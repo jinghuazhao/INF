@@ -1,0 +1,2 @@
+# INF
+SCALLOP-INF analysis
