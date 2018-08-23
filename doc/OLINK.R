@@ -16,7 +16,7 @@ olink <- function(xlsx, tabs, order=TRUE, nlines=5)
     s <- get(noquote(tabs[s]))
     t <- "Target"
     n <- names(s)
-    print(head(s["Target"]),right=FALSE)
+    print(head(s["Target"],nlines),right=FALSE)
     cat("\n")
     print(head(s[setdiff(n,t)],nlines))
   }
