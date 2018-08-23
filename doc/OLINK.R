@@ -2,7 +2,7 @@
 
 options(width=160)
 
-olink <- function(xlsx, tabs, order, nlines, verbose)
+olink_panel <- function(xlsx, tabs, order, nlines, verbose)
 {
   for (x in tabs) 
   {
@@ -27,9 +27,9 @@ olink <- function(xlsx, tabs, order, nlines, verbose)
 }
 xlsx <- "Olink validation data all panels.xlsx"
 tabs <- "Inflammation"
-olink(xlsx,tabs,FALSE,92,TRUE)
+olink_panel(xlsx,tabs,FALSE,92,TRUE)
 inf.orig <- Inflammation
 tabs <-c("Cardiometabolic","Cell Regulation","CVD II","CVD III","Development","Immune Response","Immuno-Oncology",
          "Inflammation","Metabolism","Neurology","Oncology II","Organ Damage")
-olink(xlsx,tabs,TRUE,92,FALSE)
+olink_panel(xlsx,tabs,TRUE,92,FALSE)
 ls()
