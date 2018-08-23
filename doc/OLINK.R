@@ -2,18 +2,19 @@
 
 options(width=160)
 
-olink <- function(xlsx, tabs, order=TRUE, nlines=5)
+olink <- function(xlsx, tabs, order=FALSE, nlines=5)
 {
-  for (s in 1:length(tabs)) 
+  for (x in tabs) 
   {
-    cat("\n\n", tabs[s], ":\n", rep("-", nchar(tabs[s])+1), "\n\n", sep="")
-    t <- openxlsx::read.xlsx(xlsx, sheet=s, colNames=TRUE, skipEmptyRows=FALSE, cols=c(1:16), rows=3:95)
-    if (!order) assign(tabs[s], t, envir=.GlobalEnv) else
+    cat("\n\n", x, ":\n", rep("-", nchar(x)+1), "\n\n", sep="")
+    t <- openxlsx::read.xlsx(xlsx, sheet=x, colNames=TRUE, skipEmptyRows=FALSE, cols=c(1:16), rows=3:95)
+    s <- sub(" ", "_", x)
+    if (!order) assign(s, t, envir=.GlobalEnv) else
     {
       o <- order(t[,2])
-      assign(tabs[s], t[o,], envir=.GlobalEnv)
+      assign(s, t[o,], envir=.GlobalEnv)
     }
-    s <- get(noquote(tabs[s]))
+    s <- get(noquote(s))
     t <- "Target"
     n <- names(s)
     print(head(s["Target"],nlines),right=FALSE)
@@ -22,7 +23,8 @@ olink <- function(xlsx, tabs, order=TRUE, nlines=5)
   }
 }
 xlsx <- "Olink validation data all panels.xlsx"
-tabs <-c("Cardiometabolic","Cell_Regulation","CVDII","CVDIII","Development","Immune_Respone","Immue_Oncology",
-         "Inflammation","Metabolism","Neurology","OncologyII","Organ_Damage")
-olink(xlsx,tabs,FALSE)
+tabs <-c("Cardiometabolic","Cell Regulation","CVD II","CVD III","Development","Immune Response","Immuno-Oncology",
+         "Inflammation","Metabolism","Neurology","Oncology II","Organ Damage")
+olink(xlsx,tabs)
+tabs <- "Inflammation"
 olink(xlsx,tabs,nlines=92)
