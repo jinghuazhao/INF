@@ -2,7 +2,7 @@
 
 options(width=160)
 
-olink <- function(xlsx,tabs,order=TRUE)
+olink <- function(xlsx, tabs, order=TRUE, nlines=5)
 {
   for (s in 1:length(tabs)) 
   {
@@ -18,11 +18,11 @@ olink <- function(xlsx,tabs,order=TRUE)
     n <- names(s)
     print(head(s["Target"]),right=FALSE)
     cat("\n")
-    print(s[setdiff(n,t)])
+    print(head(s[setdiff(n,t)],nlines))
   }
 }
 xlsx <- "Olink validation data all panels.xlsx"
 tabs <-c("Cardiometabolic","Cell_Regulation","CVDII","CVDIII","Development","Immune_Respone","Immue_Oncology",
          "Inflammation","Metabolism","Neurology","OncologyII","Organ_Damage")
-olink(xlsx,tabs)
-ls()
+oilnk(xlsx,tabs,FALSE)
+olink(xlsx,tabs,nlines=92)
