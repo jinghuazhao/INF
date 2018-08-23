@@ -24,5 +24,5 @@ olink <- function(xlsx, tabs, order=TRUE, nlines=5)
 xlsx <- "Olink validation data all panels.xlsx"
 tabs <-c("Cardiometabolic","Cell_Regulation","CVDII","CVDIII","Development","Immune_Respone","Immue_Oncology",
          "Inflammation","Metabolism","Neurology","OncologyII","Organ_Damage")
-oilnk(xlsx,tabs,FALSE)
+olink(xlsx,tabs,FALSE)
 olink(xlsx,tabs,nlines=92)
