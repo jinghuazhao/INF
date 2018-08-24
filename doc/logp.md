@@ -32,4 +32,4 @@ format(2*pnorm(mpfr(z,100),lower.tail=FALSE,log.p=TRUE))
 which are 1.660579603192917090365313727164e-86858901 and -400000021.6448521764816015432890, respectively.
 
 We can conclude that the order of magnitude is the same 86858901 even with such a big z, the base
-making the slight difference. In reality, there might well not be z score!!
+making the slight difference. In reality, there might well not be such a huge z score!!
