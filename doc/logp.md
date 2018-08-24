@@ -1,5 +1,6 @@
-# log10(p) and p for a very large z from Normal(0,1)
+# -log10(p) and p for a very large z from Normal(0,1)
 
+## -log10(p)
 First thing first, here is the anwser for log10(p) given z,
 ```r
 # -log10(p) for a standard normal deviate z based on log()
@@ -27,6 +28,8 @@ z <- 20000
 -log10(2)-pnorm(-abs(z), lower.tail=TRUE, log=TRUE)/log(10)
 ```
 giving -log10(p) = 86858901.
+
+## p
 
 We would be curious about the p value itself as well, which is furnished with the Rmpfr package
 ```r
