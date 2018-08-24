@@ -13,8 +13,8 @@ or 0.04999579. We proceed to get -log10(p)
 ```r
 -log10(2)-log10(pnorm(-abs(z),lower.tail=TRUE))
 ```
-leading to form above from the fact that log10(X)=log(X)/log(10) since log() is 
-also the natural log, ln(), in R, works far better on the numerator of the second term.
+leading to form above from the fact that log10(X)=log(X)/log(10) since log(), being 
+the natural log, ln(), in R, works far better on the numerator of the second term.
 The use of -abs() simply makes sure we are working on the lower tail of the standard
 Normal distribution from which our p value is calculated.
 
