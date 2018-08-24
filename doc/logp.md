@@ -11,7 +11,7 @@ We start with z=1.96 whose corresponding p value is known approximately 0.05.
 ```
 or 0.04999579. We proceed with the log version
 ```r
-log10(2)+log10(pnorm(z,lower.tail=TRUE)
+log10(2)+log10(pnorm(z,lower.tail=TRUE))
 ```
 leading to form above from the fact that log10(X)=ln(X)/ln(10) since ln(), or 
 equivalently log() in R, works far better on the numerator of the second term.
