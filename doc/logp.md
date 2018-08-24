@@ -2,8 +2,8 @@
 
 First thing first, here is the anwser,
 ```r
-# -log10(p) based on log(), using lower.tail at its default
-logp <- -log(2, base=10)-pnorm(-abs(z), log=T)/log(10)
+# -log10(p) based on log()
+logp <- -log(2, base=10)-pnorm(-abs(z), lower.tail=TRUE, log=TRUE)/log(10)
 ```
 We start with z=1.96 whose corresponding p value is known approximately 0.05.
 ```r
