@@ -9,19 +9,20 @@ We start with z=1.96 whose corresponding p value is known to be 0.05 approximate
 ```r
 2*pnorm(-1.96,lower.tail=TRUE)
 ```
-or 0.04999579. We proceed with the log version
+or 0.04999579. We proceed with the -log10(p)
 ```r
-log10(2)+log10(pnorm(z,lower.tail=TRUE))
+-log10(2)-log10(pnorm(-abs(z),lower.tail=TRUE))
 ```
 leading to form above from the fact that log10(X)=ln(X)/ln(10) since ln(), or 
-equivalently log() in R, works far better on the numerator of the second term.
+equivalently log() in R, works far better on the numerator of the second term. The
+use of -abs() simply makes sure we are working on the lower tail.
 
-To test, now let
+For a stress test, now let
 ```r
 z. <- 20000
--log10(2)+pnorm(-abs(z), log=TRUE)/log(10)
+-log10(2)-pnorm(-abs(z), log=TRUE)/log(10)
 ```
-giving -log10(p)=86858901.
+giving -log10(p) = 86858901.
 
 To contrast with Rmpfr package on the actual p and log10(p),
 ```r
