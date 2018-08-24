@@ -26,8 +26,8 @@ giving -log10(p)=86858901.
 To contrast with Rmpfr package on the actual p and log10(p),
 ```r
 require(Rmpfr)
-format(2*pnorm(mpfr(z,100),lower.tail=FALSE,log.p=FALSE))
-format(2*pnorm(mpfr(z,100),lower.tail=FALSE,log.p=TRUE))
+format(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE,log.p=FALSE))
+format(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE,log.p=TRUE))
 ```
 which are 1.660579603192917090365313727164e-86858901 and -400000021.6448521764816015432890, respectively.
 
