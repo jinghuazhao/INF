@@ -1,4 +1,4 @@
-# p and log10(p) for very large z from Normal(0,1)
+# p and log10(p) for a very large z from Normal(0,1)
 
 First thing first, here is the anwser for log10(p) given z,
 ```r
