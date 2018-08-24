@@ -29,7 +29,7 @@ z <- 20000
 ```
 giving -log10(p) = 86858901.
 
-## p
+## p, log10(p) and the multiple precision arithmetic
 
 We would be curious about the p value itself as well, which is furnished with the Rmpfr package
 ```r
@@ -39,5 +39,9 @@ format(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE,log.p=TRUE))
 ```
 giving 1.660579603192917090365313727164e-86858901 and -400000021.6448521764816015432890, respectively.
 
-We can then conclude that the order of magnitude is the same 86858901 even with such a big z, the base
-making the slight difference. In reality, there might well be no such a huge z score!
+We can then conclude that the order of magnitude is the same 86858901 even with such a z big as this,
+the base making the slight difference. To obtain -log10(p) directly we resort to
+````r
+as.numeric(-log10(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE)))
+```
+actually yields exactly the same 86858901.
