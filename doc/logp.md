@@ -8,7 +8,7 @@ First thing first, here is the anwser for log10(p) given z,
 ```
 
 ## Rationale
-We start with z=1.96 whose corresponding p value is known to be 0.05 approximately.
+We start with z=1.96 whose corresponding p value is approximately 0.05.
 ```r
 2*pnorm(-1.96,lower.tail=TRUE)
 ```
