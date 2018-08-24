@@ -36,5 +36,6 @@ ls()
 # grep inf1 olink.prot.list.txt | sed 's/inf1_//g;s/___/\t/g' > inf1.list
 inf <- read.table("inf1.list",header=FALSE,col.names=c("prot","UniProt"),sep="\t",as.is=TRUE)
 inf1 <- merge(inf,inf.orig,by.x="UniProt",by.y="UniProt.No.")
+# See https://www.uniprot.org/uniprot/ for additional information
 setdiff(inf$UniProt,inf.orig$UniProt.No.)
 setdiff(inf.orig$UniProt.No.,inf$UniProt)
