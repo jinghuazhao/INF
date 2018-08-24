@@ -1,8 +1,8 @@
-# p and log10(p) for very large z
+# p and log10(p) for very large z from Normal(0,1)
 
 First thing first, here is the anwser,
 ```r
-# -log10(p) based on log()
+# -log10(p) for a standard normal deviate z based on log()
 logp <- -log(2, base=10)-pnorm(-abs(z), lower.tail=TRUE, log=TRUE)/log(10)
 ```
 We start with z=1.96 whose corresponding p value is known approximately 0.05.
@@ -25,11 +25,11 @@ giving -log10(p)=86858901.
 
 To contrast with Rmpfr package on the actual p and log10(p),
 ```r
+require(Rmpfr)
 format(2*pnorm(mpfr(z,100),lower.tail=FALSE,log.p=FALSE))
 format(2*pnorm(mpfr(z,100),lower.tail=FALSE,log.p=TRUE))
 ```
-giving 
-1.660579603192917090365313727164e-86858901 and -400000021.6448521764816015432890, respectively.
+which are 1.660579603192917090365313727164e-86858901 and -400000021.6448521764816015432890, respectively.
 
-We can conclude that the order of magnitude is the same 86858901 even with such a big z; the base
-makes slight difference. In reality, there might well not be z score!!
+We can conclude that the order of magnitude is the same 86858901 even with such a big z, the base
+making the slight difference. In reality, there might well not be z score!!
