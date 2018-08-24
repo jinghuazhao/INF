@@ -13,7 +13,7 @@ or 0.04999579. We proceed with the log version
 ```r
 log10(2)+log10(pnorm(z,lower.tail=TRUE)
 ```
-leading to form above from the fact that log10(X)=ln(X)/ln(10) since apparently ln(), or 
+leading to form above from the fact that log10(X)=ln(X)/ln(10) since ln(), or 
 equivalently log() in R, works far better on the numerator of the second term.
 
 To test, now let
@@ -32,4 +32,4 @@ giving
 1.660579603192917090365313727164e-86858901 and -400000021.6448521764816015432890, respectively.
 
 We can conclude that the order of magnitude is the same 86858901 even with such a big z; the base
-makes slight difference. In reality, we hope that z score is not as big!
+makes slight difference. In reality, there might well not be z score!!
