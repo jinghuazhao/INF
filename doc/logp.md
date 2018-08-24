@@ -9,7 +9,7 @@ We start with z=1.96 whose corresponding p value is known to be 0.05 approximate
 ```r
 2*pnorm(-1.96,lower.tail=TRUE)
 ```
-or 0.04999579. We proceed with the -log10(p)
+or 0.04999579. We proceed to get -log10(p)
 ```r
 -log10(2)-log10(pnorm(-abs(z),lower.tail=TRUE))
 ```
