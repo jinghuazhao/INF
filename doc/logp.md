@@ -41,7 +41,9 @@ giving 1.660579603192917090365313727164e-86858901 and -400000021.644852176481601
 
 We can then conclude that the order of magnitude is the same 86858901 even with such a z big as this,
 the base making the slight difference. To obtain -log10(p) directly we resort to
-````r
+```r
 as.numeric(-log10(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE)))
 ```
 actually yields exactly the same 86858901.
+
+If we go very far to have z=50000. then -log10(p)=542868107 but we have less luck with Rmpfr.
