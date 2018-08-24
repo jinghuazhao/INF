@@ -16,9 +16,9 @@ giving an acceptable value 0.04999579, so we proceed to get -log10(p)
 -log10(2)-log10(pnorm(-abs(z),lower.tail=TRUE))
 ```
 leading to the expression above from the fact that log10(X)=log(X)/log(10) since log(),
-being the natural log, ln(), in R, works far better on the numerator of the second term.
-The use of -abs() simply makes sure we are working on the lower tail of the standard
-Normal distribution from which our p value is calculated.
+being the natural log function, ln(), in R, works far better on the numerator of the
+second term. The use of -abs() simply makes sure we are working on the lower tail of
+the standard Normal distribution from which our p value is calculated.
 
 ## Benchmark
 Now we have a stress test,
