@@ -15,7 +15,8 @@ or 0.04999579. We proceed to get -log10(p)
 ```
 leading to form above from the fact that log10(X)=ln(X)/ln(10) since ln(), or 
 equivalently log() in R, works far better on the numerator of the second term. The
-use of -abs() simply makes sure we are working on the lower tail.
+use of -abs() simply makes sure we are working on the lower tail of the standard
+Normal distribution from which our p value is calculated.
 
 For a stress test, now let
 ```r
