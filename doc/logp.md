@@ -5,6 +5,8 @@ First thing first, here is the anwser for log10(p) given z,
 # -log10(p) for a standard normal deviate z based on log()
 -log(2, base=10)-pnorm(-abs(z), lower.tail=TRUE, log=TRUE)/log(10)
 ```
+
+## Rationale
 We start with z=1.96 whose corresponding p value is known to be 0.05 approximately.
 ```r
 2*pnorm(-1.96,lower.tail=TRUE)
@@ -18,6 +20,7 @@ being the natural log, ln(), in R, works far better on the numerator of the seco
 The use of -abs() simply makes sure we are working on the lower tail of the standard
 Normal distribution from which our p value is calculated.
 
+## Benchmark
 Now we have a stress test,
 ```r
 z <- 20000
