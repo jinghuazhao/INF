@@ -1,6 +1,6 @@
 # p and log10(p) for very large z from Normal(0,1)
 
-First thing first, here is the anwser,
+First thing first, here is the anwser for log10(p),
 ```r
 # -log10(p) for a standard normal deviate z based on log()
 logp <- -log(2, base=10)-pnorm(-abs(z), lower.tail=TRUE, log=TRUE)/log(10)
