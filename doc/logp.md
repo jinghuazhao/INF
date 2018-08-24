@@ -18,14 +18,14 @@ being the natural log, ln(), in R, works far better on the numerator of the seco
 The use of -abs() simply makes sure we are working on the lower tail of the standard
 Normal distribution from which our p value is calculated.
 
-For a stress test, now let
+Now we have a stress test,
 ```r
 z <- 20000
 -log10(2)-pnorm(-abs(z), lower.tail=TRUE, log=TRUE)/log(10)
 ```
 giving -log10(p) = 86858901.
 
-We would be curious about the p value itself as well, which is furnished together with log10(p) via Rmpfr package
+We would be curious about the p value itself as well, which is furnished with the Rmpfr package
 ```r
 require(Rmpfr)
 format(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE,log.p=FALSE))
