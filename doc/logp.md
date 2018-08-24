@@ -5,7 +5,7 @@ First thing first, here is the anwser for log10(p),
 # -log10(p) for a standard normal deviate z based on log()
 logp <- -log(2, base=10)-pnorm(-abs(z), lower.tail=TRUE, log=TRUE)/log(10)
 ```
-We start with z=1.96 whose corresponding p value is known approximately 0.05.
+We start with z=1.96 whose corresponding p value is known to be 0.05 approximately.
 ```r
 2*pnorm(-1.96,lower.tail=TRUE)
 ```
