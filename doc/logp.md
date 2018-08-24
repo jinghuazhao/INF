@@ -19,8 +19,8 @@ use of -abs() simply makes sure we are working on the lower tail.
 
 For a stress test, now let
 ```r
-z. <- 20000
--log10(2)-pnorm(-abs(z), log=TRUE)/log(10)
+z <- 20000
+-log10(2)-pnorm(-abs(z), lower.ftail=TRUE, log=TRUE)/log(10)
 ```
 giving -log10(p) = 86858901.
 
