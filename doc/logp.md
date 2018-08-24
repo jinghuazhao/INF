@@ -25,7 +25,7 @@ z <- 20000
 ```
 giving -log10(p) = 86858901.
 
-To contrast with Rmpfr package on the actual p and log10(p),
+We would be curious about the p value itself as well, which is furnished together with log10(p) via Rmpfr package
 ```r
 require(Rmpfr)
 format(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE,log.p=FALSE))
