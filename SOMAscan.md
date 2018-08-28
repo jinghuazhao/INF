@@ -452,11 +452,13 @@ variants according to the regression model:
 β<sub>Y</sub> = θ<sub>XY</sub>β<sub>X</sub> + ε,  ε ~N (0, Ω)
 
 where β<sub>Y</sub> and β<sub>X</sub> are vectors of the univariable (marginal) genetic associations, and 
-the weighting matrix Ω has terms Ω<sub>g1g2</sub>  = σ<sub>Yg1</sub>σ<sub>Yg2</sub>ρ<sub>g1g2</sub>, and ρg1g2 is the correlation 
+the weighting matrix Ω has terms Ω<sub>g1g2</sub>  = σ<sub>Yg1</sub>σ<sub>Yg2</sub>ρ<sub>g1g2</sub>, and ρ<sub>g1g2</sub> is the correlation 
 between the g<sub>1</sub>th and g<sub>2</sub>th variants.
 
 The IV estimate from this method is:
+
 θ<sub>XY</sub> = (β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>X</sub>)<sup>−1</sup>β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>Y</sub>
+
 and the standard error is:
 
 se(θ<sub>XY</sub>) = (β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>X</sub>)<sup>-1/2</sup>
