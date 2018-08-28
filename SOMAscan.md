@@ -441,20 +441,20 @@ rately using summary statistics in the inverse-variance weighted method adapted
 to account for correlated variants65,66. For each of G genetic variants (g = 1, …, G) 
 having per-allele estimate of the association with the protein βXg and standard error 
 σXg, and per-allele estimate of the association with the outcome (here, AD or CHD) 
-βYg  and standard error σYg , the IV estimate (θXY ) is obtained from generalized 
-weighted linear regression of the genetic associations with the outcome (βY ) on 
+βYg  and standard error σYg , the IV estimate (θ<sub>XY</sub> ) is obtained from generalized 
+weighted linear regression of the genetic associations with the outcome (β<sub>Y</sub> ) on 
 the genetic associations with the protein (βX) weighting for the precisions of the 
 genetic associations with the outcome and accounting for correlations between the 
 variants according to the regression model:
-βY = θXY   βX + ε,  ε ~N (0, Ω)
+β<sub>Y</sub> = θ<sub>XY</sub>   βX + ε,  ε ~N (0, Ω)
 where βY and βX are vectors of the univariable (marginal) genetic associations, and 
 the weighting matrix Ω has terms Ωg1g2  = σYg1σYg2ρg1g2, and ρg1g2 is the correlation 
 between the g1th and g2th variants.
 
 The IV estimate from this method is:
-θXY = (βXTΩ−1βX)−1βXTΩ−1βY
+θ<sub>XY</sub> = (β<sub>X</sub><sup>T</sup>Ω<sub>−1</sup>β<sub>X</sub>)<sup>−1</sup>β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>Y</sub>
 and the standard error is:
-se(θXY) =    (βXTΩ−1βX)−1
+se(θ<sub>XY</sub>) =    (β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>X</sub>)<sup>−1</sup>
 where T is a matrix transpose. This is the estimate and standard error from the 
 regression model fixing the residual standard error to 1 (equivalent to a fixed- 
 effects model in a meta-analysis).
@@ -470,7 +470,7 @@ Burgess et al.68. For each of K risk factors in the model (k = 1,…,K), the w
 regression-based method is performed by multivariable generalized weighted  
 linear regression of the association estimates βY  on each of the association  
 estimates with each risk factor βXk in a single regression model:
-βY = θXY1βX1 + θXY 2βX 2 + … + θXYKβXK + ε,  ε ~N (0, Ω)
+β<sub>Y</sub> = θ<sub>XY1</sub>β<sub>X1</sub> + θ<sub>XY2</sub> β<sub>X2</sub> + … + θ<sub>XYK</sub>β<sub>XK</sub> + ε,  ε ~N (0, Ω)
 where βX1 is the vectors of the univariable genetic associations with risk factor 1, 
 and so on. This regression model is implemented by first pre-multiplying the asso-
 ciation vectors by the Cholesky decomposition of the weighting matrix, and then 
