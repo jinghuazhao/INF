@@ -154,7 +154,7 @@ variant with the lowest P value for each region was assigned as the ‘regional 
 nel variant’. Owing to the complexity of the MHC region, we treated the extended 
 MHC region (chr6:25.5–34.0Mb) as one region. To identify whether a region was 
 associated with multiple SOMAmers, we used an LD-based clumping approach. 
-Regional sentinel variants in high LD (r2 ≥ 0.8) with each other were combined 
+Regional sentinel variants in high LD (r<sup>2</sup> ≥ 0.8) with each other were combined 
 together into a single region.
 
 **Conditional analyses**. To identify conditionally significant associations, we per-
@@ -200,7 +200,7 @@ also assayed on the SOMAscan panel. For previous studies that used SomaLogic
 technology, we refined this match to the specific aptamer used. We then clumped 
 associations into distinct loci using the same method that we applied to our pQTLs 
 (see ‘Refinement of significant regions’). For each locus, we asked whether the sen-
-tinel SNP or a proxy (r2 > 0.6) was associated with the same protein (or aptamer) in 
+tinel SNP or a proxy (r<sup>2</sup> > 0.6) was associated with the same protein (or aptamer) in 
 our study at a defined significance threshold. For our primary assessment, we used 
 a P value threshold of 10−4 (Supplementary Table 21). We also performed sensitiv-
 ity analyses to explore factors that influence replication rate (Supplementary Note).
@@ -236,7 +236,7 @@ including eQTL and chromosome conformation capture. In addition to reporting
 the nearest gene to the sentinel variant, ProGeM employs complementary ‘bottom 
 up’ and ‘top down’ approaches, starting from the variant and protein respectively. 
 For the ‘bottom up’ approach, the sentinel variant and corresponding proxies 
-(r2 > 0.8) for each trans pQTL were first annotated using Ensembl VEP v83 (using 
+(r<sup>2</sup> > 0.8) for each trans pQTL were first annotated using Ensembl VEP v83 (using 
 the ‘pick’ option) to determine whether variants were (1) protein-altering coding 
 variants; (2) synonymous coding or 5′/3′ untranslated region (UTR); (3) intronic 
 or up/downstream; or (4) intergenic. Second, we queried all sentinel variants  
@@ -253,15 +253,15 @@ potential candidate genes. Using these three sources of information, we generate
 list of candidate genes for the trans pQTLs. A gene was considered a candidate if it 
 fulfilled at least one of the following criteria: (1) it was proximal (intragenic or ± 5 
 kb from the gene) or nearest to the sentinel variant; (2) it contained a sentinel or 
-proxy variant (r2 > 0.8) that was protein-altering; (3) it had a significant cis eQTL 
+proxy variant (r<sup>2</sup> > 0.8) that was protein-altering; (3) it had a significant cis eQTL 
 in at least one GTEx tissue overlapping with a sentinel pQTL variant (or proxy); or 
 (4) it was regulated by a promoter annotated on either fragment of a chromosomal 
 contact52 involving a sentinel variant.
 
 For the ‘top down’ approach, we first identified all genes with a TSS located 
 within the corresponding pQTL region using the GenomicRanges Bioconductor 
-package53 with annotation from a GRCh37 GTF file from Ensembl (ftp://ftp.
-ensembl.org/pub/grch37/update/gtf/homo_sapiens/; file: ‘Homo_sapiens.
+package53 with annotation from a GRCh37 GTF file from Ensembl
+(ftp://ftp.ensembl.org/pub/grch37/update/gtf/homo_sapiens/; file: ‘Homo_sapiens.
 GRCh37.82.gtf.gz’, downloaded June 2016). We then identified any local genes 
 that had previously been linked with the corresponding trans-associated pro-
 tein(s) according to the following open source databases: (1) the Online Mendelian 
@@ -271,8 +271,8 @@ and (3) STRINGdb56 (http://string-db.org/; v10.0). We accessed OMIM data via
 HumanMine web tool57 (http://www.humanmine.org/; accessed June 2016), 
 whereby we extracted all OMIM IDs for (i) our trans-affected proteins and (ii) 
 genes local (± 500 kb) to the corresponding trans-acting variant. We extracted all 
-human KEGG pathway IDs using the KEGGREST Bioconductor package (https://
-bioconductor.org/packages/release/bioc/html/KEGGREST.html). In cases where a 
+human KEGG pathway IDs using the KEGGREST Bioconductor package
+(https://bioconductor.org/packages/release/bioc/html/KEGGREST.html). In cases where a 
 trans-associated protein shared either an OMIM ID or a KEGG pathway ID with 
 a gene local to the corresponding trans-acting variant, we took this as evidence of 
 a potential functional involvement of that gene. We interrogated protein–protein 
@@ -300,12 +300,12 @@ formed using Ensembl VEP v83 using the ‘pick’ option. We tested the enrich-
 ment of significant pQTL variants for certain functional classes by comparing 
 to permuted sets of variants showing no significant association with any protein 
 (P > 0.0001 for all proteins tested). First, the regional sentinel variants were 
-LD-pruned at r2 of 0.1. Each time the sentinel variants were LD-pruned, one of the 
+LD-pruned at r<sup>2</sup> of 0.1. Each time the sentinel variants were LD-pruned, one of the 
 pairs of correlated variants was removed at random and for each set of LD-pruned 
 sentinel variants, 100 equally sized sets of null permuted variants were sampled 
 matching for MAF (bins of 5%), distance to TSS (bins of 0–0.5 kb, 0.5–2 kb, 
 2–5 kb, 5–10 kb, 10–20 kb, 20–100 kb and >100 kb in each direction) and LD 
-(± half the number of variants in LD with the sentinel variant at r2 of 0.8). This 
+(± half the number of variants in LD with the sentinel variant at r<sup>2</sup> of 0.8). This 
 procedure was repeated 100 times resulting in 10,000 permuted sets of variants. 
 An empirical P value was calculated as the proportion of permuted variant sets 
 where the proportion that is classified as a particular functional group exceeded 
@@ -318,13 +318,13 @@ possibility of binding-affinity effects, where protein-altering variants (PAVs) 
 their proxies in LD) are associated with protein measurements owing to differential 
 binding rather than differences in protein abundance. To account for this potential 
 effect, we performed conditional analysis at all cis pQTLs where the sentinel variant 
-was in LD (r2 ≥ 0.1 and r2 ≤ 0.9) with a PAV in the gene(s) encoding the associated 
+was in LD (r<sup>2</sup> ≥ 0.1 and r<sup>2</sup> ≤ 0.9) with a PAV in the gene(s) encoding the associated 
 protein. First, variants were annotated with Ensembl VEP v83 using the ‘per-gene’ 
 option. Variant annotations were considered protein-altering if they were anno-
 tated as coding sequence variant, frameshift variant, in-frame deletion, in-frame 
 insertion, missense variant, protein altering variant, splice acceptor variant,
 splice donor variant, splice region variant, start lost, stop gained, or stop lost. 
-To avoid multi-collinearity, PAVs were LD-pruned (r2 > 0.9) using PLINK v1.9 
+To avoid multi-collinearity, PAVs were LD-pruned (r<sup>2</sup> > 0.9) using PLINK v1.9 
 before including them as covariates in the conditional analysis on the meta- 
 analysis summary statistics using GCTA v1.25.2. Coverage of known common 
 (MAF >5%) PAVs in our data was checked by comparison with exome sequences 
@@ -335,8 +335,8 @@ exac.broadinstitute.org), downloaded June 2016)59.
 were enriched for functional and regulatory characteristics using GARFIELD 
 v1.2.060. GARFIELD is a non-parametric permutation-based enrichment method 
 that compares input variants to permuted sets matched for number of proxies 
-(r2 ≥ 0.8), MAF and distance to the closest TSS. It first applies ‘greedy pruning’ 
-(r2 < 0.1) within a 1-Mb region of the most significant variant. GARFIELD anno-
+(r<sup>2</sup> ≥ 0.8), MAF and distance to the closest TSS. It first applies ‘greedy pruning’ 
+(r<sup>2</sup> < 0.1) within a 1-Mb region of the most significant variant. GARFIELD anno-
 tates variants with more than a thousand features, drawn predominantly from the 
 GENCODE, ENCODE and ROADMAP projects, which includes genic annota-
 tions, histone modifications, chromatin states and other regulatory features across 
@@ -352,7 +352,7 @@ footprints, hotspots, or peaks) with up to 190 cell types from 57 tissues, leadi
 statistically significant.
 
 **Disease annotation**. To identify diseases with which our pQTLs have been asso-
-ciated, we queried our sentinel variants and their strong proxies (r2 ≥ 0.8) against 
+ciated, we queried our sentinel variants and their strong proxies (r<sup>2</sup> ≥ 0.8) against 
 publicly available disease GWAS data using PhenoScanner61. A list of data sets 
 queried is available at http://www.phenoscanner.medschl.cam.ac.uk/information.
 html. For disease GWAS, results were filtered to P < 5 × 10<sup>−8</sup> and then manually 
@@ -360,7 +360,7 @@ curated to retain only the entry with the strongest evidence for association (th
 is, smallest P value) per disease. Non-disease phenotypes such as anthropometric 
 traits, intermediate biomarkers and lipids were excluded manually.
 cis eQTL overlap and enrichment of cis pQTLs for cis eQTLs. For each regional 
-sentinel cis pQTL variant, its strong proxies (r2 ≥ 0.8) were queried against
+sentinel cis pQTL variant, its strong proxies (r<sup>2</sup> ≥ 0.8) were queried against
 publicly available eQTL association data using PhenoScanner. cis eQTL results were 
 filtered to retain only variants with P < 1.5 × 10<sup>−11</sup>. Only cis eQTLs for the same 
 gene as the cis pQTL protein were retained. We tested whether cis pQTLs were 
@@ -374,7 +374,7 @@ level. GTEx results were filtered to contain only variants lying in cis (that is
 both data sets were used.
 
 For the enrichment analysis, the cis pQTL sentinel variants were first LD-pruned 
-(r2 < 0.1) and the proportion of sentinel cis pQTL variants that are also eQTLs at 
+(r<sup>2</sup> < 0.1) and the proportion of sentinel cis pQTL variants that are also eQTLs at 
 our pQTL significance threshold (P < 1.5 × 10<sup>−11</sup>), conventional genome-wide 
 significance (P < 5 × 10<sup>−8</sup>) or a nominal P value threshold (P < 1 × 10<sup>−5</sup>) for the 
 same protein or gene was compared to a permuted set of variants that were not 
@@ -416,20 +416,20 @@ likely causal proteins that underpin the previous genetic association of the IL1
 IL18R1 locus (chr11:102.5–103.5Mb) with atopic dermatitis (AD)31, we used the 
 following approach. For each protein encoded by a gene in the IL1RL1–IL18R1 
 locus, we took genetic variants that had a cis association at P < 1 × 10<sup>−4</sup> and 
-‘LD-pruned’ them at r2 < 0.1 to leave largely independent variants. We then used 
+‘LD-pruned’ them at r<sup>2</sup> < 0.1 to leave largely independent variants. We then used 
 these genetic variants to construct a genetic score for each protein. Formally, we 
 used these variants as instrumental variables for their respective proteins in uni-
 variable MR. For multivariable MR, association estimates for all proteins in the 
 locus were extracted for all instruments. We used PhenoScanner to obtain asso-
 ciation statistics for the selected variants in the European-ancestry population of 
 a recent large-scale GWAS meta-analysis of AD31. Where the relevant variant was 
-not available, the strongest proxy with r2 ≥ 0.8 was used.
+not available, the strongest proxy with r<sup>2</sup> ≥ 0.8 was used.
 
 **MMP-12 and coronary heart disease (CHD)**. To test whether plasma MMP-
 12 levels have a causal effect on risk of CHD, we selected genetic variants in the 
 MMP12 gene region to use as instrumental variables. We constructed a genetic 
 score comprising 17 variants that had a cis association with MMP-12 levels at 
-P < 5 × 10−8 and that were not highly correlated with one another (r2 < 0.2). To 
+P < 5 × 10<sup>−8</sup> and that were not highly correlated with one another (r<sup>2</sup> < 0.2). To 
 perform multivariable MR, we used association estimates for these variants with 
 other MMP proteins in the locus (MMP-1, MMP-7, MMP-8, MMP-10, MMP-13). 
 Summary associations for variants in the score with CHD were obtained through 
@@ -505,7 +505,7 @@ ID. When multiple drugs targeted the same protein, we selected the drug with the
 latest stage of development.
 
 For drug targets with significant pQTLs, we identified the subset where the 
-sentinel variant or proxy variants in LD (r2 > 0.8) are also associated with disease 
+sentinel variant or proxy variants in LD (r<sup>2</sup> > 0.8) are also associated with disease 
 risk through PhenoScanner. We used an internal Merck auto-encoding method to 
 map GWAS traits and drug indications to a common set of terms from the Medical 
 Dictionary for Regulatory Activities (MedDRA). MedDRA terms are organized 
