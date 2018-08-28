@@ -102,7 +102,7 @@ Genotyping was performed in multiple batches of approximately 4,800 samples
 each. Sample QC was performed including exclusions for sex mismatches, low call 
 rates, duplicate samples, extreme heterozygosity and non-European descent. 
 Relatedness was removed by excluding one participant from each pair of close 
-(first- or second-degree) relatives, defined as π > 0.187. Identity-by-descent was 
+(first- or second-degree) relatives, defined as π\> 0.187. Identity-by-descent was 
 estimated using a subset of variants with a call rate >99% and MAF > 5% in the 
 merged data set of both subcohorts, pruned for linkage disequilibrium (LD) using 
 PLINK v1.946. Numbers of participants excluded at each stage of the genetic QC 
@@ -111,7 +111,7 @@ using PLINK v1.9 to create components to account for ancestry in genetic analyse
 Prior to imputation, additional variant filtering steps were performed to establish 
 a high-quality imputation scaffold. In summary, 654,966 high-quality variants (auto-
 somal, non-monomorphic, bi-allelic variants with Hardy–Weinberg Equilibrium 
-(HWE) P > 5 × 10−6, with a call rate of >99% across the INTERVAL genotyping 
+(HWE) P \> 5 × 10−6, with a call rate of \>99% across the INTERVAL genotyping 
 batches in which a variant passed QC, and a global call rate of >75% across all 
 INTERVAL genotyping batches) were used for imputation. Variants were phased 
 using SHAPEIT3 and imputed using a combined 1000 Genomes Phase 3-UK10K 
@@ -241,8 +241,8 @@ the ‘pick’ option) to determine whether variants were (1) protein-altering c
 variants; (2) synonymous coding or 5′/3′ untranslated region (UTR); (3) intronic 
 or up/downstream; or (4) intergenic. Second, we queried all sentinel variants  
 and proxies against significant cis eQTL variants (defined by beta distribution- 
-adjusted empirical P values using an FDR threshold of 0.05, see http://www.gtex-
-portal.org/home/documentationPage for details) in any cell type or tissue from 
+adjusted empirical P values using an FDR threshold of 0.05, see 
+http://www.gtex-portal.org/home/documentationPage for details) in any cell type or tissue from 
 the Genotype-Tissue Expression (GTEx) project v628 (http://www.gtexportal.org/
 home/datasets). Third, we also queried promoter capture Hi-C data in 17 human 
 primary haematopoietic cell types52 to identify contacts (with a CHiCAGO score 
