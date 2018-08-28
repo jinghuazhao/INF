@@ -448,8 +448,10 @@ weighted linear regression of the genetic associations with the outcome (β<sub>
 the genetic associations with the protein (βX) weighting for the precisions of the 
 genetic associations with the outcome and accounting for correlations between the 
 variants according to the regression model:
-β<sub>Y</sub> = θ<sub>XY</sub>βX + ε,  ε ~N (0, Ω)
-where βY and βX are vectors of the univariable (marginal) genetic associations, and 
+
+β<sub>Y</sub> = θ<sub>XY</sub>β<sub>X</sub> + ε,  ε ~N (0, Ω)
+
+where β<sub>Y</sub> and β<sub>X</sub> are vectors of the univariable (marginal) genetic associations, and 
 the weighting matrix Ω has terms Ω<sub>g1g2</sub>  = σ<sub>Yg1</sub>σ<sub>Yg2</sub>ρ<sub>g1g2</sub>, and ρg1g2 is the correlation 
 between the g<sub>1</sub>th and g<sub>2</sub>th variants.
 
