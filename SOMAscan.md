@@ -1,6 +1,6 @@
 ## METHODS
 
-(Adaoted from Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79)
+(Adapted from Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79)
 
 **Study participants**. The INTERVAL study comprises about 50,000 participants 
 nested within a randomized trial of varying blood donation intervals9. Between 
