@@ -33,8 +33,8 @@ or protein complexes assayed using 4,034 modified aptamers (‘SOMAmer
 reagents’, hereafter referred to as SOMAmers; Supplementary Table 18). The assay 
 extends the lower limit of detectable protein abundance afforded by conventional 
 approaches (for example, immunoassays), measuring both extracellular and 
-intracellular proteins (including soluble domains of membrane-associated pro-
-teins), with a bias towards proteins likely to be found in the human secretome<sup>8,39</sup>
+intracellular proteins (including soluble domains of membrane-associated proteins),
+with a bias towards proteins likely to be found in the human secretome<sup>8,39</sup>
 (Extended Data Fig. 10a). The proteins cover a wide range of molecular functions 
 (Extended Data Fig. 10b). The selection of proteins on the platform reflects both 
 the availability of purified protein targets and a focus on proteins suspected to be 
@@ -69,8 +69,8 @@ protein levels of 30 and 10 pooled plasma samples randomly distributed across
 plates for subcohort 1 and subcohort 2, respectively. Laboratory technicians were 
 blinded to the presence of pooled samples. This approach enabled estimation of 
 the reproducibility of the protein assays. We calculated the coefficient of variation 
-(CV) for each SOMAmer within each subcohort by dividing the standard devi-
-ation by the mean of the pooled plasma sample protein read-outs. In addition to 
+(CV) for each SOMAmer within each subcohort by dividing the standard deviation by
+the mean of the pooled plasma sample protein read-outs. In addition to 
 passing SomaLogic QC processes, we required SOMAmers to have a CV ≤ 20% 
 in both subcohorts. Eight non-human protein targets were also excluded, leaving 
 3,283 SOMAmers (mapping to 2,994 unique proteins or protein complexes) for 
@@ -91,8 +91,8 @@ using gene ontology annotations<sup>43</sup> from UniProt.
 of the protein assays, we attempted to replicate the associations with age or sex of 
 45 proteins previously reported by Ngo et al. and 40 reported by Menni et al.<sup>44,45</sup>. 
 We used Bonferroni-corrected P value thresholds of P = 1.1 × 10<sup>−3</sup> (0.05/45) and 
-P = 1.2 × 10<sup>−3</sup> (0.05/40), respectively. Relative protein abundances were rank-in-
-verse normalized within each subcohort and linear regression was performed 
+P = 1.2 × 10<sup>−3</sup> (0.05/40), respectively. Relative protein abundances were
+rank-inverse normalized within each subcohort and linear regression was performed 
 using age, sex, body mass index, natural log of estimated glomerular filtration 
 rate (eGFR) and subcohort as independent variables.
 
@@ -111,8 +111,8 @@ PLINK v1.946. Numbers of participants excluded at each stage of the genetic QC
 are summarized in Extended Data Fig. 1. Multi-dimensional scaling was performed 
 using PLINK v1.9 to create components to account for ancestry in genetic analyses.
 Prior to imputation, additional variant filtering steps were performed to establish 
-a high-quality imputation scaffold. In summary, 654,966 high-quality variants (auto-
-somal, non-monomorphic, bi-allelic variants with Hardy–Weinberg Equilibrium 
+a high-quality imputation scaffold. In summary, 654,966 high-quality variants (autosomal,
+non-monomorphic, bi-allelic variants with Hardy–Weinberg Equilibrium 
 (HWE) P \> 5 × 10<sup>−6</sup>, with a call rate of \>99% across the INTERVAL genotyping 
 batches in which a variant passed QC, and a global call rate of >75% across all 
 INTERVAL genotyping batches) were used for imputation. Variants were phased 
@@ -127,50 +127,50 @@ alleles, the variant with the lowest INFO score was removed. 10,572,788 variants
 passing all filters in both subcohorts were taken forward for analysis (Extended 
 Data Fig. 1).
 
-**Genome-wide association study**. Within each subcohort, relative protein abun-
-dances were first natural log-transformed. Log-transformed protein levels were 
+**Genome-wide association study**. Within each subcohort, relative protein abundances
+were first natural log-transformed. Log-transformed protein levels were 
 then adjusted in a linear regression for age, sex, duration between blood draw and 
 processing (binary, ≤1 day/>1day) and the first three principal components of 
 ancestry from multi-dimensional scaling. The protein residuals from this linear 
-regression were then rank-inverse normalized and used as phenotypes for asso-
-ciation testing. Simple linear regression using an additive genetic model was used 
+regression were then rank-inverse normalized and used as phenotypes for association
+testing. Simple linear regression using an additive genetic model was used 
 to test genetic associations. Association tests were carried out on allelic dosages to 
 account for imputation uncertainty (‘-method expected’ option) using SNPTEST 
 v2.5.2<sup>47</sup>.
 
 **Meta-analysis and statistical significance**. Association results from the two 
-subcohorts were combined via fixed-effects inverse-variance meta-analysis com-
-bining the betas and standard errors using METAL<sup>48</sup>. Genetic associations were 
-considered to be genome-wide significant based on a conservative strategy requir-
-ing associations to have (i) a meta-analysis P value < 1.5 × 10<sup>−11</sup> (genome-wide 
+subcohorts were combined via fixed-effects inverse-variance meta-analysis combining
+the betas and standard errors using METAL<sup>48</sup>. Genetic associations were 
+considered to be genome-wide significant based on a conservative strategy requiring
+associations to have (i) a meta-analysis P value < 1.5 × 10<sup>−11</sup> (genome-wide 
 threshold of P = 5 × 10<sup>−8</sup> Bonferroni-corrected for 3,283 aptamers tested), (ii) at 
-least nominal significance (P < 0.05) in both subcohorts, and (iii) consistent direc-
-tion of effect across subcohorts. We did not observe significant genomic inflation 
+least nominal significance (P < 0.05) in both subcohorts, and (iii) consistent
+direction of effect across subcohorts. We did not observe significant genomic inflation 
 (mean inflation factor was 1.0, standard deviation = 0.01) (Extended Data Fig. 3d).
 Refinement of significant regions. To identify distinct non-overlapping regions 
 associated with a given SOMAmer, we first defined a 1-Mb region around each 
 significant variant for that SOMAmer. Starting with the region containing the 
 variant with the smallest P value, any overlapping regions were then merged and 
 this process was repeated until no more overlapping 1-Mb regions remained. The 
-variant with the lowest P value for each region was assigned as the ‘regional senti-
-nel variant’. Owing to the complexity of the MHC region, we treated the extended 
+variant with the lowest P value for each region was assigned as the ‘regional sentinel
+variant’. Owing to the complexity of the MHC region, we treated the extended 
 MHC region (chr6:25.5–34.0Mb) as one region. To identify whether a region was 
 associated with multiple SOMAmers, we used an LD-based clumping approach. 
 Regional sentinel variants in high LD (r<sup>2</sup> ≥ 0.8) with each other were combined 
 together into a single region.
 
-**Conditional analyses**. To identify conditionally significant associations, we per-
-formed approximate genome-wide stepwise conditional analysis using GCTA 
+**Conditional analyses**. To identify conditionally significant associations, we performed
+approximate genome-wide stepwise conditional analysis using GCTA 
 v1.25.2<sup>49</sup> using the ‘cojo-slct’ option. We used the same conservative significance 
 threshold of P = 1.5 × 10<sup>−11</sup> as for the univariable analysis. As inputs for GCTA, we 
-used the summary statistics (that is, betas and standard errors) from the meta-anal-
-ysis. Correlation between variants was estimated using the ‘hard-called’ genotypes 
+used the summary statistics (that is, betas and standard errors) from the meta-analysis.
+Correlation between variants was estimated using the ‘hard-called’ genotypes 
 (where a genotype was called if it had a posterior probability of >0.9 following 
 imputation or set to missing otherwise) in the merged genetic data set, and only 
 variants also passing the univariable genome-wide threshold (P < 1.5 × 10<sup>−11</sup>) 
 were considered for stepwise selection. As the conditional analyses use different 
-data inputs to the univariable analysis (that is, summarized rather than individu-
-al-level data), there were some instances where the conditional analysis failed to 
+data inputs to the univariable analysis (that is, summarized rather than individual-level
+data), there were some instances where the conditional analysis failed to 
 include in the stepwise selection sentinel variants that were only just statistically 
 significant in the univariable analysis. In these instances (n = 28), we re-conducted 
 the joint model estimation without stepwise selection in GCTA, using the variants 
@@ -201,11 +201,11 @@ To assess replication we first identified the set of unique UniProt IDs that wer
 also assayed on the SOMAscan panel. For previous studies that used SomaLogic 
 technology, we refined this match to the specific aptamer used. We then clumped 
 associations into distinct loci using the same method that we applied to our pQTLs 
-(see ‘Refinement of significant regions’). For each locus, we asked whether the sen-
-tinel SNP or a proxy (r<sup>2</sup> > 0.6) was associated with the same protein (or aptamer) in 
+(see ‘Refinement of significant regions’). For each locus, we asked whether the
+sentinel SNP or a proxy (r<sup>2</sup> > 0.6) was associated with the same protein (or aptamer) in 
 our study at a defined significance threshold. For our primary assessment, we used 
-a P value threshold of 10−4 (Supplementary Table 21). We also performed sensitiv-
-ity analyses to explore factors that influence replication rate (Supplementary Note).
+a P value threshold of 10−4 (Supplementary Table 21). We also performed sensitivity
+analyses to explore factors that influence replication rate (Supplementary Note).
 Replication study using Olink assay. To test replication of 163 pQTLs for 116 
 proteins, we performed protein measurements using an alternative assay, that is, 
 a proximity extension assay method (Olink Bioscience, Uppsala, Sweden)13 in an 
@@ -215,16 +215,16 @@ assayed on more than 1 panel). 4,902, 4,947 and 4,987 samples passed quality
 control for the ‘inflammatory’, ‘cvd2’ and ‘cvd3’ panels, respectively, of which 712, 
 715 and 721 samples were from individuals included in our primary pQTL analysis 
 using the SOMAscan assay. Normalized protein levels (‘NPX’) were regressed on 
-age, sex, plate, time from blood draw to processing (in days), and season (categor-
-ical: ‘Spring’, ‘Summer’, ‘Autumn’, ‘Winter’). The residuals were then rank-inverse 
+age, sex, plate, time from blood draw to processing (in days), and season
+(categorical: ‘Spring’, ‘Summer’, ‘Autumn’, ‘Winter’). The residuals were then rank-inverse 
 normalized. Genotype data was processed as described earlier. Linear regression of 
 the rank-inversed normalized residuals on genotype was carried out in SNPTEST 
 with the first three components of multi-dimensional scaling as covariates to adjust 
-for ancestry. pQTLs were considered to have replicated if they met a P value thresh-
-old Bonferroni-corrected for the number of tests (P < 3.1 × 10<sup>−4</sup>; 0.05/163) and 
+for ancestry. pQTLs were considered to have replicated if they met a P value threshold
+Bonferroni-corrected for the number of tests (P < 3.1 × 10<sup>−4</sup>; 0.05/163) and 
 had a directionally concordant beta estimate with the SOMAscan estimate.
-Candidate gene annotation. We defined a pQTL as cis when the most signifi-
-cantly associated variant in the region was located within 1 Mb of the TSS of the 
+Candidate gene annotation. We defined a pQTL as cis when the most significantly
+associated variant in the region was located within 1 Mb of the TSS of the 
 gene(s) encoding the protein. pQTLs lying outside of this region were defined as 
 trans. When considering the distance of the lead cis-associated variant from the 
 relevant TSS, only proteins that mapped to single genes on the primary assembly 
@@ -242,8 +242,8 @@ For the ‘bottom up’ approach, the sentinel variant and corresponding proxies
 the ‘pick’ option) to determine whether variants were (1) protein-altering coding 
 variants; (2) synonymous coding or 5′/3′ untranslated region (UTR); (3) intronic 
 or up/downstream; or (4) intergenic. Second, we queried all sentinel variants  
-and proxies against significant cis eQTL variants (defined by beta distribution- 
-adjusted empirical P values using an FDR threshold of 0.05, see 
+and proxies against significant cis eQTL variants (defined by beta
+distribution-adjusted empirical P values using an FDR threshold of 0.05, see 
 http://www.gtex-portal.org/home/documentationPage for details) in any cell type or tissue from 
 the Genotype-Tissue Expression (GTEx) project v628 (http://www.gtexportal.org/home/datasets).
 Third, we also queried promoter capture Hi-C data in 17 human 
@@ -265,8 +265,8 @@ within the corresponding pQTL region using the GenomicRanges Bioconductor
 package<sup>53</sup> with annotation from a GRCh37 GTF file from Ensembl
 (ftp://ftp.ensembl.org/pub/grch37/update/gtf/homo_sapiens/; file: ‘Homo_sapiens.
 GRCh37.82.gtf.gz’, downloaded June 2016). We then identified any local genes 
-that had previously been linked with the corresponding trans-associated pro-
-tein(s) according to the following open source databases: (1) the Online Mendelian 
+that had previously been linked with the corresponding trans-associated protein(s)
+according to the following open source databases: (1) the Online Mendelian 
 Inheritance in Man (OMIM) catalogue<sup>54</sup> (http://www.omim.org/); (2) the Kyoto 
 Encyclopedia of Genes and Genomes (KEGG)<sup>55</sup> (http://www.genome.jp/kegg/); 
 and (3) STRINGdb<sup>56</sup> (http://string-db.org/; v10.0). We accessed OMIM data via 
@@ -279,16 +279,16 @@ trans-associated protein shared either an OMIM ID or a KEGG pathway ID with
 a gene local to the corresponding trans-acting variant, we took this as evidence of 
 a potential functional involvement of that gene. We interrogated protein–protein 
 interaction data by accessing STRINGdb data using the STRINGdb Bioconductor 
-package<sup>58</sup>, whereby we extracted all pairwise interaction scores for each trans- 
-affected protein and all proteins with genes local to the corresponding trans-acting 
+package<sup>58</sup>, whereby we extracted all pairwise interaction scores for each
+transaffected protein and all proteins with genes local to the corresponding trans-acting 
 variants. We took the default interaction score of 400 as evidence of an interaction 
 between the proteins, therefore indicating a possible functional involvement for 
 the local gene. In addition to using data from open source databases in our top 
 down approach, we also adopted a ‘guilt-by-association’ (GbA) approach using 
 the same plasma proteomic data used to identify our pQTLs. We first generated a 
 matrix containing all possible pairwise Pearson’s correlation coefficients between 
-our 3,283 SOMAmers. We then extracted the coefficients relating to our trans- 
-associated proteins and any proteins encoded by genes local to their corresponding 
+our 3,283 SOMAmers. We then extracted the coefficients relating to our
+trans-associated proteins and any proteins encoded by genes local to their corresponding 
 trans-acting variants (where available). Where the correlation coefficient was ≥0.5 
 we prioritized the relevant local genes as being potential mediators of the trans 
 association(s) at that locus.
@@ -297,9 +297,9 @@ We report the potential candidate genes for our trans pQTLs from both the
 ‘bottom up’ and ‘top down’ approaches, highlighting cases where the same gene 
 was highlighted by both approaches.
 
-**Functional annotation of pQTLs**. Functional annotation of variants was per-
-formed using Ensembl VEP v83 using the ‘pick’ option. We tested the enrich-
-ment of significant pQTL variants for certain functional classes by comparing 
+**Functional annotation of pQTLs**. Functional annotation of variants was performed
+using Ensembl VEP v83 using the ‘pick’ option. We tested the enrichment
+of significant pQTL variants for certain functional classes by comparing 
 to permuted sets of variants showing no significant association with any protein 
 (P > 0.0001 for all proteins tested). First, the regional sentinel variants were 
 LD-pruned at r<sup>2</sup> of 0.1. Each time the sentinel variants were LD-pruned, one of the 
@@ -322,39 +322,39 @@ binding rather than differences in protein abundance. To account for this potent
 effect, we performed conditional analysis at all cis pQTLs where the sentinel variant 
 was in LD (r<sup>2</sup> ≥ 0.1 and r<sup>2</sup> ≤ 0.9) with a PAV in the gene(s) encoding the associated 
 protein. First, variants were annotated with Ensembl VEP v83 using the ‘per-gene’ 
-option. Variant annotations were considered protein-altering if they were anno-
-tated as coding sequence variant, frameshift variant, in-frame deletion, in-frame 
+option. Variant annotations were considered protein-altering if they were annotated
+as coding sequence variant, frameshift variant, in-frame deletion, in-frame 
 insertion, missense variant, protein altering variant, splice acceptor variant,
 splice donor variant, splice region variant, start lost, stop gained, or stop lost. 
 To avoid multi-collinearity, PAVs were LD-pruned (r<sup>2</sup> > 0.9) using PLINK v1.9 
-before including them as covariates in the conditional analysis on the meta- 
-analysis summary statistics using GCTA v1.25.2. Coverage of known common 
+before including them as covariates in the conditional analysis on the meta-analysis
+summary statistics using GCTA v1.25.2. Coverage of known common 
 (MAF >5%) PAVs in our data was checked by comparison with exome sequences 
-from ~60,000 individuals in the Exome Aggregation Consortium (ExAC (http://
-exac.broadinstitute.org), downloaded June 2016)<sup>59</sup>.
+from ~60,000 individuals in the Exome Aggregation Consortium (ExAC 
+(http://exac.broadinstitute.org), downloaded June 2016)<sup>59</sup>.
 
 **Testing for regulatory and functional enrichment**. We tested whether our pQTLs 
 were enriched for functional and regulatory characteristics using GARFIELD 
 v1.2.0<sup>60</sup>. GARFIELD is a non-parametric permutation-based enrichment method 
 that compares input variants to permuted sets matched for number of proxies 
 (r<sup>2</sup> ≥ 0.8), MAF and distance to the closest TSS. It first applies ‘greedy pruning’ 
-(r<sup>2</sup> < 0.1) within a 1-Mb region of the most significant variant. GARFIELD anno-
-tates variants with more than a thousand features, drawn predominantly from the 
-GENCODE, ENCODE and ROADMAP projects, which includes genic annota-
-tions, histone modifications, chromatin states and other regulatory features across 
+(r<sup>2</sup> < 0.1) within a 1-Mb region of the most significant variant. GARFIELD
+annotates variants with more than a thousand features, drawn predominantly from the 
+GENCODE, ENCODE and ROADMAP projects, which includes genic annotations, histone
+modifications, chromatin states and other regulatory features across 
 a wide range of tissues and cell types.
 
-The enrichment analysis was run using all variants that passed our Bonferroni-
-adjusted significance threshold (P < 1.5 × 10<sup>−11</sup>) for association with any protein. 
+The enrichment analysis was run using all variants that passed our Bonferroni-adjusted
+significance threshold (P < 1.5 × 10<sup>−11</sup>) for association with any protein. 
 For each of the matching criteria (MAF, distance to TSS, number of LD proxies), 
-we used five bins. In total we tested 25 combinations of features (classified as tran-
-scription factor binding sites, FAIRE-seq, chromatin states, histone modifications, 
+we used five bins. In total we tested 25 combinations of features (classified as
+transcription factor binding sites, FAIRE-seq, chromatin states, histone modifications, 
 footprints, hotspots, or peaks) with up to 190 cell types from 57 tissues, leading to 
 998 tests. Hence, we considered enrichment with P < 5 × 10<sup>−5</sup> (0.05/998) to be 
 statistically significant.
 
-**Disease annotation**. To identify diseases with which our pQTLs have been asso-
-ciated, we queried our sentinel variants and their strong proxies (r<sup>2</sup> ≥ 0.8) against 
+**Disease annotation**. To identify diseases with which our pQTLs have been associated,
+we queried our sentinel variants and their strong proxies (r<sup>2</sup> ≥ 0.8) against 
 publicly available disease GWAS data using PhenoScanner<sup>61</sup>. A list of data sets 
 queried is available at http://www.phenoscanner.medschl.cam.ac.uk/information.
 html. For disease GWAS, results were filtered to P < 5 × 10<sup>−8</sup> and then manually 
@@ -369,8 +369,8 @@ gene as the cis pQTL protein were retained. We tested whether cis pQTLs were
 significantly enriched for eQTLs for the corresponding gene compared to null sets 
 of variants appropriately matched for MAF and distance to nearest TSS. For this 
 analysis, we restricted eQTL data to GTEx project v6, since this project provided 
-complete summary statistics across a wide range of tissues and cell-types, in con-
-trast to many other studies which only report P values below some significance 
+complete summary statistics across a wide range of tissues and cell-types, in contrast
+to many other studies which only report P values below some significance 
 level. GTEx results were filtered to contain only variants lying in cis (that is, within 
 1 Mb) of genes that encode proteins analysed in our study and only variants in 
 both data sets were used.
@@ -387,18 +387,18 @@ of pQTLs’). An empirical P value was calculated as the proportion of permuted
 variant sets where the proportion that are also cis eQTLs exceeded that of the test 
 set of sentinel cis pQTL variants.
 
-At a stringent eQTL significance threshold (P < 1.5 × 10<sup>−11</sup>), we found signif-
-icant enrichment of cis pQTLs for eQTLs (P < 0.0001) (Supplementary Table 11) 
+At a stringent eQTL significance threshold (P < 1.5 × 10<sup>−11</sup>), we found
+significant enrichment of cis pQTLs for eQTLs (P < 0.0001) (Supplementary Table 11) 
 with 19.5% overlap observed compared to a mean overlap of 1.8% in the null 
 sets. Results were similar in sensitivity analyses using the standard genome-wide 
-or nominal significance thresholds as well as when using only the sentinel vari-
-ants at cis pQTLs that were robust to adjusting for PAVs (Supplementary Table 7), 
+or nominal significance thresholds as well as when using only the sentinel variants
+at cis pQTLs that were robust to adjusting for PAVs (Supplementary Table 7), 
 suggesting our results are robust to the choice of threshold and potential differential 
 binding effects.
 
 **Colocalization analysis**. Colocalization testing was performed using the coloc 
-package<sup>62</sup>. For testing colocalization of pQTLs and disease associations, colocali-
-zation testing was necessarily limited to disease traits for which full GWAS summary 
+package<sup>62</sup>. For testing colocalization of pQTLs and disease associations,
+colocalization testing was necessarily limited to disease traits for which full GWAS summary 
 statistics had been made available. We obtained GWAS summary statistics through 
 PhenoScanner. For testing colocalization of pQTLs with eQTLs, we used publically 
 available summary statistics for expression traits from GTEx28. We used the default 
@@ -414,21 +414,21 @@ the exposure (here a plasma protein) on the outcome (here a disease)<sup>11,63<
 Data Fig. 9).
 
 **Proteins in the IL1RL1–IL18R1 locus and atopic dermatitis**. To identify the 
-likely causal proteins that underpin the previous genetic association of the IL1RL1–
-IL18R1 locus (chr11:102.5–103.5Mb) with atopic dermatitis (AD)31, we used the 
+likely causal proteins that underpin the previous genetic association of the
+IL1RL1–IL18R1 locus (chr11:102.5–103.5Mb) with atopic dermatitis (AD)31, we used the 
 following approach. For each protein encoded by a gene in the IL1RL1–IL18R1 
 locus, we took genetic variants that had a cis association at P < 1 × 10<sup>−4</sup> and 
 ‘LD-pruned’ them at r<sup>2</sup> < 0.1 to leave largely independent variants. We then used 
 these genetic variants to construct a genetic score for each protein. Formally, we 
-used these variants as instrumental variables for their respective proteins in uni-
-variable MR. For multivariable MR, association estimates for all proteins in the 
-locus were extracted for all instruments. We used PhenoScanner to obtain asso-
-ciation statistics for the selected variants in the European-ancestry population of 
+used these variants as instrumental variables for their respective proteins in univariable
+MR. For multivariable MR, association estimates for all proteins in the 
+locus were extracted for all instruments. We used PhenoScanner to obtain association
+statistics for the selected variants in the European-ancestry population of 
 a recent large-scale GWAS meta-analysis of AD31. Where the relevant variant was 
 not available, the strongest proxy with r<sup>2</sup> ≥ 0.8 was used.
 
-**MMP-12 and coronary heart disease (CHD)**. To test whether plasma MMP-
-12 levels have a causal effect on risk of CHD, we selected genetic variants in the 
+**MMP-12 and coronary heart disease (CHD)**. To test whether plasma MMP-12 levels
+have a causal effect on risk of CHD, we selected genetic variants in the 
 MMP12 gene region to use as instrumental variables. We constructed a genetic 
 score comprising 17 variants that had a cis association with MMP-12 levels at 
 P < 5 × 10<sup>−8</sup> and that were not highly correlated with one another (r<sup>2</sup> < 0.2). To 
@@ -438,13 +438,13 @@ Summary associations for variants in the score with CHD were obtained through
 PhenoScanner from a recent large-scale GWAS meta-analysis which consisted 
 mostly (77%) of individuals of European ancestry<sup>64</sup>.
 
-**MR analysis**. Two-sample univariable MR was performed for each protein sepa-
-rately using summary statistics in the inverse-variance weighted method adapted 
+**MR analysis**. Two-sample univariable MR was performed for each protein separately
+using summary statistics in the inverse-variance weighted method adapted 
 to account for correlated variants<sup>65,66</sup>. For each of G genetic variants (g = 1, …, G) 
 having per-allele estimate of the association with the protein β<sub>Xg</sub> and standard error 
 σXg, and per-allele estimate of the association with the outcome (here, AD or CHD) 
-β<sub>Yg</sub>  and standard error σYg , the IV estimate (θ<sub>XY</sub> ) is obtained from generalized 
-weighted linear regression of the genetic associations with the outcome (β<sub>Y</sub> ) on 
+β<sub>Yg</sub> and standard error σ<sub>Yg</sub>, the IV estimate (θ<sub>XY</sub>) is obtained from generalized 
+weighted linear regression of the genetic associations with the outcome (β<sub>Y</sub>) on 
 the genetic associations with the protein (βX) weighting for the precisions of the 
 genetic associations with the outcome and accounting for correlations between the 
 variants according to the regression model:
@@ -495,12 +495,12 @@ to determine the robustness of the MR findings. First, we measured plasma MMP-12
 levels using a different method (proximity extension assay; Olink Bioscience, 
 Uppsala, Sweden13) in 4,998 individuals, and used this to derive genotype-MMP12 
 effect estimates for the 17 variants in our genetic score. Second, we obtained effect 
-estimates from a pQTL study based on SOMAscan assay measurements in an inde-
-pendent sample of ~1,000 individuals3. In both cases the genetic score reflecting 
+estimates from a pQTL study based on SOMAscan assay measurements in an independent
+sample of ~1,000 individuals3. In both cases the genetic score reflecting 
 higher plasma MMP-12 was associated with lower risk of CHD.
 
-**Overlap of pQTLs with drug targets**. We used the Informa Pharmaprojects data-
-base from Citeline to obtain information on drugs that target proteins assayed 
+**Overlap of pQTLs with drug targets**. We used the Informa Pharmaprojects database
+from Citeline to obtain information on drugs that target proteins assayed 
 on the SOMAscan platform. This is a manually curated database that maintains 
 profiles for >60,000 drugs. For our analysis, we focused on the following
 information for each drug: protein target, indications, and development status. We 
