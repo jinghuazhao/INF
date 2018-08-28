@@ -465,7 +465,7 @@ valid instruments: (1) the variant is associated with the risk factor of interes
 is, the protein level), (2) the variant is not associated with any confounder of the 
 risk factor-outcome association, and (3) the variant is conditionally independent 
 of the outcome given the risk factor and confounders.
-To account for potential effects of functional pleiotropy67, we performed  
+To account for potential effects of functional pleiotropy67, we performed
 multivariable MR using the weighted regression-based method proposed by 
 Burgess et al.68. For each of K risk factors in the model (k = 1,…,K), the weighted 
 regression-based method is performed by multivariable generalized weighted  
