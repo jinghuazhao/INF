@@ -140,8 +140,8 @@ v2.5.247.
 subcohorts were combined via fixed-effects inverse-variance meta-analysis com-
 bining the betas and standard errors using METAL48. Genetic associations were 
 considered to be genome-wide significant based on a conservative strategy requir-
-ing associations to have (i) a meta-analysis P value < 1.5 × 10−11 (genome-wide 
-threshold of P = 5 × 10−8 Bonferroni-corrected for 3,283 aptamers tested), (ii) at 
+ing associations to have (i) a meta-analysis P value < 1.5 × 10<sup>−11</sup> (genome-wide 
+threshold of P = 5 × 10<sup>−8</sup> Bonferroni-corrected for 3,283 aptamers tested), (ii) at 
 least nominal significance (P < 0.05) in both subcohorts, and (iii) consistent direc-
 tion of effect across subcohorts. We did not observe significant genomic inflation 
 (mean inflation factor was 1.0, standard deviation = 0.01) (Extended Data Fig. 3d).
@@ -160,12 +160,12 @@ together into a single region.
 **Conditional analyses**. To identify conditionally significant associations, we per-
 formed approximate genome-wide stepwise conditional analysis using GCTA 
 v1.25.249 using the ‘cojo-slct’ option. We used the same conservative significance 
-threshold of P = 1.5 × 10−11 as for the univariable analysis. As inputs for GCTA, we 
+threshold of P = 1.5 × 10<sup>−11</sup> as for the univariable analysis. As inputs for GCTA, we 
 used the summary statistics (that is, betas and standard errors) from the meta-anal-
 ysis. Correlation between variants was estimated using the ‘hard-called’ genotypes 
 (where a genotype was called if it had a posterior probability of >0.9 following 
 imputation or set to missing otherwise) in the merged genetic data set, and only 
-variants also passing the univariable genome-wide threshold (P < 1.5 × 10−11) 
+variants also passing the univariable genome-wide threshold (P < 1.5 × 10<sup>−11</sup>) 
 were considered for stepwise selection. As the conditional analyses use different 
 data inputs to the univariable analysis (that is, summarized rather than individu-
 al-level data), there were some instances where the conditional analysis failed to 
