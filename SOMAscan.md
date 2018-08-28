@@ -458,8 +458,7 @@ and the standard error is:
 se(θ<sub>XY</sub>) = (β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>X</sub>)<sup>−1</sup>
 
 where T is a matrix transpose. This is the estimate and standard error from the 
-regression model fixing the residual standard error to 1 (equivalent to a fixed- 
-effects model in a meta-analysis).
+regression model fixing the residual standard error to 1 (equivalent to a fixed-effects model in a meta-analysis).
 
 Genetic variants in univariable MR need to satisfy three key assumptions to be 
 valid instruments: (1) the variant is associated with the risk factor of interest (that 
