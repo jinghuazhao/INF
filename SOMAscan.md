@@ -246,7 +246,7 @@ portal.org/home/documentationPage for details) in any cell type or tissue from
 the Genotype-Tissue Expression (GTEx) project v628 (http://www.gtexportal.org/
 home/datasets). Third, we also queried promoter capture Hi-C data in 17 human 
 primary haematopoietic cell types52 to identify contacts (with a CHiCAGO score 
->5 in at least one cell type) involving chromosomal regions containing a sentinel 
+\>5 in at least one cell type) involving chromosomal regions containing a sentinel 
 variant. We considered gene promoters annotated on either fragment (that is, the 
 fragment containing the sentinel variant or the other corresponding fragment) as 
 potential candidate genes. Using these three sources of information, we generated a 
