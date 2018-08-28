@@ -502,8 +502,8 @@ higher plasma MMP-12 was associated with lower risk of CHD.
 **Overlap of pQTLs with drug targets**. We used the Informa Pharmaprojects data-
 base from Citeline to obtain information on drugs that target proteins assayed 
 on the SOMAscan platform. This is a manually curated database that maintains 
-profiles for >60,000 drugs. For our analysis, we focused on the following infor-
-mation for each drug: protein target, indications, and development status. We 
+profiles for >60,000 drugs. For our analysis, we focused on the following
+information for each drug: protein target, indications, and development status. We 
 included drugs across the development pipeline, including those in pre-clinical 
 studies or with no development reported, drugs in clinical trials (all phases), and 
 launched/registered drugs. For each protein assayed, we identified all drugs in 
