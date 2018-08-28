@@ -245,8 +245,8 @@ or up/downstream; or (4) intergenic. Second, we queried all sentinel variants
 and proxies against significant cis eQTL variants (defined by beta distribution- 
 adjusted empirical P values using an FDR threshold of 0.05, see 
 http://www.gtex-portal.org/home/documentationPage for details) in any cell type or tissue from 
-the Genotype-Tissue Expression (GTEx) project v628 (http://www.gtexportal.org/
-home/datasets). Third, we also queried promoter capture Hi-C data in 17 human 
+the Genotype-Tissue Expression (GTEx) project v628 (http://www.gtexportal.org/home/datasets).
+Third, we also queried promoter capture Hi-C data in 17 human 
 primary haematopoietic cell types<sup>52</sup> to identify contacts (with a CHiCAGO score 
 \>5 in at least one cell type) involving chromosomal regions containing a sentinel 
 variant. We considered gene promoters annotated on either fragment (that is, the 
