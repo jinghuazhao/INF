@@ -1,5 +1,7 @@
 ## METHODS
 
+(Adaoted from Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79)
+
 **Study participants**. The INTERVAL study comprises about 50,000 participants 
 nested within a randomized trial of varying blood donation intervals9. Between 
 mid-2012 and mid-2014, blood donors aged 18 years and older were recruited at 
@@ -582,8 +584,7 @@ increased coverage and integration. Nucleic Acids Res. 41, D808–D815
  59.  Lek, M. et al. Analysis of protein-coding genetic variation in 60,706 humans. 
 Nature 536, 285–291 (2016).
  60.  Iotchkova, V. et al. GARFIELD—GWAS Analysis of Regulatory or Functional 
-Information Enrichment with LD correction. Preprint at https://www.biorxiv.
-org/content/early/2016/11/07/085738 (2016).
+Information Enrichment with LD correction. Preprint at https://www.biorxiv.org/content/early/2016/11/07/085738 (2016).
  61.  Staley, J. R. et al. PhenoScanner: a database of human genotype–phenotype 
 associations. Bioinformatics 32, 3207–3209 (2016).
  62.  Giambartolomei, C. et al. Bayesian test for colocalisation between pairs of 
