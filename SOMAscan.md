@@ -452,9 +452,11 @@ the weighting matrix Ω has terms Ωg1g2  = σYg1σYg2ρg1g2, and ρg1g2 is the
 between the g1th and g2th variants.
 
 The IV estimate from this method is:
-θ<sub>XY</sub> = (β<sub>X</sub><sup>T</sup>Ω<sub>−1</sup>β<sub>X</sub>)<sup>−1</sup>β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>Y</sub>
+θ<sub>XY</sub> = (β<sub>X</sub><sup>T</sup>Ω<sub>−1</sup>β<sub>X</sub>)<sup>−1</sup>β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>Y</sub>
 and the standard error is:
-se(θ<sub>XY</sub>) =    (β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>X</sub>)<sup>−1</sup>
+
+se(θ<sub>XY</sub>) = (β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>X</sub>)<sup>−1</sup>
+
 where T is a matrix transpose. This is the estimate and standard error from the 
 regression model fixing the residual standard error to 1 (equivalent to a fixed- 
 effects model in a meta-analysis).
