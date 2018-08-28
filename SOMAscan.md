@@ -111,7 +111,7 @@ using PLINK v1.9 to create components to account for ancestry in genetic analyse
 Prior to imputation, additional variant filtering steps were performed to establish 
 a high-quality imputation scaffold. In summary, 654,966 high-quality variants (auto-
 somal, non-monomorphic, bi-allelic variants with Hardy–Weinberg Equilibrium 
-(HWE) P \> 5 × 10−6, with a call rate of \>99% across the INTERVAL genotyping 
+(HWE) P \> 5 × 10<sup>−6</sup>, with a call rate of \>99% across the INTERVAL genotyping 
 batches in which a variant passed QC, and a global call rate of >75% across all 
 INTERVAL genotyping batches) were used for imputation. Variants were phased 
 using SHAPEIT3 and imputed using a combined 1000 Genomes Phase 3-UK10K 
@@ -119,7 +119,7 @@ reference panel. Imputation was performed via the Sanger Imputation Server
 (https://imputation.sanger.ac.uk) and resulted in 87,696,888 imputed variants.
 Prior to genetic association testing, variants were filtered in each subcohort 
 separately using the following exclusion criteria: (1) imputation quality (INFO) 
-score <0.7; (2) minor allele count <8; (3) HWE P < 5 × 10−6. In the small number 
+score <0.7; (2) minor allele count <8; (3) HWE P < 5 × 10<sup>−6</sup>. In the small number 
 of cases in which imputed variants had the same genomic position (GRCh37) and 
 alleles, the variant with the lowest INFO score was removed. 10,572,788 variants 
 passing all filters in both subcohorts were taken forward for analysis (Extended 
@@ -343,26 +343,26 @@ tions, histone modifications, chromatin states and other regulatory features acr
 a wide range of tissues and cell types.
 
 The enrichment analysis was run using all variants that passed our Bonferroni-
-adjusted significance threshold (P < 1.5 × 10−11) for association with any protein. 
+adjusted significance threshold (P < 1.5 × 10<sup>−11</sup>) for association with any protein. 
 For each of the matching criteria (MAF, distance to TSS, number of LD proxies), 
 we used five bins. In total we tested 25 combinations of features (classified as tran-
 scription factor binding sites, FAIRE-seq, chromatin states, histone modifications, 
 footprints, hotspots, or peaks) with up to 190 cell types from 57 tissues, leading to 
-998 tests. Hence, we considered enrichment with P < 5 × 10−5 (0.05/998) to be 
+998 tests. Hence, we considered enrichment with P < 5 × 10<sup>−5</sup> (0.05/998) to be 
 statistically significant.
 
 **Disease annotation**. To identify diseases with which our pQTLs have been asso-
 ciated, we queried our sentinel variants and their strong proxies (r2 ≥ 0.8) against 
 publicly available disease GWAS data using PhenoScanner61. A list of data sets 
 queried is available at http://www.phenoscanner.medschl.cam.ac.uk/information.
-html. For disease GWAS, results were filtered to P < 5 × 10−8 and then manually 
+html. For disease GWAS, results were filtered to P < 5 × 10<sup>−8</sup> and then manually 
 curated to retain only the entry with the strongest evidence for association (that 
 is, smallest P value) per disease. Non-disease phenotypes such as anthropometric 
 traits, intermediate biomarkers and lipids were excluded manually.
 cis eQTL overlap and enrichment of cis pQTLs for cis eQTLs. For each regional 
-sentinel cis pQTL variant, its strong proxies (r2 ≥ 0.8) were queried against pub-
-licly available eQTL association data using PhenoScanner. cis eQTL results were 
-filtered to retain only variants with P < 1.5 × 10−11. Only cis eQTLs for the same 
+sentinel cis pQTL variant, its strong proxies (r2 ≥ 0.8) were queried against
+publicly available eQTL association data using PhenoScanner. cis eQTL results were 
+filtered to retain only variants with P < 1.5 × 10<sup>−11</sup>. Only cis eQTLs for the same 
 gene as the cis pQTL protein were retained. We tested whether cis pQTLs were 
 significantly enriched for eQTLs for the corresponding gene compared to null sets 
 of variants appropriately matched for MAF and distance to nearest TSS. For this 
@@ -375,8 +375,8 @@ both data sets were used.
 
 For the enrichment analysis, the cis pQTL sentinel variants were first LD-pruned 
 (r2 < 0.1) and the proportion of sentinel cis pQTL variants that are also eQTLs at 
-our pQTL significance threshold (P < 1.5 × 10−11), conventional genome-wide 
-significance (P < 5 × 10−8) or a nominal P value threshold (P < 1 × 10−5) for the 
+our pQTL significance threshold (P < 1.5 × 10<sup>−11</sup>), conventional genome-wide 
+significance (P < 5 × 10<sup>−8</sup>) or a nominal P value threshold (P < 1 × 10<sup>−5</sup>) for the 
 same protein or gene was compared to a permuted set of variants that were not 
 pQTLs (P > 0.0001 for all proteins). We generated 10,000 permuted sets of null 
 variants for each significance threshold matched for MAF, distance to TSS and 
@@ -385,7 +385,7 @@ of pQTLs’). An empirical P value was calculated as the proportion of permuted
 variant sets where the proportion that are also cis eQTLs exceeded that of the test 
 set of sentinel cis pQTL variants.
 
-At a stringent eQTL significance threshold (P < 1.5 × 10−11), we found signif-
+At a stringent eQTL significance threshold (P < 1.5 × 10<sup>−11</sup>), we found signif-
 icant enrichment of cis pQTLs for eQTLs (P < 0.0001) (Supplementary Table 11) 
 with 19.5% overlap observed compared to a mean overlap of 1.8% in the null 
 sets. Results were similar in sensitivity analyses using the standard genome-wide 
@@ -415,7 +415,7 @@ Data Fig. 9).
 likely causal proteins that underpin the previous genetic association of the IL1RL1–
 IL18R1 locus (chr11:102.5–103.5Mb) with atopic dermatitis (AD)31, we used the 
 following approach. For each protein encoded by a gene in the IL1RL1–IL18R1 
-locus, we took genetic variants that had a cis association at P < 1 × 10−4 and 
+locus, we took genetic variants that had a cis association at P < 1 × 10<sup>−4</sup> and 
 ‘LD-pruned’ them at r2 < 0.1 to leave largely independent variants. We then used 
 these genetic variants to construct a genetic score for each protein. Formally, we 
 used these variants as instrumental variables for their respective proteins in uni-
