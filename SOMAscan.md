@@ -448,7 +448,7 @@ genetic associations with the outcome and accounting for correlations between th
 variants according to the regression model:
 β<sub>Y</sub> = θ<sub>XY</sub>   βX + ε,  ε ~N (0, Ω)
 where βY and βX are vectors of the univariable (marginal) genetic associations, and 
-the weighting matrix Ω has terms Ωg1g2  = σYg1σYg2ρg1g2, and ρg1g2 is the correlation 
+the weighting matrix Ω has terms Ω<sub>g1g2</sub>  = σ<sub>Yg1</sub>σ<sub>Yg2</sub>ρ<sub>g1g2</sub>, and ρg1g2 is the correlation 
 between the g1th and g2th variants.
 
 The IV estimate from this method is:
