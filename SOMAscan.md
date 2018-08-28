@@ -457,35 +457,35 @@ and the standard error is:
 
 se(θ<sub>XY</sub>) = (β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>X</sub>)<sup>−1</sup>
 
-where T is a matrix transpose. This is the estimate and standard error from the 
+where T is a matrix transpose. This is the estimate and standard error from the
 regression model fixing the residual standard error to 1 (equivalent to a fixed-effects model in a meta-analysis).
 
-Genetic variants in univariable MR need to satisfy three key assumptions to be 
-valid instruments: (1) the variant is associated with the risk factor of interest (that 
-is, the protein level), (2) the variant is not associated with any confounder of the 
-risk factor-outcome association, and (3) the variant is conditionally independent 
+Genetic variants in univariable MR need to satisfy three key assumptions to be
+valid instruments: (1) the variant is associated with the risk factor of interest (that
+is, the protein level), (2) the variant is not associated with any confounder of the
+risk factor-outcome association, and (3) the variant is conditionally independent
 of the outcome given the risk factor and confounders.
 To account for potential effects of functional pleiotropy67, we performed
-multivariable MR using the weighted regression-based method proposed by 
+multivariable MR using the weighted regression-based method proposed by
 Burgess et al.68. For each of K risk factors in the model (k = 1,…,K), the weighted 
-regression-based method is performed by multivariable generalized weighted  
+regression-based method is performed by multivariable generalized weighted
 linear regression of the association estimates β<sub>Y</sub> on each of the association
 estimates with each risk factor β<sub>Xk</sub> in a single regression model:
 β<sub>Y</sub> = θ<sub>XY1</sub>β<sub>X1</sub> + θ<sub>XY2</sub> β<sub>X2</sub> + … + θ<sub>XYK</sub>β<sub>XK</sub> + ε,  ε ~N (0, Ω)
-where βX1 is the vectors of the univariable genetic associations with risk factor 1, 
-and so on. This regression model is implemented by first pre-multiplying the asso-
-ciation vectors by the Cholesky decomposition of the weighting matrix, and then 
-applying standard linear regression to the transformed vectors. Estimates and 
+where βX1 is the vectors of the univariable genetic associations with risk factor 1,
+and so on. This regression model is implemented by first pre-multiplying the 
+association vectors by the Cholesky decomposition of the weighting matrix, and then
+applying standard linear regression to the transformed vectors. Estimates and
 standard errors are obtained fixing the residual standard error to be 1 as above.
-The multivariable MR analysis allows the estimation of the causal effect of a 
-protein on disease outcome accounting for the fact that genetic variants may be 
-associated with multiple proteins in the region. Causal estimates from multivariable 
-MR represent direct causal effects, representing the effect of intervening on one 
+The multivariable MR analysis allows the estimation of the causal effect of a
+protein on disease outcome accounting for the fact that genetic variants may be
+associated with multiple proteins in the region. Causal estimates from multivariable
+MR represent direct causal effects, representing the effect of intervening on one
 risk factor in the model while keeping others constant.
 
-**MMP-12 genetic score sensitivity analyses**. We performed two sensitivity analyses 
-to determine the robustness of the MR findings. First, we measured plasma MMP-
-12 levels using a different method (proximity extension assay; Olink Bioscience, 
+**MMP-12 genetic score sensitivity analyses**. We performed two sensitivity analyses
+to determine the robustness of the MR findings. First, we measured plasma MMP-12
+levels using a different method (proximity extension assay; Olink Bioscience, 
 Uppsala, Sweden13) in 4,998 individuals, and used this to derive genotype-MMP12 
 effect estimates for the 17 variants in our genetic score. Second, we obtained effect 
 estimates from a pQTL study based on SOMAscan assay measurements in an inde-
