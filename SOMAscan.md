@@ -88,8 +88,8 @@ using gene ontology annotations43 from UniProt.
 **Non-genetic associations of proteins**. To provide confidence in the reproducibility 
 of the protein assays, we attempted to replicate the associations with age or sex of 
 45 proteins previously reported by Ngo et al. and 40 reported by Menni et al.44,45. 
-We used Bonferroni-corrected P value thresholds of P = 1.1 × 10−3 (0.05/45) and 
-P = 1.2 × 10−3 (0.05/40), respectively. Relative protein abundances were rank-in-
+We used Bonferroni-corrected P value thresholds of P = 1.1 × 10<sup>−3</sup> (0.05/45) and 
+P = 1.2 × 10<sup>−3</sup> (0.05/40), respectively. Relative protein abundances were rank-in-
 verse normalized within each subcohort and linear regression was performed 
 using age, sex, body mass index, natural log of estimated glomerular filtration 
 rate (eGFR) and subcohort as independent variables.
