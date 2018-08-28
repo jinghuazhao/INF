@@ -1,4 +1,4 @@
-METHODS
+## METHODS
 
 **Study participants**. The INTERVAL study comprises about 50,000 participants 
 nested within a randomized trial of varying blood donation intervals9. Between 
@@ -322,8 +322,7 @@ was in LD (r2 ≥ 0.1 and r2 ≤ 0.9) with a PAV in the gene(s) encoding the
 protein. First, variants were annotated with Ensembl VEP v83 using the ‘per-gene’ 
 option. Variant annotations were considered protein-altering if they were anno-
 tated as coding sequence variant, frameshift variant, in-frame deletion, in-frame 
-insertion, missense variant, protein altering variant, splice acceptor variant, 
- 
+insertion, missense variant, protein altering variant, splice acceptor variant,
 splice donor variant, splice region variant, start lost, stop gained, or stop lost. 
 To avoid multi-collinearity, PAVs were LD-pruned (r2 > 0.9) using PLINK v1.9 
 before including them as covariates in the conditional analysis on the meta- 
