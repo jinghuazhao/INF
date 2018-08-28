@@ -446,10 +446,10 @@ weighted linear regression of the genetic associations with the outcome (β<sub>
 the genetic associations with the protein (βX) weighting for the precisions of the 
 genetic associations with the outcome and accounting for correlations between the 
 variants according to the regression model:
-β<sub>Y</sub> = θ<sub>XY</sub>   βX + ε,  ε ~N (0, Ω)
+β<sub>Y</sub> = θ<sub>XY</sub>βX + ε,  ε ~N (0, Ω)
 where βY and βX are vectors of the univariable (marginal) genetic associations, and 
 the weighting matrix Ω has terms Ω<sub>g1g2</sub>  = σ<sub>Yg1</sub>σ<sub>Yg2</sub>ρ<sub>g1g2</sub>, and ρg1g2 is the correlation 
-between the g1th and g2th variants.
+between the g<sub>1</sub>th and g<sub>2</sub>th variants.
 
 The IV estimate from this method is:
 θ<sub>XY</sub> = (β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>X</sub>)<sup>−1</sup>β<sub>X</sub><sup>T</sup>Ω<sup>−1</sup>β<sub>Y</sub>
@@ -465,6 +465,7 @@ valid instruments: (1) the variant is associated with the risk factor of interes
 is, the protein level), (2) the variant is not associated with any confounder of the
 risk factor-outcome association, and (3) the variant is conditionally independent
 of the outcome given the risk factor and confounders.
+
 To account for potential effects of functional pleiotropy67, we performed
 multivariable MR using the weighted regression-based method proposed by
 Burgess et al.68. For each of K risk factors in the model (k = 1,…,K), the weighted 
