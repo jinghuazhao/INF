@@ -188,8 +188,8 @@ phenotypes mapped to the Experimental Factor Ontology (EFO)<sup>51</sup>, by res
 those with EFO annotations relevant to protein biomarkers (for example, ‘protein 
 measurement’, EFO_0004747). Studies identified through both approaches were 
 manually filtered to include only studies that profiled plasma or serum samples 
-and to exclude studies not assessing proteins. We recorded basic summary infor-
-mation for each study including the assay used, sample size and number of proteins 
+and to exclude studies not assessing proteins. We recorded basic summary
+informationfor each study including the assay used, sample size and number of proteins 
 with pQTLs (Supplementary Table 19). To reduce the impact of ethnic differences 
 in allele frequencies on replication rate estimates, we filtered studies to include 
 only associations reported in European-ancestry populations. We then manually 
