@@ -439,9 +439,9 @@ mostly (77%) of individuals of European ancestry64.
 **MR analysis**. Two-sample univariable MR was performed for each protein sepa-
 rately using summary statistics in the inverse-variance weighted method adapted 
 to account for correlated variants65,66. For each of G genetic variants (g = 1, …, G) 
-having per-allele estimate of the association with the protein βXg and standard error 
+having per-allele estimate of the association with the protein β<sub>Xg</sub> and standard error 
 σXg, and per-allele estimate of the association with the outcome (here, AD or CHD) 
-βYg  and standard error σYg , the IV estimate (θ<sub>XY</sub> ) is obtained from generalized 
+β<sub>Yg</sub>  and standard error σYg , the IV estimate (θ<sub>XY</sub> ) is obtained from generalized 
 weighted linear regression of the genetic associations with the outcome (β<sub>Y</sub> ) on 
 the genetic associations with the protein (βX) weighting for the precisions of the 
 genetic associations with the outcome and accounting for correlations between the 
