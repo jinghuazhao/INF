@@ -219,7 +219,7 @@ normalized. Genotype data was processed as described earlier. Linear regression 
 the rank-inversed normalized residuals on genotype was carried out in SNPTEST 
 with the first three components of multi-dimensional scaling as covariates to adjust 
 for ancestry. pQTLs were considered to have replicated if they met a P value thresh-
-old Bonferroni-corrected for the number of tests (P < 3.1 × 10−4; 0.05/163) and 
+old Bonferroni-corrected for the number of tests (P < 3.1 × 10<sup>−4</sup>; 0.05/163) and 
 had a directionally concordant beta estimate with the SOMAscan estimate.
 Candidate gene annotation. We defined a pQTL as cis when the most signifi-
 cantly associated variant in the region was located within 1 Mb of the TSS of the 
