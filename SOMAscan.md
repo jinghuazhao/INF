@@ -45,7 +45,7 @@ Colorado, US) for protein measurement. Assay details have been previously
 described<sup>39,40</sup> and a technical white paper with further information can be found 
 at the manufacturer’s website
 (http://somalogic.com/wp-content/uploads/2017/06/SSM-002-Technical-White-Paper_010916_LSM1.pdf).
-In brief, modified single- stranded DNA SOMAmers are used to bind to specific protein targets
+In brief, modified single-stranded DNA SOMAmers are used to bind to specific protein targets
 that are then quantified using a DNA microarray. Protein concentrations are quantified 
 as relative fluorescent units.
 
