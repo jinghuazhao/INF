@@ -204,7 +204,7 @@ associations into distinct loci using the same method that we applied to our pQT
 (see ‘Refinement of significant regions’). For each locus, we asked whether the
 sentinel SNP or a proxy (r<sup>2</sup> > 0.6) was associated with the same protein (or aptamer) in 
 our study at a defined significance threshold. For our primary assessment, we used 
-a P value threshold of 10−4 (Supplementary Table 21). We also performed sensitivity
+a P value threshold of 10<sup>−4</sup> (Supplementary Table 21). We also performed sensitivity
 analyses to explore factors that influence replication rate (Supplementary Note).
 Replication study using Olink assay. To test replication of 163 pQTLs for 116 
 proteins, we performed protein measurements using an alternative assay, that is, 
@@ -415,7 +415,7 @@ Data Fig. 9).
 
 **Proteins in the IL1RL1–IL18R1 locus and atopic dermatitis**. To identify the 
 likely causal proteins that underpin the previous genetic association of the
-IL1RL1–IL18R1 locus (chr11:102.5–103.5Mb) with atopic dermatitis (AD)31, we used the 
+IL1RL1–IL18R1 locus (chr11:102.5–103.5Mb) with atopic dermatitis (AD)<sup>31</sup>, we used the 
 following approach. For each protein encoded by a gene in the IL1RL1–IL18R1 
 locus, we took genetic variants that had a cis association at P < 1 × 10<sup>−4</sup> and 
 ‘LD-pruned’ them at r<sup>2</sup> < 0.1 to leave largely independent variants. We then used 
