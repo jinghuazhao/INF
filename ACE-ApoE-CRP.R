@@ -1,10 +1,9 @@
 # 29/8/2018 JHZ
 
-setwd("u:/work")
-# https://github.com/MRCIEU
 library(MRInstruments)
 d <- subset(proteomic_qtls,analyte%in%c("ACE","ApoE","CRP"))
 d <- within(d, {N=1000})
+
 library(TwoSampleMR)
 exposure_dat <- format_data(d, type="exposure", snp_col = "SNP", effect_allele_col = "effect_allele", other_allele_col = "other_allele",
                             eaf_col = "eaf", beta_col = "beta", se_col = "se", pval_col = "pval", samplesize_col = "N")
@@ -17,6 +16,7 @@ mr_heterogeneity(dat)
 mr_pleiotropy_test(dat)
 res_single <- mr_singlesnp(dat)
 res_loo <- mr_leaveoneout(dat)
+setwd("u:/work")
 pdf("ACE-ApoE-CRP.pdf")
 mr_scatter_plot(res_mr, dat)
 mr_forest_plot(res_single)
@@ -25,7 +25,7 @@ mr_funnel_plot(res_single)
 
 library(MendelianRandomization)
 MRInputObject <- with(dat, mr_input(bx = beta.exposure, bxse = se.exposure, by = beta.outcome, byse = se.outcome,
-                                    exposure = "ApoE-CRP", outcome = "CAD", snps = SNP))
+                                    exposure = "ACE-ApoE-CRP", outcome = "CAD", snps = SNP))
 mr_ivw(MRInputObject, model = "default", robust = FALSE, penalized = FALSE, weights = "simple", distribution = "normal", alpha = 0.05)
 mr_egger(MRInputObject, robust = FALSE, penalized = FALSE, distribution = "normal", alpha = 0.05)
 mr_maxlik(MRInputObject, model = "default", distribution = "normal", alpha = 0.05)
