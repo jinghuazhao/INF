@@ -401,7 +401,7 @@ package<sup>62</sup>. For testing colocalization of pQTLs and disease associatio
 colocalization testing was necessarily limited to disease traits for which full GWAS summary 
 statistics had been made available. We obtained GWAS summary statistics through 
 PhenoScanner. For testing colocalization of pQTLs with eQTLs, we used publically 
-available summary statistics for expression traits from GTEx28. We used the default 
+available summary statistics for expression traits from GTEx<sup>28</sup>. We used the default 
 priors. Regions for testing were determined by dividing the genome into 0.1-cM 
 chunks using recombination data. Evidence for colocalization was assessed using 
 the posterior probability (PP) for hypothesis 4 (that there is an association for both 
