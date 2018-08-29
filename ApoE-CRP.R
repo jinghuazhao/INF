@@ -1,6 +1,7 @@
 # 29/8/2018 JHZ
 
 setwd("u:/work")
+# https://github.com/MRCIEU
 library(MRInstruments)
 d <- subset(proteomic_qtls,analyte%in%c("ApoE","CRP"))
 d <- within(d, {N=1000})
