@@ -280,7 +280,7 @@ a gene local to the corresponding trans-acting variant, we took this as evidence
 a potential functional involvement of that gene. We interrogated protein–protein 
 interaction data by accessing STRINGdb data using the STRINGdb Bioconductor 
 package<sup>58</sup>, whereby we extracted all pairwise interaction scores for each
-transaffected protein and all proteins with genes local to the corresponding trans-acting 
+trans-affected protein and all proteins with genes local to the corresponding trans-acting 
 variants. We took the default interaction score of 400 as evidence of an interaction 
 between the proteins, therefore indicating a possible functional involvement for 
 the local gene. In addition to using data from open source databases in our top 
