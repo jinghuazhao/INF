@@ -1,5 +1,8 @@
 # 29/8/2018 JHZ
 
+# location for mrbase.oauth and pdf
+setwd("u:/work")
+
 library(MRInstruments)
 d <- subset(proteomic_qtls,analyte%in%c("ACE","ApoE","CRP"))
 d <- within(d, {N=1000})
@@ -16,7 +19,6 @@ mr_heterogeneity(dat)
 mr_pleiotropy_test(dat)
 res_single <- mr_singlesnp(dat)
 res_loo <- mr_leaveoneout(dat)
-setwd("u:/work")
 pdf("ACE-ApoE-CRP.pdf")
 mr_scatter_plot(res_mr, dat)
 mr_forest_plot(res_single)
