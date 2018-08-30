@@ -231,7 +231,7 @@ relevant TSS, only proteins that mapped to single genes on the primary assembly
 in Ensembl v83 were considered.
 
 For trans pQTLs, we sought to prioritize candidate genes in the region that might 
-underpin the genotype–protein association. We applied the ProGeM framework22, 
+underpin the genotype–protein association. We applied the ProGeM framework<sup>22</sup>, 
 which leverages a combination of databases of molecular pathways, protein–protein 
 interaction networks, and variant annotation, as well as functional genomic data 
 including eQTL and chromosome conformation capture. In addition to reporting 
