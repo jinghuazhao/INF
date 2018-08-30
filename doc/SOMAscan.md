@@ -357,7 +357,7 @@ statistically significant.
 we queried our sentinel variants and their strong proxies (r<sup>2</sup> ≥ 0.8) against 
 publicly available disease GWAS data using PhenoScanner<sup>61</sup>. A list of data sets 
 queried is available at http://www.phenoscanner.medschl.cam.ac.uk/information.html.
-html. For disease GWAS, results were filtered to P < 5 × 10<sup>−8</sup> and then manually 
+For disease GWAS, results were filtered to P < 5 × 10<sup>−8</sup> and then manually 
 curated to retain only the entry with the strongest evidence for association (that 
 is, smallest P value) per disease. Non-disease phenotypes such as anthropometric 
 traits, intermediate biomarkers and lipids were excluded manually.
