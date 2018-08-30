@@ -64,24 +64,4 @@ extract.pheno.csv(
  exposure = "log(eGFR creatinine)", pmidE = 26831199, ancestryE = "European",
  outcome = "Tanner stage", pmidO = 24770850, ancestryO = "European", rsq.proxy = 0.6, file = path.proxies)
 
-# coloc, large (>0.05) p.value.chisquare indicates traits are compatible with colocalisation
-set.seed(1)
-X1 <- matrix(rbinom(1000,1,0.4),ncol=2)
-X2 <- matrix(rbinom(1000,1,0.6),ncol=2)
-colnames(X1) <- colnames(X2) <- c("f1","f2")
-Y1 <- rnorm(500,apply(X1,1,sum),2)
-Y2 <- rnorm(500,2*apply(X2,1,sum),5)
-summary(lm1 <- lm(Y1~f1+f2,data=as.data.frame(X1)))
-summary(lm2 <- lm(Y2~f1+f2,data=as.data.frame(X2)))
-par(mfrow=c(2,2))
-obj <- coloc.test(lm1,lm2, plots.extra=list(x=c("eta","theta"), y=c("lhood","lhood")))
-summary(obj)
-plot(obj)
-b1 <- coef(lm1)
-b2 <- coef(lm2)
-v1 <- vcov(lm1)
-v2 <- vcov(lm2)
-coloc.test.summary(b1,b2,v1,v2)
-abf <- coloc.abf(dataset1=list(beta=b1, varbeta=diag(v1), N=nrow(X1), sdY=sd(Y1), type="quant"),
-                 dataset2=list(beta=b2, varbeta=diag(v2), N=nrow(X2), sdY=sd(Y2), type="quant"))
-abf
+# see software-notes for example setup.
