@@ -445,7 +445,7 @@ having per-allele estimate of the association with the protein β<sub>Xg</sub> a
 σXg, and per-allele estimate of the association with the outcome (here, AD or CHD) 
 β<sub>Yg</sub> and standard error σ<sub>Yg</sub>, the IV estimate (θ<sub>XY</sub>) is obtained from generalized 
 weighted linear regression of the genetic associations with the outcome (β<sub>Y</sub>) on 
-the genetic associations with the protein (βX) weighting for the precisions of the 
+the genetic associations with the protein (β<sub>X</sub>) weighting for the precisions of the 
 genetic associations with the outcome and accounting for correlations between the 
 variants according to the regression model:
 
