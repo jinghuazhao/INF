@@ -82,3 +82,6 @@ b2 <- coef(lm2)
 v1 <- vcov(lm1)
 v2 <- vcov(lm2)
 coloc.test.summary(b1,b2,v1,v2)
+abf <- coloc.abf(dataset1=list(beta=b1, varbeta=diag(v1), N=nrow(X1), sdY=sd(Y1), type="quant"),
+                 dataset2=list(beta=b2, varbeta=diag(v2), N=nrow(X2), sdY=sd(Y2), type="quant"))
+abf
