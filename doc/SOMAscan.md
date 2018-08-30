@@ -479,7 +479,7 @@ regression-based method is performed by multivariable generalized weighted
 linear regression of the association estimates β<sub>Y</sub> on each of the association
 estimates with each risk factor β<sub>XK</sub> in a single regression model:
 β<sub>Y</sub> = θ<sub>XY1</sub>β<sub>X1</sub> + θ<sub>XY2</sub> β<sub>X2</sub> + … + θ<sub>XYK</sub>β<sub>XK</sub> + ε,  ε ~N (0, Ω)
-where βX1 is the vectors of the univariable genetic associations with risk factor 1,
+where β<sub>X1</sub> is the vectors of the univariable genetic associations with risk factor 1,
 and so on. This regression model is implemented by first pre-multiplying the 
 association vectors by the Cholesky decomposition of the weighting matrix, and then
 applying standard linear regression to the transformed vectors. Estimates and
