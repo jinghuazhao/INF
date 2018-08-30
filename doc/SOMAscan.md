@@ -183,7 +183,7 @@ the NCBI Entrez programming utility in R (rentrez) to perform a literature searc
 for pQTL studies published from 2008 onwards. We searched for the following 
 terms: ‘pQTL’, ‘pQTLs’, and ‘protein quantitative trait locus’. We supplemented this 
 search by filtering out GWAS associations from the NHGRI-EBI GWAS Catalog 
-v.1.0.150 (https://www.ebi.ac.uk/gwas/, downloaded November 2017), which has all 
+v.1.0.1<sup>50</sup> (https://www.ebi.ac.uk/gwas/, downloaded November 2017), which has all 
 phenotypes mapped to the Experimental Factor Ontology (EFO)<sup>51</sup>, by restricting to 
 those with EFO annotations relevant to protein biomarkers (for example, ‘protein 
 measurement’, EFO_0004747). Studies identified through both approaches were 
