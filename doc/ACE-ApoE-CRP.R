@@ -1,11 +1,11 @@
-# 29/8/2018 JHZ
+# 30/8/2018 JHZ
 
 # location for mrbase.oauth and pdf
 setwd("u:/work")
 
 library(MRInstruments)
 d <- subset(proteomic_qtls,analyte%in%c("ACE","ApoE","CRP"))
-d <- within(d, {N=1000})
+d <- within(d, {N=5000})
 
 library(TwoSampleMR)
 exposure_dat <- format_data(d, type="exposure", snp_col = "SNP", effect_allele_col = "effect_allele", other_allele_col = "other_allele",
@@ -35,3 +35,41 @@ mr_median(MRInputObject, weighting = "weighted", distribution = "normal", alpha 
 mr_allmethods(MRInputObject, method = "all")
 mr_plot(MRInputObject, error = TRUE, orientate = FALSE, interactive = TRUE, labels = TRUE, line = "ivw")
 dev.off()
+
+# documentation example
+MRMVInputObject <- mr_mvinput(bx = cbind(ldlc, hdlc, trig),
+                              bxse = cbind(ldlcse, hdlcse, trigse),
+                              by = chdlodds, 
+                              byse = chdloddsse)
+
+MRMVInputObject
+MRMVObject <- mr_mvivw(MRMVInputObject, 
+                          model = "default",
+			  correl = FALSE,
+                          distribution = "normal",
+                          alpha = 0.05)
+
+MRMVObject <- mr_mvivw(MRMVInputObject)
+MRMVObject
+# PhenoScanner
+path.noproxy <- system.file("extdata", "vitD_snps_PhenoScanner.csv",
+package = "MendelianRandomization")
+path.proxies <- system.file("extdata", "vitD_snps_PhenoScanner_proxies.csv",
+ package = "MendelianRandomization")
+ # these two files from PhenoScanner are provided
+ # as part of the MendelianRandomization package
+
+extract.pheno.csv(
+ exposure = "log(eGFR creatinine)", pmidE = 26831199, ancestryE = "European",
+ outcome = "Tanner stage", pmidO = 24770850, ancestryO = "European", 
+ file = path.noproxy)
+
+extract.pheno.csv(
+ exposure = "log(eGFR creatinine)", pmidE = 26831199, ancestryE = "European",
+ outcome = "Tanner stage", pmidO = 24770850, ancestryO = "European",
+ rsq.proxy = 0.6, file = path.proxies)
+
+extract.pheno.csv(
+ exposure = "log(eGFR creatinine)", pmidE = 26831199, ancestryE = "European",
+ outcome = "Asthma", pmidO = 20860503, ancestryO = "European",
+ rsq.proxy = 0.6, file = path.proxies)
