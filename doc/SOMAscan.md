@@ -208,7 +208,7 @@ a P value threshold of 10<sup>−4</sup> (Supplementary Table 21). We also perf
 analyses to explore factors that influence replication rate (Supplementary Note).
 Replication study using Olink assay. To test replication of 163 pQTLs for 116 
 proteins, we performed protein measurements using an alternative assay, that is, 
-a proximity extension assay method (Olink Bioscience, Uppsala, Sweden)13 in an 
+a proximity extension assay method (Olink Bioscience, Uppsala, Sweden)<sup>13</sup> in an 
 additional subcohort of 4,998 INTERVAL participants. Proteins were measured 
 using three 92-protein ‘panels’ – ‘inflammatory’, ‘cvd2’ and ‘cvd3’ (10 proteins were 
 assayed on more than 1 panel). 4,902, 4,947 and 4,987 samples passed quality 
@@ -493,7 +493,7 @@ risk factor in the model while keeping others constant.
 **MMP-12 genetic score sensitivity analyses**. We performed two sensitivity analyses
 to determine the robustness of the MR findings. First, we measured plasma MMP-12
 levels using a different method (proximity extension assay; Olink Bioscience, 
-Uppsala, Sweden13) in 4,998 individuals, and used this to derive genotype-MMP12 
+Uppsala, Sweden<sup>13</sup>) in 4,998 individuals, and used this to derive genotype-MMP12 
 effect estimates for the 17 variants in our genetic score. Second, we obtained effect 
 estimates from a pQTL study based on SOMAscan assay measurements in an independent
 sample of ~1,000 individuals3. In both cases the genetic score reflecting 
