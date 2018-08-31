@@ -40,3 +40,10 @@ mr_median(MRInputObject, weighting = "weighted", distribution = "normal", alpha 
 mr_allmethods(MRInputObject, method = "all")
 mr_plot(MRInputObject, error = TRUE, orientate = FALSE, interactive = TRUE, labels = TRUE, line = "ivw")
 dev.off()
+# PhenoScanner
+path.noproxy <- system.file("extdata", "vitD_snps_PhenoScanner.csv", package = "MendelianRandomization")
+path.proxies <- system.file("extdata", "vitD_snps_PhenoScanner_proxies.csv", package = "MendelianRandomization")
+extract.pheno.csv(exposure = "log(eGFR creatinine)", pmidE = 26831199, ancestryE = "European",
+                  outcome = "Tanner stage", pmidO = 24770850, ancestryO = "European", file = path.noproxy)
+extract.pheno.csv(exposure = "log(eGFR creatinine)", pmidE = 26831199, ancestryE = "European",
+                  outcome = "Tanner stage", pmidO = 24770850, ancestryO = "European", rsq.proxy = 0.6, file = path.proxies)

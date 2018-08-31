@@ -1,4 +1,4 @@
-# 30/8/2018 JHZ
+# 31/8/2018 JHZ
 
 # location for mrbase.oauth and pdf
 setwd("u:/work")
@@ -55,13 +55,8 @@ MRMVObject
 # PhenoScanner
 path.noproxy <- system.file("extdata", "vitD_snps_PhenoScanner.csv", package = "MendelianRandomization")
 path.proxies <- system.file("extdata", "vitD_snps_PhenoScanner_proxies.csv", package = "MendelianRandomization")
+extract.pheno.csv(exposure = "log(eGFR creatinine)", pmidE = 26831199, ancestryE = "European",
+                  outcome = "Tanner stage", pmidO = 24770850, ancestryO = "European", file = path.noproxy)
 
-extract.pheno.csv(
- exposure = "log(eGFR creatinine)", pmidE = 26831199, ancestryE = "European",
- outcome = "Tanner stage", pmidO = 24770850, ancestryO = "European", file = path.noproxy)
-
-extract.pheno.csv(
- exposure = "log(eGFR creatinine)", pmidE = 26831199, ancestryE = "European",
- outcome = "Tanner stage", pmidO = 24770850, ancestryO = "European", rsq.proxy = 0.6, file = path.proxies)
-
-# see software-notes for example setup.
+extract.pheno.csv(exposure = "log(eGFR creatinine)", pmidE = 26831199, ancestryE = "European",
+                  outcome = "Tanner stage", pmidO = 24770850, ancestryO = "European", rsq.proxy = 0.6, file = path.proxies)
