@@ -11,6 +11,7 @@ dim(cad_mmp12)
 names(cad_mmp12)
 
 library(TwoSampleMR)
+# less ideal to obtain RSid's from cad and PhenoScanner actually does better
 exposure_dat <- format_data(cad_mmp12, type="exposure", snp_col = "markername", effect_allele_col = "Allele1", other_allele_col = "Allele2",
                             eaf_col = "effect_allele_freq", beta_col = "Effect", se_col = "StdErr", pval_col = "P", samplesize_col = "N")
 ao <- available_outcomes()
