@@ -32,7 +32,7 @@ mr_funnel_plot(res_single)
 
 library(MendelianRandomization)
 MRInputObject <- with(dat, mr_input(bx = beta.exposure, bxse = se.exposure, by = beta.outcome, byse = se.outcome,
-                                    exposure = "Body mass index", outcome = "Coronary heart disease", snps = SNP))
+                                    exposure = "MMP-12", outcome = "Coronary heart disease", snps = SNP))
 mr_ivw(MRInputObject, model = "default", robust = FALSE, penalized = FALSE, weights = "simple", distribution = "normal", alpha = 0.05)
 mr_egger(MRInputObject, robust = FALSE, penalized = FALSE, distribution = "normal", alpha = 0.05)
 mr_maxlik(MRInputObject, model = "default", distribution = "normal", alpha = 0.05)
