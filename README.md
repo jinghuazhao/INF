@@ -2,9 +2,9 @@
 SCALLOP-INF analysis
 
 File    | Description
---------|-------------------------------
-[MMP12.sh](doc/MMP12.sh) | Bash script
-[MMP12.R](doc/MMP12.R) | R script
+--------|----------------------------------------------------
+[MMP12.sh](doc/MMP12.sh) | Bash script for MMP12-CHD analysis
+[MMP12.R](doc/MMP12.R) | R script as above
 [SOMAscan.md](doc/SOMAscan.md) | Methods in MarkDown
 [SOMAscan.pdf](doc/SOMAscan.pdf) | Methods in pdf
 [SOMAscan.tif](doc/SOMAscan.tif) | Methods in tiff
