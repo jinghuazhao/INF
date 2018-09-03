@@ -28,7 +28,7 @@ olink_panel <- function(xlsx, tabs, order, nlines, verbose)
 xlsx <- "Olink validation data all panels.xlsx"
 tabs <- "Inflammation"
 olink_panel(xlsx,tabs,FALSE,92,TRUE)
-# TWEAK O43508, Q4ACW9
+# TWEAK O43508 <- Q4ACW9
 Inflammation["UniProt.No."] <- with(Inflammation, {replace(UniProt.No.,UniProt.No.=="Q4ACW9","O43508")})
 Inflammation["Comment"] <- NA
 Inflammation["Comment"] <- with(Inflammation, {replace(Comment, UniProt.No.=="O43508", "Q4ACW9")})
