@@ -1,17 +1,10 @@
-# 31/8/2018 JHZ
+# 3/9/2018 JHZ
 
 setwd("u:/work")
-mmp12 <- read.delim("MMP12.txt",as.is=TRUE)
-mmp12 <- within(mmp12, {phen <- "MMP12";P <- 10^log.P.;N <- 3400})
-dim(mmp12)
-cad <- read.delim("CAD.txt",as.is=TRUE)
-dim(cad)
-cad_mmp12 <- merge(cad,mmp12,by.x="bp_hg19",by.y="position")
-dim(cad_mmp12)
-names(cad_mmp12)
+mmp12 <- read.table("MMP12.dat",as.is=TRUE, col.names=c("MarkerName", "Allele1", "Allele2", "Effect", "StdErr", "logP"))
+mmp12 <- within(mmp12, {phen <- "MMP12";P <- 10^logP;N <- 3400})
 
 library(TwoSampleMR)
-# less ideal to obtain RSid's from cad and PhenoScanner actually does better
 exposure_dat <- format_data(cad_mmp12, type="exposure", snp_col = "markername", effect_allele_col = "Allele1", other_allele_col = "Allele2",
                             eaf_col = "effect_allele_freq", beta_col = "Effect", se_col = "StdErr", pval_col = "P", samplesize_col = "N")
 ao <- available_outcomes()
