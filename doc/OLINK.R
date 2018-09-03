@@ -30,7 +30,7 @@ tabs <- "Inflammation"
 olink_panel(xlsx,tabs,FALSE,92,TRUE)
 # TWEAK O43508, Q4ACW9
 Inflammation["UniProt.No."] <- with(Inflammation, {replace(UniProt.No.,UniProt.No.=="Q4ACW9","O43508")})
-Inflammation["Comment"] <- ""
+Inflammation["Comment"] <- NA
 Inflammation["Comment"] <- with(Inflammation, {replace(Comment, UniProt.No.=="O43508", "Q4ACW9")})
 inf.orig <- Inflammation
 # grep inf1 olink.prot.list.txt | sed 's/inf1_//g;s/___/\t/g' > inf1.list
