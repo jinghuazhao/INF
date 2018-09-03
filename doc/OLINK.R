@@ -1,4 +1,4 @@
-# 24-8-2018 JHZ
+# 3-9-2018 JHZ
 
 options(width=160)
 
@@ -39,3 +39,7 @@ inf1 <- merge(inf,inf.orig,by.x="UniProt",by.y="UniProt.No.")
 # See https://www.uniprot.org/uniprot/ for additional information
 setdiff(inf$UniProt,inf.orig$UniProt.No.)
 setdiff(inf.orig$UniProt.No.,inf$UniProt)
+# from CVD I analysis plan
+cvd1 <- read.delim("cvd1", as.is=TRUE)
+cvd1 <- cvd1[c("Olink_name", "gene", "Uniprot")]
+inf2 <- merge(cvd1, inf.orig, by.x="Uniprot", by.y="UniProt.No.")
