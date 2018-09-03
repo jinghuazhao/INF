@@ -30,12 +30,14 @@ tabs <- "Inflammation"
 olink_panel(xlsx,tabs,FALSE,92,TRUE)
 # TWEAK O43508, Q4ACW9
 Inflammation["UniProt.No."] <- with(Inflammation, {replace(UniProt.No.,UniProt.No.=="Q4ACW9","O43508")})
+Inflammation["Comment"] <- ""
+Inflammation["Comment"] <- with(Inflammation, {replace(Comment, UniProt.No.=="O43508", "Q4ACW9")})
 inf.orig <- Inflammation
 # grep inf1 olink.prot.list.txt | sed 's/inf1_//g;s/___/\t/g' > inf1.list
 inf <- read.table("inf1.list",header=FALSE,col.names=c("prot","UniProt"),sep="\t",as.is=TRUE)
 inf1 <- merge(inf,inf.orig,by.x="UniProt",by.y="UniProt.No.")
 # See https://www.uniprot.org/uniprot/ for additional information
-write.csv(inf1[c("UniProt","prot","Target")], file="inf1.csv", quote=FALSE, row.names=FALSE)
+write.csv(inf1[c("UniProt","prot","Target","Comment")], file="inf1.csv", quote=FALSE, row.names=FALSE)
 # from CVD I analysis plan
 cvd1 <- read.delim("cvd1", as.is=TRUE)
 cvd1 <- cvd1[c("Olink_name", "gene", "Uniprot")]
