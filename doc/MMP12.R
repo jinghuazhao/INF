@@ -5,7 +5,7 @@ mmp12 <- read.table("MMP12.dat",as.is=TRUE, col.names=c("MarkerName", "Allele1",
 mmp12 <- within(mmp12, {phen <- "MMP12";P <- 10^logP;N <- 3400})
 
 library(TwoSampleMR)
-exposure_dat <- format_data(cad_mmp12, type="exposure", snp_col = "markername", effect_allele_col = "Allele1", other_allele_col = "Allele2",
+exposure_dat <- format_data(mmp12, type="exposure", snp_col = "MarkerName", effect_allele_col = "Allele1", other_allele_col = "Allele2",
                             eaf_col = "effect_allele_freq", beta_col = "Effect", se_col = "StdErr", pval_col = "P", samplesize_col = "N")
 ao <- available_outcomes()
 subset(ao,consortium=="CARDIoGRAMplusC4D")
