@@ -28,18 +28,20 @@ olink_panel <- function(xlsx, tabs, order, nlines, verbose)
 xlsx <- "Olink validation data all panels.xlsx"
 tabs <- "Inflammation"
 olink_panel(xlsx,tabs,FALSE,92,TRUE)
+# TWEAK O43508, Q4ACW9
+Inflammation["UniProt.No."] <- with(Inflammation, {replace(UniProt.No.,UniProt.No.=="Q4ACW9","O43508")})
 inf.orig <- Inflammation
-tabs <-c("Cardiometabolic","Cell Regulation","CVD II","CVD III","Development","Immune Response","Immuno-Oncology",
-         "Inflammation","Metabolism","Neurology","Oncology II","Organ Damage")
-olink_panel(xlsx,tabs,TRUE,92,FALSE)
-ls()
 # grep inf1 olink.prot.list.txt | sed 's/inf1_//g;s/___/\t/g' > inf1.list
 inf <- read.table("inf1.list",header=FALSE,col.names=c("prot","UniProt"),sep="\t",as.is=TRUE)
 inf1 <- merge(inf,inf.orig,by.x="UniProt",by.y="UniProt.No.")
 # See https://www.uniprot.org/uniprot/ for additional information
-setdiff(inf$UniProt,inf.orig$UniProt.No.)
-setdiff(inf.orig$UniProt.No.,inf$UniProt)
+write.csv(inf1[c("UniProt","prot","Target")], file="inf1.csv", quote=FALSE, row.names=FALSE)
 # from CVD I analysis plan
 cvd1 <- read.delim("cvd1", as.is=TRUE)
 cvd1 <- cvd1[c("Olink_name", "gene", "Uniprot")]
 inf2 <- merge(cvd1, inf.orig, by.x="Uniprot", by.y="UniProt.No.")
+
+tabs <-c("Cardiometabolic","Cell Regulation","CVD II","CVD III","Development","Immune Response","Immuno-Oncology",
+         "Inflammation","Metabolism","Neurology","Oncology II","Organ Damage")
+olink_panel(xlsx,tabs,TRUE,92,FALSE)
+ls()
