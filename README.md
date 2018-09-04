@@ -6,7 +6,7 @@ File    | Description
 [inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel linking [CVD1](doc/cvd1.txt) by [OLINK.R](doc/OLINK.R)
 [logp.md](doc/logp.md) | A very competitive -log(p) calculator
 MMP12 | Bash ([MMP12.sh](doc/MMP12.sh)) and R ([MMP12.R](doc/MMP12.R)) scripts for MMP12-CHD analysis
-SOMAscan | Methods ([SOMAscan.md](doc/SOMAscan.md), [SOMAscan.pdf](doc/SOMAscan.pdf), [SOMAscan.tif](doc/SOMAscan.tif)) and supplementary tables ([SOMAscan.xlsx](doc/SOMAscan.xlsx)) for the SOMAscan paper
+SOMAscan | Methods ([SOMAscan.md](doc/SOMAscan.md), [SOMAscan.pdf](doc/SOMAscan.pdf), [SOMAscan.tif](doc/SOMAscan.tif)) and supplementary tables ([SOMAscan.xlsx](doc/SOMAscan.xlsx)) for the SOMAscan paper<sup>[1](#SOMAscan)</sup>
 SecureCloud.md | Information for SecureCloud (unavailable here yet)
 
 As noted in MMP12.sh, the MMP12 case would have been done genomewide; the CAD summary statistics is also described 
@@ -18,5 +18,4 @@ example in [Omics-analysis](https://github.com/jinghuazhao/Omics-analysis).
 
 https://github.com/ds763/ProGeM
 
-Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79
-
+<a name="SOMAscan">1</a>Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79
