@@ -13,3 +13,10 @@ As noted in MMP12.sh, the MMP12 case would have been done genomewide; the CAD su
 [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD). A toy example with colocalisation analysis can be found
 in the association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes) as well as the BMI
 example in [Omics-analysis](https://github.com/jinghuazhao/Omics-analysis).
+
+## References
+
+https://github.com/ds763/ProGeM
+
+Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79
+
