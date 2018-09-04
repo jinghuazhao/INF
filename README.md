@@ -18,4 +18,4 @@ example in [Omics-analysis](https://github.com/jinghuazhao/Omics-analysis).
 
 https://github.com/ds763/ProGeM
 
-<a name="SOMAscan">1</a>Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79
+<a name="SOMAscan"><sup>1</sup></a>Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79
