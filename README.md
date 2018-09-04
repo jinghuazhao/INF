@@ -16,7 +16,7 @@ example in [Omics-analysis](https://github.com/jinghuazhao/Omics-analysis).
 
 ## References
 
-Stacey D, et al. (2017), [ProGeM](https://github.com/ds763/ProGeM): [A framework for the prioritisation of candidate causal genes at molecular 
-quantitative trait loci](http://dx.doi.org/10.1101/230094).
+Stacey D, et al. (2017), [ProGeM](https://github.com/ds763/ProGeM): A framework for the prioritisation of candidate causal genes at molecular 
+quantitative trait loci, http://dx.doi.org/10.1101/230094.
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79
