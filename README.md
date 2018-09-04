@@ -8,6 +8,7 @@ File    | Description
 [MMP12.sh](doc/MMP12.sh) | Bash and R scripts for MMP12-CHD analysis
 [MMP12.R](doc/MMP12.R)   |
 [SOMAscan.md](doc/SOMAscan.md) | Methods for the SOMAscan paper (also in [pdf](doc/SOMAscan.pdf) & [tif](doc/SOMAscan.tif))
+SecureCloud.md | Information for SecureCloud (unavailable yet)
 
 As noted in MMP12.sh, the MMP12 case would have been done genomewide; the CAD summary statistics is also described 
 [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD). A toy example with colocalisation analysis can be found
