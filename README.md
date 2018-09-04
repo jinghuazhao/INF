@@ -7,9 +7,11 @@ File    | Description
 [logp.md](doc/logp.md) | A very competitive -log(p) calculator
 [MMP12.sh](doc/MMP12.sh) | Bash and R scripts for MMP12-CHD analysis
 [MMP12.R](doc/MMP12.R)   |
-[SOMAscan.md](doc/SOMAscan.md) | Methods for the SOMAscan paper
-([pdf](doc/SOMAscan.pdf) & [tif](doc/SOMAscan.tif)) |
-[SOMAscan.xlsx](doc/SOMAscan.xlsx) | Supplementary tables for the SOMAscan paper
+SOMAscan | Methods and supplementary tables for the SOMAscan paper
+[SOMAscan.md](doc/SOMAscan.md) | 
+([pdf](doc/SOMAscan.pdf) |
+[tif](doc/SOMAscan.tif)) |
+[xlsx](doc/SOMAscan.xlsx) |
 SecureCloud.md | Information for SecureCloud (unavailable here yet)
 
 As noted in MMP12.sh, the MMP12 case would have been done genomewide; the CAD summary statistics is also described 
