@@ -8,7 +8,7 @@ File    | Description
 [MMP12.sh](doc/MMP12.sh) | Bash and R scripts for MMP12-CHD analysis
 [MMP12.R](doc/MMP12.R)   |
 [SOMAscan.md](doc/SOMAscan.md) | Methods for the SOMAscan paper
-(also in [pdf](doc/SOMAscan.pdf) & [tif](doc/SOMAscan.tif)) |
+([pdf](doc/SOMAscan.pdf) & [tif](doc/SOMAscan.tif)) |
 [SOMAscan.xlsx](doc/SOMAscan.xlsx) | Supplementary tables for the SOMAscan paper
 SecureCloud.md | Information for SecureCloud (unavailable here yet)
 
