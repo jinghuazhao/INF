@@ -1,4 +1,4 @@
-# 3-9-2018 JHZ
+# 4-9-2018 JHZ
 
 options(width=160)
 
@@ -39,7 +39,7 @@ inf1 <- merge(inf,inf.orig,by.x="UniProt",by.y="UniProt.No.")
 # See https://www.uniprot.org/uniprot/ for additional information
 write.csv(inf1[c("UniProt","prot","Target","Comment")], file="inf1.csv", quote=FALSE, row.names=FALSE)
 # from CVD I analysis plan
-cvd1 <- read.delim("cvd1", as.is=TRUE)
+cvd1 <- read.delim("cvd1.txt", as.is=TRUE)
 cvd1 <- cvd1[c("Olink_name", "gene", "Uniprot")]
 inf2 <- merge(cvd1, inf.orig, by.x="Uniprot", by.y="UniProt.No.")
 
