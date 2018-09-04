@@ -527,9 +527,8 @@ the Nature Research Reporting Summary linked to this paper.
 association results from the genetic analysis, are available through the European 
 Genotype Archive (accession number EGAS00001002555). Summary association 
 results are also publically available at http://www.phpc.cam.ac.uk/ceu/proteins/, 
-through PhenoScanner (http://www.phenoscanner.medschl.cam.ac.uk) and 
-from the NHGRI-EBI GWAS Catalog (https://www.ebi.ac.uk/gwas/downloads/ 
-summary-statistics).
+through PhenoScanner (http://www.phenoscanner.medschl.cam.ac.uk) and from the
+NHGRI-EBI GWAS Catalog (https://www.ebi.ac.uk/gwas/downloads/summary-statistics).
  
  38.  Moore, C. et al. The INTERVAL trial to determine whether intervals between 
 blood donations can be safely and acceptably decreased to optimise blood 
