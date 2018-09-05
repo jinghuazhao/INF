@@ -31,7 +31,7 @@ join -t$'\t' -12 -24 1 2 > 12
 wc -l 12
 # Q8NF90 (FGF.5), Q8WWJ7 (CD6) are missing
 join -v2 -22 12 1
-
+rm 1 2 12
 ```
 
 ## References
