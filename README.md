@@ -29,8 +29,8 @@ wc -l 12
 join -v2 -22 12 1
 
 ```
-It turned out all but Q8NF90 and Q8WWJ7 were out of the UCSC list; they appear to be on UniProt to be backward compatible as they point
-to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN).
+It turned out all but Q8NF90 and Q8WWJ7 were out of the UCSC list, which appear on UniProt to be backward compatible as they point to P12034 
+and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN).
 
 ## References
 
