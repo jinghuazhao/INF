@@ -1,4 +1,4 @@
-# 4-9-2018 JHZ
+# 5-9-2018 JHZ
 
 options(width=160)
 
@@ -7,7 +7,7 @@ olink_panel <- function(xlsx, tabs, order, nlines, verbose)
   for (x in tabs) 
   {
     if (verbose) cat("\n\n", x, ":\n", rep("-", nchar(x)+1), "\n\n", sep="")
-    t <- openxlsx::read.xlsx(xlsx, sheet=x, colNames=TRUE, skipEmptyRows=FALSE, cols=c(1:16), rows=3:95)
+    t <- openxlsx::read.xlsx(xlsx, sheet=x, colNames=TRUE, skipEmptyRows=FALSE, cols=1:16, rows=3:95)
     s <- sub(" ", "_", x)
     if (!order) assign(s, t, envir=.GlobalEnv) else
     {
