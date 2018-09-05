@@ -14,7 +14,7 @@ As noted in MMP12.sh, the MMP12 case would have been done genomewide; the CAD su
 in the association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes) as well as the BMI
 example in [Omics-analysis](https://github.com/jinghuazhao/Omics-analysis).
 
-## Notes chromosmal localtions
+## Notes chromosmal locations
 
 [hgTables.txt](doc/hgTables.txt) is based on UCSC, which can be merged through UniProt IDs as follows,
 ```bash
