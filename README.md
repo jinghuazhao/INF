@@ -14,9 +14,11 @@ As noted in MMP12.sh, the MMP12 case would have been done genomewide; the CAD su
 in the association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes) as well as the BMI
 example in [Omics-analysis](https://github.com/jinghuazhao/Omics-analysis).
 
-## Notes on chromosmal locations
+## Notes on UniProt
 
-[hgTables.txt](doc/hgTables.txt) is based on UCSC, which can be merged through UniProt IDs as follows,
+1. The protein list in [inf1.csv](doc/inf1.csv) found O43508 and Q4ACW9 are associated with the TNFSF12 and TWEAK gene, respectively.
+
+2. [hgTables.txt](doc/hgTables.txt) is based on UCSC, which can be merged through UniProt IDs as follows,
 ```bash
 sort -k2,2 inf1.list > 1
 awk '{FS=OFS="\t"; split($4,f,"-");$4=f[1];if(!index($1,"_")) print}' hgTables.txt | sort -k4,4 > 2
@@ -27,8 +29,8 @@ wc -l 12
 join -v2 -22 12 1
 
 ```
-All but two appeared in the UCSC list; it turned out Q8NF90 is P12034 (UCSC) and while Q8WWJ7 is catalogged in UniProt but also with 
-P30203 (UCSC).
+It turned out all but Q8NF90 and Q8WWJ7 were out of the UCSC list; they appear to be on UniProt to be backward compatible as they point
+to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN).
 
 ## References
 
