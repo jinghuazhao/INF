@@ -27,8 +27,8 @@ wc -l 12
 join -v2 -22 12 1
 
 ```
-All but two appeared in the UCSC list: it turned out the former is P12034 (UCSC) and while the latter is catalogged in UniProt but also with P30203 (UCSC).
-
+All but two appeared in the UCSC list; it turned out Q8NF90 is P12034 (UCSC) and while Q8WWJ7 is catalogged in UniProt but also with 
+P30203 (UCSC).
 
 ## References
 
