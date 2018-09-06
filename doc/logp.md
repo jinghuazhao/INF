@@ -1,7 +1,7 @@
 # -log10(p) and p for a very large z from Normal(0,1)
 
 ## -log10(p)
-First thing first, here is the anwser for log10(p) given z,
+First thing first, here is the anwser for -log10(p) given z,
 ```r
 # -log10(p) for a standard normal deviate z based on log()
 -log(2, base=10)-pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)/log(10)
