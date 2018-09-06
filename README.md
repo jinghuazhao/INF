@@ -21,7 +21,7 @@ The use of UniProt IDs is rationalised in two aspects,
 1. The protein list in [inf1.csv](doc/inf1.csv) found O43508 and Q4ACW9 are associated with the TNFSF12 and TWEAK gene, respectively.
 
 2. Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
-point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.txt](doc/hgTables.txt) is based on UCSC, merged through
+point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.txt](doc/hgTables.txt) is based on UCSC, checked over
 UniProt IDs as follows,
 ```bash
 sort -k2,2 inf1.list > 1
@@ -33,7 +33,8 @@ wc -l 12
 join -v2 -22 12 1
 rm 1 2 12
 ```
-A UniProt ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5.
+A UniProt ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. WHile [inf1.csv](doc/inf1.csv) 
+edits Q4ACW9, [inf2.csv](doc/inf2.csv) is inline with UCSC with respect to P12034 and P30203.
 
 ## References
 
