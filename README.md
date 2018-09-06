@@ -33,6 +33,7 @@ wc -l 12
 join -v2 -22 12 1
 rm 1 2 12
 ```
+A UniProt ID may be associated with multiple chromosomes, e.g., Q6IEY1 (OR4F3_HUMAN) with chromosomes 1 and 5.
 
 ## References
 
