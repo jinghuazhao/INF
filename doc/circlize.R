@@ -1,20 +1,7 @@
 # 6-9-2018 JHZ
 
 library(circlize)
-# toy example
-bed1 <- generateRandomBed(nr = 100)
-bed2 <- generateRandomBed(nr = 100)
-bed1 <- bed1[sample(nrow(bed1), 1), ]
-bed1 <- rbind(bed1,bed1,bed1,bed1,bed1,bed1)
-bed2 <- bed2[sample(nrow(bed2), 6), ]
-bed1
-bed2
-circos.par("track.height" = 0.1, cell.padding = c(0, 0, 0, 0))
-circos.initializeWithIdeogram()
-circos.genomicLink(bed1, bed2, col = sample(1:6, 6, replace = TRUE), border = NA)
-circos.clear()
 
-# SOMAscan
 xlsx <- "https://github.com/jinghuazhao/INF/blob/master/doc/SOMAscan.xlsx?raw=true"
 t <- openxlsx::read.xlsx(xlsx, sheet=4, colNames=TRUE, skipEmptyRows=TRUE, cols=c(3,5,7:16,23,24), rows=c(5,1019:1037))
 hgTables <- read.delim("hgTables.txt",as.is=TRUE)
