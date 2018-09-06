@@ -1,4 +1,4 @@
-# 5-9-2018 JHZ
+# 6-9-2018 JHZ
 
 options(width=160)
 
@@ -32,10 +32,16 @@ olink_panel(xlsx,tabs,FALSE,92,TRUE)
 Inflammation["UniProt.No."] <- with(Inflammation, {replace(UniProt.No.,UniProt.No.=="Q4ACW9","O43508")})
 Inflammation["Comment"] <- NA
 Inflammation["Comment"] <- with(Inflammation, {replace(Comment, UniProt.No.=="O43508", "Q4ACW9")})
+Inflammation["Comment"] <- with(Inflammation, {replace(Comment, UniProt.No.=="Q8NF90", "P12034")})
+Inflammation["Comment"] <- with(Inflammation, {replace(Comment, UniProt.No.=="Q8WWJ7", "P30203")})
 inf.orig <- Inflammation
 # grep inf1 olink.prot.list.txt | sed 's/inf1_//g;s/___/\t/g' > inf1.list
 inf <- read.table("inf1.list",header=FALSE,col.names=c("prot","UniProt"),sep="\t",as.is=TRUE)
 inf1 <- merge(inf,inf.orig,by.x="UniProt",by.y="UniProt.No.")
+# UCSC hgTables
+hgTables <- read.delim("hgTables.txt",as.is=TRUE)
+hgTables <- within(hgTables, UniProt <- unlist(lapply(strsplit(hgTables$name,"-"),"[",1)))
+inf2 <- merge(inf,hgTables,by="UniProt",all=TRUE)
 # See https://www.uniprot.org/uniprot/ for additional information
 write.csv(inf1[c("UniProt","prot","Target","Comment")], file="inf1.csv", quote=FALSE, row.names=FALSE)
 # from CVD I analysis plan
