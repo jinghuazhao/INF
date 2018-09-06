@@ -11,8 +11,8 @@ SecureCloud.md | Information for SecureCloud (unavailable here yet)
 
 As noted in MMP12.sh, the MMP12 case could have been done genomewide; the CAD summary statistics is also described 
 [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD). A toy example with colocalisation analysis can be found
-in the association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes) as well as the BMI
-example in [Omics-analysis](https://github.com/jinghuazhao/Omics-analysis).
+in the association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes) as well as the [BMI
+example](https://github.com/jinghuazhao/Omics-analysis/tree/master/BMI).
 
 ## Notes on UniProt IDs
 
