@@ -14,6 +14,6 @@ b2
 pdf("circlize.pdf")
 circos.par("track.height" = 0.1, cell.padding = c(0, 0, 0, 0))
 circos.initializeWithIdeogram()
-circos.genomicLink(b1, b2, col = 10, border = 1, lwd = 15)
+circos.genomicLink(b1, b2, col = 10, border = 1, lwd = 2)
 circos.clear()
 dev.off()
