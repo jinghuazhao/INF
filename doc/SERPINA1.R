@@ -9,11 +9,10 @@ b1 <- with(b, data.frame(chr=paste0("chr",Chr),start=94844947-1,end=94844947,val
 b2 <- with(b, data.frame(chr=X.chrom,start=chromStart,end=chromEnd,value1=t[["Meta-analysis"]]/X14,gene=geneName,Target=Target,UniProt=UniProt))
 b1
 b2
-
 pdf("SERPINA1.pdf")
 library(circlize)
-circos.par("track.height" = 0.1, cell.padding = c(0, 0, 0, 0))
-circos.initializeWithIdeogram()
+circos.par("start.degree" = 90, "track.height" = 0.1, cell.padding = c(0, 0, 0, 0))
+circos.initializeWithIdeogram(species="hg19")
 circos.genomicLabels(b2,labels.column = 5, side="inside")
 circos.genomicLink(b1, b2, col = 10, border = 10, lwd = 2)
 circos.clear()
