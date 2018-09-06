@@ -14,7 +14,7 @@ b2
 pdf("SERPINA1.pdf")
 circos.par("track.height" = 0.1, cell.padding = c(0, 0, 0, 0))
 circos.initializeWithIdeogram()
-circos.genomicLink(b1, b2, col = 10, border = 10, lwd = 2)
 circos.genomicLabels(b2,labels.column = 5, side="inside")
+circos.genomicLink(b1, b2, col = 10, border = 10, lwd = 2)
 circos.clear()
 dev.off()
