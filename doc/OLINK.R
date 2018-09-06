@@ -51,7 +51,7 @@ write.csv(inf2, file="inf2.csv", quote=FALSE, row.names=FALSE)
 cvd1 <- read.delim("cvd1.txt", as.is=TRUE)
 cvd1 <- cvd1[c("Olink_name", "gene", "Uniprot")]
 inf2 <- merge(cvd1, inf.orig, by.x="Uniprot", by.y="UniProt.No.")
-
+# The tables are ordered below
 tabs <-c("Cardiometabolic","Cell Regulation","CVD II","CVD III","Development","Immune Response","Immuno-Oncology",
          "Inflammation","Metabolism","Neurology","Oncology II","Organ Damage")
 olink_panel(xlsx,tabs,TRUE,92,FALSE)
