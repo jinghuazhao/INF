@@ -8,7 +8,7 @@ hgTables <- read.delim("hgTables.txt",as.is=TRUE)
 hgTables <- within(hgTables, UniProt <- unlist(lapply(strsplit(hgTables$name,"-"),"[",1)))
 b <- merge(t,hgTables,by="UniProt")
 b1 <- with(b, data.frame(chr=paste0("chr",Chr),start=94844947-1,end=94844947,value1=1,gene="SERPINA1"))
-b2 <- with(b, data.frame(chr=X.chrom,start=chromStart,end=chromEnd,value1=t[["Meta-analysis"]]/X14,gene=geneName,UniProt=UniProt))
+b2 <- with(b, data.frame(chr=X.chrom,start=chromStart,end=chromEnd,value1=t[["Meta-analysis"]]/X14,gene=geneName,Target=Target,UniProt=UniProt))
 b1
 b2
 pdf("SERPINA1.pdf")
