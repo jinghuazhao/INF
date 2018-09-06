@@ -28,7 +28,7 @@ olink_panel <- function(xlsx, tabs, order, nlines, verbose)
 xlsx <- "Olink validation data all panels.xlsx"
 tabs <- "Inflammation"
 olink_panel(xlsx,tabs,FALSE,92,TRUE)
-# TWEAK O43508 <- Q4ACW9
+# TWEAK O43508 <- Q4ACW9. See https://www.uniprot.org/uniprot/ for additional information
 Inflammation["UniProt.No."] <- with(Inflammation, {replace(UniProt.No.,UniProt.No.=="Q4ACW9","O43508")})
 Inflammation["alias"] <- NA
 Inflammation["alias"] <- with(Inflammation, {replace(alias, UniProt.No.=="O43508", "Q4ACW9")})
@@ -38,12 +38,15 @@ inf.orig <- Inflammation
 # grep inf1 olink.prot.list.txt | sed 's/inf1_//g;s/___/\t/g' > inf1.list
 inf <- read.table("inf1.list",header=FALSE,col.names=c("prot","UniProt"),sep="\t",as.is=TRUE)
 inf1 <- merge(inf,inf.orig,by.x="UniProt",by.y="UniProt.No.")
+write.csv(inf1[c("UniProt","prot","Target","alias")], file="inf1.csv", quote=FALSE, row.names=FALSE)
 # UCSC hgTables
 hgTables <- read.delim("hgTables.txt",as.is=TRUE)
 hgTables <- within(hgTables, UniProt <- unlist(lapply(strsplit(hgTables$name,"-"),"[",1)))
-inf2 <- merge(inf,hgTables,by="UniProt",all=TRUE)
-# See https://www.uniprot.org/uniprot/ for additional information
-write.csv(inf1[c("UniProt","prot","Target","alias")], file="inf1.csv", quote=FALSE, row.names=FALSE)
+inf <- within(inf,UniProt <- replace(UniProt,UniProt=="Q8NF90","P12034"))
+inf <- within(inf,UniProt <- replace(UniProt,UniProt=="Q8WWJ7","P30203"))
+inf <- merge(inf,hgTables,by="UniProt",all=TRUE)
+inf2 <- subset(inf,UniProt%in%inf1$UniProt|UniProt%in%c("P12034","P30203"))
+write.csv(inf2, file="inf2.csv", quote=FALSE, row.names=FALSE)
 # from CVD I analysis plan
 cvd1 <- read.delim("cvd1.txt", as.is=TRUE)
 cvd1 <- cvd1[c("Olink_name", "gene", "Uniprot")]
