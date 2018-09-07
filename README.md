@@ -1,7 +1,7 @@
 # INF
 SCALLOP-INF analysis
 
-File / root(s)  | Description
+File / root  | Description
 ---------|---------------------------------------------------------------------------------------------------------------------
 [inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel linking [CVD1](doc/cvd1.txt) by [OLINK.R](doc/OLINK.R)
 [logp.md](doc/logp.md) | A very competitive -log(p) calculator
