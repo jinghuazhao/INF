@@ -5,7 +5,7 @@ The list of proteins association with inflammation is within a panel from [OLINK
 
 File / root  | Description
 ---------|---------------------------------------------------------------------------------------------------------------------
-[inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel linking [CVD1](doc/cvd1.txt) by [OLINK.R](doc/OLINK.R)
+[inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel
 [logp.md](doc/logp.md) | A very competitive -log(p) calculator
 MMP12 | Bash ([MMP12.sh](doc/MMP12.sh)) and R ([MMP12.R](doc/MMP12.R)) scripts for MMP12-CHD analysis
 SERPINA1 | [SERPINA1.R](doc/SERPINA1.R) and [SERPINA1.pdf](doc/SERPINA1.pdf) which emulate [original version](doc/fig2.R) of the SOMAscan paper (Sun et al. 2018)
