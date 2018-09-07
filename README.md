@@ -1,7 +1,7 @@
 # INF
 SCALLOP-INF analysis
 
-The list of proteins association with inflammation is within a panel from [OLINK](https://www.olink.com/products/), containing 92 proteins shown in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx) along with other panels. The information in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), together with some compromise made with earlier version and annotation from other sources.
+The list of proteins association with inflammation is within a panel from [OLINK](https://www.olink.com/products/), containing 92 proteins shown in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx) along with other panels. Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), together with some compromise made with earlier version and annotation from other sources.
 
 File / root  | Description
 ---------|---------------------------------------------------------------------------------------------------------------------
