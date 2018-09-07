@@ -45,7 +45,7 @@ Link.Data <- data.frame(
   dir=g.data$Direction,
   effectsize= g.data$beta_meta
 )
-# Plot pdf
+# Plot
 out.file <- paste0(wd, "Circos_", snp,"_liberal-v3.pdf")
 pdf(file=out.file, height=8, width=8, compress=TRUE);
 RCircos.Set.Plot.Area()
