@@ -1,7 +1,7 @@
 # INF
 SCALLOP-INF analysis
 
-[OLINK](https://www.olink.com/products/) provides a dozen of panels each containing 92 proteins as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx), which can be retrieved into R via [OLINK.R](doc/OLINK.R).
+The Inflammation panel is but one in a dozen of panels from [OLINK](https://www.olink.com/products/), each containing 92 proteins shown in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx) whose information can be retrieved into R via [OLINK.R](doc/OLINK.R); some compromise is also made with earlier version and annotation from other sources.
 
 File / root  | Description
 ---------|---------------------------------------------------------------------------------------------------------------------
