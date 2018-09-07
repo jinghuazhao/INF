@@ -4,7 +4,7 @@
 First thing first, here is the anwser for -log10(p) given z,
 ```r
 # -log10(p) for a standard normal deviate z based on log()
--log(2, base=10)-pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)/log(10)
+log10p <- function(z) -log(2, base=10)-pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)/log(10)
 ```
 
 ## Rationale
@@ -25,7 +25,7 @@ the lower tail of the standard Normal distribution from which our p value is cal
 Now we have a stress test,
 ```r
 z <- 20000
--log10(2)-pnorm(-abs(z), lower.tail=TRUE, log=TRUE)/log(10)
+log10p(z)
 ```
 giving -log10(p) = 86858901.
 
