@@ -1,6 +1,8 @@
 # INF
 SCALLOP-INF analysis
 
+[OLINK](https://www.olink.com/products/) provides a dozen of panels each containing 92 proteins the details of which is in [Olink validation data all panels.xlsx](doc/Olink validation data all panels.xlsx) and the focus here is on Inflammation. Information on these panels can be retrieved into R via [OLINK.R](doc/OLINK.R).
+
 File / root  | Description
 ---------|---------------------------------------------------------------------------------------------------------------------
 [inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel linking [CVD1](doc/cvd1.txt) by [OLINK.R](doc/OLINK.R)
