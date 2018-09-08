@@ -6,7 +6,7 @@ The list of proteins on inflammation is within one of the panels from [OLINK](ht
 File / root  | Description
 ---------|---------------------------------------------------------------------------------------------------------------------
 [inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel
-[log10p.md](doc/log10p.md) | A very competitive log10(p) calculator
+[log10p.md](doc/log10p.md) | On a very competitive log10(p) calculator
 MMP12 | Bash ([MMP12.sh](doc/MMP12.sh)) and R ([MMP12.R](doc/MMP12.R)) scripts for MMP12-CHD analysis
 SERPINA1 | [SERPINA1.R](doc/SERPINA1.R) and [SERPINA1.pdf](doc/SERPINA1.pdf) which emulate [original version](doc/fig2.R) of the SOMAscan paper (Sun et al. 2018)
 SOMAscan | Methods ([SOMAscan.md](doc/SOMAscan.md), [SOMAscan.pdf](doc/SOMAscan.pdf), [SOMAscan.tif](doc/SOMAscan.tif)) and supplementary tables ([SOMAscan.xlsx](doc/SOMAscan.xlsx)) for the SOMAscan paper
