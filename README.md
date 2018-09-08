@@ -1,18 +1,7 @@
 # INF
 SCALLOP-INF analysis
 
-The list of proteins on inflammation is within one of the panels from [OLINK](https://www.olink.com/products/), each containing 92 proteins as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx). Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
-
-Files available in this repository are described in the following table.
-
-File / root  | Description
----------|---------------------------------------------------------------------------------------------------------------------
-[inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel
-[log10p.md](doc/log10p.md) | On a very competitive log10(p) calculator
-MMP12 | Bash ([MMP12.sh](doc/MMP12.sh)) and R ([MMP12.R](doc/MMP12.R)) scripts for MMP12-CHD analysis
-SERPINA1 | [SERPINA1.R](doc/SERPINA1.R) and [SERPINA1.pdf](doc/SERPINA1.pdf) which emulate [original version](doc/fig2.R) of the SOMAscan paper (Sun et al. 2018)
-SOMAscan | Methods ([SOMAscan.md](doc/SOMAscan.md), [SOMAscan.pdf](doc/SOMAscan.pdf), [SOMAscan.tif](doc/SOMAscan.tif)) and supplementary tables ([SOMAscan.xlsx](doc/SOMAscan.xlsx)) for the SOMAscan paper
-SecureCloud.md | Information for SecureCloud (unavailable here yet)
+The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels each containing 92 proteins as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx). Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
 
 ## UniProt IDs
 
@@ -24,6 +13,7 @@ The use of UniProt IDs is rationalised in two aspects,
 point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.txt](doc/hgTables.txt) is based on UCSC, checked over
 UniProt IDs as follows,
 ```bash
+grep inf1 olink.prot.list.txt | sed 's/inf1_//g;s/___/\t/g' > inf1.list
 sort -k2,2 inf1.list > 1
 awk '{FS=OFS="\t"; split($4,f,"-");$4=f[1];if(!index($1,"_")) print}' hgTables.txt | sort -k4,4 > 2
 join -t$'\t' -12 -24 1 2 > 12
@@ -42,6 +32,17 @@ As noted in MMP12.sh, the MMP12 case could have been done genomewide; the CAD su
 [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD). A colocalisation analysis on simulated 
 data can be found in the association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes) as 
 well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/master/BMI).
+
+## A summary of files
+
+File / root  | Description
+---------|---------------------------------------------------------------------------------------------------------------------
+[inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel
+[log10p.md](doc/log10p.md) | On a very competitive log10(p) calculator
+MMP12 | Bash ([MMP12.sh](doc/MMP12.sh)) and R ([MMP12.R](doc/MMP12.R)) scripts for MMP12-CHD analysis
+SERPINA1 | [SERPINA1.R](doc/SERPINA1.R) and [SERPINA1.pdf](doc/SERPINA1.pdf) which emulate [original version](doc/fig2.R) of the SOMAscan paper (Sun et al. 2018)
+SOMAscan | Methods ([SOMAscan.md](doc/SOMAscan.md), [SOMAscan.pdf](doc/SOMAscan.pdf), [SOMAscan.tif](doc/SOMAscan.tif)) and supplementary tables ([SOMAscan.xlsx](doc/SOMAscan.xlsx)) for the SOMAscan paper
+SecureCloud.md | Information for SecureCloud (unavailable here yet)
 
 ## References
 
