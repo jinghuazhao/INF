@@ -1,6 +1,6 @@
 # log10(p) and p for a very large z from Normal(0,1)
 
-It is generally known that p values in a GWAS could be very small, a genomewide significance is typically declared at 0.05/1000000=5e-8 assuming 1 million SNPs are used. This short note describes -log10(p) when the associate normal deviate is very large. The solution here is generic since a small p value coresponds to a very large z value, which is also the sqaure root of a chi-sqaured statistic, for instance.
+When a Normally distributed association statistic z is very large, it corresponds to a very small p value. A genomewide significance is declared at 0.05/1000000=5e-8 with Bonferroni correction assuming 1 million SNPs are tested. This short note describes -log10(p) when the associate normal deviate is very large. The solution here is generic since z is also the sqaure root of a chi-sqaured statistic, for instance.
 
 ## log10(p)
 First thing first, here is the anwser for log10(p) given z,
