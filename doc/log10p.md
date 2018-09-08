@@ -1,9 +1,9 @@
 # log10(p) and p for a very large z from Normal(0,1)
 
-## -log10(p)
+## log10(p)
 First thing first, here is the anwser for log10(p) given z,
 ```r
-# -log10(p) for a standard normal deviate z based on log()
+# log10(p) for a standard normal deviate z based on log()
 log10p <- function(z) log(2, base=10)+pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)/log(10)
 ```
 
@@ -14,7 +14,7 @@ We start with z=1.96 whose corresponding p value is approximately 0.05.
 ```
 giving an acceptable value 0.04999579, so we proceed to get log10(p)
 ```r
-log10(2)-log10(pnorm(-abs(z),lower.tail=TRUE))
+log10(2)+log10(pnorm(-abs(z),lower.tail=TRUE))
 ```
 leading to the expression above from the fact that log10(X)=log(X)/log(10) since log(),
 being the natural log function, ln() -- so log(exp(1)) = 1, in R, works far better on
