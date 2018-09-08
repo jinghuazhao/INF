@@ -4,7 +4,7 @@
 First thing first, here is the anwser for -log10(p) given z,
 ```r
 # -log10(p) for a standard normal deviate z based on log()
-log10p <- function(z) -log(2, base=10)-pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)/log(10)
+log10p <- function(z) log(2, base=10)+pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)/log(10)
 ```
 
 ## Rationale
@@ -12,9 +12,9 @@ We start with z=1.96 whose corresponding p value is approximately 0.05.
 ```r
 2*pnorm(-1.96,lower.tail=TRUE)
 ```
-giving an acceptable value 0.04999579, so we proceed to get -log10(p)
+giving an acceptable value 0.04999579, so we proceed to get log10(p)
 ```r
--log10(2)-log10(pnorm(-abs(z),lower.tail=TRUE))
+log10(2)-log10(pnorm(-abs(z),lower.tail=TRUE))
 ```
 leading to the expression above from the fact that log10(X)=log(X)/log(10) since log(),
 being the natural log function, ln() -- so log(exp(1)) = 1, in R, works far better on
@@ -25,11 +25,11 @@ the lower tail of the standard Normal distribution from which our p value is cal
 Now we have a stress test,
 ```r
 z <- 20000
-log10p(z)
+-log10p(z)
 ```
 giving -log10(p) = 86858901.
 
-## p, -log10(p) and the multiple precision arithmetic
+## p, log10(p) and the multiple precision arithmetic
 
 We would be curious about the p value itself as well, which is furnished with the Rmpfr package
 ```r
