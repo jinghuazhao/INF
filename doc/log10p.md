@@ -1,6 +1,6 @@
 # log10(p) and p for a very large z from Normal(0,1)
 
-When a Normally distributed association statistic z is very large, its corresponding p value is very small. A genomewide significance is declared at 0.05/1000000=5e-8 with Bonferroni correction assuming 1 million SNPs are tested. This short note describes how to get -log10(p), which is used in a Q-Q plot and software such as DEPICT. The solution here is generic since z is also the sqaure root of a chi-sqaured statistic, for instance.
+When a Normally distributed association statistic z is very large, its corresponding p value is very small. A genomewide significance is declared at 0.05/1000000=5e-8 with Bonferroni correction assuming 1 million SNPs are tested. This short note describes how to get -log10(p), which can be used in a Q-Q plot and software such as DEPICT. The solution here is generic since z is also the sqaure root of a chi-sqaured statistic, for instance.
 
 ## log10(p)
 First thing first, here is the anwser for log10(p) given z,
