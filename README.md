@@ -12,11 +12,6 @@ SERPINA1 | [SERPINA1.R](doc/SERPINA1.R) and [SERPINA1.pdf](doc/SERPINA1.pdf) whi
 SOMAscan | Methods ([SOMAscan.md](doc/SOMAscan.md), [SOMAscan.pdf](doc/SOMAscan.pdf), [SOMAscan.tif](doc/SOMAscan.tif)) and supplementary tables ([SOMAscan.xlsx](doc/SOMAscan.xlsx)) for the SOMAscan paper
 SecureCloud.md | Information for SecureCloud (unavailable here yet)
 
-As noted in MMP12.sh, the MMP12 case could have been done genomewide; the CAD summary statistics is described 
-[here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD). A colocalisation analysis on simulated 
-data can be found in the association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes) as 
-well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/master/BMI).
-
 ## Notes on UniProt IDs
 
 The use of UniProt IDs is rationalised in two aspects,
@@ -38,6 +33,13 @@ rm 1 2 12
 ```
 A UniProt ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While [inf1.csv](doc/inf1.csv) 
 edits Q4ACW9, [inf2.csv](doc/inf2.csv) is inline with UCSC with respect to P12034 and P30203.
+
+## Additional notes on analysis
+
+As noted in MMP12.sh, the MMP12 case could have been done genomewide; the CAD summary statistics is described 
+[here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD). A colocalisation analysis on simulated 
+data can be found in the association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes) as 
+well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/master/BMI).
 
 ## References
 
