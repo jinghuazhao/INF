@@ -39,7 +39,7 @@ require(Rmpfr)
 format(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE,log.p=FALSE))
 format(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE,log.p=TRUE))
 ```
-which gives p = 1.660579603192917090365313727164e-86858901 and -log10(p) = 400000021.6448521764816015432890,
+giving p = 1.660579603192917090365313727164e-86858901 and -log10(p) = 400000021.6448521764816015432890,
 respectively.
 
 We can then conclude that the order of magnitude is the same 86858901 even with a z big as this, the
