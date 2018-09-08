@@ -1,7 +1,7 @@
 # INF
 SCALLOP-INF analysis
 
-The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels each containing 92 proteins as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx). Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
+The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
 
 ## UniProt IDs
 
