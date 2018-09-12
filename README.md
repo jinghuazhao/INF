@@ -39,7 +39,6 @@ File / root  | Description
 ---------|---------------------------------------------------------------------------------------------------------------------
 [inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel
 [log10p.md](doc/log10p.md) | On a very competitive log10(p) calculator
-MMP12 | Bash ([MMP12.sh](doc/MMP12.sh)) and R ([MMP12.R](doc/MMP12.R)) scripts for MMP12-CHD analysis
 SecureCloud | [SecureCloud.md](SecureCloud.md) contains information for SecureCloud
 
 ## References
