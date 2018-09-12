@@ -38,7 +38,7 @@ well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/mas
 File     | Description
 ---------|---------------------------------------------------------------------------------------------------------------------
 [inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel
-[log10p.md](doc/log10p.md) | On a very competitive log10(p) calculator
+[log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
 [SecureCloud.md](SecureCloud.md) | Information for SecureCloud
 
 ## References
