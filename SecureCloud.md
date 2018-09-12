@@ -14,16 +14,13 @@ The repository contains the following files,
 
 Filespec     | Descrription
 -------------|-----------------------------------------
-README.md    | This document
-README.docx  | This document in .docx format
-list.sh      | Generation of file list and directory
-format.sh    | Code for format GWAS summary statistics
-st.sh        | git batch file
-doc/         | Oringal documents
+SecureCloud.md    | This document
+[list.sh](list.sh)      | Generation of file list and directory
+[format.sh](format.sh)    | Code for format GWAS summary statistics
+doc/         | Orignal documents
 sumstats/    | Directory for file list and study
 METAL/       | METAL/output scripts by protein
-METAL.qsub   | TORQUE qsub script for METAL
-SOMAscan.md  | SOMAscan by Sun, et al. (2018) Nature
+[METAL.qsub](METAL.qsub)   | TORQUE qsub script for METAL
 
 In total, 92 proteins are expected as given in
 [olink.prot.list.txt](doc/olink.prot.list.txt). Data processing so far
