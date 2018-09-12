@@ -7,7 +7,7 @@ The list of proteins on inflammation is within one of the [OLINK](https://www.ol
 
 The use of UniProt IDs is rationalised in two aspects,
 
-1. The protein list in [inf1.csv](doc/inf1.csv) found O43508 and Q4ACW9 are associated with the TNFSF12 and TWEAK gene, respectively.
+1. The protein list in [inf1.csv](doc/inf1.csv) found O43508 and Q4ACW9 are associated with the TNFSF12 and TWEAK genes, respectively.
 
 2. Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
 point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.txt](doc/hgTables.txt) is based on UCSC, checked over
