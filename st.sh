@@ -10,6 +10,8 @@ git add list.sh format.sh INTERVAL.awk PLINK.sh
 git commit -m "Programs"
 git add METAL.qsub METAL.sh
 git commit -m "METAL program"
+git add SecureCloud.md
+git commit -m "SecureCloud notes"
 git add st.sh
 git commit -m "st.sh"
 git push
