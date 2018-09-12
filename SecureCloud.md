@@ -72,8 +72,8 @@ For instance, once libreoffice and pandoc are loaded, we can view this
 file with
 
 ``` {.bash}
-pandoc README.md -o README.docx
-soffice README.docx
+pandoc SecureCloud.md -o SecureCloud.docx
+soffice SecureCloud.docx
 ```
 
 ## Parallel computing
