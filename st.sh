@@ -8,7 +8,7 @@ git add doc
 git commit -m "Documents and auxiliary files"
 git add list.sh format.sh INTERVAL.awk PLINK.sh
 git commit -m "Programs"
-git add METAL.qsub METAL.sh
+git add METAL.qsub
 git commit -m "METAL program"
 git add SecureCloud.md
 git commit -m "SecureCloud notes"
