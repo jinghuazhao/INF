@@ -28,9 +28,9 @@ edits Q4ACW9, [inf2.csv](doc/inf2.csv) is inline with UCSC with respect to P1203
 
 ## Analysis
 
-The CAD summary statistics is described [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD), for which 
-MAGMA and MR were exemplified -- as noted in MMP12.sh, the MMP12 case could have been done genomewide. A colocalisation analysis
-on simulated data can be found in the association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes)
+Example with the CAD summary statistics used for MAGMA and MR is described [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD)
+-- as noted in MMP12.sh, the MMP12 case could have been done genomewide. A colocalisation analysis on simulated data can be found in the
+association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes)
 as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/master/BMI).
 
 ## A summary of files
