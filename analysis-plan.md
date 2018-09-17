@@ -62,8 +62,3 @@ We will apply genomic control and the appropriate marker filters at this stage (
 a.	Marker exclusion filters: we will apply imputation quality filters at the meta-analysis stage. Please do not apply these filters yourself and provide unfiltered results. 
 b.	Genomic control (GC): genomic control will be applied to each study at the meta-analysis stage (single GC). Please do not apply GC to GWAS results and provide uncorrected standard errors, as (double) GC will be applied at the meta-analysis stage. 
 c.	Significance: the threshold for the genome-wide analyses will be set at 5 x 10-8. The results will be replicated in independent cohorts so no need for additional correction.
-
-9.	Uploading of results data to TRYGGVE server
-
-Known problems include issues with the SMS-step (4), particularly for US-telephone numbers. If you don’t receive passcode by SMS, we can setup with google authenticator instead.
-For further support contact either Lasse Folkersen (lasfol@cbs.dtu.dk) or Ali Syed (alisyed@cbs.dtu.dk) 
