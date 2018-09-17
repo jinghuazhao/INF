@@ -40,7 +40,7 @@ File     | Description
 doc/     | Some documents and auxiliary files
 METAL/   | METAL results
 sumstats/| reformatted summary statistics by cohort
-[analysis-planmd](analysis-plan.md) | Analysis plan
+[analysis-plan.md](analysis-plan.md) | Analysis plan
 [inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel
 [log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
 [SecureCloud.md](SecureCloud.md) | Information for SecureCloud
