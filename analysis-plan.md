@@ -38,8 +38,8 @@ Please fill out the attached descriptive statistics spreadsheet and use the nami
 
 SNP table for association results. Please include the following columns. Missing values are coded as “NA”.
 
-	|Variable name | Description
---------|--------------|------------
+   | Variable name | Description
+---|---------------|------------
 V1 | SNPID | SNP ID as rs number
 V2 | CHR | Chromosome number (1-22)
 V3 | POS | Physical position for the reference sequence (please indicate NCBI build in descriptive file)
