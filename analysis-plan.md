@@ -1,28 +1,31 @@
 # CVD1 analysis plan
 
-Olink protein assays
+The plan is quoted here since it largely overlaps with INFlammation analysis.
+
+## Olink protein assays
 
 The aim is to keep as many proteins as possible for the meta-analysis and we therefore suggest to dichotomize proteins with more than 20% missing values. The expectation is that these proteins will largely be the same across cohorts. Please include all proteins for which you have usable data, and further filtering can be done at the meta-analysis stage. At a later stage in the collaboration, imputation of missing values will be discussed.
+
 *	Use standard linear regression for assays with 80 % of samples above the lower detection limit. 
 *	Dichotomize proteins with more than 20 % of samples below the lower detection limit and code values below the detection limit as 0 and those above as 1. 
 *	Rank-based inverse normal transformation
 
-List of proteins. 
+## List of proteins
 
-SNPs
+## SNPs
 
 *	1000 genomes imputation, any version 
 *	SNPs will be filtered for imputation quality at time of meta-analysis, but please filter out SNPs with IMPUTE INFO quality less than 0.2
 *	Standard QC, including call rate <95 % or failed Illumina genotype calling, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, sample call rate <95 %, Bonferroni corrected Hardy-Weinberg Equilibrium test.
 
-Association analysis
+## Association analysis
 
 *	Linear regression with adjustment for study-specific covariates. These should always include age at time of sample collection, gender and adjustment for population structure / geography if applicable (e.g across countries). Sample storage time and season of collection if applicable. 
 *	Use imputation-dosages
 *	Additive genetic model
 *	Separate the analyses for men and women for X chromosome SNPs (exception for cohorts that have already performed analyses)
 
-Stratification
+## Stratification
 
 *	Analyse patients and controls separately –results will be merged at meta-analysis stage
 
