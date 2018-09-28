@@ -10,12 +10,12 @@ The use of UniProt IDs is rationalised in two aspects,
 1. The protein list in [inf1.csv](doc/inf1.csv) found O43508 and Q4ACW9 are associated with the TNFSF12 and TWEAK genes, respectively.
 
 2. Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
-point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.txt](doc/hgTables.txt) is based on UCSC, checked over
+point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.tsv](doc/hgTables.tsv) is based on UCSC, checked over
 UniProt IDs as follows,
 ```bash
 grep inf1 olink.prot.list.txt | sed 's/inf1_//g;s/___/\t/g' > inf1.list
 sort -k2,2 inf1.list > 1
-awk '{FS=OFS="\t"; split($4,f,"-");$4=f[1];if(!index($1,"_")) print}' hgTables.txt | sort -k4,4 > 2
+awk '{FS=OFS="\t"; split($4,f,"-");$4=f[1];if(!index($1,"_")) print}' hgTables.tsv | sort -k4,4 > 2
 join -t$'\t' -12 -24 1 2 > 12
 # 90 lines
 wc -l 12
