@@ -5,7 +5,7 @@ The list of proteins on inflammation is within one of the [OLINK](https://www.ol
 
 ## UniProt IDs
 
-The use of UniProt IDs is rationalised in two aspects,
+The use of [UniProt](https://www.uniprot.org/) IDs is rationalised in two aspects,
 
 1. The protein list in [inf1.csv](doc/inf1.csv) found O43508 and Q4ACW9 are associated with the TNFSF12 and TWEAK genes, respectively.
 
