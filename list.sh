@@ -6,7 +6,7 @@ if [ ! -d sumstats ]; then mkdir sumstats; fi
 
 ## INF list of proteins
 grep inf1 doc/olink.prot.list.txt| sed 's/inf1_//g;s/___/\t/g' > inf1.tmp
-echo -e "CD6\tP30202\nCD6\tQ8WWJ7\nFGF.5\tP12034" >> inf1.tmp
+echo -e "CD6\tP30203\nFGF.5\tP12034" >> inf1.tmp
 sort -k1,1 inf1.tmp > inf1.list
 
 ## file list
