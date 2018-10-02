@@ -1,11 +1,13 @@
-# 23-8-2018 JHZ
+# 2-10-2018 JHZ
 
 module load parallel/20170822
 
 if [ ! -d sumstats ]; then mkdir sumstats; fi
 
 ## INF list of proteins
-grep inf1 doc/olink.prot.list.txt| sed 's/inf1_//g;s/___/\t/g' | sort -k1,1 > inf1.list
+grep inf1 doc/olink.prot.list.txt| sed 's/inf1_//g;s/___/\t/g' > inf1.tmp
+echo -e "CD6\tP30202\nCD6\tQ8WWJ7\nFGF.5\tP12034" >> inf1.tmp
+sort -k1,1 inf1.tmp > inf1.list
 
 ## file list
 awk -vOFS="\t" '{l=$1;gsub(/\./,"_",$1);print $1,$2,l}' inf1.list > inf1_gene
