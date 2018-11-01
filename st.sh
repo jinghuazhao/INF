@@ -14,7 +14,7 @@ git add analysis-plan.md
 git commit "Analysis plan"
 git add list.sh format.sh analysis.sh analysis.ini SecureCloud.sh files
 git commit -m "Programs"
-git add METAL.qsub
+git add metal.sh METAL.qsub
 git commit -m "METAL program"
 git add SecureCloud.md
 git commit -m "SecureCloud notes"
