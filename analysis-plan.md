@@ -8,7 +8,7 @@ The aim is to keep as many proteins as possible for the meta-analysis and we the
 
 *	Use standard linear regression for assays with 80 % of samples above the lower detection limit. 
 *	Dichotomize proteins with more than 20 % of samples below the lower detection limit and code values below the detection limit as 0 and those above as 1. 
-*	Rank-based inverse normal transformation
+*	Rank-based inverse normal transformation, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap
 
 ## List of proteins
 
