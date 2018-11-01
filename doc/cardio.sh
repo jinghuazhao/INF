@@ -24,11 +24,14 @@ function CD6()
 export BGEN_DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 export BGEN=$BGEN_DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only
 
-qctool -g $BGEN.bgen -s $BGEN.sample -snp-stats -osnp INTERVAL.snpstats
+function snpstats()
+{
+  qctool -g $BGEN.bgen -s $BGEN.sample -snp-stats -osnp INTERVAL.snpstats
 
-awk 'NR==10' INTERVAL.snpstats | \
-awk '{gsub(/\t/, "\n",$0)};1'| \
-awk '{print "#" NR, $1}'
+  awk 'NR==10' INTERVAL.snpstats | \
+  awk '{gsub(/\t/, "\n",$0)};1'| \
+  awk '{print "#" NR, $1}'
+}
 
 #1 alternate_ids
 #2 rsid
@@ -57,26 +60,31 @@ awk '{print "#" NR, $1}'
 #25 NULL
 #26 total
 
-head -1 INTERVAL.snpstats
-awk '
-{
-   OFS="\t"
-   if (NR>1)
-   {
-     CHR=$3
-     POS=$4
-     a1=$5
-     a2=$6
-     if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
-     else snpid="chr" CHR ":" POS "_" a1 "_" a2
-     $1=snpid
-   }
-   print snpid, $2
-}' INTERVAL.snpstats | \
-sort | \
-join - INTERVAL.clumped | \
-cut -d' ' -f2 > INTERVAL.rsid
+sed 's|work/INTERVAL.||g;s/.clumped://g' work/INTERVAL.clumped| \
+awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > work/INTERVAL.clump.dat
 
+function signals()
+{
+  head -1 INTERVAL.snpstats
+  awk '
+  {
+     OFS="\t"
+     if (NR>1)
+     {
+       CHR=$3
+       POS=$4
+       a1=$5
+       a2=$6
+       if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+       else snpid="chr" CHR ":" POS "_" a1 "_" a2
+       $1=snpid
+     }
+     print snpid, $2
+  }' INTERVAL.snpstats | \
+  sort | \
+  join - INTERVAL.clumped | \
+  cut -d' ' -f2 > INTERVAL.rsid
+}
 
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
 export BS=/scratch/jp549/apps/bram-scripts
