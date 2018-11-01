@@ -123,7 +123,6 @@ rm -f work/INTERVAL.ldr
   grep -v SNP work/INTERVAL.*.ldr.cojo
 ) > work/INTERVAL.ldr
 
-
 echo "--> Q-Q, Manhattan, LocusZoom plots"
 
 export p=IFN.gamma
