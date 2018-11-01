@@ -1,4 +1,4 @@
-# 27-10-2018 JHZ
+# 1-11-2018 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
@@ -52,7 +52,7 @@ done
 module load metal/20110325 parallel/20170822
 ls METAL/*.metal | \
 sed 's/.metal//g' | \
-parallel --env HOME -j8 -C' ' '
+parallel --env HOME -j3 -C' ' '
   metal $HOME/INF/{}.metal; \
   gzip -f $HOME/INF/{}-1.tbl
 '
