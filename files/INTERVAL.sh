@@ -43,6 +43,13 @@ plink --bfile EUR1KG \
 rm work/INTERVAL.{}.tmp
 '
 
+rm -f work/INTERVAL.clumped
+(
+  grep CHR work/INTERVAL.*.clumped | \
+  head -1
+  grep -v CHR work/INTERVAL.*.clumped
+) > work/INTERVAL.clumped
+
 echo "--> GC lambda"
 
 (
@@ -101,6 +108,21 @@ parallel -j3 --env rt -C' ' '
 gcta64 --bfile EUR1KG --cojo-file work/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
        --exclude-region-bp 6 30000000 5000 --thread-num 3 --out work/{}
 '
+
+rm -f work/INTERVAL.jma
+(
+  grep SNP work/INTERVAL.*.jma.cojo | \
+  head -1
+  grep -v SNP work/INTERVAL.*.jma.cojo
+) > work/INTERVAL.jma
+
+rm -f work/INTERVAL.ldr
+(
+  grep SNP work/INTERVAL.*.ldr.cojo | \
+  head -1
+  grep -v SNP work/INTERVAL.*.ldr.cojo
+) > work/INTERVAL.ldr
+
 
 echo "--> Q-Q, Manhattan, LocusZoom plots"
 
