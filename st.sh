@@ -12,7 +12,7 @@ git add METAL
 git commit -m "METAL results"
 git add analysis-plan.md
 git commit "Analysis plan"
-git add list.sh format.sh INTERVAL.awk PLINK.sh files
+git add list.sh format.sh analysis.sh analysis.ini files
 git commit -m "Programs"
 git add METAL.qsub
 git commit -m "METAL program"
