@@ -1,6 +1,6 @@
-# CVD1 analysis plan
+The cvd1 plan is quoted here since it largely overlaps with INFlammation analysis.
 
-The plan is quoted here since it largely overlaps with INFlammation analysis.
+## cvd1 analysis plan
 
 ## Olink protein assays
 
