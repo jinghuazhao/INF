@@ -37,7 +37,7 @@ as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/
 
 File     | Description
 ---------|---------------------------------------------------------------------------------------------------------------------
-doc/     | Some documents and auxiliary files
+[doc/](doc) | Some documents and auxiliary files
 METAL/   | METAL results
 sumstats/| reformatted summary statistics by cohort
 [analysis-plan.md](analysis-plan.md) | Analysis plan
