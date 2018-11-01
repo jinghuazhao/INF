@@ -1,7 +1,5 @@
 The cvd1 plan is quoted here since it largely overlaps with INFlammation analysis.
 
-## cvd1 analysis plan
-
 ## Olink protein assays
 
 The aim is to keep as many proteins as possible for the meta-analysis and we therefore suggest to dichotomize proteins with more than 20% missing values. The expectation is that these proteins will largely be the same across cohorts. Please include all proteins for which you have usable data, and further filtering can be done at the meta-analysis stage. At a later stage in the collaboration, imputation of missing values will be discussed.
