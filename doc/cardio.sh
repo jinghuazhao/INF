@@ -16,7 +16,7 @@ function CD6()
        beta=$24;
        se=$25;
        p=$22;
-       print SNP,a2,a1,EAF,beta,se,p,N,chr,pos;
+       if(p<=1e-5) print SNP,a2,a1,EAF,beta,se,p,N,chr,pos;
   }' | \
   sort -k9,9n -k10,10n > CD6
 }
