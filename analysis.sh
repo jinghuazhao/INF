@@ -129,7 +129,8 @@ cut -f1-8 --output-delimiter=" " \
 ls METAL/*.tbl.gz | \
 xargs -l basename -s -1.tbl.gz | \
 parallel -j3 --env rt -C' ' '
-gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 --exclude-region-bp 6 30000000 5000 --thread-num 3 --out $rt/{}
+gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
+       --exclude-region-bp 6 30000000 5000 --thread-num 3 --out $rt/{}
 '
 #1 MarkerName
 #2 Allele1
