@@ -64,4 +64,4 @@ We will apply genomic control and the appropriate marker filters at this stage (
 
 a.	Marker exclusion filters: we will apply imputation quality filters at the meta-analysis stage. Please do not apply these filters yourself and provide unfiltered results. 
 b.	Genomic control (GC): genomic control will be applied to each study at the meta-analysis stage (single GC). Please do not apply GC to GWAS results and provide uncorrected standard errors, as (double) GC will be applied at the meta-analysis stage. 
-c.	Significance: the threshold for the genome-wide analyses will be set at 5 x 10-8. The results will be replicated in independent cohorts so no need for additional correction.
+c.	Significance: the threshold for the genome-wide analyses will be set at 5 x 10<sup>-8</sup>. The results will be replicated in independent cohorts so no need for additional correction.
