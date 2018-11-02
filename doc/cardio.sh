@@ -1,8 +1,9 @@
-# 1-11-2018 JHZ
+# 2-11-2018 JHZ
 
 export INTERVAL=/scratch/jp549/olink-merged-output
 
 function CD6()
+$ SUMSTATS for depict
 {
   gunzip -c $INTERVAL/INTERVAL_inf1_CD6___Q8WWJ7_chr_merged.gz | \
   awk -vOFS="\t" '(NR>1){
@@ -32,7 +33,7 @@ function snpstats()
   awk '{gsub(/\t/, "\n",$0)};1'| \
   awk '{print "#" NR, $1}'
 }
-
+# list of columns from operations above
 #1 alternate_ids
 #2 rsid
 #3 chromosome
@@ -60,8 +61,16 @@ function snpstats()
 #25 NULL
 #26 total
 
-sed 's|work/INTERVAL.||g;s/.clumped://g' work/INTERVAL.clumped| \
-awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > work/INTERVAL.clump.dat
+cd work
+sed 's|work/INTERVAL.||g;s/.clumped://g' INTERVAL.clumped | \
+awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > INTERVAL.clump.dat
+
+sed 's|work/INTERVAL.||g;s/.jma.cojo:/ /g' INTERVAL.jma | \
+awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > INTERVAL.jma.dat
+
+sed 's|work/INTERVAL.||g;s/.ldr.cojo:/ /g' INTERVAL.ldr| \
+awk '{$1=$1; if(NR>1 && NF>1) print}' > INTERVAL.ldr.dat
+cd -
 
 function signals()
 {
