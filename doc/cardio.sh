@@ -89,6 +89,8 @@ sed 's|work/INTERVAL.||g;s/.ldr.cojo:/ /g' INTERVAL.ldr| \
 awk '{$1=$1; if(NR>1 && NF>1) print}' > INTERVAL.ldr.dat
 cd -
 
+# see also http://www.phenoscanner.medschl.cam.ac.uk
+
 module load phenoscanner/phenoscanner_v1.1
 phenoscanner -c All -l No -p 0.00001 -i INTERVAL.ps -o INTERVAL
 
