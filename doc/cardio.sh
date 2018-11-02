@@ -74,7 +74,7 @@ function snpstats_typed()
 
 cd work
 sed 's|work/INTERVAL.||g;s/.clumped://g' INTERVAL.clumped | \
-awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > INTERVAL.clump.dat
+awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > INTERVAL.clumped.dat
 
 sed 's|work/INTERVAL.||g;s/.jma.cojo:/ /g' INTERVAL.jma | \
 awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > INTERVAL.jma.dat
