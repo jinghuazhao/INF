@@ -10,7 +10,7 @@ function CD6()
   gunzip -c $INTERVAL/INTERVAL_inf1_CD6___Q8WWJ7_chr_merged.gz | \
   awk -vOFS="\t" '(NR>1){
        SNP=$2;
-       chr=$3; sub(/0/,"",chr);
+       chr=$3; sub(/^0/,"",chr);
        pos=$4;
        a1=$5;
        a2=$6;
@@ -113,7 +113,7 @@ parallel -j5 --env REF -C' ' '
   awk "NR>1" | \
   awk "{\
     rsid=\$1;chr=\$2;pos=\$3;a1=\$4;a2=\$5; \
-    gsub(/0/,\"\",chr); \
+    gsub(/^0/,\"\",chr); \
     if (a1>a2) snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1; \
     else snpid=\"chr\" \":\" pos \"_\" a1 \"_\" a2; \
     print snpid, rsid \
