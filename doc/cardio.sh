@@ -26,7 +26,6 @@ export BGEN=$BGEN_DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosoma
 function snpstats_typed()
 {
   qctool -g $BGEN.bgen -s $BGEN.sample -snp-stats -osnp INTERVAL.snpstats
-
   awk 'NR==10' INTERVAL.snpstats | \
   awk '{gsub(/\t/, "\n",$0)};1'| \
   awk '{print "#" NR, $1}'
@@ -78,6 +77,10 @@ awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > INTERVAL.clumped.dat
 
 sed 's|work/INTERVAL.||g;s/.jma.cojo:/ /g' INTERVAL.jma | \
 awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > INTERVAL.jma.dat
+awk 'NR>1' INTERVAL.jma.dat | \
+sort -k2,2n -k4,4n | \
+awk '{print "chr" $2 ":" $4}' | \
+uniq > INTERVAL.ps
 
 sed 's|work/INTERVAL.||g;s/.ldr.cojo:/ /g' INTERVAL.ldr| \
 awk '{$1=$1; if(NR>1 && NF>1) print}' > INTERVAL.ldr.dat
@@ -109,8 +112,8 @@ export TMPDIR=/scratch/jhz22/INF/work
       else snpid=\"chr\" \":\" pos \"_\" a1 \"_\" a2; \
       print snpid, rsid \
     }"'
-) | \
-sort -k1,1 | \
+)  > INTERVAL.snpid
+sort -k1,1 INTERVAL.snpid | \
 gzip -f > INTERVAL.snpid.gz
 
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
