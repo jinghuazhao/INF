@@ -1,3 +1,6 @@
+#!/bin/bash
+. /etc/profile.d/modules.sh
+
 # 2-11-2018 JHZ
 
 export INTERVAL=/scratch/jp549/olink-merged-output
@@ -85,6 +88,9 @@ uniq > INTERVAL.ps
 sed 's|work/INTERVAL.||g;s/.ldr.cojo:/ /g' INTERVAL.ldr| \
 awk '{$1=$1; if(NR>1 && NF>1) print}' > INTERVAL.ldr.dat
 cd -
+
+module load phenoscanner/phenoscanner_v1.1
+phenoscanner -c All -l No -p 0.00001 -i INTERVAL.ps -o INTERVAL
 
 function signals()
 {
