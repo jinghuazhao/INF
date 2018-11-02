@@ -107,22 +107,39 @@ function signals()
 
 export REF=/scratch/curated_genetic_data/reference_files/interval/
 export TMPDIR=/scratch/jhz22/INF/work
-(
-  cut -f2-6 $REF/impute_1_interval.snpstats
-  seq 22 | \
-  parallel -j5 --env REF -C' ' '
-    cut -f2-6 $REF/impute_{}_interval.snpstats | \
-    awk "NR>1" | \
-    awk "{\
-      rsid=\$1;chr=\$2;pos=\$3;a1=\$4;a2=\$5; \
-      gsub(/0/,\"\",chr); \
-      if (a1>a2) snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1; \
-      else snpid=\"chr\" \":\" pos \"_\" a1 \"_\" a2; \
-      print snpid, rsid \
-    }"'
-) | \
-sort -k1,1 | \
-gzip -f > INTERVAL.snpid.gz
+seq 22 | \
+parallel -j5 --env REF -C' ' '
+  cut -f2-6 $REF/impute_{}_interval.snpstats | \
+  awk "NR>1" | \
+  awk "{\
+    rsid=\$1;chr=\$2;pos=\$3;a1=\$4;a2=\$5; \
+    gsub(/0/,\"\",chr); \
+    if (a1>a2) snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1; \
+    else snpid=\"chr\" \":\" pos \"_\" a1 \"_\" a2; \
+    print snpid, rsid \
+  }" > INTERVAL.snpid-{}.gz'
+zcat INTERVAL.snpid-1.gz \
+     INTERVAL.snpid-2.gz \
+     INTERVAL.snpid-3.gz \
+     INTERVAL.snpid-4.gz \
+     INTERVAL.snpid-5.gz \
+     INTERVAL.snpid-6.gz \
+     INTERVAL.snpid-7.gz \
+     INTERVAL.snpid-8.gz \
+     INTERVAL.snpid-9.gz \
+     INTERVAL.snpid-10.gz \
+     INTERVAL.snpid-11.gz \
+     INTERVAL.snpid-12.gz \
+     INTERVAL.snpid-13.gz \
+     INTERVAL.snpid-14.gz \
+     INTERVAL.snpid-15.gz \
+     INTERVAL.snpid-16.gz \
+     INTERVAL.snpid-17.gz \
+     INTERVAL.snpid-18.gz \
+     INTERVAL.snpid-19.gz \
+     INTERVAL.snpid-20.gz \
+     INTERVAL.snpid-21.gz \
+     INTERVAL.snpid-22.gz > INTERVAL.snpid.gz
 
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
