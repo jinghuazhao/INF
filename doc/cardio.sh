@@ -108,9 +108,9 @@ function signals()
 export REF=/scratch/curated_genetic_data/reference_files/interval/
 export TMPDIR=/scratch/jhz22/INF/work
 (
-  cut -f2-6
+  cut -f2-6 impute_1_interval.snpstats
   seq 22 | \
-  parallel -j1 --env REF -C' ' '
+  parallel -j5 --env REF -C' ' '
     cut -f2-6 $REF/impute_{}_interval.snpstats | \
     awk "NR>1" | \
     awk "{\
@@ -120,8 +120,8 @@ export TMPDIR=/scratch/jhz22/INF/work
       else snpid=\"chr\" \":\" pos \"_\" a1 \"_\" a2; \
       print snpid, rsid \
     }"'
-)  > INTERVAL.snpid
-sort -k1,1 INTERVAL.snpid | \
+) | \
+sort -k1,1 | \
 gzip -f > INTERVAL.snpid.gz
 
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
