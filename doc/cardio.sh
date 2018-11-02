@@ -89,22 +89,6 @@ sed 's|work/INTERVAL.||g;s/.ldr.cojo:/ /g' INTERVAL.ldr| \
 awk '{$1=$1; if(NR>1 && NF>1) print}' > INTERVAL.ldr.dat
 cd -
 
-# see also http://www.phenoscanner.medschl.cam.ac.uk
-
-module load phenoscanner/phenoscanner_v1.1
-phenoscanner -c All -l No -p 0.00001 -i INTERVAL.ps -o INTERVAL
-
-function signals()
-{
-  cd work
-  awk 'NR>1' INTERVAL.clump.dat | \
-  sort -k2,2 | \
-  cut -d' ' -f1,2 | \
-  join -12 -21 - INTERVAL.snpid | \
-  cut -d' ' -f2 > INTERVAL.rsid
-  cd -
-}
-
 export REF=/scratch/curated_genetic_data/reference_files/interval/
 export TMPDIR=/scratch/jhz22/INF/work
 seq 22 | \
@@ -142,6 +126,22 @@ cat INTERVAL.snpid-1.gz \
     INTERVAL.snpid-21.gz \
     INTERVAL.snpid-22.gz > INTERVAL.snpid.gz
 rm INTERVAL.snpid-*.gz
+
+# see also http://www.phenoscanner.medschl.cam.ac.uk
+
+module load phenoscanner/phenoscanner_v1.1
+phenoscanner -c All -l No -p 0.00001 -i INTERVAL.ps -o INTERVAL
+
+function signals()
+{
+  awk 'NR>1' INTERVAL.jma.dat | \
+  sort -k3,3 | \
+  cut -d' ' -f1,3 > INTERVAL.jma.snpid
+  gunzip -c INTERVAL.snpid.gz | \
+  sort -k1,1 | \
+  join -11 -22 - INTERVAL.jma.snpid | \
+  cut -d' ' -f2 > INTERVAL.rsid
+}
 
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
