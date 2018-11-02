@@ -125,6 +125,7 @@ awk -vOFS="\t" "(NR>1 && \$14>0) { \
 sort -k9,9n -k10,10n | \
 cut -f1-8 --output-delimiter=" " \
 ) > $rt/{}.ma; \
+'
 
 ls METAL/*.tbl.gz | \
 xargs -l basename -s -1.tbl.gz | \
