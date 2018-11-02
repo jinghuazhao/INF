@@ -3,7 +3,7 @@
 export INTERVAL=/scratch/jp549/olink-merged-output
 
 function CD6()
-$ SUMSTATS for depict
+# SUMSTATS for depict
 {
   gunzip -c $INTERVAL/INTERVAL_inf1_CD6___Q8WWJ7_chr_merged.gz | \
   awk -vOFS="\t" '(NR>1){
@@ -32,6 +32,19 @@ function snpstats()
   awk 'NR==10' INTERVAL.snpstats | \
   awk '{gsub(/\t/, "\n",$0)};1'| \
   awk '{print "#" NR, $1}'
+  cut -f1,2,4,5,6 INTERVAL.snpstats | \
+  awk '(NR>10 && !/success/)' | \
+  awk '
+  {
+     CHR=$1
+     POS=$3
+     a1=$4
+     a2=$5
+     if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+     else snpid="chr" CHR ":" POS "_" a1 "_" a2
+     print snpid, $2
+  }' | \
+  sort -k1,1 > INTERVAL.snpid
 }
 # list of columns from operations above
 #1 alternate_ids
@@ -74,26 +87,16 @@ cd -
 
 function signals()
 {
-  head -1 INTERVAL.snpstats
-  awk '
-  {
-     OFS="\t"
-     if (NR>1)
-     {
-       CHR=$3
-       POS=$4
-       a1=$5
-       a2=$6
-       if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
-       else snpid="chr" CHR ":" POS "_" a1 "_" a2
-       $1=snpid
-     }
-     print snpid, $2
-  }' INTERVAL.snpstats | \
-  sort | \
-  join - INTERVAL.clumped | \
+  cd work
+  awk 'NR>1' INTERVAL.clump.dat | \
+  sort -k2,2 | \
+  cut -d' ' -f1,2 | \
+  join -12 -21 - INTERVAL.snpid | \
   cut -d' ' -f2 > INTERVAL.rsid
+  cd -
 }
+
+signals
 
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
 export BS=/scratch/jp549/apps/bram-scripts
