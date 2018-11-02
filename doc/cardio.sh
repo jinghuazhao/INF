@@ -97,8 +97,8 @@ function signals()
 }
 
 export REF=/scratch/curated_genetic_data/reference_files/interval/
+export TMPDIR=/scratch/jhz22/INF/work
 (
-  head -1 $REF/impute_1_interval.snpstats | \
   cut -f2-6
   seq 22 | \
   parallel -j1 --env REF -C' ' '
@@ -112,6 +112,7 @@ export REF=/scratch/curated_genetic_data/reference_files/interval/
       print snpid, rsid \
     }"'
 ) | \
+sort -k1,1 | \
 gzip -f > INTERVAL.snpid.gz
 
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
