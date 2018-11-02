@@ -107,11 +107,12 @@ export REF=/scratch/curated_genetic_data/reference_files/interval/
     awk "{\
       rsid=\$1;chr=\$2;pos=\$3;a1=\$4;a2=\$5; \
       gsub(/0/,\"\",chr); \
-      if (a1>a2) snpid="chr" chr \":\" pos \"_\" a2 \"_\" a1; \
-      else snpid="chr" \":\" pos \"_\" a1 \"_\" a2; \
+      if (a1>a2) snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1; \
+      else snpid=\"chr\" \":\" pos \"_\" a1 \"_\" a2; \
       print snpid, rsid \
     }"'
-)
+) | \
+gzip -f > INTERVAL.snpid.gz
 
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
 export BS=/scratch/jp549/apps/bram-scripts
