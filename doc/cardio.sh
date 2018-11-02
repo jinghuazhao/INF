@@ -108,7 +108,7 @@ function signals()
 export REF=/scratch/curated_genetic_data/reference_files/interval/
 export TMPDIR=/scratch/jhz22/INF/work
 (
-  cut -f2-6 impute_1_interval.snpstats
+  cut -f2-6 $REF/impute_1_interval.snpstats
   seq 22 | \
   parallel -j5 --env REF -C' ' '
     cut -f2-6 $REF/impute_{}_interval.snpstats | \
