@@ -118,7 +118,7 @@ parallel -j5 --env REF -C' ' '
     else snpid=\"chr\" \":\" pos \"_\" a1 \"_\" a2; \
     print snpid, rsid \
   }" | \
-gzip -f > INTERVAL.snpid-{}.gz'
+  gzip -f > INTERVAL.snpid-{}.gz'
 zcat INTERVAL.snpid-1.gz \
      INTERVAL.snpid-2.gz \
      INTERVAL.snpid-3.gz \
