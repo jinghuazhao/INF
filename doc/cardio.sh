@@ -25,7 +25,7 @@ function CD6()
 export BGEN_DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 export BGEN=$BGEN_DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only
 
-function snpstats()
+function snpstats_typed()
 {
   qctool -g $BGEN.bgen -s $BGEN.sample -snp-stats -osnp INTERVAL.snpstats
 
@@ -96,12 +96,26 @@ function signals()
   cd -
 }
 
-signals
+export REF=/scratch/curated_genetic_data/reference_files/interval/
+(
+  head -1 $REF/impute_1_interval.snpstats | \
+  cut -f2-6
+  seq 22 | \
+  parallel -j1 --env REF -C' ' '
+    cut -f2-6 $REF/impute_{}_interval.snpstats | \
+    awk "NR>1" | \
+    awk "{\
+      rsid=\$1;chr=\$2;pos=\$3;a1=\$4;a2=\$5; \
+      gsub(/0/,\"\",chr); \
+      if (a1>a2) snpid="chr" chr \":\" pos \"_\" a2 \"_\" a1; \
+      else snpid="chr" \":\" pos \"_\" a1 \"_\" a2; \
+      print snpid, rsid \
+    }"'
+)
 
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
 export BS=/scratch/jp549/apps/bram-scripts
 export INF=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
-export REF=/scratch/curated_genetic_data/reference_files/interval/
 
 function NOTE()
 {
