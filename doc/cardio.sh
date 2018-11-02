@@ -141,6 +141,7 @@ cat INTERVAL.snpid-1.gz \
     INTERVAL.snpid-20.gz \
     INTERVAL.snpid-21.gz \
     INTERVAL.snpid-22.gz > INTERVAL.snpid.gz
+rm INTERVAL.snpid-*.gz
 
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
