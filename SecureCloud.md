@@ -92,7 +92,7 @@ Resource and QUEue Manager (TORQUE)](https://en.wikipedia.org/wiki/TORQUE) contr
 distributed compute nodes, enabling integration with [Moab cluster
 suite](https://en.wikipedia.org/wiki/Moab_Cluster_Suite) and extending
 [Portable Batch System (PBS)](https://en.wikipedia.org/wiki/Portable_Batch_System) with respect
-to extend scalability, fault tolerance, and functionality. Iformation on
+to extend scalability, fault tolerance, and functionality. Information on
 job scheduling on Computerome is availble from https://www.computerome.dk/display/CW/Batch+System,
 
 However, the SCALLOP securitycloud is a 1-node cloud and we resort to
