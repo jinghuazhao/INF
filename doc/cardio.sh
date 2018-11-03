@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# 2-11-2018 JHZ
+# 3-11-2018 JHZ
 
 export BGEN_DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 export BGEN=$BGEN_DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only
@@ -152,7 +152,7 @@ function CD6()
        beta=$24;
        se=$25;
        p=$22;
-       if(p<=1e-5) print SNP,a2,a1,EAF,beta,se,p,N,chr,pos;
+       if(SNP!="." && p<=0.1) print SNP,a2,a1,EAF,beta,se,p,N,chr,pos;
   }' | \
   sort -k9,9n -k10,10n > CD6
 }
