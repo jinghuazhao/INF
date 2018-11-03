@@ -14,7 +14,7 @@ The aim is to keep as many proteins as possible for the meta-analysis and we the
 
 *	1000 genomes imputation, any version 
 *	SNPs will be filtered for imputation quality at time of meta-analysis, but please filter out SNPs with IMPUTE INFO quality less than 0.2
-*	Standard QC, including call rate <95 % or failed Illumina genotype calling, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, sample call rate <95 %, Bonferroni corrected Hardy-Weinberg Equilibrium test.
+*	Standard QC, including call rate < 95% or failed Illumina genotype calling, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, sample call rate < 95%, Bonferroni corrected Hardy-Weinberg Equilibrium test.
 
 ## Association analysis
 
