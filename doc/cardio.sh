@@ -165,6 +165,8 @@ function snp_gene()
   }' INTERVAL.snpid_rsid > INTERVAL.bed
 # The following module is available on cardio but it does not contain the command.
 # module load bedtools/2.4.26
+# It requires at least 4.8.1 to compile bedtools 2.27.1
+# module load gcc/4.8.1
   intersectBed -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.bedtools
   cd -
 }
