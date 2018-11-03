@@ -5,7 +5,7 @@ The cvd1 plan is quoted here since it largely overlaps with INFlammation analysi
 The aim is to keep as many proteins as possible for the meta-analysis and we therefore suggest to dichotomize proteins with more than 20% missing values. The expectation is that these proteins will largely be the same across cohorts. Please include all proteins for which you have usable data, and further filtering can be done at the meta-analysis stage. At a later stage in the collaboration, imputation of missing values will be discussed.
 
 *	Use standard linear regression for assays with 80% of samples above the lower detection limit. 
-*	Dichotomize proteins with more than 20 % of samples below the lower detection limit and code values below the detection limit as 0 and those above as 1. 
+*	Dichotomize proteins with more than 20% of samples below the lower detection limit and code values below the detection limit as 0 and those above as 1. 
 *	Rank-based inverse normal transformation, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap
 
 ## List of proteins
