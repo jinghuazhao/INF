@@ -149,6 +149,9 @@ function snp_gene()
 {
   cd work
   mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -D hg19 -e 'select * from refGene' > refGene.txt
+  cut -f3,7,8,13 refGene.txt | \
+  awk '!index($1,"_")' | \
+  uniq > refGen.bed
   # https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
   wget https://www.cog-genomics.org/static/bin/plink/glist-hg19
   sort -k1,1n -k2,2n glist-hg19 | \
