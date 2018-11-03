@@ -102,21 +102,18 @@ function clumped_jma()
   sed 's|work/INTERVAL.||g;s/.clumped://g' INTERVAL.clumped | \
   awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > INTERVAL.clumped.dat
 
+  sed 's|work/INTERVAL.||g;s/.ldr.cojo:/ /g' INTERVAL.ldr| \
+  awk '{$1=$1; if(NR>1 && NF>1) print}' > INTERVAL.ldr.dat
+
   sed 's|work/INTERVAL.||g;s/.jma.cojo:/ /g' INTERVAL.jma | \
   awk '{$1=$1;if(NR==1) $1="prot";if(NF>1) print}' > INTERVAL.jma.dat
   awk 'NR>1' INTERVAL.jma.dat | \
   sort -k2,2n -k4,4n | \
   awk '{print "chr" $2 ":" $4}' | \
   uniq > INTERVAL.ps
-
-  sed 's|work/INTERVAL.||g;s/.ldr.cojo:/ /g' INTERVAL.ldr| \
-  awk '{$1=$1; if(NR>1 && NF>1) print}' > INTERVAL.ldr.dat
-  cd -
-}
-
-function signals()
-{
-  cd work
+# see also http://www.phenoscanner.medschl.cam.ac.uk
+  module load phenoscanner/phenoscanner_v1.1
+  phenoscanner -c All -l No -p 0.00001 -i INTERVAL.ps -o INTERVAL
   awk 'NR>1' INTERVAL.jma.dat | \
   sort -k3,3 | \
   cut -d' ' -f1,3 > INTERVAL.jma.snpid
@@ -124,15 +121,6 @@ function signals()
   sort -k1,1 | \
   join -11 -22 - INTERVAL.jma.snpid | \
   cut -d' ' -f2 > INTERVAL.rsid
-  cd -
-}
-
-function ps()
-# see also http://www.phenoscanner.medschl.cam.ac.uk
-{
-  module load phenoscanner/phenoscanner_v1.1
-  cd work
-  phenoscanner -c All -l No -p 0.00001 -i INTERVAL.ps -o INTERVAL
   cd -
 }
 
