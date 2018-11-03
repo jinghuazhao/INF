@@ -150,8 +150,32 @@ function snp_gene()
 # module load bedtools/2.4.26
 # It requires at least 4.8.1 to compile bedtools 2.27.1
   module load gcc/4.8.1
-  intersectBed -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.bedtools
+  intersectBed -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
   cd -
+}
+
+function cis_trans()
+{
+  awk -F "\t" '{
+    chrom=$1
+    cdsStart=$2
+    cdsEnd=$3
+    name2=$4
+    Start=cdsStart-1000000
+    End=cdsEnd+1000000
+    if(NR==1) print "#chrom", "Start", "End", "cdsStart", "CdsEnd", "name2";
+    else chrom, Start, End, cdsStart, cdsEnd, name2
+  }' INTERVAL.refGene > INTERVAL.refGene.cis_trans
+  awk -F "\t" '{
+    chrom=$1
+    cdsStart=$2
+    cdsEnd=$3
+    name2=$4
+    Start=cdsStart-1000000
+    End=cdsEnd+1000000
+    if(NR==1) print "#chrom", "Start", "End", "cdsStart", "CdsEnd", "gene";
+    else chrom, Start, End, cdsStart, cdsEnd, name2
+  }' glist-hg19 > INTERVAL.refGene.cis_trans
 }
 
 export INTERVAL=/scratch/jp549/olink-merged-output
