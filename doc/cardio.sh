@@ -157,9 +157,6 @@ function CD6()
   sort -k9,9n -k10,10n > CD6
 }
 
-export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
-export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
-export BS=/scratch/jp549/apps/bram-scripts
 function NOTE_for_MASS_Processing()
 {
   ls $INTERVAL/*gz | \
@@ -172,3 +169,7 @@ function NOTE_for_MASS_Processing()
     gunzip -c $INTERVAL/INTERVAL_inf1_{1}___{2}_chr_merged.gz
   '
 }
+
+export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
+export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
+export BS=/scratch/jp549/apps/bram-scripts
