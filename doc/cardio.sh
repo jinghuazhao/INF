@@ -96,7 +96,7 @@ function snpstats_imputed()
   cd -
 }
 
-function process_clump_cojo()
+function process_clumped_jma()
 {
   cd work
   sed 's|work/INTERVAL.||g;s/.clumped://g' INTERVAL.clumped | \
