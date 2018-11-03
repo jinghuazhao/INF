@@ -153,7 +153,7 @@ function snp_gene()
   wget https://www.cog-genomics.org/static/bin/plink/glist-hg19
   sort -k1,1n -k2,2n glist-hg19 | \
   awk '{if(NR==1) print "#chrom","start","end","gene";print "chr" $1,$2,$3,$4}' OFS="\t" > glist-hg19.bed
-  awk '{
+  awk -vOFS="\t" '{
     snpid=$1
     rsid=$2
     split(snpid,a,":")
@@ -166,7 +166,7 @@ function snp_gene()
 # The following module is available on cardio but it does not contain the command.
 # module load bedtools/2.4.26
 # It requires at least 4.8.1 to compile bedtools 2.27.1
-# module load gcc/4.8.1
+  module load gcc/4.8.1
   intersectBed -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.bedtools
   cd -
 }
