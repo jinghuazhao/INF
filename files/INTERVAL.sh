@@ -1,4 +1,4 @@
-# 1-11-2018 JHZ
+# 3-11-2018 JHZ
 
 source analysis.ini
 
@@ -81,19 +81,19 @@ xargs -l basename -s .gz | \
 sed 's/INTERVAL.//g' | \
 parallel -j3 --env rt -C' ' '
 ( \
-echo SNP A1 A2 freq b se p N; \
-gunzip -c $rt/INTERVAL.{}.gz | \
-awk -vOFS="\t" "(NR>1) { \
-   snpid=\$1; \
-   gsub(/chr/,\"\",snpid); \
-   split(snpid,chrpos_a1_a2,\":\"); \
-   chr=chrpos_a1_a2[1]; \
-   split(chrpos_a1_a2[2],a,\"_\"); \
-   pos=a[1]; \
-   a1=toupper(\$6); \
-   a2=toupper(\$7); \
-   print \$1, a1, a2, \$8, \$9, \$10, \$11, \$5 \
-}" \
+  echo SNP A1 A2 freq b se p N; \
+  gunzip -c $rt/INTERVAL.{}.gz | \
+  awk -vOFS="\t" "(NR>1) { \
+     snpid=\$1; \
+     gsub(/chr/,\"\",snpid); \
+     split(snpid,chrpos_a1_a2,\":\"); \
+     chr=chrpos_a1_a2[1]; \
+     split(chrpos_a1_a2[2],a,\"_\"); \
+     pos=a[1]; \
+     a1=toupper(\$6); \
+     a2=toupper(\$7); \
+     print \$1, a1, a2, \$8, \$9, \$10, \$11, \$5 \
+  }" \
 ) > work/INTERVAL.{}.ma'
 
 ls work/*jma*cojo | \
@@ -105,8 +105,8 @@ xargs -l basename -s .ma | \
 sort | \
 join -v1 - INTERVAL.cojo.done | \
 parallel -j3 --env rt -C' ' '
-gcta64 --bfile EUR1KG --cojo-file work/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
-       --exclude-region-bp 6 30000000 5000 --thread-num 3 --out work/{}
+  gcta64 --bfile EUR1KG --cojo-file work/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
+         --exclude-region-bp 6 30000000 5000 --thread-num 3 --out work/{}
 '
 
 rm -f work/INTERVAL.jma
@@ -131,14 +131,14 @@ xargs -l basename -s .gz | \
 sed 's/INTERVAL.//g' | \
 parallel -j1 --env rt -C' ' '
 export protein={}; \
-R --no-save <<END
-protein <- Sys.getenv("protein");\
-rt <- Sys.getenv("rt");\
-gz <- gzfile(paste0(rt,"/INTERVAL.",protein,".gz"));\
-qqman <- paste0("work/",protein,"-qqman.png");\
-MarkerName <- "SNPID";\
-PVAL <- "PVAL";\
-source("files/qqman.R")
+R --no-save -q <<END
+  protein <- Sys.getenv("protein");\
+  rt <- Sys.getenv("rt");\
+  gz <- gzfile(paste0(rt,"/INTERVAL.",protein,".gz"));\
+  qqman <- paste0("work/",protein,"-qqman.png");\
+  MarkerName <- "SNPID";\
+  PVAL <- "PVAL";\
+  source("files/qqman.R")
 END'
 (echo Chr Start End; echo 11 60739337 60786787) > st.bed
 grep ${p} $HOME/INF/sumstats/INTERVAL.list | \
