@@ -1,22 +1,21 @@
 top.level.dir	INF1	Study
-/data/stefane/	x	NSPHS	
-		x	Pfizer trials (RA, UC, psoriasis)	
+/data/stefane/	x	NSPHS
+	x	Pfizer trials (RA, UC, psoriasis)
 /data/niceri/	x	STABILITY
 /data/andmala/	x	STANLEY
 /data/stefang/	x	PIVUS
-			ULSAM
-			ASAP
-		x	BioFinder
-		x	COMBINE / RECOMBINE
-			EpiHealth
+		ULSAM
+	x	BioFinder
+	x	COMBINE / RECOMBINE
+		EpiHealth
 /data/anekal/	x	Estonian Biobank
-			HELIC MANOLIS
+		HELIC MANOLIS
 /data/jampet/	x	INTERVAL
-			CKB	
-		x	KORA F4
+		CKB
+	x	KORA F4
 /data/darzhe		LifeLines Deep
-			MPP-RES
+		MPP-RES
 /data/erimac/	x	ORCADES
-		x	VIS
-		x	Pride
-		x	Tromso
+	x	VIS
+	x	Pride
+	x	Tromso

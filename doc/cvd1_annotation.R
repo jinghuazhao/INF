@@ -1,5 +1,5 @@
-# 3-9-2018 JHZ
+# 3-11-2018 JHZ
 
-cvd1_annotation <- read.delim("cvd1_annotation", as.is=TRUE)
+cvd1_annotation <- read.delim("cvd1_annotation.tsv", as.is=TRUE)
 dim(cvd1_annotation)
 head(cvd1_annotation, 40)
