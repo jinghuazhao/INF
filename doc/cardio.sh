@@ -124,27 +124,6 @@ function clumped_jma()
   cd -
 }
 
-export INTERVAL=/scratch/jp549/olink-merged-output
-function CD6()
-# SUMSTATS for depict
-{
-  gunzip -c $INTERVAL/INTERVAL_inf1_CD6___Q8WWJ7_chr_merged.gz | \
-  awk -vOFS="\t" '(NR>1){
-       SNP=$2;
-       chr=$3; sub(/^0/,"",chr);
-       pos=$4;
-       a1=$5;
-       a2=$6;
-       N=$18;
-       EAF=(0.5*$15+$16)/N;
-       beta=$24;
-       se=$25;
-       p=$22;
-       if(SNP!="." && p<=0.1) print SNP,a2,a1,EAF,beta,se,p,N,chr,pos;
-  }' | \
-  sort -k9,9n -k10,10n > CD6
-}
-
 function snp_gene()
 {
   cd work
@@ -173,6 +152,27 @@ function snp_gene()
   module load gcc/4.8.1
   intersectBed -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.bedtools
   cd -
+}
+
+export INTERVAL=/scratch/jp549/olink-merged-output
+function CD6()
+# SUMSTATS for depict
+{
+  gunzip -c $INTERVAL/INTERVAL_inf1_CD6___Q8WWJ7_chr_merged.gz | \
+  awk -vOFS="\t" '(NR>1){
+       SNP=$2;
+       chr=$3; sub(/^0/,"",chr);
+       pos=$4;
+       a1=$5;
+       a2=$6;
+       N=$18;
+       EAF=(0.5*$15+$16)/N;
+       beta=$24;
+       se=$25;
+       p=$22;
+       if(SNP!="." && p<=0.1) print SNP,a2,a1,EAF,beta,se,p,N,chr,pos;
+  }' | \
+  sort -k9,9n -k10,10n > CD6
 }
 
 function NOTE_for_MASS_Processing()
