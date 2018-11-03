@@ -148,14 +148,6 @@ function CD6()
 function snp_gene()
 {
   cd work
-  mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -D hg19 -e 'select * from refGene' > refGene.txt
-  cut -f3,7,8,13 refGene.txt | \
-  awk '!index($1,"_")' | \
-  uniq > refGen.bed
-  # https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
-  wget https://www.cog-genomics.org/static/bin/plink/glist-hg19
-  sort -k1,1n -k2,2n glist-hg19 | \
-  awk '{if(NR==1) print "#chrom","start","end","gene";print "chr" $1,$2,$3,$4}' OFS="\t" > glist-hg19.bed
   awk -vOFS="\t" '{
     snpid=$1
     rsid=$2
@@ -166,6 +158,15 @@ function snp_gene()
     if(NR==1) print "#chrom","Start","End","rsid"
     print chr,pos-1,pos,rsid
   }' INTERVAL.snpid_rsid > INTERVAL.bed
+  mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -D hg19 -e 'select * from refGene' > refGene.txt
+  cut -f3,7,8,13 refGene.txt | \
+  awk '!index($1,"_")' | \
+  uniq > refGene.bed
+  # https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
+  intersectBed -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
+  wget https://www.cog-genomics.org/static/bin/plink/glist-hg19
+  sort -k1,1n -k2,2n glist-hg19 | \
+  awk '{if(NR==1) print "#chrom","start","end","gene";print "chr" $1,$2,$3,$4}' OFS="\t" > glist-hg19.bed
 # The following module is available on cardio but it does not contain the command.
 # module load bedtools/2.4.26
 # It requires at least 4.8.1 to compile bedtools 2.27.1
