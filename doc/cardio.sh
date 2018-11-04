@@ -120,13 +120,29 @@ function clumped_jma()
   gunzip -c INTERVAL.snpid.gz | \
   sort -k1,1 | \
   join -11 -22 - INTERVAL.jma.snpid > INTERVAL.snpid_rsid
-  cut -d' ' -f2 INTERVAL.snpid_rsid > INTERVAL.rsid
+  cut -d' ' -f2 INTERVAL.snpid_rsid | \
+  sort | \
+  uniq > INTERVAL.rsid
   cd -
 }
 
 function snp_gene()
+# This is according to the following implementation
+# https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
+# bedtools 2.4.26 on cardio does not contain the intersect command.
+# module load bedtools/2.4.26
+# intersect requires at least 4.8.1 to compile bedtools 2.27.1
+# bedtools 2.27.1 is available from /scratch/jhz22/bin
+# The breakup of snpid leads to duplicate records so we employ uniq operation.
 {
   cd work
+  mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -D hg19 -e 'select * from refGene' > refGene.txt
+  cut -f3,7,8,13 refGene.txt | \
+  awk '!index($1,"_")' | \
+  uniq > refGene.bed
+  wget -qO- https://www.cog-genomics.org/static/bin/plink/glist-hg19 > glist-hg19
+  sort -k1,1n -k2,2n glist-hg19 | \
+  awk '{if(NR==1) print "#chrom","start","end","gene";print "chr" $1,$2,$3,$4}' OFS="\t" > glist-hg19.bed
   awk -vOFS="\t" '{
     snpid=$1
     rsid=$2
@@ -136,20 +152,10 @@ function snp_gene()
     pos=b[1]
     if(NR==1) print "#chrom","Start","End","rsid"
     print chr,pos-1,pos,rsid
-  }' INTERVAL.snpid_rsid > INTERVAL.bed
-  mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -D hg19 -e 'select * from refGene' > refGene.txt
-  cut -f3,7,8,13 refGene.txt | \
-  awk '!index($1,"_")' | \
-  uniq > refGene.bed
-  # https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
-# The following module is available on cardio but it does not contain the intersect command.
-  module load bedtools/2.4.26
-# intersect requires at least 4.8.1 to compile bedtools 2.27.1
+  }' INTERVAL.snpid_rsid | \
+  uniq > INTERVAL.bed
   module load gcc/4.8.1
   bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
-  wget -qO- https://www.cog-genomics.org/static/bin/plink/glist-hg19 > glist-hg19
-  sort -k1,1n -k2,2n glist-hg19 | \
-  awk '{if(NR==1) print "#chrom","start","end","gene";print "chr" $1,$2,$3,$4}' OFS="\t" > glist-hg19.bed
   bedtools intersect -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
   cd -
 }
