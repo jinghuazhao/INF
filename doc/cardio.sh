@@ -4,7 +4,7 @@
 # 4-11-2018 JHZ
 #
 # 1. The overall design was influenced by the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
-# 2. While PLINK clumping (clumped) and GCTA -cojo (jma) provides corrobarative results, the latter is used for PhenoScanner|cis/trans expliotation.
+# 2. While PLINK clumping (clumped) and GCTA -cojo (jma) provide corrobarative results, the latter is used for PhenoScanner|cis/trans expliotation.
 # 3. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 4. From 3 a SNP-gene match is established by snp_gene(),  which seems more pertinent with SNP/gene compared to cis_trans().
 #
