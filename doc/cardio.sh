@@ -170,7 +170,7 @@ function cis_trans()
   }' refGene.bed > refGene.cis_trans 
   bedtools intersect -a INTERVAL.bed -b refGene.cis_trans -loj > INTERVAL.refGene.cis_trans
   awk -vOFS="\t" '{
-    chrom="chr" $1
+    chrom=$1
     cdsStart=$2
     cdsEnd=$3
     name2=$4
