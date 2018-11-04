@@ -147,7 +147,7 @@ function snp_gene()
 # intersect requires at least 4.8.1 to compile bedtools 2.27.1
   module load gcc/4.8.1
   bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
-  wget https://www.cog-genomics.org/static/bin/plink/glist-hg19
+  wget -qO- https://www.cog-genomics.org/static/bin/plink/glist-hg19 > glist-hg19
   sort -k1,1n -k2,2n glist-hg19 | \
   awk '{if(NR==1) print "#chrom","start","end","gene";print "chr" $1,$2,$3,$4}' OFS="\t" > glist-hg19.bed
   bedtools intersect -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
@@ -168,7 +168,8 @@ function cis_trans()
     End=cdsEnd+1000000
     if(NR==1) print "#chrom", "Start", "End", "cdsStart", "CdsEnd", "name2";
     else print chrom, Start, End, cdsStart, cdsEnd, name2
-  }' INTERVAL.refGene | bedtools intersect -a INTERVAL.bed -b - -loj > INTERVAL.refGene.cis_trans
+  }' INTERVAL.refGene > refGene.cis_trans 
+  bedtools intersect -a INTERVAL.bed -b refGene.cis_trans -loj > INTERVAL.refGene.cis_trans
   awk -vOFS="\t" '{
     chrom="chr" $1
     cdsStart=$2
@@ -179,7 +180,8 @@ function cis_trans()
     End=cdsEnd+1000000
     if(NR==1) print "#chrom", "Start", "End", "cdsStart", "CdsEnd", "gene";
     else print chrom, Start, End, cdsStart, cdsEnd, name2
-  }' glist-hg19 | bedtools intersect -a INTERVAL.bed -b - -loj > INTERVAL.glist-hg19.cis_trans
+  }' glist-hg19 > glist-hg19.cis_trans
+  bedtools intersect -a INTERVAL.bed -b glist-hg19.cis_trans -loj > INTERVAL.glist-hg19.cis_trans
 }
 
 export INTERVAL=/scratch/jp549/olink-merged-output
