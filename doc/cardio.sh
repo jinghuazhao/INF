@@ -190,6 +190,22 @@ function cis_trans()
 }
 
 export INTERVAL=/scratch/jp549/olink-merged-output
+function to_METAL()
+{
+  ls $INTERVAL/*gz | \
+  grep inf1 | \
+  xargs -l basename | \
+  sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz\*//g' | \
+  cut -d'_' --output-delimiter=' ' -f1,4 | \
+  grep -w CD6 | \
+  parallel -j2 --env INTERVAL -C' ' '
+    gunzip -c $INTERVAL/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
+    awk -f files/INTERVAL.awk | \
+    awk -f files/order.awk | \
+    gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz
+  '
+}
+
 function CD6()
 # SUMSTATS for depict
 {
@@ -208,22 +224,6 @@ function CD6()
        if(SNP!="." && p<=0.1) print SNP,a2,a1,EAF,beta,se,p,N,chr,pos;
   }' | \
   sort -k9,9n -k10,10n > CD6
-}
-
-function METAL_input()
-{
-  ls $INTERVAL/*gz | \
-  grep inf1 | \
-  xargs -l basename | \
-  sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz\*//g' | \
-  cut -d'_' --output-delimiter=' ' -f1,4 | \
-  grep -w CD6 | \
-  parallel -j2 --env INTERVAL -C' ' '
-    gunzip -c $INTERVAL/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
-    awk -f files/INTERVAL.awk | \
-    awk -f files/order.awk | \
-    gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz
-  '
 }
 
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
