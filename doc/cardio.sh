@@ -8,12 +8,12 @@
 # 4. From 3 a SNP-gene match is established by snp_gene(), which seems more pertinent with SNP/gene compared to cis_trans().
 #    Additional notes for this step are as follows,
 #    This follows https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
-#    bedtools 2.4.26 on cardio does not contain the intersect command.
+#    bedtools 2.4.26 on cardio is called with
 #    module load bedtools/2.4.26
-#    intersect requires at least 4.8.1 to compile bedtools 2.27.1
-#    bedtools 2.27.1 is available from /scratch/jhz22/bin and gcc/4.8.1 is customarily called.
+#    but it does not contain the intersect command. We therefore turned to the latest bedtools release 2.27.1.
+#    bedtools 2.27.1 is now available from /scratch/jhz22/bin and gcc/4.8.1 is customarily called.
 #    The breakup of snpid leads to duplicate records in BED files so we employ uniq operation.
-# 5. to_METAL() is actually copied from format.sh and CD6() is a simple expoition.
+# 5. format_for_METAL() is actually copied from format.sh and CD6() is a simple exposition.
 
 export BGEN_DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 export BGEN=$BGEN_DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only
@@ -197,7 +197,7 @@ function cis_trans()
 }
 
 export INTERVAL=/scratch/jp549/olink-merged-output
-function to_METAL()
+function format_for_METAL()
 {
   ls $INTERVAL/*gz | \
   grep inf1 | \
