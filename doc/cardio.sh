@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# 3-11-2018 JHZ
+# 4-11-2018 JHZ
 
 export BGEN_DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 export BGEN=$BGEN_DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only
@@ -142,40 +142,46 @@ function snp_gene()
   awk '!index($1,"_")' | \
   uniq > refGene.bed
   # https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
-  intersectBed -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
+  module load bedtools/2.4.26
+# The following module is available on cardio but it does not contain the command.
+# IntersectBed requires at least 4.8.1 to compile bedtools 2.27.1
+  module load gcc/4.8.1
+  bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
   wget https://www.cog-genomics.org/static/bin/plink/glist-hg19
   sort -k1,1n -k2,2n glist-hg19 | \
   awk '{if(NR==1) print "#chrom","start","end","gene";print "chr" $1,$2,$3,$4}' OFS="\t" > glist-hg19.bed
-# The following module is available on cardio but it does not contain the command.
-# module load bedtools/2.4.26
-# It requires at least 4.8.1 to compile bedtools 2.27.1
-  module load gcc/4.8.1
-  intersectBed -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
+  bedtools intersect -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
   cd -
 }
 
 function cis_trans()
 {
-  awk -F "\t" '{
+  module load gcc/4.8.1
+  module load bedtools/2.4.26
+  awk -vOFS="\t" '{
     chrom=$1
     cdsStart=$2
     cdsEnd=$3
     name2=$4
     Start=cdsStart-1000000
+    if (Start<0) Start=0
     End=cdsEnd+1000000
     if(NR==1) print "#chrom", "Start", "End", "cdsStart", "CdsEnd", "name2";
-    else chrom, Start, End, cdsStart, cdsEnd, name2
-  }' INTERVAL.refGene > INTERVAL.refGene.cis_trans
-  awk -F "\t" '{
-    chrom=$1
+    else print chrom, Start, End, cdsStart, cdsEnd, name2
+  }' INTERVAL.refGene > refGene.cis_trans
+  bedtools intersect -a INTERVAL.bed -b refGene.cis_trans -loj > INTERVAL.refGene.cis_trans
+  awk -vOFS="\t" '{
+    chrom="chr" $1
     cdsStart=$2
     cdsEnd=$3
     name2=$4
     Start=cdsStart-1000000
+    if (Start<0) Start=0
     End=cdsEnd+1000000
     if(NR==1) print "#chrom", "Start", "End", "cdsStart", "CdsEnd", "gene";
-    else chrom, Start, End, cdsStart, cdsEnd, name2
-  }' glist-hg19 > INTERVAL.refGene.cis_trans
+    else print chrom, Start, End, cdsStart, cdsEnd, name2
+  }' glist-hg19 > glist-hg19.cis_trans
+  bedtools intersect -a INTERVAL.bed -b glist-hg19.cis_trans -loj > INTERVAL.glist-hg19.cis_trans
 }
 
 export INTERVAL=/scratch/jp549/olink-merged-output
