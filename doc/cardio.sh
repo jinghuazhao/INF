@@ -127,13 +127,13 @@ function clumped_jma()
 }
 
 function snp_gene()
-# This is according to the following implementation
-# https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
+# The routine seems more reasonable compared to cis_trans() below as we simply work on the SNP/gene positions.
+# This follows https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
 # bedtools 2.4.26 on cardio does not contain the intersect command.
 # module load bedtools/2.4.26
 # intersect requires at least 4.8.1 to compile bedtools 2.27.1
-# bedtools 2.27.1 is available from /scratch/jhz22/bin
-# The breakup of snpid leads to duplicate records so we employ uniq operation.
+# bedtools 2.27.1 is available from /scratch/jhz22/bin and gcc/4.8.1 is customarily called.
+# The breakup of snpid leads to duplicate records in BED files so we employ uniq operation.
 {
   cd work
   mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -D hg19 -e 'select * from refGene' > refGene.txt
@@ -150,7 +150,7 @@ function snp_gene()
     chr=a[1]
     split(a[2],b,"_")
     pos=b[1]
-    if(NR==1) print "#chrom","Start","End","rsid"
+    if(NR==1) print "#chrom","start","end","rsid"
     print chr,pos-1,pos,rsid
   }' INTERVAL.snpid_rsid | \
   uniq > INTERVAL.bed
@@ -161,29 +161,31 @@ function snp_gene()
 }
 
 function cis_trans()
+# This somewhat causes confusion since 1,000,000 flankings covers more genes.
 {
   module load gcc/4.8.1
-  awk -vOFS="\t" '{
+  export M=1000000
+  awk -vOFS="\t" -vM=$M '{
     chrom=$1
     cdsStart=$2
     cdsEnd=$3
     name2=$4
-    Start=cdsStart-1000000
+    Start=cdsStart-M
     if (Start<0) Start=0
-    End=cdsEnd+1000000
-    if(NR==1) print "#chrom", "Start", "End", "cdsStart", "CdsEnd", "name2";
+    End=cdsEnd+M
+    if(NR==1) print "#chrom", "start", "end", "cdsStart", "CdsEnd", "name2";
     else print chrom, Start, End, cdsStart, cdsEnd, name2
   }' refGene.bed > refGene.cis_trans 
   bedtools intersect -a INTERVAL.bed -b refGene.cis_trans -loj > INTERVAL.refGene.cis_trans
-  awk -vOFS="\t" '{
+  awk -vOFS="\t" -vM=$M '{
     chrom=$1
     cdsStart=$2
     cdsEnd=$3
     name2=$4
-    Start=cdsStart-1000000
+    Start=cdsStart-M
     if (Start<0) Start=0
-    End=cdsEnd+1000000
-    if(NR==1) print "#chrom", "Start", "End", "cdsStart", "CdsEnd", "gene";
+    End=cdsEnd+M
+    if(NR==1) print "#chrom", "start", "end", "cdsStart", "CdsEnd", "gene";
     else print chrom, Start, End, cdsStart, cdsEnd, name2
   }' glist-hg19.bed > glist-hg19.cis_trans
   bedtools intersect -a INTERVAL.bed -b glist-hg19.cis_trans -loj > INTERVAL.glist-hg19.cis_trans
