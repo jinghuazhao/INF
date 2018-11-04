@@ -2,6 +2,20 @@
 . /etc/profile.d/modules.sh
 
 # 4-11-2018 JHZ
+#
+# 1. The overall design was influenced by the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
+# 2. While PLINK clumping (clumped) and GCTA -cojo (jma) provides corrobarative results, the latter is used for PhenoScanner|cis/trans expliotation.
+# 3. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
+# 4. From 3 a SNP-gene match is established by snp_gene(),  which seems more pertinent with SNP/gene compared to cis_trans().
+#
+# Additional notes for this step are as follows,
+#   This follows https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
+#   bedtools 2.4.26 on cardio does not contain the intersect command.
+#   module load bedtools/2.4.26
+#   intersect requires at least 4.8.1 to compile bedtools 2.27.1
+#   bedtools 2.27.1 is available from /scratch/jhz22/bin and gcc/4.8.1 is customarily called.
+#   The breakup of snpid leads to duplicate records in BED files so we employ uniq operation.
+# 5. to_METAL() is actually copied from format.sh and CD6() is a simple expoition.
 
 export BGEN_DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 export BGEN=$BGEN_DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only
@@ -127,13 +141,6 @@ function clumped_jma()
 }
 
 function snp_gene()
-# The routine seems more reasonable compared to cis_trans() below as we simply work on the SNP/gene positions.
-# This follows https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
-# bedtools 2.4.26 on cardio does not contain the intersect command.
-# module load bedtools/2.4.26
-# intersect requires at least 4.8.1 to compile bedtools 2.27.1
-# bedtools 2.27.1 is available from /scratch/jhz22/bin and gcc/4.8.1 is customarily called.
-# The breakup of snpid leads to duplicate records in BED files so we employ uniq operation.
 {
   cd work
   mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -D hg19 -e 'select * from refGene' > refGene.txt
