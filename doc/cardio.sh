@@ -142,7 +142,7 @@ function snp_gene()
   awk '!index($1,"_")' | \
   uniq > refGene.bed
   # https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
-# The following module is available on cardio but it does not contain the command.
+# The following module is available on cardio but it does not contain the intersect command.
   module load bedtools/2.4.26
 # intersect requires at least 4.8.1 to compile bedtools 2.27.1
   module load gcc/4.8.1
