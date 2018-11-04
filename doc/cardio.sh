@@ -204,7 +204,7 @@ function CD6()
   sort -k9,9n -k10,10n > CD6
 }
 
-function NOTE_for_MASS_Processing()
+function METAL_input()
 {
   ls $INTERVAL/*gz | \
   grep inf1 | \
@@ -213,7 +213,10 @@ function NOTE_for_MASS_Processing()
   cut -d'_' --output-delimiter=' ' -f1,4 | \
   grep -w CD6 | \
   parallel -j2 --env INTERVAL -C' ' '
-    gunzip -c $INTERVAL/INTERVAL_inf1_{1}___{2}_chr_merged.gz
+    gunzip -c $INTERVAL/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
+    awk -f files/INTERVAL.awk | \
+    awk -f files/order.awk | \
+    gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz
   '
 }
 
