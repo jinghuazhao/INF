@@ -157,7 +157,6 @@ function snp_gene()
 function cis_trans()
 {
   module load gcc/4.8.1
-  module load bedtools/2.4.26
   awk -vOFS="\t" '{
     chrom=$1
     cdsStart=$2
@@ -168,7 +167,7 @@ function cis_trans()
     End=cdsEnd+1000000
     if(NR==1) print "#chrom", "Start", "End", "cdsStart", "CdsEnd", "name2";
     else print chrom, Start, End, cdsStart, cdsEnd, name2
-  }' INTERVAL.refGene > refGene.cis_trans 
+  }' refGene.bed > refGene.cis_trans 
   bedtools intersect -a INTERVAL.bed -b refGene.cis_trans -loj > INTERVAL.refGene.cis_trans
   awk -vOFS="\t" '{
     chrom="chr" $1
@@ -180,7 +179,7 @@ function cis_trans()
     End=cdsEnd+1000000
     if(NR==1) print "#chrom", "Start", "End", "cdsStart", "CdsEnd", "gene";
     else print chrom, Start, End, cdsStart, cdsEnd, name2
-  }' glist-hg19 > glist-hg19.cis_trans
+  }' glist-hg19.bed > glist-hg19.cis_trans
   bedtools intersect -a INTERVAL.bed -b glist-hg19.cis_trans -loj > INTERVAL.glist-hg19.cis_trans
 }
 
