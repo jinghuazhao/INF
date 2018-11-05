@@ -167,7 +167,7 @@ function snp_gene()
 
 export INF=/scratch/jhz22/INF
 function olink_cis_trans()
-# title,exonic,cis,trans
+# title,genic,cis,trans
 {
   head -1 $INF/doc/olink.inf.panel.annot.tsv | \
   awk '{gsub(/\t/, "\n",$0)};1'| \
@@ -180,8 +180,8 @@ function olink_cis_trans()
   }' $INF/doc/olink.inf.panel.annot.tsv > olink.bed
   module load gcc/4.8.1
   bedtools intersect -a INTERVAL.bed -b olink.bed -loj > INTERVAL.tmp
-  awk '$8!="." && $8!="NA" {print $4}' INTERVAL.tmp > INTERVAL.rsid_exonic
-  grep -v -w -f INTERVAL.rsid_exonic INTERVAL.bed > INTERVAL.tmp
+  awk '$8!="." && $8!="NA" {print $4}' INTERVAL.tmp > INTERVAL.rsid_genic
+  grep -v -w -f INTERVAL.rsid_genic INTERVAL.bed > INTERVAL.tmp
   awk -vOFS="\t" -vM=$M '{
     chrom=$1
     cdsStart=$2
@@ -198,8 +198,8 @@ function olink_cis_trans()
   sort | \
   uniq > INTERVAL.rsid_cis
   awk 'NR>1' INTERVAL.bed | \
-  grep -w -v -f INTERVAL.rsid_exonic -f INTERVAL.rsid_cis > INTERVAL.rsid_trans
-  wc -l INTERVAL.rsid_cis INTERVAL.rsid_exonic INTERVAL.rsid_trans
+  grep -w -v -f INTERVAL.rsid_genic -f INTERVAL.rsid_cis > INTERVAL.rsid_trans
+  wc -l INTERVAL.rsid_cis INTERVAL.rsid_genic INTERVAL.rsid_trans
 }
 #1 "target"
 #2 "target.short"
