@@ -5,7 +5,7 @@
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
-# 4. A SNP-gene match is established by snp_gene() genomewide and olink_cis_trans() for OLINK. Addtional notes:
+# 4. SNP-gene matchings are established by snp_gene() genomewide and olink_cis_trans() for OLINK. Addtional notes:
 #    - This follows https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
 #    - bedtools 2.4.26 on cardio has no intersect command:
 #    - module load bedtools/2.4.26
@@ -138,7 +138,7 @@ function clumped_jma()
 
 export M=1000000
 function snp_gene()
-# broad SNP-gene match
+# genomwide SNP-gene matchings
 {
   cd work
   mysql --user=genome --host=genome-mysql.cse.ucsc.edu -A -D hg19 -e 'select * from refGene' > refGene.txt
