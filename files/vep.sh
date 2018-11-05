@@ -25,3 +25,20 @@ function vep()
   export vepfile=/usr/local/Cluster-Apps/vep/release-88/examples/homo_sapiens_GRCh37.vcf
   vep -i $vepfile --assembly GRCh37 -o $(basename $vepfile .vcf).out --force_overwrite -offline
 }
+
+R -q --no-save <<END
+    snpgene <- read.table("INTERVAL.glist-hg19",as.is=TRUE,sep="\t")
+    names(snpgene) <- c("chr1","start1","pos","rsid","chr2","start2","end2","gene")
+    M <- as.numeric(Sys.getenv("M"))
+    snpgene <- within(snpgene,{
+      trans <- NA
+      L <- start2 - M
+      L[L<0] <- 0
+      U <- end2 + M
+      snpgene[pos < L | pos < U,"trans"] <- 1
+      snpgene[pos >= L & pos <= U,"trans"] <- 0
+    })
+   trans_table <- with(snpgene,table(rsid,trans))
+   print(trans_table)
+END
+
