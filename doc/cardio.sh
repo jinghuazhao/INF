@@ -159,7 +159,6 @@ function snp_gene()
     print chr,pos-1,pos,rsid
   }' INTERVAL.snpid_rsid | \
   uniq > INTERVAL.bed
-# to be more precise, the following could be used in place of glist-hg19.
   head -1 $INF/doc/olink.inf.panel.annot.tsv | \
   awk '{gsub(/\t/, "\n",$0)};1'| \
   awk '{print "#" NR, $1}'
