@@ -203,7 +203,7 @@ function olink_cis_trans()
     End=cdsEnd+M
     if(NR==1) print "#chrom", "start", "end", "cdsStart", "CdsEnd", "name2";
     else print chrom, Start, End, cdsStart, cdsEnd, name2
-  }' olink.bed > olink.cis_trans 
+  }' olink.bed > olink.cis_trans
   bedtools intersect -a INTERVAL.tmp -b olink.cis_trans -loj > INTERVAL.olink.cis_trans
   awk '$10!="." && $10!="NA" {print $4}' INTERVAL.olink.cis_trans | \
   sort | \
