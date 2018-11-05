@@ -5,7 +5,7 @@
 # 1. The overall design was influenced by the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
 # 3. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
-# 4. From 3 a SNP-gene match is established by snp_gene() while cis_trans() is experimental.
+# 4. A SNP-gene match is established by snp_gene(), the experimental cis_trans() and olink_cis_trans().
 #    Additional notes for this step are as follows,
 #    This follows https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
 #    bedtools 2.4.26 on cardio is called with
@@ -137,6 +137,37 @@ function clumped_jma()
   uniq > INTERVAL.rsid
   cd -
 }
+
+export INF=/scratch/jhz22/INF
+function olink_cis_trans()
+{
+  head -1 $INF/doc/olink.inf.panel.annot.tsv | \
+  awk '{gsub(/\t/, "\n",$0)};1'| \
+  awk '{print "#" NR, $1}'
+  awk '{
+    FS=OFS="\t"
+    gsub(/\"/,"",$0)
+    if(NR==1) print "#chrom","start","end","gene";
+    else print "chr" $8,$9,$10,$7
+  }' $INF/doc/olink.inf.panel.annot.tsv > olink.bed
+  module load gcc/4.8.1
+  bedtools intersect -a INTERVAL.bed -b olink.bed -loj > INTERVAL.olink.cis_trans
+  cut -f8 INTERVAL.olink.cis_trans | \
+  awk '!/\.|NA/' | \
+  wc -l
+}
+#1 "target"
+#2 "target.short"
+#3 "uniprot"
+#4 "panel"
+#5 "prot.on.multiple.panel"
+#6 "panels.with.prot"
+#7 "hgnc_symbol"
+#8 "chromosome_name"
+#9 "start_position"
+#10 "end_position"
+#11 "olink.id"
+#12 "alternate.uniprot"
 
 export M=1000000
 function snp_gene()
