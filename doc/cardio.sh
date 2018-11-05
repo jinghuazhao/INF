@@ -159,16 +159,7 @@ function snp_gene()
     print chr,pos-1,pos,rsid
   }' INTERVAL.snpid_rsid | \
   uniq > INTERVAL.bed
-  module load gcc/4.8.1
-  bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
-  bedtools intersect -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
-  cd -
-}
-
-export INF=/scratch/jhz22/INF
-function olink_cis_trans()
-# title,genic,cis,trans
-{
+# to be more precise, the following could be used in place of glist-hg19.
   head -1 $INF/doc/olink.inf.panel.annot.tsv | \
   awk '{gsub(/\t/, "\n",$0)};1'| \
   awk '{print "#" NR, $1}'
@@ -179,8 +170,29 @@ function olink_cis_trans()
     else print "chr" $8,$9,$10,$7
   }' $INF/doc/olink.inf.panel.annot.tsv > olink.bed
   module load gcc/4.8.1
-  bedtools intersect -a INTERVAL.bed -b olink.bed -loj > INTERVAL.tmp
-  awk '$8!="." && $8!="NA" {print $4}' INTERVAL.tmp > INTERVAL.rsid_genic
+  bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
+  bedtools intersect -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
+  bedtools intersect -a INTERVAL.bed -b olink.bed -loj > INTERVAL.olink
+  cd -
+}
+#1 "target"
+#2 "target.short"
+#3 "uniprot"
+#4 "panel"
+#5 "prot.on.multiple.panel"
+#6 "panels.with.prot"
+#7 "hgnc_symbol"
+#8 "chromosome_name"
+#9 "start_position"
+#10 "end_position"
+#11 "olink.id"
+#12 "alternate.uniprot"
+
+export INF=/scratch/jhz22/INF
+function olink_cis_trans()
+# title,genic,cis,trans
+{
+  awk '$8!="." && $8!="NA" {print $4}' INTERVAL.olink > INTERVAL.rsid_genic
   grep -v -w -f INTERVAL.rsid_genic INTERVAL.bed > INTERVAL.tmp
   awk -vOFS="\t" -vM=$M '{
     chrom=$1
@@ -201,18 +213,6 @@ function olink_cis_trans()
   grep -v -w -f INTERVAL.rsid_genic -f INTERVAL.rsid_cis > INTERVAL.rsid_trans
   wc -l INTERVAL.rsid_cis INTERVAL.rsid_genic INTERVAL.rsid_trans
 }
-#1 "target"
-#2 "target.short"
-#3 "uniprot"
-#4 "panel"
-#5 "prot.on.multiple.panel"
-#6 "panels.with.prot"
-#7 "hgnc_symbol"
-#8 "chromosome_name"
-#9 "start_position"
-#10 "end_position"
-#11 "olink.id"
-#12 "alternate.uniprot"
 
 export INTERVAL=/scratch/jp549/olink-merged-output
 function format_for_METAL()
