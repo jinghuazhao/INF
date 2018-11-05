@@ -1,7 +1,7 @@
 # 5-11-2018 JHZ
 
 function vep()
-# a1/a2 reaffirmation is necessary
+# a1/a2 assertion is necessary
 {
   (
   echo -e "##fileformat=VCFv4.0"
