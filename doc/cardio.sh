@@ -163,21 +163,6 @@ function snp_gene()
   module load gcc/4.8.1
   bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
   bedtools intersect -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
-R -q --no-save <<END
-    snpgene <- read.table("INTERVAL.glist-hg19",as.is=TRUE,sep="\t")
-    names(snpgene) <- c("chr1","start1","pos","rsid","chr2","start2","end2","gene")
-    M <- as.numeric(Sys.getenv("M"))
-    snpgene <- within(snpgene,{
-      trans <- NA
-      L <- start2 - M
-      L[L<0] <- 0
-      U <- end2 + M
-      snpgene[pos < L | pos < U,"trans"] <- 1
-      snpgene[pos >= L & pos <= U,"trans"] <- 0
-    })
-   trans_table <- with(snpgene,table(rsid,trans))
-   print(trans_table)
-END
   cd -
 }
 
