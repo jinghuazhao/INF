@@ -169,6 +169,7 @@ function snp_gene()
 
 export INF=/scratch/jhz22/INF
 function olink_cis_trans()
+# title,exonic,cis,trans
 {
   head -1 $INF/doc/olink.inf.panel.annot.tsv | \
   awk '{gsub(/\t/, "\n",$0)};1'| \
@@ -181,17 +182,8 @@ function olink_cis_trans()
   }' $INF/doc/olink.inf.panel.annot.tsv > olink.bed
   module load gcc/4.8.1
   bedtools intersect -a INTERVAL.bed -b olink.bed -loj > INTERVAL.tmp
-  cut -f8 INTERVAL.tmp | \
-  awk '!/\.|NA/' | \
-  wc -l
-  awk '{
-    FS=OFS="\t"
-    chr=$1;sub(/chr/,"",chr)
-    pos=$3
-    print $0,chr,pos
-  }' INTERVAL.tmp | \
-  sort -k9,9n -k10,10n | \
-  cut -f1-8 > INTERVAL.olink.cis_trans
+  awk '$8!="." && $8!="NA" {print $4}' INTERVAL.tmp > INTERVAL.rsid_exonic
+  grep -v -w -f INTERVAL.rsid_exonic INTERVAL.bed > INTERVAL.tmp
   awk -vOFS="\t" -vM=$M '{
     chrom=$1
     cdsStart=$2
@@ -202,20 +194,14 @@ function olink_cis_trans()
     End=cdsEnd+M
     if(NR==1) print "#chrom", "start", "end", "cdsStart", "CdsEnd", "name2";
     else print chrom, Start, End, cdsStart, cdsEnd, name2
-  }' refGene.bed > refGene.cis_trans 
-  bedtools intersect -a INTERVAL.bed -b refGene.cis_trans -loj > INTERVAL.refGene.cis_trans
-  awk -vOFS="\t" -vM=$M '{
-    chrom=$1
-    cdsStart=$2
-    cdsEnd=$3
-    name2=$4
-    Start=cdsStart-M
-    if (Start<0) Start=0
-    End=cdsEnd+M
-    if(NR==1) print "#chrom", "start", "end", "cdsStart", "CdsEnd", "gene";
-    else print chrom, Start, End, cdsStart, cdsEnd, name2
-  }' glist-hg19.bed > glist-hg19.cis_trans
-  bedtools intersect -a INTERVAL.bed -b glist-hg19.cis_trans -loj > INTERVAL.glist-hg19.cis_trans
+  }' olink.bed > olink.cis_trans 
+  bedtools intersect -a INTERVAL.tmp -b olink.cis_trans -loj > INTERVAL.olink.cis_trans
+  awk '$10!="." && $10!="NA" {print $4}' INTERVAL.olink.cis_trans | \
+  sort | \
+  uniq > INTERVAL.rsid_cis
+  awk 'NR>1' INTERVAL.bed | \
+  grep -w -v -f INTERVAL.rsid_exonic -f INTERVAL.rsid_cis > INTERVAL.rsid_trans
+  wc -l INTERVAL.rsid_cis INTERVAL.rsid_exonic INTERVAL.rsid_trans
 }
 #1 "target"
 #2 "target.short"
