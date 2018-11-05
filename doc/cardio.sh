@@ -151,10 +151,18 @@ function olink_cis_trans()
     else print "chr" $8,$9,$10,$7
   }' $INF/doc/olink.inf.panel.annot.tsv > olink.bed
   module load gcc/4.8.1
-  bedtools intersect -a INTERVAL.bed -b olink.bed -loj > INTERVAL.olink.cis_trans
-  cut -f8 INTERVAL.olink.cis_trans | \
+  bedtools intersect -a INTERVAL.bed -b olink.bed -loj > INTERVAL.tmp
+  cut -f8 INTERVAL.tmp | \
   awk '!/\.|NA/' | \
   wc -l
+  awk '{
+    FS=OFS="\t"
+    chr=$1;sub(/chr/,"",chr)
+    pos=$3
+    print $0,chr,pos
+  }' INTERVAL.tmp | \
+  sort -k9,9n -k10,10n | \
+  cut -f1-8 > INTERVAL.olink.cis_trans
 }
 #1 "target"
 #2 "target.short"
