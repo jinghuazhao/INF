@@ -26,6 +26,7 @@ function vep()
   vep -i $vepfile --assembly GRCh37 -o $(basename $vepfile .vcf).out --force_overwrite -offline
 }
 
+export M=1000000
 R -q --no-save <<END
     snpgene <- read.table("INTERVAL.glist-hg19",as.is=TRUE,sep="\t")
     names(snpgene) <- c("chr1","start1","pos","rsid","chr2","start2","end2","gene")
