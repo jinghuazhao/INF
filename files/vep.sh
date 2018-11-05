@@ -1,6 +1,7 @@
 # 5-11-2018 JHZ
 
 function vep()
+# a1/a2 reaffirmation is necessary
 {
   (
   echo -e "##fileformat=VCFv4.0"
@@ -22,24 +23,7 @@ function vep()
 
   module load perl/5.20.0 vep/88
   ln -sf /usr/local/Cluster-Apps/vep/release-88/cache $/HOME/.vep
-  export vepfile=/usr/local/Cluster-Apps/vep/release-88/examples/homo_sapiens_GRCh37.vcf
+# export vepfile=/usr/local/Cluster-Apps/vep/release-88/examples/homo_sapiens_GRCh37.vcf
+  export vepfile=INTERVAL.vcf
   vep -i $vepfile --assembly GRCh37 -o $(basename $vepfile .vcf).out --force_overwrite -offline
 }
-
-export M=1000000
-R -q --no-save <<END
-    snpgene <- read.table("INTERVAL.glist-hg19",as.is=TRUE,sep="\t")
-    names(snpgene) <- c("chr1","start1","pos","rsid","chr2","start2","end2","gene")
-    M <- as.numeric(Sys.getenv("M"))
-    snpgene <- within(snpgene,{
-      trans <- NA
-      L <- start2 - M
-      L[L<0] <- 0
-      U <- end2 + M
-      snpgene[pos < L | pos < U,"trans"] <- 1
-      snpgene[pos >= L & pos <= U,"trans"] <- 0
-    })
-   trans_table <- with(snpgene,table(rsid,trans))
-   print(trans_table)
-END
-
