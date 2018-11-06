@@ -166,7 +166,7 @@ function snp_gene()
     FS=OFS="\t"
     gsub(/\"/,"",$0)
     if(NR==1) print "#chrom","start","end","gene";
-    else print "chr" $8,$9,$10,$7
+    else print "chr" $8,$9,$10,$2
   }' $INF/doc/olink.inf.panel.annot.tsv > olink.bed
   module load gcc/4.8.1
   bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
@@ -191,7 +191,8 @@ export INF=/scratch/jhz22/INF
 function olink_cis_trans()
 # title,genic,cis,trans
 {
-  awk '$8!="." && $8!="NA" {print $4}' INTERVAL.olink > INTERVAL.rsid_genic
+  awk '$8!="." && $8!="NA"' INTERVAL.olink > INTERVAL.prot_genic
+  cut -f4 INTERVAL.prot_genic > INTERVAL.rsid_genic
   grep -v -w -f INTERVAL.rsid_genic INTERVAL.bed > INTERVAL.tmp
   awk -vOFS="\t" -vM=$M '{
     chrom=$1
@@ -204,14 +205,31 @@ function olink_cis_trans()
     if(NR==1) print "#chrom", "start", "end", "cdsStart", "CdsEnd", "name2";
     else print chrom, Start, End, cdsStart, cdsEnd, name2
   }' olink.bed > olink.cis_trans
-  bedtools intersect -a INTERVAL.tmp -b olink.cis_trans -loj > INTERVAL.olink.cis_trans
-  awk '$10!="." && $10!="NA" {print $4}' INTERVAL.olink.cis_trans | \
+  bedtools intersect -a INTERVAL.tmp -b olink.cis_trans -loj > INTERVAL.cis_trans
+  awk '$10!="." && $10!="NA"' INTERVAL.cis_trans > INTERVAL.prot_cis
+  cut -f4 INTERVAL.prot_cis | \
   sort | \
   uniq > INTERVAL.rsid_cis
   awk 'NR>1' INTERVAL.bed | \
-  grep -v -w -f INTERVAL.rsid_genic -f INTERVAL.rsid_cis > INTERVAL.rsid_trans
+  grep -v -w -f INTERVAL.rsid_genic -f INTERVAL.rsid_cis > INTERVAL.prot_trans
+  cut -f4 INTERVAL.prot_trans > INTERVAL.rsid_trans
   wc -l INTERVAL.rsid_cis INTERVAL.rsid_genic INTERVAL.rsid_trans
+  (
+    awk '{print 1,$1}' INTERVAL.rsid_genic
+    awk '{print 2,$1}' INTERVAL.rsid_cis
+    awk '{print 3,$1}' INTERVAL.rsid_trans
+  ) | \
+  sort -k2,2 >  INTERVAL.rsid.genic_cis_trans
+  awk 'NR>1' INTERVAL.bed | \
+  sort -k4,4 | \
+  join -14 -22 - INTERVAL.genic_cis_trans | \
+  awk -vOFS="\t" '{
+    if(NR==1) print "#chrom","start","end","rsid","rsid_status"
+    print $2,$3,$4,$1,$5
+  }' > INTERVAL.tmp
 }
+
+olink_cis_trans
 
 export INTERVAL=/scratch/jp549/olink-merged-output
 function format_for_METAL()
@@ -252,17 +270,20 @@ function CD6()
 
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
 export IMPUTED=/scratch/curated_genetic_data/interval/imputed
-cut -d"," -f1 $PHEN | \
-awk 'NR>1 {OFS="\t";print $1,$1}' > INTERVAL.id
-seq 22 | \
-parallel -j3 --env IMPUTED -C' ' '
-  plink --bgen $IMPUTED/impute_{}_interval.bgen \
-        --sample $IMPUTED/interval.samples \
-        --keep INTERVAL.id \
-        --make-bed \
-        --out INTERVAL-{} \
-        --threads 2
-'
+function reference()
+{
+  cut -d"," -f1 $PHEN | \
+  awk 'NR>1 {OFS="\t";print $1,$1}' > INTERVAL.id
+  seq 22 | \
+  parallel -j3 --env IMPUTED -C' ' '
+    plink --bgen $IMPUTED/impute_{}_interval.bgen \
+          --sample $IMPUTED/interval.samples \
+          --keep INTERVAL.id \
+          --make-bed \
+          --out INTERVAL-{} \
+          --threads 2
+  '
+}
 
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
 export BS=/scratch/jp549/apps/bram-scripts
