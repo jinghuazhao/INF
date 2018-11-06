@@ -1,7 +1,11 @@
-# 30-10-2018 JHZ
+# 6-11-2018 JHZ
 
 export KORA=/data/jinhua/KORA/Affy_AxiomPhase3_n3775_CodeAX1KG3_V2_LU9220
 module load bcftools/1.8 plink2/1.90beta5.4
+
+module load lapack/3.8.0 gcc/5.4.0 qctool/2.0.1
+export LD_LIBRARY_PATH=/data/jinhua/lapack-3.8.0/lib64:$LD_LIBRARY_PATH
+qctool -help
 
 echo "--> remove duplicates"
 
