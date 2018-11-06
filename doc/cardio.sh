@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 5/11/18 JHZ
+# General notes, 6/11/18 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
@@ -251,5 +251,18 @@ function CD6()
 }
 
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
+export IMPUTED=/scratch/curated_genetic_data/interval/imputed
+cut -d"," -f1 $PHEN | \
+awk 'NR>1 {OFS="\t";print $1,$1}' > INTERVAL.id
+seq 22 | \
+parallel -j3 --env IMPUTED -C' ' '
+  plink --bgen $IMPUTED/impute_{}_interval.bgen \
+        --sample $IMPUTED/interval.samples \
+        --keep INTERVAL.id \
+        --make-bed \
+        --out INTERVAL-{} \
+        --threads 2
+'
+
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
 export BS=/scratch/jp549/apps/bram-scripts
