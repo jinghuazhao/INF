@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 6/11/18 JHZ
+# General notes, 7/11/18 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
@@ -136,7 +136,6 @@ function clumped_jma()
   cd -
 }
 
-export M=1000000
 function snp_gene()
 # genomwide SNP-gene matchings
 {
@@ -155,8 +154,9 @@ function snp_gene()
     chr=a[1]
     split(a[2],b,"_")
     pos=b[1]
-    if(NR==1) print "#chrom","start","end","rsid"
-    print chr,pos-1,pos,rsid
+    prot=$3
+    if(NR==1) print "#chrom","start","end","rsid","prot"
+    print chr,pos-1,pos,rsid,prot
   }' INTERVAL.snpid_rsid | \
   uniq > INTERVAL.bed
   head -1 $INF/doc/olink.inf.panel.annot.tsv | \
@@ -166,7 +166,7 @@ function snp_gene()
     FS=OFS="\t"
     gsub(/\"/,"",$0)
     if(NR==1) print "#chrom","start","end","gene";
-    else print "chr" $8,$9,$10,$2
+    else print "chr" $8,$9,$10,$7
   }' $INF/doc/olink.inf.panel.annot.tsv > olink.bed
   module load gcc/4.8.1
   bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
@@ -188,25 +188,28 @@ function snp_gene()
 #12 "alternate.uniprot"
 
 export INF=/scratch/jhz22/INF
+export M=1000000
 function olink_cis_trans()
 # title,genic,cis,trans
 {
-  awk '$8!="." && $8!="NA"' INTERVAL.olink > INTERVAL.prot_genic
-  cut -f4 INTERVAL.prot_genic > INTERVAL.rsid_genic
+  awk '$9!="." && $9!="NA"' INTERVAL.olink > INTERVAL.prot_genic
+  cut -f4 INTERVAL.prot_genic | \
+  sort | \
+  uniq > INTERVAL.rsid_genic
   grep -v -w -f INTERVAL.rsid_genic INTERVAL.bed > INTERVAL.tmp
   awk -vOFS="\t" -vM=$M '{
     chrom=$1
     cdsStart=$2
     cdsEnd=$3
-    name2=$4
-    Start=cdsStart-M
-    if (Start<0) Start=0
-    End=cdsEnd+M
-    if(NR==1) print "#chrom", "start", "end", "cdsStart", "CdsEnd", "name2";
-    else print chrom, Start, End, cdsStart, cdsEnd, name2
+    gene=$4
+    start=cdsStart-M
+    if (start<0) start=0
+    end=cdsEnd+M
+    if(NR==1) print "#chrom", "start", "end", "cdsStart", "CdsEnd", "gene";
+    else print chrom, start, end, cdsStart, cdsEnd, gene
   }' olink.bed > olink.cis_trans
   bedtools intersect -a INTERVAL.tmp -b olink.cis_trans -loj > INTERVAL.cis_trans
-  awk '$10!="." && $10!="NA"' INTERVAL.cis_trans > INTERVAL.prot_cis
+  awk '$11!="." && $11!="NA"' INTERVAL.cis_trans > INTERVAL.prot_cis
   cut -f4 INTERVAL.prot_cis | \
   sort | \
   uniq > INTERVAL.rsid_cis
@@ -222,7 +225,7 @@ function olink_cis_trans()
   sort -k2,2 >  INTERVAL.rsid.genic_cis_trans
   awk 'NR>1' INTERVAL.bed | \
   sort -k4,4 | \
-  join -14 -22 - INTERVAL.genic_cis_trans | \
+  join -14 -22 - INTERVAL.rsid.genic_cis_trans | \
   awk -vOFS="\t" '{
     if(NR==1) print "#chrom","start","end","rsid","rsid_status"
     print $2,$3,$4,$1,$5
