@@ -5,7 +5,7 @@
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
-# 4. SNP-gene matchings are established by snp_gene() genomewide and olink_cis_trans() for OLINK. Addtional notes:
+# 4. SNP-gene matchings are established by snp_gene() genomewide and genic_cis_trans() for OLINK. Addtional notes:
 #    - This follows https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
 #    - bedtools 2.4.26 on cardio has no intersect command:
 #    - module load bedtools/2.4.26
@@ -158,23 +158,33 @@ function snp_gene()
     chr=a[1]
     split(a[2],b,"_")
     pos=b[1]
-    prot=$3
-    if(NR==1) print "#chrom","start","end","rsid","prot"
-    print chr,pos-1,pos,rsid,prot
-  }' INTERVAL.snpid_rsid | \
-  uniq > INTERVAL.bed
-  head -1 $INF/doc/olink.inf.panel.annot.tsv | \
-  awk '{gsub(/\t/, "\n",$0)};1'| \
-  awk '{print "#" NR, $1}'
+    if(NR==1) print "#chrom","start","end","rsid"
+    print chr,pos-1,pos,rsid
+  }' INTERVAL.snpid_rsid > INTERVAL.bed
   awk '{
     FS=OFS="\t"
     gsub(/\"/,"",$0)
     if(NR==1) print "#chrom","start","end","gene";
-    else print "chr" $8,$9,$10,$7
+    else print "chr" $8,$9,$10,$2
   }' $INF/doc/olink.inf.panel.annot.tsv > olink.bed
   bedtools intersect -a INTERVAL.bed -b olink.bed -loj > INTERVAL.olink
+  awk -vOFS="\t" -vM=1000000 '{
+    chrom=$1
+    cdsStart=$2
+    cdsEnd=$3
+    gene=$4
+    start=cdsStart-M
+    if (start<0) start=0
+    end=cdsEnd+M
+    if(NR==1) print "#chrom", "start", "end", "gene";
+    else print chrom, start, end, gene
+  }' olink.bed > olink.cis
+  bedtools intersect -a INTERVAL.bed -b olink.cis -loj > INTERVAL.genic_cis_trans
   cd -
 }
+#  head -1 $INF/doc/olink.inf.panel.annot.tsv | \
+#  awk '{gsub(/\t/, "\n",$0)};1'| \
+#  awk '{print "#" NR, $1}'
 #1 "target"
 #2 "target.short"
 #3 "uniprot"
@@ -188,28 +198,16 @@ function snp_gene()
 #11 "olink.id"
 #12 "alternate.uniprot"
 
-export M=1000000
-function olink_cis_trans()
+function genic_cis_trans()
 # title,genic,cis,trans
 {
-  awk '$NF!="." && $NF!="NA"' INTERVAL.olink > INTERVAL.genic
+  awk '$NF!="."' INTERVAL.olink > INTERVAL.genic
   cut -f4 INTERVAL.genic | \
   sort | \
   uniq > INTERVAL.rsid_genic
   grep -v -w -f INTERVAL.rsid_genic INTERVAL.bed > INTERVAL.tmp
-  awk -vOFS="\t" -vM=$M '{
-    chrom=$1
-    cdsStart=$2
-    cdsEnd=$3
-    gene=$4
-    start=cdsStart-M
-    if (start<0) start=0
-    end=cdsEnd+M
-    if(NR==1) print "#chrom", "start", "end", "cdsStart", "CdsEnd", "gene";
-    else print chrom, start, end, cdsStart, cdsEnd, gene
-  }' olink.bed > olink.cis_trans
-  bedtools intersect -a INTERVAL.tmp -b olink.cis_trans -loj > INTERVAL.cis_trans
-  awk '$NF!="." && $NF!="NA"' INTERVAL.cis_trans > INTERVAL.cis
+  bedtools intersect -a INTERVAL.tmp -b olink.cis -loj > INTERVAL.cis_trans
+  awk '$NF!="."' INTERVAL.cis_trans > INTERVAL.cis
   cut -f4 INTERVAL.cis | \
   sort | \
   uniq > INTERVAL.rsid_cis
@@ -217,7 +215,7 @@ function olink_cis_trans()
   cut -f4 INTERVAL.tmp | \
   uniq > INTERVAL.rsid_trans
   wc -l INTERVAL.rsid_cis INTERVAL.rsid_genic INTERVAL.rsid_trans
-  bedtools intersect -a INTERVAL.tmp -b olink.bed -loj > INTERVAL.prot_trans
+  bedtools intersect -a INTERVAL.tmp -b olink.bed -loj > INTERVAL.trans
   (
     awk '{print "genic",$1}' INTERVAL.rsid_genic
     awk '{print "cis",$1}' INTERVAL.rsid_cis
@@ -237,12 +235,12 @@ function olink_cis_trans()
 END
 }
 
-olink_cis_trans
+genic_cis_trans
 
 echo prot genic cis trans
 for i in $(awk 'NR>1' olink.bed | cut -f4)
 do
-  echo $i $(grep -w $i INTERVAL.prot_genic | wc -l)  $(grep -w $i INTERVAL.prot_cis | wc -l)  $(grep -w $i INTERVAL.prot_trans | wc -l)
+  echo $i $(grep -w $i INTERVAL.genic | wc -l)  $(grep -w $i INTERVAL.cis | wc -l)  $(grep -w $i INTERVAL.trans | wc -l)
 done
 
 export INTERVAL=/scratch/jp549/olink-merged-output
