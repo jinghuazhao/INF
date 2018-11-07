@@ -136,6 +136,7 @@ function clumped_jma()
   cd -
 }
 
+export INF=/scratch/jhz22/INF
 function snp_gene()
 # genomwide SNP-gene matchings
 {
@@ -187,7 +188,6 @@ function snp_gene()
 #11 "olink.id"
 #12 "alternate.uniprot"
 
-export INF=/scratch/jhz22/INF
 export M=1000000
 function olink_cis_trans()
 # title,genic,cis,trans
@@ -215,21 +215,26 @@ function olink_cis_trans()
   uniq > INTERVAL.rsid_cis
   awk 'NR>1' INTERVAL.bed | \
   grep -v -w -f INTERVAL.rsid_genic -f INTERVAL.rsid_cis > INTERVAL.prot_trans
-  cut -f4 INTERVAL.prot_trans > INTERVAL.rsid_trans
+  cut -f4 INTERVAL.prot_trans | \
+  uniq > INTERVAL.rsid_trans
   wc -l INTERVAL.rsid_cis INTERVAL.rsid_genic INTERVAL.rsid_trans
   (
-    awk '{print 1,$1}' INTERVAL.rsid_genic
-    awk '{print 2,$1}' INTERVAL.rsid_cis
-    awk '{print 3,$1}' INTERVAL.rsid_trans
+    awk '{print "genic",$1}' INTERVAL.rsid_genic
+    awk '{print "cis",$1}' INTERVAL.rsid_cis
+    awk '{print "trans",$1}' INTERVAL.rsid_trans
   ) | \
   sort -k2,2 >  INTERVAL.rsid.genic_cis_trans
   awk 'NR>1' INTERVAL.bed | \
   sort -k4,4 | \
   join -14 -22 - INTERVAL.rsid.genic_cis_trans | \
   awk -vOFS="\t" '{
-    if(NR==1) print "#chrom","start","end","rsid","rsid_status"
-    print $2,$3,$4,$1,$5
-  }' > INTERVAL.tmp
+    if(NR==1) print "#chrom","start","end","rsid","prot","rsid_status"
+    print $2,$3,$4,$1,$5,$6
+  }' > INTERVAL.rsid.prot
+  R --no-save -q <<END
+    cistrans <- read.delim("INTERVAL.rsid.prot",as.is=TRUE)
+    with(cistrans,table(prot,rsid_status))
+END
 }
 
 olink_cis_trans
