@@ -89,7 +89,7 @@ It is recommended to use format STUDY_inf1_protein_UniProtID_date.gz, see https:
 
 ### Notes on PLINK
 
-Due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis in which case one may see the following information: 
+Due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis with which one may see the following information: 
 
 No | Name | Description | Comment
 --|----------|----------|--------
