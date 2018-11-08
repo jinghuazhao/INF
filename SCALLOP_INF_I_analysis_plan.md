@@ -11,7 +11,7 @@ analysis, with highlight of relevant information to facilitate the meta-analysis
 
 ## 2. Aims
 
-As with the CVD meta-analysis, the tasks will include
+As with the CVD meta-analysis, the tasks will involve
 
 * Identification of pQTLs in SCALLOP discovery cohorts
 * Replication of pQTLs in SCALLOP replication cohorts
