@@ -2,11 +2,11 @@
 
 ## https://www.olink.com/scallop/
 
-1. Background
+## 1. Background
 
 The SCALLOP consortium was created to work collaboratively on discovery and follow-up of pQTLs for proteins measured using Olink technology. A meta-analysis has been conducted on data from participating cohort Olink CVD panel and consequent contributions have been made on Olink INF panel. This document therefore follows closely the analysis plan for the analysis while highlighting relevant information which will facilitate the meta-analysis
 
-2. Aims
+## 2. Aims
 
 As with the CVD I meta-analysis, the tasks will include
 
@@ -16,30 +16,30 @@ As with the CVD I meta-analysis, the tasks will include
 * Investigation of pleiotropic effects of the pQTLs
 * Evaluate whether the CVD I proteins are causal in e.g. CHD and stroke
 
-3. Data analysis
+## 3. Data analysis
 
 * Use standard linear regression for assays with 80% of samples above the lower detection limit. 
 * Dichotomize proteins with more than 20% of samples below the lower detection limit and code values below the detection limit as 0 and those above as 1. 
 * Rank-based inverse normal transformation, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap
 
-## SNPs
+### SNPs
 
 * 1000 genomes imputation
 * SNPs will be filtered for imputation quality at time of meta-analysis, but please filter out SNPs with IMPUTE INFO quality less than 0.2
 * Standard QC, including call rate < 95% or failed Illumina genotype calling, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, sample call rate < 95%, Bonferroni corrected Hardy-Weinberg Equilibrium test.
 
-## Association analysis
+### Association analysis
 
 * Linear regression with adjustment for study-specific covariates. These should always include age at time of sample collection, gender and adjustment for population structure / geography if applicable (e.g across countries). Sample storage time and season of collection if applicable. 
 * Use imputation-dosages
 * Additive genetic model
 * Separate the analyses for men and women for X chromosome SNPs (exception for cohorts that have already performed analyses)
 
-## Stratification
+### Stratification
 
 * Analyse patients and controls separately –results will be merged at meta-analysis stage
 
-6. Descriptive statistics
+## 4. Descriptive statistics
 
 Please fill out the attached descriptive statistics spreadsheet and use the naming convention: 
 
@@ -47,7 +47,7 @@ Please fill out the attached descriptive statistics spreadsheet and use the nami
 * Where, STUDY is a short (14 characters or less) identifier for the population studied, which is the same for all files provided by your study.
 * DATE is the date on which the file was prepared, in the format “YYYYMMDD”.
 
-7. GWAS results submission and file formats
+## 5. GWAS results submission and file formats
 
 SNP table for association results. Please include the following columns. Missing values are coded as “NA”.
 
@@ -86,7 +86,7 @@ No | Name | Description | Comment
 
 In this case, if is preferable to provide strand, effect allele, effect allele frequency, and the information measures.
 
-8. Meta-analysis
+## 6. Meta-analysis
 
 Meta-analysis will be performed using the inverse-N weighted analysis of p-values, as implemented in the software METAL (www.sph.umich.edu/csg/abecasis/metal). METAL implements a weighted Z-score method using the following formula: where the weight wi = square root of the sample size of the ith study, zi= -1(1-(pi/2))*(effect direction for study i), and pi is the P-value for the ith study.  
  
@@ -96,6 +96,6 @@ We will apply genomic control and the appropriate marker filters at this stage (
 *. Genomic control (GC): genomic control will be applied to each study at the meta-analysis stage (single GC). Please do not apply GC to GWAS results and provide uncorrected standard errors, as (double) GC will be applied at the meta-analysis stage. 
 *. Significance: the threshold for the genome-wide analyses will be set at 5 x 10<sup>-8</sup>. The results will be replicated in independent cohorts so no need for additional correction.
 
-9. Uploading of results data to TRYGGVE server
+## 7. Uploading of results data to TRYGGVE server
 
 See CVD I analysis plan.
