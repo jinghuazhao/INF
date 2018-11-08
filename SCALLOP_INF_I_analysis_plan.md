@@ -71,7 +71,7 @@ Please fill out the spreadsheet as with SCALLOP/CVD1 with naming convention:
 
 Please include the following columns. Missing values are coded as “NA”.
 
-No | Variable name | Description
+No | Variable name | Description of variable
 ---|---------------|----------------------------------------------------------------------------------
 1 | SNPID | SNP ID as rs number
 2 | CHR | Chromosome number (1-22)
