@@ -10,14 +10,12 @@
 
 ---
 
-## 1. Background
+## 1. Overview
 
 The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for 
 discovery and follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on data Olink CVD1 panel 
 from participating cohorts and consequent contributions have been made on Olink INF panel. This document therefore follows closely the SCALLOP/CVD1 analysis 
 plan for the analysis, and in particular highlights relevant information required to facilitate the meta-analysis.
-
-## 2. Aims
 
 As with the CVD1 meta-analysis, the tasks will involve
 
@@ -30,7 +28,7 @@ As with the CVD1 meta-analysis, the tasks will involve
 
 among others.
 
-## 3. Data analysis
+## 2. Data and analysis
 
 ### Proteins
 
@@ -60,7 +58,7 @@ invnormal <- function(x)
 
 It is preferable to use software which account for genotype uncertainty, such as SNPTEST, QUICKTEST, or BOLT-LMM.
 
-## 4. Descriptive statistics
+## 3. Descriptive statistics
 
 Please fill out the spreadsheet as with SCALLOP/CVD1 with naming convention: 
 
@@ -68,7 +66,7 @@ Please fill out the spreadsheet as with SCALLOP/CVD1 with naming convention:
 * Where STUDY is a short (14 characters or less) identifier for the population studied, which is the same for all files provided by your study.
 * DATE is the date on which the file was prepared, in the format “DDMMYYYY”.
 
-## 5. File formats for GWAS results
+## 4. File formats for GWAS results
 
 ### SNP table for GWAS results
 
@@ -119,7 +117,7 @@ In this case, please provide for each SNP information on strand, effect allele, 
 measure can be on the genotype level rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based statistics can greatly be
 facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/.
 
-## 6. Meta-analysis
+## 5. Meta-analysis
 
 Meta-analysis will be performed using the inverse-N weighted analysis of regression betas and standard errors, as implemented in the software METAL 
 (https://github.com/statgen/METAL).
@@ -130,11 +128,11 @@ We will apply genomic control and the appropriate marker filters at this stage (
 * Genomic control (GC): genomic control will be applied to each study at the meta-analysis stage (single GC), so GC-correction is needed for each cohort. 
 * Significance: the threshold for the genome-wide analyses will be set at 5 x 10<sup>-10</sup>. The results will be replicated in independent cohorts.
 
-## 7. Uploading of results
+## 6. Uploading of results
 
 See CVD1 analysis plan.
 
-## 8. Contact information
+## 7. Contact information
 
 For questions about SCALLOP, please contact Anders Malarstig (anders.malarstig@ki.se). For technical issues regarding TRYGGVE, please contact Lasse Folkersen (lasfol@cbs.dtu.dk).
 
