@@ -26,7 +26,11 @@ among others.
 
 * Use standard linear regression for assays with 80% of samples above the lower detection limit. 
 * Dichotomize proteins with more than 20% of samples below the lower detection limit and code values below the detection limit as 0 and those above as 1. 
-* Rank-based inverse normal transformation, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap
+* Rank-based inverse normal transformation, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap,
+```r
+invnormal <- function(x)
+  qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
+```
 
 ### Proteins
 
@@ -84,7 +88,7 @@ No | Variable name | Description
 
 It is recommended to use format STUDY_inf1_protein_UnitProtID_date.gz.
 
-### Note on PLINK
+### Notes on PLINK
 
 Due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis in which case one may see the following information: 
 
