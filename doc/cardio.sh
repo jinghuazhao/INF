@@ -148,17 +148,24 @@ function snp_gene()
   uniq > refGene.bed
   bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
   cut -f7 $INF/doc/olink.inf.panel.annot.tsv | \
-  awk '(NR>1){gsub(/\"/,"");print}' > inf1.gene
+  awk '(NR>1){gsub(/\"/,"");print}' | \
+  sort > olink.gene
   (
     head -1 refGene.bed
-    grep -w -f inf1.gene refGene.bed
+    awk 'NR>1' refGene.bed | \
+    sort -k4,4 | \
+    join -11 -24 olink.gene - | \
+    awk '{print $2,$3,$4,$1}'
   ) > refGene.olink
   wget -qO- https://www.cog-genomics.org/static/bin/plink/glist-hg19 > glist-hg19
   sort -k1,1n -k2,2n glist-hg19 | \
   awk '{if(NR==1) print "#chrom","start","end","gene";print "chr" $1,$2,$3,$4}' OFS="\t" > glist-hg19.bed
   (
     head -1 glist-hg19.bed
-    grep -w -f inf1.gene glist-hg19.bed
+    awk 'NR>1' glist-hg19.bed | \
+    sort -k4,4 | \
+    join -11 -24 olink.gene - | \
+    awk '{print $2,$3,$4,$1}'
   ) > glist-hg19.olink
   bedtools intersect -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
   awk -vOFS="\t" '{
