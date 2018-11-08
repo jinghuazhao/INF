@@ -118,8 +118,10 @@ We will apply genomic control and the appropriate marker filters at this stage (
 *. Genomic control (GC): genomic control will be applied to each study at the meta-analysis stage (single GC). Please do not apply GC to GWAS results and provide uncorrected standard errors, as (double) GC will be applied at the meta-analysis stage. 
 *. Significance: the threshold for the genome-wide analyses will be set at 5 x 10<sup>-8</sup>. The results will be replicated in independent cohorts so no need for additional correction.
 
-If you have any questions, please contact Jing Hua Zhao via jhz22@medschl.cam.ac.uk or James Peters at jp549@medschl.cam.ac.uk. 
-
 ## 7. Uploading of results data to TRYGGVE server
 
 See CVD analysis plan.
+
+## 8. Contact information
+
+If you have any questions, please contact Jing Hua Zhao via jhz22@medschl.cam.ac.uk or James Peters at jp549@medschl.cam.ac.uk. 
