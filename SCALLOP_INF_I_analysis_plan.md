@@ -95,8 +95,8 @@ It is recommended to use format STUDY_analyst_inf1_protein_UniProtID_date.gz, se
 
 Due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis with which one may see the following information: 
 
-No | Name | Description | Comment
---|----------|----------|--------
+No | Name | Description | Additional comment
+--|----------|----------|-------------------------------------
 1 | BP | Position in base pairs
 2 | CHR | Chromosome
 3 | SNP | SNP name/chr:pos_a1_a2	
