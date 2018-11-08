@@ -1,6 +1,6 @@
 # SCALLOP consortium - analysis plan for INF panel proteins
 
-***Adapted from SCALLOP/CVD1 analysis plan, Cambridge 8/11/2018***
+***Adapted from SCALLOP/CVD1 analysis plan, Cambridge last updated 8/11/2018***
 
 ---
 
@@ -45,7 +45,7 @@ The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao
 
 ### Association analysis
 
-* Rank-based inverse normal transformation on the raw measurement of proteins including those below lower limit of detection, e.g., `invnormal` function from https://github.com/jinghuazhao/R/tree/master/gap,
+* Rank-based inverse normal transformation on the raw measurement of proteins including those below lower limit of detection, e.g., `invnormal` function,
 ```r
 invnormal <- function(x)
   qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
