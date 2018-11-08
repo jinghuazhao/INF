@@ -43,7 +43,7 @@ File     | Description
 METAL/   | METAL results
 sumstats/| reformatted summary statistics by cohort
 [SCALLOP_INF_I_analysis_plan.md](SCALLOP_INF_I_analysis_plan.md) | analysis plan
-[SCALLOP_INF_I_analysis_plan.md](SCALLOP_INF_I_analysis_plan.docx) |
+[SCALLOP_INF_I_analysis_plan.docx](SCALLOP_INF_I_analysis_plan.docx) |
 [inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel
 [log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
 [SecureCloud.md](SecureCloud.md) | Information for SecureCloud
