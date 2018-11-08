@@ -1,6 +1,6 @@
 # SCALLOP consortium - Analysis plan for INF panel proteins
 
-***Adapted from CVD analysis plan***
+***Adapted from CVD analysis plan, Cambridge 8/11/2018***
 
 ## 1. Background
 
@@ -115,5 +115,3 @@ If you have any questions, please contact Jing Hua Zhao via jhz22@medschl.cam.ac
 ## 7. Uploading of results data to TRYGGVE server
 
 See CVD analysis plan.
-
-**Cambridge**, *8/11/2018*
