@@ -100,4 +100,4 @@ See CVD I analysis plan.
 
 ## 8. SCALLOP consortium
 
-### https://www.olink.com/scallop/
+### Information is available from https://www.olink.com/scallop/.
