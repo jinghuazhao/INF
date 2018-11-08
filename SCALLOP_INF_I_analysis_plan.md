@@ -26,8 +26,6 @@ As with the CVD1 meta-analysis, the tasks will involve
 * Evaluation over the causal role of INF proteins disease outcomes such as CHD and stroke
 * Other downstream analysis
 
-among others.
-
 ## 2. Data and analysis
 
 ### Proteins
