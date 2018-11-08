@@ -99,11 +99,10 @@ No | Name | Description | Comment
 4 | HWE | Hardy-Weinberg equilibrium P
 5 | MAF | Minor allele frequency
 6 | A1 | Allele 1
-7 | A2 | Allele 2
-8 | N |	Sample size
-9 | BETA | Regression coefficient
-10 | CHI2 | Regression statistics
-11 | P | P value
+7 | N | Sample size
+8 | BETA | Regression coefficient
+9 | CHI2/STAT | Regression statistics
+10 | P | P value
 
 In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures.
 
