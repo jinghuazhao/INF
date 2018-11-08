@@ -105,7 +105,7 @@ No | Name | Description | Comment
 10 | CHI2 | Regression statistics
 11 | P | P value
 
-In this case, if is preferable to provide strand, effect allele, effect allele frequency, and the information measures.
+In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures.
 
 ## 6. Meta-analysis
 
