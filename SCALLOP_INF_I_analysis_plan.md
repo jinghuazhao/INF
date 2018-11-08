@@ -24,9 +24,8 @@ among others.
 
 ## 3. Data analysis
 
-* Use standard linear regression for assays with 80% of samples above the lower detection limit. 
-* Dichotomize proteins with more than 20% of samples below the lower detection limit and code values below the detection limit as 0 and those above as 1. 
-* Rank-based inverse normal transformation, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap,
+* Use multiple linear regression for all samples and raw measurements from assays
+* Rank-based inverse normal transformation on the residuals, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap,
 ```r
 invnormal <- function(x)
   qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
