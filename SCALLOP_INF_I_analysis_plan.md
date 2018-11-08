@@ -78,10 +78,12 @@ No | Variable name | Description
 13 | RSQ_IMP| Observed divided by expected variance for imputed allele dosage.
 14 | IMP | Please specify whether the SNP was imputed or genotyped: 1: imputed SNP, 0: directly genotyped SNP
 
+File-naming convention: it is recommended to use format STUDY_inf1_protein_UnitProtID_date.gz.
+
 Note that due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis in which case one sees the following information: 
 
 No | Name | Description | Comment
---|----------|--------------------
+--|----------|----------|---------
 1 | BP | Position in basepairs	
 2 | CHR | Chromosome	
 3 | SNP | SNP name/chr:pos_a1_a2	
