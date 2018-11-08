@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 7/11/18 JHZ
+# General notes, 8/11/18 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
@@ -147,9 +147,19 @@ function snp_gene()
   awk '!index($1,"_")' | \
   uniq > refGene.bed
   bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
+  cut -f7 $INF/doc/olink.inf.panel.annot.tsv | \
+  awk '(NR>1){gsub(/\"/,"");print}' > inf1.gene
+  (
+    head -1 refGene.bed
+    grep -w -f inf1.gene refGene.bed
+  ) > refGene.olink
   wget -qO- https://www.cog-genomics.org/static/bin/plink/glist-hg19 > glist-hg19
   sort -k1,1n -k2,2n glist-hg19 | \
   awk '{if(NR==1) print "#chrom","start","end","gene";print "chr" $1,$2,$3,$4}' OFS="\t" > glist-hg19.bed
+  (
+    head -1 glist-hg19.bed
+    grep -w -f inf1.gene glist-hg19.bed
+  ) > glist-hg19.olink
   bedtools intersect -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
   awk -vOFS="\t" '{
     snpid=$1
