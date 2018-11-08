@@ -103,10 +103,13 @@ No | Name | Description | Additional comment
 4 | HWE | Hardy-Weinberg equilibrium P-value
 5 | MAF | Minor allele frequency | Please indicate if this is the effect allele frequency
 6 | A1 | Allele 1 | Please indicate if this is the effect allele
-7 | N | Sample size
-8 | BETA | Regression coefficient
-9 | STAT | Regression test statistic
-10 | P | P value
+7* | A2 | Allele 2 | Please indicate if this is the effect allele
+8 | N | Sample size
+9 | BETA | Regression coefficient
+10 | STAT | Regression test statistic
+11 | P | P value
+
+\* may be required to take from the PLINK .bim file.
 
 In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures for imputation -- the information 
 measure can be on the genotype level rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based statistics can greatly be
