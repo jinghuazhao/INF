@@ -2,6 +2,15 @@
 
 ***Adapted from SCALLOP/CVD1 analysis plan, Cambridge 8/11/2018***
 
+---
+
+<p align="center">
+Timeline for completing cohort- and ancestry-specific analyses and uploading the results for this project 
+
+October 1, 2018 
+</p>
+---
+
 ## 1. Background
 
 The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for 
@@ -81,7 +90,7 @@ No | Variable name | Description
 
 ### File-naming convention
 
-It is recommended to use format STUDY_inf1_protein_UniProtID_date.gz, see https://www.uniprot.org/ for additional information on UniProt IDs.
+It is recommended to use format STUDY_analyst_inf1_protein_UniProtID_date.gz, see https://www.uniprot.org/ for additional information on UniProt IDs.
 
 ### Notes on PLINK
 
