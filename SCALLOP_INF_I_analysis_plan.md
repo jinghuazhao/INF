@@ -24,13 +24,6 @@ among others.
 
 ## 3. Data analysis
 
-* Use multiple linear regression for all samples and raw measurements from assays
-* Rank-based inverse normal transformation on the residuals, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap,
-```r
-invnormal <- function(x)
-  qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
-```
-
 ### Proteins
 
 The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao/INF/blob/master/doc/olink.inf.panel.annot.tsv.
@@ -43,7 +36,12 @@ The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao
 
 ### Association analysis
 
-* Linear regression with adjustment for study-specific covariates. These should always include age at time of sample collection, gender and adjustment for population structure / geography if applicable (e.g across countries). Sample storage time and season of collection if applicable. 
+* Rank-based inverse normal transformation on the raw measurement of proteins including those below lower limit of detection, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap,
+```r
+invnormal <- function(x)
+  qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
+```
+* Multiple linear regression for all samples including sex, age, principal components and other cohort specific covariates.
 * Additive genetic model
 
 ### Stratification
