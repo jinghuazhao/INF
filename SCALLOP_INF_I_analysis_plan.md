@@ -44,9 +44,7 @@ The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao
 ### Association analysis
 
 * Linear regression with adjustment for study-specific covariates. These should always include age at time of sample collection, gender and adjustment for population structure / geography if applicable (e.g across countries). Sample storage time and season of collection if applicable. 
-* Use imputation-dosages
 * Additive genetic model
-* Separate the analyses for men and women for X chromosome SNPs (exception for cohorts that have already performed analyses)
 
 ### Stratification
 
@@ -54,10 +52,10 @@ The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao
 
 ## 4. Descriptive statistics
 
-Please fill out the attached descriptive statistics spreadsheet and use the naming convention: 
+Please fill out the spreadsheet and use the naming convention: 
 
 * STUDY.descriptives.DATE.xls
-* Where, STUDY is a short (14 characters or less) identifier for the population studied, which is the same for all files provided by your study.
+* Where STUDY is a short (14 characters or less) identifier for the population studied, which is the same for all files provided by your study.
 * DATE is the date on which the file was prepared, in the format “YYYYMMDD”.
 
 ## 5. File formats for GWAS results
