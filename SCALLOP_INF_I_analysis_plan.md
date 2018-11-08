@@ -57,9 +57,11 @@ Please fill out the attached descriptive statistics spreadsheet and use the nami
 * Where, STUDY is a short (14 characters or less) identifier for the population studied, which is the same for all files provided by your study.
 * DATE is the date on which the file was prepared, in the format “YYYYMMDD”.
 
-## 5. GWAS results submission and file formats
+## 5. File formats for GWAS results
 
-SNP table for association results. Please include the following columns. Missing values are coded as “NA”.
+### SNP table for GWAS results
+
+Please include the following columns. Missing values are coded as “NA”.
 
 No | Variable name | Description
 ---|---------------|------------
@@ -82,27 +84,30 @@ No | Variable name | Description
 
 It is recommended to use format STUDY_inf1_protein_UnitProtID_date.gz.
 
-Note that due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis in which case one sees the following information: 
+### Note on PLINK
+
+Due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis in which case one may see the following information: 
 
 No | Name | Description | Comment
---|----------|----------|---------
-1 | BP | Position in basepairs	
-2 | CHR | Chromosome	
+--|----------|----------|--------
+1 | BP | Position in basepairs
+2 | CHR | Chromosome
 3 | SNP | SNP name/chr:pos_a1_a2	
-4 | HWE | Hardy-Weinberg equilibrium P	
-5 | MAF | Minor allele frequency	
-6 | A1 | Allele 1	
-7 | A2 | Allele 2	
-8 | N |	Sample size	
-9 | BETA | Regression coefficient	
-10 | CHI2 | Regression statistics	
-11 | P | P value	
+4 | HWE | Hardy-Weinberg equilibrium P
+5 | MAF | Minor allele frequency
+6 | A1 | Allele 1
+7 | A2 | Allele 2
+8 | N |	Sample size
+9 | BETA | Regression coefficient
+10 | CHI2 | Regression statistics
+11 | P | P value
 
 In this case, if is preferable to provide strand, effect allele, effect allele frequency, and the information measures.
 
 ## 6. Meta-analysis
 
-Meta-analysis will be performed using the inverse-N weighted analysis of regression betas and standard errors, as implemented in the software METAL (https://github.com/statgen/METAL). 
+Meta-analysis will be performed using the inverse-N weighted analysis of regression betas and standard errors, as implemented in the software METAL 
+(https://github.com/statgen/METAL).
 
 We will apply genomic control and the appropriate marker filters at this stage (i.e. please provide unfiltered results). 
 
