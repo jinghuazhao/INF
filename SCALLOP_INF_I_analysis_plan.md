@@ -1,12 +1,17 @@
-# SCAndinavian coLLaboration for Olink plasma Protein genetics – INF panel proteins
+# SCALLOP consortium - Analysis plan for INF panel proteins
+
+***Adapted from CVD analysis plan***
 
 ## 1. Background
 
-The SCALLOP consortium was created to work collaboratively on discovery and follow-up of pQTLs for proteins measured using Olink technology. A meta-analysis has been conducted on data from participating cohort Olink CVD panel and consequent contributions have been made on Olink INF panel. This document therefore follows closely the analysis plan for the analysis while highlighting relevant information which will facilitate the meta-analysis
+The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for 
+discovery and follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on data Olink CVD panela 
+from participating cohorts and consequent contributions have been made on Olink INF panel. This document therefore follows closely the analysis plan for the 
+analysis, with highlight of relevant information to facilitate the meta-analysis.
 
 ## 2. Aims
 
-As with the CVD I meta-analysis, the tasks will include
+As with the CVD meta-analysis, the tasks will include
 
 * Identification of pQTLs in SCALLOP discovery cohorts
 * Replication of pQTLs in SCALLOP replication cohorts
@@ -19,6 +24,10 @@ As with the CVD I meta-analysis, the tasks will include
 * Use standard linear regression for assays with 80% of samples above the lower detection limit. 
 * Dichotomize proteins with more than 20% of samples below the lower detection limit and code values below the detection limit as 0 and those above as 1. 
 * Rank-based inverse normal transformation, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap
+
+### Proteins
+
+The Olink INFlammation panel of 92 proteins.
 
 ### SNPs
 
@@ -49,22 +58,22 @@ Please fill out the attached descriptive statistics spreadsheet and use the nami
 
 SNP table for association results. Please include the following columns. Missing values are coded as “NA”.
 
-V# | Variable name | Description
+No | Variable name | Description
 ---|---------------|------------
-V1 | SNPID | SNP ID as rs number
-V2 | CHR | Chromosome number (1-22)
-V3 | POS | Physical position for the reference sequence (please indicate NCBI build in descriptive file)
-V4 | STRAND | Indicator of strand direction. Please specify “+” if positive or forward strand and “-” if negative or reverse strand. 
-V5 | N | Number of non-missing observations
-V6 | EFFECT_ALLELE | Allele for which the effect (beta coefficient) is reported. For example, in an A/G SNP in which AA = 0, AG=1, and GG=2, the coded allele is G.
-V7 | REFERENCE_ALLELE | Second allele at the SNP (the other allele). In the example above, the non-coded allele is A. 
-V8 | CODE_ALL_FQ | Allele frequency for the coded allele – “NA” if not available
-V9 | BETA | Effect size for the coded allele, beta estimate from the genotype-phenotype association, with at least 5 decimal places. Note: if not available, please report “NA” for this variable.
-V10 | SE | Standard error of the beta estimate, to at least 5 decimal places - “NA” if not available. 
-V11 | PVAL | p-value of Wald test statistic – “NA” if not available
-V12 | RSQ | Residual phenotypic variance explained by SNP. “NA” if not available
-V13 | RSQ_IMP| Observed divided by expected variance for imputed allele dosage.
-V14 | IMP | Please specify whether the SNP was imputed or genotyped: 1: imputed SNP, 0: directly genotyped SNP
+1 | SNPID | SNP ID as rs number
+2 | CHR | Chromosome number (1-22)
+3 | POS | Physical position for the reference sequence (please indicate NCBI build in descriptive file)
+4 | STRAND | Indicator of strand direction. Please specify “+” if positive or forward strand and “-” if negative or reverse strand. 
+5 | N | Number of non-missing observations
+6 | EFFECT_ALLELE | Allele for which the effect (beta coefficient) is reported. For example, in an A/G SNP in which AA = 0, AG=1, and GG=2, the coded allele is G.
+7 | REFERENCE_ALLELE | Second allele at the SNP (the other allele). In the example above, the non-coded allele is A. 
+8 | CODE_ALL_FQ | Allele frequency for the coded allele – “NA” if not available
+9 | BETA | Effect size for the coded allele, beta estimate from the genotype-phenotype association, with at least 5 decimal places. Note: if not available, please report “NA” for this variable.
+10 | SE | Standard error of the beta estimate, to at least 5 decimal places - “NA” if not available. 
+11 | PVAL | p-value of Wald test statistic – “NA” if not available
+12 | RSQ | Residual phenotypic variance explained by SNP. “NA” if not available
+13 | RSQ_IMP| Observed divided by expected variance for imputed allele dosage.
+14 | IMP | Please specify whether the SNP was imputed or genotyped: 1: imputed SNP, 0: directly genotyped SNP
 
 Note that due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis in which case one sees the following information: 
 
@@ -86,18 +95,18 @@ In this case, if is preferable to provide strand, effect allele, effect allele f
 
 ## 6. Meta-analysis
 
-Meta-analysis will be performed using the inverse-N weighted analysis of p-values, as implemented in the software METAL (www.sph.umich.edu/csg/abecasis/metal). METAL implements a weighted Z-score method using the following formula: where the weight wi = square root of the sample size of the ith study, zi= -1(1-(pi/2))*(effect direction for study i), and pi is the P-value for the ith study.  
- 
+Meta-analysis will be performed using the inverse-N weighted analysis of regression betas and standard errors, as implemented in the software METAL (https://github.com/statgen/METAL). 
+
 We will apply genomic control and the appropriate marker filters at this stage (i.e. please provide unfiltered results). 
 
 *. Marker exclusion filters: we will apply imputation quality filters at the meta-analysis stage. Please do not apply these filters yourself and provide unfiltered results. 
 *. Genomic control (GC): genomic control will be applied to each study at the meta-analysis stage (single GC). Please do not apply GC to GWAS results and provide uncorrected standard errors, as (double) GC will be applied at the meta-analysis stage. 
 *. Significance: the threshold for the genome-wide analyses will be set at 5 x 10<sup>-8</sup>. The results will be replicated in independent cohorts so no need for additional correction.
 
+If you have any questions, please contact Jing Hua Zhao via jhz22@medschl.cam.ac.uk or James Peters at jp549@medschl.cam.ac.uk. 
+
 ## 7. Uploading of results data to TRYGGVE server
 
-See CVD I analysis plan.
+See CVD analysis plan.
 
-## 8. SCALLOP consortium
-
-### Information is available from https://www.olink.com/scallop/.
+Cambridge, 8/11/2018
