@@ -54,7 +54,7 @@ invnormal <- function(x)
 
 ### Software
 
-It is preferable to use software which account for genotype uncertainty, such as SNPTEST, QUICKTEST, or BOLT-LMM.
+It is preferable to use software which account for genotype uncertainty, such as SNPTEST, QUICKTEST, and BOLT-LMM.
 
 ## 3. Descriptive statistics
 
