@@ -130,7 +130,7 @@ We will apply genomic control and the appropriate marker filters at this stage (
 
 ## 6. Uploading of results
 
-See CVD1 analysis plan.
+See the CVD1 analysis plan.
 
 ## 7. Contact information
 
