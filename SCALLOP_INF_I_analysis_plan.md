@@ -6,8 +6,8 @@
 
 The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for 
 discovery and follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on data Olink CVD panela 
-from participating cohorts and consequent contributions have been made on Olink INF panel. This document therefore follows closely the analysis plan for the 
-analysis, with highlight of relevant information to facilitate the meta-analysis.
+from participating cohorts and consequent contributions have been made on Olink INF panel. This document therefore follows closely the SCALLOP/CVD analysis 
+plan for the analysis, with highlight of relevant information to facilitate the meta-analysis.
 
 ## 2. Aims
 
