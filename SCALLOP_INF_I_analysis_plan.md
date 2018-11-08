@@ -17,7 +17,10 @@ As with the CVD meta-analysis, the tasks will involve
 * Replication of pQTLs in SCALLOP replication cohorts
 * Investigation of the mechanistic basis of identified cis- and trans-pQTL by functional annotation
 * Investigation of pleiotropic effects of the pQTLs
-* Evaluate whether the CVD I proteins are causal in e.g. CHD and stroke
+* Evaluation over the causal role of INF proteins disease outcomes such as CHD and stroke
+* Other downstream analysis
+
+among others.
 
 ## 3. Data analysis
 
@@ -27,7 +30,7 @@ As with the CVD meta-analysis, the tasks will involve
 
 ### Proteins
 
-The Olink INFlammation panel of 92 proteins.
+The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao/INF/blob/master/doc/olink.inf.panel.annot.tsv.
 
 ### SNPs
 
@@ -44,7 +47,7 @@ The Olink INFlammation panel of 92 proteins.
 
 ### Stratification
 
-* Analyse patients and controls separately –results will be merged at meta-analysis stage
+* Analyse patients and controls separately – results will be merged at meta-analysis stage
 
 ## 4. Descriptive statistics
 
