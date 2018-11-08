@@ -85,7 +85,7 @@ No | Variable name | Description
 
 ### File-naming convention
 
-It is recommended to use format STUDY_inf1_protein_UnitProtID_date.gz.
+It is recommended to use format STUDY_inf1_protein_UniProtID_date.gz, see https://www.uniprot.org/ for additional information on UniProt IDs.
 
 ### Notes on PLINK
 
