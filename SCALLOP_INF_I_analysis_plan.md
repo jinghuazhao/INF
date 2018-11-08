@@ -1,4 +1,6 @@
-The cvd1 plan is quoted here since it largely overlaps with INFlammation analysis.
+# SCAndinavian coLLaboration for Olink plasma Protein genetics – INF panel proteins
+
+https://www.olink.com/scallop/
 
 1. Background
 
@@ -97,4 +99,6 @@ We will apply genomic control and the appropriate marker filters at this stage (
 9. Uploading of results data to TRYGGVE server
 
 See CVD I analysis plan.
+
+
 
