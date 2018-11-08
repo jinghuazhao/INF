@@ -11,7 +11,7 @@ git commit -m "Reformatted summary statistics by cohort"
 git add METAL
 git commit -m "METAL results"
 git add SCALLOP_INF_I_analysis_plan.*
-git commit "Analysis plan"
+git commit -m "Analysis plan"
 git add list.sh format.sh analysis.sh analysis.ini SecureCloud.sh files
 git commit -m "Programs"
 git add metal.sh METAL.qsub
