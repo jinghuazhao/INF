@@ -124,6 +124,6 @@ See CVD analysis plan.
 
 ## 8. Contact information
 
-If you have any questions about SCALLOP, please contact Anders Malarstig at anders.malarstig@ki.se. For technical issues regarding TRYGGVE, please contact Lasse Folkersen (lasfol@cbs.dtu.dk.
+If you have any questions about SCALLOP, please contact Anders Malarstig (anders.malarstig@ki.se). For technical issues regarding TRYGGVE, please contact Lasse Folkersen (lasfol@cbs.dtu.dk).
 
-For questions regarding SCALLOP/INF, please contact Jing Hua Zhao via jhz22@medschl.cam.ac.uk and James Peters via jp549@medschl.cam.ac.uk. 
+For questions regarding SCALLOP/INF, please contact Jing Hua Zhao (jhz22@medschl.cam.ac.uk) and James Peters via (jp549@medschl.cam.ac.uk).
