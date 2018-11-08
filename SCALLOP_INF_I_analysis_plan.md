@@ -119,7 +119,7 @@ We will apply genomic control and the appropriate marker filters at this stage (
 * Genomic control (GC): genomic control will be applied to each study at the meta-analysis stage (single GC), so GC-correction is needed for each cohort. 
 * Significance: the threshold for the genome-wide analyses will be set at 5 x 10<sup>-10</sup>. The results will be replicated in independent cohorts.
 
-## 7. Uploading of results data to TRYGGVE server
+## 7. Uploading of results
 
 See CVD1 analysis plan.
 
