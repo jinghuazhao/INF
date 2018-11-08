@@ -124,4 +124,4 @@ See CVD analysis plan.
 
 ## 8. Contact information
 
-If you have any questions, please contact Jing Hua Zhao via jhz22@medschl.cam.ac.uk or James Peters at jp549@medschl.cam.ac.uk. 
+If you have any questions, please contact Jing Hua Zhao via jhz22@medschl.cam.ac.uk and James Peters via jp549@medschl.cam.ac.uk. 
