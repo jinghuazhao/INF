@@ -59,7 +59,7 @@ invnormal <- function(x)
 
 ## 4. Descriptive statistics
 
-Please fill out the spreadsheet and use the naming convention: 
+Please fill out the spreadsheet as with SCALLOP/CVD1 with naming convention: 
 
 * STUDY.descriptives.DATE.xls
 * Where STUDY is a short (14 characters or less) identifier for the population studied, which is the same for all files provided by your study.
