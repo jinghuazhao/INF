@@ -32,7 +32,7 @@ The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao
 
 * 1000 genomes imputation
 * SNPs will be filtered for imputation quality at time of meta-analysis, but please filter out SNPs with IMPUTE INFO quality less than 0.2
-* Standard QC, including call rate < 95% or failed Illumina genotype calling, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, sample call rate < 95%, Bonferroni corrected Hardy-Weinberg Equilibrium test.
+* Standard QC. Aspects may include SNP/sample call rates, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, heterozygosity and Hardy-Weinberg Equilibrium test.
 
 ### Association analysis
 
