@@ -119,7 +119,7 @@ greatly be facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctoo
 
 ## 5. Meta-analysis
 
-Meta-analysis will be performed using the inverse-N weighted analysis of regression betas and standard errors, as implemented in the software METAL 
+Meta-analysis will be performed centrally using the inverse-N weighted analysis of regression betas and standard errors, as implemented in the software METAL 
 (https://github.com/statgen/METAL).
 
 We will apply genomic control and the appropriate marker filters at this stage (i.e. please provide unfiltered results). 
