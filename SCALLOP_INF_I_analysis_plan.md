@@ -5,10 +5,10 @@
 ---
 
 <p align="center">
-Timeline for completing cohort- and ancestry-specific analyses and uploading the results for this project 
-
-October 1, 2018 
+Timeline for completing cohort- and ancestry-specific analyses and uploading the results for this project<br><>br
+1 October 2018 
 </p>
+
 ---
 
 ## 1. Background
@@ -63,7 +63,7 @@ Please fill out the spreadsheet and use the naming convention:
 
 * STUDY.descriptives.DATE.xls
 * Where STUDY is a short (14 characters or less) identifier for the population studied, which is the same for all files provided by your study.
-* DATE is the date on which the file was prepared, in the format “YYYYMMDD”.
+* DATE is the date on which the file was prepared, in the format “DDMMYYYY”.
 
 ## 5. File formats for GWAS results
 
