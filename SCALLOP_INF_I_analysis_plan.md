@@ -1,12 +1,12 @@
 # SCAndinavian coLLaboration for Olink plasma Protein genetics – INF panel proteins
 
-https://www.olink.com/scallop/
+## https://www.olink.com/scallop/
 
 1. Background
 
 The SCALLOP consortium was created to work collaboratively on discovery and follow-up of pQTLs for proteins measured using Olink technology. A meta-analysis has been conducted on data from participating cohort Olink CVD panel and consequent contributions have been made on Olink INF panel. This document therefore follows closely the analysis plan for the analysis while highlighting relevant information which will facilitate the meta-analysis
 
-2. 2.	Aims
+2. Aims
 
 As with the CVD I meta-analysis, the tasks will include
 
@@ -99,6 +99,3 @@ We will apply genomic control and the appropriate marker filters at this stage (
 9. Uploading of results data to TRYGGVE server
 
 See CVD I analysis plan.
-
-
-
