@@ -31,8 +31,8 @@ The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao
 ### SNPs
 
 * 1000 genomes imputation
-* SNPs will be filtered for imputation quality at time of meta-analysis, but please filter out SNPs with IMPUTE INFO quality less than 0.2
-* Standard QC. Aspects may include SNP/sample call rates, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, heterozygosity and Hardy-Weinberg Equilibrium test.
+* SNPs will be filtered for imputation quality at time of meta-analysis
+* Quality control on aspects such as SNP/sample call rates, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, heterozygosity and Hardy-Weinberg Equilibrium test.
 
 ### Association analysis
 
