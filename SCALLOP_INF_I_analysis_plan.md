@@ -56,6 +56,10 @@ invnormal <- function(x)
 
 * Analyse patients and controls separately – results will be merged at meta-analysis stage
 
+### Software
+
+It is preferable to use software which account for genotype uncertainty, such as SNPTEST, QUICKTEST, or BOLT-LMM.
+
 ## 4. Descriptive statistics
 
 Please fill out the spreadsheet as with SCALLOP/CVD1 with naming convention: 
