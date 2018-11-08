@@ -1,17 +1,17 @@
 # SCALLOP consortium - analysis plan for INF panel proteins
 
-***Adapted from SCALLOP/CVD analysis plan, Cambridge 8/11/2018***
+***Adapted from SCALLOP/CVD1 analysis plan, Cambridge 8/11/2018***
 
 ## 1. Background
 
 The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for 
-discovery and follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on data Olink CVD panela 
-from participating cohorts and consequent contributions have been made on Olink INF panel. This document therefore follows closely the SCALLOP/CVD analysis 
+discovery and follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on data Olink CVD1 panel 
+from participating cohorts and consequent contributions have been made on Olink INF panel. This document therefore follows closely the SCALLOP/CVD1 analysis 
 plan for the analysis, with highlight of relevant information to facilitate the meta-analysis.
 
 ## 2. Aims
 
-As with the CVD meta-analysis, the tasks will involve
+As with the CVD1 meta-analysis, the tasks will involve
 
 * Identification of pQTLs in SCALLOP discovery cohorts
 * Replication of pQTLs in SCALLOP replication cohorts
@@ -114,13 +114,13 @@ Meta-analysis will be performed using the inverse-N weighted analysis of regress
 
 We will apply genomic control and the appropriate marker filters at this stage (i.e. please provide unfiltered results). 
 
-* Marker exclusion filters: we will apply imputation quality filters at the meta-analysis stage. Please do not apply these filters yourself and provide unfiltered results. 
-* Genomic control (GC): genomic control will be applied to each study at the meta-analysis stage (single GC). Please do not apply GC to GWAS results and provide uncorrected standard errors, as (double) GC will be applied at the meta-analysis stage. 
-* Significance: the threshold for the genome-wide analyses will be set at 5 x 10<sup>-10</sup>. The results will be replicated in independent cohorts so no need for additional correction.
+* Marker exclusion filters: we will apply imputation quality filters at the meta-analysis stage, so provide unfiltered results. 
+* Genomic control (GC): genomic control will be applied to each study at the meta-analysis stage (single GC), so GC-correction is needed for each cohort. 
+* Significance: the threshold for the genome-wide analyses will be set at 5 x 10<sup>-10</sup>. The results will be replicated in independent cohorts.
 
 ## 7. Uploading of results data to TRYGGVE server
 
-See CVD analysis plan.
+See CVD1 analysis plan.
 
 ## 8. Contact information
 
