@@ -5,7 +5,7 @@
 ---
 
 <p align="center">
-Timeline for completing cohort- and ancestry-specific analyses and uploading the results for this project<br><>br
+Timeline for completing cohort- and ancestry-specific analyses and uploading the results for this project<br><br>
 1 October 2018 
 </p>
 
