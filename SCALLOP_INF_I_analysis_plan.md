@@ -93,18 +93,20 @@ Due possibly to the large number of proteins for GWAS, some cohorts employed PLI
 
 No | Name | Description | Comment
 --|----------|----------|--------
-1 | BP | Position in basepairs
+1 | BP | Position in base pairs
 2 | CHR | Chromosome
 3 | SNP | SNP name/chr:pos_a1_a2	
-4 | HWE | Hardy-Weinberg equilibrium P
+4 | HWE | Hardy-Weinberg equilibrium P-value
 5 | MAF | Minor allele frequency | Please indicate if this is the effect allele frequency
 6 | A1 | Allele 1 | Please indicate if this is the effect allele
 7 | N | Sample size
 8 | BETA | Regression coefficient
-9 | CHI2/STAT | Regression statistics
+9 | STAT | Regression test statistic
 10 | P | P value
 
-In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures.
+In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures for imputation -- the information 
+measure can be on the genotype level rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based statistics can greatly be
+facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/.
 
 ## 6. Meta-analysis
 
