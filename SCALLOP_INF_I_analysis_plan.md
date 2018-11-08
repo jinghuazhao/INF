@@ -102,8 +102,8 @@ No | Name | Description | Additional comment
 3 | SNP | SNP name/chr:pos_a1_a2	
 4 | HWE | Hardy-Weinberg equilibrium P-value
 5 | MAF | Minor allele frequency | Please indicate if this is the effect allele frequency
-6 | A1 | Allele 1 | Please indicate if this is the effect allele
-7* | A2 | Allele 2 | Please indicate if this is the effect allele
+6 | A1 | Allele 1 | Please indicate if this is the effect/reference allele
+7* | A2 | Allele 2 | Please indicate if this is the effect/reference allele
 8 | N | Sample size
 9 | BETA | Regression coefficient
 10 | STAT | Regression test statistic
