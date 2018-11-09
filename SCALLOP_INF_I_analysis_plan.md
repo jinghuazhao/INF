@@ -1,35 +1,32 @@
-# SCALLOP consortium - analysis plan for INF panel proteins
+# SCALLOP consortium analysis plan for INF panel proteins
 
-***Adapted from SCALLOP/CVD analysis plan, Cambridge 8/11/2018***
+***Adapted from SCALLOP/CVD1 analysis plan, last updated 8/11/2018***
 
-## 1. Background
+---
 
-The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for 
-discovery and follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on data Olink CVD panela 
-from participating cohorts and consequent contributions have been made on Olink INF panel. This document therefore follows closely the SCALLOP/CVD analysis 
-plan for the analysis, with highlight of relevant information to facilitate the meta-analysis.
+<p align="center">
+<b><font size="10">Timeline for completing cohort-specific analyses and uploading the results for this project --</font></b><b><font color="red" size="14">1 October 2018</font></b>
+</p>
 
-## 2. Aims
+---
 
-As with the CVD meta-analysis, the tasks will involve
+## 1. Overview
+
+The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for discovery and 
+follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on Olink CVD1 panel data from participating cohorts; 
+consequent requests were sent and contributions made on the Olink INF panel. This document follows closely the SCALLOP/CVD1 analysis plan for the analysis, and in 
+particular highlights relevant information required to facilitate the meta-analysis.
+
+As with the CVD1 meta-analysis, the tasks will involve
 
 * Identification of pQTLs in SCALLOP discovery cohorts
-* Replication of pQTLs in SCALLOP replication cohorts
+* Study of pQTLs in replication cohorts
 * Investigation of the mechanistic basis of identified cis- and trans-pQTL by functional annotation
-* Investigation of pleiotropic effects of the pQTLs
+* Examination of pQTL pleiotropic effects
 * Evaluation over the causal role of INF proteins disease outcomes such as CHD and stroke
 * Other downstream analysis
 
-among others.
-
-## 3. Data analysis
-
-* Use multiple linear regression for all samples and raw measurements from assays
-* Rank-based inverse normal transformation on the residuals, e.g., invnormal function from https://github.com/jinghuazhao/R/tree/master/gap,
-```r
-invnormal <- function(x)
-  qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
-```
+## 2. Data and analysis
 
 ### Proteins
 
@@ -38,38 +35,42 @@ The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao
 ### SNPs
 
 * 1000 genomes imputation
-* SNPs will be filtered for imputation quality at time of meta-analysis, but please filter out SNPs with IMPUTE INFO quality less than 0.2
-* Standard QC, including call rate < 95% or failed Illumina genotype calling, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, sample call rate < 95%, Bonferroni corrected Hardy-Weinberg Equilibrium test.
+* SNPs will be filtered for imputation quality at time of meta-analysis
+* Quality control on aspects such as SNP/sample call rates, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, heterozygosity and Hardy-Weinberg Equilibrium test.
 
 ### Association analysis
 
-* Linear regression with adjustment for study-specific covariates. These should always include age at time of sample collection, gender and adjustment for population structure / geography if applicable (e.g across countries). Sample storage time and season of collection if applicable. 
-* Use imputation-dosages
+* Rank-based inverse normal transformation on the raw measurement of proteins including those below lower limit of detection, e.g., via `invnormal` function,
+```r
+invnormal <- function(x)
+  qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
+```
+* Multiple linear regression for all samples including sex, age, principal components and other cohort specific covariates.
 * Additive genetic model
-* Separate the analyses for men and women for X chromosome SNPs (exception for cohorts that have already performed analyses)
+* For case-control data, cases and controls are analysed separately – results will be merged at meta-analysis stage
 
-### Stratification
+### Software
 
-* Analyse patients and controls separately – results will be merged at meta-analysis stage
+It is preferable to use software which account for genotype uncertainty, such as SNPTEST, QUICKTEST, and BOLT-LMM.
 
-## 4. Descriptive statistics
+## 3. Descriptive statistics
 
-Please fill out the attached descriptive statistics spreadsheet and use the naming convention: 
+Please fill out the spreadsheet as with SCALLOP/CVD1 with naming convention: 
 
 * STUDY.descriptives.DATE.xls
-* Where, STUDY is a short (14 characters or less) identifier for the population studied, which is the same for all files provided by your study.
-* DATE is the date on which the file was prepared, in the format “YYYYMMDD”.
+* Where STUDY is a short (14 characters or less) identifier for the population studied, which is the same for all files provided by your study.
+* DATE is the date on which the file was prepared, in the format “DDMMYYYY”.
 
-## 5. File formats for GWAS results
+## 4. File formats for GWAS results
 
 ### SNP table for GWAS results
 
 Please include the following columns. Missing values are coded as “NA”.
 
-No | Variable name | Description
----|---------------|------------
-1 | SNPID | SNP ID as rs number
-2 | CHR | Chromosome number (1-22)
+No | Variable name | Description of variable
+---|---------------|----------------------------------------------------------------------------------
+1 | SNPID | chr:pos_a1_a2 or rsid
+2 | CHR | Chromosome number
 3 | POS | Physical position for the reference sequence (please indicate NCBI build in descriptive file)
 4 | STRAND | Indicator of strand direction. Please specify “+” if positive or forward strand and “-” if negative or reverse strand. 
 5 | N | Number of non-missing observations
@@ -85,43 +86,49 @@ No | Variable name | Description
 
 ### File-naming convention
 
-It is recommended to use format STUDY_inf1_protein_UnitProtID_date.gz.
+It is recommended to use format STUDY_analyst_inf1_protein_UniProtID_date.gz, see https://www.uniprot.org/ for additional information on UniProt IDs.
 
 ### Notes on PLINK
 
-Due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis in which case one may see the following information: 
+Due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis with which one may see the following information: 
 
-No | Name | Description | Comment
---|----------|----------|--------
-1 | BP | Position in basepairs
+No | Name | Description | Additional comment
+--|----------|----------|-------------------------------------
+1 | BP | Position in base pairs
 2 | CHR | Chromosome
 3 | SNP | SNP name/chr:pos_a1_a2	
-4 | HWE | Hardy-Weinberg equilibrium P
-5 | MAF | Minor allele frequency
-6 | A1 | Allele 1
-7 | A2 | Allele 2
-8 | N |	Sample size
+4 | HWE | Hardy-Weinberg equilibrium P-value
+5 | MAF | Minor allele frequency | Please indicate if this is the effect allele frequency
+6 | A1 | Allele 1 | Please indicate if this is the effect/reference allele
+7* | A2 | Allele 2 | Please indicate if this is the effect/reference allele
+8 | N | Sample size
 9 | BETA | Regression coefficient
-10 | CHI2 | Regression statistics
+10 | STAT | Regression test statistic
 11 | P | P value
 
-In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures.
+\* may be taken from the PLINK .bim file.
 
-## 6. Meta-analysis
+In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures for imputation -- the information 
+measure can be on the genotype level obtained once for a cohort rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based 
+statistics can be greatly facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/.
 
-Meta-analysis will be performed using the inverse-N weighted analysis of regression betas and standard errors, as implemented in the software METAL 
+## 5. Meta-analysis
+
+Meta-analysis will be performed centrally using the inverse-N weighted analysis of regression betas and standard errors, as implemented in the software METAL 
 (https://github.com/statgen/METAL).
 
-We will apply genomic control and the appropriate marker filters at this stage (i.e. please provide unfiltered results). 
+Genomic control and appropriate marker filters will be applied at this stage.
 
-* Marker exclusion filters: we will apply imputation quality filters at the meta-analysis stage. Please do not apply these filters yourself and provide unfiltered results. 
-* Genomic control (GC): genomic control will be applied to each study at the meta-analysis stage (single GC). Please do not apply GC to GWAS results and provide uncorrected standard errors, as (double) GC will be applied at the meta-analysis stage. 
-* Significance: the threshold for the genome-wide analyses will be set at 5 x 10<sup>-10</sup>. The results will be replicated in independent cohorts so no need for additional correction.
+* **Marker exclusion filters**: we will apply imputation quality filters at the meta-analysis stage, so provide unfiltered results. 
+* **Genomic control (GC)**: genomic control will be applied to each study at the meta-analysis stage (single GC), so GC-correction is needed for each cohort. 
+* **Significance**: the threshold for the genome-wide analyses will be set at 5 x 10<sup>-10</sup>. The results will be replicated in independent cohorts.
 
-## 7. Uploading of results data to TRYGGVE server
+## 6. Uploading of results
 
-See CVD analysis plan.
+See the CVD1 analysis plan.
 
-## 8. Contact information
+## 7. Contact information
 
-If you have any questions, please contact Jing Hua Zhao via jhz22@medschl.cam.ac.uk and James Peters via jp549@medschl.cam.ac.uk. 
+For questions about SCALLOP, please contact Anders Malarstig (anders.malarstig@ki.se). For technical issues regarding TRYGGVE, please contact Lasse Folkersen (lasfol@cbs.dtu.dk).
+
+For questions regarding SCALLOP/INF, please contact Jing Hua Zhao (jhz22@medschl.cam.ac.uk) and James Peters (jp549@medschl.cam.ac.uk).
