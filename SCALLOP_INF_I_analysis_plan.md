@@ -5,7 +5,7 @@
 ---
 
 <p align="center">
-<b><font size="10">Timeline for completing cohort-specific analyses and uploading the results for this project --</font></b><b><font color="red" size="14">1 October 2018</font></b>
+<b><font size="10">Timeline for completing cohort-specific analyses and uploading the results for this project --</font></b>![deadline](doc/deadline.png)
 </p>
 
 ---
