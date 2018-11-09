@@ -229,7 +229,7 @@ function format_for_METAL()
     gunzip -c $INTERVAL/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
     awk -f files/INTERVAL.awk | \
     awk -f files/order.awk | \
-    gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz
+    gzip -f > sumstats/INTERVAL.{1}.gz
   '
 }
 
