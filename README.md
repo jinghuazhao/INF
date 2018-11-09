@@ -14,11 +14,11 @@ sumstats/| reformatted summary statistics by cohort
 [log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
 [SecureCloud.md](SecureCloud.md) | Information for SecureCloud
 
+## Analysis
+
 To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](files/INTERVAL.sh) and [cardio.sh](doc/cardio.sh).
 
 The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
-
-## Analysis
 
 The CAD summary statistics used for MAGMA and MR is described [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD)
 -- as noted in MMP12.sh, the MMP12 case could have been done genomewide. A colocalisation analysis on simulated data can be found in the
