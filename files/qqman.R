@@ -3,7 +3,7 @@
 protein <- Sys.getenv("protein");
 print(protein);
 gz <- gzfile(paste0("METAL/",protein,"-1.tbl.gz"));
-qqman <- paste0("METAL/","protein,"-qqman.pdf");
+qqman <- paste0("METAL/",protein,"-qqman.pdf");
 MarkerName <- "MarkerName";
 PVAL <- "P.Value";
 .libPaths("/services/tools/R/3.5.0/lib64/R/library")
