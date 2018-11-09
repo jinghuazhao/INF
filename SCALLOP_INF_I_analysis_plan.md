@@ -71,7 +71,7 @@ Please include the following columns. Missing values are coded as “NA”.
 
 No | Variable name | Description of variable
 ---|---------------|----------------------------------------------------------------------------------
-1 | SNPID | CHR:POS_A1_A2 (A1<A2) or rsid
+1 | SNPID | CHR:POS_A1_A2 (such that A1<A2) or rsid
 2 | CHR | Chromosome number
 3 | POS | Physical position for the reference sequence (please indicate NCBI build in descriptive file)
 4 | STRAND | Indicator of strand direction. Please specify “+” if positive or forward strand and “-” if negative or reverse strand. 
@@ -98,7 +98,7 @@ No | Name | Description | Additional comment
 --|----------|----------|-------------------------------------
 1 | BP | Position in base pairs
 2 | CHR | Chromosome
-3 | SNP | SNP name/chr:pos_a1_a2	
+3 | SNP | CHR:POS_A1_A2	
 4 | HWE | Hardy-Weinberg equilibrium P-value
 5 | MAF | Minor allele frequency | Please indicate if this is the effect allele frequency
 6 | A1 | Allele 1 | Please indicate if this is the effect/reference allele
