@@ -71,7 +71,7 @@ Please include the following columns. Missing values are coded as “NA”.
 
 No | Variable name | Description of variable
 ---|---------------|----------------------------------------------------------------------------------
-1 | SNPID | chr:pos_a1_a2 or rsid
+1 | SNPID | chr:pos_a1_a2 (a1<a2) or rsid
 2 | CHR | Chromosome number
 3 | POS | Physical position for the reference sequence (please indicate NCBI build in descriptive file)
 4 | STRAND | Indicator of strand direction. Please specify “+” if positive or forward strand and “-” if negative or reverse strand. 
