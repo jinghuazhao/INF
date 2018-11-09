@@ -1,6 +1,21 @@
 # INF
 SCALLOP-INF analysis
 
+## A summary of files
+
+File     | Description
+---------|---------------------------------------------------------------------------------------------------------------------
+[doc/](doc) | Some documents and auxiliary files
+METAL/   | METAL results
+sumstats/| reformatted summary statistics by cohort
+[SCALLOP_INF_I_analysis_plan.md](SCALLOP_INF_I_analysis_plan.md) | analysis plan
+[SCALLOP_INF_I_analysis_plan.docx](SCALLOP_INF_I_analysis_plan.docx) |
+[inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel
+[log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
+[SecureCloud.md](SecureCloud.md) | Information for SecureCloud
+
+To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](files/INTERVAL.sh) and [cardio.sh](doc/cardio.sh).
+
 The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
 
 ## UniProt IDs
@@ -34,21 +49,6 @@ The CAD summary statistics used for MAGMA and MR is described [here](https://git
 -- as noted in MMP12.sh, the MMP12 case could have been done genomewide. A colocalisation analysis on simulated data can be found in the
 association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes)
 as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/master/BMI).
-
-## A summary of files
-
-File     | Description
----------|---------------------------------------------------------------------------------------------------------------------
-[doc/](doc) | Some documents and auxiliary files
-METAL/   | METAL results
-sumstats/| reformatted summary statistics by cohort
-[SCALLOP_INF_I_analysis_plan.md](SCALLOP_INF_I_analysis_plan.md) | analysis plan
-[SCALLOP_INF_I_analysis_plan.docx](SCALLOP_INF_I_analysis_plan.docx) |
-[inf1.csv](doc/inf1.csv) | UniProt ID, protein, target for the INF panel
-[log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
-[SecureCloud.md](SecureCloud.md) | Information for SecureCloud
-
-To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](files/INTERVAL.sh) and [cardio.sh](doc/cardio.sh).
 
 ## References
 
