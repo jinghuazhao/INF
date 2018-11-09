@@ -98,7 +98,7 @@ No | Name | Description | Additional comment
 --|----------|----------|-------------------------------------
 1 | BP | Position in base pairs
 2 | CHR | Chromosome
-3 | SNP | CHR:POS_A1_A2	
+3 | SNP | CHR:POS_A1_A2	or rsid
 4 | HWE | Hardy-Weinberg equilibrium P-value
 5 | MAF | Minor allele frequency | Please indicate if this is the effect allele frequency
 6 | A1 | Allele 1 | Please indicate if this is the effect/reference allele
