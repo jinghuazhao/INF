@@ -1,11 +1,11 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 8/11/18 JHZ
+# General notes, 9/11/18 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
-# 4. SNP-gene matchings are established by snp_gene() genomewide and genic_cis_trans() for OLINK. Addtional notes:
+# 4. SNP-gene matchings are established by snp_gene() genomewide and Jimmy's R code for cis/trans classification. Addtional notes:
 #    - This follows https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
 #    - bedtools 2.4.26 on cardio has no intersect command:
 #    - module load bedtools/2.4.26
@@ -215,50 +215,7 @@ function snp_gene()
 #11 "olink.id"
 #12 "alternate.uniprot"
 
-function genic_cis_trans()
-# title,genic,cis,trans
-{
-  awk '$NF!="."' INTERVAL.olink > INTERVAL.genic
-  cut -f4 INTERVAL.genic | \
-  sort | \
-  uniq > INTERVAL.rsid_genic
-  grep -v -w -f INTERVAL.rsid_genic INTERVAL.bed > INTERVAL.tmp
-  bedtools intersect -a INTERVAL.tmp -b olink.cis -loj > INTERVAL.cis_trans
-  awk '$NF!="."' INTERVAL.cis_trans > INTERVAL.cis
-  cut -f4 INTERVAL.cis | \
-  sort | \
-  uniq > INTERVAL.rsid_cis
-  grep -v -w -f INTERVAL.rsid_genic -f INTERVAL.rsid_cis INTERVAL.bed > INTERVAL.tmp
-  cut -f4 INTERVAL.tmp | \
-  uniq > INTERVAL.rsid_trans
-  wc -l INTERVAL.rsid_cis INTERVAL.rsid_genic INTERVAL.rsid_trans
-  bedtools intersect -a INTERVAL.tmp -b olink.bed -loj > INTERVAL.trans
-  (
-    awk '{print "genic",$1}' INTERVAL.rsid_genic
-    awk '{print "cis",$1}' INTERVAL.rsid_cis
-    awk '{print "trans",$1}' INTERVAL.rsid_trans
-  ) | \
-  sort -k2,2 >  INTERVAL.rsid.genic_cis_trans
-  awk 'NR>1' INTERVAL.bed | \
-  sort -k4,4 | \
-  join -14 -22 - INTERVAL.rsid.genic_cis_trans | \
-  awk -vOFS="\t" '{
-    if(NR==1) print "#chrom","start","end","rsid","prot","rsid_status"
-    print $2,$3,$4,$1,$5,$6
-  }' > INTERVAL.rsid.prot
-  R --no-save -q <<END
-    cistrans <- read.delim("INTERVAL.rsid.prot",as.is=TRUE)
-    with(cistrans,table(prot,rsid_status))
-END
-}
-
-genic_cis_trans
-
-echo prot genic cis trans
-for i in $(awk 'NR>1' olink.bed | cut -f4)
-do
-  echo $i $(grep -w $i INTERVAL.genic | wc -l)  $(grep -w $i INTERVAL.cis | wc -l)  $(grep -w $i INTERVAL.trans | wc -l)
-done
+R --no-save -q < $INF/doc/cis.vs.trans.classification.R > cis.vs.trans.classification.out
 
 export INTERVAL=/scratch/jp549/olink-merged-output
 function format_for_METAL()
@@ -313,6 +270,51 @@ function reference()
           --threads 2
   '
 }
+
+function genic_cis_trans()
+# title,genic,cis,trans
+{
+  awk '$NF!="."' INTERVAL.olink > INTERVAL.genic
+  cut -f4 INTERVAL.genic | \
+  sort | \
+  uniq > INTERVAL.rsid_genic
+  grep -v -w -f INTERVAL.rsid_genic INTERVAL.bed > INTERVAL.tmp
+  bedtools intersect -a INTERVAL.tmp -b olink.cis -loj > INTERVAL.cis_trans
+  awk '$NF!="."' INTERVAL.cis_trans > INTERVAL.cis
+  cut -f4 INTERVAL.cis | \
+  sort | \
+  uniq > INTERVAL.rsid_cis
+  grep -v -w -f INTERVAL.rsid_genic -f INTERVAL.rsid_cis INTERVAL.bed > INTERVAL.tmp
+  cut -f4 INTERVAL.tmp | \
+  uniq > INTERVAL.rsid_trans
+  wc -l INTERVAL.rsid_cis INTERVAL.rsid_genic INTERVAL.rsid_trans
+  bedtools intersect -a INTERVAL.tmp -b olink.bed -loj > INTERVAL.trans
+  (
+    awk '{print "genic",$1}' INTERVAL.rsid_genic
+    awk '{print "cis",$1}' INTERVAL.rsid_cis
+    awk '{print "trans",$1}' INTERVAL.rsid_trans
+  ) | \
+  sort -k2,2 >  INTERVAL.rsid.genic_cis_trans
+  awk 'NR>1' INTERVAL.bed | \
+  sort -k4,4 | \
+  join -14 -22 - INTERVAL.rsid.genic_cis_trans | \
+  awk -vOFS="\t" '{
+    if(NR==1) print "#chrom","start","end","rsid","prot","rsid_status"
+    print $2,$3,$4,$1,$5,$6
+  }' > INTERVAL.rsid.prot
+  R --no-save -q <<END
+    cistrans <- read.delim("INTERVAL.rsid.prot",as.is=TRUE)
+    with(cistrans,table(prot,rsid_status))
+END
+}
+
+genic_cis_trans
+
+echo prot genic cis trans
+for i in $(awk 'NR>1' olink.bed | cut -f4)
+do
+  echo $i $(grep -w $i INTERVAL.genic | wc -l)  $(grep -w $i INTERVAL.cis | wc -l)  $(grep -w $i INTERVAL.trans | wc -l)
+done
 
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
 export BS=/scratch/jp549/apps/bram-scripts
