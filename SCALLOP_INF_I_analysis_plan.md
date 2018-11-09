@@ -12,10 +12,10 @@
 
 ## 1. Overview
 
-The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for 
-discovery and follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on data Olink CVD1 panel 
-from participating cohorts and consequent contributions have been made on Olink INF panel. This document therefore follows closely the SCALLOP/CVD1 analysis 
-plan for the analysis, and in particular highlights relevant information required to facilitate the meta-analysis.
+The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for discovery and 
+follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on data Olink CVD1 panel from participating cohorts and 
+consequent contributions have been made on Olink INF panel. This document follows closely the SCALLOP/CVD1 analysis plan for the analysis, and in particular highlights 
+relevant information required to facilitate the meta-analysis.
 
 As with the CVD1 meta-analysis, the tasks will involve
 
@@ -113,7 +113,7 @@ No | Name | Description | Additional comment
 
 In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures for imputation -- the information 
 measure can be on the genotype level once for a cohort rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based statistics can 
-greatly be facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/.
+be greatly facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/.
 
 ## 5. Meta-analysis
 
