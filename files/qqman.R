@@ -1,9 +1,13 @@
-# 30-10-2018 JHZ
+# 9-11-2018 JHZ
 
-.libPaths("/services/tools/R/3.5.0/lib64/R/library")
-require(qqman);
 protein <- Sys.getenv("protein");
 print(protein);
+gz <- gzfile(paste0("METAL/",protein,"-1.tbl.gz"));
+qqman <- paste0("METAL/","protein,"-qqman.pdf");
+MarkerName <- "MarkerName";
+PVAL <- "P.Value";
+.libPaths("/services/tools/R/3.5.0/lib64/R/library")
+require(qqman);
 tbl <- read.delim(gz,as.is=TRUE);
 chrpos_a1_a2 <- strsplit(gsub("chr","",tbl[MarkerName]),":")
 tbl <- within(tbl,{
@@ -15,7 +19,7 @@ tbl <- within(tbl,{
    P <- tbl[PVAL]
 })
 tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
-png(qqman,res=300,width=12,height=10,units="in")
+pdf(qqman,res=300,width=12,height=10,units="in")
 par(mfrow=c(2,1))
 qq(with(tbl,P))
 manhattan(tbl,main=protein,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,10));

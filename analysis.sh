@@ -4,19 +4,11 @@ source analysis.ini
 
 echo "--> Q-Q/Manhattan/LocusZoom plots"
 
-export p=IFN.gamma
-ls METAL/${p}-1.tbl.gz | \
+ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 parallel -j$threads -C' ' '
-export protein={}; \
-R --no-save <<END
-protein <- Sys.getenv("protein");\
-gz <- gzfile(paste0("METAL/",protein,"-1.tbl.gz"));\
-qqman <- paste0("METAL/",protein,"-qqman.png");\
-MarkerName <- "MarkerName";\
-PVAL <- "P.Value";\
-source("files/qqman.R");\
-END'
+  export protein={}; \
+  R --no-save -q < files/qqman.R'
 (echo Chr Start End; echo 4 73649784 76033785) > st.bed
 awk 'NR>1' st.bed | \
 parallel -j${threads} --env p -C' ' '
