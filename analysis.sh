@@ -1,4 +1,4 @@
-# 2-11-2018 JHZ
+# 9-11-2018 JHZ
 
 source analysis.ini
 
@@ -88,7 +88,8 @@ echo "--> clumping"
 export rt=$HOME/INF/METAL
 
 ls METAL/*tbl.gz | \
-xargs -l basename -s -1.tbl.gz | \
+sed 's/-1.tbl.gz//g' | \
+xargs -l basename | \
 parallel -j4 --env rt -C' ' '
 plink --bfile EUR1KG \
       --exclude MHC.snpid \
@@ -106,7 +107,8 @@ echo "--> COJO analysis, --cojo-wind 10000"
 
 export rt=$HOME/INF/METAL
 ls METAL/*.tbl.gz | \
-xargs -l basename -s -1.tbl.gz | \
+sed 's/-1.tbl.gz//g' | \
+xargs -l basename | \
 parallel -j3 --env rt -C' ' '
 ( \
 echo SNP A1 A2 freq b se p N; \
@@ -128,7 +130,8 @@ cut -f1-8 --output-delimiter=" " \
 '
 
 ls METAL/*.tbl.gz | \
-xargs -l basename -s -1.tbl.gz | \
+sed 's/-1.tbl.gz//g' | \
+xargs -l basename | \
 parallel -j3 --env rt -C' ' '
 gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
        --exclude-region-bp 6 30000000 5000 --thread-num 3 --out $rt/{}
@@ -150,7 +153,7 @@ gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0
 
 echo "--> LDetect, approximate LD blocks"
 
-for p in $(ls METAL/*tbl.gz | xargs -l basename -s -1.tbl.gz)
+for p in $(ls METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
 do
 awk '(NR>1){
   chr=$1;
@@ -248,7 +251,8 @@ sort -k1,1 > snp_pos.noh
 cut -f1 inf1.list | \
 parallel -j6 -C' ' 'awk -vOFS="\t" "BEGIN{print \"SNP\",\"CHR\",\"BP\",\"P\",\"zscore\"}" > METAL/{}.tsv'
 ls METAL/*.tbl | \
-xargs -l basename -s -1.tbl | \
+sed 's/-1.tbl//g' | \
+xargs -l basename | \
 parallel -j6 -C' ' '
 awk "NR>1" METAL/{}-1.tbl | \
 sort -k1,1 | \
