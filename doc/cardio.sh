@@ -225,7 +225,6 @@ function format_for_METAL()
   xargs -l basename | \
   sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz\*//g' | \
   cut -d'_' --output-delimiter=' ' -f1,4 | \
-  grep -w CD6 | \
   parallel -j2 --env INTERVAL -C' ' '
     gunzip -c $INTERVAL/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
     awk -f files/INTERVAL.awk | \
