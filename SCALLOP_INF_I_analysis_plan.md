@@ -112,8 +112,8 @@ No | Name | Description | Additional comment
 \* may be required to take from the PLINK .bim file.
 
 In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures for imputation -- the information 
-measure can be on the genotype level once for a cohort rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based statistics can 
-be greatly facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/.
+measure can be on the genotype level obtained once for a cohort rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based 
+statistics can be greatly facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/.
 
 ## 5. Meta-analysis
 
