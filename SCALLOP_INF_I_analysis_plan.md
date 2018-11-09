@@ -22,7 +22,7 @@ As with the CVD1 meta-analysis, the tasks will involve
 * Identification of pQTLs in SCALLOP discovery cohorts
 * Replication of pQTLs in replication cohorts
 * Investigation of the mechanistic basis of identified cis- and trans-pQTL by functional annotation
-* Examination of pleiotropic effects of the pQTLs
+* Examination of pQTL pleiotropic effects
 * Evaluation over the causal role of INF proteins disease outcomes such as CHD and stroke
 * Other downstream analysis
 
