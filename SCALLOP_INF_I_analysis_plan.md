@@ -47,7 +47,7 @@ invnormal <- function(x)
 ```
 * Multiple linear regression for all samples including sex, age, principal components and other cohort specific covariates.
 * Additive genetic model
-* For case-control study, patients and controls are analysed separately – results will be merged at meta-analysis stage
+* For case-control data, patients and controls are analysed separately – results will be merged at meta-analysis stage
 
 ### Software
 
