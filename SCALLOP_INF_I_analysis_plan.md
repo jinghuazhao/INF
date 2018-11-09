@@ -1,6 +1,6 @@
 # SCALLOP consortium analysis plan for INF panel proteins
 
-***Adapted from SCALLOP/CVD1 analysis plan, last updated 8/11/2018***
+***Adapted from SCALLOP/CVD1 analysis plan, last updated 9/11/2018***
 
 ---
 
@@ -129,6 +129,6 @@ See the CVD1 analysis plan.
 
 ## 7. Contact information
 
-For questions about SCALLOP, please contact Anders Malarstig (anders.malarstig@ki.se). For technical issues regarding TRYGGVE, please contact Lasse Folkersen (lasfol@cbs.dtu.dk).
+For general questions about SCALLOP, please contact Anders Malarstig (anders.malarstig@ki.se). For technical issues regarding TRYGGVE, please contact Lasse Folkersen (lasfol@cbs.dtu.dk).
 
 For questions regarding SCALLOP/INF, please contact Jing Hua Zhao (jhz22@medschl.cam.ac.uk) and James Peters (jp549@medschl.cam.ac.uk).
