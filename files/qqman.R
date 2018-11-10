@@ -3,11 +3,11 @@
 protein <- Sys.getenv("protein");
 print(protein);
 gz <- gzfile(paste0("METAL/",protein,"-1.tbl.gz"));
-qqman <- paste0(protein,"-qqman.png");
+qqman <- paste0("METAL/",protein,"-qqman.png");
 .libPaths("/services/tools/R/3.5.0/lib64/R/library")
 require(qqman);
 tbl <- read.delim(gz,as.is=TRUE);
-tbl <- within(tbl,{
+tbl <- within(subset(tbl,Chromosome!="X"),{
    SNP <- MarkerName
    CHR <- Chromosome
    BP <- Position
