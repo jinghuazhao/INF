@@ -98,7 +98,7 @@ parallel -j3 --env rt -C' ' '
 ) > work/INTERVAL.{}.ma'
 
 ls work/*.ma | \
-sed '/.ma//g' | \
+sed 's/.ma//g' | \
 xargs -l basename | \
 sort | \
 parallel -j3 --env rt -C' ' '
