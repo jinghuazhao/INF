@@ -87,8 +87,8 @@ xterm -fa arial -fs 12 -bg black -fg white
 For instance, once libreoffice and pandoc are loaded, we can view this file with
 
 ``` {.bash}
-pandoc SecureCloud.md -o SecureCloud.docx
-soffice SecureCloud.docx
+pandoc tryggve.md -o tryggve.docx
+soffice tryggve.docx
 ```
 
 ## Parallel computing
