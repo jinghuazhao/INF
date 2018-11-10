@@ -146,7 +146,6 @@ function snp_gene()
   cut -f3,7,8,13 refGene.txt | \
   awk '!index($1,"_")' | \
   uniq > refGene.bed
-  bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
   cut -f7 $INF/doc/olink.inf.panel.annot.tsv | \
   awk '(NR>1){gsub(/\"/,"");print}' | \
   sort > olink.gene
@@ -167,7 +166,6 @@ function snp_gene()
     join -11 -24 olink.gene - | \
     awk '{print $2,$3,$4,$1}'
   ) > glist-hg19.olink
-  bedtools intersect -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
   awk -vOFS="\t" '{
     snpid=$1
     rsid=$2
@@ -175,27 +173,37 @@ function snp_gene()
     chr=a[1]
     split(a[2],b,"_")
     pos=b[1]
-    if(NR==1) print "#chrom","start","end","rsid"
-    print chr,pos-1,pos,rsid
+    prot=$3
+    if(NR==1) print "#chrom","start","end","rsid","prot"
+    print chr,pos-1,pos,rsid,prot
   }' INTERVAL.snpid_rsid > INTERVAL.bed
-  awk '{
-    FS=OFS="\t"
-    gsub(/\"/,"",$0)
-    if(NR==1) print "#chrom","start","end","gene";
-    else print "chr" $8,$9,$10,$2
-  }' $INF/doc/olink.inf.panel.annot.tsv > olink.bed
-  bedtools intersect -a INTERVAL.bed -b olink.bed -loj > INTERVAL.olink
+  (
+    echo -e "#chrom\tstart\tend\t\tgene\tprot";
+    sort -k2,2 $INF/inf1.list > inf1.tmp
+    awk '{
+      FS=OFS="\t"
+      gsub(/\"/,"",$0)
+      print "chr" $8,$9,$10,$3,$7
+    }' $INF/doc/olink.inf.panel.annot.tsv | \
+    sort -k4,4 | \
+    join -14 -22 - inf1.tmp | \
+    awk -vOFS="\t" '{print $2,$3,$4,$5,$6}'
+  ) > olink.bed
   awk -vOFS="\t" -vM=1000000 '{
     chrom=$1
     cdsStart=$2
     cdsEnd=$3
     gene=$4
+    prot=$5
     start=cdsStart-M
     if (start<0) start=0
     end=cdsEnd+M
-    if(NR==1) print "#chrom", "start", "end", "gene";
-    else print chrom, start, end, gene
+    if(NR==1) print "#chrom", "start", "end", "gene", "prot";
+    else print chrom, start, end, gene, prot
   }' olink.bed > olink.cis
+  bedtools intersect -a INTERVAL.bed -b refGene.bed -loj > INTERVAL.refGene
+  bedtools intersect -a INTERVAL.bed -b glist-hg19.bed -loj > INTERVAL.glist-hg19
+  bedtools intersect -a INTERVAL.bed -b olink.bed -loj > INTERVAL.olink
   bedtools intersect -a INTERVAL.bed -b olink.cis -loj > INTERVAL.genic_cis_trans
   cd -
 }
@@ -279,31 +287,34 @@ function genic_cis_trans()
   uniq > INTERVAL.rsid_genic
   grep -v -w -f INTERVAL.rsid_genic INTERVAL.bed > INTERVAL.tmp
   bedtools intersect -a INTERVAL.tmp -b olink.cis -loj > INTERVAL.cis_trans
-  awk '$NF!="."' INTERVAL.cis_trans > INTERVAL.cis
+  awk '$5==$10' INTERVAL.cis_trans > INTERVAL.cis
   cut -f4 INTERVAL.cis | \
   sort | \
   uniq > INTERVAL.rsid_cis
-  grep -v -w -f INTERVAL.rsid_genic -f INTERVAL.rsid_cis INTERVAL.bed > INTERVAL.tmp
-  cut -f4 INTERVAL.tmp | \
+  awk '$5!=$10&&$10=="."' INTERVAL.cis_trans > INTERVAL.trans
+  cut -f4 INTERVAL.trans | \
+  sort | \
   uniq > INTERVAL.rsid_trans
   wc -l INTERVAL.rsid_cis INTERVAL.rsid_genic INTERVAL.rsid_trans
-  bedtools intersect -a INTERVAL.tmp -b olink.bed -loj > INTERVAL.trans
+  sort -k5,5 INTERVAL.trans | \
+  join -t$'\t' -11 -25 $INF/inf1.list - | \
+  sort -k2,2 > olink.tmp
+  cut -f3,7 $INF/doc/olink.inf.panel.annot.tsv | \
+  awk -vOFS="\t" 'NR>1{gsub(/\"/,"",$0);print $1,$2}' | \
+  sort -k1,1 | \
+  join -t$'\t' -12 -21 olink.tmp - | \
+  awk -vOFS="\t" '{print $3,$4,$5,$6,$2,$8,$9,$10,$12,$11}' > INTERVAL.tmp
   (
-    awk '{print "genic",$1}' INTERVAL.rsid_genic
-    awk '{print "cis",$1}' INTERVAL.rsid_cis
-    awk '{print "trans",$1}' INTERVAL.rsid_trans
-  ) | \
-  sort -k2,2 >  INTERVAL.rsid.genic_cis_trans
-  awk 'NR>1' INTERVAL.bed | \
-  sort -k4,4 | \
-  join -14 -22 - INTERVAL.rsid.genic_cis_trans | \
-  awk -vOFS="\t" '{
-    if(NR==1) print "#chrom","start","end","rsid","prot","rsid_status"
-    print $2,$3,$4,$1,$5,$6
-  }' > INTERVAL.rsid.prot
+    echo -e "chr\tstart\tend\trsid\tprot\tchrom\tcisstart\tcisend\tgene\ttarget\tstatus"
+    awk -vOFS="\t" '{print $0,"genic"}' INTERVAL.genic
+    awk -vOFS="\t" '{print $0,"cis"}' INTERVAL.cis
+    awk -vOFS="\t" '{print $0,"trans"}' INTERVAL.tmp
+  ) > INTERVAL.prot
   R --no-save -q <<END
-    cistrans <- read.delim("INTERVAL.rsid.prot",as.is=TRUE)
-    with(cistrans,table(prot,rsid_status))
+    prot <- read.delim("INTERVAL.prot",as.is=TRUE,header=TRUE)
+    genic_cis_trans <- with(prot,as.matrix(table(gene,status)))
+    genic_cis_trans
+    sum(genic_cis_trans)
 END
 }
 
