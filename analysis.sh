@@ -1,14 +1,12 @@
-# 9-11-2018 JHZ
+# 10-11-2018 JHZ
 
 source analysis.ini
 
 echo "--> Q-Q/Manhattan/LocusZoom plots"
 
-ls METAL/*-1.tbl.gz | \
-sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-parallel -j$threads -C' ' '
-  export protein={}; \
-  R --no-save -q < files/qqman.R'
+ls *-1.tbl.gz | \
+sed 's|METAL/||g;s/-1.tbl.gz@//g' | \
+parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/files/qqman.R'
 (echo Chr Start End; echo 4 73649784 76033785) > st.bed
 awk 'NR>1' st.bed | \
 parallel -j${threads} --env p -C' ' '
