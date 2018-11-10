@@ -7,21 +7,15 @@ echo "--> Q-Q/Manhattan/LocusZoom plots"
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/files/qqman.R'
+# more work to add
 (echo Chr Start End; echo 4 73649784 76033785) > st.bed
 awk 'NR>1' st.bed | \
 parallel -j${threads} --env p -C' ' '
    gunzip -c METAL/${p}-1.tbl.gz | \
-   awk -vOFS="\t" -vchrom={1} -vStart={2} -vEnd={3} "(NR>1){
-     snpid=\$1; \
-     gsub(/chr/,\"\",snpid); \
-     split(snpid,chrpos_a1_a2,\":\"); \
-     chr=chrpos_a1_a2[1]; \
-     split(chrpos_a1_a2[2],a,\"_\"); \
-     pos=a[1]; \
-     if (chr == chrom && pos >= Start && pos <= End) print \$1}" | \
+   awk -vOFS="\t" -vchrom={1} -vStart={2} -vEnd={3} "(NR>1 && \$1 == chrom && \$2 >= Start && \$2 <= End) print \$1}" | \
    sort > st.tmp;
    gunzip -c METAL/${p}-1.tbl.gz | \
-   awk -vOFS="\t" "(NR>1) {print \$1,\$10,\$14}" | \
+   awk -vOFS="\t" "(NR>1) {print \$3,\$12,\$14}" | \
    sort -k1,1 | \
    join st.tmp - | \
    awk -vOFS="\t" "{if(NR==1) print \"MarkerName\", \"P-value\", \"Weight\";print \$1,\$2,\$3}"> METAL/${f}.lz
