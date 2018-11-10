@@ -43,7 +43,7 @@ individually though this has been done by cut and paste interactively.
 -   **STABILITY**. 90 protein.
 -   **STANLEY**. 92 largely complete protein results for lah1 and swe6
 
-It is necessary to generate an annotation file similar to [cvd1\_annotation](doc/cvd1_annotation).
+It is necessary to generate an annotation file similar to [cvd1\_annotation.tsv](doc/cvd1_annotation.tsv).
 
 ## KORA and INTERVAL
 
