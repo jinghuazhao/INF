@@ -188,6 +188,8 @@ function snp_gene()
     awk '{
       FS=OFS="\t"
       gsub(/\"/,"",$0)
+      if($3=="Q8NF90") $7="FGF5"
+      if($3=="Q8WWJ7") $7="CD6"
       print "chr" $8,$9,$10,$3,$7
     }' $INF/doc/olink.inf.panel.annot.tsv | \
     sort -k4,4 | \
@@ -252,7 +254,12 @@ function genic_cis_trans()
   join -t$'\t' -11 -25 $INF/inf1.list - | \
   sort -k2,2 > olink.tmp
   cut -f3,7 $INF/doc/olink.inf.panel.annot.tsv | \
-  awk -vOFS="\t" 'NR>1{gsub(/\"/,"",$0);print $1,$2}' | \
+  awk -vOFS="\t" 'NR>1{
+    gsub(/\"/,"",$0);
+    if($1=="Q8NF90") $2="FGF5"
+    if($1=="Q8WWJ7") $2="CD6"
+    print $1,$2
+  }' | \
   sort -k1,1 | \
   join -t$'\t' -12 -21 olink.tmp - | \
   awk -vOFS="\t" '{print $3,$4,$5,$6,$2,$8,$9,$10,$12,$11}' > INTERVAL.tmp
