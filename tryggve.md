@@ -14,8 +14,8 @@ The repository contains the following files,
 
 Filespec     | Descrription
 -------------|-----------------------------------------
-SecureCloud.md    | This document
-SecureCloud.sh    | git batch file
+tryggve.md   | This document
+tryggve.sh   | git batch file
 list.sh      | Generation of file list and directory
 format.sh    | Code for format GWAS summary statistics
 analysis.sh  | Bash code for analysis calling analysis.ini
