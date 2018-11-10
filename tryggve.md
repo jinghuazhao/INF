@@ -63,17 +63,22 @@ File | Description
 The system is managed with modules, e.g.,
 
 ``` {.bash}
-module load gcc/5.4.0 R/3.2.5 rstudio/1.1.453
 module load anaconda2/4.4.0
+module load perl/5.24.0 annovar/2018apr16
+module load bcftools/1.8
 module load gcta/1.91.0beta
+module load intel/redist/2018 intel/perflibs/64/2018 gcc/5.4.0 R/3.5.0-ICC-MKL rstudio/1.1.453
 module load libreoffice/6.0.5.2
+module load locuszoom/1.4
 module load metal/20110325
 module load pandoc/2.1
 module load parallel/20170822
-module load perl/5.24.0 annovar/2018apr16
 module load plink2/1.90beta5.4
-module load locuszoom/1.4
+module load qctool/1.4
+module load rstudio/1.1.453
+module load vcftools/0.1.15
 module load xpdf/3.04
+export threads=1
 
 xterm -fa arial -fs 12 -bg black -fg white
 ```
