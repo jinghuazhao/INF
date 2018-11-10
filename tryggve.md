@@ -14,16 +14,17 @@ The repository contains the following files,
 
 Filespec     | Descrription
 -------------|-----------------------------------------
+doc/         | Oringal documents
+files/       | auxiliary files
+sumstats/    | File lists and study directories
+METAL/       | METAL/output scripts by protein
 tryggve.md   | This document
 tryggve.sh   | git batch file
 list.sh      | Generation of file list and directory
 format.sh    | Code for format GWAS summary statistics
 analysis.sh  | Bash code for analysis calling analysis.ini
-METAL.qsub   | TORQUE qsub script for METAL
 metal.sh     | Generation/execution of METAL scripts
-doc/         | Oringal documents
-sumstats/    | File lists and study directories
-METAL/       | METAL/output scripts by protein
+METAL.qsub   | TORQUE qsub script for METAL
 
 In total, 92 proteins are expected as given in
 [olink.prot.list.txt](doc/olink.prot.list.txt). Data processing so far
