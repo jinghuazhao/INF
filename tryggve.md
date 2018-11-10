@@ -75,7 +75,6 @@ module load pandoc/2.1
 module load parallel/20170822
 module load plink2/1.90beta5.4
 module load qctool/1.4
-module load rstudio/1.1.453
 module load vcftools/0.1.15
 module load xpdf/3.04
 export threads=1
