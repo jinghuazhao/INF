@@ -47,6 +47,8 @@ It is necessary to generate an annotation file similar to [cvd1\_annotation.tsv]
 
 ## KORA and INTERVAL
 
+These are in the files/ directory.
+
 File | Description
 -----|-------------------------------------------------------------
 [KORA.sh](files/KORA.sh) | Bash/R scripts to hand KORA data
