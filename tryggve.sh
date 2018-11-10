@@ -6,7 +6,7 @@ git add tryggve.md
 git commit -m "tryggve notes"
 git add files list.sh format.sh metal.sh analysis.sh analysis.ini
 git commit -m "Programs"
-git add metal.md metal.qsub
+git add metal.md METAL.qsub
 git commit -m "TORQUE notes and program"
 git add doc
 git commit -m "Documents"
