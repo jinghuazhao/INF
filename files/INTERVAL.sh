@@ -1,4 +1,4 @@
-# 3-11-2018 JHZ
+# 10-11-2018 JHZ
 
 source analysis.ini
 
@@ -7,7 +7,8 @@ export rt=$HOME/INF/sumstats/INTERVAL
 echo "--> top signals"
 
 ls $rt/*.gz | \
-xargs -l basename -s .gz | \
+sed 's/.gz//g' | \
+xargs -l basename | \
 sed 's/INTERVAL.//g' | \
 parallel -j4 --env rt -C' ' '
 ( \
@@ -23,8 +24,8 @@ parallel -j4 --env rt -C' ' '
 echo "--> LD clumping"
 
 ls $rt/*.gz | \
-xargs -l basename -s .gz | \
-sed 's/INTERVAL.//g' | \
+sed 's/INTERVAL.//g;s/.gz//g' | \
+xargs -l basename | \
 parallel -j4 --env rt -C' ' '
 gunzip -c $rt/INTERVAL.{}.gz | \
 awk "\$8 > 0.0001 && \$13" | \
@@ -54,8 +55,8 @@ echo "--> GC lambda"
 
 (
 ls $rt/*.gz | \
-xargs -l basename -s .gz | \
-sed 's/INTERVAL.//g' | \
+sed 's/INTERVAL.//g;s/.gz//g' | \
+xargs -l basename | \
 parallel -j4 --env rt -C' ' '
   gunzip -c $rt/INTERVAL.{}.gz | \
   cut -f1,11 | \
@@ -77,8 +78,8 @@ sed 's/GC.lambda=//g' > work/INTERVAL.lambda.dat
 echo "--> conditional analysis"
 
 ls $rt/*.gz | \
-xargs -l basename -s .gz | \
-sed 's/INTERVAL.//g' | \
+sed 's/INTERVAL.//g;s/.gz//g' | \
+xargs -l basename | \
 parallel -j3 --env rt -C' ' '
 ( \
   echo SNP A1 A2 freq b se p N; \
@@ -96,18 +97,19 @@ parallel -j3 --env rt -C' ' '
   }" \
 ) > work/INTERVAL.{}.ma'
 
-ls work/*jma*cojo | \
-xargs -l basename -s .jma.cojo | \
-sort > INTERVAL.cojo.done
-
 ls work/*.ma | \
-xargs -l basename -s .ma | \
+sed '/.ma//g' | \
+xargs -l basename | \
 sort | \
-join -v1 - INTERVAL.cojo.done | \
 parallel -j3 --env rt -C' ' '
   gcta64 --bfile EUR1KG --cojo-file work/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
          --exclude-region-bp 6 30000000 5000 --thread-num 3 --out work/{}
 '
+
+ls work/*jma*cojo | \
+sed 's/.jma.cojo//g' | \
+xargs -l basename | \
+sort > INTERVAL.cojo.done
 
 rm -f work/INTERVAL.jma
 (
@@ -127,8 +129,8 @@ echo "--> Q-Q, Manhattan, LocusZoom plots"
 
 export p=IFN.gamma
 ls $rt/INTERVAL.${p}.gz | \
-xargs -l basename -s .gz | \
-sed 's/INTERVAL.//g' | \
+sed 's/INTERVAL.//g;s/.gz//g' | \
+xargs -l basename | \
 parallel -j1 --env rt -C' ' '
 export protein={}; \
 R --no-save -q <<END
