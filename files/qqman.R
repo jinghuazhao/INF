@@ -7,7 +7,7 @@ qqman <- paste0("METAL/",protein,"-qqman.png");
 .libPaths("/services/tools/R/3.5.0/lib64/R/library")
 require(qqman);
 tbl <- read.delim(gz,as.is=TRUE);
-tbl <- within(subset(tbl,Chromosome!="X"),{
+tbl <- within(subset(tbl,Chromosome!="X"&Chromosome!="Y"),{
    SNP <- MarkerName
    CHR <- Chromosome
    BP <- Position
