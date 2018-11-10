@@ -101,23 +101,25 @@ sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j3 --env rt -C' ' '
 ( \
-echo SNP A1 A2 freq b se p N; \
-gunzip -c $rt/{}-1.tbl.gz | \
-awk -vOFS="\t" "(NR>1 && \$14>0) { \
-   snpid=\$1; \
-   gsub(/chr/,\"\",snpid); \
-   split(snpid,chrpos_a1_a2,\":\"); \
-   chr=chrpos_a1_a2[1]; \
-   split(chrpos_a1_a2[2],a,\"_\"); \
-   pos=a[1]; \
-   a1=toupper(\$2); \
-   a2=toupper(\$3); \
-   print \$1, a1, a2, \$4, \$8, \$9, \$10, \$14, chr, pos \
-}" | \
-sort -k9,9n -k10,10n | \
-cut -f1-8 --output-delimiter=" " \
-) > $rt/{}.ma; \
+  echo SNP A1 A2 freq b se p N; \
+  gunzip -c $rt/{}-1.tbl.gz | \
+  awk -vOFS="\t" "(NR>1 && \$14>0) {print \$3, \$4, \$5, \$6, \$10, \$11, \$12, \$14}" \
+) > $rt/{}.ma
 '
+#1 Chromosome
+#2 Position
+#3 MarkerName
+#4 Allele1
+#5 Allele2
+#6 Freq1
+#7 FreqSE
+#8 MinFreq
+#9 MaxFreq
+#10 Effect
+#11 StdErr
+#12 P-value
+#13 Direction
+#14 N
 
 ls METAL/*.tbl.gz | \
 sed 's/-1.tbl.gz//g' | \
