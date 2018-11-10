@@ -103,7 +103,7 @@ parallel -j3 --env rt -C' ' '
 ( \
   echo SNP A1 A2 freq b se p N; \
   gunzip -c $rt/{}-1.tbl.gz | \
-  awk -vOFS="\t" "(NR>1 && \$14>0) {print \$3, \$4, \$5, \$6, \$10, \$11, \$12, \$14}" \
+  awk -vOFS="\t" "(NR>1 && \$14>50) {print \$3, \$4, \$5, \$6, \$10, \$11, \$12, \$14}" \
 ) > $rt/{}.ma
 '
 #1 Chromosome
