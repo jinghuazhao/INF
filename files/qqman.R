@@ -1,9 +1,9 @@
-# 9-11-2018 JHZ
+# 10-11-2018 JHZ
 
 protein <- Sys.getenv("protein");
 print(protein);
 gz <- gzfile(paste0("METAL/",protein,"-1.tbl.gz"));
-qqman <- paste0("METAL/",protein,"-qqman.pdf");
+qqman <- paste0(protein,"-qqman.png");
 MarkerName <- "MarkerName";
 PVAL <- "P.Value";
 .libPaths("/services/tools/R/3.5.0/lib64/R/library")
@@ -19,7 +19,7 @@ tbl <- within(tbl,{
    P <- tbl[PVAL]
 })
 tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
-pdf(qqman,res=300,width=12,height=10,units="in")
+png(qqman,res=300,width=12,height=10,units="in")
 par(mfrow=c(2,1))
 qq(with(tbl,P))
 manhattan(tbl,main=protein,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,10));
