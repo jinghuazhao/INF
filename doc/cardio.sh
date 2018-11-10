@@ -147,8 +147,12 @@ function snp_gene()
   cut -f3,7,8,13 refGene.txt | \
   awk '!index($1,"_")' | \
   uniq > refGene.bed
-  cut -f7 $INF/doc/olink.inf.panel.annot.tsv | \
-  awk '(NR>1){gsub(/\"/,"");print}' | \
+  awk '(NR>1){
+    gsub(/\"/,"")
+    if($3=="Q8NF90") $7="FGF5"
+    if($3=="Q8WWJ7") $7="CD6"
+    print $7
+  }' $INF/doc/olink.inf.panel.annot.tsv | \
   sort > olink.gene
   (
     head -1 refGene.bed
