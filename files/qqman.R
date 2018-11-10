@@ -7,12 +7,11 @@ qqman <- paste0(protein,"-qqman.png");
 .libPaths("/services/tools/R/3.5.0/lib64/R/library")
 require(qqman);
 tbl <- read.delim(gz,as.is=TRUE);
-chrpos_a1_a2 <- strsplit(gsub("chr","",tbl[MarkerName]),":")
 tbl <- within(tbl,{
    SNP <- MarkerName
    CHR <- Chromosome
    BP <- Position
-   P <- P.Value
+   P <- P.value
 })
 tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
 png(qqman,res=300,width=12,height=10,units="in")
