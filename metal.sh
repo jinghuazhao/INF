@@ -1,4 +1,4 @@
-# 1-11-2018 JHZ
+# 10-11-2018 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
@@ -22,34 +22,33 @@ sort -k1,1 METAL/METAL.tmp > METAL/METAL.list
 # generate METAL command files
 for p in $(cut -f1 inf1.list)
 do
-   export metal=METAL/$p.metal
-   echo SEPARATOR TAB > $metal
-   echo COLUMNCOUNTING STRICT >> $metal
-   echo CUSTOMVARIABLE CHR >> $metal
-   echo LABEL CHR as CHR >> $metal
-   echo CUSTOMVARIABLE POS >> $metal
-   echo LABEL POS as POS >> $metal
-   echo CUSTOMVARIABLE WEIGHT >> $metal
-   echo LABEL WEIGHT as N >> $metal
-   echo AVERAGEFREQ ON >> $metal
-   echo MINMAXFREQ ON >> $metal
-   echo MARKERLABEL SNPID >> $metal
-   echo ALLELELABELS EFFECT_ALLELE REFERENCE_ALLELE >> $metal
-   echo EFFECTLABEL BETA >> $metal
-   echo PVALUELABEL PVAL >> $metal
-   echo WEIGHTLABEL N >> $metal
-   echo FREQLABEL CODE_ALL_FQ >> $metal
-   echo STDERRLABEL SE >> $metal
-   echo SCHEME STDERR >> $metal
-   echo GENOMICCONTROL OFF >> $metal
-   echo OUTFILE $HOME/INF/METAL/$p- .tbl >> $metal
-   echo $p | join METAL/METAL.list - | awk '{$1="PROCESS"; print}' >> $metal;
-   echo ANALYZE >> $metal
-   echo CLEAR >> $metal
+(
+   echo SEPARATOR TAB
+   echo COLUMNCOUNTING STRICT
+   echo CHROMOSOMELABEL CHR
+   echo POSITIONLABEL POS
+   echo TRACKPOSITIONS ON
+   echo AVERAGEFREQ ON
+   echo MINMAXFREQ ON
+   echo ADDFILTER >= 50
+   echo MARKERLABEL SNPID
+   echo ALLELELABELS EFFECT_ALLELE REFERENCE_ALLELE
+   echo EFFECTLABEL BETA
+   echo PVALUELABEL PVAL
+   echo WEIGHTLABEL N
+   echo FREQLABEL CODE_ALL_FQ
+   echo STDERRLABEL SE
+   echo SCHEME STDERR
+   echo GENOMICCONTROL OFF
+   echo OUTFILE $HOME/INF/METAL/$p- .tbl
+   echo $p | join METAL/METAL.list - | awk '{$1="PROCESS"; print}'
+   echo ANALYZE
+   echo CLEAR
+) > METAL/$p.metal
 done
 
-# conducting the analysis
-module load metal/20110325 parallel/20170822
+# conducting the analysis 
+# module load metal/20110325 parallel/20170822
 ls METAL/*.metal | \
 sed 's/.metal//g' | \
 parallel --env HOME -j3 -C' ' '
