@@ -28,7 +28,7 @@ parallel -j3 -C' ' '
    grep -w {} st.bed > st.tmp; \
    read chrom start end gene prot < st.tmp; \
    gunzip -c METAL/{}-1.tbl.gz | \
-   awk -vOFS="\t" -vM=1000000 "(NR>1 && \$1 == ENVIRON["chrom"] && \$2 >= ENVIRON["start"]-M && \$2 <= ENVIRON["end"]+M) print \$1}" | \
+   awk -vOFS="\t" -vM=1000000 "(NR>1 && \$1 == ENVIRON[\"chrom\"] && \$2 >= ENVIRON[\"start\"]-M && \$2 <= ENVIRON[\"end\"]+M) print \$1}" | \
    sort > st.tmp;
    gunzip -c METAL/{}-1.tbl.gz | \
    awk -vOFS="\t" "(NR>1) {print \$3,\$12,\$14}" | \
