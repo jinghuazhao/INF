@@ -237,19 +237,13 @@ function genic_cis_trans()
 # title,genic,cis,trans
 {
   awk '$NF!="."' INTERVAL.olink > INTERVAL.genic
-  cut -f4 INTERVAL.genic | \
-  sort | \
-  uniq > INTERVAL.rsid_genic
+  cut -f4 INTERVAL.genic > INTERVAL.rsid_genic
   grep -v -w -f INTERVAL.rsid_genic INTERVAL.bed > INTERVAL.tmp
   bedtools intersect -a INTERVAL.tmp -b olink.cis -loj > INTERVAL.cis_trans
   awk '$5==$10' INTERVAL.cis_trans > INTERVAL.cis
-  cut -f4 INTERVAL.cis | \
-  sort | \
-  uniq > INTERVAL.rsid_cis
+  cut -f4 INTERVAL.cis > INTERVAL.rsid_cis
   awk '$5!=$10&&$10=="."' INTERVAL.cis_trans > INTERVAL.trans
-  cut -f4 INTERVAL.trans | \
-  sort | \
-  uniq > INTERVAL.rsid_trans
+  cut -f4 INTERVAL.trans > INTERVAL.rsid_trans
   wc -l INTERVAL.rsid_cis INTERVAL.rsid_genic INTERVAL.rsid_trans
   sort -k5,5 INTERVAL.trans | \
   join -t$'\t' -11 -25 $INF/inf1.list - | \
