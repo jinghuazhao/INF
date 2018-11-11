@@ -14,7 +14,7 @@ tbl <- within(tbl,{
    P <- P.value
 })
 tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
-pdf(qqman,res=300,width=12,height=10,units="in")
+pdf(qqman,width=12,height=10)
 qq(with(tbl,P))
 manhattan(tbl,main=protein,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25));
 dev.off();
