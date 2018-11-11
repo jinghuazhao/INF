@@ -41,8 +41,8 @@ parallel -j1 -C' ' '
    rm -f ld_cache.db; \
    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal {}.lz \
              --plotonly --chr $chrom --start $start --end $end --no-date --rundir .; \
-   mv chr${chrom}_${start}-${end}.pdf {}; \
-   pdftopng {} -r 300 {}; \
+   mv chr${chrom}_${start}-${end}.pdf {}.pdf; \
+   pdftopng -r 300 {}.pdf {}; \
    cd -
 '
 
