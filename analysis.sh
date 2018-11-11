@@ -30,7 +30,7 @@ parallel -j3 -C' ' '
    grep -w {} st.bed > st.tmp; \
    read chrom start end gene prot < st.tmp; \
    gunzip -c METAL/{}-1.tbl.gz | \
-   awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end -vM=1000000 "(\$1 == chr && \$2 >= start-M && \$2 <= end+M){print \$3,\$12,\$14}"
+   awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end -vM=1000000 "(\$1 == chr && \$2 >= start-M && \$2 <= end+M){split(\$3,a,"_");print a[1],\$12,\$14}"
 )  > METAL/{}.lz'
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
