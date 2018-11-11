@@ -30,17 +30,17 @@ parallel -j3 -C' ' '
    grep -w {} st.bed > st.tmp; \
    read chrom start end gene prot < st.tmp; \
    gunzip -c METAL/{}-1.tbl.gz | \
-   awk -vOFS="\t" -vM=1000000 "(\$1 == ENVIRON[\"chrom\"] && \$2 >= ENVIRON[\"start\"]-M && \$2 <= ENVIRON[\"end\"]+M){print \$3,\$12,\$14}"
-)  > METAL/${prot}.lz'
+   awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end -vM=1000000 "(\$1 == chr && \$2 >= start-M && \$2 <= end+M){print \$3,\$12,\$14}"
+)  > METAL/{}.lz'
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 parallel -j1 -C' ' '
    grep -w {} st.bed > st.tmp; \
    read chrom start end gene prot < st.tmp; \
    rm -f ld_cache.db; \
-   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal METAL/${prot}.lz \
+   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal METAL/{}.lz \
              --plotonly --chr $chrom --start $start --end $end --no-date --rundir .; \
-   pdftopng chr${chrom}_${start}-${end}.pdf -r 300 $prot; \
+   pdftopng chr${chrom}_${start}-${end}.pdf -r 300 {}; \
 '
 
 echo "--> 1000Genomes reference data"
