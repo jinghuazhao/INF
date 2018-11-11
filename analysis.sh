@@ -25,17 +25,13 @@ parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/files/qqman
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 parallel -j3 -C' ' '
+(
+   echo -e "MarkerName\tP-value\tWeight"
    grep -w {} st.bed > st.tmp; \
    read chrom start end gene prot < st.tmp; \
    gunzip -c METAL/{}-1.tbl.gz | \
-   awk -vOFS="\t" -vM=1000000 "(NR>1 && \$1 == ENVIRON[\"chrom\"] && \$2 >= ENVIRON[\"start\"]-M && \$2 <= ENVIRON[\"end\"]+M){print \$1}" | \
-   sort > st.tmp;
-   gunzip -c METAL/{}-1.tbl.gz | \
-   awk -vOFS="\t" "(NR>1) {print \$3,\$12,\$14}" | \
-   sort -k1,1 | \
-   join st.tmp - | \
-   awk -vOFS="\t" "{if(NR==1) print \"MarkerName\", \"P-value\", \"Weight\";print \$1,\$2,\$3}"> METAL/${prot}.lz
-'
+   awk -vOFS="\t" -vM=1000000 "(\$1 == ENVIRON[\"chrom\"] && \$2 >= ENVIRON[\"start\"]-M && \$2 <= ENVIRON[\"end\"]+M){print \$3,\$12,\$14}"
+)  > METAL/${prot}.lz'
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 parallel -j1 -C' ' '
@@ -44,7 +40,7 @@ parallel -j1 -C' ' '
    rm -f ld_cache.db; \
    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal METAL/${prot}.lz \
              --plotonly --chr $chrom --start $start --end $end --no-date --rundir .; \
-   pdftopng chr{1}_{2}-{3}.pdf -r 300 $prot; \
+   pdftopng chr${chrom}_${start}-${end}.pdf -r 300 $prot; \
 '
 
 echo "--> 1000Genomes reference data"
