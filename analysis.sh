@@ -1,4 +1,4 @@
-# 10-11-2018 JHZ
+# 11-11-2018 JHZ
 
 source analysis.ini
 
@@ -7,26 +7,44 @@ echo "--> Q-Q/Manhattan/LocusZoom plots"
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/files/qqman.R'
-# more work to add
-(echo Chr Start End; echo 4 73649784 76033785) > st.bed
-awk 'NR>1' st.bed | \
-parallel -j${threads} --env p -C' ' '
-   gunzip -c METAL/${p}-1.tbl.gz | \
-   awk -vOFS="\t" -vchrom={1} -vStart={2} -vEnd={3} "(NR>1 && \$1 == chrom && \$2 >= Start && \$2 <= End) print \$1}" | \
+# (echo Chr Start End; echo 4 73649784 76033785) > st.bed
+(
+  echo -e "chrom\tstart\tend\tgene\tprot"
+  sort -k2,2 inf1.list > inf1.tmp
+  cut -f2,3,7-10 doc/olink.inf.panel.annot.tsv  | \
+  awk -vOFS="\t" '(NR>1){
+      gsub(/\"/,"",$0)
+      if($2=="Q8NF90") $3="FGF5"
+      if($2=="Q8WWJ7") $3="CD6"
+      print
+  }' | \
+  sort -k2,2 | \
+  join -j2 inf1.tmp - | \
+  awk -vOFS="\t" '{print $5,$6,$7,$4,$2}'
+) > st.bed
+ls METAL/*-1.tbl.gz | \
+sed 's|METAL/||g;s/-1.tbl.gz//g' | \
+parallel -j3 -C' ' '
+   grep -w {} st.bed > st.tmp; \
+   read chrom start end gene prot < st.tmp; \
+   gunzip -c METAL/{}-1.tbl.gz | \
+   awk -vOFS="\t" -vM=1000000 "(NR>1 && \$1 == ENVIRON["chrom"] && \$2 >= ENVIRON["start"]-M && \$2 <= ENVIRON["end"]+M) print \$1}" | \
    sort > st.tmp;
-   gunzip -c METAL/${p}-1.tbl.gz | \
+   gunzip -c METAL/{}-1.tbl.gz | \
    awk -vOFS="\t" "(NR>1) {print \$3,\$12,\$14}" | \
    sort -k1,1 | \
    join st.tmp - | \
-   awk -vOFS="\t" "{if(NR==1) print \"MarkerName\", \"P-value\", \"Weight\";print \$1,\$2,\$3}"> METAL/${f}.lz
+   awk -vOFS="\t" "{if(NR==1) print \"MarkerName\", \"P-value\", \"Weight\";print \$1,\$2,\$3}"> METAL/${prot}.lz
 '
-awk 'NR>1' st.bed | parallel -j1 --env p -C' ' '
-  rm -f ld_cache.db; \
-  export f=chr{1}_{2}_{3}; \
-  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal METAL/$f.lz \
-            --plotonly --chr {1} --start {2} --end {3} --no-date --rundir .; \
-  pdftopng chr{1}_{2}-{3}.pdf -r 300 $p; \
-  xdg-open ${p}-000001.png
+ls METAL/*-1.tbl.gz | \
+sed 's|METAL/||g;s/-1.tbl.gz//g' | \
+parallel -j1 -C' ' '
+   grep -w {} st.bed > st.tmp; \
+   read chrom start end gene prot < st.tmp; \
+   rm -f ld_cache.db; \
+   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal METAL/${prot}.lz \
+             --plotonly --chr $chrom --start $start --end $end --no-date --rundir .; \
+   pdftopng chr{1}_{2}-{3}.pdf -r 300 $prot; \
 '
 
 echo "--> 1000Genomes reference data"
