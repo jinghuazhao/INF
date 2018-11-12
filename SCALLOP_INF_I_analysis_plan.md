@@ -38,7 +38,7 @@ The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao
 
 * 1000 genomes imputation, build 37 (hg19) positions.
 * SNPs will be filtered for imputation quality at time of meta-analysis
-* Quality control on aspects such as SNP/sample call rates, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, heterozygosity and Hardy-Weinberg Equilibrium test.
+* Quality control on aspects such as SNP/sample call rates, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, heterozygosity and Hardy-Weinberg equilibrium test.
 
 ### Association analysis
 
