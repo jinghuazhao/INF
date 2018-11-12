@@ -64,7 +64,7 @@ parallel -j4 --env rt -C' ' '
   awk -vchr=$chrom "(NR > 1 && \$1==chr && \$12 <= 5e-10 && \$6 > 0.0001)" | \
   sort -k3,3 | \
   join -v1 -13 -21 - MHC.snpid | \
-  sort -k1,1n -k2,2n \
+  sort -k2,2n -k3,3n \
 ) > $rt/{}.top
 '
 
