@@ -6,10 +6,6 @@ git add README.md
 git commit -m "README"
 git add doc
 git commit -m "Documents and auxiliary files"
-git add sumstats
-git commit -m "Reformatted summary statistics by cohort"
-git add METAL
-git commit -m "METAL results"
 git add SCALLOP_INF_I_analysis_plan.*
 git commit -m "Analysis plan"
 git add files
