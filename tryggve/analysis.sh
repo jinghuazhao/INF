@@ -56,10 +56,12 @@ sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j4 --env rt -C' ' '
 ( \
+  grep -w {} st.bed > st.tmp; \
+  read chrom start end gene prot < st.tmp; \
   gunzip -c $rt/{}-1.tbl.gz | \
   head -1; \
   gunzip -c $rt/{}-1.tbl.gz | \
-  awk "(NR > 1 && \$12 <= 5e-10 && \$4 > 0.0001)" | \
+  awk -vchr=$chrom "(NR > 1 && \$1==chr && \$12 <= 5e-10 && \$6 > 0.0001)" | \
   sort -k3,3 | \
   join -v1 -13 -21 - MHC.snpid | \
   sort -k1,1n -k2,2n \
