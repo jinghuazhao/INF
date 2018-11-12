@@ -1,6 +1,6 @@
-# 10-11-2018 JHZ
+# 12-11-2018 JHZ
 
-source analysis.ini
+source tryggve/analysis.ini
 
 export rt=$HOME/INF/sumstats/INTERVAL
 
