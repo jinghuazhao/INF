@@ -48,6 +48,24 @@ parallel -j1 -C' ' '
    cd -
 '
 
+echo "--> top signals"
+
+export rt=$HOME/INF/METAL
+ls METAL/*-1.tbl.gz | \
+sed 's|METAL/||g;s/-1.tbl.gz//g' | \
+xargs -l basename | \
+parallel -j4 --env rt -C' ' '
+( \
+  gunzip -c $rt/{}-1.tbl.gz | \
+  head -1; \
+  gunzip -c $rt/{}-1.tbl.gz | \
+  awk "(NR > 1 && \$12 <= 5e-10 && \$4 > 0.0001)" | \
+  sort -k3,3 | \
+  join -v1 -13 -21 - MHC.snpid | \
+  sort -k1,1n -k2,2n \
+) > $rt/{}.top
+'
+
 echo "--> 1000Genomes reference data"
 
 # individual genotypes
