@@ -1,4 +1,4 @@
-# 10-11-2018 JHZ
+# 12-11-2018 JHZ
 
 git add .gitignore
 git commit -m ".gitignore"
@@ -16,7 +16,7 @@ git add list.sh format.sh analysis.sh analysis.ini files
 git commit -m "Programs"
 git add metal.sh METAL.qsub
 git commit -m "METAL program"
-git add tryggve.*
+git add tryggve tryggve.*
 git commit -m "TRYGGVE notes"
 git add st.sh
 git commit -m "st.sh"
