@@ -118,7 +118,7 @@ parallel -j4 --env rt -C' ' '
    awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M;\$2=start;\$3=end};1" > st.tmp; \
    read chrom start end gene prot < st.tmp; \
    head -1 $rt/{}.clumped; \
-   awk -vchr=$chrom -vstart=$start -vend=$end "(NR > 1 && \$1==chr && \$4 >=start && \$4 <= end)" $rt/{}.clumped | \
+   awk -vchr=$chrom "(NR > 1 && \$1==chr)" $rt/{}.clumped | \
    sort -k3,3 | \
    join -v1 -13 -21 - MHC.snpid | \
    sort -k2,2n -k3,3n \
