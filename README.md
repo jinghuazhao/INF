@@ -6,6 +6,7 @@ SCALLOP-INF analysis
 File     | Description
 ---------|---------------------------------------------------------------------------------------------------------------------
 [doc/](doc) | Some documents and auxiliary files
+[tryggve/](tryggve) | Analysis programs on TRYGGVE
 [SCALLOP_INF_I_analysis_plan.md](SCALLOP_INF_I_analysis_plan.md) | analysis plan
 [SCALLOP_INF_I_analysis_plan.docx](SCALLOP_INF_I_analysis_plan.docx) |
 [log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
