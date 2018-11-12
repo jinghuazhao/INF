@@ -12,10 +12,8 @@ git add METAL
 git commit -m "METAL results"
 git add SCALLOP_INF_I_analysis_plan.*
 git commit -m "Analysis plan"
-git add list.sh format.sh analysis.sh analysis.ini files
+git add files
 git commit -m "Programs"
-git add metal.sh METAL.qsub
-git commit -m "METAL program"
 git add tryggve tryggve.*
 git commit -m "TRYGGVE notes"
 git add st.sh
