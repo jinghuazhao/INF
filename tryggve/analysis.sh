@@ -48,24 +48,6 @@ parallel -j1 -C' ' '
    cd -
 '
 
-echo "--> top signals"
-
-export rt=$HOME/INF/METAL
-ls METAL/*-1.tbl.gz | \
-sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-xargs -l basename | \
-parallel -j4 --env rt -C' ' '
-( \
-  grep -w {} st.bed > st.tmp; \
-  read chrom start end gene prot < st.tmp; \
-  gunzip -c $rt/{}-1.tbl.gz | \
-  awk -vchr=$chrom "(NR > 1 && \$1==chr && \$12 <= 5e-10 && \$6 > 0.0001)" | \
-  sort -k3,3 | \
-  join -v1 -13 -21 - MHC.snpid | \
-  sort -k2,2n -k3,3n \
-) > $rt/{}.top
-'
-
 echo "--> 1000Genomes reference data"
 
 # individual genotypes
@@ -122,6 +104,25 @@ plink --bfile EUR1KG \
       --clump-p2 0.0001 \
       --clump-r2 0.1 \
       --out $rt/{}
+'
+
+echo "--> top signals"
+
+export rt=$HOME/INF/METAL
+ls METAL/*clumped | \
+sed 's|METAL/||g;s/.clumped//g' | \
+xargs -l basename | \
+parallel -j4 --env rt -C' ' '
+( \
+   grep -w {} st.bed | \
+   awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M;\$2=start;\$3=end};1" > st.tmp; \
+   read chrom start end gene prot < st.tmp; \
+   head -1 $rt/{}.clumped; \
+   awk -vchr=$chrom -vstart=$start -vend=$end "(NR > 1 && \$1==chr && \$4 >=start && \$4 <= end)" $rt/{}.clumped | \
+   sort -k3,3 | \
+   join -v1 -13 -21 - MHC.snpid | \
+   sort -k2,2n -k3,3n \
+) > $rt/{}.top
 '
 
 echo "--> COJO analysis, --cojo-wind 10000"
