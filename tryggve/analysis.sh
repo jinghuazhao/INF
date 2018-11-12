@@ -28,7 +28,7 @@ parallel -j3 -C' ' '
 (
    echo -e "MarkerName\tP-value\tWeight"
    grep -w {} st.bed | \
-   awk -vOFS="\t" -vM=1000000 "{start=\$2=\$2-M;if(start<0) start=0;end=\$3+M;};1" > st.tmp; \
+   awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M;};1" > st.tmp; \
    read chrom start end gene prot < st.tmp; \
    gunzip -c METAL/{}-1.tbl.gz | \
    awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end "(\$1 == chr && \$2 >= start && \$2 <= end){split(\$3,a,\"_\");print a[1],\$12,\$14}"
@@ -37,7 +37,7 @@ ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 parallel -j1 -C' ' '
    grep -w {} st.bed | \
-   awk -vOFS="\t" -vM=1000000 "{start=\$2=\$2-M;if(start<0) start=0;end=\$3+M};1" > st.tmp; \
+   awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M};1" > st.tmp; \
    read chrom start end gene prot < st.tmp; \
    cd METAL; \
    rm -f ld_cache.db; \
