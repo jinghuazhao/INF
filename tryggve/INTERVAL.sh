@@ -1,6 +1,8 @@
 # 13-11-2018 JHZ
 
 # NOTE this was based on results from metal/20110325 without TRACKPOSITIONS
+# The QQ/Manhattan/LocusZoom plots function is dropped as it is available from tryggve/anlaysis.sh
+
 source tryggve/analysis.ini
 
 export rt=$HOME/INF/sumstats/INTERVAL
@@ -126,58 +128,3 @@ rm -f work/INTERVAL.ldr
   head -1
   grep -v SNP work/INTERVAL.*.ldr.cojo
 ) > work/INTERVAL.ldr
-
-echo "--> Q-Q, Manhattan, LocusZoom plots"
-
-export p=IFN.gamma
-ls $rt/INTERVAL.${p}.gz | \
-sed 's/INTERVAL.//g;s/.gz//g' | \
-xargs -l basename | \
-parallel -j1 --env rt -C' ' '
-export protein={}; \
-R --no-save -q <<END
-  protein <- Sys.getenv("protein");\
-  rt <- Sys.getenv("rt");\
-  gz <- gzfile(paste0(rt,"/INTERVAL.",protein,".gz"));\
-  qqman <- paste0("work/",protein,"-qqman.png");\
-  MarkerName <- "SNPID";\
-  PVAL <- "PVAL";\
-  source("files/qqman.R")
-END'
-(echo Chr Start End; echo 11 60739337 60786787) > st.bed
-grep ${p} $HOME/INF/sumstats/INTERVAL.list | \
-sed "s/INTERVAL_inf1_//g;s/_chr_merged.gz\*//g;s/___/ /g" | \
-parallel -j${threads} -C' ' '
-   gunzip -c /data/jampet/upload-20170920/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
-   awk -f files/INTERVAL-lz.awk | \
-   awk -f files/order.awk | \
-   gzip -f > work/INTERVAL.{1}.gz'
-'
-awk 'NR>1' st.bed | \
-parallel -j${threads} --env p -C' ' '
-   gunzip -c work/INTERVAL.${p}.gz | \
-   awk -vOFS="\t" -vchrom={1} -vStart={2} -vEnd={3} "(NR>1){ \
-     snpid=\$1; \
-     gsub(/chr/,\"\",snpid); \
-     split(snpid,chrpos_a1_a2,\":\"); \
-     chr=chrpos_a1_a2[1]; \
-     split(chrpos_a1_a2[2],a,\"_\"); \
-     pos=a[1]; \
-     if (chr==chrom && pos >= Start && pos <= End) print \$1}" | \
-   sort > st.tmp;
-   gunzip -c work/INTERVAL.${p}.gz | \
-   awk -vOFS="\t" "(NR>1 && \$11 != \"NA\" && \$15!=\".\") {print \$1,\$11,\$5,\$15}" | \
-   sort -k1,1 | \
-   join st.tmp - | \
-   awk -vOFS="\t" "{if(NR==1) print \"MarkerName\", \"P-value\", \"Weight\";print \$4,\$2,\$3}"> work/INTERVAL.${p}.lz
-'
-awk 'NR>1' st.bed | \
-parallel -j1 --env p -C' ' '
-  cd work; \
-  rm -f ld_cache.db; \
-  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal INTERVAL.${p}.lz \
-            --plotonly --chr {1} --start {2} --end {3} --no-date --rundir .; \
-  pdftopng chr{1}_{2}-{3}.pdf -r 300 INTERVAL.${p}; \
-  xdg-open INTERVAL.${p}-000001.png; \
-  cd -
-'
