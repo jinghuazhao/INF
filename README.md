@@ -1,6 +1,8 @@
 # INF
 SCALLOP-INF analysis
 
+<img src="doc/OPG-qqman.png" width="400" height="600" align="right">
+
 ## Installation
 
 The repository can be downloaded locally with
@@ -21,8 +23,6 @@ File     | Description
 [tryggve.md](tryggve.md) | TRYGGVE notes
 
 ## Analysis
-
-<img src="doc/OPG-qqman.png" width="400" height="600" align="right">
 
 To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](doc/cardio.sh).
 
