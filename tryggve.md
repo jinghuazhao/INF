@@ -28,9 +28,9 @@ In total, 92 proteins are expected as given in
 is done for all studies altogether; it might be appropriate to furnish
 individually though this has been done by cut and paste interactively.
 
-## Technical notes
+## Modules
 
-The system is managed with modules, e.g.,
+Instances are exemplified as follows,
 
 ``` {.bash}
 module load anaconda2/4.4.0
@@ -48,15 +48,14 @@ module load qctool/1.4
 module load vcftools/0.1.15
 module load xpdf/3.04
 export threads=1
-
-xterm -fa arial -fs 12 -bg black -fg white
 ```
 
-For instance, once libreoffice and pandoc are loaded, we can view this file with
+e.g., 
 
-``` {.bash}
+```bash
 pandoc tryggve.md -o tryggve.docx
 soffice tryggve.docx
+xterm -fa arial -fs 12 -bg black -fg white
 ```
 
 ## Parallel computing
