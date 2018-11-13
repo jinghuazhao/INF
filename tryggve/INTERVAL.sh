@@ -1,26 +1,10 @@
-# 12-11-2018 JHZ
+# 13-11-2018 JHZ
 
+# NOTE this was based on results from metal/20110325 without TRACKPOSITIONS
 source tryggve/analysis.ini
 
 export rt=$HOME/INF/sumstats/INTERVAL
 
-echo "--> top signals"
-
-ls $rt/*.gz | \
-sed 's/.gz//g' | \
-xargs -l basename | \
-sed 's/INTERVAL.//g' | \
-parallel -j4 --env rt -C' ' '
-( \
-  gunzip -c $rt/INTERVAL.{}.gz | \
-  head -1; \
-  gunzip -c $rt/INTERVAL.{}.gz | \
-  awk "(NR > 1 && \$11 <= 5e-10 && \$8 > 0.0001)" | \
-  sort -k1,1 | \
-  join -v1 - MHC.snpid | \
-  sort -k2,2n -k3,3n \
-) > work/INTERVAL.{}.top
-'
 echo "--> LD clumping"
 
 ls $rt/*.gz | \
@@ -50,6 +34,24 @@ rm -f work/INTERVAL.clumped
   head -1
   grep -v CHR work/INTERVAL.*.clumped
 ) > work/INTERVAL.clumped
+
+echo "--> top signals"
+
+ls work/*clumped | \
+sed 's|work/||g;s/.clumped//g' | \
+xargs -l basename | \
+parallel -j4 --env rt -C' ' '
+( \
+   grep -w {} st.bed | \
+   awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M;\$2=start;\$3=end};1" > st.tmp; \
+   read chrom start end gene prot < st.tmp; \
+   head -1 $rt/{}.clumped; \
+   awk -vchr=$chrom "(NR > 1 && \$1==chr)" $rt/{}.clumped | \
+   sort -k3,3 | \
+   join -v1 -13 -21 - MHC.snpid | \
+   sort -k2,2n -k3,3n \
+) > $rt/{}.top
+'
 
 echo "--> GC lambda"
 
