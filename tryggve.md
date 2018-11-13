@@ -20,7 +20,6 @@ doc/               | Oringal documents
  -- [KORA.pc.below.llod.pdf*](doc/KORA.pc.below.llod.pdf) | llod check
 sumstats/          | File lists and study directories
 METAL/             | METAL/output scripts by protein
-tryggve.md         | This document
 tryggve/           | Auxiliary files
  -- [list.sh](tryggve/list.sh)         | Generation of file list and directory
  -- [format.sh](tryggve/format.sh)     | Code for format GWAS summary statistics
@@ -30,6 +29,7 @@ tryggve/           | Auxiliary files
  -- [INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis
  -- [KORA.sh](tryggve/KORA.sh) | Bash/R scripts to hand KORA data
  -- [KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
+tryggve.md         | This document
 
 \* from Jimmy
 
