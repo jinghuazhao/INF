@@ -28,7 +28,7 @@ In total, 92 proteins are expected as given in
 is done for all studies altogether; it might be appropriate to furnish
 individually though this has been done by cut and paste interactively.
 
-## Modules and related uses
+## Modules and related applications
 
 Instances are exemplified as follows,
 
