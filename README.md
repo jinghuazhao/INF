@@ -1,6 +1,8 @@
 # INF
 SCALLOP-INF analysis
 
+![OPG](doc/OPG-qqman.png)
+
 The repository can be deployed with
 
 ``` {.bash}
