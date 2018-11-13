@@ -15,6 +15,9 @@ The repository contains the following files,
 File specification | Descrription
 -------------------|-----------------------------------------
 doc/               | Oringal documents
+ -- [KORA.prot.preproc.R*](doc/KORA.prot.preproc.R) | R code for data preprocessing
+ -- [kora.normalised.prot.txt*](doc/kora.normalised.prot.txt) | sex, age, normalised proteins
+ -- [KORA.pc.below.llod.pdf*](doc/KORA.pc.below.llod.pdf) | llod check
 sumstats/          | File lists and study directories
 METAL/             | METAL/output scripts by protein
 tryggve.md         | This document
@@ -24,17 +27,9 @@ tryggve/           | Auxiliary files
  -- [analysis.sh](tryggve/analysis.sh) | Bash code for analysis calling analysis.ini
  -- [metal.sh](tryggve/metal.sh)       | Generation/execution of METAL scripts
  -- [METAL.qsub](tryggve/METAL.qsub)   | TORQUE qsub script for METAL
-
-INTERVAL and KORA as in the tryggve/ and doc/ directories.
-
-File | Description
------|-------------------------------------------------------------
-[INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis
-[KORA.sh](tryggve/KORA.sh) | Bash/R scripts to hand KORA data
-[KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
-[KORA.prot.preproc.R*](doc/KORA.prot.preproc.R) | R code for data preprocessing
-[kora.normalised.prot.txt*](doc/kora.normalised.prot.txt) | sex, age, normalised proteins
-[KORA.pc.below.llod.pdf*](doc/KORA.pc.below.llod.pdf) | llod check
+ -- [INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis
+ -- [KORA.sh](tryggve/KORA.sh) | Bash/R scripts to hand KORA data
+ -- [KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
 
 \* from Jimmy
 
