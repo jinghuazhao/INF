@@ -175,7 +175,7 @@ gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0
 #13 POS
 #14 WEIGHT
 
-echo "--> LDetect, approximate LD blocks"
+echo "--> clumping and cojo with LDetect approximate LD blocks"
 
 awk '(NR>1){
   chr=$1;
@@ -187,13 +187,31 @@ awk '(NR>1){
 export rt=$HOME/INF/METAL
 for p in $(ls METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
 do
-  cat EURLD.region | \
-  parallel --dry-run --env rt --env p -C' ' '
+  awk 'NR>1' EURLD.bed | \
+  parallel --env p --env rt -C' ' '
   ( \
-    gcta64 --bfile KORA2 --cojo-file $rt/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
-           --extract-region-bp {1} {2} {3} --exclude-region-bp 6 30000000 5000 --thread-num 3 --out METAL/$p-{4}; \
-    awk "NR>1" $rt/$p-{4}.jma.cojo \
-  ) > $rt/$p.jma
+    plink --bfile EUR1KG \
+      --chr {1} \
+      --from-bp {2} \
+      --to-bp {3} \
+      --exclude MHC.snpid \
+      --clump $rt/{}-1.tbl.gz \
+      --clump-snp-field MarkerName \
+      --clump-field P-value \
+      --clump-kb 500 \
+      --clump-p1 5e-10 \
+      --clump-p2 0.0001 \
+      --clump-r2 0.1 \
+      --out $rt/${p}-{4}; \
+    if [ -f ${p}-{4}.clumped ]; then awk "NR>1" $rt/$p-{4}.clumped; fi; \
+   ) > $rt/${p}.clumped; \
+  cat EURLD.region | \
+  parallel --env p --env rt -C' ' '
+   ( \
+     gcta64 --bfile KORA2 --cojo-file $rt/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
+            --extract-region-bp {1} {2} {3} --exclude-region-bp 6 30000000 5000 --thread-num 3 --out METAL/$p-{4}; \
+     if [ -f ${p}-{4}.jma.cojo ]; then awk "NR>1" $rt/$p-{4}.jma.cojo; fi; \
+   ) > $rt/${p}.jma
   '
 done
 
