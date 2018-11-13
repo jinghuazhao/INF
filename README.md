@@ -20,7 +20,7 @@ File     | Description
 
 ## Analysis
 
-<img src="doc/OPG-qqman.jpg" width="200" height="300" align="right">
+<img src="doc/OPG-qqman.jpg" width="300" height="400" align="right">
 
 To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](doc/cardio.sh).
 
