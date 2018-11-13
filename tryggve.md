@@ -28,21 +28,6 @@ In total, 92 proteins are expected as given in
 is done for all studies altogether; it might be appropriate to furnish
 individually though this has been done by cut and paste interactively.
 
-## Notes on studies
-
--   **NSPHS**. 91 proteins, originally a tar.gz file is unpacked into \$HOME/INF/work leading to 10 proteins
--   **EGCUT**. 91 proteins, orginally only 18 proteins though stratified by chromsomes
--   **INTERVAL**. raw SNPTEST output with information such as strand/chip SNPs to be added
--   **LifeLinesDeep**. Only 1/25 proteins
--   **ULSAM**. 25 proteins
--   **PIVUS**. 23 proteins
--   **ORCADES**. 91 protein results are available but adding CCL3 which overlaps with MMP.1
--   **VIS**. 91 protein restults as with ORCADES
--   **STABILITY**. 90 protein.
--   **STANLEY**. 92 largely complete protein results for lah1 and swe6
-
-It is necessary to generate an annotation file similar to [cvd1\_annotation.tsv](doc/cvd1_annotation.tsv).
-
 ## Technical notes
 
 The system is managed with modules, e.g.,
@@ -102,6 +87,21 @@ SCALLOP GitHub repository, https://github.com/lassefolkersen/scallop
 SCALLOP securecloud, https://secureremote.dtu.dk/vpn/index.html
 
 SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/proteins
+
+## Notes on studies
+
+-   **NSPHS**. 91 proteins, originally a tar.gz file is unpacked into \$HOME/INF/work leading to 10 proteins
+-   **EGCUT**. 91 proteins, orginally only 18 proteins though stratified by chromsomes
+-   **INTERVAL**. raw SNPTEST output with information such as strand/chip SNPs to be added
+-   **LifeLinesDeep**. Only 1/25 proteins
+-   **ULSAM**. 25 proteins
+-   **PIVUS**. 23 proteins
+-   **ORCADES**. 91 protein results are available but adding CCL3 which overlaps with MMP.1
+-   **VIS**. 91 protein restults as with ORCADES
+-   **STABILITY**. 90 protein.
+-   **STANLEY**. 92 largely complete protein results for lah1 and swe6
+
+It is necessary to generate an annotation file similar to [cvd1\_annotation.tsv](doc/cvd1_annotation.tsv).
 
 96, MMP.12 (CVD II)
 97, MMP.9 (CVD III)
