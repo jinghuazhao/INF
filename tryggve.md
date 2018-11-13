@@ -19,11 +19,11 @@ sumstats/          | File lists and study directories
 METAL/             | METAL/output scripts by protein
 tryggve.md         | This document
 tryggve/           | Auxiliary files
-1                  | list.sh.     Generation of file list and directory
-2                  | format.sh.   Code for format GWAS summary statistics
-3                  | analysis.sh. Bash code for analysis calling analysis.ini
-4                  | metal.sh.    Generation/execution of METAL scripts
-5                  | METAL.qsub.  TORQUE qsub script for METAL
+ 1                  | list.sh.     Generation of file list and directory
+ 2                  | format.sh.   Code for format GWAS summary statistics
+ 3                  | analysis.sh. Bash code for analysis calling analysis.ini
+ 4                  | metal.sh.    Generation/execution of METAL scripts
+ 5                  | METAL.qsub.  TORQUE qsub script for METAL
 
 INTERVAL and KORA as in the tryggve/ and doc/ directories.
 
