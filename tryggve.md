@@ -19,7 +19,7 @@ tryggve/           | Auxiliary files
  -- [INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis
  -- [KORA.sh](tryggve/KORA.sh) | Bash/R scripts to hand KORA data
  -- [KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
- -- [EURLD.bed](tryggve/EURLD.bed) | LD regions for Europeans as from ldetect-data.
+ -- [EURLD.bed](tryggve/EURLD.bed) | LD regions for Europeans as from LDetect-data.
 tryggve.md         | This document
 
 \* from Jimmy
