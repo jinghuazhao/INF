@@ -187,7 +187,7 @@ awk '(NR>1){
 export rt=$HOME/INF/METAL
 for p in $(ls METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
 do
-  awk 'NR>1' EURLD.bed | \
+  awk 'NR>1' tryggve/EURLD.bed | \
   parallel --env p --env rt -C' ' '
   ( \
     plink --bfile EUR1KG \
