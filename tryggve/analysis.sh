@@ -6,7 +6,7 @@ echo "--> Q-Q/Manhattan/LocusZoom plots"
 
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/files/qqman.R'
+parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/tryggve/qqman.R'
 # (echo Chr Start End; echo 4 73649784 76033785) > st.bed
 (
   echo -e "chrom\tstart\tend\tgene\tprot"

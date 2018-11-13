@@ -15,16 +15,28 @@ The repository contains the following files,
 Filespec     | Descrription
 -------------|-----------------------------------------
 doc/         | Oringal documents
-files/       | auxiliary files
 sumstats/    | File lists and study directories
 METAL/       | METAL/output scripts by protein
 tryggve.md   | This document
-tryggve.sh   | git batch file
-list.sh      | Generation of file list and directory
-format.sh    | Code for format GWAS summary statistics
-analysis.sh  | Bash code for analysis calling analysis.ini
-metal.sh     | Generation/execution of METAL scripts
-METAL.qsub   | TORQUE qsub script for METAL
+tryggve/     |
+ - list.sh   | Generation of file list and directory
+ - format.sh | Code for format GWAS summary statistics
+ - analysis.sh  | Bash code for analysis calling analysis.ini
+ - metal.sh     | Generation/execution of METAL scripts
+ - METAL.qsub   | TORQUE qsub script for METAL
+
+INTERVAL and KORA as in the tryggve/ and doc/ directories.
+
+File | Description
+-----|-------------------------------------------------------------
+[INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis
+[KORA.sh](tryggve/KORA.sh) | Bash/R scripts to hand KORA data
+[KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
+[KORA.prot.preproc.R*](doc/KORA.prot.preproc.R) | R code for data preprocessing
+[kora.normalised.prot.txt*](doc/kora.normalised.prot.txt) | sex, age, normalised proteins
+[KORA.pc.below.llod.pdf*](doc/KORA.pc.below.llod.pdf) | llod check
+
+\* from Jimmy
 
 In total, 92 proteins are expected as given in
 [olink.prot.list.txt](doc/olink.prot.list.txt). Data processing so far
@@ -45,21 +57,6 @@ individually though this has been done by cut and paste interactively.
 -   **STANLEY**. 92 largely complete protein results for lah1 and swe6
 
 It is necessary to generate an annotation file similar to [cvd1\_annotation.tsv](doc/cvd1_annotation.tsv).
-
-## KORA and INTERVAL
-
-These are in the files/ directory.
-
-File | Description
------|-------------------------------------------------------------
-[KORA.sh](files/KORA.sh) | Bash/R scripts to hand KORA data
-[KORA.R](files/KORA.R) | R code to simulate phenotypes
-[KORA.prot.preproc.R*](doc/KORA.prot.preproc.R) | R code
-[kora.normalised.prot.txt*](doc/kora.normalised.prot.txt) | sex, age, normalised proteins
-[KORA.pc.below.llod.pdf*](doc/KORA.pc.below.llod.pdf) | llod check
-[INTERVAL.sh](files/INTERVAL.sh) | INTERVAL analysis
-
-\* from Jimmy
 
 ## Technical notes
 

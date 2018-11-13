@@ -1,4 +1,4 @@
-# 15-10-2018 JHZ
+# 13-11-2018 JHZ
 
 module load parallel/20170822
 export threads=8
@@ -13,7 +13,7 @@ sort -k2,2 | \
 parallel -j$threads -C' ' '
   gunzip -c /data/anekal/EGCUT_INF/EGCUT{2}_{1}_inf_280918.txt.gz | \
   awk "{if(NR>1&&(index(\$1,\"esv\")||index(\$1,\"ss\"))) \$1=\"chr\" \$2 \":\" \$3;print}" | \
-  awk -f files/order.awk | \
+  awk -f tryggve/order.awk | \
   gzip -f > sumstats/EGCUT_INF/EGCUT{2}.{3}.gz'
 
 # INTERVAL
@@ -21,8 +21,8 @@ cat $HOME/INF/sumstats/INTERVAL.list | \
 sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz\*//g;s/___/ /g' | \
 parallel -j$threads -C' ' '
    /usr/bin/gunzip -c /data/jampet/upload-20170920/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
-   awk -f files/INTERVAL.awk | \
-   awk -f files/order.awk | \
+   awk -f tryggve/INTERVAL.awk | \
+   awk -f tryggve/order.awk | \
    gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz'
 
 # LifeLinesDeep -- SNPID has no "chr" prefix for non-rsids
@@ -36,7 +36,7 @@ awk -vprotein={1} -vFS="\t" -vOFS="\t" "(NR==1||index(\$1,protein))" | \
 cut -f2-14 | \
 sort -k2,2n -k3,3n | \
 awk "{if (NR>1&&substr(\$1,1,2)!=\"rs\") \$1=\"chr\" \$2 \":\" \$3; print}" | \
-awk -f files/order.awk | \
+awk -f tryggve/order.awk | \
 gzip -f > sumstats/LifeLinesDeep/LifeLinesDeep.{1}.gz'
 
 # NSPHS_INF
@@ -44,7 +44,7 @@ ls work/NSPHS*gz | \
 sed 's|work/NSPHS\.||g;s/\.gz//g' | \
 parallel -j$threads --env HOME=$HOME -C' ' '
   gunzip -c work/NSPHS.{}.gz | \
-  awk -f files/order.awk | \
+  awk -f tryggve/order.awk | \
   gzip -f > sumstats/NSPHS_INF/NSPHS.{}.gz'
 
 # PIVUS and ULSAM SNPID has :I/D suffix and VG prefix
@@ -57,7 +57,7 @@ cut -d ' ' -f1,3 | \
 parallel -j$threads -C' ' '
   gunzip -c /data/stefang/pivus_ulsam/pivus.all.{1}.20161128.txt.gz | \
   awk "{if(NR>1&&substr(\$1,1,2)!=\"rs\") \$1=\"chr\" \$2 \":\" \$3;print}" | \
-  awk -f files/order.awk | \
+  awk -f tryggve/order.awk | \
   gzip -f > sumstats/PIVUS/PIVUS.{2}.gz'
 
 ls /data/stefang/pivus_ulsam/ulsam* | \
@@ -68,7 +68,7 @@ cut -d ' ' -f1,3 | \
 parallel -j$threads -C' ' '
   gunzip -c /data/stefang/pivus_ulsam/ulsam.all.{1}.20161128.txt.gz | \
   awk "{if(NR>1&&substr(\$1,1,2)!=\"rs\") \$1=\"chr\" \$2 \":\" \$3;print}" | \
-  awk -f files/order.awk | \
+  awk -f tryggve/order.awk | \
   gzip -f > sumstats/ULSAM/ULSAM.{2}.gz'
 
 # ORCADES and VIS
@@ -102,7 +102,7 @@ sort | \
 join -a1 -11 -23 - inf1.tmp | \
 parallel -j$threads -C' ' '
   gunzip -c /data/erimac/ORCADES/ORCADES.INF1.{1}_rank.tsv.gz | \
-  awk -f files/order.awk | \
+  awk -f tryggve/order.awk | \
   gzip -f > sumstats/ORCADES/ORCADES.{2}.gz'
 
 ls /data/erimac/VIS/ | \
@@ -112,7 +112,7 @@ sort | \
 join -a1 -11 -23 - inf1.tmp | \
 parallel -j$threads -C' ' '
   gunzip -c /data/erimac/VIS/VIS.INF1.{1}_rank.tsv.gz | \
-  awk -f files/order.awk | \
+  awk -f tryggve/order.awk | \
   gzip -f > sumstats/VIS/VIS.{2}.gz'
 
 # STABILITY
@@ -125,7 +125,7 @@ awk -vFS='\t' -vOFS='\t' '(NR==1||!/BETA/){
   if(index(\$1,\":\")) \$1= \"chr\" \$2 \":\" \$3; \
   print
 }' | \
-awk -f files/order.awk | \
+awk -f tryggve/order.awk | \
 gzip -f > sumstats/STABILITY/{}"
 
 # STANLEY_lahl/STANLEY_swe6
@@ -133,6 +133,6 @@ ls work/STANLEY*gz | \
 sed 's/work\///g' | \
 parallel -j$threads -C' ' '
 gunzip -c work/{} | \
-awk -f files/STANLEY.awk | \
-awk -f files/order.awk | \
+awk -f tryggve/STANLEY.awk | \
+awk -f tryggve/order.awk | \
 gzip -f > sumstats/STANLEY/{}'
