@@ -287,21 +287,3 @@ select * from snp_set;
 END
 
 gzip -f snp_pos.tsv
-
-echo "--> add positions to METAL .tbl files"
-
-gunzip -c snp_pos.tsv.gz | \
-awk 'NR>1' | \
-sort -k1,1 > snp_pos.noh
-
-cut -f1 inf1.list | \
-parallel -j6 -C' ' 'awk -vOFS="\t" "BEGIN{print \"SNP\",\"CHR\",\"BP\",\"P\",\"zscore\"}" > METAL/{}.tsv'
-ls METAL/*.tbl | \
-sed 's/-1.tbl//g' | \
-xargs -l basename | \
-parallel -j6 -C' ' '
-awk "NR>1" METAL/{}-1.tbl | \
-sort -k1,1 | \
-join -j1 snp_pos.noh - | \
-sort -k2,2n -k3,3n | \
-awk -vOFS="\t" "{print \$1, \$2, \$3, \$8, \$7}" >> METAL/{}.tsv'
