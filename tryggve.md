@@ -18,7 +18,7 @@ doc/               | Oringal documents
 sumstats/          | File lists and study directories
 METAL/             | METAL/output scripts by protein
 tryggve.md         | This document
-tryggve/           |
+tryggve/           | Auxiliary files
  - list.sh         | Generation of file list and directory
  - format.sh       | Code for format GWAS summary statistics
  - analysis.sh     | Bash code for analysis calling analysis.ini
