@@ -176,7 +176,7 @@ gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0
 #13 POS
 #14 WEIGHT
 
-echo "--> clumping and cojo with LDetect approximate LD blocks"
+echo "--> clumping and cojo with LDetect approximately independent LD blocks"
 
 awk '(NR>1){
   chr=$1;
