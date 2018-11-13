@@ -1,7 +1,7 @@
 # INF
 SCALLOP-INF analysis
 
-<img src="doc/OPG-qqman.jpg" width="200" height="300" align="left">
+<img src="doc/OPG-qqman.jpg" width="200" height="300" align="top">
 
 The repository can be deployed with
 
