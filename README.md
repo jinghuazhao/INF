@@ -1,6 +1,12 @@
 # INF
 SCALLOP-INF analysis
 
+The repository can be deployed with
+
+``` {.bash}
+git clone https://github.com/jinghua/INF
+```
+
 ## A summary of files
 
 File     | Description
