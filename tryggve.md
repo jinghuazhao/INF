@@ -12,18 +12,18 @@ git clone https://github.com/jinghua/INF
 
 The repository contains the following files,
 
-Filespec     | Descrription
--------------|-----------------------------------------
-doc/         | Oringal documents
-sumstats/    | File lists and study directories
-METAL/       | METAL/output scripts by protein
-tryggve.md   | This document
-tryggve/     |
- - list.sh   | Generation of file list and directory
- - format.sh | Code for format GWAS summary statistics
- - analysis.sh  | Bash code for analysis calling analysis.ini
- - metal.sh     | Generation/execution of METAL scripts
- - METAL.qsub   | TORQUE qsub script for METAL
+File specification | Descrription
+-------------------|-----------------------------------------
+doc/               | Oringal documents
+sumstats/          | File lists and study directories
+METAL/             | METAL/output scripts by protein
+tryggve.md         | This document
+tryggve/           |
+ - list.sh         | Generation of file list and directory
+ - format.sh       | Code for format GWAS summary statistics
+ - analysis.sh     | Bash code for analysis calling analysis.ini
+ - metal.sh        | Generation/execution of METAL scripts
+ - METAL.qsub      | TORQUE qsub script for METAL
 
 INTERVAL and KORA as in the tryggve/ and doc/ directories.
 
