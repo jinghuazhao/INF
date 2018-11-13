@@ -1,6 +1,4 @@
-# SCAndinavian coLLaboration for Olink plasma Protein (SCALLOP)
-
-INFlmmation anlaysis
+# SCALLOP/INFlmmation anlaysis on TRYGGVE
 
 The working directory is \$HOME/INF which can be made available from
 /data or GitHub -- when the Internet connection is enabled one can deploy
