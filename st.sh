@@ -1,4 +1,4 @@
-# 12-11-2018 JHZ
+# 13-11-2018 JHZ
 
 git add .gitignore
 git commit -m ".gitignore"
@@ -8,10 +8,8 @@ git add doc
 git commit -m "Documents and auxiliary files"
 git add SCALLOP_INF_I_analysis_plan.*
 git commit -m "Analysis plan"
-git add files
-git commit -m "Programs"
 git add tryggve tryggve.*
-git commit -m "TRYGGVE notes"
+git commit -m "Notes and programs on TRYGGVE"
 git add st.sh
 git commit -m "st.sh"
 git push
