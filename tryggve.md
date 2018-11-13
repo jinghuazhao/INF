@@ -60,7 +60,7 @@ xterm -fa arial -fs 12 -bg black -fg white
 
 ## Parallel computing
 
-[METAL.qsub](METAL.qsub) was intended to run batch jobs under [Terascale Open-source
+[METAL.qsub](tryggve/METAL.qsub) was intended to run batch jobs under [Terascale Open-source
 Resource and QUEue Manager (TORQUE)](https://en.wikipedia.org/wiki/TORQUE) controls batch jobs and
 distributed compute nodes, enabling integration with [Moab cluster
 suite](https://en.wikipedia.org/wiki/Moab_Cluster_Suite) and extending
