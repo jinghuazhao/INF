@@ -6,7 +6,7 @@ echo "--> Q-Q/Manhattan/LocusZoom plots"
 
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/tryggve/qqman.R'
+parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/files/qqman.R'
 # (echo Chr Start End; echo 4 73649784 76033785) > st.bed
 (
   echo -e "chrom\tstart\tend\tgene\tprot"
@@ -177,20 +177,24 @@ gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0
 
 echo "--> LDetect, approximate LD blocks"
 
-for p in $(ls METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
-do
 awk '(NR>1){
   chr=$1;
   gsub(/chr/,"",chr);
-  region=sprintf("%d %d %s", chr, $2+($3-$2)/2, $4);
-  print region
-}' EURLD.bed | \
-parallel --dry-run --env rt --env p -C' ' '
-  rm -rf work/$p.jma; \
-  touch work/$p.jma; \
-  gcta64 --bfile KORA2 --cojo-file $rt/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
-         --extract-region-bp {1} {2} 1 --exclude-region-bp 6 30000000 5000 --thread-num 3 --out work/$p-{3}; \
-  awk "NR>1" work/$p-{3}.jma.cojo >> work/$p.jma'
+  flanking=($3-$2)/2/1000
+  centre=$2+flanking
+  print sprintf("%d %d %d %s", chr, centre, flanking,$4);
+}' tryggve/EURLD.bed > EURLD.region
+export rt=$HOME/INF/METAL
+for p in $(ls METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
+do
+  cat EURLD.region | \
+  parallel --dry-run --env rt --env p -C' ' '
+  ( \
+    gcta64 --bfile KORA2 --cojo-file $rt/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
+           --extract-region-bp {1} {2} {3} --exclude-region-bp 6 30000000 5000 --thread-num 3 --out METAL/$p-{4}; \
+    awk "NR>1" $rt/$p-{4}.jma.cojo \
+  ) > $rt/$p.jma
+  '
 done
 
 echo "--> contrast studies"
