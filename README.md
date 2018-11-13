@@ -20,7 +20,7 @@ File     | Description
 [log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
 [tryggve.md](tryggve.md) | TRYGGVE notes
 
-<img src="doc/OPG-qqman.png" width="400" height="600" align="right">
+<img src="doc/OPG-qml.png" width="400" height="600" align="right">
 
 ## Analysis
 
