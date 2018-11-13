@@ -1,13 +1,5 @@
 # SCALLOP/INFlmmation anlaysis on TRYGGVE
 
-The working directory is \$HOME/INF which can be made available from
-/data or GitHub -- when the Internet connection is enabled one can deploy
-with
-
-``` {.bash}
-git clone https://github.com/jinghua/INF
-```
-
 The repository contains the following files,
 
 File specification | Descrription
