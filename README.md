@@ -3,7 +3,7 @@ SCALLOP-INF analysis
 
 ## Installation
 
-The repository can be download locally with
+The repository can be downloaded locally with
 
 ``` {.bash}
 git clone https://github.com/jinghua/INF
