@@ -20,9 +20,9 @@ File     | Description
 [log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
 [tryggve.md](tryggve.md) | TRYGGVE notes
 
-## Analysis
-
 <img src="doc/OPG-qqman.png" width="400" height="600" align="right">
+
+## Analysis
 
 To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](doc/cardio.sh).
 
