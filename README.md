@@ -1,7 +1,9 @@
 # INF
 SCALLOP-INF analysis
 
-The repository can be deployed with
+## Installation
+
+The repository can be download locally with
 
 ``` {.bash}
 git clone https://github.com/jinghua/INF
