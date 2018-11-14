@@ -1,8 +1,6 @@
 # INF
 SCALLOP-INF analysis
 
-<img src="doc/OPG-qml.png" width="400" height="800">
-
 ## Installation
 
 The repository can be downloaded locally with
@@ -32,6 +30,8 @@ The CAD summary statistics used for MAGMA and MR is described [here](https://git
 -- as noted in MMP12.sh, the MMP12 case could have been done genomewide. A colocalisation analysis on simulated data can be found in the
 association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes)
 as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/master/BMI).
+
+<img src="doc/OPG-qml.png" width="400" height="800" align="left">
 
 ## Notes on UniProt IDs
 
