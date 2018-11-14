@@ -47,7 +47,7 @@ parallel -j1 -C' ' '
    pdftopng -r 300 {}.pdf {}; \
    cd -
 '
-# convert OPG-000001.png -resize 120% OPG-000003.png
+# convert OPG-000001.png -resize 130% OPG-000003.png
 # convert \( OPG-qqman-000001.png -append OPG-qqman-000002.png -append OPG-000003.png -append \) +append OPG-qml.png
 
 echo "--> 1000Genomes reference data"
