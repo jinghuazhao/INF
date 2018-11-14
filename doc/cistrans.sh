@@ -94,6 +94,8 @@ R --no-save -q <<END
   }
 END
 
+cat cistrans.table
+
 # head -1 $rt/doc/olink.inf.panel.annot.tsv |  awk '{gsub(/\t/, "\n",$0)};1'|  awk '{print "#", NR, $1}'
 # 1 "target"
 # 2 "target.short"
