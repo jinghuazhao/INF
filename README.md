@@ -14,7 +14,7 @@ git clone https://github.com/jinghua/INF
 ## A summary of files
 
 File     | Description
----------|-----------------------------------------------------------------------
+---------|--------------------------------------------------------
 [doc/](doc) | Some documents and auxiliary files
 [tryggve/](tryggve) | Analysis programs on TRYGGVE
 [SCALLOP_INF_I_analysis_plan.md](SCALLOP_INF_I_analysis_plan.md) | analysis plan
