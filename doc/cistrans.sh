@@ -2,10 +2,18 @@
 . /etc/profile.d/modules.sh
 
 export rt=/scratch/jhz22/INF
+export prot_list=$rt/doc/olink.prot.list.txt
+export prot_annotation=$rt/doc/olink.inf.panel.annot.tsv
+export prot_jma_cojo=INTERVAL.jma.dat
+(
+  grep inf1 ${prot_list} | \
+  sed 's/inf1_//g;s/___/\t/g'
+) | \
+sort -k1,1 > inf1.list
 (
   echo -e "chrom\tstart\tend\tgene\tprot"
-  sort -k2,2 $rt/inf1.list > inf1.tmp
-  cut -f2,3,7-10 $rt/doc/olink.inf.panel.annot.tsv  | \
+  sort -k2,2 inf1.list > inf1.tmp
+  cut -f2,3,7-10 ${prot_annotation}  | \
   awk -vFS="\t" -vOFS="\t" '(NR>1){
       gsub(/\"/,"",$0)
       if($2=="Q8NF90") $3="FGF5"
@@ -22,7 +30,7 @@ export rt=/scratch/jhz22/INF
   echo -e "prot\tChr\tbp\tSNP\tgene"
   awk -vFS="\t" -vOFS="\t" 'NR>1 {print $4,$5}' inf1.bed | \
   sort -k2,2 > inf1.tmp
-  awk -vOFS="\t" 'NR>1 {print $1,$2,$3,$4}' INTERVAL.jma.dat | \
+  awk -vOFS="\t" 'NR>1 {print $1,$2,$3,$4}' ${prot_jma_cojo} | \
   sort -k1,1 | \
   join -t$'\t' -11 -22 - inf1.tmp | \
   awk -vFS="\t" -vOFS="\t" '{print $1,$2,$4,$3,$5}'
