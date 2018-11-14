@@ -4,13 +4,14 @@ source tryggve/analysis.ini
 
 echo "--> Q-Q/Manhattan/LocusZoom plots"
 
+export rt=$HOME/INF
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/tryggve/qqman.R'
 (
   echo -e "chrom\tstart\tend\tgene\tprot"
-  sort -k2,2 inf1.list > inf1.tmp
-  cut -f2,3,7-10 doc/olink.inf.panel.annot.tsv  | \
+  sort -k2,2 $rt/inf1.list > inf1.tmp
+  cut -f2,3,7-10 $rt/doc/olink.inf.panel.annot.tsv  | \
   awk -vFS="\t" -vOFS="\t" '(NR>1){
       gsub(/\"/,"",$0)
       if($2=="Q8NF90") $3="FGF5"
