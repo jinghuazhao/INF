@@ -22,7 +22,7 @@ File     | Description
 
 ## Analysis
 
-To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](doc/cardio.sh), including cis/trans classification ([cis.vs.trans.classification.R](doc/cis.vs.trans.classification.R),[cistrans.sh](doc/cistrans.sh))
+To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](doc/cardio.sh), including cis/trans classification via [cis.vs.trans.classification.R](doc/cis.vs.trans.classification.R) and attempt via bedtools, [cistrans.sh](doc/cistrans.sh).
 
 The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
 
