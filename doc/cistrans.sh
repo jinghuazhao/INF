@@ -70,26 +70,26 @@ R --no-save -q <<END
   sink("cistrans.table")
   cistrans <- read.delim("cistrans.tsv",as.is=TRUE)
   with(cistrans, table(gene,status))
-END
+  sink()
 
-R --no-save -q <<END
+# for R, data preparation is through the following section,
+# while the bedtools section can be furnished with Bioconductor/GenomicRanges
 
-done_in_R <- function()
-{
-# preliminary annotation
-  inf1 <- read.delim("/scratch/jhz22/INF/doc/olink.inf.panel.annot.tsv", as.is=TRUE)
-  inf1[with(inf1, uniprot=="Q8NF90"),"hgnc_symbol"] <- "FGF5"
-  inf1[with(inf1, uniprot=="Q8WWJ7"),"hgnc_symbol"] <- "CD6"
+  preproc <- function()
+  {
+    inf1 <- read.delim("olink.inf.panel.annot.tsv", as.is=TRUE)
+    inf1[with(inf1, uniprot=="Q8NF90"),"hgnc_symbol"] <- "FGF5"
+    inf1[with(inf1, uniprot=="Q8WWJ7"),"hgnc_symbol"] <- "CD6"
 
-  prot <- read.table("/scratch/jhz22/INF/inf1.list",col.names=c("prot","uniprot"),as.is=TRUE,sep="\t")
+    prot <- read.table("inf1.list",col.names=c("prot","uniprot"),as.is=TRUE,sep="\t")
 
-  p <- merge(inf1,prot,by="uniprot")[c("chromosome_name","start_position","end_position","hgnc_symbol","prot")]
-  p <- within(p,{chromosome_name=paste0("chr",chromosome_name)})
-  names(p) <- c("#chrom","start","end","gene","prot")
-  write.table(p,file="inf1.bed",quote=FALSE,row.names=FALSE,sep="\t")
+    p <- merge(inf1,prot,by="uniprot")[c("chromosome_name","start_position","end_position","hgnc_symbol","prot")]
+    p <- within(p,{chromosome_name=paste0("chr",chromosome_name)})
+    names(p) <- c("#chrom","start","end","gene","prot")
+    write.table(p,file="inf1.bed",quote=FALSE,row.names=FALSE,sep="\t")
 
-  jma <- read.table("INTERVAL.jma.dat",as.is=TRUE,header=TRUE)
-  r <- merge(jma[c("Chr","bp","SNP","prot")],p[c("prot","gene")],by="prot")
-  write.table(r,file="cistrans.tmp",quote=FALSE,row.names=FALSE,sep="\t")
-}
+    jma <- read.table("INTERVAL.jma.dat",as.is=TRUE,header=TRUE)
+    r <- merge(jma[c("Chr","bp","SNP","prot")],p[c("prot","gene")],by="prot")
+    write.table(r,file="cistrans.tmp",quote=FALSE,row.names=FALSE,sep="\t")
+  }
 END
