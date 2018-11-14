@@ -47,6 +47,8 @@ parallel -j1 -C' ' '
    pdftopng -r 300 {}.pdf {}; \
    cd -
 '
+# convert OPG-000001.png -resize 130% OPG-000003.png
+# convert \( OPG-qqman-000001.png -append OPG-qqman-000002.png -append OPG-000003.png -append \) +append OPG-qml.png
 
 echo "--> 1000Genomes reference data"
 
@@ -175,7 +177,7 @@ gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0
 #13 POS
 #14 WEIGHT
 
-echo "--> clumping and cojo with LDetect approximate LD blocks"
+echo "--> clumping and cojo with LDetect approximately independent LD blocks"
 
 awk '(NR>1){
   chr=$1;
