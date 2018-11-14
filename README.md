@@ -17,12 +17,12 @@ File     | Description
 [tryggve/](tryggve) | Analysis programs on TRYGGVE
 [SCALLOP_INF_I_analysis_plan.md](SCALLOP_INF_I_analysis_plan.md) | analysis plan
 [SCALLOP_INF_I_analysis_plan.docx](SCALLOP_INF_I_analysis_plan.docx) |
-[log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
 [tryggve.md](tryggve.md) | TRYGGVE notes
 
 ## Analysis
 
 To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](doc/cardio.sh), which includes cis/trans classification via [cis.vs.trans.classification.R](doc/cis.vs.trans.classification.R) and an attempt with bedtools, [cistrans.sh](doc/cistrans.sh).
+Jimmy's competitive log10(p) calculator is also documented in [log10p.md](doc/log10p.md).
 
 The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
 
