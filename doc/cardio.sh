@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 11/11/18 JHZ
+# General notes, 14/11/18 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
