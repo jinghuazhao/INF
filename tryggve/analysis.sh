@@ -6,21 +6,21 @@ echo "--> Q-Q/Manhattan/LocusZoom plots"
 
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/files/qqman.R'
-# (echo Chr Start End; echo 4 73649784 76033785) > st.bed
+parallel -j2 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/tryggve/qqman.R'
 (
   echo -e "chrom\tstart\tend\tgene\tprot"
   sort -k2,2 inf1.list > inf1.tmp
   cut -f2,3,7-10 doc/olink.inf.panel.annot.tsv  | \
-  awk -vOFS="\t" '(NR>1){
+  awk -vFS="\t" -vOFS="\t" '(NR>1){
       gsub(/\"/,"",$0)
       if($2=="Q8NF90") $3="FGF5"
       if($2=="Q8WWJ7") $3="CD6"
       print
   }' | \
-  sort -k2,2 | \
-  join -j2 inf1.tmp - | \
-  awk -vOFS="\t" '{print $5,$6,$7,$4,$2}'
+  sort -t$'\t' -k2,2 | \
+  join -t$'\t' -j2 inf1.tmp - | \
+  awk -vFS="\t" -vOFS="\t" '{print $5,$6,$7,$4,$2}' | \
+  sort -k1,1n -k2,2n
 ) > st.bed
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
@@ -47,8 +47,6 @@ parallel -j1 -C' ' '
    pdftopng -r 300 {}.pdf {}; \
    cd -
 '
-# convert OPG-000001.png -resize 130% OPG-000003.png
-# convert \( OPG-qqman-000001.png -append OPG-qqman-000002.png -append OPG-000003.png -append \) +append OPG-qml.png
 
 echo "--> 1000Genomes reference data"
 
@@ -177,7 +175,7 @@ gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0
 #13 POS
 #14 WEIGHT
 
-echo "--> clumping and cojo with LDetect approximately independent LD blocks"
+echo "--> clumping and cojo with LDetect approximate LD blocks"
 
 awk '(NR>1){
   chr=$1;
