@@ -24,8 +24,6 @@ File     | Description
 To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](doc/cardio.sh), which includes cis/trans classification via [cis.vs.trans.classification.R](doc/cis.vs.trans.classification.R) and an attempt with bedtools, [cistrans.sh](doc/cistrans.sh).
 Jimmy's competitive log10(p) calculator is also documented in [log10p.md](doc/log10p.md) relative to R/Rmpfr.
 
-The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
-
 The CAD summary statistics used for MAGMA and MR is described [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD)
 -- as noted in MMP12.sh, the MMP12 case could have been done genomewide. A colocalisation analysis on simulated data can be found in the
 association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes)
@@ -34,6 +32,8 @@ as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/
 <img src="doc/OPG-qml.png" width="400" height="800" align="left">
 
 ## Notes on UniProt IDs
+
+The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
 
 The latest by Jimmy is [olink.inf.panel.annot.tsv](doc/olink.inf.panel.annot.tsv) from [olink.annotation.R](doc/olink.annotation.R).
 
