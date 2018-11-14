@@ -45,9 +45,16 @@ The use of [UniProt](https://www.uniprot.org/) IDs is rationalised in two aspect
 point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.tsv](doc/hgTables.tsv) is based on UCSC, checked over
 UniProt IDs as follows,
 ```bash
-grep inf1 olink.prot.list.txt | sed 's/inf1_//g;s/___/\t/g' > inf1.list
+grep doc/inf1 olink.prot.list.txt | \
+sed 's/inf1_//g;s/___/\t/g' > inf1.list
 sort -k2,2 inf1.list > 1
-awk '{FS=OFS="\t"; split($4,f,"-");$4=f[1];if(!index($1,"_")) print}' hgTables.tsv | sort -k4,4 > 2
+awk '{
+   FS=OFS="\t"; 
+   split($4,f,"-");
+   $4=f[1];
+   if(!index($1,"_")) print
+}' hgTables.tsv | \
+sort -k4,4 > 2
 join -t$'\t' -12 -24 1 2 > 12
 # 90 lines
 wc -l 12
