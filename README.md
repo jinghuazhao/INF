@@ -1,6 +1,8 @@
 # INF
 SCALLOP-INF analysis
 
+<img src="doc/OPG-qml.png" width="400" height="800" align="right">
+
 ## Installation
 
 The repository can be downloaded locally with
@@ -19,8 +21,6 @@ File     | Description
 [SCALLOP_INF_I_analysis_plan.docx](SCALLOP_INF_I_analysis_plan.docx) |
 [log10p.md](doc/log10p.md) | Jimmy's competitive log10(p) calculator
 [tryggve.md](tryggve.md) | TRYGGVE notes
-
-<img src="doc/OPG-qml.png" width="400" height="800" align="right">
 
 ## Analysis
 
