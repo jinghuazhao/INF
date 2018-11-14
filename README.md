@@ -53,7 +53,7 @@ awk '{
    split($4,f,"-");
    $4=f[1];
    if(!index($1,"_")) print
-}' hgTables.tsv | \
+}' doc/hgTables.tsv | \
 sort -k4,4 > 2
 join -t$'\t' -12 -24 1 2 > 12
 # 90 lines
