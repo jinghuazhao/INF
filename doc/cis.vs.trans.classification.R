@@ -29,8 +29,8 @@ res2 <- merge(x= results, y= ids, by.x='prot', by.y='casual.name', all.x=T)
 # Take Jimmy's mapping file (on my laptop, ~/post-doc/o-link/scallop/olink.inf.panel.annot.txt)
 # proteins <- read.table("/scratch/jp549/olink.inf.panel.annot.txt", head=T)
 proteins <- read.table("/scratch/jhz22/INF/doc/olink.inf.panel.annot.tsv", head=T)
-proteins[proteins$uniprot=="Q8NF90","hgnc_symbol"] <- "FGF5"
-proteins[proteins$uniprot=="Q8WWJ7","hgnc_symbol"] <- "CD6"
+proteins[with(proteins,uniprot=="Q8NF90"),"hgnc_symbol"] <- "FGF5"
+proteins[with(proteins,uniprot=="Q8WWJ7"),"hgnc_symbol"] <- "CD6"
 
 # keep the relevant columns
 col.keep <- c("target", "target.short", "uniprot", "hgnc_symbol", 
