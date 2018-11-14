@@ -1,7 +1,7 @@
 # INF
 SCALLOP-INF analysis
 
-<img src="doc/OPG-qml.png" width="400" height="800" align="right">
+<img src="doc/OPG-qml.png" width="400" height="800">
 
 ## Installation
 
