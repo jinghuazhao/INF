@@ -99,16 +99,16 @@ No | Name | Description | Additional comment
 1 | BP | Position in base pairs
 2 | CHR | Chromosome
 3 | SNP | CHR:POS_A1_A2	or rsid
-4 | HWE | Hardy-Weinberg equilibrium P-value
-5 | MAF | Minor allele frequency | Please indicate if this is the effect allele frequency
+4* | HWE | Hardy-Weinberg equilibrium P-value
+5* | MAF | Minor allele frequency | Please indicate if this is the effect allele frequency
 6 | A1 | Allele 1 | Please indicate if this is the effect/reference allele
 7* | A2 | Allele 2 | Please indicate if this is the effect/reference allele
-8 | N | Sample size
+8 | NMISS | Sample size
 9 | BETA | Regression coefficient
 10 | STAT | Regression test statistic
 11 | P | P value
 
-\* may be taken from the PLINK .bim file.
+\* may be taken from the PLINK --hardy option and .bim file.
 
 In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures for imputation -- the information 
 measure can be on the genotype level obtained once for a cohort rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based 
