@@ -49,9 +49,8 @@ module load gcc/4.8.1
   awk -vOFS="\t" '{print $0,"trans"}'
 ) > cistrans.tsv
 
-(
 R --no-save -q <<END
+  sink("cistrans.table")
   cistrans <- read.delim("cistrans.tsv",as.is=TRUE)
   with(cistrans, table(gene,status))
 END
-) > cistrans.table
