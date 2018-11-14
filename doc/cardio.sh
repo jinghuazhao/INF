@@ -5,7 +5,7 @@
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
-# 4. SNP-gene matchings are established by snp_gene() genomewide and genic_cis_trans() and Jimmy's R code for cis/trans classification.
+# 4. SNP-gene matchings are established by snp_gene() genomewide and Jimmy's R code for cis/trans classification.
 #    Addtional notes:
 #    - This follows https://github.com/jinghuazhao/PW-pipeline/blob/master/vegas2v2.sh
 #    - bedtools 2.4.26 on cardio has no intersect command:
@@ -215,64 +215,8 @@ function snp_gene()
   bedtools intersect -a INTERVAL.bed -b olink.cis -loj > INTERVAL.genic_cis_trans
   cd -
 }
-#  head -1 $INF/doc/olink.inf.panel.annot.tsv | \
-#  awk '{gsub(/\t/, "\n",$0)};1'| \
-#  awk '{print "#" NR, $1}'
-#1 "target"
-#2 "target.short"
-#3 "uniprot"
-#4 "panel"
-#5 "prot.on.multiple.panel"
-#6 "panels.with.prot"
-#7 "hgnc_symbol"
-#8 "chromosome_name"
-#9 "start_position"
-#10 "end_position"
-#11 "olink.id"
-#12 "alternate.uniprot"
 
 R --no-save -q < $INF/doc/cis.vs.trans.classification.R
-
-function genic_cis_trans()
-# title,genic,cis,trans
-{
-  awk '$NF!="."' INTERVAL.olink > INTERVAL.genic
-  cut -f4 INTERVAL.genic > INTERVAL.rsid_genic
-  grep -v -w -f INTERVAL.rsid_genic INTERVAL.bed > INTERVAL.tmp
-  bedtools intersect -a INTERVAL.tmp -b olink.cis -loj > INTERVAL.cis_trans
-  awk '$5==$10' INTERVAL.cis_trans > INTERVAL.cis
-  cut -f4 INTERVAL.cis > INTERVAL.rsid_cis
-  awk '$5!=$10&&$10=="."' INTERVAL.cis_trans > INTERVAL.trans
-  cut -f4 INTERVAL.trans > INTERVAL.rsid_trans
-  wc -l INTERVAL.rsid_cis INTERVAL.rsid_genic INTERVAL.rsid_trans
-  sort -k5,5 INTERVAL.trans | \
-  join -t$'\t' -11 -25 $INF/inf1.list - | \
-  sort -k2,2 > olink.tmp
-  cut -f3,7 $INF/doc/olink.inf.panel.annot.tsv | \
-  awk -vOFS="\t" 'NR>1{
-    gsub(/\"/,"",$0);
-    if($1=="Q8NF90") $2="FGF5"
-    if($1=="Q8WWJ7") $2="CD6"
-    print $1,$2
-  }' | \
-  sort -k1,1 | \
-  join -t$'\t' -12 -21 olink.tmp - | \
-  awk -vOFS="\t" '{print $3,$4,$5,$6,$2,$8,$9,$10,$12,$11}' > INTERVAL.tmp
-  (
-    echo -e "chr\tstart\tend\trsid\tprot\tchrom\tcisstart\tcisend\tgene\ttarget\tstatus"
-    awk -vOFS="\t" '{print $0,"genic"}' INTERVAL.genic
-    awk -vOFS="\t" '{print $0,"cis"}' INTERVAL.cis
-    awk -vOFS="\t" '{print $0,"trans"}' INTERVAL.tmp
-  ) > INTERVAL.prot
-  R --no-save -q <<END
-    prot <- read.delim("INTERVAL.prot",as.is=TRUE,header=TRUE)
-    genic_cis_trans <- with(prot,as.matrix(table(gene,status)))
-    genic_cis_trans
-    sum(genic_cis_trans)
-END
-}
-
-genic_cis_trans
 
 export INTERVAL=/scratch/jp549/olink-merged-output
 function format_for_METAL()

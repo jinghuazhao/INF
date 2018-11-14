@@ -93,3 +93,34 @@ R --no-save -q <<END
     write.table(r,file="cistrans.tmp",quote=FALSE,row.names=FALSE,sep="\t")
   }
 END
+
+# head -1 $rt/doc/olink.inf.panel.annot.tsv |  awk '{gsub(/\t/, "\n",$0)};1'|  awk '{print "#", NR, $1}'
+# 1 "target"
+# 2 "target.short"
+# 3 "uniprot"
+# 4 "panel"
+# 5 "prot.on.multiple.panel"
+# 6 "panels.with.prot"
+# 7 "hgnc_symbol"
+# 8 "chromosome_name"
+# 9 "start_position"
+# 10 "end_position"
+# 11 "olink.id"
+# 12 "alternate.uniprot"
+
+# head -1 INTERVAL.jma.dat | awk '{gsub(/ /, "\n",$0);print}' | awk '{print "#", NR, $1}'
+# 1 prot
+# 2 Chr
+# 3 SNP
+# 4 bp
+# 5 refA
+# 6 freq
+# 7 b
+# 8 se
+# 9 p
+# 10 n
+# 11 freq_geno
+# 12 bJ
+# 13 bJ_se
+# 14 pJ
+# 15 LD_r
