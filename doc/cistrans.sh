@@ -10,6 +10,7 @@ export prot_jma_cojo=INTERVAL.jma.dat
   sed 's/inf1_//g;s/___/\t/g'
 ) | \
 sort -k1,1 > inf1.list
+# addition of genes/proteins on both files
 (
   echo -e "chrom\tstart\tend\tgene\tprot"
   sort -k2,2 inf1.list > inf1.tmp
@@ -51,17 +52,22 @@ awk -vOFS="\t" -vM=1000000 '{
 }' inf1.bed > inf1.tmp
 
 module load gcc/4.8.1
+# gene/protein-specific implementation to avoid confusion.
 (
   echo -e "chr\tstart\tend\tSNP\tprot\tgene\tstatus"
   bedtools intersect -a cistrans.in -b inf1.tmp -u > cistrans.tmp
-  bedtools intersect -a cistrans.in -b inf1.tmp -loj | \
-  awk '($6==$10)' | \
-  cut -f4 > cistrans.cis
-# to fix: some trans- SNPs are labelled cis- if they are cis- at one gene but and trans- at another
-  grep -w -f cistrans.cis cistrans.tmp | \
-  awk -vOFS="\t" '{print $0, "cis"}'
-  grep -v -w -f cistrans.cis cistrans.tmp | \
-  awk -vOFS="\t" '{print $0, "trans"}'
+  bedtools intersect -a cistrans.in -b inf1.tmp -loj > cistrans.loj
+  for g in $(cut -f6 cistrans.loj | uniq)
+  do
+    awk -vgene=$g -vFS="\t" -vOFS="\t" '$6==gene && $6==$10' cistrans.loj | \
+    cut -f4 > cistrans.cis
+    awk -vgene=$g -vFS="\t" -vOFS='\t' '$6==gene' cistrans.tmp | \
+    grep -w -f cistrans.cis | \
+    awk -vOFS="\t" '{print $0, "cis"}'
+    awk -vgene=$g -vFS="\t" -vOFS='\t' '$6==gene' cistrans.tmp | \
+    grep -v -w -f cistrans.cis | \
+    awk -vOFS="\t" '{print $0, "trans"}'
+  done
   bedtools intersect -a cistrans.in -b inf1.tmp -v | \
   awk -vOFS="\t" '{print $0,"trans"}'
 ) > cistrans.tsv
