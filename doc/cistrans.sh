@@ -57,6 +57,7 @@ module load gcc/4.8.1
   bedtools intersect -a cistrans.in -b inf1.tmp -loj | \
   awk '($6==$10)' | \
   cut -f4 > cistrans.cis
+# to fix: some trans- SNPs are labelled cis- if they are cis- at one gene but and trans- at another
   grep -w -f cistrans.cis cistrans.tmp | \
   awk -vOFS="\t" '{print $0, "cis"}'
   grep -v -w -f cistrans.cis cistrans.tmp | \
