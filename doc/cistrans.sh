@@ -54,7 +54,6 @@ module load gcc/4.8.1
 (
   echo -e "chr\tstart\tend\tSNP\tprot\tgene\tstatus"
   bedtools intersect -a cistrans.in -b inf1.tmp -u > cistrans.tmp
-  bedtools intersect -a cistrans.in -b inf1.tmp -loj -u > cistrans.tmp
   bedtools intersect -a cistrans.in -b inf1.tmp -loj | \
   awk '($6==$10)' | \
   cut -f4 > cistrans.snp
