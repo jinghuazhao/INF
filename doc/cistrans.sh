@@ -56,10 +56,10 @@ module load gcc/4.8.1
   bedtools intersect -a cistrans.in -b inf1.tmp -u > cistrans.tmp
   bedtools intersect -a cistrans.in -b inf1.tmp -loj | \
   awk '($6==$10)' | \
-  cut -f4 > cistrans.snp
-  grep -w -f cistrans.snp cistrans.tmp | \
+  cut -f4 > cistrans.cis
+  grep -w -f cistrans.cis cistrans.tmp | \
   awk -vOFS="\t" '{print $0, "cis"}'
-  grep -v -w -f cistrans.snp cistrans.tmp | \
+  grep -v -w -f cistrans.cis cistrans.tmp | \
   awk -vOFS="\t" '{print $0, "trans"}'
   bedtools intersect -a cistrans.in -b inf1.tmp -v | \
   awk -vOFS="\t" '{print $0,"trans"}'
