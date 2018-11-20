@@ -1,9 +1,8 @@
-# 13-11-2018 JHZ
+# 20-11-2018 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
-rm -f METAL/METAL.tmp
-touch METAL/METAL.tmp
+(
 for dir in EGCUT_INF INTERVAL NSPHS_INF ORCADES STABILITY STANLEY VIS
 do
    ls sumstats/$dir | \
@@ -15,8 +14,9 @@ do
       gsub(/^\./,"",s)
       gsub(/@/,"",$1)
       print s " " ENVIRON["HOME"] "/INF/sumstats/" dir "/" $1
-   }' >> METAL/METAL.tmp
+   }'
 done
+) > METAL/METAL.tmp
 sort -k1,1 METAL/METAL.tmp > METAL/METAL.list
 
 # generate METAL command files
@@ -57,6 +57,12 @@ parallel --env HOME -j3 -C' ' '
   metal $HOME/INF/{}.metal; \
   gzip -f $HOME/INF/{}-1.tbl
 '
+
+# extracting the top-hits
+ls METAL/*-1.tbl.gz | \
+parallel -j4 -C' ' '
+  gunzip -c {} | \
+  awk "NR==1 || \$6 <= 5e-10" > METAL/$(basename -s -1.tbl.gz {}).top'
 
 # obtain largest M -- the union of SNP lists as initially requested by NSPHS
 
