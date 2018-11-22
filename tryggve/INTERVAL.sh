@@ -13,7 +13,7 @@ parallel -j4 --env rt -C' ' '
 gunzip -c $rt/INTERVAL.{}.gz | \
 plink --bfile EUR1KG \
       --exclude MHC.snpid \
-      --clump work/INTERVAL.{}.gz \
+      --clump $rt/INTERVAL.{}.gz \
       --clump-snp-field SNPID \
       --clump-field PVAL \
       --clump-kb 500 \
