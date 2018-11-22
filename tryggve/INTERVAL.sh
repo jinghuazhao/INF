@@ -103,11 +103,6 @@ parallel -j3 --env rt -C' ' '
          --exclude-region-bp 6 30000000 5000 --thread-num 3 --out work/{}
 '
 
-ls work/*jma*cojo | \
-sed 's/.jma.cojo//g' | \
-xargs -l basename | \
-sort > INTERVAL.cojo.done
-
 rm -f work/INTERVAL.jma
 (
   grep SNP work/INTERVAL.*.jma.cojo | \
