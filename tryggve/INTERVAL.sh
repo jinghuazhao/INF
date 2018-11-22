@@ -1,7 +1,4 @@
-# 13-11-2018 JHZ
-
-# NOTE this was based on results from metal/20110325 without TRACKPOSITIONS
-# The QQ/Manhattan/LocusZoom plots function is dropped as it is available from tryggve/anlaysis.sh
+# 22-11-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -14,12 +11,9 @@ sed 's/INTERVAL.//g;s/.gz//g' | \
 xargs -l basename | \
 parallel -j4 --env rt -C' ' '
 gunzip -c $rt/INTERVAL.{}.gz | \
-awk "\$8 > 0.0001 && \$13" | \
-cut -f1,11,13 | \
-gzip -f > work/INTERVAL.{}.tmp; \
 plink --bfile EUR1KG \
       --exclude MHC.snpid \
-      --clump work/INTERVAL.{}.tmp \
+      --clump work/INTERVAL.{}.gz \
       --clump-snp-field SNPID \
       --clump-field PVAL \
       --clump-kb 500 \
@@ -27,7 +21,6 @@ plink --bfile EUR1KG \
       --clump-p2 0.0001 \
       --clump-r2 0.1 \
       --out work/INTERVAL.{}; \
-rm work/INTERVAL.{}.tmp
 '
 
 rm -f work/INTERVAL.clumped
@@ -38,6 +31,7 @@ rm -f work/INTERVAL.clumped
 ) > work/INTERVAL.clumped
 
 echo "--> top signals"
+# NOTE this was based on results from metal/20110325 without TRACKPOSITIONS
 
 ls work/*clumped | \
 sed 's|work/||g;s/.clumped//g' | \
