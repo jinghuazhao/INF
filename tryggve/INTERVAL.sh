@@ -23,7 +23,6 @@ plink --bfile EUR1KG \
       --out work/INTERVAL.{}; \
 '
 
-rm -f work/INTERVAL.clumped
 (
   grep CHR work/INTERVAL.*.clumped | \
   head -1
