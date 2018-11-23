@@ -1,4 +1,4 @@
-# 14-11-2018 JHZ
+# 23-11-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -104,7 +104,7 @@ plink --bfile EUR1KG \
       --clump-field P-value \
       --clump-kb 500 \
       --clump-p1 5e-10 \
-      --clump-p2 0.0001 \
+      --clump-p2 0.01 \
       --clump-r2 0.1 \
       --out $rt/{}
 '
