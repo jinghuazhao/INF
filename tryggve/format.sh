@@ -120,6 +120,7 @@ ls work/STABILITY*gz | \
 sed 's/work\///g' | \
 parallel -j$threads -C' ' "
 gunzip -c work/{} | \
+cut -d' ' -f1-8,10-15 | \
 sed 's/ /\t/g' | \
 awk -vFS='\t' -vOFS='\t' '(NR==1||!/BETA/){
   if(index(\$1,\":\")) \$1= \"chr\" \$2 \":\" \$3; \
