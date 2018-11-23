@@ -1,4 +1,4 @@
-# 13-11-2018 JHZ
+# 23-11-2018 JHZ
 
 module load parallel/20170822
 export threads=8

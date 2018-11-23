@@ -10,7 +10,7 @@
      else snpid="chr" CHR ":" POS "_" a1 "_" a2
      $1=snpid
    }
-   print
+   if ($13=="NA"||($13!="NA"&&$13>=0.4)) print
 }
 
 # 1 SNPID
