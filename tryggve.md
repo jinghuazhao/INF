@@ -3,7 +3,7 @@
 The repository contains the following files,
 
 File specification | Descrription
--------------------|-----------------------------------------
+-------------------|---------------------------------------------------------------
 doc/               | Oringal documents
  -- [KORA.prot.preproc.R*](doc/KORA.prot.preproc.R) | R code for data preprocessing
  -- kora.normalised.prot.txt* | sex, age, normalised proteins
@@ -13,7 +13,8 @@ sumstats/          | File lists and study directories
 tryggve/           | Auxiliary files
  -- [list.sh](tryggve/list.sh)         | Generation of file list and directory
  -- [format.sh](tryggve/format.sh)     | Code for format GWAS summary statistics
- -- [analysis.sh](tryggve/analysis.sh) | Bash code for analysis calling analysis.ini
+ -- [lz14.sh](tryggve/lz14.sh)         | Code to extract LocusZoom 1.4 databases for [analysis.sh](tryggve/analysis.sh)
+ -- [analysis.sh](tryggve/analysis.sh) | Bash code for analysis calling [analysis.ini](tryggve/analysis.ini)
  -- [metal.sh](tryggve/metal.sh)       | Generation/execution of METAL scripts
  -- [METAL.qsub](tryggve/METAL.qsub)   | TORQUE qsub script for METAL
  -- [INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis
