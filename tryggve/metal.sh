@@ -1,4 +1,4 @@
-# 20-11-2018 JHZ
+# 24-11-2018 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
@@ -57,12 +57,6 @@ parallel --env HOME -j3 -C' ' '
   metal $HOME/INF/{}.metal; \
   gzip -f $HOME/INF/{}-1.tbl
 '
-
-# extracting the top-hits
-ls METAL/*-1.tbl.gz | \
-parallel -j4 -C' ' '
-  gunzip -c {} | \
-  awk "NR==1 || \$6 <= 5e-10" > METAL/$(basename -s -1.tbl.gz {}).top'
 
 # obtain largest M -- the union of SNP lists as initially requested by NSPHS
 
