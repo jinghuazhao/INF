@@ -76,7 +76,9 @@ plink --bfile EUR1KG \
   head -1
   grep -v CHR $rt/*.clumped
 ) | \
-awk 'NF>1' > INF1.clumped
+sed 's|'"$rt"'/||g;s/.clumped://g' | \
+awk '(NF>1){$3="";print}' | \
+awk '{$1=$1;if(NR==1)$1="prot";print}' > INF1.clumped
 
 echo "--> top signals"
 
