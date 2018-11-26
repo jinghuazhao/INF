@@ -1,4 +1,4 @@
-# 24-11-2018 JHZ
+# 26-11-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -70,6 +70,13 @@ plink --bfile EUR1KG \
       --clump-r2 0.0001 \
       --out $rt/{}
 '
+
+(
+  grep CHR $rt/*.clumped | \
+  head -1
+  grep -v CHR $rt/*.clumped
+) | \
+awk 'NF>1' > INF1.clumped
 
 echo "--> top signals"
 
