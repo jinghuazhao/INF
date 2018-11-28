@@ -14,7 +14,7 @@ tbl <- within(tbl,{
 })
 tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
 qq <- paste0("METAL/",protein,".qq.png");
-png(qqman,width=12,height=10,units="in",pointsize=4,res=300)
+png(qq,width=12,height=10,units="in",pointsize=4,res=300)
 qq(with(tbl,P))
 dev.off()
 manhattan <- paste0("METAL/",protein,".manhattan.png");
