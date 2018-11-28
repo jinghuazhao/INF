@@ -1,9 +1,8 @@
-# 11-11-2018 JHZ
+# 28-11-2018 JHZ
 
 protein <- Sys.getenv("protein");
 print(protein);
 gz <- gzfile(paste0("METAL/",protein,"-1.tbl.gz"));
-qqman <- paste0("METAL/",protein,"-qqman.pdf");
 .libPaths("/services/tools/R/3.5.0/lib64/R/library")
 require(qqman);
 tbl <- read.delim(gz,as.is=TRUE);
@@ -14,7 +13,11 @@ tbl <- within(tbl,{
    P <- P.value
 })
 tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
-pdf(qqman,width=12,height=10)
+qq <- paste0("METAL/",protein,".qq.png");
+png(qqman,width=12,height=10,units="in",pointsize=4,res=300)
 qq(with(tbl,P))
+dev.off()
+manhattan <- paste0("METAL/",protein,".manhattan.png");
+png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
 manhattan(tbl,main=protein,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25));
 dev.off();
