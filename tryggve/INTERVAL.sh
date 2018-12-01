@@ -1,4 +1,4 @@
-# 23-11-2018 JHZ
+# 1-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -103,14 +103,12 @@ parallel -j3 --env rt -C' ' '
          --exclude-region-bp 6 30000000 5000 --thread-num 3 --out work/{}
 '
 
-rm -f work/INTERVAL.jma
 (
   grep SNP work/INTERVAL.*.jma.cojo | \
   head -1
   grep -v SNP work/INTERVAL.*.jma.cojo
 ) > work/INTERVAL.jma
 
-rm -f work/INTERVAL.ldr
 (
   grep SNP work/INTERVAL.*.ldr.cojo | \
   head -1
