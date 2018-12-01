@@ -122,7 +122,7 @@ parallel -j4 --env rt -C' ' '
 ) > $rt/{}.top
 '
 
-echo "--> COJO analysis, --cojo-wind 10000"
+echo "--> COJO analysis"
 
 export rt=$HOME/INF/METAL
 ls METAL/*.tbl.gz | \
