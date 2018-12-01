@@ -1,4 +1,4 @@
-# 26-11-2018 JHZ
+# 30-11-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -80,6 +80,29 @@ sed 's|'"$rt"'/||g;s/.clumped://g' | \
 awk '(NF>1){$3="";print}' | \
 awk '{$1=$1;if(NR==1)$1="prot";print}' > INF1.clumped
 
+echo "--> METAL results containing P-value=0"
+
+awk '($5==0)' INF1.clumped | \
+cut -d' ' -f1 | 
+uniq > INF1.z
+cat INF1.z | \
+parall -j2 --env rt '
+(
+  export port={}
+  gunzip -c $rt/{}-1.tbl.gz | \
+  awk -vOFS="\t" "NR==1||\$12!=0";
+  gunzip -c $rt/{}-1.tbl.gz | \
+  awk -vOFS="\t" '(NR==1||\$12==0)' > {}.z; \
+  R --no-save -q <<END
+  prot <- Sys.getenv("prot");\
+  metal <- read.delim(paste0(prot,".z"),as.is=TRUE);\
+  library(Rmpfr) \
+  metal <- within(metal,{P.value=format(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE,log.p=FALSE))});\
+  write.table(metal,file=paste0(prot,".p"),sep=\"\\t\",row.names=FALSE,quote=FALSE);\
+END
+awk 'NR>1' {}.p;\
+)'
+
 echo "--> top signals"
 
 export rt=$HOME/INF/METAL
@@ -131,7 +154,7 @@ ls METAL/*.tbl.gz | \
 sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j3 --env rt -C' ' '
-gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
+gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.01 --maf 0.0001 \
        --exclude-region-bp 6 30000000 5000 --thread-num 3 --out $rt/{}
 '
 #1 MarkerName
