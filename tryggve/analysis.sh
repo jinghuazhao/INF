@@ -1,4 +1,4 @@
-# 30-11-2018 JHZ
+# 1-12-2018 JHZ
 
 source tryggve/analysis.ini
 
