@@ -154,8 +154,8 @@ ls METAL/*.tbl.gz | \
 sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j3 --env rt -C' ' '
-gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.01 --maf 0.0001 \
-       --exclude-region-bp 6 30000000 5000 --thread-num 3 --out $rt/{}
+gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.01 --cojo-wind 500 \
+       --maf 0.0001 --exclude-region-bp 6 30000000 5000 --thread-num 3 --out $rt/{}
 '
 #1 MarkerName
 #2 Allele1
