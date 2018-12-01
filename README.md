@@ -19,12 +19,12 @@ File     | Description
 [SCALLOP_INF_I_analysis_plan.docx](SCALLOP_INF_I_analysis_plan.docx) |
 [tryggve.md](tryggve.md) | TRYGGVE notes
 
+<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="right">
+
 ## Analysis
 
 To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](doc/cardio.sh), which includes cis/trans classification via Jimmy's [cis.vs.trans.classification.R](doc/cis.vs.trans.classification.R) and a Bash version via bedtools, [cistrans.sh](doc/cistrans.sh).
 Jimmy's competitive log10(p) calculator is also documented in [log10p.md](doc/log10p.md) in comparison with R/Rmpfr. The cis.vs.trans.classification and log10p functions are now both in [R/gap](https://github.com/jinghuazhao/R/tree/master/gap).
-
-<img src="doc/INTERVAL.circlize.png" width="400" height="400" align="right">
 
 The CAD summary statistics used for MAGMA and MR is described [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD)
 -- as noted in MMP12.sh, the MMP12 case could have been done genomewide. A colocalisation analysis on simulated data can be found in the
