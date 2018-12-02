@@ -1,4 +1,4 @@
-# 1-12-2018 JHZ
+# 2-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -60,6 +60,7 @@ sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j4 --env rt -C' ' '
 plink --bfile EUR1KG \
+      --mac 1 \
       --exclude MHC.snpid \
       --clump $rt/{}-1.tbl.gz \
       --clump-snp-field MarkerName \
