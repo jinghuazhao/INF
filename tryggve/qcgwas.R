@@ -2,7 +2,7 @@
 
 z <- gzfile("/data/jinhua/1KGp3/1KGp3v5.txt.gz")
 allfreq_ref_std <- read.table(z,header=TRUE,as.is=TRUE)
-save(allfreq_ref_std,file="allfreq_ref_std.RData")
+save(allfreq_ref_std,file="1KGp3v3.RData")
 
 library(QCGWAS)
 QCresults <- QC_GWAS("sumstats/INTERVAL/INTERVAL.IFN.gamma.gz",
@@ -13,8 +13,8 @@ QCresults <- QC_GWAS("sumstats/INTERVAL/INTERVAL.IFN.gamma.gz",
 		QQfilter_FRQ = c(NA, 0.01, 0.03, 0.05, 3),
 		QQfilter_imp = c(NA, 0.3, 0.5, 0.7, 0.9),
 		NAfilter = TRUE,
-		allele_ref_std = "allfreq_ref_std.RData",
-		allele_name_std = "MINOR",
+		allele_ref_std = "1KGp3v5.RData",
+		allele_name_std = "OneKG",
 		remove_mismatches = TRUE,
 		allele_ref_alt = "ref_alternative.RData",
 		allele_name_alt = "alternative",
