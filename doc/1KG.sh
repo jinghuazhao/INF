@@ -1,5 +1,16 @@
-# 16-11-2018 JHZ
+# 2-12-2018 JHZ
 
+# to take on results from 1KG.sb
+(
+  awk -vOFS="\t" 'BEGIN{print "SNP","CHR","POS","MINOR","MAJOR","MAF"}'
+  for chr in $(seq 22)
+  do
+    zgrep -v -w CHR 1KGp3v5-${chr}.txt.gz 
+  done
+) | \
+gzip -f > 1KGp3v5.txt.gz
+
+# to work on data from LocusZoom 1.4
 (
   echo -e "snpid\trsid"
   for i in $(seq 22)
