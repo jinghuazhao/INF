@@ -11,9 +11,9 @@
 gzip -f > 1KGp3v5.txt.gz
 
 R --no-save -q <<END
-z <- gzfile("1KGp3v5.txt.gz")
-allele_ref_std <- read.table(z,header=TRUE,as.is=TRUE)
-save(allele_ref_std,file="1KGp3v3.RData")
+  z <- gzfile("1KGp3v5.txt.gz")
+  allele_ref_std <- read.table(z,header=TRUE,as.is=TRUE)
+  save(allele_ref_std,file="1KGp3v3.RData")
 END
 
 # to work on data from LocusZoom 1.4
