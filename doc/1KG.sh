@@ -1,6 +1,7 @@
 # 2-12-2018 JHZ
 
-# to take on results from 1KG.sb
+# allele frequencies from 1KG phase 3
+sbatch -wait doc/1KG.slurm
 (
   awk -vOFS="\t" 'BEGIN{print "SNP","CHR","POS","MINOR","MAJOR","MAF"}'
   for chr in $(seq 22)
@@ -16,7 +17,7 @@ R --no-save -q <<END
   save(allele_ref_std,file="1KGp3v3.RData")
 END
 
-# to work on data from LocusZoom 1.4
+# snpid-rsid from genotype data
 (
   echo -e "snpid\trsid"
   for i in $(seq 22)
