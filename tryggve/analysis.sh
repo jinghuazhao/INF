@@ -60,7 +60,6 @@ sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j4 --env rt -C' ' '
 plink --bfile EUR1KG \
-      --mac 1 \
       --exclude MHC.snpid \
       --clump $rt/{}-1.tbl.gz \
       --clump-snp-field MarkerName \
@@ -68,7 +67,8 @@ plink --bfile EUR1KG \
       --clump-kb 500 \
       --clump-p1 5e-10 \
       --clump-p2 0.01 \
-      --clump-r2 0.0001 \
+      --clump-r2 0 \
+      --mac 1 \
       --out $rt/{}
 '
 
