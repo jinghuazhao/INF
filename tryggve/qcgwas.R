@@ -6,7 +6,7 @@ library(QCGWAS)
 QC_series(data_files=c("INTERVAL.ARTN.gz","INTERVAL.IFN.gamma.gz","INTERVAL.IL.13.gz"),
 	dir_data="sumstats/INTERVAL",
 	dir_output="work",
-	dir_references=".",
+	dir_references="/data/jinhua/1KGp3",
 	header_translations = header_translations,
 	save_final_dataset = TRUE,
 	HQfilter_FRQ = 0.01,
