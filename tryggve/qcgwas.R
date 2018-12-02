@@ -7,6 +7,7 @@ QC_series(data_files=c("INTERVAL.ARTN.gz","INTERVAL.IFN.gamma.gz","INTERVAL.IL.1
 	dir_data="sumstats/INTERVAL",
 	dir_output="work",
 	dir_references="/data/jinhua/1KGp3",
+	output_filenames = c("INTERVAL.ARTN.gz","INTERVAL.IFN.gamma.gz","INTERVAL.IL.13.gz"),
 	header_translations = header_translations,
 	save_final_dataset = TRUE,
 	HQfilter_FRQ = 0.01,
