@@ -13,7 +13,7 @@ do
       gsub(/\_autosomal|\_X_female|\_X_male|\_lah1-|\_swe6-|.gz|@/,"",s)
       gsub(/^\./,"",s)
       gsub(/@/,"",$1)
-      print s " " ENVIRON["HOME"] "/INF/sumstats/" dir "/" $1
+      print s " /data/" ENVIRON["USER"] "/INF/sumstats/" dir "/" $1
    }'
 done
 ) > METAL/METAL.tmp
