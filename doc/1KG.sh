@@ -6,10 +6,10 @@ sbatch -wait doc/1KG.slurm
   awk -vOFS="\t" 'BEGIN{print "SNP","CHR","POS","MINOR","MAJOR","MAF"}'
   for chr in $(seq 22); do zgrep -v -w CHR 1KGp3v5-${chr}.txt.gz ; done
 ) | \
-gzip -f > 1KGp3v5.txt.gz
+gzip -f > 1KGp3v5.tsv.gz
 
 R --no-save -q <<END
-  z <- gzfile("1KGp3v5.txt.gz")
+  z <- gzfile("1KGp3v5.tsv.gz")
   allele_ref_std <- read.table(z,header=TRUE,as.is=TRUE)
   save(allele_ref_std,file="1KGp3v5.RData")
 END
