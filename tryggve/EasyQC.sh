@@ -20,10 +20,10 @@ awk -vOFS="\t" '
      print snpid,a[2],a[1],minor,major,maf
   }
 }' | \
-gzip -f > 1KGp3v5.txt.gz
+gzip -f > 1KGp3v5.tsv.gz
 
 R --no-save -q <<END
-   z <- gzfile("1KGp3v5.txt.gz")
+   z <- gzfile("1KGp3v5.tsv.gz")
    allele_ref_std <- read.table(z,header=TRUE,as.is=TRUE)
    save(allele_ref_std,file="1KGp3v5.RData")
 END
