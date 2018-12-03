@@ -2,13 +2,20 @@
 
 library(QCGWAS)
 
-QC_GWAS(data_files = "INTERVAL.ARTN.gz",
+prot <- Sys.getenv("protein")
+src <- "INTERVAL"
+src_file <- paste(src, prot, "gz", sep=".")
+EGCUT <- paste0("EGCUT_INF",c("_autosomal","_male","_female"))
+studies <- c(EGCUT, "INTERVAL", "NSPHS_INF", "ORCADES", "STABILITY", "STANLEY", "VIS")
+QC_files <- paste(studies, prot, "gz", sep=".")
+header_translations <- read.delim("tryggve/header_translations.tsv",as.is=TRUE)
+
+QC_GWAS(src_file,
         dir_data = "sumstats/work",
         dir_output = "work",
-        dir_references = "/data/jinhua/data/1KG",
-        output_filenames = "INTERVAL.ARTN.gz"",
-        header_translations = "tryggve/header_translations.txt",
-        save_final_dataset = TRUE,
+        dir_references = "/data/jinhua/data/EasyQC",
+        header_translations = header_translations,
+        save_final_dataset = FALSE,
         HQfilter_FRQ = 0.01,
         HQfilter_imp = 0.3,
         QQfilter_FRQ = c(NA, 0.01, 0.03, 0.05, 3),
@@ -23,12 +30,12 @@ QC_GWAS(data_files = "INTERVAL.ARTN.gz",
         update_savename = "ref_alternative",
         update_as_rdata = TRUE)
 
-QC_series(data_files=c("INTERVAL.ARTN.gz","ORCADES.ARTN.gz","STABILITY.ARTN.gz"),
+QC_series(data_files = QC_files,
 	dir_data = "sumstats/work",
 	dir_output = "work",
-	dir_references = "/data/jinhua/data/1KG",
-	output_filenames = c("INTERVAL.ARTN.gz","ORCADES.ARTN.gz","STABILITY.ARTN.gz"),
-	header_translations = "tryggve/header_translations.txt",
+	dir_references = "/data/jinhua/data/EasyQC",
+	output_filenames = QC_files,
+	header_translations = header_translations,
 	save_final_dataset = TRUE,
 	HQfilter_FRQ = 0.01,
 	HQfilter_imp = 0.3,
