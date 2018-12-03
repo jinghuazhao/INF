@@ -1,4 +1,4 @@
-# 24-11-2018 JHZ
+# 3-12-2018 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
@@ -17,6 +17,15 @@ do
    }'
 done
 ) > METAL/METAL.tmp
+
+cd $HOME/INF/sumstats/work
+cat $HOME/INF/METAL/METAL.tmp | \
+parallel -j10 -C' ' '
+  echo {2}; \
+  ln -sf {2}
+'
+cd -
+
 sort -k1,1 METAL/METAL.tmp > METAL/METAL.list
 
 # generate METAL command files
@@ -80,5 +89,3 @@ function largest_M()
   uniq > /data/jinhua/M/M.union
   cd -
 }
-
-largest_M

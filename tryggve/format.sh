@@ -1,4 +1,4 @@
-# 23-11-2018 JHZ
+# 3-12-2018 JHZ
 
 module load parallel/20170822
 export threads=8
@@ -137,3 +137,6 @@ gunzip -c work/{} | \
 awk -f tryggve/STANLEY.awk | \
 awk -f tryggve/order.awk | \
 gzip -f > sumstats/STANLEY/{}'
+
+# to pave way for QCGWAS
+mkdir $HOME/INF/sumstats/work

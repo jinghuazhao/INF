@@ -1,13 +1,13 @@
-# 2-12-2018 JHZ
+# 3-12-2018 JHZ
 
 header_translations <- read.delim("tryggve/header_translations.txt",as.is=TRUE)
 
 library(QCGWAS)
-QC_series(data_files=c("INTERVAL.ARTN.gz","INTERVAL.IFN.gamma.gz","INTERVAL.IL.13.gz"),
-	dir_data="sumstats/INTERVAL",
+QC_series(data_files=c("INTERVAL.ARTN.gz","ORCADES.ARTN.gz","STABILITY.ARTN.gz"),
+	dir_data="sumstats/work",
 	dir_output="work",
 	dir_references="/data/jinhua/1KGp3",
-	output_filenames = c("INTERVAL.ARTN.gz","INTERVAL.IFN.gamma.gz","INTERVAL.IL.13.gz"),
+	output_filenames = c("INTERVAL.ARTN.gz","ORCADES.ARTN.gz","STABILITY.ARTN.gz"),
 	header_translations = header_translations,
 	save_final_dataset = TRUE,
 	HQfilter_FRQ = 0.01,
@@ -17,9 +17,4 @@ QC_series(data_files=c("INTERVAL.ARTN.gz","INTERVAL.IFN.gamma.gz","INTERVAL.IL.1
 	NAfilter = TRUE,
 	allele_ref_std = "1KGp3v5.RData",
 	allele_name_std = "OneKG",
-	remove_mismatches = TRUE,
-	allele_ref_alt = "ref_alternative.RData",
-	allele_name_alt = "alternative",
-	update_alt = TRUE,
-	update_as_rdata = TRUE,
-	backup_alt = TRUE)
+	remove_mismatches = TRUE)
