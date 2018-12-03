@@ -1,14 +1,12 @@
 # 3-12-2018 JHZ
 
-header_translations <- read.delim("tryggve/header_translations.txt",as.is=TRUE)
-
 library(QCGWAS)
 QC_series(data_files=c("INTERVAL.ARTN.gz","ORCADES.ARTN.gz","STABILITY.ARTN.gz"),
 	dir_data="sumstats/work",
 	dir_output="work",
 	dir_references="/data/jinhua/data/1KG",
 	output_filenames = c("INTERVAL.ARTN.gz","ORCADES.ARTN.gz","STABILITY.ARTN.gz"),
-	header_translations = header_translations,
+	header_translations = "tryggve/header_translations.txt",
 	save_final_dataset = TRUE,
 	HQfilter_FRQ = 0.01,
 	HQfilter_imp = 0.3,
