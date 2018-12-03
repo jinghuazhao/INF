@@ -1,4 +1,4 @@
-# 2-12-2018 JHZ
+# 3-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -44,8 +44,8 @@ parallel -j1 -C' ' '
    rm -f ld_cache.db; \
    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal {}.lz \
              --plotonly --chr $chrom --start $start --end $end --no-date --rundir .; \
-   mv chr${chrom}_${start}-${end}.pdf {}.pdf; \
-   pdftopng -r 300 {}.pdf {}; \
+   mv chr${chrom}_${start}-${end}.pdf {}.lz.pdf; \
+   pdftopng -r 300 {}.lz.pdf {}; \
    cd -
 '
 # convert OPG-000001.png -resize 130% OPG-000003.png
