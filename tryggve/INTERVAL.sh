@@ -1,4 +1,4 @@
-# 1-12-2018 JHZ
+# 3-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -19,7 +19,8 @@ plink --bfile EUR1KG \
       --clump-kb 500 \
       --clump-p1 5e-10 \
       --clump-p2 0.0001 \
-      --clump-r2 0.0001 \
+      --clump-r2 0 \
+      --mac 1 \
       --out work/INTERVAL.{}; \
 '
 
