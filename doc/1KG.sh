@@ -1,13 +1,10 @@
-# 2-12-2018 JHZ
+# 3-12-2018 JHZ
 
 # allele frequencies from 1KG phase 3
 sbatch -wait doc/1KG.slurm
 (
   awk -vOFS="\t" 'BEGIN{print "SNP","CHR","POS","MINOR","MAJOR","MAF"}'
-  for chr in $(seq 22)
-  do
-    zgrep -v -w CHR 1KGp3v5-${chr}.txt.gz 
-  done
+  for chr in $(seq 22); do zgrep -v -w CHR 1KGp3v5-${chr}.txt.gz ; done
 ) | \
 gzip -f > 1KGp3v5.txt.gz
 
@@ -38,6 +35,7 @@ END
   done
 ) | \
 gzip -f > 1KG.tsv.gz
+gunzip -c  /data/jinhua//1KGp3/1KG.tsv.gz | cut -f1 | awk 'NR>1' | sort > 1KG.snpid
 
 # x.csv.gz
 # 1 CHR
