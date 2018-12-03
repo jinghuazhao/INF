@@ -43,3 +43,21 @@ gunzip -c  /data/jinhua//1KGp3/1KG.tsv.gz | cut -f1 | awk 'NR>1' | sort > 1KG.sn
 # 3 POS
 # 4 A1
 # 5 A2
+
+# to pick SNPIDs not in the reference panel
+
+gunzip -c /data/jinhua/data/1KG/1KG.tsv.gz | \
+cut -f1 | \
+awk 'NR>1' | \
+sort -k1,1 > 1KG.snpid
+
+export protein=CD6
+grep -w $protein METAL/METAL.tmp | \
+parallel -j1 -C' ' '
+   gunzip -c {1} | \
+   cut -f1 | \
+   awk "NR>1"| \
+   sort -k1,1 | \
+   join -j1 -v1 - 1KG.snpid > {2}.v1
+' 
+
