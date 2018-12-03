@@ -1,7 +1,10 @@
 # 3-12-2018 JHZ
 
+source tryggve/analysis.ini
+
 # 1000Genomes phase 3 from EasyQC
-gunzip -c /data/jinhua/data/EasyQC/1000GP_p3v5_legends_rbind.noDup.noMono.noCnv.noCnAll.afref.EUR.txt.gz | \
+cd /data/jinhua/data/EasyQC
+gunzip -c 1000GP_p3v5_legends_rbind.noDup.noMono.noCnv.noCnAll.afref.EUR.txt.gz | \
 awk -vOFS="\t" '
 {
   if(NR==1) print "SNP","CHR","POS","MINOR","MAJOR","MAF";
@@ -20,10 +23,12 @@ awk -vOFS="\t" '
 gzip -f > 1KGp3v5.txt.gz
 
 R --no-save -q <<END
-  z <- gzfile("1KGp3v5.txt.gz")
-  allele_ref_std <- read.table(z,header=TRUE,as.is=TRUE)
-  save(allele_ref_std,file="1KGp3v5.RData")
+   z <- gzfile("1KGp3v5.txt.gz")
+   allele_ref_std <- read.table(z,header=TRUE,as.is=TRUE)
+   save(allele_ref_std,file="1KGp3v5.RData")
 END
+cd -
+
 # cptid   ea      oa      eaf
 # 10:100000122    T       A       0.997018
 

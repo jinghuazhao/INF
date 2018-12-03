@@ -6,7 +6,7 @@ library(QCGWAS)
 QC_series(data_files=c("INTERVAL.ARTN.gz","ORCADES.ARTN.gz","STABILITY.ARTN.gz"),
 	dir_data="sumstats/work",
 	dir_output="work",
-	dir_references="/data/jinhua/1KGp3",
+	dir_references="/data/jinhua/data/1KG",
 	output_filenames = c("INTERVAL.ARTN.gz","ORCADES.ARTN.gz","STABILITY.ARTN.gz"),
 	header_translations = header_translations,
 	save_final_dataset = TRUE,
