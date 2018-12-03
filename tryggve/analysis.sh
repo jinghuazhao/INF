@@ -46,6 +46,8 @@ parallel -j1 -C' ' '
              --plotonly --chr $chrom --start $start --end $end --no-date --rundir .; \
    mv chr${chrom}_${start}-${end}.pdf {}.lz.pdf; \
    pdftopng -r 300 {}.lz.pdf {}; \
+   mv {}.lz-000001.png {}.lz-1.png; \
+   mv {}.lz-000002.png {}.lz-2.png; \
    cd -
 '
 # convert OPG-000001.png -resize 130% OPG-000003.png
