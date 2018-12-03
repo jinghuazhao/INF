@@ -50,8 +50,8 @@ parallel -j1 -C' ' '
    mv {}.lz-000002.png {}.lz-2.png; \
    cd -
 '
-# convert OPG-000001.png -resize 130% OPG-000003.png
-# convert \( OPG-qqman-000001.png -append OPG-qqman-000002.png -append OPG-000003.png -append \) +append OPG-qml.png
+# convert OPG.lz-1.png -resize 130% OPG.lz-3.png
+# convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
 
 echo "--> clumping"
 
