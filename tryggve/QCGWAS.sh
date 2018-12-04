@@ -1,4 +1,4 @@
-# 3-12-2018 JHZ
+# 4-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -6,5 +6,6 @@ declare -a proteins=(ARTN CCL25 CD6 CST5 FGF.5 IFN.gamma IL.13 IL.18R1 IL.1.alph
 for s in $(seq 1 ${#cohorts[@]}); do
     export protein=${cohorts[$(( $s-1 ))]}
     echo $protein
-    R --no-save -q < tryggve/QCGWAS.R
+    if [ ! -d $protein ]; then mkdir $protein; fi
+    R --no-save -q < tryggve/QCGWAS.R > $protein.log
 done
