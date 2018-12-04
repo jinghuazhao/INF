@@ -7,9 +7,9 @@ src <- "INTERVAL"
 src_in <- paste(src, prot, "gz", sep=".")
 src_out <- paste(src, prot, sep=".")
 EGCUT <- paste0("EGCUT_",c("autosomal","X_male","X_female"))
-STANLEY <- paste0("STANLEY_",c("lah1-","swe6-"),prot,".gz")
+STANLEY <- paste0("STANLEY_",c("lah1-","swe6-"),prot)
 studies <- c(EGCUT, "INTERVAL", "NSPHS", "ORCADES", "STABILITY", "VIS")
-QC_in <- c(paste(studies, prot, "gz", sep="."), STANLEY)
+QC_in <- c(paste(studies, prot, "gz", sep="."), paste0(STANLEY,".gz"))
 QC_out <- c(paste(studies, prot, sep="."), STANLEY)
 header_translations <- read.delim("tryggve/header_translations.tsv",as.is=TRUE)
 
