@@ -11,4 +11,4 @@ done
 
 # QCGWAS
 export protein=$1
-R --no-save -q < tryggve/QCGWAS.R > $protein.log
+R --no-save -q < tryggve/QCGWAS.R > work/$protein.log
