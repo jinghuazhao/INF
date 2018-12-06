@@ -143,7 +143,7 @@ For questions regarding SCALLOP/INF, please contact Jing Hua Zhao (jhz22@medschl
 
 **SLURM script for qctool 2.0.1**
 
-This is called with `sbatch qctool.sb`.
+This is called with `sbatch qctool.sb`, where `qctool.sb` contains the following lines:
 
 ```bash
 #!/bin/bash --login
