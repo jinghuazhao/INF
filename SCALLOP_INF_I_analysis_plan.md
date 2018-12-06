@@ -116,7 +116,7 @@ statistics can be greatly facilitated with software qctool, http://www.well.ox.a
 ```bash
 qctool -g INTERVAL.bgen -s INTERVAL.sample -snp-stats -osnp INTERVAL.snp-stats -sample-stats -osample INTERVAL.sample-stats -os INTERVAL.os
 ```
-See also the full SLURM sbatch script in the appendix.
+See also the full SLURM sbatch script in the Appendix.
 
 ## 5. Meta-analysis
 
