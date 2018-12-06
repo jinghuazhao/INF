@@ -1,4 +1,4 @@
-# 4-12-2018 JHZ
+# 6-12-2018 JHZ
 
 module load parallel/20170822
 export threads=8
@@ -118,11 +118,11 @@ parallel -j$threads -C' ' '
 # STABILITY
 ls work/STABILITY*gz | \
 sed 's/work\///g' | \
-parallel -j$threads -C' ' "
+parallel -j$threads -C' ' '
 gunzip -c work/{} | \
-cut -d' ' -f1-8,10-15 | \
+awk -vOFS="\t" "(\$8>=0.03 && \$9>=1e-6){print \$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$10,\$11,\$12,\$13,\$14,\$15}" | \
 awk -f tryggve/order.awk | \
-gzip -f > sumstats/STABILITY/{}"
+gzip -f > sumstats/STABILITY/{}'
 
 # STANLEY_lahl/STANLEY_swe6
 ls work/STANLEY*gz | \
