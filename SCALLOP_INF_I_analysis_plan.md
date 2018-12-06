@@ -165,7 +165,7 @@ ln -sf $INTERVAL.sample INTERVAL.sample
 
 # to obtain SNP-specific statistics as in .bgen and .sample format with qctool, tested with qctool 2.0.1
 
-qctool -g INTERVAL.bgen -s INTERVAL.sample -snp-stats -osnp INTERVAL.snp-stats -sample-stats -osample INTERVAL.sample-stats -os INTERVAL.os
+qctool -g INTERVAL.bgen -s INTERVAL.sample -snp-stats -osnp INTERVAL.snp-stats -sample-stats -osample INTERVAL.sample-stats
 
 # Note in particular: the # option allows for chromosome-specific analysis; the -strand option will enable results in positive strand.
 ```
