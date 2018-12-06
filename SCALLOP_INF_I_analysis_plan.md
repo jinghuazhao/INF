@@ -1,6 +1,6 @@
 # SCALLOP consortium analysis plan for INF panel proteins
 
-***Adapted from SCALLOP/CVD1 analysis plan, last updated 9/11/2018***
+***Adapted from SCALLOP/CVD1 analysis plan, last updated 6/12/2018***
 
 ---
 
@@ -112,7 +112,11 @@ No | Name | Description | Additional comment
 
 In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures for imputation -- the information 
 measure can be on the genotype level obtained once for a cohort rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based 
-statistics can be greatly facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/.
+statistics can be greatly facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/. As is the case with INTERVAL.bgen and INTERVAL.sample, one can obtain the SNP-based statistics as follows,
+```bash
+qctool -g INTERVAL.bgen -s INTERVAL.sample -snp-stats -osnp INTERVAL.snp-stats -sample-stats -osample INTERVAL.sample-stats -os INTERVAL.os
+```
+See also the full SLURM sbatch script in the appendix.
 
 ## 5. Meta-analysis
 
@@ -134,3 +138,34 @@ See the CVD1 analysis plan.
 For general questions about SCALLOP, please contact Anders Malarstig (anders.malarstig@ki.se). For technical issues about TRYGGVE, please contact Lasse Folkersen (lasfol@cbs.dtu.dk).
 
 For questions regarding SCALLOP/INF, please contact Jing Hua Zhao (jhz22@medschl.cam.ac.uk) and James Peters (jp549@medschl.cam.ac.uk).
+
+## Appendix
+
+**SLURM script for qctool 2.0.1**
+
+This is called with `sbatch qctool.sb`.
+
+```bash
+#!/bin/bash --login
+# 6-12-2018 JHZ
+
+#SBATCH -J qctool
+#SBATCH -o qctool.log
+#SBATCH -p long
+#SBATCH -t 4-0:0
+#SBATCH --export ALL
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+
+export DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
+export INTERVAL=$DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only
+ln -sf $INTERVAL.bgen INTERVAL.bgen
+ln -sf $INTERVAL.sample INTERVAL.sample
+
+# to obtain SNP-specific statistics as in .bgen and .sample format with qctool, tested with qctool 2.0.1
+
+qctool -g INTERVAL.bgen -s INTERVAL.sample -snp-stats -osnp INTERVAL.snp-stats -sample-stats -osample INTERVAL.sample-stats -os INTERVAL.os
+
+# Note in particular: the # option allows for chromosome-specific analysis; the -strand option will enable results in positive strand.
+```
