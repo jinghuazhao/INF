@@ -1,16 +1,16 @@
-<p align="center">
 # SCALLOP consortium analysis plan for INF panel proteins
 
 ***Adapted from SCALLOP/CVD1 analysis plan, last updated 6/12/2018***
 
 ---
 
+<p align="center">
 <b><font align="top" size="16">Timeline for completing cohort-specific analyses and uploading the results for this project: </font></b><br><br>
 
 <img src="doc/deadline.png" align="botom">
+</p>
 
 ---
-</p>
 
 ## 1. Overview
 
