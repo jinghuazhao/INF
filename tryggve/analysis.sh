@@ -93,7 +93,7 @@ export prot_annotation=$rt/doc/olink.inf.panel.annot.tsv
 sort -k1,1 > inf1.tmp
 (
   sed 's/.clumped://g' INF1.clumped | \
-  awk '(NF>1){$1=$1;if(NR==1) $1="prot";print $1,$2,$4,$5,$6}'
+  awk '(NF>1){$1=$1;if(NR==1) $1="prot"};1'
 ) > INF1.clumped.dat
 R --no-save -q <<END
   inf1 <- read.delim(Sys.getenv("prot_annotation"), as.is=TRUE)
