@@ -44,8 +44,7 @@ The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao
 
 * Rank-based inverse normal transformation on the raw measurement of proteins including those below lower limit of detection, e.g., via `invnormal` function,
 ```r
-invnormal <- function(x)
-  qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
+invnormal <- function(x) qnorm((rank(x,na.last="keep")-0.5)/sum(!is.na(x)))
 ```
 * Multiple linear regression for all samples including sex, age, principal components and other cohort specific covariates.
 * Additive genetic model
