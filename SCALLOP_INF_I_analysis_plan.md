@@ -118,7 +118,7 @@ In this case, please provide for each SNP information on strand, effect allele, 
 measure can be on the genotype level obtained once for a cohort rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based 
 statistics can be greatly facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/. As is the case with INTERVAL.bgen and INTERVAL.sample, one can obtain the SNP-based statistics as follows,
 ```bash
-qctool -g INTERVAL.bgen -s INTERVAL.sample -snp-stats -osnp INTERVAL.snp-stats -sample-stats -osample INTERVAL.sample-stats -os INTERVAL.os
+qctool -g INTERVAL.bgen -s INTERVAL.sample -snp-stats -osnp INTERVAL.snp-stats -sample-stats -osample INTERVAL.sample-stats
 ```
 See also the full SLURM sbatch script in the Appendix.
 
