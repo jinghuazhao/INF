@@ -1,4 +1,4 @@
-# 23-11-2018 JHZ
+# 7-12-2018 JHZ
 
 # --- INF list of proteins and file list ---
 
@@ -241,4 +241,4 @@ function md()
 }
 
 module load parallel/20170822
-STABILITY
+STANLEY
