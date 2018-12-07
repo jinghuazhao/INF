@@ -107,7 +107,7 @@ R --no-save -q <<END
   names(hits) <- c("prot","Chr","bp","SNP","uniprot")
   require(gap)
   cistrans <- cis.vs.trans.classification(hits,p)
-  sink("INTERVAL.clumped.out")
+  sink("INF1.clumped.out")
   cistrans$table
   sink()
   sum(cistrans$table)
