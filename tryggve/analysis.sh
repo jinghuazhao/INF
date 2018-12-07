@@ -96,7 +96,7 @@ sort -k1,1 > inf1.tmp
   awk '(NF>1){$1=$1;if(NR==1) $1="prot";print $1,$2,$4,$5,$6}'
 ) > INF1.clumped.dat
 R --no-save -q <<END
-  inf1 <- read.delim(Sys.getenv("prot_annotation", as.is=TRUE)
+  inf1 <- read.delim(Sys.getenv("prot_annotation"), as.is=TRUE)
   inf1[with(inf1, uniprot=="Q8NF90"),"hgnc_symbol"] <- "FGF5"
   inf1[with(inf1, uniprot=="Q8WWJ7"),"hgnc_symbol"] <- "CD6"
   prot <- read.table("inf1.tmp",col.names=c("prot","uniprot"),as.is=TRUE,sep="\t")
