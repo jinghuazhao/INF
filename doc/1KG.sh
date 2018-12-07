@@ -1,4 +1,4 @@
-# 3-12-2018 JHZ
+# 7-12-2018 JHZ
 
 # allele frequencies from 1KG phase 3
 sbatch -wait doc/1KG.slurm
@@ -61,3 +61,28 @@ parallel -j1 -C' ' '
    join -j1 -v1 - 1KG.snpid > {2}.v1
 ' 
 
+echo "--> 100Genomes phase 3 version 5 at Cardio"
+
+export p3v5=/scratch/public_databases/1000_Genomes_phase3v5a
+export TMPDIR=/scratch/jhz22/tmp
+if [ ! -f EUR.list ]; then
+  grep EUR $p3v5/integrated_call_samples_v3.20130502.ALL.panel | cut -f1 > EUR.list
+fi
+bcftools view -S EUR.list -O v $p3v5/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz | \
+vcftools --vcf - --freq --stdout | \
+awk -vOFS="\t" '
+{
+  if(NR==1) print "SNP","CHR","POS","MINOR","MAJOR","MAF";
+  else
+  {
+     split($5,x,":"); a=x[1]; af=x[2];
+     split($6,y,":"); b=y[1]; bf=y[2];
+     if (a>b) snpid="chr" $1 ":" $2 "_" b "_" a;
+         else snpid="chr" $1 ":" $2 "_" a "_" b
+     if (af<bf) {minor=a;major=b;maf=af}
+           else {minor=b;major=a;maf=bf}
+     if (maf>0) print snpid, $1, $2, minor, major, maf
+  }
+}' | \
+gzip -f > $HOME/INF/work/1KGp3v5-X.txt.gz
+# bcftools annotate --set-id +'%CHROM\_%POS\_%REF\_%FIRST_ALT'
