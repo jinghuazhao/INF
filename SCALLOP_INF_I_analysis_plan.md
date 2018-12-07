@@ -1,6 +1,6 @@
 # SCALLOP consortium analysis plan for INF panel proteins
 
-***Adapted from SCALLOP/CVD1 analysis plan, last updated 6/12/2018***
+***Adapted from SCALLOP/CVD1 analysis plan, last updated 7/12/2018***
 
 ---
 
