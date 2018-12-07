@@ -56,7 +56,7 @@ It is preferable to use software which account for genotype uncertainty, such as
 
 ## 3. Descriptive statistics
 
-A [Google sheet](https://tinyurl.com/y76f5mv5) has been set up for filling up the information online; in order to do so please contact us via email to add you in.
+A [Google sheet](https://tinyurl.com/y76f5mv5) has been set up for filling up the information online; in order to do so please provide your gmail to us.
 
 [https://tinyurl.com/ycf5vkhn](https://tinyurl.com/ycf5vkhn)
 
