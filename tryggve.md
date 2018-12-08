@@ -39,14 +39,13 @@ module load anaconda2/4.4.0
 module load perl/5.24.0 annovar/2018apr16
 module load bcftools/1.8
 module load gcta/1.91.0beta
-module load intel/redist/2018 intel/perflibs/64/2018 gcc/5.4.0 R/3.5.0-ICC-MKL rstudio/1.1.453
+module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL rstudio/1.1.453
 module load libreoffice/6.0.5.2
 module load locuszoom/1.4
 module load metal/20110325
 module load pandoc/2.1
 module load parallel/20170822
 module load plink2/1.90beta5.4
-module load qctool/1.4
 module load vcftools/0.1.15
 module load xpdf/3.04
 export threads=1
@@ -83,6 +82,7 @@ NB METAL add -1 to the filenames.
 
 The version at TRYGGVE and CRAN are not the latest, which contains functions such as cis.vs.trans.classification, and here is the way to go
 ```bash
+module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL
 tar xvfz gap_1.1-23.tar.gz
 cd gap/src
 gcc -I/services/tools/intel/perflibs/2019/compilers_and_libraries/linux/mpi/intel64/include -L/services/tools/intel/perflibs/2019/compilers_and_libraries/linux/mpi/intel64/lib/release -L/services/tools/intel/perflibs/2019/compilers_and_libraries/linux/mpi/intel64/lib -Xlinker --enable-new-dtags -Xlinker -rpath -Xlinker /services/tools/intel/perflibs/2019/compilers_and_libraries/linux/mpi/intel64/lib/release -Xlinker -rpath -Xlinker /services/tools/intel/perflibs/2019/compilers_and_libraries/linux/mpi/intel64/lib -Xlinker -rpath -Xlinker /opt/intel/mpi-rt/2017.0.0/intel64/lib/release -Xlinker -rpath -Xlinker /opt/intel/mpi-rt/2017.0.0/intel64/lib -lmpifort -lmpi -ldl -lrt -lpthread -L/services/tools/intel/perflibs/2019//compilers_and_libraries_2019.0.117/linux/mpi/intel64/libfabric/lib -fPIC -shared *.c *.f -c
