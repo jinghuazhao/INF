@@ -90,7 +90,7 @@ gcc -shared -L/services/tools/R/3.5.0-ICC-MKL/lib64/R/lib -L/usr/local/lib64 -o 
 cd -
 R CMD INSTALL gap
 ```
-The rather complicated compiler flags are derived from `mpiicc -show`, and the idea is to get around check for icc which does not exist on the system.
+The rather imtimidating compiler flags are derived from `mpiicc -show` as with initial pass requested for libfabric.so.1, and the idea is to get around check for icc which does not exist on the system.
 
 ## URLs
 
