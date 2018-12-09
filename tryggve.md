@@ -1,4 +1,4 @@
-# SCALLOP/INFlmmation anlaysis on TRYGGVE
+# SCALLOP/INFlammation anlaysis on TRYGGVE
 
 The repository contains the following files,
 
