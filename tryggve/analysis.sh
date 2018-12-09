@@ -1,4 +1,4 @@
-# 8-12-2018 JHZ
+# 9-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -104,9 +104,9 @@ R --no-save -q <<END
   require(gap)
   cistrans <- cis.vs.trans.classification(hits,p)
   sink("INF1.clumped.out")
-  cistrans\$table
+  with(cistrans,table)
   sink()
-  sum(cistrans\$table)
+  sum(with(cistrans,table))
 END
 
 echo "--> METAL results containing P-value=0"
