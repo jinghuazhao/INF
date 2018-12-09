@@ -104,9 +104,9 @@ R --no-save -q <<END
   require(gap)
   cistrans <- cis.vs.trans.classification(hits,p)
   sink("INF1.clumped.out")
-  cistrans$table
+  cistrans\$table
   sink()
-  sum(cistrans$table)
+  sum(cistrans\$table)
 END
 
 echo "--> METAL results containing P-value=0"
