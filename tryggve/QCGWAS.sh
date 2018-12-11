@@ -1,4 +1,4 @@
-# 9-12-2018 JHZ
+# 11-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -14,7 +14,7 @@ cd $rt/work; \
 if [ ! -d {} ]; then mkdir {}; fi; \
 cd -; \
 R --no-save -q < $rt/tryggve/QCGWAS.R > $rt/work/{}.log; \
-' ::: ARTN IFN.gamma IL.10RA IL.1.alpha IL.20 IL.20RA IL.22.RA1 IL.24 IL.2RB IL.33 IL.5 NRTN TNF TSLP
+' ::: ARTN IFN.gamma IL.1.alpha IL.20 IL.20RA IL.22.RA1 IL.24 IL.2RB IL.33 NRTN TSLP
 
 function single_protein_as_argument()
 {
