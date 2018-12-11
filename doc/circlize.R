@@ -1,4 +1,4 @@
-#28-11-2018 JHZ
+#11-12-2018 JHZ
 
 inf1 <- read.delim("olink.inf.panel.annot.tsv", as.is=TRUE)
 inf1[with(inf1, uniprot=="Q8NF90"),"hgnc_symbol"] <- "FGF5"
@@ -36,10 +36,8 @@ dev.off()
 clumped <- read.table("INF1.clumped",as.is=TRUE,header=TRUE)
 hits <- merge(clumped[c("CHR","BP","SNP","prot")],p[c("prot","uniprot")],by="prot")
 names(hits) <- c("prot","Chr","bp","SNP","uniprot")
-hits_excl <- c( "ADA", "CCL25", "CD6", "CST5", "FGF.5", "IFN.gamma",
-                "IL.13", "IL.18R1", "IL.1.alpha", "IL.20", "IL.20RA", "IL.22.RA1",
-                "IL.24", "IL.2RB", "IL.33", "LIF", "MCP.2", "NRTN", "TSLP",
-                "IL.10RA", "IL.5", "TNF")
+hits_excl <- c( "ADA", "IFN.gamma", "IL.1.alpha", "IL.20", "IL.20RA", "IL.22.RA1",
+                "IL.24", "IL.33", "IL.2RB", "NRTN", "TSLP")
 hits_inc <- subset(hits, !(prot%in%hits_excl))
 cvt <- cis.vs.trans.classification(hits_inc,p)
 with(cvt,summary(data))
