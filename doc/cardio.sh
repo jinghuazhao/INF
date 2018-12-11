@@ -263,9 +263,8 @@ seq 22 | \
 parallel -j5 'tabix -f -p vcf chr{}.vcf.gz'
 seq 22 | \
 awk -vp=$PWD '{print p "/chr" $1 ".vcf.gz"}' > INTERVAL.list
-vcf-concat --files INTERVAL.list | \
-bcftools norm -d both - | \
-bcftools convert - -O z -o INTERVAL.vcf.gz
+bcftools concat --file-list INTERVAL.list --threads 6 | \
+bcftools annotate --set-id 'chr%CHROM\:%POS\_%REF\_%ALT' --threads 6 - -O z -o INTERVAL.vcf.gz
 plink --vcf INTERVAL.vcf.gz --make-bed --out INTERVAL
 awk -vFS="\t" '
 {
