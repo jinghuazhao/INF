@@ -6,6 +6,7 @@ inf1[with(inf1, uniprot=="Q8WWJ7"),"hgnc_symbol"] <- "CD6"
 prot <- read.table("inf1.list",col.names=c("prot","uniprot"),as.is=TRUE,sep="\t")
 p <- merge(inf1,prot,by="uniprot")[c("chromosome_name","start_position","end_position","hgnc_symbol","prot","uniprot")]
 names(p) <- c("chr","start","end","gene","prot","uniprot")
+
 # INTERVAL
 clumped <- read.table("INTERVAL.clumped",as.is=TRUE,header=TRUE)
 hits <- merge(clumped[c("CHR","BP","SNP","prot")],p[c("prot","uniprot")],by="prot")
@@ -59,7 +60,6 @@ circos.genomicLabels(ann,labels.column = 4, side="inside")
 circos.genomicLink(b1, b2, col = 10, border = 10, lwd = 2)
 circos.clear()
 dev.off()
-
 
 #> head(cistrans$data)
 #  uniprot   prot Chr        bp                SNP p.chr   p.start     p.end
