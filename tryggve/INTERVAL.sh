@@ -1,4 +1,4 @@
-# 3-12-2018 JHZ
+# 11-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -28,7 +28,10 @@ plink --bfile EUR1KG \
   grep CHR work/INTERVAL.*.clumped | \
   head -1
   grep -v CHR work/INTERVAL.*.clumped
-) > work/INTERVAL.clumped
+) | \
+sed 's|'"$rt"'/||g;s/.clumped://g' | \
+awk '(NF>1){$3="";print}' | \
+awk '{$1=$1;if(NR==1)$1="prot";print}' > INTERVAL.clumped
 
 echo "--> top signals"
 # NOTE this was based on results from metal/20110325 without TRACKPOSITIONS
