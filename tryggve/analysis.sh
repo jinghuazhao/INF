@@ -206,9 +206,8 @@ gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-co
   head -1
   grep -v -w SNP $rt/*.jma.cojo
 ) | \
-sed 's|'"$rt"'/||g;s/.jma.cojo://g' | \
-awk '(NF>1){$3="";print}' | \
-awk '{$1=$1;if(NR==1)$1="prot";print}' > INF1.jma
+sed 's|'"$rt"'/||g;s/.jma.cojo:/\t/g' | \
+awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > INF1.jma
 
 echo "--> clumping and cojo with LDetect approximately independent LD blocks"
 
