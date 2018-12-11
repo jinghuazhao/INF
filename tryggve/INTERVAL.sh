@@ -29,7 +29,7 @@ plink --bfile EUR1KG \
   head -1
   grep -v CHR work/INTERVAL.*.clumped
 ) | \
-sed 's|'"$rt"'/||g;s/.clumped://g' | \
+sed 's|work/INTERVAL.||g;s/.clumped://g' | \
 awk '(NF>1){$3="";print}' | \
 awk '{$1=$1;if(NR==1)$1="prot";print}' > INTERVAL.clumped
 
