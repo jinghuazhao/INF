@@ -1,13 +1,13 @@
 #11-12-2018 JHZ
 
-inf1 <- read.delim("olink.inf.panel.annot.tsv", as.is=TRUE)
+inf1 <- read.delim("doc/olink.inf.panel.annot.tsv", as.is=TRUE)
 inf1[with(inf1, uniprot=="Q8NF90"),"hgnc_symbol"] <- "FGF5"
 inf1[with(inf1, uniprot=="Q8WWJ7"),"hgnc_symbol"] <- "CD6"
 prot <- read.table("inf1.list",col.names=c("prot","uniprot"),as.is=TRUE,sep="\t")
 p <- merge(inf1,prot,by="uniprot")[c("chromosome_name","start_position","end_position","hgnc_symbol","prot","uniprot")]
 names(p) <- c("chr","start","end","gene","prot","uniprot")
 # INTERVAL
-clumped <- read.table("INTERVAL.clumped.dat",as.is=TRUE,header=TRUE)
+clumped <- read.table("INTERVAL.clumped",as.is=TRUE,header=TRUE)
 hits <- merge(clumped[c("CHR","BP","SNP","prot")],p[c("prot","uniprot")],by="prot")
 names(hits) <- c("prot","Chr","bp","SNP","uniprot")
 require(gap)
