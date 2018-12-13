@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 10/12/18 JHZ
+# General notes, 13/12/18 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
@@ -257,6 +257,8 @@ function CD6()
 export src=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_imputed_info_0.4_phwe_1e-4_filtered/per_chr
 export PERL5LIB=/scratch/jhz22/share/perl5
 
+# INTERVAL data as LD reference
+## whole-genome versionk, too slow and not implemented
 seq 22 | \
 parallel --env src -j5 'plink --bfile $src/interval.imputed.olink.chr_{} --recode vcf bgz --out chr{}'
 seq 22 | \
@@ -280,6 +282,25 @@ awk -vFS="\t" '
 plink --bfile INTERVAL --update-name INTERVAL.snpid 1 2 --make-bed --out UK10K1KG
 plink --bfile UK10K1KG --chr 6 --from-mb 25 --to-mb 35 --make-bed --out MHC
 cut -f2 MHC.bim > MHC.snpid
+
+## by chromosome which nevertheless worked through SLURM
+seq 22 | \
+parallel -j4 '
+  bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr{}.vcf.gz -O z -o INTERVAL-{}.vcf.gz;\
+  plink --vcf INTERVAL-{}.vcf.gz --make-bed --out INTERVAL-{};\
+  awk -vFS="\t" "
+  {
+    CHR=\$1
+    POS=\$4
+    a1=\$5
+    a2=\$6
+    if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+    else snpid="chr" CHR ":" POS "_" a1 "_" a2
+    print snpid, \$2
+  }" INTERVAL-{}.bim > INTERVAL-{}.snpid;\
+  plink --bfile INTERVAL-{} --update-name INTERVAL-{}.snpid 1 2 --make-bed --out UK10K1KG-{};\
+'
+plink --bfile UK10K1KG-6 --chr 6 --from-mb 25 --to-mb 35 --make-bed --out MHC
 
 ## side information
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
