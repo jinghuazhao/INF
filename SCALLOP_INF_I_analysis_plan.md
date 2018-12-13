@@ -56,9 +56,9 @@ It is preferable to use software which account for genotype uncertainty, such as
 
 ## 3. Descriptive statistics
 
-A [Google sheet](https://tinyurl.com/y76f5mv5) has been set up for filling up the information online; in order to do so please provide your gmail to us.
+A [Google sheet](https://tinyurl.com/y76f5mv5) has been set up for filling up the information online:
 
-[https://tinyurl.com/ycf5vkhn](https://tinyurl.com/ycf5vkhn)
+[https://tinyurl.com/y9sw8b5u](https://tinyurl.com/y9sw8b5u)
 
 Alternatively, please fill out the spreadsheet as with SCALLOP/CVD1 with naming convention: 
 
