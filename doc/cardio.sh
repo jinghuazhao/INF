@@ -268,7 +268,7 @@ awk -vp=$PWD '{print p "/chr" $1 ".vcf.gz"}' > INTERVAL.list
 bcftools concat --file-list INTERVAL.list --threads 6 | \
 bcftools annotate --set-id 'chr%CHROM\:%POS\_%REF\_%ALT' --threads 6 - -O z -o INTERVAL.vcf.gz
 plink --vcf INTERVAL.vcf.gz --make-bed --out INTERVAL
-awk -vFS="\t" '
+awk -vOFS="\t" '
 {
   CHR=$1
   POS=$4
