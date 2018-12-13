@@ -268,39 +268,12 @@ awk -vp=$PWD '{print p "/chr" $1 ".vcf.gz"}' > INTERVAL.list
 bcftools concat --file-list INTERVAL.list --threads 6 | \
 bcftools annotate --set-id 'chr%CHROM\:%POS\_%REF\_%ALT' --threads 6 - -O z -o INTERVAL.vcf.gz
 plink --vcf INTERVAL.vcf.gz --make-bed --out INTERVAL
-awk -vOFS="\t" '
-{
-  CHR=$1
-  POS=$4
-  a1=$5
-  a2=$6
-  if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
-  else snpid="chr" CHR ":" POS "_" a1 "_" a2
-  print snpid, $2
-}' INTERVAL.bim > INTERVAL.snpid
-
-plink --bfile INTERVAL --update-name INTERVAL.snpid 1 2 --make-bed --out UK10K1KG
-plink --bfile UK10K1KG --chr 6 --from-mb 25 --to-mb 35 --make-bed --out MHC
-cut -f2 MHC.bim > MHC.snpid
 
 ## by chromosome which nevertheless worked through SLURM
-seq 22 | \
-parallel -j4 '
-  bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr{}.vcf.gz -O z -o INTERVAL-{}.vcf.gz;\
-  plink --vcf INTERVAL-{}.vcf.gz --make-bed --out INTERVAL-{};\
-  awk -vFS="\t" "
-  {
-    CHR=\$1
-    POS=\$4
-    a1=\$5
-    a2=\$6
-    if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
-    else snpid="chr" CHR ":" POS "_" a1 "_" a2
-    print snpid, \$2
-  }" INTERVAL-{}.bim > INTERVAL-{}.snpid;\
-  plink --bfile INTERVAL-{} --update-name INTERVAL-{}.snpid 1 2 --make-bed --out UK10K1KG-{};\
-'
+sbatch --wait INTERVAL.sb
 plink --bfile UK10K1KG-6 --chr 6 --from-mb 25 --to-mb 35 --make-bed --out MHC
+plink --bfile UK10K1KG --chr 6 --from-mb 25 --to-mb 35 --make-bed --out MHC
+cut -f2 MHC.bim > MHC.snpid
 
 ## side information
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv

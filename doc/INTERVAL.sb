@@ -1,0 +1,26 @@
+#!/bin/bash --login
+# 13-12-2018 JHZ
+
+#SBATCH -J bcftools
+#SBATCH -o bcftools.log
+#SBATCH -a 1-22
+#SBATCH -t 3-0:0
+#SBATCH -p long
+
+export chr=$SLURM_ARRAY_TASK_ID
+
+bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr${chr}.vcf.gz -O z -o INTERVAL-${chr}.vcf.gz
+plink --bfile INTERVAL-${chr} --list-duplicate-vars require-same-ref -out INTERVAL-${chr}
+awk '(NR>1){split($NF,dupids," ");print dupids[1]}' INTERVAL-${chr}.dupvar > INTERVAL-${chr}.dupid
+plink --bfile INTERVAL-${chr} --exclude INTERVAL-${chr}.dupid --make-bed --out nodup-${chr}
+awk -vOFS="\t" '
+{
+    CHR=$1
+    POS=$4
+    a1=$5
+    a2=$6
+    if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+    else snpid="chr" CHR ":" POS "_" a1 "_" a2
+    print snpid, $2
+}' nodup-${chr}.bim > nodup-${chr}.snpid
+plink --bfile nodup-${chr} --update-name nodup-${chr}.snpid 1 2 --make-bed --out UK10K1KG-${chr}
