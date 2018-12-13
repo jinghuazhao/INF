@@ -272,8 +272,10 @@ plink --vcf INTERVAL.vcf.gz --make-bed --out INTERVAL
 ## by chromosome which nevertheless worked through SLURM
 sbatch --wait INTERVAL.sb
 plink --bfile UK10K1KG-6 --chr 6 --from-mb 25 --to-mb 35 --make-bed --out MHC
-plink --bfile UK10K1KG --chr 6 --from-mb 25 --to-mb 35 --make-bed --out MHC
 cut -f2 MHC.bim > MHC.snpid
+seq 22 | \
+awk -vp=$PWD '{print p "/UK10K1KG-" $1}' > INTERVAL.list
+plink --merge-list INTERVAL.list --make-bed --out INTERVAL
 
 ## side information
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
