@@ -78,6 +78,10 @@ ls METAL/*.run | parallel --dry-run --env HOME -j8 -C' ' 'metal $HOME/INF/{}'
 ```
 NB METAL add -1 to the filenames.
 
+## Installation of METAL
+
+The version contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format.as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
+
 ## Installation of R/gap
 
 The version at TRYGGVE and CRAN are not the latest, which contains functions such as cis.vs.trans.classification, and here is the way to go
@@ -94,7 +98,7 @@ The rather imtimidating compiler flags are derived from `mpiicc -show` as with i
 
 ## Installation of R/QCGWAS
 
-The version contains fix to the use of HapMap reference and is noted in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
+The version contains fix to the use of HapMap reference as in software-notes above.
 
 ## Installation of EasyQC and EasyStrata
 
