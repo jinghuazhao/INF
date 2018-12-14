@@ -11,8 +11,7 @@ sed 's/INTERVAL.//g;s/.gz//g' | \
 xargs -l basename | \
 parallel -j4 --env rt -C' ' '
 gunzip -c $rt/INTERVAL.{}.gz | \
-plink --bfile EUR1KG \
-      --exclude range tryggve/high-LD-regions-hg19.txt \
+plink --bfile EUR \
       --clump $rt/INTERVAL.{}.gz \
       --clump-snp-field SNPID \
       --clump-field PVAL \
@@ -129,8 +128,8 @@ sed 's/.ma//g' | \
 xargs -l basename | \
 sort | \
 parallel -j3 --env rt -C' ' '
-  gcta64 --bfile EUR1KG --cojo-file work/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
-         --exclude-region-bp 6 30000000 5000 --thread-num 3 --out work/{}
+  gcta64 --bfile EUR --cojo-file work/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
+         --thread-num 3 --out work/{}
 '
 
 (

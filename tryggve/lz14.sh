@@ -1,4 +1,4 @@
-# 24-11-2018 JHZ
+# 14-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -39,6 +39,10 @@ awk -vFS="\t" '
 plink --bfile EUR --update-name EUR.snpid 1 2 --make-bed --out EUR1KG
 plink --bfile EUR1KG --chr 6 --from-mb 25 --to-mb 35 --make-bed --out MHC
 cut -f2 MHC.bim > MHC.snpid
+
+plink --bfile EUR1KG \
+      --exclude range tryggve/high-LD-regions-hg19.txt \
+      --make-bed --out EUR
 
 echo "--> SNP/gene databases and indices"
 

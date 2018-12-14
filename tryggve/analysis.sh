@@ -61,8 +61,7 @@ ls METAL/*tbl.gz | \
 sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j4 --env rt -C' ' '
-plink --bfile EUR1KG \
-      --exclude range tryggve/high-LD-regions-hg19.txt \
+plink --bfile EUR \
       --clump $rt/{}-1.tbl.gz \
       --clump-snp-field MarkerName \
       --clump-field P-value \
@@ -183,8 +182,8 @@ ls METAL/*.tbl.gz | \
 sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j3 --env rt -C' ' '
-gcta64 --bfile EUR1KG --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.01 --cojo-wind 500 \
-       --maf 0.0001 --exclude-region-bp 6 30000000 5000 --thread-num 3 --out $rt/{}
+gcta64 --bfile EUR --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.01 --cojo-wind 500 \
+       --maf 0.0001 --thread-num 3 --out $rt/{}
 '
 #1 MarkerName
 #2 Allele1
@@ -224,11 +223,10 @@ do
   awk 'NR>1' tryggve/EURLD.bed | \
   parallel --env p --env rt -C' ' '
   ( \
-    plink --bfile EUR1KG \
+    plink --bfile EUR \
       --chr {1} \
       --from-bp {2} \
       --to-bp {3} \
-      --exclude range tryggve/high-LD-regions-hg19.txt \
       --clump $rt/{}-1.tbl.gz \
       --clump-snp-field MarkerName \
       --clump-field P-value \
@@ -242,8 +240,8 @@ do
   cat EURLD.region | \
   parallel --env p --env rt -C' ' '
    ( \
-     gcta64 --bfile KORA2 --cojo-file $rt/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
-            --extract-region-bp {1} {2} {3} --exclude-region-bp 6 30000000 5000 --thread-num 3 --out METAL/$p-{4}; \
+     gcta64 --bfile EUR --cojo-file $rt/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
+            --extract-region-bp {1} {2} {3} --thread-num 3 --out METAL/$p-{4}; \
      if [ -f ${p}-{4}.jma.cojo ]; then awk "NR>1" $rt/$p-{4}.jma.cojo; fi; \
    ) > $rt/${p}.jma
   '
