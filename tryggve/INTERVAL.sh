@@ -1,4 +1,4 @@
-# 11-12-2018 JHZ
+# 16-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -12,7 +12,7 @@ xargs -l basename | \
 parallel -j4 --env rt -C' ' '
 gunzip -c $rt/INTERVAL.{}.gz | \
 plink --bfile EUR1KG \
-      --exclude MHC.snpid \
+      --exclude range tryggve/high-LD-regions-hg19.txt \
       --clump $rt/INTERVAL.{}.gz \
       --clump-snp-field SNPID \
       --clump-field PVAL \
