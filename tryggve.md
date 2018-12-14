@@ -80,7 +80,7 @@ NB METAL add -1 to the filenames.
 
 ## Installation of METAL
 
-The version contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format.as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
+The version contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
 
 ## Installation of R/gap
 
