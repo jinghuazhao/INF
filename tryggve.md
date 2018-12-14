@@ -102,9 +102,9 @@ The rather imtimidating compiler flags are derived from `mpiicc -show` as with i
 
 ## Installation of R/QCGWAS
 
-The version contains fix to the use of HapMap reference as in software-notes above.
+The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.
 
-## Installation of EasyQC and EasyStrata
+## Installation of R/EasyQC and R/EasyStrata
 
 The version is 18.1 rather than 9.2 and 8.6 currenly online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.
 
