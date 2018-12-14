@@ -15,8 +15,8 @@ File     | Description
 ---------|--------------------------------------------------------
 [doc/](doc) | Some documents and auxiliary files
 [tryggve/](tryggve) | Analysis programs on TRYGGVE
-[SCALLOP_INF_I_analysis_plan.md](SCALLOP_INF_I_analysis_plan.md) | analysis plan
-[SCALLOP_INF_I_analysis_plan.docx](SCALLOP_INF_I_analysis_plan.docx) |
+[SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | analysis plan
+[SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
 [tryggve.md](tryggve.md) | TRYGGVE notes
 
 <img src="doc/INTERVAL.circlize.png" width="300" height="300" align="right">
