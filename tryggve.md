@@ -84,7 +84,7 @@ The version contains modification which allows for CUSTOMVARIABLE to use integer
 
 ## Installation of qctool
 
-The system has qctool/2.0.1 module installed but nevertheless not functional for lack of lapack shared libraries, lapack-3.8.0/ is available from /data/jinhua as composed to module lapack/3.8.0.
+The system has module qctool/2.0.1 installed but nevertheless not functional for lack of lapack shared libraries, lapack-3.8.0/ is available from /data/jinhua as composed to module lapack/3.8.0.
 
 ## Installation of R/gap
 
