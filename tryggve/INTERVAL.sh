@@ -1,4 +1,4 @@
-# 16-12-2018 JHZ
+# 14-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -32,6 +32,32 @@ plink --bfile EUR1KG \
 sed 's|work/INTERVAL.||g;s/.clumped://g' | \
 awk '(NF>1){$3="";print}' | \
 awk '{$1=$1;if(NR==1)$1="prot";print}' > INTERVAL.clumped
+
+export rt=$HOME/INF 
+export prot_list=$rt/doc/olink.prot.list.txt
+export prot_annotation=$rt/doc/olink.inf.panel.annot.tsv
+(
+  grep inf1 ${prot_list} | \
+  sed 's/inf1_//g;s/___/\t/g'
+) | \
+sort -k1,1 > inf1.tmp
+R --no-save -q <<END
+  inf1 <- read.delim(Sys.getenv("prot_annotation"), as.is=TRUE)
+  inf1[with(inf1, uniprot=="Q8NF90"),"hgnc_symbol"] <- "FGF5"
+  inf1[with(inf1, uniprot=="Q8WWJ7"),"hgnc_symbol"] <- "CD6"
+  prot <- read.table("inf1.tmp",col.names=c("prot","uniprot"),as.is=TRUE,sep="\t")
+  p <- merge(inf1,prot,by="uniprot")[c("chromosome_name","start_position","end_position","hgnc_symbol","prot","uniprot")]
+  names(p) <- c("chr","start","end","gene","prot","uniprot")
+  clumped <- read.table("INTERVAL.clumped",as.is=TRUE,header=TRUE)
+  hits <- merge(clumped[c("CHR","BP","SNP","prot")],p[c("prot","uniprot")],by="prot")
+  names(hits) <- c("prot","Chr","bp","SNP","uniprot")
+  require(gap)
+  cistrans <- cis.vs.trans.classification(hits,p)
+  sink("INTERVAL.clumped.out")
+  with(cistrans,table)
+  sink()
+  sum(with(cistrans,table))
+END
 
 echo "--> top signals"
 # NOTE this was based on results from metal/20110325 without TRACKPOSITIONS
