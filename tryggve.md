@@ -92,6 +92,14 @@ R CMD INSTALL gap
 ```
 The rather imtimidating compiler flags are derived from `mpiicc -show` as with initial pass requested for libfabric.so.1, and the idea is to get around check for icc which does not exist on the system.
 
+## Installation of R/QCGWAS
+
+The version contains fix to the use of HapMap reference and is noted in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
+
+## Installation of EasyQC and EasyStrata
+
+The version is 18.1 rather than 9.2 and 8.6 currenly online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.
+
 ## URLs
 
 SCALLOP consortium, https://www.olink.com/scallop/
