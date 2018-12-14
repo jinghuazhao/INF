@@ -228,7 +228,7 @@ do
       --chr {1} \
       --from-bp {2} \
       --to-bp {3} \
-      --exclude MHC.snpid \
+      --exclude range tryggve/high-LD-regions-hg19.txt \
       --clump $rt/{}-1.tbl.gz \
       --clump-snp-field MarkerName \
       --clump-field P-value \
