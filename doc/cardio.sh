@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 13/12/18 JHZ
+# General notes, 14/12/18 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
@@ -258,24 +258,25 @@ export src=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelat
 export PERL5LIB=/scratch/jhz22/share/perl5
 
 # INTERVAL data as LD reference
-## whole-genome versionk, too slow and not implemented
 seq 22 | \
 parallel --env src -j5 'plink --bfile $src/interval.imputed.olink.chr_{} --recode vcf bgz --out chr{}'
 seq 22 | \
 parallel -j5 'tabix -f -p vcf chr{}.vcf.gz'
-seq 22 | \
-awk -vp=$PWD '{print p "/chr" $1 ".vcf.gz"}' > INTERVAL.list
-bcftools concat --file-list INTERVAL.list --threads 6 | \
-bcftools annotate --set-id 'chr%CHROM\:%POS\_%REF\_%ALT' --threads 6 - -O z -o INTERVAL.vcf.gz
-plink --vcf INTERVAL.vcf.gz --make-bed --out INTERVAL
 
-## by chromosome which nevertheless worked through SLURM
+## by chromosome worked through SLURM
 sbatch --wait INTERVAL.sb
 plink --bfile UK10K1KG-6 --chr 6 --from-mb 25 --to-mb 35 --make-bed --out MHC
 cut -f2 MHC.bim > MHC.snpid
 seq 22 | \
 awk -vp=$PWD '{print p "/UK10K1KG-" $1}' > INTERVAL.list
 plink --merge-list INTERVAL.list --make-bed --out INTERVAL
+
+## whole-genome version, too slow to run
+# seq 22 | \
+# awk -vp=$PWD '{print p "/chr" $1 ".vcf.gz"}' > INTERVAL.list
+# bcftools concat --file-list INTERVAL.list --threads 6 | \
+# bcftools annotate --set-id 'chr%CHROM\:%POS\_%REF\_%ALT' --threads 6 - -O z -o INTERVAL.vcf.gz
+# plink --vcf INTERVAL.vcf.gz --make-bed --out INTERVAL
 
 ## side information
 export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
