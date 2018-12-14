@@ -1,4 +1,4 @@
-# 11-12-2018 JHZ
+# 14-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -63,6 +63,7 @@ xargs -l basename | \
 parallel -j4 --env rt -C' ' '
 plink --bfile EUR1KG \
       --exclude MHC.snpid \
+      --exclude range trygve/high-LD-regions-hg19.txt \
       --clump $rt/{}-1.tbl.gz \
       --clump-snp-field MarkerName \
       --clump-field P-value \
