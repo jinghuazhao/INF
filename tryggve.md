@@ -82,6 +82,10 @@ NB METAL add -1 to the filenames.
 
 The version contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
 
+## Installation of qctool
+
+The system has qctool/2.0.1 module installed but nevertheless not functional for lack of lapack shared libraries, lapack-3.8.0/ is available from /data/jinhua as composed to module lapack/3.8.0.
+
 ## Installation of R/gap
 
 The version at TRYGGVE and CRAN are not the latest, which contains functions such as cis.vs.trans.classification, and here is the way to go
