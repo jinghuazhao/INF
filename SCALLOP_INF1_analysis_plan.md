@@ -111,7 +111,7 @@ No | Name | Description | Additional comment
 10 | STAT | Regression test statistic
 11 | P | P value
 
-\* may be taken from the PLINK --hardy option and .bim file.
+\* may be taken from the PLINK --hardy option and .bim file, see http://zzz.bwh.harvard.edu/plink/anal.shtml#glm.
 
 In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures for imputation -- the information 
 measure can be on the genotype level obtained once for a cohort rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based 
