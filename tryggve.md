@@ -84,7 +84,7 @@ There are a number of software updates/additions which are worthy of note.
 
 ### GCTA
 
-The version that can handle z statistics instead of p values is at /data/jinhua/gcta_1.91.7beta/
+The version that can handle chi-squared statistics instead of p values is at /data/jinhua/gcta_1.91.7beta/
 
 ### METAL
 
