@@ -1,4 +1,4 @@
-# 4-12-2018 JHZ
+# 15-12-2018 JHZ
 
 library(QCGWAS)
 
@@ -17,7 +17,7 @@ src_qc <- QC_GWAS(src_in,
 	filename_output = src_out,
 	dir_data = "sumstats/work",
 	dir_output = paste0("work/",prot),
-	dir_references = "/data/jinhua/data/EasyQC",
+	dir_references = "/data/jinhua/data/1KG",
 	header_translations = header_translations,
 	save_final_dataset = FALSE,
 	HQfilter_FRQ = 0.01,
@@ -38,7 +38,7 @@ src_qc
 QC_series(data_files = QC_in,
 	dir_data = "sumstats/work",
 	dir_output = paste0("work/",prot),
-	dir_references = "/data/jinhua/data/EasyQC",
+	dir_references = "/data/jinhua/data/1KG",
 	output_filenames = QC_out,
 	header_translations = header_translations,
 	save_final_dataset = FALSE,
