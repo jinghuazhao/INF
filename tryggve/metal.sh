@@ -1,4 +1,4 @@
-# 10-12-2018 JHZ
+# 15-12-2018 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
@@ -16,7 +16,8 @@ do
       print s " /data/" ENVIRON["USER"] "/INF/sumstats/" dir "/" $1
    }'
 done
-) > METAL/METAL.tmp
+) | \
+awk '{print $0, NR}' > METAL/METAL.tmp
 
 cd $HOME/INF/sumstats/work
 cat $HOME/INF/METAL/METAL.tmp | \
@@ -52,7 +53,7 @@ do
    echo SCHEME STDERR
    echo GENOMICCONTROL OFF
    echo OUTFILE $HOME/INF/METAL/$p- .tbl
-   echo $p | join METAL/METAL.list - | awk '{$1="PROCESS"; print}'
+   echo $p | join METAL/METAL.list - | sort -k3,3n | awk '{print "PROCESS", $2}'
    echo ANALYZE
    echo CLEAR
 ) > METAL/$p.metal

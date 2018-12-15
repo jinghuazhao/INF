@@ -82,6 +82,10 @@ NB METAL add -1 to the filenames.
 
 The version contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
 
+## Installation of parallel
+
+The version has some improvement, and is installed at /data/jinhua/parallel-20181022/.
+
 ## Installation of qctool
 
 The system has module qctool/2.0.1 installed but nevertheless not functional for lack of lapack shared libraries, so lapack-3.8.0/ is available from /data/jinhua as composed to module lapack/3.8.0.
