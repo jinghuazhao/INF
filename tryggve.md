@@ -78,19 +78,23 @@ ls METAL/*.run | parallel --dry-run --env HOME -j8 -C' ' 'metal $HOME/INF/{}'
 ```
 NB METAL add -1 to the filenames.
 
-## Installation of METAL
+## INSTALLATIONS
+
+There are a number of software updates/additions which are worthy of note.
+
+### METAL
 
 The version contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
 
-## Installation of parallel
+### GNU parallel
 
-The version has some improvement, and is installed at /data/jinhua/parallel-20181022/.
+The version has some improvement and is installed at /data/jinhua/parallel-20181022/.
 
-## Installation of qctool
+### qctool
 
 The system has module qctool/2.0.1 installed but nevertheless not functional for lack of lapack shared libraries, so lapack-3.8.0/ is available from /data/jinhua as composed to module lapack/3.8.0.
 
-## Installation of R/gap
+### R/gap
 
 The version at TRYGGVE and CRAN are not the latest, which contains functions such as cis.vs.trans.classification, and here is the way to go
 ```bash
@@ -104,11 +108,11 @@ R CMD INSTALL gap
 ```
 The rather imtimidating compiler flags are derived from `mpiicc -show` as with initial pass requested for libfabric.so.1, and the idea is to get around check for icc which does not exist on the system.
 
-## Installation of R/QCGWAS
+### R/QCGWAS
 
 The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.
 
-## Installation of R/EasyQC and R/EasyStrata
+### R/EasyQC and R/EasyStrata
 
 The version is 18.1 rather than 9.2 and 8.6 currenly online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.
 
