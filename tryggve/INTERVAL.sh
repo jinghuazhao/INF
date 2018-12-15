@@ -1,4 +1,4 @@
-# 14-12-2018 JHZ
+# 15-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -89,7 +89,7 @@ parallel -j4 --env rt -C' ' '
   gzip -f > work/INTERVAL.{}.p.gz; \
   export protein={}; \
   R --no-save -q <<END
-  source("files/lambda.R"); \
+  library(gap); \
   rt <- Sys.getenv("rt"); \
   protein <- Sys.getenv("protein"); \
   gz <- gzfile(paste0("work/INTERVAL.",protein,".p.gz")); \
