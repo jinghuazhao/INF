@@ -58,7 +58,7 @@ It is preferable to use software which account for genotype uncertainty, such as
 
 A Google sheet has been set up for filling up the information online:
 
-[https://tinyurl.com/ycf5vkhn](https://tinyurl.com/ycf5vkhn)
+[https://tinyurl.com/y9sw8b5u](https://tinyurl.com/y9sw8b5u)
 
 Alternatively, please fill out the spreadsheet as with SCALLOP/CVD1 with naming convention: 
 
