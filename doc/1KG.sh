@@ -1,4 +1,4 @@
-# 14-12-2018 JHZ
+# 15-12-2018 JHZ
 
 # allele frequencies from 1KG phase 3
 sbatch -wait doc/1KG.sb
@@ -7,7 +7,10 @@ sbatch -wait doc/1KG.sb
   for chr in $(seq 22); do zgrep -v -w CHR 1KGp3v5-${chr}.txt.gz ; done
 ) | \
 gzip -f > 1KGp3v5.tsv.gz
-gunzip -c 1KGp3v5.tsv.gz | awk -F '\t' 'BEGIN {prev="";} {key=$1;if(key==prev) next;print;prev=key;}' | \
+gunzip -c 1KGp3v5.tsv.gz | \
+sort -k1,1 | \
+awk -F '\t' 'BEGIN {prev="";} {key=$1;if(key==prev) next;print;prev=key;}' | \
+sort -k2,2n -k3,3n | \
 gzip -f > nodup.gz
 R --no-save -q <<END
   z <- gzfile("nodup.gz")
