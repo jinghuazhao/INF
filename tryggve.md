@@ -82,6 +82,10 @@ NB METAL add -1 to the filenames.
 
 There are a number of software updates/additions which are worthy of note.
 
+### GCTA
+
+The version can handle z statistics instead of p values is at /data/jinhua/gcta_1.91.7beta/
+
 ### METAL
 
 The version contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
