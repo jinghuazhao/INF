@@ -20,7 +20,6 @@ done
 awk '{print $0, NR}' > METAL/METAL.tmp
 
 sort -k1,1 METAL/METAL.tmp > METAL/METAL.list
-
 # generate METAL command files
 for p in $(cut -f1 inf1.list)
 do
@@ -51,8 +50,7 @@ do
 ) > METAL/$p.metal
 done
 
-## all in one directory to get ready for QCGWAS
-
+# all in one directory to get ready for QCGWAS
 cd $HOME/INF/sumstats/work
 cat $HOME/INF/METAL/METAL.tmp | \
 parallel -j10 -C' ' '
