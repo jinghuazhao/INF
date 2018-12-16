@@ -1,4 +1,4 @@
-# 15-12-2018 JHZ
+# 16-12-2018 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
@@ -18,14 +18,6 @@ do
 done
 ) | \
 awk '{print $0, NR}' > METAL/METAL.tmp
-
-cd $HOME/INF/sumstats/work
-cat $HOME/INF/METAL/METAL.tmp | \
-parallel -j10 -C' ' '
-  echo {2}; \
-  ln -sf {2}
-'
-cd -
 
 sort -k1,1 METAL/METAL.tmp > METAL/METAL.list
 
@@ -58,6 +50,16 @@ do
    echo CLEAR
 ) > METAL/$p.metal
 done
+
+## all in one directory to get ready for QCGWAS
+
+cd $HOME/INF/sumstats/work
+cat $HOME/INF/METAL/METAL.tmp | \
+parallel -j10 -C' ' '
+  echo {2}; \
+  ln -sf {2}
+'
+cd -
 
 # conducting the analysis 
 # module load metal/20110325 parallel/20170822
