@@ -143,8 +143,6 @@ SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/
 -   **STABILITY**. 90 protein.
 -   **STANLEY**. 92 largely complete protein results for lah1 and swe6
 
-It is necessary to generate an annotation file similar to [cvd1\_annotation.tsv](doc/cvd1_annotation.tsv).
-
 96, MMP.12 (CVD II)
 97, MMP.9 (CVD III)
 153, TNFRSF12A (UnitProt ID Q9NP84) (reported in Sun et al. but nonoverlapped with CVD/INF)
