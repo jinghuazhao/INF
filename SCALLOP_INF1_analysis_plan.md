@@ -1,6 +1,6 @@
 # SCALLOP consortium analysis plan for INF panel proteins
 
-***Adapted from SCALLOP/CVD1 analysis plan, last updated 16/12/2018***
+***Adapted from SCALLOP/CVD1 analysis plan, last updated 18/12/2018***
 
 ---
 
@@ -60,11 +60,7 @@ A Google sheet has been set up for filling up the information online:
 
 [https://tinyurl.com/y9sw8b5u](https://tinyurl.com/y9sw8b5u)
 
-Alternatively, please fill out the spreadsheet as with SCALLOP/CVD1 with naming convention: 
-
-* STUDY.descriptives.DATE.xls
-* Where STUDY is a short (14 characters or less) identifier for the population studied, which is the same for all files provided by your study.
-* DATE is the date on which the file was prepared, in the format “DDMMYYYY”.
+Alternatively, you can use the [Excel spreadsheet](doc/SCALLOP-INF1.xlsx) from this repository. 
 
 ## 4. File formats for GWAS results
 
