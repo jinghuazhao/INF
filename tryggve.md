@@ -118,7 +118,7 @@ The version contains fix to the use of HapMap reference as in software-notes abo
 
 ### R/EasyQC and R/EasyStrata
 
-The version is 18.1 rather than 9.2 and 8.6 currenly online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.
+The version is 18.1 rather than 9.2 and 8.6 currently online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.
 
 ## URLs
 
