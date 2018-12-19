@@ -185,7 +185,6 @@ gcta64 --bfile EUR --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-colli
 #12 CHR
 #13 POS
 #14 WEIGHT
-
 (
   grep SNP $rt/*.jma.cojo | \
   head -1

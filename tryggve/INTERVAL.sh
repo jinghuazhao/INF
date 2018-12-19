@@ -117,13 +117,11 @@ parallel -j3 --env rt -C' ' '
   gcta64 --bfile EUR --cojo-file work/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
          --thread-num 3 --out work/{}
 '
-
 (
   grep SNP work/INTERVAL.*.jma.cojo | \
   head -1
   grep -v SNP work/INTERVAL.*.jma.cojo
 ) > work/INTERVAL.jma
-
 (
   grep SNP work/INTERVAL.*.ldr.cojo | \
   head -1
