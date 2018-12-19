@@ -56,7 +56,6 @@ parallel -j1 -C' ' '
 echo "--> clumping"
 
 export rt=$HOME/INF/METAL
-
 ls METAL/*tbl.gz | \
 sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
@@ -72,7 +71,6 @@ plink --bfile EUR \
       --mac 50 \
       --out $rt/{}
 '
-
 (
   grep CHR $rt/*.clumped | \
   head -1
@@ -81,7 +79,6 @@ plink --bfile EUR \
 sed 's|'"$rt"'/||g;s/.clumped://g' | \
 awk '(NF>1){$3="";print}' | \
 awk '{$1=$1;if(NR==1)$1="prot";print}' > INF1.clumped
-
 R --no-save -q <<END
   require(gap)
   clumped <- read.table("INF1.clumped",as.is=TRUE,header=TRUE)
@@ -92,11 +89,6 @@ R --no-save -q <<END
   with(cistrans,table)
   sink()
   sum(with(cistrans,table))
-END
-
-# circos plot
-R --no-save -q <<END
-  require(gap)
   pdf("INF1.circlize.pdf")
   circos.cis.vs.trans.plot(hits="INF1.clumped")
   dev.off()

@@ -2,10 +2,9 @@
 
 source tryggve/analysis.ini
 
-export rt=$HOME/INF/sumstats/INTERVAL
-
 echo "--> LD clumping"
 
+export rt=$HOME/INF/sumstats/INTERVAL
 ls $rt/*.gz | \
 sed 's/INTERVAL.//g;s/.gz//g' | \
 xargs -l basename | \
@@ -22,7 +21,6 @@ plink --bfile EUR \
       --mac 1 \
       --out work/INTERVAL.{}; \
 '
-
 (
   grep CHR work/INTERVAL.*.clumped | \
   head -1
@@ -31,7 +29,6 @@ plink --bfile EUR \
 sed 's|work/INTERVAL.||g;s/.clumped://g' | \
 awk '(NF>1){$3="";print}' | \
 awk '{$1=$1;if(NR==1)$1="prot";print}' > INTERVAL.clumped
-
 R --no-save -q <<END
   require(gap)
   clumped <- read.table("INTERVAL.clumped",as.is=TRUE,header=TRUE)
@@ -42,11 +39,6 @@ R --no-save -q <<END
   with(cistrans,table)
   sink()
   sum(with(cistrans,table))
-END
-
-# circos plot
-R --no-save -q <<END
-  require(gap)
   pdf("INTERVAL.circlize.pdf")
   circos.cis.vs.trans.plot(hits="INTERVAL.clumped")
   dev.off()
