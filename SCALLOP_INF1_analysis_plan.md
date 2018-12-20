@@ -188,7 +188,6 @@ The following obtains chromosome-specific statistics.
 
 export DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only/per_chr
 export INTERVAL=$DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only_chr_
-
 export chr=$SLURM_ARRAY_TASK_ID
 
 qctool -g ${INTERVAL}${chr}.bgen -s ${INTERVAL}${chr}.sample -snp-stats -osnp INTERVAL-${chr}.snp-stats
