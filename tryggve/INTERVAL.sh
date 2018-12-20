@@ -1,4 +1,4 @@
-# 19-12-2018 JHZ
+# 20-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -9,6 +9,7 @@ ls $rt/*.gz | \
 sed 's/INTERVAL.//g;s/.gz//g' | \
 xargs -l basename | \
 parallel -j4 --env rt -C' ' '
+if [ -f work/{}.clumped ]; then rm work/{}.clumped; fi; \
 gunzip -c $rt/INTERVAL.{}.gz | \
 plink --bfile EUR \
       --clump $rt/INTERVAL.{}.gz \
@@ -114,6 +115,7 @@ sed 's/.ma//g' | \
 xargs -l basename | \
 sort | \
 parallel -j3 --env rt -C' ' '
+  if [ -f work/{}.jma.cojo ]; then rm work/{}.jma.cojo work/{}.ldr.cojo; fi; \
   gcta64 --bfile EUR --cojo-file work/{}.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
          --thread-num 3 --out work/{}
 '
