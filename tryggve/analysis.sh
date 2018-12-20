@@ -1,4 +1,4 @@
-# 19-12-2018 JHZ
+# 20-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -60,6 +60,7 @@ ls METAL/*tbl.gz | \
 sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j4 --env rt -C' ' '
+if [ -f $rt/{}.clumped ]; then rm $rt/{}.clumped; fi; \
 plink --bfile EUR \
       --clump $rt/{}-1.tbl.gz \
       --clump-snp-field MarkerName \
@@ -168,6 +169,7 @@ ls METAL/*.tbl.gz | \
 sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j3 --env rt -C' ' '
+if [ -f $rt/{}.jma.cojo ]; then rm $rt/{}.jma.cojo $rt/{}.ldr.cojo; fi; \
 gcta64 --bfile EUR --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.01 --cojo-wind 500 \
        --maf 0.0001 --thread-num 3 --out $rt/{}
 '
