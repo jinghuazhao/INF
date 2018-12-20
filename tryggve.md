@@ -112,6 +112,8 @@ R CMD INSTALL gap
 ```
 The rather imtimidating compiler flags are derived from `mpiicc -show` as with initial pass requested for libfabric.so.1, and the idea is to get around check for icc which does not exist on the system. To faciliate compiling, [gap.sh](tryggve/gap.sh) contains these lines for use.
 
+To take advantage of the `circos.mhtplot` function, package gap.datasets is also made available.
+
 ### R/QCGWAS
 
 The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.
