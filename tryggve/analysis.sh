@@ -1,4 +1,4 @@
-# 20-12-2018 JHZ
+# 27-12-2018 JHZ
 
 source tryggve/analysis.ini
 
@@ -94,6 +94,24 @@ R --no-save -q <<END
   circos.cis.vs.trans.plot(hits="INF1.clumped")
   dev.off()
 END
+(
+awk 'NR>1' INF1.clumped | \
+cut -d' ' -f1,3 | \
+parallel -j2 -C' ' '
+  export direction=$(zgrep -w {2} METAL/{1}-1.tbl.gz | cut -f13)
+  echo $direction
+  let j=1
+  for i in $(grep "Input File" METAL/{1}-1.tbl.info | cut -d" " -f7)
+  do
+     export n=$(awk -vj=$j "BEGIN{split(ENVIRON[\"direction\"],a,\"\");print a[j]}")
+     if [ "$n" != "?" ]; then
+        echo $i
+        zgrep -w {2} $i
+     fi
+     let j=$j+1
+  done
+'
+) > INF1.clumped.all
 
 echo "--> METAL results containing P-value=0"
 
