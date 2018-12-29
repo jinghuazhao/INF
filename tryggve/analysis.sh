@@ -1,13 +1,10 @@
-# 27-12-2018 JHZ
+# 28-12-2018 JHZ
 
 source tryggve/analysis.ini
 
 echo "--> Q-Q/Manhattan/LocusZoom plots"
 
 export rt=$HOME/INF
-ls METAL/*-1.tbl.gz | \
-sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-parallel -j4 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/tryggve/qqman.R'
 (
   echo -e "chrom\tstart\tend\tgene\tprot"
   sort -k2,2 $rt/inf1.list > inf1.tmp
@@ -23,6 +20,9 @@ parallel -j4 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/tryggve/qqm
   awk -vFS="\t" -vOFS="\t" '{print $5,$6,$7,$4,$2}' | \
   sort -k1,1n -k2,2n
 ) > st.bed
+ls METAL/*-1.tbl.gz | \
+sed 's|METAL/||g;s/-1.tbl.gz//g' | \
+parallel -j4 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/tryggve/qqman.R'
 ls METAL/*-1.tbl.gz | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 parallel -j3 -C' ' '
