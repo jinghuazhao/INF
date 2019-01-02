@@ -78,13 +78,23 @@ ls METAL/*.run | parallel --dry-run --env HOME -j8 -C' ' 'metal $HOME/INF/{}'
 ```
 NB METAL add -1 to the filenames.
 
-## INSTALLATIONS
+## NEW SOFTWARE
 
 There are a number of software updates/additions which are worthy of note.
 
 ### GCTA
 
 The version that can handle chi-squared statistics instead of p values in the joint/conditional (COJO) analysis is at /data/jinhua/gcta_1.91.7beta/
+
+### ImageMaick
+
+This is version 7.0.8-22, made available due to the inability to use the imagemagick/7.0.8-16 module, e.g,,
+```bash
+export IM_dir=/data/jinhua/ImageMagick-7.0.8-22/bin
+$IM_dir/convert OPG.lz-1.png -resize 130% OPG.lz-3.png
+$IM_dir/convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
+```
+Another very useful utility is its `display`.
 
 ### METAL
 

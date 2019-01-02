@@ -1,4 +1,4 @@
-# 28-12-2018 JHZ
+# 2-1-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -50,8 +50,9 @@ parallel -j1 -C' ' '
    mv {}-000002.png {}.lz-2.png; \
    cd -
 '
-# convert OPG.lz-1.png -resize 130% OPG.lz-3.png
-# convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
+export IM_dir=/data/jinhua/ImageMagick-7.0.8-22/bin
+$IM_dir/convert OPG.lz-1.png -resize 130% OPG.lz-3.png
+$IM_dir/convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
 
 echo "--> clumping"
 
