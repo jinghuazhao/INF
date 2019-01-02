@@ -38,7 +38,7 @@ File     | Description
 1. To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](doc/cardio.sh), which includes cis/trans classification via Jimmy's [cis.vs.trans.classification.R](doc/cis.vs.trans.classification.R) and a Bash version via bedtools, [cistrans.sh](doc/cistrans.sh).
 Jimmy's competitive log10(p) calculator is also documented in [log10p.md](doc/log10p.md) in comparison with R/Rmpfr. 
 
-2. The meta-analysis was according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with addtional investigation.
+2. Data preprocessig was done with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh). The meta-analysis was according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with addtional investigation.
 
 3. The main analysis is with [analysis.sh](tryggve/analysis.sh), which contains codes for Q-Q/Manhattan/LocusZoom plots (see the figure below for the OPG example), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans classification. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the figure on the right), `log10p`, `gc.lambda`, `invnormal` functions are now all in [R/gap](https://github.com/jinghuazhao/R/tree/master/gap).
 
