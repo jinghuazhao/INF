@@ -39,6 +39,7 @@ module load anaconda2/4.4.0
 module load perl/5.24.0 annovar/2018apr16
 module load bcftools/1.8
 module load gcta/1.91.0beta
+module load fftw/3.3.8 imagemagick/7.0.8-16
 module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL rstudio/1.1.453
 module load libreoffice/6.0.5.2
 module load locuszoom/1.4
@@ -86,7 +87,7 @@ There are a number of software updates/additions which are worthy of note.
 
 The version that can handle chi-squared statistics instead of p values in the joint/conditional (COJO) analysis is at /data/jinhua/gcta_1.91.7beta/
 
-### ImageMaick
+### ImageMagick
 
 This is version 7.0.8-22, made available due to the inability to use the imagemagick/7.0.8-16 module, e.g,,
 ```bash
