@@ -1,7 +1,7 @@
 # INF
 SCALLOP-INF analysis
 
-## Table of contents
+## TABLE OF CONTENTS
 
 * [Installation](https://github.com/jinghuazhao/INF#inf)
 * [A summary of files](https://github.com/jinghuazhao/INF#a-summary-of-files)
