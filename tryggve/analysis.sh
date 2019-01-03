@@ -239,25 +239,7 @@ awk '(NR>1){
 for prot in $(ls $rt/METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
 do
   export p=$prot
-  function bruteforce()
-  {
-    export p=$prot
-    awk 'NR>1{gsub(/chr/,"",$1);print}' $rt/tryggve/EURLD.bed | \
-    parallel -j8 --env p --env rt -C' ' '
-    plink --bfile EUR \
-        --chr {1} --from-bp {2} --to-bp {3} \
-        --clump $rt/METAL/${p}-1.tbl.gz \
-        --clump-snp-field MarkerName \
-        --clump-field P-value \
-        --clump-kb 500 \
-        --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0 \
-        --mac 50 \
-        --out $rt/LDBLOCK/${p}-{4}'
-     (
-       cat $rt/LDBLOCK/${p}*.clumped | head -1
-       awk "NR>1" $rt/LDBLOCK/${p}*.clumped
-     ) > $rt/LDBLOCK/${p}.clumped
-  }
+  # bruteforceclumpingbyregion
   cat EURLD.region | \
   parallel -j8 --env p --env rt -C' ' '
    gcta64 --bfile EUR --cojo-file $rt/METAL/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
@@ -315,3 +297,22 @@ echo "--> remove duplicates"
 #  sort -t $'\t' -k1,1 -k2,2n -k4,4 | \
 #  awk -F '\t' 'BEGIN {prev="";} {key=sprintf("%s\t%s\t%s",$1,$2,$4);if(key==prev) next;print;prev=key;}' \
 #) 
+
+function bruteforceclumpingbyregion()
+{
+  awk 'NR>1{gsub(/chr/,"",$1);print}' $rt/tryggve/EURLD.bed | \
+  parallel -j8 --env p --env rt -C' ' '
+  plink --bfile EUR \
+      --chr {1} --from-bp {2} --to-bp {3} \
+      --clump $rt/METAL/${p}-1.tbl.gz \
+      --clump-snp-field MarkerName \
+      --clump-field P-value \
+      --clump-kb 500 \
+      --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0 \
+      --mac 50 \
+      --out $rt/LDBLOCK/${p}-{4}'
+  (
+    cat $rt/LDBLOCK/${p}*.clumped | head -1
+    awk "NR>1" $rt/LDBLOCK/${p}*.clumped
+  ) > $rt/LDBLOCK/${p}.clumped
+}
