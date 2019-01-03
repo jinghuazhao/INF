@@ -4,6 +4,8 @@
 
 ---
 
+<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="right">
+
 ## TABLE OF CONTENTS
 
 * [Installation](https://github.com/jinghuazhao/INF#inf)
@@ -11,9 +13,6 @@
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
 * [Notes on UniProt IDs](https://github.com/jinghuazhao/INF#notes-on-uniprot-ids)
 * [References](https://github.com/jinghuazhao/INF#references)
-
-
-<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="right">
 
 ## Installation
 
