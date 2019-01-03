@@ -16,7 +16,7 @@
 
 ## Installation
 
-Optionally, the repository can be downloaded locally with
+Optionally, the repository can be downloaded with
 
 ``` {.bash}
 git clone https://github.com/jinghua/INF
