@@ -1,6 +1,6 @@
 ---
 
-# INF -- SCALLOP-INF analysis
+# SCALLOP-INF analysis
 
 ---
 
