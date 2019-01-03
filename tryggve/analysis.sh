@@ -223,29 +223,30 @@ awk '(NR>1){
   centre=$2+flanking
   print sprintf("%d %d %d %s", chr, centre, flanking,$4);
 }' tryggve/EURLD.bed > EURLD.region
-export rt=$HOME/INF/METAL
-for p in $(ls METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
+export rt=$HOME/INF
+for prot in $(ls $rt/METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
 do
-  awk 'NR>1{gsub(/chr/,"",$1);print}' tryggve/EURLD.bed | \
-  parallel --env p --env rt -C' ' '
+  export p=$prot
+  awk 'NR>1{gsub(/chr/,"",$1);print}' $rt/tryggve/EURLD.bed | \
+  parallel -j6 --env p --env rt -C' ' '
   (
     plink --bfile EUR \
       --chr {1} --from-bp {2} --to-bp {3} \
-      --clump $rt/${p}-1.tbl.gz \
+      --clump $rt/METAL/${p}-1.tbl.gz \
       --clump-snp-field MarkerName \
       --clump-field P-value \
       --clump-kb 500 \
       --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0 \
       --mac 50 \
-      --out LDBLOCK/${p}-{4}
-    if [ -f LDBLOCK/${p}-{4}.clumped ]; then awk "NR>1" LDBLOCK/$p-{4}.clumped; fi
-   )' > LDBLOCK/${p}.clumped
+      --out $rt/LDBLOCK/${p}-{4}
+    if [ -f $rt/LDBLOCK/${p}-{4}.clumped ]; then awk "NR>1" $rt/LDBLOCK/$p-{4}.clumped; fi
+   )' > $rt/LDBLOCK/${p}.clumped
   cat EURLD.region | \
-  parallel --env p --env rt -C' ' '
+  parallel -j6 --env p --env rt -C' ' '
    (
-     gcta64 --bfile EUR --cojo-file $rt/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
-            --extract-region-bp {1} {2} {3} --thread-num 3 --out LDBLOCK/$p-{4}
-     if [ -f LDBLOCK/${p}-{4}.jma.cojo ]; then awk "NR>1" LDBLOCK/$p-{4}.jma.cojo; fi
+     gcta64 --bfile EUR --cojo-file $rt/METAL/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
+            --extract-region-bp {1} {2} {3} --thread-num 3 --out $rt/LDBLOCK/$p-{4}
+     if [ -f $rt/LDBLOCK/${p}-{4}.jma.cojo ]; then awk "NR>1" $rt/LDBLOCK/$p-{4}.jma.cojo; fi
    )' > $rt/${p}.jma
 done
 
