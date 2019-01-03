@@ -31,7 +31,7 @@ File     | Description
 [SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
 [tryggve.md](tryggve.md) | TRYGGVE notes
 
-<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="right">
+<img src="doc/OPG-qml.png" width="400" height="800" align="left">
 
 ## Analysis
 
@@ -49,7 +49,7 @@ as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/
 
 5. TRYGGVE-specific issues were noted in [tryggve.md](tryggve.md). The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the figure above), `log10p`, `gc.lambda`, `invnormal` functions are now all in [R/gap](https://github.com/jinghuazhao/R/tree/master/gap).
 
-<img src="doc/OPG-qml.png" width="400" height="800" align="left">
+<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="right">
 
 ## Notes on UniProt IDs
 
