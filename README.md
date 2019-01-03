@@ -13,7 +13,7 @@
 * [References](https://github.com/jinghuazhao/INF#references)
 
 
-<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="left">
+<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="right">
 
 ## Installation
 
@@ -49,7 +49,7 @@ Jimmy's competitive log10(p) calculator is also documented in [log10p.md](doc/lo
 association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes)
 as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/master/BMI).
 
-5. TRYGGVE-specific issues were noted in [tryggve.md](tryggve.md). The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the figure above), `log10p`, `gc.lambda`, `invnormal` functions are now all in [R/gap](https://github.com/jinghuazhao/R/tree/master/gap).
+5. TRYGGVE-specific issues were noted in [tryggve.md](tryggve.md). The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot), `log10p`, `gc.lambda`, `invnormal` functions are now all in [R/gap](https://github.com/jinghuazhao/R/tree/master/gap).
 
 ## Notes on UniProt IDs
 
