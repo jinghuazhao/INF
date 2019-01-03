@@ -231,7 +231,7 @@ do
   (
     plink --bfile EUR \
       --chr {1} --from-bp {2} --to-bp {3} \
-      --clump $rt/{}-1.tbl.gz \
+      --clump $rt/${p}-1.tbl.gz \
       --clump-snp-field MarkerName \
       --clump-field P-value \
       --clump-kb 500 \
