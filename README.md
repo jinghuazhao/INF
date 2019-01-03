@@ -49,8 +49,6 @@ as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/
 
 5. TRYGGVE-specific issues were noted in [tryggve.md](tryggve.md). The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the figure above), `log10p`, `gc.lambda`, `invnormal` functions are now all in [R/gap](https://github.com/jinghuazhao/R/tree/master/gap).
 
-<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="left">
-
 ## Notes on UniProt IDs
 
 The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
@@ -84,6 +82,8 @@ A UniProt ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chro
 edits Q4ACW9, [inf2.csv](doc/inf2.csv) is inline with UCSC with respect to P12034 and P30203.
 
 A version by Jimmy is [olink.inf.panel.annot.tsv](doc/olink.inf.panel.annot.tsv) from [olink.annotation.R](doc/olink.annotation.R).
+
+<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="left">
 
 ## References
 
