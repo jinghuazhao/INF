@@ -13,6 +13,8 @@
 * [References](https://github.com/jinghuazhao/INF#references)
 
 
+<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="left">
+
 ## Installation
 
 The repository can be downloaded locally with
@@ -82,8 +84,6 @@ A UniProt ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chro
 edits Q4ACW9, [inf2.csv](doc/inf2.csv) is inline with UCSC with respect to P12034 and P30203.
 
 A version by Jimmy is [olink.inf.panel.annot.tsv](doc/olink.inf.panel.annot.tsv) from [olink.annotation.R](doc/olink.annotation.R).
-
-<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="left">
 
 ## References
 
