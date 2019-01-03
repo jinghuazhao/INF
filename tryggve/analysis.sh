@@ -216,6 +216,19 @@ awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > INF1.jma
 
 echo "--> clumping and cojo with LDetect approximately independent LD blocks"
 
+awk 'NR>1{gsub(/chr/,"",$1);print}' tryggve/EURLD.bed > rlist-hg19
+export rt=$HOME/INF
+ls $rt/METAL/*tbl.gz | \
+sed 's/-1.tbl.gz//g' | \
+xargs -l basename | \
+parallel -j6 --env rt -C' ' '
+plink --bfile EUR \
+      --clump $rt/METAL/{}-1.tbl.gz --clump-range rlist-hg19 \
+      --clump-snp-field MarkerName \
+      --clump-field P-value \
+      --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0 \
+      --mac 50 \
+      --out $rt/LDBLOCK/{}'
 awk '(NR>1){
   chr=$1;
   gsub(/chr/,"",chr);
@@ -223,25 +236,28 @@ awk '(NR>1){
   centre=$2+flanking
   print sprintf("%d %d %d %s", chr, centre, flanking,$4);
 }' tryggve/EURLD.bed > EURLD.region
-export rt=$HOME/INF
 for prot in $(ls $rt/METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
 do
   export p=$prot
-  awk 'NR>1{gsub(/chr/,"",$1);print}' $rt/tryggve/EURLD.bed | \
-  parallel -j8 --env p --env rt -C' ' '
-  plink --bfile EUR \
-      --chr {1} --from-bp {2} --to-bp {3} \
-      --clump $rt/METAL/${p}-1.tbl.gz \
-      --clump-snp-field MarkerName \
-      --clump-field P-value \
-      --clump-kb 500 \
-      --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0 \
-      --mac 50 \
-      --out $rt/LDBLOCK/${p}-{4}'
-   (
-     cat $rt/LDBLOCK/${p}*.clumped | head -1
-     awk "NR>1" $rt/LDBLOCK/${p}*.clumped
-   ) > $rt/LDBLOCK/${p}.clumped
+  function bruteforce()
+  {
+    export p=$prot
+    awk 'NR>1{gsub(/chr/,"",$1);print}' $rt/tryggve/EURLD.bed | \
+    parallel -j8 --env p --env rt -C' ' '
+    plink --bfile EUR \
+        --chr {1} --from-bp {2} --to-bp {3} \
+        --clump $rt/METAL/${p}-1.tbl.gz \
+        --clump-snp-field MarkerName \
+        --clump-field P-value \
+        --clump-kb 500 \
+        --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0 \
+        --mac 50 \
+        --out $rt/LDBLOCK/${p}-{4}'
+     (
+       cat $rt/LDBLOCK/${p}*.clumped | head -1
+       awk "NR>1" $rt/LDBLOCK/${p}*.clumped
+     ) > $rt/LDBLOCK/${p}.clumped
+  }
   cat EURLD.region | \
   parallel -j8 --env p --env rt -C' ' '
    gcta64 --bfile EUR --cojo-file $rt/METAL/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
