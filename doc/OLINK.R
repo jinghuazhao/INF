@@ -1,4 +1,4 @@
-# 6-9-2018 JHZ
+# 3-1-2019 JHZ
 
 options(width=160)
 
@@ -45,7 +45,7 @@ inf <- within(inf,UniProt <- replace(UniProt,UniProt=="Q8NF90","P12034"))
 inf <- within(inf,UniProt <- replace(UniProt,UniProt=="Q8WWJ7","P30203"))
 inf <- merge(inf,hgTables,by="UniProt",all=TRUE)
 inf2 <- subset(inf,UniProt%in%inf1$UniProt|UniProt%in%c("P12034","P30203"))
-write.csv(inf2, file="inf2.csv", quote=FALSE, row.names=FALSE)
+write.csv(subset(inf2,grep("hap",X.chrom)==0), file="inf2.csv", quote=FALSE, row.names=FALSE)
 # from CVD I analysis plan
 cvd1 <- read.delim("cvd1.txt", as.is=TRUE)
 cvd1 <- cvd1[c("Olink_name", "gene", "Uniprot")]
