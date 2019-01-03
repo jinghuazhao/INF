@@ -229,8 +229,7 @@ do
   export p=$prot
   awk 'NR>1{gsub(/chr/,"",$1);print}' $rt/tryggve/EURLD.bed | \
   parallel -j6 --env p --env rt -C' ' '
-  (
-    plink --bfile EUR \
+  plink --bfile EUR \
       --chr {1} --from-bp {2} --to-bp {3} \
       --clump $rt/METAL/${p}-1.tbl.gz \
       --clump-snp-field MarkerName \
@@ -239,13 +238,14 @@ do
       --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0 \
       --mac 50 \
       --out $rt/LDBLOCK/${p}-{4}
+   (
     if [ -f $rt/LDBLOCK/${p}-{4}.clumped ]; then awk "NR>1" $rt/LDBLOCK/$p-{4}.clumped; fi
    )' > $rt/LDBLOCK/${p}.clumped
   cat EURLD.region | \
   parallel -j6 --env p --env rt -C' ' '
+   gcta64 --bfile EUR --cojo-file $rt/METAL/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
+          --extract-region-bp {1} {2} {3} --thread-num 3 --out $rt/LDBLOCK/$p-{4}
    (
-     gcta64 --bfile EUR --cojo-file $rt/METAL/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
-            --extract-region-bp {1} {2} {3} --thread-num 3 --out $rt/LDBLOCK/$p-{4}
      if [ -f $rt/LDBLOCK/${p}-{4}.jma.cojo ]; then awk "NR>1" $rt/LDBLOCK/$p-{4}.jma.cojo; fi
    )' > $rt/${p}.jma
 done
