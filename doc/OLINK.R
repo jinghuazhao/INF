@@ -39,17 +39,13 @@ inf <- read.table("inf1.list",header=FALSE,col.names=c("prot","UniProt"),sep="\t
 inf1 <- merge(inf,inf.orig,by.x="UniProt",by.y="UniProt.No.")
 write.csv(inf1[c("UniProt","prot","Target","alias")], file="inf1.csv", quote=FALSE, row.names=FALSE)
 # UCSC hgTables
-hgTables <- read.delim("hgTables.txt",as.is=TRUE)
+hgTables <- read.delim("hgTables.tsv",as.is=TRUE)
 hgTables <- within(hgTables, UniProt <- unlist(lapply(strsplit(hgTables$name,"-"),"[",1)))
 inf <- within(inf,UniProt <- replace(UniProt,UniProt=="Q8NF90","P12034"))
 inf <- within(inf,UniProt <- replace(UniProt,UniProt=="Q8WWJ7","P30203"))
 inf <- merge(inf,hgTables,by="UniProt",all=TRUE)
 inf2 <- subset(inf,UniProt%in%inf1$UniProt|UniProt%in%c("P12034","P30203"))
-write.csv(subset(inf2,grep("hap",X.chrom)==0), file="inf2.csv", quote=FALSE, row.names=FALSE)
-# from CVD I analysis plan
-cvd1 <- read.delim("cvd1.txt", as.is=TRUE)
-cvd1 <- cvd1[c("Olink_name", "gene", "Uniprot")]
-inf2 <- merge(cvd1, inf.orig, by.x="Uniprot", by.y="UniProt.No.")
+write.csv(subset(inf2,!grepl("hap",X.chrom)), file="inf2.csv", quote=FALSE, row.names=FALSE)
 # The tables are ordered below
 tabs <-c("Cardiometabolic","Cell Regulation","CVD II","CVD III","Development","Immune Response","Immuno-Oncology",
          "Inflammation","Metabolism","Neurology","Oncology II","Organ Damage")
