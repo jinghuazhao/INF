@@ -4,7 +4,7 @@
 
 ---
 
-<img src="doc/INTERVAL.circlize.png" width="300" height="300" align="right">
+<img src="doc/INTERVAL.circlize.png" width="100" height="100" align="right">
 
 ## TABLE OF CONTENTS
 
