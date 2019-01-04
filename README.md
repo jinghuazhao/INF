@@ -41,7 +41,7 @@ Jimmy's competitive log10(p) calculator is also documented in [log10p.md](doc/lo
 
 2. Data preprocessig was done with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh). The meta-analysis was according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with addtional investigation.
 
-3. The main analysis is with [analysis.sh](tryggve/analysis.sh), which contains codes for Q-Q/Manhattan/LocusZoom plots (see the figure on the right for the OPG example, which repliated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals.
+3. The main analysis is with [analysis.sh](tryggve/analysis.sh), which contains codes for Q-Q/Manhattan/LocusZoom plots (see the figure on the right for the OPG example, which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals.
 
 4. Further downstream analysis will be considered. The CAD summary statistics used for MAGMA and MR is described [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD)
 -- as noted in MMP12.sh, the MMP12 case could have been done genomewide. A colocalisation analysis on simulated data can be found in the
