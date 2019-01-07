@@ -284,7 +284,7 @@ module load gcc/5.2.0
 awk 'NR>1 {print $1,$2,$3}' INF1.clumped | \
 parallel -j3 -C' ' '
   gunzip -c METAL/{1}-1.tbl.gz | \
-  awk -vchr={2} "chr==\$2{print \$3,\$4,\$5,\$6,\$10,\$11,\$12,\$14,\$1,\$2}" > {1}-{3}
+  awk -vchr={2} "chr==\$1{print \$3,\$4,\$5,\$6,\$10,\$11,\$12,\$14,\$1,\$2}" > {1}-{3}
 '
 
 function CD6()
