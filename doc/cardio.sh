@@ -307,4 +307,4 @@ parallel -j${threads} -C' ' \
          --env LD_MAGIC \
          --env LD_PLINK \
          --env LocusZoom \
-          '$dir/doc/fm.subs {1} {2} {3} {4} {5}'
+          '$dir/doc/fm.subs {1} {2} {3} {4} {5} {6} {7}'

@@ -15,7 +15,7 @@ qctool -filetype gen -g work/$f.ord -s ${sample_file} -ofiletype binary_ped -og 
 
 echo "--> region-specific data"
 awk "(\$9==chr && \$10 >= l && \$10 <= u){if(\$2<\$3) {a1=\$2; a2=\$3;} else {a1=\$3; a2=\$2};\
-     \$0=\$0 \" \" \$9 \":\" \$10 \"_\" a1 \"_\" a2;print}" chr=${1} l=${2} u=${3} $rt/$f | \
+     \$0=\$0 \" \" \$9 \":\" \$10 \"_\" a1 \"_\" a2;print}" chr=${1} l=${2} u=${3} $rt/${7}-${4} | \
 sort -k11,11 > $f.txt
 
 echo "--> GWAS auxiliary files"
