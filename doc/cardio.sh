@@ -12,7 +12,7 @@
 #    - module load bedtools/2.4.26
 #    - We then compiled the latest bedtools release 2.27.1 to /scratch/jhz22/bin and gcc/4.8.1 is customarily called.
 #    - The breakup of snpid leads to duplicate records in BED files so we employ uniq operation.
-# 5. format_for_METAL() is actually copied from format.sh and CD6() is a simple exposition.
+# 5. format_for_METAL() is actually copied from format.sh.
 
 export BGEN_DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 export BGEN=$BGEN_DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only
@@ -287,67 +287,24 @@ parallel -j3 -C' ' '
   awk -vchr={2} "chr==\$1{print \$3,toupper(\$4),toupper(\$5),\$6,\$10,\$11,\$12,\$14,\$1,\$2}" > METAL/{1}-{3}
 '
 
-function CD6()
-# SUMSTATS for depict
-{
-  gunzip -c $INTERVAL/INTERVAL_inf1_CD6___Q8WWJ7_chr_merged.gz | \
-  awk -vOFS="\t" '(NR>1){
-       SNP=$2;
-       chr=$3; sub(/^0/,"",chr);
-       pos=$4;
-       a1=$5;
-       a2=$6;
-       N=$18;
-       EAF=(0.5*$15+$16)/N;
-       beta=$24;
-       se=$25;
-       p=$22;
-       if(SNP!="." && p<=0.1) print SNP,a2,a1,EAF,beta,se,p,N,chr,pos;
-  }' | \
-  sort -k9,9n -k10,10n > CD6
-}
+export dir=${PWD}
+export rt=$dir/METAL/
+source $dir/doc/fm.ini
 
-export src=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_imputed_info_0.4_phwe_1e-4_filtered/per_chr
-export PERL5LIB=/scratch/jhz22/share/perl5
-
-# INTERVAL data as LD reference
-seq 22 | \
-parallel --env src -j5 'plink --bfile $src/interval.imputed.olink.chr_{} --recode vcf bgz --out chr{}'
-seq 22 | \
-parallel -j5 'tabix -f -p vcf chr{}.vcf.gz'
-
-## by chromosome worked through SLURM
-sbatch --wait INTERVAL.sb
-plink --bfile UK10K1KG-6 --chr 6 --from-mb 25 --to-mb 35 --make-bed --out MHC
-cut -f2 MHC.bim > MHC.snpid
-seq 22 | \
-awk -vp=$PWD '{print p "/UK10K1KG-" $1}' > INTERVAL.list
-plink --merge-list INTERVAL.list --make-bed --out INTERVAL
-
-## whole-genome version, too slow to run
-# seq 22 | \
-# awk -vp=$PWD '{print p "/chr" $1 ".vcf.gz"}' > INTERVAL.list
-# bcftools concat --file-list INTERVAL.list --threads 6 | \
-# bcftools annotate --set-id 'chr%CHROM\:%POS\_%REF\_%ALT' --threads 6 - -O z -o INTERVAL.vcf.gz
-# plink --vcf INTERVAL.vcf.gz --make-bed --out INTERVAL
-
-## side information
-export PHEN=/scratch/curated_genetic_data/phenotypes/interval/high_dimensional_data/Olink_proteomics_inf/gwasqc/olink_qcgwas_inf.csv
-export IMPUTED=/scratch/curated_genetic_data/interval/imputed
-function reference()
-{
-  cut -d"," -f1 $PHEN | \
-  awk 'NR>1 {OFS="\t";print $1,$1}' > INTERVAL.id
-  seq 22 | \
-  parallel -j3 --env IMPUTED -C' ' '
-    plink --bgen $IMPUTED/impute_{}_interval.bgen \
-          --sample $IMPUTED/interval.samples \
-          --keep INTERVAL.id \
-          --make-bed \
-          --out INTERVAL-{} \
-          --threads 2
-  '
-}
-
-export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
-export BS=/scratch/jp549/apps/bram-scripts
+awk 'NR>1' st.bed | \
+parallel -j${threads} -C' ' \
+         --env dir \
+         --env rt \
+         --env FM_location \
+         --env GEN_location  \
+         --env CAVIAR \
+         --env CAVIARBF \
+         --env FM_summary \
+         --env fgwas \
+         --env finemap \
+         --env GCTA \
+         --env JAM \
+         --env LD_MAGIC \
+         --env LD_PLINK \
+         --env LocusZoom \
+          '$dir/doc/fm.subs {1} {2} {3} {4} {5}'
