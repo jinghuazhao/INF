@@ -286,13 +286,13 @@ parallel -j3 -C' ' '
   awk -vchr={2} "chr==\$1{print \$3,toupper(\$4),toupper(\$5),\$6,\$10,\$11,\$12,\$14,\$1,\$2}" > METAL/{1}-{3}
 '
 
-export dir=${PWD}
-export rt=$dir/METAL/
+export wd=${PWD}
+export rt=$wd/METAL/
 source $dir/doc/fm.ini
 
 awk 'NR>1' st.bed | \
 parallel -j${threads} -C' ' \
-         --env dir \
+         --env wd \
          --env rt \
          --env FM_location \
          --env GEN_location  \
