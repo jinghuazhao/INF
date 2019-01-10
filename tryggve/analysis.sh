@@ -1,4 +1,4 @@
-# 3-1-2019 JHZ
+# 10-1-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -95,6 +95,15 @@ R --no-save -q <<END
   circos.cis.vs.trans.plot(hits="INF1.clumped")
   dev.off()
 END
+
+(
+  gunzip -c METAL/4E.BP1-1.tbl.gz | \
+  head -1
+  awk 'NR>1' INF1.clumped | \
+  cut -d' ' -f1,3 | \
+  parallel -j1 -C' ' 'zgrep -w {2} METAL/{1}-1.tbl.gz'
+) > INF1.clumped.tbl
+
 (
 awk 'NR>1' INF1.clumped | \
 cut -d' ' -f1,3 | \
