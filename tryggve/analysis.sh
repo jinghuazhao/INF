@@ -107,7 +107,7 @@ END
 (
 awk 'NR>1' INF1.clumped | \
 cut -d' ' -f1,3 | \
-parallel -j2 -C' ' '
+parallel -j1 -C' ' '
   export direction=$(zgrep -w {2} METAL/{1}-1.tbl.gz | cut -f13)
   echo $direction
   let j=1
@@ -115,8 +115,7 @@ parallel -j2 -C' ' '
   do
      export n=$(awk -vj=$j "BEGIN{split(ENVIRON[\"direction\"],a,\"\");print a[j]}")
      if [ "$n" != "?" ]; then
-        echo $i
-        zgrep -w {2} $i
+        zgrep -H -w {2} $i
      fi
      let j=$j+1
   done
