@@ -101,7 +101,7 @@ END
   head -1
   awk 'NR>1' INF1.clumped | \
   cut -d' ' -f1,3 | \
-  parallel -j1 -C' ' 'zgrep -w {2} METAL/{1}-1.tbl.gz'
+  parallel -j1 -C' ' 'zgrep -H -w {2} METAL/{1}-1.tbl.gz'
 ) > INF1.clumped.tbl
 
 (
