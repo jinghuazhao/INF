@@ -1,4 +1,4 @@
-# 10-1-2019 JHZ
+# 11-1-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -102,7 +102,8 @@ END
   awk 'NR>1' INF1.clumped | \
   cut -d' ' -f1,3 | \
   parallel -j1 -C' ' 'zgrep -H -w {2} METAL/{1}-1.tbl.gz'
-) > INF1.clumped.tbl
+) | \
+sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.clumped.tbl
 
 (
 awk 'NR>1' INF1.clumped | \
@@ -120,7 +121,8 @@ parallel -j1 -C' ' '
      let j=$j+1
   done
 '
-) > INF1.clumped.all
+) | \
+sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.clumped.all
 
 echo "--> METAL results containing P-value=0"
 
