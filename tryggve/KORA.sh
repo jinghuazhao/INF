@@ -1,4 +1,4 @@
-# 6-11-2018 JHZ
+# 11-1-2019 JHZ
 
 export KORA=/data/jinhua/KORA/Affy_AxiomPhase3_n3775_CodeAX1KG3_V2_LU9220
 module load bcftools/1.8 plink2/1.90beta5.4
@@ -93,6 +93,8 @@ END
 
 module load snptest/2.5.2
 module load parallel/20170822
+
+export llod=/data/jampet/KORA/kora.below.llod.normalised.prot.txt
 
 export rt=$HOME/INF/work
 echo $(seq 22) X |
