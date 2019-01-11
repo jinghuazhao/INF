@@ -288,7 +288,8 @@ parallel -j3 -C' ' '
 
 export wd=${PWD}
 export rt=$wd/METAL/
-source $dir/doc/fm.ini
+source $wd/doc/fm.ini
+export FM_location=$HOME/FM-pipeline
 
 awk 'NR>1' st.bed | \
 parallel -j${threads} -C' ' \
@@ -306,4 +307,4 @@ parallel -j${threads} -C' ' \
          --env LD_MAGIC \
          --env LD_PLINK \
          --env LocusZoom \
-          '$dir/doc/fm.subs {1} {2} {3} {4} {5} {6} {7}'
+          '$wd/doc/fm.subs {1} {2} {3} {4} {5} {6} {7}'
