@@ -1,0 +1,117 @@
+# 14-1-2019 JHZ
+
+export KORA=/data/jinhua/data/KORA/Affy_AxiomPhase3_n3775_CodeAX1KG3_V2_LU9220
+module load bcftools/1.8 plink2/1.90beta5.4
+
+module load lapack/3.8.0 gcc/5.4.0 qctool/2.0.1
+export LD_LIBRARY_PATH=/data/jinhua/lapack-3.8.0/lib64:$LD_LIBRARY_PATH
+qctool -help
+
+echo "--> remove duplicates"
+
+ls $KORA/chr[0-9]*gz > KORA.list
+vcf-concat --files KORA.list | \
+bcftools norm -d both - | \
+bcftools convert - -O z -o KORA.vcf.gz
+# Code above does not remove duplicates!!! We then adapts notes from https://www.biostars.org/p/264584/
+export LC_ALL=C
+(
+  zgrep '^#' KORA.vcf.gz ; 
+  zgrep -v "^#" KORA.vcf.gz | \
+  awk -F '\t' '{$3=sprintf("%s_%s_%s",$3,$4,$5);print}'
+#  sort -t $'\t' -k3,3 | \
+#  awk -F '\t' 'BEGIN {prev="";} {key=sprintf("%s",$3);if(key==prev) next;print;prev=key;}'
+) | \
+gzip -f > $KORA/KORA.vcf.gz
+
+plink --vcf KORA.vcf.gz --make-bed --out KORA --threads 2
+awk '
+{
+   OFS="\t"
+   CHRPOS=$2
+   a1=$5
+   a2=$6
+   if (a1>a2) snpid="chr" CHRPOS "_" a2 "_" a1;
+   else snpid="chr" CHRPOS "_" a1 "_" a2
+   print snpid, $2
+}' KORA.bim > KORA.snpid
+
+# 1 CHR
+# 2 CHR:POS
+# 3 0
+# 4 POS
+# 5 A1
+# 6 A2
+
+plink --bfile KORA --update-name KORA.snpid 1 2 --make-bed --out KORA2
+
+function incl_excl()
+{
+  # sample inclusion/exclusion
+  cut -f1 $HOME/INF/doc/kora.normalised.prot.txt | \
+  awk 'NR>1' > KORA.inc
+  grep -f KORA.inc -v $KORA/individuals.txt > KORA.excl
+  awk -vOFS="\t" '{print $1,$1}' KORA.inc > KORA.keep
+}
+
+function missing()
+{
+  # to calculate missing proportation as required by SNPTEST
+  # qctool 1.4 apparently cannot cope 
+  module load qctool/1.4
+  qctool -g $KORA/chr#_N3775_1000GPhase3.dose.vcf.gz -s KORA.txt -incl-samples KORA.inc -sample-stats KORA.sample-stats -os KORA.os
+  # so we turn to vcftools which requires whole-genome data
+  module load perl/5.24.0 vcftools/0.1.15
+  vcftools --gzvcf $KORA/KORA.vcf.gz --keep KORA.inc --missing-indv --out KORA
+  # this is similar to PLINK --missing
+  plink --vcf $KORA/KORA.vcf.gz --threads 8 --keep KORA.keep --missing --out KORA
+}
+
+plink --vcf KORA.vcf.gz --threads 8 --indep-pairwise 500kb 1 0.8 --maf 0.001 --out KORA
+plink --vcf KORA.vcf.gz --threads 8 --extract KORA.prune.in --keep KORA.keep --pca 5 --out KORA
+
+## INF list of proteins
+grep inf1 doc/olink.prot.list.txt | \
+sed 's/inf1_//g;s/___/\t/g' > inf1.tmp
+
+module load gcc/5.4.0 R/3.2.5
+
+R --no-save -q <<END
+nPCA <- 5
+imiss <- read.delim("KORA.imiss",as.is=TRUE)[c("INDV","F_MISS")]
+pca <- read.table("KORA.eigenvec",col.names=c("pid","iid",paste0("pca",1:nPCA)))[,-1]
+prot <- read.delim("doc/kora.normalised.prot.txt",as.is=TRUE)
+names(prot) <- gsub("uh_o_","",names(prot))
+ip <- merge(imiss,pca,by.x="INDV",by.y="iid")
+ipprot <- merge(ip,prot,by.x="INDV",by.y="zz_nr_axiom")
+pheno <- with(ipprot,data.frame(ID_1=INDV,ID_2=INDV,ipprot[,-1]))
+library(reshape)
+pheno <- rename(pheno,c(F_MISS="missing"))
+l2 <- c(rep("0",3),rep("C",nPCA+2),rep("P",92))
+write.table(rbind(l2,pheno),file="KORA.pheno",quote=FALSE,row.names=FALSE)
+END
+
+module load snptest/2.5.2
+module load parallel/20170822
+
+export llod=/data/jampet/KORA/kora.below.llod.normalised.prot.txt
+
+export rt=$HOME/INF/work
+echo $(seq 22) X |
+parallel -j12 --env KORA --env rt  -C' ' '
+/services/tools/snptest/2.5.2/snptest \
+  -data $KORA/chr{2}_N3775_1000GPhase3.dose.vcf.gz KORA.pheno \
+  -o ${rt}/KORA/KORA.{1}-{2}.out \
+  -exclude_samples KORA.excl \
+  -printids \
+  -lower_sample_limit 50 \
+  -frequentist 1 \
+  -genotype_field GP \
+  -missing_code NA,-999 \
+  -method score \
+  -pheno {1} \
+  -use_raw_covariates \
+  -use_raw_phenotypes \
+  -use_long_column_naming_scheme \
+  -hwe \
+  -log ${rt}/KORA/KORA.{1}-{2}.log' ::: $(cut -f1 inf1.tmp) ::: $(echo $(seq 22) X)
