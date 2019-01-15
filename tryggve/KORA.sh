@@ -1,22 +1,5 @@
 # 15-1-2019 JHZ
 
-## covariates and proteins
-bcftools query -l chr22.vcf.gz | \
-sort > genotyped.id
-export llod=/data/jampet/KORA/kora.below.llod.normalised.prot.txt
-awk -vOFS="\t" '{
-  $1=$1 OFS $1
-  if($3=="M") $3=0; else if($3=="F") $3=1
-  print
-}' $llod | \
-awk -vOFS="\t" '{if(NR==1) {$1="FID"; $2="IID"}};1' > phenocovar.txt
-cut -f1-2 phenocovar.txt | \
-awk 'NR>1' | \
-sort -k1,1 | \
-join genotyped.id - | \
-cut -d' ' -f1 > protein.id
-awk -vOFS="\t" '{print $1,$1}' protein.id > remove.id
-
 ## concatenate .info and filter .info>=0.4
 export info=/data/jinhua/data/KORA/impute_out_info/info
 
@@ -41,6 +24,24 @@ parallel -j3 -C' ' 'ln -sf Affy\ AxiomPhase3_n3775_CodeAX1KG3_V2_LU9220/chr{}_N3
 module load bcftools/1.9
 # bcftools query -f"%CHROM\t%POS\t%REF\t%ALT\t%ID\n" chr22.vcf.gz
 
+## covariates and proteins
+bcftools query -l chr22.vcf.gz | \
+sort > genotyped.id
+export llod=/data/jampet/KORA/kora.below.llod.normalised.prot.txt
+awk -vOFS="\t" '{
+  $1=$1 OFS $1
+  if($3=="M") $3=0; else if($3=="F") $3=1
+  print
+}' $llod | \
+awk -vOFS="\t" '{if(NR==1) {$1="FID"; $2="IID"}};1' > phenocovar.txt
+cut -f1-2 phenocovar.txt | \
+awk 'NR>1' | \
+sort -k1,1 | \
+join genotyped.id - | \
+cut -d' ' -f1 > protein.id
+join -v2 genotype.id protein.id | \
+awk -vOFS="\t" '{print $1,$1}' > remove.id
+
 module load plink2/1.90beta5.4
 
 ## good quality SNPs
@@ -59,7 +60,7 @@ awk -vp=chr '{print p $1}' > merge-list
 plink --merge-list merge-list --extract MAFR2.id --make-bed --out KORA
 
 function prune()
-# only ~1M variants left with info>=0.4, so preferably skipped
+# for .info files only ~1M variants left with info>=0.4, so preferably skipped
 {
   seq 22 | \
   parallel -j3 -C' ' '
