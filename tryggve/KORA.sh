@@ -1,5 +1,8 @@
 # 16-1-2019 JHZ
 
+module load bcftools/1.9
+module load plink2/1.90beta5.4
+
 ## concatenate .info and filter .info>=0.4
 export info=/data/jinhua/data/KORA/impute_out_info/info
 
@@ -21,10 +24,8 @@ export vcf="/data/jinhua/data/KORA/Affy\ AxiomPhase3_n3775_CodeAX1KG3_V2_LU9220"
 seq 22 | \
 parallel -j3 -C' ' 'ln -sf Affy\ AxiomPhase3_n3775_CodeAX1KG3_V2_LU9220/chr{}_N3775_1000GPhase3.dose.vcf.gz chr{}.vcf.gz'
 
-module load bcftools/1.9
 bcftools query -f"%CHROM\t%POS\t%REF\t%ALT\t%ID\n" chr22.vcf.gz
 
-## covariates and proteins
 bcftools query -l chr22.vcf.gz | \
 sort > genotype.id
 export llod=/data/jampet/KORA/kora.below.llod.normalised.prot.txt
@@ -42,15 +43,12 @@ cut -d' ' -f1 > protein.id
 join -v1 genotype.id protein.id | \
 awk -vOFS="\t" '{print $1,$1}' > remove.id
 
-module load plink2/1.90beta5.4
-
-## good quality SNPs
 seq 22 | \
-parallel -j3 -C' ' '
+parallel -j1 -C' ' '
 bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr{}.vcf.gz -O z -o KORA{}.vcf.gz
 plink --vcf KORA{}.vcf.gz --list-duplicate-vars require-same-ref --out chr{}
 awk "NR>1{split(\$NF,dupids,\" \");print dupids[1]}" chr{}.dupvar > chr{}.dupid
-plink --vcf KORA{}.vcf.gz --exclude chr{}.dupid --remove remove.id --make-bed --out nodup{} --threads 1
+plink --vcf KORA{}.vcf.gz --exclude chr{}.dupid --remove remove.id --make-bed --out nodup{}
 awk -vOFS="\t" "
 {
     CHR=\$1
