@@ -22,7 +22,8 @@ seq 22 | \
 parallel -j3 -C' ' 'ln -sf Affy\ AxiomPhase3_n3775_CodeAX1KG3_V2_LU9220/chr{}_N3775_1000GPhase3.dose.vcf.gz chr{}.vcf.gz'
 
 module load bcftools/1.9
-# bcftools query -f"%CHROM\t%POS\t%REF\t%ALT\t%ID\n" chr22.vcf.gz
+bcftools query -f"%CHROM\t%POS\t%REF\t%ALT\t%ID\n" chr22.vcf.gz | \
+
 
 ## covariates and proteins
 bcftools query -l chr22.vcf.gz | \
@@ -50,6 +51,7 @@ parallel -j3 -C' ' '
 bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr{}.vcf.gz -O z -o KORA{}.vcf.gz
 plink --vcf KORA{}.vcf.gz --list-duplicate-vars require-same-ref --out chr{}
 awk "NR>1{split(\$NF,dupids,\" \");print dupids[1]}" chr{}.dupvar > chr{}.dupid
+plink --vcf KORA{}.vcf.gz --exclude chr{}.dupid --remove remove.id --make-bed --out nodup{} --threads 1
 awk -vOFS="\t" "
 {
     CHR=\$1
@@ -60,7 +62,6 @@ awk -vOFS="\t" "
     else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
     print snpid, \$2
 }" nodup{}.bim > nodup{}.snpid
-plink --vcf KORA{}.vcf.gz --exclude chr{}.dupid --remove remove.id --make-bed --out nodup{} --threads 1
 plink --bfile nodup{} --update-name nodup{}.snpid 1 2 --make-bed --out KORA{}
 '
 (
