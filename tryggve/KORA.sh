@@ -22,8 +22,7 @@ seq 22 | \
 parallel -j3 -C' ' 'ln -sf Affy\ AxiomPhase3_n3775_CodeAX1KG3_V2_LU9220/chr{}_N3775_1000GPhase3.dose.vcf.gz chr{}.vcf.gz'
 
 module load bcftools/1.9
-bcftools query -f"%CHROM\t%POS\t%REF\t%ALT\t%ID\n" chr22.vcf.gz | \
-
+bcftools query -f"%CHROM\t%POS\t%REF\t%ALT\t%ID\n" chr22.vcf.gz
 
 ## covariates and proteins
 bcftools query -l chr22.vcf.gz | \
