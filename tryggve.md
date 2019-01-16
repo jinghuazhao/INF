@@ -39,7 +39,7 @@ Instances are exemplified as follows,
 module load anaconda2/4.4.0
 module load bedtools/2.27.1
 module load perl/5.24.0 annovar/2018apr16
-module load bcftools/1.8
+module load bcftools/1.9
 module load gcta/1.91.0beta
 module load fftw/3.3.8 imagemagick/7.0.8-16
 module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL rstudio/1.1.453
