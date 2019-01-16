@@ -129,7 +129,7 @@ To take advantage of the `circos.mhtplot` function, package R/gap.datasets is al
 
 ### R/QCGWAS
 
-The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.
+The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the package's quick guide is /data/jinhua/data/QCGWAS.
 
 ### R/EasyQC and R/EasyStrata
 
