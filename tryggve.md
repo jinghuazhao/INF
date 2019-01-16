@@ -113,7 +113,7 @@ The system has module qctool/2.0.1 installed but nevertheless not functional for
 
 ### R/gap
 
-The version at TRYGGVE and CRAN are not the latest, which contains functions cis.vs.trans.classification, gc.lambda, invnormal, and here is the way to go
+The version at TRYGGVE and CRAN are not the latest, which contains functions cis.vs.trans.classification, circos.cis.vs.trans.plot, gc.lambda, invnormal, and here is the way to go
 ```bash
 module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL
 tar xvfz gap_1.1-23.tar.gz
