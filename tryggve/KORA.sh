@@ -1,4 +1,4 @@
-# 15-1-2019 JHZ
+# 16-1-2019 JHZ
 
 ## concatenate .info and filter .info>=0.4
 export info=/data/jinhua/data/KORA/impute_out_info/info
@@ -26,7 +26,7 @@ module load bcftools/1.9
 
 ## covariates and proteins
 bcftools query -l chr22.vcf.gz | \
-sort > genotyped.id
+sort > genotype.id
 export llod=/data/jampet/KORA/kora.below.llod.normalised.prot.txt
 awk -vOFS="\t" '{
   $1=$1 OFS $1
@@ -37,9 +37,9 @@ awk -vOFS="\t" '{if(NR==1) {$1="FID"; $2="IID"}};1' > phenocovar.txt
 cut -f1-2 phenocovar.txt | \
 awk 'NR>1' | \
 sort -k1,1 | \
-join genotyped.id - | \
+join genotype.id - | \
 cut -d' ' -f1 > protein.id
-join -v2 genotype.id protein.id | \
+join -v1 genotype.id protein.id | \
 awk -vOFS="\t" '{print $1,$1}' > remove.id
 
 module load plink2/1.90beta5.4
