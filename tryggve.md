@@ -19,7 +19,7 @@ tryggve/           | Auxiliary files
  -- [METAL.qsub](tryggve/METAL.qsub)   | TORQUE qsub script for METAL
  -- [INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis
  -- [KORA.sh](tryggve/KORA.sh) | Bash/R scripts to hand KORA data
- -- [KORA.txt](tryggve/KORA.txt)] | obsolete version
+ -- [KORA.txt](tryggve/KORA.txt) | obsolete version
  -- [KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
  -- [EURLD.bed](tryggve/EURLD.bed) | approximately independent LD blocks for Europeans.
 tryggve.md         | This document
