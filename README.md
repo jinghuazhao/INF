@@ -1,10 +1,10 @@
+<img src="doc/INTERVAL.circlize.png" width="200" height="200" align="right">
+
 ---
 
 # SCALLOP-INF analysis
 
 ---
-
-<img src="doc/INTERVAL.circlize.png" width="200" height="200" align="right">
 
 ## TABLE OF CONTENTS
 
