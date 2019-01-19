@@ -75,7 +75,8 @@ function snp()
     seq 22 | \
     parallel -j1 -C' ' 'bcftools query -i "MAF>0.01 && R2>=0.4" -f"%ID\n" nodup{}.vcf.gz'
   ) > MAFR2.id
-  awk -vp=KORA '{print p $1}' > merge-list
+  seq 22 | \
+  awk -vp=KORA '{print p NR}' > merge-list
   plink --merge-list merge-list --extract MAFR2.id --make-bed --out KORA
 }
 
