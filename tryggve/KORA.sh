@@ -1,4 +1,4 @@
-# 16-1-2019 JHZ
+# 19-1-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -98,7 +98,7 @@ function assoc()
   --covarFile=phenocovar.txt --covarCol sex age \
   --remove remove.id \
   --lmm --statsFileImpute2Snps={}-snp --statsFile={}-stats > 2>&1 | tee {}.log' ::: OPG TNFSF14
-  '
 }
 
+cd KORA
 snp
