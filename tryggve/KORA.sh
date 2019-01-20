@@ -75,7 +75,7 @@ function snp()
   '
   seq 22 | \
   awk -vp=KORA '{print p NR}' > merge-list
-  plink --merge-list merge-list --extract MAFR2.id --make-bed --out KORA
+  plink --merge-list merge-list --make-bed --out KORA
 }
 
 function prune()
