@@ -59,7 +59,7 @@ function snp()
   plink --vcf KORA{}.vcf.gz --list-duplicate-vars --out chr{}
   awk "NR>1{split(\$NF,dupids,\" \");print dupids[1]}" chr{}.dupvar > chr{}.dupid
   bcftools query -i "MAF>0.01 && R2>=0.4" -f"%ID\n" KORA{}.vcf.gz | \
-  join -v1 chr{}.dupid - > chr{}.mafr2
+  join -v2 chr{}.dupid - > chr{}.mafr2
   plink --vcf KORA{}.vcf.gz --extract chr{}.mafr2 --remove remove.id --make-bed --out nodup{}
   awk -vOFS="\t" "
   {
