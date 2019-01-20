@@ -1,4 +1,4 @@
-# 19-1-2019 JHZ
+# 20-1-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -73,7 +73,7 @@ function snp()
   '
   (
     seq 22 | \
-    parallel -j1 -C' ' 'bcftools query -i "MAF>0.01 && R2>=0.4" -f"%ID\n" nodup{}.vcf.gz'
+    parallel -j1 -C' ' 'bcftools query -i "MAF>0.01 && R2>=0.4" -f"%ID\n" KORA{}.vcf.gz'
   ) > MAFR2.id
   seq 22 | \
   awk -vp=KORA '{print p NR}' > merge-list
