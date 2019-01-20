@@ -58,7 +58,9 @@ function snp()
 # bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr{}.vcf.gz -O z -o KORA{}.vcf.gz
   plink --vcf KORA{}.vcf.gz --list-duplicate-vars --out chr{}
   awk "NR>1{split(\$NF,dupids,\" \");print dupids[1]}" chr{}.dupvar > chr{}.dupid
-  plink --vcf KORA{}.vcf.gz --exclude chr{}.dupid --remove remove.id --make-bed --out nodup{}
+  bcftools query -i "MAF>0.01 && R2>=0.4" -f"%ID\n" KORA{}.vcf.gz | \
+  join -v1 chr{}.dupid - > chr{}.mafr2
+  plink --vcf KORA{}.vcf.gz --extract chr{}.mafr2 --remove remove.id --make-bed --out nodup{}
   awk -vOFS="\t" "
   {
     CHR=\$1
@@ -71,10 +73,6 @@ function snp()
   }" nodup{}.bim > nodup{}.snpid
   plink --bfile nodup{} --update-name nodup{}.snpid 1 2 --make-bed --out KORA{}
   '
-  (
-    seq 22 | \
-    parallel -j1 -C' ' 'bcftools query -i "MAF>0.01 && R2>=0.4" -f"%ID\n" KORA{}.vcf.gz'
-  ) > MAFR2.id
   seq 22 | \
   awk -vp=KORA '{print p NR}' > merge-list
   plink --merge-list merge-list --extract MAFR2.id --make-bed --out KORA
