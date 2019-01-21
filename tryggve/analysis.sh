@@ -1,4 +1,4 @@
-# 14-1-2019 JHZ
+# 21-1-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -122,6 +122,41 @@ parallel -j1 -C' ' '
 '
 ) | \
 sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.clumped.all
+
+R -q --no-save <<END
+  tbl <- read.delim("INF1.clumped.tbl",as.is=TRUE)
+  tbl <- within(tbl, {
+    prot <- sapply(strsplit(Chromosome,":"),"[",1)
+    Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
+  })
+  all <- read.table("INF1.clumped.all",as.is=TRUE,col.names=c("SNPID", "CHR", "POS", "STRAND", "N",
+         "EFFECT_ALLELE", "REFERENCE_ALLELE", "CODE_ALL_FQ", "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP"))
+  all <- within(all, {
+    dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
+    p1 <- sapply(strsplit(SNPID,":"),"[",2)
+    p2 <- sapply(strsplit(SNPID,":"),"[",3)
+    MarkerName <- paste(p1,p2,sep=":")
+    study <- sapply(strsplit(dir.study.prot,"/"),"[",2)
+    study.prot <- sapply(strsplit(dir.study.prot,"/"),"[",3)
+    substudy <- sapply(strsplit(study.prot,"[.]"),"[",1)
+    p1 <- sapply(strsplit(study.prot,"[.]"),"[",2)
+    p2 <- sapply(strsplit(study.prot,"[.]"),"[",3)
+    prot <- ifelse(is.na(p2),p1,paste(p1,p2,sep="."))
+  })
+  require(rmeta)
+  pdf("INF1.forest.pdf")
+  for(i in 1:nrow(tbl))
+  {
+     p <- tbl[i,"prot"]
+     m <- tbl[i,"MarkerName"]
+     with(subset(all,prot==p & MarkerName==m), {
+       xlim <- c(-1.5,1.5)
+       metaplot(BETA,SE,N,study,xlab="Effect distribution",xlim=xlim,summn=tbl[i,"Effect"],sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"])
+       title(paste0(p,":",m))
+     })
+  }
+  dev.off()
+END
 
 echo "--> METAL results containing P-value=0"
 
