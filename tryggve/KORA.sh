@@ -83,11 +83,6 @@ function snp()
   plink --bfile KORA --extract KORA.prune.in --make-bed --out KORA.prune'
 }
 
-function prune()
-# for .info files only ~1M variants left with info>=0.4, so preferably skipped
-{
-}
-
 function assoc()
 {
 ## association analysis
