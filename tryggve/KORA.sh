@@ -91,7 +91,7 @@ function assoc()
 # https://data.broadinstitute.org/alkesgroup/BOLT-LMM/#x1-220005.1.2
   seq 22 | \
   parallel -j1 'echo KORA{}.gen.gz' > KORA.list
-  awk -vOFS '{print $1, $1}' protein.id > KORA.id
+  awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
   parallel -j2 -C' ' '
   bolt \
   --bfile KORA.prune \
