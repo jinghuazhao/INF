@@ -1,4 +1,4 @@
-# 20-1-2019 JHZ
+# 21-1-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -19,7 +19,10 @@ function info()
   ) > chr{1}.info
   '
   seq 22 | \
-  parallel -j1 -C' ' 'awk -vchr={} "NR>1 && \$7>=0.4 {print chr \":\" \$3}" chr{}.info > chr{}.id'
+  parallel -j1 -C' ' 'awk -vchr={} "NR>1 && \$7>=0.4 {print chr \":\" \$3}" chr{}.info > chr{}.id
+# only ~1M variants left with info>=0.4, so preferably skipped
+  plink --vcf chr{}.vcf.gz --extract chr{}.id --indep-pairwise 500kb 1 0.80 --maf 0.0001 --out chr{}
+  plink --vcf chr{}.vcf.gz --extract chr{}.prune.in --make-bed --out chr{}'
 }
 
 function ln()
@@ -76,15 +79,13 @@ function snp()
   seq 22 | \
   awk -vp=KORA '{print p NR}' > merge-list
   plink --merge-list merge-list --make-bed --out KORA
+  plink --bfile KORA --indep-pairwise 500kb 1 0.80 --maf 0.0001 --out KORA
+  plink --bfile KORA --extract KORA.prune.in --make-bed --out KORA.prune'
 }
 
 function prune()
 # for .info files only ~1M variants left with info>=0.4, so preferably skipped
 {
-  seq 22 | \
-  parallel -j3 -C' ' '
-  plink --vcf chr{}.vcf.gz --extract chr{}.id --indep-pairwise 500kb 1 0.80 --maf 0.0001 --out chr{}
-  plink --vcf chr{}.vcf.gz --extract chr{}.prune.in --make-bed --out chr{}'
 }
 
 function assoc()
