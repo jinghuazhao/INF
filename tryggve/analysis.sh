@@ -144,7 +144,7 @@ R -q --no-save <<END
     prot <- ifelse(is.na(p2),p1,paste(p1,p2,sep="."))
   })
   require(rmeta)
-  pdf("INF1.forest.pdf")
+  pdf("INF1.fp.pdf")
   for(i in 1:nrow(tbl)) if (i!=89 & i!=101)
   {
      p <- tbl[i,"prot"]
