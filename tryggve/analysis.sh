@@ -145,13 +145,15 @@ R -q --no-save <<END
   })
   require(rmeta)
   pdf("INF1.forest.pdf")
-  for(i in 1:nrow(tbl))
+  for(i in 1:nrow(tbl)) if (i!=89 & i!=101)
   {
      p <- tbl[i,"prot"]
      m <- tbl[i,"MarkerName"]
+     print(paste0(i,"-",p,":",m))
      with(subset(all,prot==p & MarkerName==m), {
        xlim <- c(-1.5,1.5)
-       metaplot(BETA,SE,N,study,xlab="Effect distribution",xlim=xlim,summn=tbl[i,"Effect"],sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"])
+       metaplot(BETA,SE,N,study,xlab="Effect distribution",ylab="",xlim=xlim,
+                summn=tbl[i,"Effect"],sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"])
        title(paste0(p,":",m))
      })
   }

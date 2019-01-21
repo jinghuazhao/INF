@@ -81,19 +81,27 @@ function snp()
   plink --merge-list merge-list --make-bed --out KORA
   plink --bfile KORA --indep-pairwise 500kb 1 0.80 --maf 0.0001 --out KORA
   plink --bfile KORA --extract KORA.prune.in --make-bed --out KORA.prune'
+  seq 22 | \
+  parallel -j1 -C' ' 'bcftools convert KORA{}.vcf.gz -g KORA{}'
 }
 
 function assoc()
 {
 ## association analysis
 # https://data.broadinstitute.org/alkesgroup/BOLT-LMM/#x1-220005.1.2
+  seq 22 | \
+  parallel -j1 'echo KORA{}.gen.gz' > KORA.list
+  awk -vOFS '{print $1, $1}' protein.id > KORA.id
   parallel -j2 -C' ' '
-  --bfile KORA \
+  bolt \
+  --bfile KORA.prune \
+  --impute2FileList=KORA.list \
+  --impute2FidIidFile=KORa.id \
   --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
   --covarFile=phenocovar.txt --covarCol sex age \
   --remove remove.id \
-  --lmm --statsFileImpute2Snps={}-snp --statsFile={}-stats > 2>&1 | tee {}.log' ::: OPG TNFSF14
+  --lmm --statsFileImpute2Snps={}-snp --statsFile={}-stats 2>&1 | tee {}.log' ::: OPG TNFSF14
 }
 
 cd KORA
-snp
+assoc
