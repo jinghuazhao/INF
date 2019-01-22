@@ -139,13 +139,12 @@ R -q --no-save <<END
     study <- sapply(strsplit(dir.study.prot,"/"),"[",2)
     study.prot <- sapply(strsplit(dir.study.prot,"/"),"[",3)
     substudy <- sapply(strsplit(study.prot,"[.]"),"[",1)
-    p1 <- sapply(strsplit(study.prot,"[.]"),"[",2)
-    p2 <- sapply(strsplit(study.prot,"[.]"),"[",3)
-    prot <- ifelse(is.na(p2),p1,paste(p1,p2,sep="."))
+    pos <- unlist(lapply(gregexpr("[.]",study.prot),"[",1))
+    prot <- substring(study.prot,pos+1)
   })
   require(rmeta)
   pdf("INF1.fp.pdf")
-  for(i in 1:nrow(tbl)) if (i!=89 & i!=101)
+  for(i in 1:nrow(tbl))
   {
      p <- tbl[i,"prot"]
      m <- tbl[i,"MarkerName"]
