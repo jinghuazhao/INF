@@ -83,7 +83,7 @@ function snp()
   plink --bfile KORA --extract KORA.prune.in --make-bed --out KORA.prune'
   seq 22 | \
   parallel -j3 -C' ' 'bcftools convert --samples-file protein.id KORA{}.vcf.gz -g protein{}'
-  parallel -j1 'echo {} KORA{}.gen.gz' > KORA.list
+  parallel -j1 'echo {} protein{}.gen.gz' > KORA.list
   awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
 }
 
