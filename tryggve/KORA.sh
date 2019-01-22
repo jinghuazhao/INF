@@ -98,6 +98,7 @@ function assoc()
   --impute2FileList=KORA.list \
   --impute2FidIidFile=KORA.id \
   --LDscoresUseChip \
+  --noMapCheck \
   --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
   --covarFile=phenocovar.txt --covarCol sex --covarCol age \
   --remove remove.id \
