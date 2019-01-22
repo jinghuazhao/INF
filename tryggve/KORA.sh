@@ -1,4 +1,4 @@
-# 21-1-2019 JHZ
+# 22-1-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -82,7 +82,9 @@ function snp()
   plink --bfile KORA --indep-pairwise 500kb 1 0.80 --maf 0.0001 --out KORA
   plink --bfile KORA --extract KORA.prune.in --make-bed --out KORA.prune'
   seq 22 | \
-  parallel -j1 -C' ' 'bcftools convert KORA{}.vcf.gz -g KORA{}'
+  parallel -j3 -C' ' 'bcftools convert --samples-file protein.id KORA{}.vcf.gz -g protein{}'
+  parallel -j1 'echo {} KORA{}.gen.gz' > KORA.list
+  awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
 }
 
 function assoc()
@@ -90,15 +92,14 @@ function assoc()
 ## association analysis
 # https://data.broadinstitute.org/alkesgroup/BOLT-LMM/#x1-220005.1.2
   seq 22 | \
-  parallel -j1 'echo KORA{}.gen.gz' > KORA.list
-  awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
   parallel -j2 -C' ' '
   bolt \
   --bfile KORA.prune \
   --impute2FileList=KORA.list \
-  --impute2FidIidFile=KORa.id \
+  --impute2FidIidFile=KORA.id \
+  --LDscoresUseChip \
   --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
-  --covarFile=phenocovar.txt --covarCol sex age \
+  --covarFile=phenocovar.txt --covarCol sex --covarCol age \
   --remove remove.id \
   --lmm --statsFileImpute2Snps={}-snp --statsFile={}-stats 2>&1 | tee {}.log' ::: OPG TNFSF14
 }
