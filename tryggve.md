@@ -19,7 +19,7 @@ tryggve/           | Auxiliary files
  -- [METAL.qsub](tryggve/METAL.qsub)   | TORQUE qsub script for METAL
  -- [INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis
  -- [KORA.sh](tryggve/KORA.sh) | Bash/R scripts to hand KORA data
- -- [KORA.txt](tryggve/KORA.txt) | obsolete version
+ -- [KORA.txt](tryggve/KORA.txt)] | obsolete version
  -- [KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
  -- [EURLD.bed](tryggve/EURLD.bed) | approximately independent LD blocks for Europeans.
 tryggve.md         | This document
@@ -113,7 +113,7 @@ The system has module qctool/2.0.1 installed but nevertheless not functional for
 
 ### R/gap
 
-The version at TRYGGVE and CRAN are not the latest, which contains functions cis.vs.trans.classification, circos.cis.vs.trans.plot, gc.lambda, invnormal, and here is the way to go
+The version at TRYGGVE and CRAN are not the latest, which contains functions cis.vs.trans.classification, gc.lambda, invnormal, and here is the way to go
 ```bash
 module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL
 tar xvfz gap_1.1-23.tar.gz
@@ -129,7 +129,7 @@ To take advantage of the `circos.mhtplot` function, package R/gap.datasets is al
 
 ### R/QCGWAS
 
-The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the package's quick guide is /data/jinhua/data/QCGWAS.
+The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.
 
 ### R/EasyQC and R/EasyStrata
 
