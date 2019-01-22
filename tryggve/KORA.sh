@@ -101,7 +101,7 @@ function assoc()
   --maxModelSnps 50000000 \
   --noMapCheck \
   --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
-  --covarFile=phenocovar.txt --covarCol sex --covarCol age \
+  --covarFile=phenocovar.txt --covarCol sex --qCovarCol age \
   --remove remove.id \
   --lmm --statsFileImpute2Snps={}-snp --statsFile={}-stats 2>&1 | tee {}.log' ::: OPG TNFSF14
 }
