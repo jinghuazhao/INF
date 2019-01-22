@@ -1,4 +1,4 @@
-# 21-1-2019 JHZ
+# 22-1-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -149,12 +149,22 @@ R -q --no-save <<END
   {
      p <- tbl[i,"prot"]
      m <- tbl[i,"MarkerName"]
+     d <- gsub("[?]","",tbl[i,"Direction"])
+     s <- unlist(strsplit(d,""))
+     f <- as.numeric(paste0(s,1))
+     A1 <- toupper(tbl[i,"Allele1"])
+     A2 <- toupper(tbl[i,"Allele2"])
      print(paste0(i,"-",p,":",m))
      with(subset(all,prot==p & MarkerName==m), {
        xlim <- c(-1.5,1.5)
-       metaplot(BETA,SE,N,study,xlab="Effect distribution",ylab="",xlim=xlim,
-                summn=tbl[i,"Effect"],sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"])
-       title(paste0(p,":",m))
+       e <- toupper(EFFECT_ALLELE)[1]
+       r <- toupper(REFERENCE_ALLELE)[1]
+       if (A1==e) {a1=A1;a2=A2;c=1;}
+       else if(A1==r) {a1=A2;a2=A1;c=-1;}
+       metaplot(BETA,SE,N,paste0(study," (",e,"/",r,")"),
+                xlab="Effect distribution",ylab="",xlim=xlim,
+                summn=tbl[i,"Effect"]*c,sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"])
+       title(paste0(p," [",m," (",a1,"/",a2,")]"))
      })
   }
   dev.off()
