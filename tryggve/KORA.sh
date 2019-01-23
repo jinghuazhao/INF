@@ -3,6 +3,7 @@
 module load bcftools/1.9
 module load plink2/1.90beta5.4
 module load bolt-lmm/2.3.2
+module load gcc/5.4.0 lapack/3.8.0 qctool/2.0.1
 module load snptest/2.5.2
 # This version doesn't handle --grm and --out share the same file name
 # module load gcta/1.91.0beta
