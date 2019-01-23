@@ -43,6 +43,11 @@ function id()
 {
   bcftools query -l chr22.vcf.gz | \
   sort > genotype.id
+  (
+    echo ID
+    echo 0
+    cat genotype.id
+  ) > KORA.samples
   export llod=/data/jampet/KORA/kora.below.llod.normalised.prot.txt
   awk -vOFS="\t" '{
     $1=$1 OFS $1
@@ -133,7 +138,7 @@ function snptest_assoc()
 # This is necessary as BOLT would fail TNFSF14 or some others
 {
   export rt=$HOME/INF
-  qctool -g protein#.gen.gz -s protein22.samples -sample-stats -osample KORA.sample-stats -threads 5
+  qctool -g KORA#.vcf.gz -s KORA.samples -excl-samples remove.id -sample-stats -osample KORA.sample-stats -threads 5
   gcta64 --grm KORA --pca 5 --out KORA
   awk 'NR>1' phenocovar.txt | \
   sort -k1,1 | \
