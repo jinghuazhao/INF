@@ -1,4 +1,4 @@
-# 14-1-2019 JHZ
+# 23-1-2019 JHZ
 
 export KORA=/data/jinhua/data/KORA/Affy_AxiomPhase3_n3775_CodeAX1KG3_V2_LU9220
 module load bcftools/1.8 plink2/1.90beta5.4
@@ -97,7 +97,6 @@ module load parallel/20170822
 export llod=/data/jampet/KORA/kora.below.llod.normalised.prot.txt
 
 export rt=$HOME/INF/work
-echo $(seq 22) X |
 parallel -j12 --env KORA --env rt  -C' ' '
 /services/tools/snptest/2.5.2/snptest \
   -data $KORA/chr{2}_N3775_1000GPhase3.dose.vcf.gz KORA.pheno \

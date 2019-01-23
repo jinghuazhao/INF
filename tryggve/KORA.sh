@@ -1,8 +1,12 @@
-# 22-1-2019 JHZ
+# 23-1-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
 module load bolt-lmm/2.3.2
+module load snptest/2.5.2
+# This version doesn't handle --grm and --out share the same file name
+# module load gcta/1.91.0beta
+# /data/jinhua/gcta_1.91.7beta/gcta64 is called through symbolic link
 
 function info()
 {
@@ -58,7 +62,7 @@ function snp()
 {
   seq 22 | \
   parallel -j1 -C' ' '
-# bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr{}.vcf.gz -O z -o KORA{}.vcf.gz
+  bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr{}.vcf.gz -O z -o KORA{}.vcf.gz
   plink --vcf KORA{}.vcf.gz --list-duplicate-vars --out chr{}
   awk "NR>1{split(\$NF,dupids,\" \");print dupids[1]}" chr{}.dupvar > chr{}.dupid
   bcftools query -i "MAF>0.01 && R2>=0.4" -f"%ID\n" KORA{}.vcf.gz | \
@@ -87,10 +91,10 @@ function snp()
   awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
 }
 
-function assoc()
-{
+function bolt_assoc()
 ## association analysis
 # https://data.broadinstitute.org/alkesgroup/BOLT-LMM/#x1-220005.1.2
+{
   seq 22 | \
   parallel -j2 -C' ' '
   bolt \
@@ -103,8 +107,54 @@ function assoc()
   --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
   --covarFile=phenocovar.txt --covarCol sex --qCovarCol age \
   --remove remove.id \
-  --lmm --statsFileImpute2Snps={}-snp --statsFile={}-stats 2>&1 | tee {}.log' ::: OPG TNFSF14
+  --lmm --statsFile={}.stats 2>&1 | tee {}.log' ::: OPG TNFSF14
+}
+
+function h2()
+{
+  gcta64 --bfile KORA.prune --make-grm-bin --thread-num 5 --out KORA
+  awk 'NR>1{$3="";$4="";print}' phenocovar.txt | \
+  awk '{$1=$1;print}' > prot.dat
+  awk 'NR>1{print $1,$2,$3}' phenocovar.txt > age.dat
+  awk 'NR>1{print $1,$2,$4}' phenocovar.txt > sex.dat
+  awk 'NR==1{gsub(/\t/, "\n", $0); print}' phenocovar.txt | \
+  awk 'NR>4' | \
+  awk '{gsub(/UH_O_/,"",$1);print $1,NR}' | \
+  parallel -j1 -C' ' '
+    gcta64 --reml --grm KORA --pheno prot.dat --mpheno {2} --covar sex.dat --qcovar age.dat \
+           --thread-num 5 --out {1} 2>&1 | \
+    tee {1}.log
+  '
+}
+
+function snptest_assoc()
+# This is necessary as BOLT would fail TNFSF14 or some others
+{
+  export rt=$HOME/INF
+  qctool -g protein#.gen.gz -s protein22.samples -sample-stats -osample KORA.sample-stats
+  gcta64 --grm KORA --pca 5 --out KORA
+  awk 'NR>1' phenocovar.txt | \
+  sort -k1,1 | \
+  join -j1 - KORA.eigenvec | \
+  awk '{$4="";print}' | \
+  awk '{$1=$1;print}' > KORA.pheno
+  parallel -j12 --env rt -C' ' '
+    /services/tools/snptest/2.5.2/snptest \
+    -data protein{1}.gen.gz KORA.pheno \
+    -o ${rt}/KORA/snptest.{1}-{2}.out \
+    -printids \
+    -lower_sample_limit 50 \
+    -frequentist 1 \
+    -genotype_field GP \
+    -missing_code NA,-999 \
+    -method expected \
+    -pheno {1} \
+    -use_raw_covariates \
+    -use_raw_phenotypes \
+    -use_long_column_naming_scheme \
+    -hwe \
+    -log ${rt}/KORA/snptest.{1}-{2}.log' ::: $(cut -f1 inf1.tmp) ::: $(echo $(seq 22) X)
 }
 
 cd KORA
-assoc
+bolt_assoc

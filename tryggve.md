@@ -87,7 +87,8 @@ There are a number of software updates/additions which are worthy of note.
 
 ### GCTA
 
-The version that can handle chi-squared statistics instead of p values in the joint/conditional (COJO) analysis is at /data/jinhua/gcta_1.91.7beta/
+A more recenve version is available from /data/jinhua/gcta_1.91.7beta/.
+This version can handle chi-squared statistics instead of p values in the joint/conditional (COJO) analysis; it also allows for `--grm file --pca --out file`, i.e., same file root.
 
 ### ImageMagick
 
