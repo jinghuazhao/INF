@@ -154,7 +154,7 @@ function snptest_assoc()
     -use_raw_phenotypes \
     -use_long_column_naming_scheme \
     -hwe \
-    -log ${rt}/KORA/snptest.{1}-{2}.log' ::: $(cut -f1 inf1.tmp) ::: $(echo $(seq 22) X)
+    -log snptest.{1}-{2}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}') ::: $(seq 22)
 }
 
 cd KORA
