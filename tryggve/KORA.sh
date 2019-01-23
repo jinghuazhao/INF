@@ -149,7 +149,7 @@ function snptest_assoc()
     -genotype_field GP \
     -missing_code NA,-999 \
     -method expected \
-    -pheno {1} \
+    -pheno UH_O_{1} \
     -use_raw_covariates \
     -use_raw_phenotypes \
     -use_long_column_naming_scheme \
