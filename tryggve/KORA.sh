@@ -140,11 +140,14 @@ function snptest_assoc()
   export rt=$HOME/INF
   qctool -g KORA#.vcf.gz -s KORA.samples -excl-samples remove.id -sample-stats -osample KORA.sample-stats -threads 5
   gcta64 --grm KORA --pca 5 --out KORA
-  awk 'NR>1' phenocovar.txt | \
-  sort -k1,1 | \
-  join -j1 - KORA.eigenvec | \
-  awk '{$4="";print}' | \
-  awk '{$1=$1;print}' > KORA.pheno
+R -q --no-save <<END
+  phenocovar <- read.delim("phenocovar.txt",as.is=TRUE)
+  sample_stats <- read.delim("KORA.sample-stats",skip=10,nrows=1070,as.is=TRUE)
+  missing_proportion <- with(sample_stats,{data.frame(FID=sample,IID=sample,missing=missing_proportion)})
+  eigenvec <- read.table("KORA.eigenvec",col.names=c("FID","IID",paste0("PC",1:5)))
+  pheno <- merge(missing_proportion,merge(eigenvec,phenocovar,by=c("FID","IID")),by=c("FID","IID"))
+  
+END
   parallel -j12 --env rt -C' ' '
     /services/tools/snptest/2.5.2/snptest \
     -data protein{1}.gen.gz KORA.pheno \
