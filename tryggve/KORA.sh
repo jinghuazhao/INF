@@ -99,16 +99,17 @@ function bolt_assoc()
   seq 22 | \
   parallel -j2 -C' ' '
   bolt \
-  --bfile KORA.prune \
-  --impute2FileList=KORA.list \
-  --impute2FidIidFile=KORA.id \
-  --LDscoresUseChip \
-  --maxModelSnps 50000000 \
-  --noMapCheck \
-  --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
-  --covarFile=phenocovar.txt --covarCol sex --qCovarCol age \
-  --remove remove.id \
-  --lmm --statsFile={}.stats 2>&1 | tee {}.log' ::: OPG TNFSF14
+    --bfile KORA.prune \
+    --impute2FileList=KORA.list \
+    --impute2FidIidFile=KORA.id \
+    --LDscoresUseChip \
+    --maxModelSnps 50000000 \
+    --noMapCheck \
+    --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
+    --covarFile=phenocovar.txt --covarCol sex --qCovarCol age \
+    --remove remove.id \
+    --lmm --statsFile={}.stats 2>&1 | \
+  tee {}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
 }
 
 function h2()
