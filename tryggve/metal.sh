@@ -1,4 +1,4 @@
-# 19-12-2018 JHZ
+# 23-1-2019 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
@@ -61,11 +61,13 @@ cd -
 
 # conducting the analysis 
 # module load metal/20110325 parallel/20170822
+export rt=$HOME/INF
 ls METAL/*.metal | \
 sed 's/.metal//g' | \
-parallel --env HOME -j3 -C' ' '
-  metal $HOME/INF/{}.metal; \
-  gzip -f $HOME/INF/{}-1.tbl
+parallel -j2 --env rt -C' ' '
+  metal $rt/{}.metal 2>&1 | \
+  tee $rt/{}-1.tbl.log; \
+  gzip -f $rt/INF/{}-1.tbl
 '
 
 # obtain largest M -- the union of SNP lists as initially requested by NSPHS
