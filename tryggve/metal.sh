@@ -59,12 +59,12 @@ parallel -j10 -C' ' '
 '
 cd -
 
-# conducting the analysis 
+# conduct the analysis 
 # module load metal/20110325 parallel/20170822
 export rt=$HOME/INF
 ls METAL/*.metal | \
 sed 's/.metal//g' | \
-parallel -j2 --env rt -C' ' '
+parallel -j5 --env rt -C' ' '
   metal $rt/{}.metal 2>&1 | \
   tee $rt/{}-1.tbl.log; \
   gzip -f $rt/INF/{}-1.tbl
