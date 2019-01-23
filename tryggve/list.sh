@@ -1,19 +1,22 @@
-# 7-12-2018 JHZ
+# 23-1-2019 JHZ
 
 # --- INF list of proteins and file list ---
 
-function INF() {
-  ## INF list of proteins
-  grep inf1 doc/olink.prot.list.txt | \
-  sed 's/inf1_//g;s/___/\t/g' > inf1.tmp
-  echo -e "CD6\tP30203\nFGF.5\tP12034" >> inf1.tmp
-  sort -k1,1 inf1.tmp > inf1.list
-
+function INF()
+# INF list of proteins
+{
+  ## original list
   grep inf1 doc/olink.prot.list.txt | \
   sed 's/inf1_//g;s/___/\t/g' | \
   sort -k1,1 > inf1.list
-
   awk -vOFS="\t" '{l=$1;gsub(/\./,"_",$1);print $1,$2,l}' inf1.list > inf1_gene
+  ## adding aliases
+  (
+    grep inf1 doc/olink.prot.list.txt | \
+    sed 's/inf1_//g;s/___/\t/g'
+    echo -e "CD6\tP30203\nFGF.5\tP12034"
+  ) > inf1.tmp
+  sort -k1,1 inf1.tmp > inf1.list
 }
 
 # --- studies ----
