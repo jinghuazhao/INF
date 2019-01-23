@@ -132,7 +132,7 @@ function snptest_assoc()
 # This is necessary as BOLT would fail TNFSF14 or some others
 {
   export rt=$HOME/INF
-  qctool -g protein#.gen.gz -s protein22.samples -sample-stats -osample KORA.sample-stats
+  qctool -g protein#.gen.gz -s protein22.samples -sample-stats -osample KORA.sample-stats -threads 5
   gcta64 --grm KORA --pca 5 --out KORA
   awk 'NR>1' phenocovar.txt | \
   sort -k1,1 | \
