@@ -147,13 +147,14 @@ function snptest_assoc()
     sample_stats <- read.delim("KORA.sample-stats",skip=10,nrows=1070,as.is=TRUE)
     missing_proportion <- with(sample_stats,{data.frame(FID=sample,IID=sample,missing=missing_proportion)})
     eigenvec <- read.table("KORA.eigenvec",col.names=c("FID","IID",paste0("PC",1:5)))
-    pheno <- merge(missing_proportion,merge(eigenvec,phenocovar,by=c("ID_1","ID_2")),by=c("FID","IID"))
+    pheno <- merge(missing_proportion,merge(eigenvec,phenocovar,by=c("FID","IID")),by=c("FID","IID"))
+    names(pheno)[1:2] <- c("ID_1","ID_2")
     l2 <- c(rep("0",3),rep("C",5+2),rep("P",88))
     write.table(rbind(l2,pheno),file="KORA.pheno",quote=FALSE,row.names=FALSE)
   END
   parallel -j12 --env rt -C' ' '
     /services/tools/snptest/2.5.2/snptest \
-    -data protein{1}.gen.gz KORA.pheno \
+    -data protein{2}.gen.gz KORA.pheno \
     -o ${rt}/KORA/snptest.{1}-{2}.out \
     -printids \
     -lower_sample_limit 50 \
