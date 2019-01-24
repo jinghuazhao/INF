@@ -1,4 +1,4 @@
-# 23-1-2019 JHZ
+# 24-1-2019 JHZ
 
 # --- INF list of proteins and file list ---
 
@@ -20,6 +20,49 @@ function INF()
 }
 
 # --- studies ----
+
+function biofinder() {
+  grep inf1 doc/olink.prot.list.txt | \
+  sed 's/inf1_//g;s/___/\t/g' | \
+  sort -k1,1 > inf1.tmp
+  ls /data/andmala/biofinder_inf | \
+  sed 's/rsannot_runGwas_plasmaImp.//g;s/_zre_INFI.glm.linear\*//g' | sort -k1,1 > 1
+  awk '{p=$1;gsub(/\./,"",p);print $1,$2,p}' inf1.tmp | sort -k3,3 > 2
+  (
+    join 1 inf1.list | awk '{print $1,$1}'
+    join -v1 1 inf1.tmp | join -11 -23 - 2 | cut -d' ' -f1,2
+    join -v1 1 inf1.tmp | join -11 -23 - 2 -v1 | \
+    awk '{p=$1;
+        gsub(/CL3/,"MCP.4",p);
+        gsub(/CCL2/,"MCP.1",p);
+        gsub(/CCL3/,"MIP.1.alpha",p);
+        gsub(/CCL7/,"MCP.3",p);
+        gsub(/CCL8/,"MCP.2",p);
+        gsub(/CD274/,"PD.L1",p);
+        gsub(/CXCL8/,"IL8",p);
+        gsub(/EIF4EBP1/,"4E.BP1",p);
+        gsub(/FLT3LG/,"Flt3L",p);
+        gsub(/IFNG/,"IFN.gamma",p);
+        gsub(/IL1A/,"IL.1.alpha",p);
+        gsub(/KITLG/,"SCF",p);
+        gsub(/LTA/,"TNFB",p);
+        gsub(/NGF/,"Beta.NGF",p);
+        gsub(/NTF3/,"NT.3",p);
+        gsub(/PLAU/,"uPA",p);
+        gsub(/S100A12/,"EN.RAGE",p);
+        gsub(/STAMBP/,"STAMPB",p);
+        gsub(/SULT1A1/,"ST1A1",p);
+        gsub(/TGFA/,"TGF.alpha",p);
+        gsub(/TGFB1/,"LAP.TGF.beta.1",p);
+        gsub(/TNFRSF11B/,"OPG",p);
+        gsub(/TNFSF10/,"TRAIL",p);
+        gsub(/TNFSF11/,"TRANCE",p);
+        gsub(/TNFSF10/,"TWEAK",p);
+        print $1,p
+    }'
+  ) | sort -k2,2 > sumstats/biofinder.list
+  rm 1 2
+}
 
 function EGCUT_INF() {
   # EGCUT_INF by autosomal, female, male
