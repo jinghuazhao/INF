@@ -134,6 +134,14 @@ function h2()
            --thread-num 5 --out {1} 2>&1 | \
     tee {1}.log
   '
+  grep '/' *hsq | \
+  sed 's|.hsq:V(G)/Vp||g' > h2.out
+  (
+    echo "prot h2 se p"
+    grep 'Pval' *hsq | \
+    sed 's/.hsq:Pval//g' | \
+    join h2.out - 
+  ) > h2.stats
 }
 
 function snptest_assoc()
