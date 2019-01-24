@@ -32,7 +32,9 @@ function biofinder() {
     join 1 inf1.list | awk '{print $1,$1}'
     join -v1 1 inf1.tmp | join -11 -23 - 2 | cut -d' ' -f1,2
     join -v1 1 inf1.tmp | join -11 -23 - 2 -v1 | \
-    awk '{p=$1;
+    awk '
+    {
+        p=$1;
         gsub(/CL3/,"MCP.4",p);
         gsub(/CCL2/,"MCP.1",p);
         gsub(/CCL3/,"MIP.1.alpha",p);
