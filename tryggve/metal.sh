@@ -67,7 +67,7 @@ sed 's/.metal//g' | \
 parallel -j5 --env rt -C' ' '
   metal $rt/{}.metal 2>&1 | \
   tee $rt/{}-1.tbl.log; \
-  gzip -f $rt/INF/{}-1.tbl
+  gzip -f $rt/{}-1.tbl
 '
 
 # obtain largest M -- the union of SNP lists as initially requested by NSPHS
