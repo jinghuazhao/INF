@@ -58,7 +58,7 @@ function NSPHS_INF() {
   join -j2 inf1.tmp - | \
   parallel -j8 --env NSPHS_INF -C' ' '
   gunzip -c $NSPHS_INF/NSPHS_inf1_{3}_{1}.txt.gz | \
-  awk -f files/NSPHS.awk | \
+  awk -f tryggve/NSPHS.awk | \
   gzip -f > work/NSPHS.{2}.gz
   '
 }
