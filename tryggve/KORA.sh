@@ -1,10 +1,12 @@
-# 23-1-2019 JHZ
+# 24-1-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
 module load bolt-lmm/2.3.2
 module load gcc/5.4.0 lapack/3.8.0 qctool/2.0.1
+module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL
 module load snptest/2.5.2
+
 # This version doesn't handle --grm and --out share the same file name
 # module load gcta/1.91.0beta
 # /data/jinhua/gcta_1.91.7beta/gcta64 is called through symbolic link
@@ -138,16 +140,17 @@ function snptest_assoc()
 # This is necessary as BOLT would fail TNFSF14 or some others
 {
   export rt=$HOME/INF
-  qctool -g KORA#.vcf.gz -s KORA.samples -excl-samples remove.id -sample-stats -osample KORA.sample-stats -threads 5
+  qctool -g KORA#.vcf.gz -s KORA.samples -excl-samples remove.id -vcf-genotype-field GP -sample-stats -osample KORA.sample-stats -threads 5
   gcta64 --grm KORA --pca 5 --out KORA
-R -q --no-save <<END
-  phenocovar <- read.delim("phenocovar.txt",as.is=TRUE)
-  sample_stats <- read.delim("KORA.sample-stats",skip=10,nrows=1070,as.is=TRUE)
-  missing_proportion <- with(sample_stats,{data.frame(FID=sample,IID=sample,missing=missing_proportion)})
-  eigenvec <- read.table("KORA.eigenvec",col.names=c("FID","IID",paste0("PC",1:5)))
-  pheno <- merge(missing_proportion,merge(eigenvec,phenocovar,by=c("FID","IID")),by=c("FID","IID"))
-  
-END
+  R -q --no-save <<\ \ END
+    phenocovar <- read.delim("phenocovar.txt",as.is=TRUE)
+    sample_stats <- read.delim("KORA.sample-stats",skip=10,nrows=1070,as.is=TRUE)
+    missing_proportion <- with(sample_stats,{data.frame(FID=sample,IID=sample,missing=missing_proportion)})
+    eigenvec <- read.table("KORA.eigenvec",col.names=c("FID","IID",paste0("PC",1:5)))
+    pheno <- merge(missing_proportion,merge(eigenvec,phenocovar,by=c("ID_1","ID_2")),by=c("FID","IID"))
+    l2 <- c(rep("0",3),rep("C",5+2),rep("P",88))
+    write.table(rbind(l2,pheno),file="KORA.pheno",quote=FALSE,row.names=FALSE)
+  END
   parallel -j12 --env rt -C' ' '
     /services/tools/snptest/2.5.2/snptest \
     -data protein{1}.gen.gz KORA.pheno \
