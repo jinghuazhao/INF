@@ -148,6 +148,7 @@ SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/
 
 ## Notes on studies
 
+.   **BioFinder"". 91 proteins. sumstats file named after genes and converted to protein names.
 -   **NSPHS**. 91 proteins, originally a tar.gz file is unpacked into \$HOME/INF/work leading to 10 proteins
 -   **EGCUT**. 91 proteins, orginally only 18 proteins though stratified by chromsomes
 -   **INTERVAL**. raw SNPTEST output with information such as strand/chip SNPs to be added
