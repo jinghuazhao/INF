@@ -185,7 +185,8 @@ function snptest_assoc()
       awk "NR>19" snptest.${prot}-{}.out
     )' | \
     grep -v not | \
-    awk 'NR==1 || $3!="chromosome"' > snptest.${p}.out
+    awk 'NR==1 || $3!="chromosome"' | \
+    gzip -f > snptest.${p}.out.gz
   done
 }
 
