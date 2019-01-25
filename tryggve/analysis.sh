@@ -1,4 +1,4 @@
-# 24-1-2019 JHZ
+# 25-1-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -101,14 +101,14 @@ END
   head -1
   awk 'NR>1' INF1.clumped | \
   cut -d' ' -f1,3 | \
-  parallel -j1 -C' ' 'zgrep -H -w {2} METAL/{1}-1.tbl.gz'
+  parallel -j8 -C' ' 'zgrep -H -w {2} METAL/{1}-1.tbl.gz'
 ) | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.clumped.tbl
 
 (
 awk 'NR>1' INF1.clumped | \
 cut -d' ' -f1,3 | \
-parallel -j1 -C' ' '
+parallel -j8 -C' ' '
   export direction=$(zgrep -w {2} METAL/{1}-1.tbl.gz | cut -f13)
   let j=1
   for i in $(grep "Input File" METAL/{1}-1.tbl.info | cut -d" " -f7)
