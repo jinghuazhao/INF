@@ -1,4 +1,4 @@
-# 24-1-2019 JHZ
+# 25-1-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -176,6 +176,17 @@ function snptest_assoc()
     -use_long_column_naming_scheme \
     -hwe \
     -log snptest.{1}-{2}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}') ::: $(seq 22)
+  for p in $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
+  do
+    export prot=$p
+    seq 22 | \
+    parallel -j1 --env prot -C' ' '
+    (
+      awk "NR>19" snptest.${prot}-{}.out
+    )' | \
+    grep -v not | \
+    awk 'NR==1 || $3!="chromosome"' > snptest.${p}.out
+  done
 }
 
 cd KORA
