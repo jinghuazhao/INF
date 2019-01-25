@@ -127,7 +127,7 @@ Meta-analysis will be performed centrally using the inverse-N weighted analysis 
 Genomic control and appropriate marker filters will be applied at this stage.
 
 * **Marker exclusion filters**: we will apply imputation quality filters at the meta-analysis stage, so provide unfiltered results. 
-* **Genomic control (GC)**: genomic control will not be applied to each study at the meta-analysis stage (single GC), so GC-correction is needed for each cohort. 
+* **Genomic control (GC)**: genomic control will be applied at the meta-analysis stage (single GC), so GC-correction is not needed for each cohort. 
 * **Significance**: the Bonferroni threshold for the genome-wide analyses will be set at 5 x 10<sup>-10</sup>. The results will be replicated in independent cohorts.
 
 ## 6. Uploading of results
