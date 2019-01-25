@@ -176,13 +176,17 @@ function snptest_assoc()
     -use_long_column_naming_scheme \
     -hwe \
     -log snptest.{1}-{2}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}') ::: $(seq 22)
-  parallel -j1 --env rt -C' ' '
-  (
-    awk "NR>19" snptest.{1}-{2}.out
-  ) | \
-  grep -v not | \
-  awk "NR==1 || \$3!=\"Chromosome\"" > snptest.{1}.out ' \
-      ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}') ::: $(seq 22)
+  for p in $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
+  do
+    export prot=$p
+    seq 22 | \
+    parallel -j1 --env prot -C' ' '
+    (
+      awk "NR>19" snptest.${prot}-{}.out
+    )' | \
+    grep -v not | \
+    awk 'NR==1 || $3!="chromosome"' > snptest.${p}.out
+  done
 }
 
 cd KORA
