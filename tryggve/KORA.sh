@@ -1,4 +1,4 @@
-# 25-1-2019 JHZ
+# 27-1-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -152,7 +152,7 @@ function snptest_assoc()
   gcta64 --grm KORA --pca 5 --out KORA
   R -q --no-save <<\ \ END
     phenocovar <- read.delim("phenocovar.txt",as.is=TRUE)
-    sample_stats <- read.delim("KORA.sample-stats",skip=10,nrows=1070,as.is=TRUE)
+    sample_stats <- read.delim("KORA.sample-stats",skip=12,nrows=1070,as.is=TRUE)
     missing_proportion <- with(sample_stats,{data.frame(FID=sample,IID=sample,missing=missing_proportion)})
     eigenvec <- read.table("KORA.eigenvec",col.names=c("FID","IID",paste0("PC",1:5)))
     pheno <- merge(missing_proportion,merge(eigenvec,phenocovar,by=c("FID","IID")),by=c("FID","IID"))
