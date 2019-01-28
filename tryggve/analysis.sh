@@ -164,7 +164,7 @@ R -q --no-save <<END
                 labels=paste0(study," (",e,"/",r,")", "(",tbl[i,"Effect"],"/",tbl[i,"StdErr"],")"),
                 xlab="Effect distribution",ylab="",xlim=xlim,
                 summn=tbl[i,"Effect"]*c,sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"],
-                colors=meta.colors(box="magenta",lines="blue", zero="red", summary="orange", text="black"))
+                colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
        title(paste0(p," [",m," (",a1,"/",a2,")", " N=",tbl[i,"N"],"]"))
      })
   }
