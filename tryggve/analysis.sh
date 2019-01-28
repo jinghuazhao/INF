@@ -1,4 +1,4 @@
-# 25-1-2019 JHZ
+# 28-1-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -101,7 +101,7 @@ END
   head -1
   awk 'NR>1' INF1.clumped | \
   cut -d' ' -f1,3 | \
-  parallel -j8 -C' ' 'zgrep -H -w {2} METAL/{1}-1.tbl.gz'
+  parallel -j8 -C' ' 'zgrep -H -E '(^|\s){2}($|\s)' METAL/{1}-1.tbl.gz'
 ) | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.clumped.tbl
 
@@ -115,7 +115,7 @@ parallel -j8 -C' ' '
   do
      export n=$(awk -vj=$j "BEGIN{split(ENVIRON[\"direction\"],a,\"\");print a[j]}")
      if [ "$n" != "?" ]; then
-        zgrep -H -w {2} $i
+        zgrep -H -E '(^|\s){2}($|\s)' $i
      fi
      let j=$j+1
   done
@@ -160,10 +160,12 @@ R -q --no-save <<END
        r <- toupper(REFERENCE_ALLELE)
        if (A1==e[1]) {a1=A1;a2=A2;c=1;}
        else if(A1==r[1]) {a1=A2;a2=A1;c=-1;}
-       metaplot(BETA,SE,N,paste0(study," (",e,"/",r,")"),
+       metaplot(BETA,SE,N,
+                labels=paste0(study," (",e,"/",r,")", "(",tbl[i,"Effect"],"/",tbl[i,"StdErr"],")"),
                 xlab="Effect distribution",ylab="",xlim=xlim,
-                summn=tbl[i,"Effect"]*c,sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"])
-       title(paste0(p," [",m," (",a1,"/",a2,")]"))
+                summn=tbl[i,"Effect"]*c,sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"],
+                colors=meta.colors(box="magenta",lines="blue", zero="red", summary="orange", text="black"))
+       title(paste0(p," [",m," (",a1,"/",a2,")", " N=",tbl[i,"N"],"]"))
      })
   }
   dev.off()
