@@ -160,20 +160,20 @@ R -q --no-save <<END
        r <- toupper(REFERENCE_ALLELE)
        if (A1==e[1]) {a1=A1;a2=A2;c=1;}
        else if(A1==r[1]) {a1=A2;a2=A1;c=-1;}
-       if (1==0) {
-       tabletext <- cbind(c("Study",paste0(study," (",e,"/",r,")"),"NA","Summary"),
-                          c("Effect",format(BETA,digits=3),"NA",tbl[i,"Effect"]),
-                          c("SE",format(SE,digits=3),"NA",tbl[i,"StdErr"]),
-                          c("N",N,"NA",tbl[i,"N"]))
-       forestplot(tabletext,
-                  c(NA,BETA,NA,tbl[i,"Effect"]),
-                  c(NA,BETA-1.96*SE,NA,tbl[i,"Effect"]-1.96*tbl[i,"StdErr"]),
-                  c(NA,BETA+1.96*SE,NA,tbl[i,"Effect"]+1.96*tbl[i,"StdErr"]),
-                  zero=0,
-                  is.summary=c(TRUE,rep(FALSE,length(BETA)),FALSE,TRUE),
-                  boxsize=0.75,
-                  col=meta.colors(box="royalblue",line="darkblue", summary="royalblue"))
-       title(paste0(p," [",m," (",a1,"/",a2,")","]"))
+       if (1==1) {
+         tabletext <- cbind(c("Study",paste0(study," (",e,"/",r,")"),"Summary"),
+                            c("Effect",format(BETA,digits=3),tbl[i,"Effect"]),
+                            c("SE",format(SE,digits=3),tbl[i,"StdErr"]),
+                            c("N",N,tbl[i,"N"]))
+         forestplot(tabletext,
+                    c(NA,BETA,c*tbl[i,"Effect"]),
+                    c(NA,BETA-1.96*SE,c*tbl[i,"Effect"]-1.96*tbl[i,"StdErr"]),
+                    c(NA,BETA+1.96*SE,c*tbl[i,"Effect"]+1.96*tbl[i,"StdErr"]),
+                    zero=0,
+                    is.summary=c(TRUE,rep(FALSE,length(BETA)),TRUE),
+                    boxsize=0.75,
+                    col=meta.colors(box="royalblue",line="darkblue", summary="royalblue"))
+         title(paste0(p," [",m," (",a1,"/",a2,")","]"))
        }
        metaplot(BETA,SE,N,
                 labels=paste0(study," (",e,"/",r,")", "(",tbl[i,"Effect"],"/",tbl[i,"StdErr"],")"),
