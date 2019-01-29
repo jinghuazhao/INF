@@ -1,4 +1,4 @@
-# 23-1-2019 JHZ
+# 29-1-2019 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
@@ -34,6 +34,7 @@ do
    echo AVERAGEFREQ ON
    echo MINMAXFREQ ON
    echo ADDFILTER N ">=" 10
+   echo ADDFILTER PVAL ">" 0
    echo MARKERLABEL SNPID
    echo ALLELELABELS EFFECT_ALLELE REFERENCE_ALLELE
    echo EFFECTLABEL BETA
