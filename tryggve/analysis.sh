@@ -1,4 +1,4 @@
-# 28-1-2019 JHZ
+# 4-2-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -76,7 +76,9 @@ plink --bfile EUR \
 (
   grep CHR $rt/*.clumped | \
   head -1
-  grep -v CHR $rt/*.clumped
+  ls METAL/*-1.tbl.gz | \
+  sed 's|METAL/||g;s/-1.tbl.gz//g' | \
+  parallel -j1 --env rt -C' ' 'grep -H -v CHR $rt/{}.clumped | sed "s/.clumped://g"'
 ) | \
 sed 's|'"$rt"'/||g;s/.clumped://g' | \
 awk '(NF>1){$3="";print}' | \
@@ -101,7 +103,7 @@ END
   head -1
   awk 'NR>1' INF1.clumped | \
   cut -d' ' -f1,3 | \
-  parallel -j8 -C' ' 'zgrep -H -E '(^|\s){2}($|\s)' METAL/{1}-1.tbl.gz'
+  parallel -j8 -C' ' 'zgrep -H -E "(^|\s){2}($|\s)" METAL/{1}-1.tbl.gz'
 ) | \
 sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.clumped.tbl
 
@@ -115,7 +117,7 @@ parallel -j8 -C' ' '
   do
      export n=$(awk -vj=$j "BEGIN{split(ENVIRON[\"direction\"],a,\"\");print a[j]}")
      if [ "$n" != "?" ]; then
-        zgrep -H -E '(^|\s){2}($|\s)' $i
+        zgrep -H -E "(^|\s){2}($|\s)" $i
      fi
      let j=$j+1
   done
