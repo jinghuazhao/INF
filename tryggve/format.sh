@@ -75,7 +75,7 @@ cat sumstats/KORA.list | \
 parallel -j5 -C' ' '
    zgrep -v Completed KORA/snptest.{1}.out.gz | \
    awk -f tryggve/KORA.awk | \
-   gzip -f > sumstats/KORA.{3}.gz'
+   gzip -f > sumstats/KORA/KORA.{3}.gz'
 
 # PS -- only 88 proteins without the following,
 # BDNF P23560 BDNF
