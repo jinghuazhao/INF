@@ -40,37 +40,6 @@ awk -f tryggve/order.awk | \
 gzip -f > sumstats/LifeLinesDeep/LifeLinesDeep.{1}.gz'
 
 # KORA
-
-awk '
-{
-   if ($3=="EIF4EBP1") $3="4EBP1"
-   if ($3=="NGF") $3="BetaNGF"
-   if ($3=="S100A12") $3="ENRAGE"
-   if ($3=="TGF5") $3="FGF5"
-   if ($3=="FLT3LG") $3="FLT3L"
-   if ($3=="IFNG") $3="IFNg"
-   if ($3=="IL1A") $3="IL1a"
-   if ($3=="TGFB1") $3="LAP_TGFb1"
-   if ($3=="CCL2") $3="MCP1"
-   if ($3=="CCL8") $3="MCP2"
-   if ($3=="CCL7") $3="MCP3"
-   if ($3=="CCL13") $3="MCP4"
-   if ($3=="TNFRSF11B") $3="OPG"
-   if ($3=="CD274") $3="PDL1"
-   if ($3=="KITLG") $3="SCF"
-   if ($3=="SULT1A1") $3="ST1A1"
-   if ($3=="TGFA") $3="TGFa"
-   if ($3=="LTA") $3="TNFB"
-   if ($3=="TNFSF10") $3="TRAIL"
-   if ($3=="TNFSF11") $3="TRANCE"
-   if ($3=="TNFSF12") $3="TWEAK"
-   if ($3=="PLAU") $3="uPA"
-};1' inf1.gene | \
-sort -k3,3 > inf1.tmp
-ls KORA/snptest.*.out.gz | \
-awk '{gsub(/KORA\/snptest.|.out.gz/,"");print}' | \
-sort -k1,1 | \
-join -11 -23 - inf1.tmp > sumstats/KORA.list
 cat sumstats/KORA.list | \
 parallel -j5 -C' ' '
    zgrep -v Completed KORA/snptest.{1}.out.gz | \

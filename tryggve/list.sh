@@ -34,47 +34,88 @@ function INF()
 
 # --- studies ----
 
+function anders() {
+  awk '
+  {
+     if ($3=="EIF4EBP1") $3="4EBP1"
+     if ($3=="NGF") $3="BetaNGF"
+     if ($3=="S100A12") $3="ENRAGE"
+     if ($3=="TGF5") $3="FGF5"
+     if ($3=="FLT3LG") $3="FLT3L"
+     if ($3=="IFNG") $3="IFNg"
+     if ($3=="IL1A") $3="IL1a"
+     if ($3=="TGFB1") $3="LAP_TGFb1"
+     if ($3=="CCL2") $3="MCP1"
+     if ($3=="CCL8") $3="MCP2"
+     if ($3=="CCL7") $3="MCP3"
+     if ($3=="CCL13") $3="MCP4"
+     if ($3=="TNFRSF11B") $3="OPG"
+     if ($3=="CD274") $3="PDL1"
+     if ($3=="KITLG") $3="SCF"
+     if ($3=="SULT1A1") $3="ST1A1"
+     if ($3=="TGFA") $3="TGFa"
+     if ($3=="LTA") $3="TNFB"
+     if ($3=="TNFSF10") $3="TRAIL"
+     if ($3=="TNFSF11") $3="TRANCE"
+     if ($3=="TNFSF12") $3="TWEAK"
+     if ($3=="PLAU") $3="uPA"
+  };1' inf1.gene | \
+  sort -k3,3 > inf1.tmp
+}
+
 function biofinder() {
   grep inf1 doc/olink.prot.list.txt | \
   sed 's/inf1_//g;s/___/\t/g' | \
   sort -k1,1 > inf1.tmp
-  ls /data/andmala/biofinder_inf | \
+  ls /data/andmala/biofinder_inf/ | \
+  grep -v list | \
   sed 's/rsannot_runGwas_plasmaImp.//g;s/_zre_INFI.glm.linear\*//g' | sort -k1,1 > 1
   awk '{p=$1;gsub(/\./,"",p);print $1,$2,p}' inf1.tmp | sort -k3,3 > 2
   (
     join 1 inf1.list | awk '{print $1,$1}'
     join -v1 1 inf1.tmp | join -11 -23 - 2 | cut -d' ' -f1,2
     join -v1 1 inf1.tmp | join -11 -23 - 2 -v1 | \
-    awk '{p=$1;
-        gsub(/CL3/,"MCP.4",p);
-        gsub(/CCL2/,"MCP.1",p);
-        gsub(/CCL3/,"MIP.1.alpha",p);
-        gsub(/CCL7/,"MCP.3",p);
-        gsub(/CCL8/,"MCP.2",p);
-        gsub(/CD274/,"PD.L1",p);
-        gsub(/CXCL8/,"IL8",p);
-        gsub(/EIF4EBP1/,"4E.BP1",p);
-        gsub(/FLT3LG/,"Flt3L",p);
-        gsub(/IFNG/,"IFN.gamma",p);
-        gsub(/IL1A/,"IL.1.alpha",p);
-        gsub(/KITLG/,"SCF",p);
-        gsub(/LTA/,"TNFB",p);
-        gsub(/NGF/,"Beta.NGF",p);
-        gsub(/NTF3/,"NT.3",p);
-        gsub(/PLAU/,"uPA",p);
-        gsub(/S100A12/,"EN.RAGE",p);
-        gsub(/STAMBP/,"STAMPB",p);
-        gsub(/SULT1A1/,"ST1A1",p);
-        gsub(/TGFA/,"TGF.alpha",p);
-        gsub(/TGFB1/,"LAP.TGF.beta.1",p);
-        gsub(/TNFRSF11B/,"OPG",p);
-        gsub(/TNFSF10/,"TRAIL",p);
-        gsub(/TNFSF11/,"TRANCE",p);
-        gsub(/TNFSF10/,"TWEAK",p);
-        print $1,p
+    awk '
+    {
+       p=$1;
+       if (p=="CL3") p="MCP.4";
+       if (p=="CCL2") p="MCP.1";
+       if (p=="CCL3") p="MIP.1.alpha";
+       if (p=="CCL7") p="MCP.3";
+       if (p=="CCL8") p="MCP.2";
+       if (p=="CD274") p="PD.L1";
+       if (p=="CXCL8") p="IL8";
+       if (p=="EIF4EBP1") p="4E.BP1";
+       if (p=="FLT3LG") p="Flt3L";
+       if (p=="IFNG") p="IFN.gamma";
+       if (p=="IL1A") p="IL.1.alpha";
+       if (p=="KITLG") p="SCF";
+       if (p=="LTA") p="TNFB";
+       if (p=="NGF") p="Beta.NGF";
+       if (p=="NTF3") p="NT.3";
+       if (p=="PLAU") p="uPA";
+       if (p=="S100A12") p="EN.RAGE";
+       if (p=="STAMBP") p="STAMPB";
+       if (p=="SULT1A1") p="ST1A1";
+       if (p=="TGFA") p="TGF.alpha";
+       if (p=="TGFB1") p="LAP.TGF.beta.1";
+       if (p=="TNFRSF11B") p="OPG";
+       if (p=="TNFSF10") p="TRAIL";
+       if (p=="TNFSF11") p="TRANCE";
+       if (p=="TNFSF10") p="TWEAK";
+       print $1,p
     }'
   ) | sort -k2,2 > sumstats/biofinder.list
-  rm 1 2
+# rm 1 2
+}
+
+biofinder2()
+{
+  ls /data/andmala/biofinder_inf/ | \
+  grep -v list | \
+  sed 's/rsannot_runGwas_plasmaImp.//g;s/_zre_INFI.glm.linear\*//g' | \
+  sort -k1,1 | \
+  join -11 -23 - inf1.tmp > sumstats/biofinder.list
 }
 
 function EGCUT_INF() {
@@ -87,6 +128,14 @@ function INTERVAL() {
   # INTERVAL, 92 lines
   ls /data/jampet/upload-20170920/ | \
   grep inf > sumstats/INTERVAL.list
+}
+
+function KORA() {
+  anders
+  ls KORA/snptest.*.out.gz | \
+  awk '{gsub(/KORA\/snptest.|.out.gz/,"");print}' | \
+  sort -k1,1 | \
+  join -11 -23 - inf1.tmp > sumstats/KORA.list
 }
 
 function LifeLines() {
@@ -300,4 +349,4 @@ function md()
 }
 
 module load parallel/20170822
-STANLEY
+$1

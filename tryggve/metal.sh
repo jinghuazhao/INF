@@ -3,7 +3,7 @@
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
 (
-for dir in INTERVAL EGCUT_INF KORA NSPHS_INF ORCADES STABILITY STANLEY VIS
+for dir in biofinder INTERVAL EGCUT_INF KORA NSPHS_INF ORCADES STABILITY STANLEY VIS
 do
    ls sumstats/$dir | \
    awk -vdir=$dir '{
