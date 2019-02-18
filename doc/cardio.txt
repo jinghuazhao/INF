@@ -62,3 +62,5 @@ function reference()
 
 export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/pcs1_3
 export BS=/scratch/jp549/apps/bram-scripts
+
+# \\me-filer1\groups$\MGEU\Factors\High_dimensional_genetics\Olink\INF1
