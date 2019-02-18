@@ -73,7 +73,7 @@ sort -k1,1 | \
 join -11 -23 - inf1.tmp > sumstats/KORA.list
 cat sumstats/KORA.list | \
 parallel -j5 -C' ' '
-   gunzip -c KORA/snptest.{1}.out.gz | \
+   zgrep -v Completed KORA/snptest.{1}.out.gz | \
    awk -f tryggve/KORA.awk | \
    gzip -f > sumstats/KORA.{3}.gz'
 

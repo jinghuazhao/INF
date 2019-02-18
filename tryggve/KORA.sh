@@ -1,4 +1,4 @@
-# 9-2-2019 JHZ
+# 18-2-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -185,7 +185,7 @@ function snptest_assoc()
     (
       awk "NR>19" snptest.${prot}-{}.out
     )' | \
-    grep -v not | \
+    grep -v -E 'not|Completed' | \
     awk 'NR==1 || $3!="chromosome"' | \
     gzip -f > snptest.${p}.out.gz
   done
