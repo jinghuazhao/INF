@@ -1,4 +1,4 @@
-# 24-1-2019 JHZ
+# 18-2-2019 JHZ
 
 # --- INF list of proteins and file list ---
 
@@ -9,6 +9,9 @@ function INF()
   grep inf1 doc/olink.prot.list.txt | \
   sed 's/inf1_//g;s/___/\t/g' | \
   sort -k1,1 > inf1.list
+  grep inf1 doc/olink.prot.list.txt | \
+  sed 's/inf1_//g;s/___/\t/g' | \
+  sort -k2,2 > prot.list
   awk -vOFS="\t" '{l=$1;gsub(/\./,"_",$1);print $1,$2,l}' inf1.list > inf1_gene
   ## adding aliases
   (
@@ -17,6 +20,16 @@ function INF()
     echo -e "CD6\tP30203\nFGF.5\tP12034"
   ) > inf1.tmp
   sort -k1,1 inf1.tmp > inf1.list
+  cut -f3,7 doc/olink.inf.panel.annot.tsv | \
+  sed 's/\"//g' | \
+  sort -k1,1 | \
+  join -12 -21 prot.list - | \
+  awk '{
+       if($1=="Q8NF90") {$1="P12034";$3="TGF5"}
+       if($1=="Q8WWJ7") {$1="P30203";$3="CD6"}
+       print
+  }' | \
+  sort -k3,3 > inf1.gene
 }
 
 # --- studies ----
@@ -32,9 +45,7 @@ function biofinder() {
     join 1 inf1.list | awk '{print $1,$1}'
     join -v1 1 inf1.tmp | join -11 -23 - 2 | cut -d' ' -f1,2
     join -v1 1 inf1.tmp | join -11 -23 - 2 -v1 | \
-    awk '
-    {
-        p=$1;
+    awk '{p=$1;
         gsub(/CL3/,"MCP.4",p);
         gsub(/CCL2/,"MCP.1",p);
         gsub(/CCL3/,"MIP.1.alpha",p);
