@@ -1,9 +1,9 @@
-# 29-1-2019 JHZ
+# 18-2-2019 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
 (
-for dir in INTERVAL EGCUT_INF NSPHS_INF ORCADES STABILITY STANLEY VIS
+for dir in INTERVAL EGCUT_INF KORA NSPHS_INF ORCADES STABILITY STANLEY VIS
 do
    ls sumstats/$dir | \
    awk -vdir=$dir '{
