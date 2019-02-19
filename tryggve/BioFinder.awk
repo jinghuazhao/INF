@@ -4,23 +4,19 @@
   OFS="\t"
   if (NR==1) print  "SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE", "CODE_ALL_FQ", "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP"
   else {
-    split($1,a,":")
-    CHR=a[1]
-    POS=$4
-    if (substr($2,1,2)=="rs") SNPID=$2; else SNPID="chr" CHR ":" POS
+    CHR=$1
+    POS=$2
+    SNPID=$17
     STRAND="NA"
-    N_AA=$14
-    N_AB=$15
-    N_BB=$16
-    N=N_AA+N_AB+N_BB
+    N=$11
     EFFECT_ALLELE=$6
-    REFERENCE_ALLELE=$5
-    CODE_ALL_FQ=(N_BB+N_AB*0.5)/N
-    BETA=$24
-    SE=$25
-    PVAL=$22
+    REFERENCE_ALLELE=$4
+    CODE_ALL_FQ=$9
+    BETA=$12
+    SE=$13
+    PVAL=$15
     RSQ="NA"
-    RSQ_IMP=$23
+    RSQ_IMP="NA"
     IMP="NA"
     print  SNPID, CHR, POS, STRAND, N, EFFECT_ALLELE, REFERENCE_ALLELE, CODE_ALL_FQ, BETA, SE, PVAL, RSQ, RSQ_IMP, IMP
   }
