@@ -4,11 +4,16 @@ module load parallel/20170822
 export threads=8
 
 # BioFinder
-cat sumstats/BioFinder.list | \
+grep -v TNF sumstats/BioFinder.list | \
 parallel -j5 -C' ' '
    awk -f tryggve/BioFinder.awk /data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.{1}_zre_INFI.glm.linear | \
    awk -f tryggve/order.awk | \
    gzip -f > sumstats/BioFinder/BioFinder.{3}.gz'
+# version with complete data
+gunzip -c /data/jinhua/data/BioFinder/rsannot_runGwas_plasmaImp.TNF_zre_INFI.glm.linear.gz | \
+awk -f tryggve/BioFinder.awk | \
+awk -f tryggve/order.awk | \
+gzip -f > sumstats/BioFinder/BioFinder.TNF.gz
 
 # EGCUT_INF -- SNPID has prefix esv for non-rsids
 sort -k2,2 inf1.list > inf1.tmp
