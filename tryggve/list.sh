@@ -103,6 +103,15 @@ function LifeLines() {
   uniq > sumstats/LifeLinesDeep.list
 }
 
+function MadCam()
+{
+  sort -k2,2 inf1.list > inf1.tmp
+  ls /data/andmala/madcam | \
+  awk '{split($1,a,".");print a[2],a[3]}' | \
+  sort -k1,1 | \
+  join -11 -22 - inf1.tmp > sumstats/MadCam.list
+}
+
 function NSPHS_INF() {
   # NSPHS_INF
   export NSPHS_INF=/data/stefane/NSPHS_INF

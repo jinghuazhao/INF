@@ -65,6 +65,12 @@ parallel -j5 -C' ' '
 # NRTN Q99748 NRTN
 # NTF3 P20783 NT.3
 
+# MadCam
+cat sumstats/MadCam.list | \
+parallel -j5 -C' ' '
+   awk -f tryggve/order.awk /data/andmala/madcam/MadCAM.{1}.{2}.txt | \
+   gzip -f > sumstats/MadCam/MadCam.{3}.gz'
+
 # NSPHS_INF
 ls work/NSPHS*gz | \
 sed 's|work/NSPHS\.||g;s/\.gz//g' | \
