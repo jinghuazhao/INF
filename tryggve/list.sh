@@ -105,11 +105,10 @@ function LifeLines() {
 
 function MadCam()
 {
-  sort -k2,2 inf1.list > inf1.tmp
   ls /data/andmala/madcam | \
   awk '{split($1,a,".");print a[2],a[3]}' | \
   sort -k1,1 | \
-  join -11 -22 - inf1.tmp > sumstats/MadCam.list
+  join -11 -22 - prot.list > sumstats/MadCam.list
 }
 
 function NSPHS_INF() {
@@ -313,5 +312,6 @@ function md()
   for l in $(ls sumstats/*list); do mkdir sumstats/$(echo $(basename $l)|sed 's/.list//g'); done
 }
 
-module load parallel/20170822
+module load parallel/20190122
+
 $1
