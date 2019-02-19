@@ -1,7 +1,13 @@
-# 18-2-2019 JHZ
+# 19-2-2019 JHZ
 
 module load parallel/20170822
 export threads=8
+
+# BioFinder
+cat sumstats/BioFinder.list | \
+parallel -j5 -C' ' '
+   awk -f tryggve/BioFinder.awk /data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.{1}_zre_INFI.glm.linear | \
+   gzip -f > sumstats/BioFinder/BioFinder.{3}.gz'
 
 # EGCUT_INF -- SNPID has prefix esv for non-rsids
 sort -k2,2 inf1.list > inf1.tmp

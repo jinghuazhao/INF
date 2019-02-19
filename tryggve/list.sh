@@ -1,4 +1,4 @@
-# 18-2-2019 JHZ
+# 19-2-2019 JHZ
 
 # --- INF list of proteins and file list ---
 
@@ -34,7 +34,34 @@ function INF()
 
 # --- studies ----
 
-function anders() {
+BioFinder()
+{
+  awk '
+  {
+    if ($3=="IL8") $3="CXCL8"
+    if ($3=="TGF5") $3="FGF5"
+  };1' inf1.gene | \
+  sort -k3,3 > inf1.tmp
+  ls /data/andmala/biofinder_inf/ | \
+  grep -v list | \
+  sed 's/rsannot_runGwas_plasmaImp.//g;s/_zre_INFI.glm.linear\*//g' | \
+  sort -k1,1 | \
+  join -11 -23 - inf1.tmp > sumstats/BioFinder.list
+}
+
+function EGCUT_INF() {
+  # EGCUT_INF by autosomal, female, male
+  ls /data/anekal/EGCUT_INF/ | \
+  grep inf > sumstats/EGCUT_INF.list
+}
+
+function INTERVAL() {
+  # INTERVAL, 92 lines
+  ls /data/jampet/upload-20170920/ | \
+  grep inf > sumstats/INTERVAL.list
+}
+
+function KORA() {
   awk '
   {
      if ($3=="EIF4EBP1") $3="4EBP1"
@@ -61,77 +88,6 @@ function anders() {
      if ($3=="PLAU") $3="uPA"
   };1' inf1.gene | \
   sort -k3,3 > inf1.tmp
-}
-
-function biofinder() {
-  grep inf1 doc/olink.prot.list.txt | \
-  sed 's/inf1_//g;s/___/\t/g' | \
-  sort -k1,1 > inf1.tmp
-  ls /data/andmala/biofinder_inf/ | \
-  grep -v list | \
-  sed 's/rsannot_runGwas_plasmaImp.//g;s/_zre_INFI.glm.linear\*//g' | sort -k1,1 > 1
-  awk '{p=$1;gsub(/\./,"",p);print $1,$2,p}' inf1.tmp | sort -k3,3 > 2
-  (
-    join 1 inf1.list | awk '{print $1,$1}'
-    join -v1 1 inf1.tmp | join -11 -23 - 2 | cut -d' ' -f1,2
-    join -v1 1 inf1.tmp | join -11 -23 - 2 -v1 | \
-    awk '
-    {
-       p=$1;
-       if (p=="CL3") p="MCP.4";
-       if (p=="CCL2") p="MCP.1";
-       if (p=="CCL3") p="MIP.1.alpha";
-       if (p=="CCL7") p="MCP.3";
-       if (p=="CCL8") p="MCP.2";
-       if (p=="CD274") p="PD.L1";
-       if (p=="CXCL8") p="IL8";
-       if (p=="EIF4EBP1") p="4E.BP1";
-       if (p=="FLT3LG") p="Flt3L";
-       if (p=="IFNG") p="IFN.gamma";
-       if (p=="IL1A") p="IL.1.alpha";
-       if (p=="KITLG") p="SCF";
-       if (p=="LTA") p="TNFB";
-       if (p=="NGF") p="Beta.NGF";
-       if (p=="NTF3") p="NT.3";
-       if (p=="PLAU") p="uPA";
-       if (p=="S100A12") p="EN.RAGE";
-       if (p=="STAMBP") p="STAMPB";
-       if (p=="SULT1A1") p="ST1A1";
-       if (p=="TGFA") p="TGF.alpha";
-       if (p=="TGFB1") p="LAP.TGF.beta.1";
-       if (p=="TNFRSF11B") p="OPG";
-       if (p=="TNFSF10") p="TRAIL";
-       if (p=="TNFSF11") p="TRANCE";
-       if (p=="TNFSF10") p="TWEAK";
-       print $1,p
-    }'
-  ) | sort -k2,2 > sumstats/biofinder.list
-# rm 1 2
-}
-
-biofinder2()
-{
-  ls /data/andmala/biofinder_inf/ | \
-  grep -v list | \
-  sed 's/rsannot_runGwas_plasmaImp.//g;s/_zre_INFI.glm.linear\*//g' | \
-  sort -k1,1 | \
-  join -11 -23 - inf1.tmp > sumstats/biofinder.list
-}
-
-function EGCUT_INF() {
-  # EGCUT_INF by autosomal, female, male
-  ls /data/anekal/EGCUT_INF/ | \
-  grep inf > sumstats/EGCUT_INF.list
-}
-
-function INTERVAL() {
-  # INTERVAL, 92 lines
-  ls /data/jampet/upload-20170920/ | \
-  grep inf > sumstats/INTERVAL.list
-}
-
-function KORA() {
-  anders
   ls KORA/snptest.*.out.gz | \
   awk '{gsub(/KORA\/snptest.|.out.gz/,"");print}' | \
   sort -k1,1 | \
