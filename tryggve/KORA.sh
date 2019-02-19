@@ -195,7 +195,7 @@ function qqman()
 {
   for p in OPG TNFSF14; do
       export protein=$p
-      R --no-save -q <<\ \ \ \ \ \END
+      R --no-save -q <<\ \ \ \ \ \ END
       protein <- Sys.getenv("protein");
       print(protein);
       gz <- gzfile(paste0("KORA/snptest.",protein,".out.gz"));
