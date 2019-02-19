@@ -100,51 +100,6 @@ function snp()
   awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
 }
 
-function bolt_assoc()
-## association analysis
-# https://data.broadinstitute.org/alkesgroup/BOLT-LMM/#x1-220005.1.2
-{
-  seq 22 | \
-  parallel -j2 -C' ' '
-  bolt \
-    --bfile KORA.prune \
-    --impute2FileList=KORA.list \
-    --impute2FidIidFile=KORA.id \
-    --LDscoresUseChip \
-    --maxModelSnps 50000000 \
-    --noMapCheck \
-    --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
-    --covarFile=phenocovar.txt --covarCol sex --qCovarCol age \
-    --remove remove.id \
-    --lmm --statsFile={}.stats 2>&1 | \
-  tee {}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
-}
-
-function h2()
-{
-  gcta64 --bfile KORA.prune --make-grm-bin --thread-num 5 --out KORA
-  awk 'NR>1{$3="";$4="";print}' phenocovar.txt | \
-  awk '{$1=$1;print}' > prot.dat
-  awk 'NR>1{print $1,$2,$3}' phenocovar.txt > age.dat
-  awk 'NR>1{print $1,$2,$4}' phenocovar.txt > sex.dat
-  awk 'NR==1{gsub(/\t/, "\n", $0); print}' phenocovar.txt | \
-  awk 'NR>4' | \
-  awk '{gsub(/UH_O_/,"",$1);print $1,NR}' | \
-  parallel -j1 -C' ' '
-    gcta64 --reml --grm KORA --pheno prot.dat --mpheno {2} --covar sex.dat --qcovar age.dat \
-           --thread-num 5 --out {1} 2>&1 | \
-    tee {1}.log
-  '
-  grep '/' *hsq | \
-  sed 's|.hsq:V(G)/Vp||g' > h2.out
-  (
-    echo "prot h2 se p"
-    grep 'Pval' *hsq | \
-    sed 's/.hsq:Pval//g' | \
-    join h2.out - 
-  ) > h2.stats
-}
-
 function snptest_assoc()
 # This is necessary as BOLT would fail TNFSF14 or some others
 {
@@ -193,12 +148,16 @@ function snptest_assoc()
 
 function qqman()
 {
-  for p in OPG TNFSF14; do
-      export protein=$p
+  cat sumstats/KORA.list | \
+  parallel -j5 -C' ' '
+      export gene={1}
+      export protein={3}
       R --no-save -q <<\ \ \ \ \ \ END
+      gene <- Sys.getenv("gene");
+      print(gene);
       protein <- Sys.getenv("protein");
       print(protein);
-      gz <- gzfile(paste0("KORA/snptest.",protein,".out.gz"));
+      gz <- gzfile(paste0("KORA/snptest.",gene,".out.gz"));
       .libPaths("/services/tools/R/3.5.0/lib64/R/library")
       require(qqman);
       tbl <- read.table(gz,as.is=TRUE,header=TRUE);
@@ -206,7 +165,7 @@ function qqman()
          SNP <- rsid 
          CHR <- as.numeric(unlist(strsplit(rsid,":"))[1])
          BP <- position
-         P <- tbl[[paste0("UH_O_",protein,"_frequentist_add_expected_pvalue")]]
+         P <- tbl[[paste0("UH_O_",gene,"_frequentist_add_expected_pvalue")]]
       })
       tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
       qq <- paste0(protein,".qq.png");
@@ -218,7 +177,52 @@ function qqman()
       manhattan(tbl,main=protein,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25));
       dev.off();
       END
-  done
+  '
 }
 
 qqman
+
+function bolt_assoc()
+## association analysis with BOLT but abandoned for many failed runs
+# https://data.broadinstitute.org/alkesgroup/BOLT-LMM/#x1-220005.1.2
+{
+  seq 22 | \
+  parallel -j2 -C' ' '
+  bolt \
+    --bfile KORA.prune \
+    --impute2FileList=KORA.list \
+    --impute2FidIidFile=KORA.id \
+    --LDscoresUseChip \
+    --maxModelSnps 50000000 \
+    --noMapCheck \
+    --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
+    --covarFile=phenocovar.txt --covarCol sex --qCovarCol age \
+    --remove remove.id \
+    --lmm --statsFile={}.stats 2>&1 | \
+  tee {}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
+}
+
+function h2()
+{
+  gcta64 --bfile KORA.prune --make-grm-bin --thread-num 5 --out KORA
+  awk 'NR>1{$3="";$4="";print}' phenocovar.txt | \
+  awk '{$1=$1;print}' > prot.dat
+  awk 'NR>1{print $1,$2,$3}' phenocovar.txt > age.dat
+  awk 'NR>1{print $1,$2,$4}' phenocovar.txt > sex.dat
+  awk 'NR==1{gsub(/\t/, "\n", $0); print}' phenocovar.txt | \
+  awk 'NR>4' | \
+  awk '{gsub(/UH_O_/,"",$1);print $1,NR}' | \
+  parallel -j1 -C' ' '
+    gcta64 --reml --grm KORA --pheno prot.dat --mpheno {2} --covar sex.dat --qcovar age.dat \
+           --thread-num 5 --out {1} 2>&1 | \
+    tee {1}.log
+  '
+  grep '/' *hsq | \
+  sed 's|.hsq:V(G)/Vp||g' > h2.out
+  (
+    echo "prot h2 se p"
+    grep 'Pval' *hsq | \
+    sed 's/.hsq:Pval//g' | \
+    join h2.out - 
+  ) > h2.stats
+}
