@@ -47,9 +47,9 @@ module load libreoffice/6.0.5.2
 module load locuszoom/1.4
 module load metal/20110325
 module load pandoc/2.1
-module load parallel/20170822
+module load parallel/20190122
 module load plink2/1.90beta5.4
-module load vcftools/0.1.15
+module load vcftools/0.1.16
 module load xpdf/3.04
 export threads=1
 ```
@@ -76,7 +76,7 @@ However, the SCALLOP securitycloud is a 1-node cloud and we resort to
 parallel instead, e.g,
 
 ```bash
-module load metal/20110325 parallel/20170822
+module load metal/20110325 parallel/20190122
 ls METAL/*.run | parallel --dry-run --env HOME -j8 -C' ' 'metal $HOME/INF/{}'
 ```
 NB METAL add -1 to the filenames.
@@ -106,7 +106,7 @@ The version contains modification which allows for CUSTOMVARIABLE to use integer
 
 ### GNU parallel
 
-The version has some improvement and is installed at /data/jinhua/parallel-20181022/.
+The version installed at /data/jinhua/parallel-20181022/ has new features nevertheless replaced by parallel/20190122.
 
 ### qctool
 
