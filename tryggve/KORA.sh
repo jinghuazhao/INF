@@ -1,4 +1,4 @@
-# 18-2-2019 JHZ
+# 19-2-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -194,30 +194,30 @@ function snptest_assoc()
 function qqman()
 {
   for p in OPG TNFSF14; do
-  export protein=$p
-  R --no-save -q <<\ \ END
-  protein <- Sys.getenv("protein");
-  print(protein);
-  gz <- gzfile(paste0("KORA/snptest.",protein,".out.gz"));
-  .libPaths("/services/tools/R/3.5.0/lib64/R/library")
-  require(qqman);
-  tbl <- read.table(gz,as.is=TRUE,header=TRUE);
-  tbl <- within(tbl,{
-     SNP <- rsid 
-     CHR <- as.numeric(unlist(strsplit(rsid,":"))[1])
-     BP <- position
-     P <- tbl[[paste0("UH_O_",protein,"_frequentist_add_expected_pvalue")]]
-  })
-  tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
-  qq <- paste0(protein,".qq.png");
-  png(qq,width=12,height=10,units="in",pointsize=4,res=300)
-  qq(with(tbl,P))
-  dev.off()
-  manhattan <- paste0(protein,".manhattan.png");
-  png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
-  manhattan(tbl,main=protein,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25));
-  dev.off();
-  END
+      export protein=$p
+      R --no-save -q <<\ \ \ \ \ \END
+      protein <- Sys.getenv("protein");
+      print(protein);
+      gz <- gzfile(paste0("KORA/snptest.",protein,".out.gz"));
+      .libPaths("/services/tools/R/3.5.0/lib64/R/library")
+      require(qqman);
+      tbl <- read.table(gz,as.is=TRUE,header=TRUE);
+      tbl <- within(tbl,{
+         SNP <- rsid 
+         CHR <- as.numeric(unlist(strsplit(rsid,":"))[1])
+         BP <- position
+         P <- tbl[[paste0("UH_O_",protein,"_frequentist_add_expected_pvalue")]]
+      })
+      tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
+      qq <- paste0(protein,".qq.png");
+      png(qq,width=12,height=10,units="in",pointsize=4,res=300)
+      qq(with(tbl,P))
+      dev.off()
+      manhattan <- paste0(protein,".manhattan.png");
+      png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
+      manhattan(tbl,main=protein,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25));
+      dev.off();
+      END
   done
 }
 
