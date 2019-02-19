@@ -84,6 +84,8 @@ edits Q4ACW9, [inf2.csv](doc/inf2.csv) is inline with UCSC with respect to P1203
 
 A version by Jimmy is [olink.inf.panel.annot.tsv](doc/olink.inf.panel.annot.tsv) from [olink.annotation.R](doc/olink.annotation.R).
 
+The BDNF has recently been removed from the assay, https://www.olink.com/bdnf-info/.
+
 ## References
 
 Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. *PLoS Genetics* 13(4), doi.org/10.1371/journal.pgen.1006706.
