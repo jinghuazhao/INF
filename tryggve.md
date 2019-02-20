@@ -94,9 +94,9 @@ This version can handle chi-squared statistics instead of p values in the joint/
 
 This is version 7.0.8-22, made available due to the inability to use the imagemagick/7.0.8-16 module, e.g.,
 ```bash
-export IM_dir=/data/jinhua/ImageMagick-7.0.8-22/bin
-$IM_dir/convert OPG.lz-1.png -resize 130% OPG.lz-3.png
-$IM_dir/convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
+export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
+convert OPG.lz-1.png -resize 130% OPG.lz-3.png
+convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
 ```
 used to generate the figure in the front page. Another very useful utility is its `display`.
 
