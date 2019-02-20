@@ -1,4 +1,4 @@
-# 20-12-2018 JHZ
+# 20-2-2019 JHZ
 
 source tryggve/analysis.ini
 export rt=$HOME/INF
@@ -12,7 +12,7 @@ if [ ! -d {} ]; then mkdir {}; fi; \
 cd -; \
 R --no-save -q < $rt/tryggve/QCGWAS.R > $rt/work/{}.log' ::: IFN.gamma IL.22.RA1 TSLP
 
-declare -a prot=(ARTN CCL25 CD6 CST5 FGF.5 IFN.gamma IL.13 IL.18R1 IL.1.alpha IL.20 IL.20RA IL.22.RA1 IL.24 IL.2RB IL.33 LIF MCP.2 NRTN IL.10RA IL.5 TNF TSLP)
+declare -a prot=(IFN.gamma IL.22.RA1 TSLP)
 function protein_array ()
 {
 # mkdir
@@ -24,3 +24,6 @@ function protein_array ()
   export protein=$1
   R --no-save -q < tryggve/QCGWAS.R > work/$protein.log
 }
+# original list
+# ARTN CCL25 CD6 CST5 FGF.5 IFN.gamma IL.13 IL.18R1 IL.1.alpha IL.20 IL.20RA IL.22.RA1 IL.24 IL.2RB IL.33
+# LIF MCP.2 NRTN IL.10RA IL.5 TNF TSLP
