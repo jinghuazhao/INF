@@ -1,0 +1,20 @@
+
+Cohorts with qctool SNP-stats available
+=======================================
+
+EGCUT, /data/anekal/EGCUT_INF.snp-stats
+
+INTERVAL, /scratch/curated_genetic_data/reference_files/interval/
+
+STABILITY, /data/niceri/Stability_INF/SNPstats.zip
+
+ORCADES & VIS, /data/erimac/, to be downloaded
+
+Pending cohorts
+===============
+
+NSPHS, /data/stefane/NSPHS_INF
+KORA, to be generated centrally
+STANLEY
+MadCam
+BioFinder
