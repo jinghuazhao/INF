@@ -107,7 +107,11 @@ The version contains modification which allows for CUSTOMVARIABLE to use integer
 
 ### GNU parallel
 
-The version installed at /data/jinhua/parallel-20181022/ has new features nevertheless replaced by parallel/20190122.
+The version installed at /data/jinhua/parallel-20181022/ has new features nevertheless replaced by parallel/20190122. It came handy for me to use them directly on TRYGGVE without invoking modules as follows,
+```bash
+export src=/services/tools/parallel/20190122/bin
+for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
+```
 
 ### qctool
 
