@@ -1,4 +1,4 @@
-# 19-2-2019 JHZ
+# 21-2-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -98,6 +98,7 @@ function snp()
   parallel -j3 -C' ' 'bcftools convert --samples-file protein.id KORA{}.vcf.gz -g protein{}'
   parallel -j1 'echo {} protein{}.gen.gz' > KORA.list
   awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
+  king -b KORA.prune.bed --related --prefix $HOME/KORA.prune
 }
 
 function snptest_assoc()
