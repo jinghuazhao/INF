@@ -64,3 +64,4 @@ export SCRIPT=/scratch/jp549/analyses/interval_subset_olink/inf1/r2/outlier_in/p
 export BS=/scratch/jp549/apps/bram-scripts
 
 # \\me-filer1\groups$\MGEU\Factors\High_dimensional_genetics\Olink\INF1
+# /scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_imputed_info_0.4_phwe_1e-4_filtered/per_chr
