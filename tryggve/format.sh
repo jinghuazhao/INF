@@ -1,6 +1,5 @@
-# 19-2-2019 JHZ
+# 21-2-2019 JHZ
 
-module load parallel/20170822
 export threads=8
 
 # BioFinder
