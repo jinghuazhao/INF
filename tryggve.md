@@ -5,9 +5,9 @@ The repository contains the following files,
 File specification | Descrription
 -------------------|---------------------------------------------------------------
 doc/               | Oringal documents
- -- [KORA.prot.preproc.R](doc/KORA.prot.preproc.R) | R code for data preprocessing
- -- kora.normalised.prot.txt | sex, age, normalised proteins
- -- [KORA.pc.below.llod.pdf](doc/KORA.pc.below.llod.pdf) | llod check
+ -- [KORA.prot.preproc.R*](doc/KORA.prot.preproc.R) | R code for data preprocessing
+ -- kora.normalised.prot.txt* | sex, age, normalised proteins
+ -- [KORA.pc.below.llod.pdf*](doc/KORA.pc.below.llod.pdf) | llod check
 METAL/             | METAL/output scripts by protein
 sumstats/          | File lists and study directories
 tryggve/           | Auxiliary files
