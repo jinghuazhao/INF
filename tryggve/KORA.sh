@@ -128,11 +128,13 @@ function snptest_assoc()
     -missing_code NA,-999 \
     -method expected \
     -pheno UH_O_{1} \
+    -cov_all \
     -use_raw_covariates \
     -use_raw_phenotypes \
     -use_long_column_naming_scheme \
     -hwe \
-    -log snptest.{1}-{2}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}') ::: $(seq 22)
+    -log snptest.{1}-{2}.log' ::: \
+         $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}') ::: $(seq 22)
   for p in $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
   do
     export prot=$p
