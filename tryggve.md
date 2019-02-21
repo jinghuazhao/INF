@@ -114,7 +114,7 @@ for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
 
 ### qctool
 
-TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ -- I have described its installation on GitHub repository, [Computational-Statistics](https://github.com/jinghuazhao/Computational-Statistics).
+TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ -- its installation is described on GitHub repository [Computational-Statistics](https://github.com/jinghuazhao/Computational-Statistics).
 
 ### R/gap
 
