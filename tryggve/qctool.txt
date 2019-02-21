@@ -8,12 +8,12 @@ INTERVAL, /scratch/curated_genetic_data/reference_files/interval/
 
 STABILITY, /data/niceri/Stability_INF/SNPstats.zip
 
-ORCADES & VIS, /data/erimac/, to be downloaded
+ORCADES & VIS, /data/erimac/ has GWAS summary statistics, downloaded from DataSync
 
 Pending cohorts
 ===============
 
-NSPHS, /data/stefane/NSPHS_INF
+NSPHS, /data/stefane/NSPHS_INF has GWAS summary statistics, recontact for information
 KORA, to be generated centrally
 STANLEY
 MadCam
