@@ -94,9 +94,9 @@ This version can handle chi-squared statistics instead of p values in the joint/
 
 This is version 7.0.8-22, made available due to the inability to use the imagemagick/7.0.8-16 module, e.g.,
 ```bash
-export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
-convert OPG.lz-1.png -resize 130% OPG.lz-3.png
-convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
+export IM_dir=/data/jinhua/ImageMagick-7.0.8-22/bin
+$IM_dir/convert OPG.lz-1.png -resize 130% OPG.lz-3.png
+$IM_dir/convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
 ```
 used to generate the figure in the front page. Another very useful utility is its `display`.
 
@@ -106,7 +106,7 @@ The version contains modification which allows for CUSTOMVARIABLE to use integer
 
 ### GNU parallel
 
-The version parallel-20181022 has new features nevertheless is superseded by parallel/20190122. It came handy for me to use them directly on TRYGGVE without invoking modules as follows,
+The version parallel-20181022 has new features nevertheless is superseded by parallel/20190122. It came handy to use them directly on TRYGGVE without invoking modules as follows,
 ```bash
 export src=/services/tools/parallel/20190122/bin
 for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
@@ -114,7 +114,7 @@ for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
 
 ### qctool
 
-TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ -- I have described its installation on GitHub repository [Computational-Statistics](https://github.com/jinghuazhao/Computational-Statistics).
+TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ -- I have described its installation on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
 
 ### R/gap
 
