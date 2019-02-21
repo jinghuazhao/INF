@@ -5,7 +5,6 @@ module load plink2/1.90beta5.4
 module load bolt-lmm/2.3.2
 module load gcc/5.4.0 lapack/3.8.0 qctool/2.0.1
 module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL
-module load fftw/3.3.8 imagemagick/7.0.8-16
 module load snptest/2.5.2
 
 # This version doesn't handle --grm and --out share the same file name
@@ -120,6 +119,7 @@ function snptest_assoc()
   parallel -j12 --env rt -C' ' '
     /services/tools/snptest/2.5.2/snptest \
     -data protein{2}.gen.gz KORA.pheno \
+    -exclude_samples 922003078 922003004 922002655 922003526 922002444 922003498 \
     -o ${rt}/KORA/snptest.{1}-{2}.out \
     -printids \
     -lower_sample_limit 50 \
