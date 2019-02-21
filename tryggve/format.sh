@@ -59,9 +59,8 @@ parallel -j5 -C' ' '
    awk -f tryggve/order.awk | \
    gzip -f > sumstats/KORA/KORA.{3}.gz'
 
-# PS -- only 88 proteins without the following,
+# ps -- 89 proteins without the following,
 # BDNF P23560 BDNF
-# LIF P15018 LIF
 # NRTN Q99748 NRTN
 # NTF3 P20783 NT.3
 
