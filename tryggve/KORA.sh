@@ -97,7 +97,8 @@ function snp()
   parallel -j3 -C' ' 'bcftools convert --samples-file protein.id KORA{}.vcf.gz -g protein{}'
   parallel -j1 'echo {} protein{}.gen.gz' > KORA.list
   awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
-  king -b KORA.prune.bed --related --prefix $HOME/KORA.prune
+  king -b KORA.prune.bed --related --prefix KORA.prune
+  awk 'NR>1{print $4}' KORA.prune.kin0 > KORA.prune.relatedness
 }
 
 function snptest_assoc()
@@ -119,7 +120,7 @@ function snptest_assoc()
   parallel -j12 --env rt -C' ' '
     /services/tools/snptest/2.5.2/snptest \
     -data protein{2}.gen.gz KORA.pheno \
-    -exclude_samples 922003078 922003004 922002655 922003526 922002444 922003498 \
+    -exclude_samples KORA.prune.relatedness \
     -o ${rt}/KORA/snptest.{1}-{2}.out \
     -printids \
     -lower_sample_limit 50 \
