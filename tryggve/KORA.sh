@@ -125,11 +125,10 @@ function snptest_assoc()
     -printids \
     -lower_sample_limit 50 \
     -frequentist 1 \
-    -genotype_field GP \
     -missing_code NA,-999 \
     -method expected \
     -pheno UH_O_{1} \
-    -cov_all \
+    -cov_names sex age PC1 PC2 PC3 PC4 \
     -use_raw_covariates \
     -use_raw_phenotypes \
     -use_long_column_naming_scheme \
@@ -142,7 +141,7 @@ function snptest_assoc()
     seq 22 | \
     parallel -j1 --env prot -C' ' '
     (
-      awk "NR>19" snptest.${prot}-{}.out
+      awk "NR>21" snptest.${prot}-{}.out
     )' | \
     grep -v -E 'not|Completed' | \
     awk 'NR==1 || $3!="chromosome"' | \
