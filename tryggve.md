@@ -153,17 +153,17 @@ SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/
 ## Notes on studies
 
 -   **BioFinder**. 91 (no BDNF) proteins. sumstats file named after genes and converted to protein names.
--   **NSPHS**. 91 proteins, originally a tar.gz file is unpacked into \$HOME/INF/work leading to 10 proteins
--   **EGCUT**. 91 proteins, orginally only 18 proteins though stratified by chromsomes
--   **INTERVAL**. raw SNPTEST output with information such as strand/chip SNPs to be added
+-   **NSPHS**. 91 (no BDNF) proteins, originally a tar.gz file is unpacked into \$HOME/INF/work leading to 10 proteins
+-   **EGCUT**. 91 (no BDNF) proteins, orginally only 18 proteins though stratified by chromsomes
+-   **INTERVAL**. 92 proteins. raw SNPTEST output with information such as strand/chip SNPs to be added
 -   **KORA**. 89 (no BDNF, NRTN, NT.3) proteins, age, sex and individual level imputed genotypes
 -   **LifeLinesDeep**. Only 1/25 proteins
 -   **MadCam**. 91 (no IL.6) proteins
 -   **ULSAM**. 25 proteins
 -   **PIVUS**. 23 proteins
--   **ORCADES**. 91 protein results are available but adding CCL3 which overlaps with MMP.1
--   **VIS**. 91 protein restults as with ORCADES
--   **STABILITY**. 90 protein.
+-   **ORCADES**. 91 (no BDNF) protein results are available but adding CCL3 which overlaps with MMP.1
+-   **VIS**. 91 (no BDNF) protein restults as with ORCADES
+-   **STABILITY**. 90 (no BDNF, IL.2) protein.
 -   **STANLEY**. 92 largely complete protein results for lah1 and swe6
 
 96, MMP.12 (CVD II)
