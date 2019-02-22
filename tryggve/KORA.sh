@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 # 22-2-2019 JHZ
 
 module load bcftools/1.9
@@ -129,11 +130,14 @@ function phenocovar()
 function snptest_assoc()
 # This is necessary as BOLT would fail TNFSF14 or some others
 {
-  parallel -j12 --env rt -C' ' '
+  for p in $(cat KORA.varlist)
+  do
+    export prot=$p
+    parallel -j12--env prot  --env rt -C' ' '
     /services/tools/snptest/2.5.2/snptest \
     -data protein{2}.gen.gz KORA.pheno \
     -exclude_samples KORA.prune.relatedness \
-    -o ${rt}/KORA/snptest.{1}-{2}.out \
+    -o ${rt}/KORA/${prot}-{}.out \
     -printids \
     -lower_sample_limit 50 \
     -frequentist 1 \
@@ -145,18 +149,17 @@ function snptest_assoc()
     -use_raw_phenotypes \
     -use_long_column_naming_scheme \
     -hwe \
-    -log snptest.{1}-{2}.log' ::: $(cat KORA.varlist) ::: $(seq 22)
-  for p in $(cat KORA.varlist)
-  do
-    export prot=$p
+    -log ${prot}-{}.log
+    gzip -f ${prot}-{}.out' ::: $(seq 22)
     seq 22 | \
     parallel -j1 --env prot -C' ' '
     (
-      awk "NR>20" snptest.${prot}-{}.out
+      gunzip -c ${prot}-{}.out.gz | \
+      awk "NR>20"
     )' | \
     grep -v -E 'not|Completed' | \
     awk 'NR==1 || $3!="chromosome"' | \
-    gzip -f > snptest.${p}.out.gz
+    gzip -f > ${p}.out.gz
   done
 }
 
@@ -171,7 +174,7 @@ function qqman()
       print(gene);
       protein <- Sys.getenv("protein");
       print(protein);
-      gz <- gzfile(paste0("snptest.",gene,".out.gz"));
+      gz <- gzfile(paste0(gene,".out.gz"));
       .libPaths("/services/tools/R/3.5.0/lib64/R/library")
       require(qqman);
       tbl <- read.table(gz,as.is=TRUE,header=TRUE);
@@ -239,4 +242,5 @@ function bolt_assoc()
 }
 
 cd $rt/KORA
+snptest_assoc
 qqman

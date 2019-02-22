@@ -53,7 +53,7 @@ gzip -f > sumstats/LifeLinesDeep/LifeLinesDeep.{1}.gz'
 # KORA
 cat sumstats/KORA.list | \
 parallel -j5 -C' ' '
-   gunzip -c KORA/snptest.{1}.out.gz | \
+   gunzip -c KORA/{1}.out.gz | \
    awk -f tryggve/KORA.awk | \
    awk -f tryggve/order.awk | \
    gzip -f > sumstats/KORA/KORA.{3}.gz'
