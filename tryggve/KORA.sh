@@ -179,7 +179,7 @@ function qqman()
          SNP <- rsid 
          CHR <- as.numeric(unlist(strsplit(rsid,":"))[1])
          BP <- position
-         P <- tbl[[paste0("UH_O_",gene,"_PC1_PC2_PC3_PC4_PC5_age_sex__frequentist_add_expected_pvalue")]]
+         P <- tbl[[paste0("UH_O_",gene,"_PC1_PC2_PC3_PC4_PC5_age_sex_frequentist_add_expected_pvalue")]]
       })
       tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
       qq <- paste0(protein,".qq.png");
