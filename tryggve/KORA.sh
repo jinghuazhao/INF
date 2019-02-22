@@ -119,6 +119,8 @@ function snptest_assoc()
     l2 <- c(rep("0",3),rep("C",5+2),rep("P",88))
     write.table(rbind(l2,pheno),file="KORA.pheno",quote=FALSE,row.names=FALSE)
   END
+  cut -f5-92 phenocovar.txt | \
+  awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}' > KORA.varlist
   parallel -j12 --env rt -C' ' '
     /services/tools/snptest/2.5.2/snptest \
     -data protein{2}.gen.gz KORA.pheno \
@@ -135,9 +137,8 @@ function snptest_assoc()
     -use_raw_phenotypes \
     -use_long_column_naming_scheme \
     -hwe \
-    -log snptest.{1}-{2}.log' ::: \
-         $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}') ::: $(seq 22)
-  for p in $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
+    -log snptest.{1}-{2}.log' ::: $(cat KORA.varlist) ::: $(seq 22)
+  for p in $(cat KORA.varlist)
   do
     export prot=$p
     seq 22 | \
