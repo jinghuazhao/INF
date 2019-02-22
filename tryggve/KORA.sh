@@ -238,5 +238,4 @@ function bolt_assoc()
   tee {}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
 }
 
-cd $rt/KORA
 qqman
