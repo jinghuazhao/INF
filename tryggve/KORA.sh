@@ -171,7 +171,7 @@ function qqman()
       print(gene);
       protein <- Sys.getenv("protein");
       print(protein);
-      gz <- gzfile(paste0("KORA/snptest.",gene,".out.gz"));
+      gz <- gzfile(paste0("snptest.",gene,".out.gz"));
       .libPaths("/services/tools/R/3.5.0/lib64/R/library")
       require(qqman);
       tbl <- read.table(gz,as.is=TRUE,header=TRUE);
@@ -238,4 +238,5 @@ function bolt_assoc()
   tee {}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
 }
 
+cd $rt/KORA
 qqman
