@@ -73,6 +73,8 @@ function snp()
   seq 22 | \
   parallel -j1 -C' ' '
   bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr{}.vcf.gz -O z -o KORA{}.vcf.gz
+  qctool -g KORA#.vcf.gz -s KORA.samples -excl-samples remove.id -vcf-genotype-field GP \
+         -sample-stats -osample KORA.sample-stats -threads 5
   plink --vcf KORA{}.vcf.gz --list-duplicate-vars --out chr{}
   awk "NR>1{split(\$NF,dupids,\" \");print dupids[1]}" chr{}.dupvar > chr{}.dupid
   bcftools query -i "MAF>0.01 && R2>=0.4" -f"%ID\n" KORA{}.vcf.gz | \
@@ -94,14 +96,13 @@ function snp()
   awk -vp=KORA '{print p NR}' > merge-list
   plink --merge-list merge-list --make-bed --out KORA
   plink --bfile KORA --indep-pairwise 500kb 1 0.80 --maf 0.0001 --out KORA
-  plink --bfile KORA --extract KORA.prune.in --make-bed --out KORA.prune'
+  plink --bfile KORA --extract KORA.prune.in --make-bed --out KORA.prune
   seq 22 | \
   parallel -j3 -C' ' 'bcftools convert --samples-file protein.id KORA{}.vcf.gz -g protein{}'
   seq 22 | \
   parallel -j1 'echo {} protein{}.gen.gz' > KORA.list
   awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
   gcta64 --bfile KORA.prune --make-grm-bin --thread-num 5 --out KORA
-  qctool -g KORA#.vcf.gz -s KORA.samples -excl-samples remove.id -vcf-genotype-field GP -sample-stats -osample KORA.sample-stats -threads 5
   gcta64 --grm KORA --pca 5 --out KORA
   king -b KORA.prune.bed --related --prefix KORA.prune
   awk 'NR>1{print $4}' KORA.prune.kin0 > KORA.prune.relatedness
