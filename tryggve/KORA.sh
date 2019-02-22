@@ -152,7 +152,7 @@ function snptest_assoc()
     seq 22 | \
     parallel -j1 --env prot -C' ' '
     (
-      awk "NR>21" snptest.${prot}-{}.out
+      awk "NR>20" snptest.${prot}-{}.out
     )' | \
     grep -v -E 'not|Completed' | \
     awk 'NR==1 || $3!="chromosome"' | \
