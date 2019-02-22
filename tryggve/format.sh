@@ -1,9 +1,9 @@
-# 21-2-2019 JHZ
+# 22-2-2019 JHZ
 
 export threads=8
 
 # BioFinder
-grep -v TNF sumstats/BioFinder.list | \
+grep -v -w TNF sumstats/BioFinder.list | \
 parallel -j5 -C' ' '
    awk -f tryggve/BioFinder.awk /data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.{1}_zre_INFI.glm.linear | \
    awk -f tryggve/order.awk | \
