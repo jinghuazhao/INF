@@ -133,24 +133,25 @@ function snptest_assoc()
   for p in $(cat KORA.varlist)
   do
     export prot=$p
+    seq 22 | \
     parallel --wait -j12--env prot --env rt -C' ' '
     snptest \
-    -data protein{}.gen.gz KORA.pheno \
-    -exclude_samples KORA.prune.relatedness \
-    -o ${rt}/KORA/${prot}-{}.out \
-    -printids \
-    -lower_sample_limit 50 \
-    -frequentist 1 \
-    -missing_code NA,-999 \
-    -method expected \
-    -pheno UH_O_{} \
-    -cov_all \
-    -use_raw_covariates \
-    -use_raw_phenotypes \
-    -use_long_column_naming_scheme \
-    -hwe \
-    -log ${prot}-{}.log;\
-    gzip -f ${prot}-{}.out' ::: $(seq 22)
+      -data protein{}.gen.gz KORA.pheno \
+      -exclude_samples KORA.prune.relatedness \
+      -o ${prot}-{}.out \
+      -printids \
+      -lower_sample_limit 50 \
+      -frequentist 1 \
+      -missing_code NA,-999 \
+      -method expected \
+      -pheno UH_O_{} \
+      -cov_all \
+      -use_raw_covariates \
+      -use_raw_phenotypes \
+      -use_long_column_naming_scheme \
+      -hwe \
+      -log ${prot}-{}.log;\
+    gzip -f ${prot}-{}.out'
     seq 22 | \
     parallel -j1 --env prot -C' ' '
     (
