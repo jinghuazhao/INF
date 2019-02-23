@@ -130,36 +130,35 @@ function phenocovar()
 
 function snptest_assoc()
 {
+  parallel -j12 --env rt -C' ' '
+    snptest \
+    -data protein{2}.gen.gz KORA.pheno \
+    -exclude_samples KORA.prune.relatedness \
+    -o {1}-{2} \
+    -printids \
+    -lower_sample_limit 50 \
+    -frequentist 1 \
+    -missing_code NA,-999 \
+    -method expected \
+    -pheno UH_O_{1} \
+    -cov_all \
+    -use_raw_covariates \
+    -use_raw_phenotypes \
+    -use_long_column_naming_scheme \
+    -hwe \
+    -log {1}-{2}.log;gzip -f {1}-{2}' ::: $(cat KORA.varlist) ::: $(seq 22)
   for p in $(cat KORA.varlist)
   do
     export prot=$p
     seq 22 | \
-    parallel --wait -j12 --env prot -C' ' '
-    snptest \
-      -data protein{}.gen.gz KORA.pheno \
-      -exclude_samples KORA.prune.relatedness \
-      -o ${prot}-{}.out \
-      -printids \
-      -lower_sample_limit 50 \
-      -frequentist 1 \
-      -missing_code NA,-999 \
-      -method expected \
-      -pheno UH_O_{} \
-      -cov_all \
-      -use_raw_covariates \
-      -use_raw_phenotypes \
-      -use_long_column_naming_scheme \
-      -hwe \
-      -log ${prot}-{}.log'
-    seq 22 | \
     parallel -j1 --env prot -C' ' '
     (
-      awk "NR>20" ${prot}-{}.out
-      gzip -f ${prot}-{}.out
+      gunzip -c ${prot}-{}.gz | \
+      awk "NR>20"
     )' | \
     grep -v -E 'not|Completed' | \
     awk 'NR==1 || $3!="chromosome"' | \
-    gzip -f > ${p}.out.gz
+    gzip -f > ${p}.gz
   done
 }
 
@@ -242,4 +241,3 @@ function bolt_assoc()
 }
 
 snptest_assoc
-qqman
