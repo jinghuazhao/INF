@@ -1,4 +1,5 @@
-# 21-2-2019 JHZ
+#!/usr/bin/bash
+# 23-2-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -10,6 +11,8 @@ module load snptest/2.5.2
 # This version doesn't handle --grm and --out share the same file name
 # module load gcta/1.91.0beta
 # /data/jinhua/gcta_1.91.7beta/gcta64 is called through symbolic link
+
+export rt=$HOME/INF
 
 function info()
 {
@@ -71,6 +74,8 @@ function snp()
   seq 22 | \
   parallel -j1 -C' ' '
   bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr{}.vcf.gz -O z -o KORA{}.vcf.gz
+  qctool -g KORA#.vcf.gz -s KORA.samples -excl-samples remove.id -vcf-genotype-field GP \
+         -sample-stats -osample KORA.sample-stats -threads 5
   plink --vcf KORA{}.vcf.gz --list-duplicate-vars --out chr{}
   awk "NR>1{split(\$NF,dupids,\" \");print dupids[1]}" chr{}.dupvar > chr{}.dupid
   bcftools query -i "MAF>0.01 && R2>=0.4" -f"%ID\n" KORA{}.vcf.gz | \
@@ -92,66 +97,75 @@ function snp()
   awk -vp=KORA '{print p NR}' > merge-list
   plink --merge-list merge-list --make-bed --out KORA
   plink --bfile KORA --indep-pairwise 500kb 1 0.80 --maf 0.0001 --out KORA
-  plink --bfile KORA --extract KORA.prune.in --make-bed --out KORA.prune'
+  plink --bfile KORA --extract KORA.prune.in --make-bed --out KORA.prune
   seq 22 | \
   parallel -j3 -C' ' 'bcftools convert --samples-file protein.id KORA{}.vcf.gz -g protein{}'
+  seq 22 | \
   parallel -j1 'echo {} protein{}.gen.gz' > KORA.list
   awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
+  gcta64 --bfile KORA.prune --make-grm-bin --thread-num 5 --out KORA
+  gcta64 --grm KORA --pca 5 --out KORA
   king -b KORA.prune.bed --related --prefix KORA.prune
   awk 'NR>1{print $4}' KORA.prune.kin0 > KORA.prune.relatedness
 }
 
-function snptest_assoc()
-# This is necessary as BOLT would fail TNFSF14 or some others
+function phenocovar()
 {
-  export rt=$HOME/INF
-  qctool -g KORA#.vcf.gz -s KORA.samples -excl-samples remove.id -vcf-genotype-field GP -sample-stats -osample KORA.sample-stats -threads 5
-  gcta64 --grm KORA --pca 5 --out KORA
   R -q --no-save <<\ \ END
     phenocovar <- read.delim("phenocovar.txt",as.is=TRUE)
     sample_stats <- read.delim("KORA.sample-stats",skip=12,nrows=1070,as.is=TRUE)
     missing_proportion <- with(sample_stats,{data.frame(FID=sample,IID=sample,missing=missing_proportion)})
     eigenvec <- read.table("KORA.eigenvec",col.names=c("FID","IID",paste0("PC",1:5)))
+    PCs <- paste0("PC",1:5)
+    eigenvec[PCs] <- eigenvec[PCs]*100
     pheno <- merge(missing_proportion,merge(eigenvec,phenocovar,by=c("FID","IID")),by=c("FID","IID"))
     names(pheno)[1:2] <- c("ID_1","ID_2")
     l2 <- c(rep("0",3),rep("C",5+2),rep("P",88))
     write.table(rbind(l2,pheno),file="KORA.pheno",quote=FALSE,row.names=FALSE)
   END
-  parallel -j12 --env rt -C' ' '
-    /services/tools/snptest/2.5.2/snptest \
+  cut -f5-92 phenocovar.txt | \
+  awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}' > KORA.varlist
+}
+
+function snptest_assoc()
+# This is necessary as BOLT would fail TNFSF14 or some others
+{
+  for p in $(cat KORA.varlist)
+  do
+    export prot=$p
+    parallel --wait -j12--env prot --env rt -C' ' '
+    snptest \
     -data protein{2}.gen.gz KORA.pheno \
     -exclude_samples KORA.prune.relatedness \
-    -o ${rt}/KORA/snptest.{1}-{2}.out \
+    -o ${rt}/KORA/${prot}-{}.out \
     -printids \
     -lower_sample_limit 50 \
     -frequentist 1 \
     -missing_code NA,-999 \
     -method expected \
     -pheno UH_O_{1} \
-    -cov_names sex age PC1 PC2 PC3 PC4 \
+    -cov_all \
     -use_raw_covariates \
     -use_raw_phenotypes \
     -use_long_column_naming_scheme \
     -hwe \
-    -log snptest.{1}-{2}.log' ::: \
-         $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}') ::: $(seq 22)
-  for p in $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
-  do
-    export prot=$p
+    -log ${prot}-{}.log;\
+    gzip -f ${prot}-{}.out' ::: $(seq 22)
     seq 22 | \
     parallel -j1 --env prot -C' ' '
     (
-      awk "NR>21" snptest.${prot}-{}.out
+      gunzip -c ${prot}-{}.out.gz | \
+      awk "NR>20"
     )' | \
     grep -v -E 'not|Completed' | \
     awk 'NR==1 || $3!="chromosome"' | \
-    gzip -f > snptest.${p}.out.gz
+    gzip -f > ${p}.out.gz
   done
 }
 
 function qqman()
 {
-  cat sumstats/KORA.list | \
+  cat $rt/sumstats/KORA.list | \
   parallel -j5 -C' ' '
       export gene={1}
       export protein={3}
@@ -160,7 +174,7 @@ function qqman()
       print(gene);
       protein <- Sys.getenv("protein");
       print(protein);
-      gz <- gzfile(paste0("KORA/snptest.",gene,".out.gz"));
+      gz <- gzfile(paste0(gene,".out.gz"));
       .libPaths("/services/tools/R/3.5.0/lib64/R/library")
       require(qqman);
       tbl <- read.table(gz,as.is=TRUE,header=TRUE);
@@ -168,7 +182,7 @@ function qqman()
          SNP <- rsid 
          CHR <- as.numeric(unlist(strsplit(rsid,":"))[1])
          BP <- position
-         P <- tbl[[paste0("UH_O_",gene,"_frequentist_add_expected_pvalue")]]
+         P <- tbl[[paste0("UH_O_",gene,"_PC1_PC2_PC3_PC4_PC5_age_sex_frequentist_add_expected_pvalue")]]
       })
       tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
       qq <- paste0(protein,".qq.png");
@@ -183,31 +197,8 @@ function qqman()
   '
 }
 
-qqman
-
-function bolt_assoc()
-## association analysis with BOLT but abandoned for many failed runs
-# https://data.broadinstitute.org/alkesgroup/BOLT-LMM/#x1-220005.1.2
-{
-  seq 22 | \
-  parallel -j2 -C' ' '
-  bolt \
-    --bfile KORA.prune \
-    --impute2FileList=KORA.list \
-    --impute2FidIidFile=KORA.id \
-    --LDscoresUseChip \
-    --maxModelSnps 50000000 \
-    --noMapCheck \
-    --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
-    --covarFile=phenocovar.txt --covarCol sex --qCovarCol age \
-    --remove remove.id \
-    --lmm --statsFile={}.stats 2>&1 | \
-  tee {}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
-}
-
 function h2()
 {
-  gcta64 --bfile KORA.prune --make-grm-bin --thread-num 5 --out KORA
   awk 'NR>1{$3="";$4="";print}' phenocovar.txt | \
   awk '{$1=$1;print}' > prot.dat
   awk 'NR>1{print $1,$2,$3}' phenocovar.txt > age.dat
@@ -229,3 +220,27 @@ function h2()
     join h2.out - 
   ) > h2.stats
 }
+
+function bolt_assoc()
+## association analysis with BOLT but abandoned for many failed runs
+# https://data.broadinstitute.org/alkesgroup/BOLT-LMM/#x1-220005.1.2
+{
+  seq 22 | \
+  parallel -j2 -C' ' '
+  bolt \
+    --bfile KORA.prune \
+    --impute2FileList=KORA.list \
+    --impute2FidIidFile=KORA.id \
+    --LDscoresUseChip \
+    --maxModelSnps 50000000 \
+    --noMapCheck \
+    --phenoFile=phenocovar.txt --phenoCol UH_O_{} \
+    --covarFile=phenocovar.txt --covarCol sex --qCovarCol age \
+    --remove remove.id \
+    --lmm --statsFile={}.stats 2>&1 | \
+  tee {}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
+}
+
+cd $rt/KORA
+snptest_assoc
+qqman
