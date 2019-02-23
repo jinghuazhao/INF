@@ -106,9 +106,9 @@ The version contains modification which allows for CUSTOMVARIABLE to use integer
 
 ### GNU parallel
 
-The version parallel-20181022 has new features nevertheless is superseded by parallel/20190122. It came handy to use them directly on TRYGGVE without invoking modules as follows,
+The latest version parallel-20190222 has new features and to use them directly on TRYGGVE without invoking modules as follows,
 ```bash
-export src=/services/tools/parallel/20190122/bin
+export src=/data/jinhua/parallel-20190222/bin
 for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
 ```
 
