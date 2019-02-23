@@ -13,6 +13,7 @@ module load snptest/2.5.2
 # /data/jinhua/gcta_1.91.7beta/gcta64 is called through symbolic link
 
 export rt=$HOME/INF
+cd $rt/KORA
 
 function info()
 {
@@ -128,13 +129,12 @@ function phenocovar()
 }
 
 function snptest_assoc()
-# This is necessary as BOLT would fail TNFSF14 or some others
 {
   for p in $(cat KORA.varlist)
   do
     export prot=$p
     seq 22 | \
-    parallel --wait -j12--env prot --env rt -C' ' '
+    parallel --wait -j12 --env prot -C' ' '
     snptest \
       -data protein{}.gen.gz KORA.pheno \
       -exclude_samples KORA.prune.relatedness \
@@ -150,13 +150,12 @@ function snptest_assoc()
       -use_raw_phenotypes \
       -use_long_column_naming_scheme \
       -hwe \
-      -log ${prot}-{}.log;\
-    gzip -f ${prot}-{}.out'
+      -log ${prot}-{}.log'
     seq 22 | \
     parallel -j1 --env prot -C' ' '
     (
-      gunzip -c ${prot}-{}.out.gz | \
-      awk "NR>20"
+      awk "NR>20" ${prot}-{}.out
+      gzip -f ${prot}-{}.out
     )' | \
     grep -v -E 'not|Completed' | \
     awk 'NR==1 || $3!="chromosome"' | \
@@ -242,6 +241,5 @@ function bolt_assoc()
   tee {}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
 }
 
-cd $rt/KORA
 snptest_assoc
 qqman
