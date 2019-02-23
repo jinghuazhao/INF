@@ -135,7 +135,7 @@ function snptest_assoc()
     export prot=$p
     parallel --wait -j12--env prot --env rt -C' ' '
     snptest \
-    -data protein{2}.gen.gz KORA.pheno \
+    -data protein{}.gen.gz KORA.pheno \
     -exclude_samples KORA.prune.relatedness \
     -o ${rt}/KORA/${prot}-{}.out \
     -printids \
@@ -143,7 +143,7 @@ function snptest_assoc()
     -frequentist 1 \
     -missing_code NA,-999 \
     -method expected \
-    -pheno UH_O_{1} \
+    -pheno UH_O_{} \
     -cov_all \
     -use_raw_covariates \
     -use_raw_phenotypes \
