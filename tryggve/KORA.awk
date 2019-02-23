@@ -47,10 +47,10 @@
 #19 all_maf
 #20 missing_data_proportion
 #21 cohort_1_hwe
-#22 UH_O_OPG_frequentist_add_expected_pvalue
-#23 UH_O_OPG_frequentist_add_expected_info
-#24 UH_O_OPG_frequentist_add_expected_beta_1
-#25 UH_O_OPG_frequentist_add_expected_se_1
+#22 UH_O_OPG_PC1_PC2_PC3_PC4_PC5_age_sex_frequentist_add_expected_pvalue
+#23 UH_O_OPG_PC1_PC2_PC3_PC4_PC5_age_sex_frequentist_add_expected_info
+#24 UH_O_OPG_PC1_PC2_PC3_PC4_PC5_age_sex_frequentist_add_expected_beta_1
+#25 UH_O_OPG_PC1_PC2_PC3_PC4_PC5_age_sex_frequentist_add_expected_se_1
 #26 comment
 
 # gunzip -c KORA/snptest.uPA.out.gz | head -1 | awk '{gsub(/ /, "\n",$0)};1'| awk '{print "#" NR, $1}'

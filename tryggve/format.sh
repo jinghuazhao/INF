@@ -1,9 +1,9 @@
-# 21-2-2019 JHZ
+# 22-2-2019 JHZ
 
 export threads=8
 
 # BioFinder
-grep -v TNF sumstats/BioFinder.list | \
+grep -v -w TNF sumstats/BioFinder.list | \
 parallel -j5 -C' ' '
    awk -f tryggve/BioFinder.awk /data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.{1}_zre_INFI.glm.linear | \
    awk -f tryggve/order.awk | \
@@ -53,7 +53,7 @@ gzip -f > sumstats/LifeLinesDeep/LifeLinesDeep.{1}.gz'
 # KORA
 cat sumstats/KORA.list | \
 parallel -j5 -C' ' '
-   zgrep -v Completed KORA/snptest.{1}.out.gz | \
+   gunzip -c KORA/{1}.out.gz | \
    awk -f tryggve/KORA.awk | \
    awk -f tryggve/order.awk | \
    gzip -f > sumstats/KORA/KORA.{3}.gz'

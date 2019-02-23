@@ -94,9 +94,9 @@ This version can handle chi-squared statistics instead of p values in the joint/
 
 This is version 7.0.8-22, made available due to the inability to use the imagemagick/7.0.8-16 module, e.g.,
 ```bash
-export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
-convert OPG.lz-1.png -resize 130% OPG.lz-3.png
-convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
+export IM_dir=/data/jinhua/ImageMagick-7.0.8-22/bin
+$IM_dir/convert OPG.lz-1.png -resize 130% OPG.lz-3.png
+$IM_dir/convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
 ```
 used to generate the figure in the front page. Another very useful utility is its `display`.
 
@@ -114,7 +114,7 @@ for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
 
 ### qctool
 
-TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ -- its installation is described on GitHub repository [Computational-Statistics](https://github.com/jinghuazhao/Computational-Statistics).
+TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ -- I have described its installation on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
 
 ### R/gap
 
@@ -152,17 +152,18 @@ SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/
 
 ## Notes on studies
 
--   **BioFinder**. 91 proteins. sumstats file named after genes and converted to protein names.
--   **NSPHS**. 91 proteins, originally a tar.gz file is unpacked into \$HOME/INF/work leading to 10 proteins
--   **EGCUT**. 91 proteins, orginally only 18 proteins though stratified by chromsomes
--   **INTERVAL**. raw SNPTEST output with information such as strand/chip SNPs to be added
+-   **BioFinder**. 91 (no BDNF) proteins. sumstats file named after genes and converted to protein names.
+-   **NSPHS**. 91 (no BDNF) proteins, originally a tar.gz file is unpacked into \$HOME/INF/work leading to 10 proteins
+-   **EGCUT**. 91 (no BDNF) proteins, orginally only 18 proteins though stratified by chromsomes
+-   **INTERVAL**. 92 proteins. raw SNPTEST output with information such as strand/chip SNPs to be added
 -   **KORA**. 89 (no BDNF, NRTN, NT.3) proteins, age, sex and individual level imputed genotypes
--   **LifeLinesDeep**. Only 1/25 proteins
--   **ULSAM**. 25 proteins
--   **PIVUS**. 23 proteins
--   **ORCADES**. 91 protein results are available but adding CCL3 which overlaps with MMP.1
--   **VIS**. 91 protein restults as with ORCADES
--   **STABILITY**. 90 protein.
+-   **LifeLinesDeep**. Only 1/25 proteins (unused)
+-   **MadCam**. 91 (no IL.6) proteins
+-   **ULSAM**. 25 proteins (unused)
+-   **PIVUS**. 23 proteins (unused)
+-   **ORCADES**. 91 (no BDNF) protein results are available but adding CCL3 which overlaps with MMP.1
+-   **VIS**. 91 (no BDNF) protein restults as with ORCADES
+-   **STABILITY**. 90 (no BDNF, IL.2) protein.
 -   **STANLEY**. 92 largely complete protein results for lah1 and swe6
 
 96, MMP.12 (CVD II)
