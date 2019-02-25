@@ -8,7 +8,9 @@ INTERVAL, /scratch/curated_genetic_data/reference_files/interval/
 
 STABILITY, /data/niceri/Stability_INF/SNPstats.zip
 
-ORCADES & VIS, /data/jinhua/data/ORCADES|VIS
+ORCADES, /data/jinhua/data/ORCADES
+
+VIS, /data/jinhua/data/VIS
 
 Pending cohorts
 ===============
