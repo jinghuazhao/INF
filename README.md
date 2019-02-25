@@ -27,8 +27,9 @@ git clone https://github.com/jinghua/INF
 File     | Description
 ---------|--------------------------------------------------------
 [doc/](doc) | Some documents and auxiliary files
+[cardio/](cardio) | Work on CEU's cardio
 [tryggve/](tryggve) | Analysis programs on TRYGGVE
-[SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | analysis plan
+[SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | Analysis plan
 [SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
 [tryggve.md](tryggve.md) | TRYGGVE notes
 
