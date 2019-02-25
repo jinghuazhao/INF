@@ -8,7 +8,7 @@ INTERVAL, /scratch/curated_genetic_data/reference_files/interval/
 
 STABILITY, /data/niceri/Stability_INF/SNPstats.zip
 
-ORCADES & VIS, /data/erimac/ has GWAS summary statistics, downloaded from DataSync
+ORCADES & VIS, /data/jinhua/data/ORCADES|VIS
 
 Pending cohorts
 ===============
