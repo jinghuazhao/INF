@@ -68,14 +68,10 @@ function id()
   cut -d' ' -f1 > protein.id
   join -v1 genotype.id protein.id | \
   awk -vOFS="\t" '{print $1,$1}' > remove.id
-  awk -vOFS="\t" '{print $1, $1}' protein.id > KORA.id
 }
 
 function snp()
 {
-  echo --> IMPUTE2 format
-  seq 22 | \
-  parallel -j5 -C' ' 'bcftools convert --samples-file protein.id --tag GP chr{}.vcf.gz -g protein{}'
   echo --> -sample-stats and -snp-stats
   qctool -g chr#.vcf.gz -s KORA.samples -excl-samples remove.id -vcf-genotype-field GP \
          -sample-stats -osample KORA.sample-stats -snp-stats -osnp KORA#.snp-stats -threads 5
@@ -134,7 +130,7 @@ function snptest_assoc()
 {
   parallel -j12 --env rt -C' ' '
     snptest \
-    -data protein{2}.gen.gz KORA.pheno \
+    -data chr{2}.vcf.gz KORA.pheno \
     -exclude_samples KORA.prune.relatedness \
     -o {1}-{2} \
     -printids \
@@ -169,11 +165,17 @@ function bolt_assoc()
 # https://data.broadinstitute.org/alkesgroup/BOLT-LMM/#x1-220005.1.2
 {
   seq 22 | \
+  awk '{print "protein" $1 ".gen.gz"}' > bolt.list
+  awk -vOFS="\t" '{print $1, $1}' protein.id > bolt.id
+  echo --> IMPUTE2 format
+  seq 22 | \
+  parallel -j5 -C' ' 'bcftools convert --samples-file protein.id --tag GP chr{}.vcf.gz -g protein{}'
+  seq 22 | \
   parallel -j2 -C' ' '
   bolt \
     --bfile KORA.prune \
-    --impute2FileList=KORA.list \
-    --impute2FidIidFile=KORA.id \
+    --impute2FileList=bolt.list \
+    --impute2FidIidFile=bolt.id \
     --LDscoresUseChip \
     --maxModelSnps 50000000 \
     --noMapCheck \
