@@ -36,7 +36,7 @@ File     | Description
 
 ## Analysis
 
-1. To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](doc/cardio.sh), which includes cis/trans classification via Jimmy's [cis.vs.trans.classification.R](doc/cis.vs.trans.classification.R) and a Bash version via bedtools, [cistrans.sh](doc/cistrans.sh).
+1. To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](cardio/cardio.sh), which includes cis/trans classification via Jimmy's [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) and a Bash version via bedtools, [cistrans.sh](cardio/cistrans.sh).
 Jimmy's competitive log10(p) calculator is also documented in [log10p.md](doc/log10p.md) in comparison with R/Rmpfr. 
 
 2. Data preprocessig was done with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh). The meta-analysis was according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with addtional investigation.
@@ -52,7 +52,7 @@ as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/
 
 ## Notes on UniProt IDs
 
-The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](doc/OLINK.R), which also attempts to compromise earlier version and annotations.
+The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](cardio/OLINK.R), which also attempts to compromise earlier version and annotations.
 
 The use of [UniProt](https://www.uniprot.org/) IDs is rationalised in two aspects,
 
