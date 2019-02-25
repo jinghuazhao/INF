@@ -76,7 +76,7 @@ function snp()
   seq 22 | \
   parallel -j12 'bcftools view -S protein.id -O z chr{}.vcf.gz -o KORA{}.vcf.gz'
   qctool -g KORA#.vcf.gz -s KORA.samples -excl-samples remove.id -vcf-genotype-field GP \
-         -sample-stats -osample KORA.sample-stats -snp-stats -osnp KORA#.snp-stats -threads 5
+         -sample-stats -osample KORA.sample-stats -snp-stats -osnp KORA#.snp-stats -threads 12
   echo "--> PCs based on independent SNPs"
   seq 22 | \
   parallel -j1 -C' ' '
@@ -138,6 +138,7 @@ function snptest_assoc()
     -printids \
     -lower_sample_limit 50 \
     -frequentist 1 \
+    -genotype_field GP \
     -missing_code NA,-999 \
     -method expected \
     -pheno UH_O_{1} \
