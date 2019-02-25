@@ -72,12 +72,12 @@ function id()
 
 function snp()
 {
-  echo --> -sample-stats and -snp-stats
+  echo "--> -sample-stats and -snp-stats"
   seq 22 | \
-  parallel -j5 'bcftools view -S protein.id -O z chr{}.vcf.gz -o KORA{}.vcf.gz'
+  parallel -j12 'bcftools view -S protein.id -O z chr{}.vcf.gz -o KORA{}.vcf.gz'
   qctool -g KORA#.vcf.gz -s KORA.samples -excl-samples remove.id -vcf-genotype-field GP \
          -sample-stats -osample KORA.sample-stats -snp-stats -osnp KORA#.snp-stats -threads 5
-  echo --> PCs based on independent SNPs
+  echo "--> PCs based on independent SNPs"
   seq 22 | \
   parallel -j1 -C' ' '
     bcftools annotate --set-id "chr%CHROM\:%POS\_%REF\_%ALT" chr{}.vcf.gz -O z -o KORA{}.vcf.gz
@@ -105,7 +105,7 @@ function snp()
   plink --bfile KORA --extract KORA.prune.in --make-bed --out KORA.prune
   gcta64 --bfile KORA.prune --make-grm-bin --thread-num 5 --out KORA
   gcta64 --grm KORA --pca 5 --out KORA
-  echo --> relatedness
+  echo "--> relatedness"
   king -b KORA.prune.bed --related --prefix KORA.prune
   awk 'NR>1{print $4}' KORA.prune.kin0 > KORA.prune.relatedness
 }
@@ -169,7 +169,7 @@ function bolt_assoc()
   seq 22 | \
   awk '{print "protein" $1 ".gen.gz"}' > bolt.list
   awk -vOFS="\t" '{print $1, $1}' protein.id > bolt.id
-  echo --> IMPUTE2 format
+  echo "--> IMPUTE2 format"
   seq 22 | \
   parallel -j5 -C' ' 'bcftools convert --samples-file protein.id --tag GP chr{}.vcf.gz -g protein{}'
   seq 22 | \
