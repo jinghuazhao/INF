@@ -155,7 +155,7 @@ function snptest_assoc()
     parallel -j1 --env prot -C' ' '
     (
       gunzip -c ${prot}-{}.gz | \
-      awk "NR>20"
+      awk "NR>21"
     )' | \
     grep -v -E 'not|Completed' | \
     awk 'NR==1 || $3!="chromosome"' | \
