@@ -200,7 +200,7 @@ function qqman()
       print(gene);
       protein <- Sys.getenv("protein");
       print(protein);
-      gz <- gzfile(paste0(gene,".out.gz"));
+      gz <- gzfile(paste0(gene,".gz"));
       .libPaths("/services/tools/R/3.5.0/lib64/R/library")
       require(qqman);
       tbl <- read.table(gz,as.is=TRUE,header=TRUE);
