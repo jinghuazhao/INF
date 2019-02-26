@@ -1,4 +1,4 @@
-# 22-2-2019 JHZ
+# 26-2-2019 JHZ
 
 export threads=8
 
@@ -154,14 +154,21 @@ parallel -j$threads -C' ' '
   awk -f tryggve/order.awk | \
   gzip -f > sumstats/STABILITY/{}'
 
-# STANLEY_lahl/STANLEY_swe6
-ls work/STANLEY*gz | \
-sed 's/work\///g' | \
-parallel -j$threads -C' ' '
-  gunzip -c work/{} | \
-  awk -f tryggve/STANLEY.awk | \
-  awk -f tryggve/order.awk | \
-  gzip -f > sumstats/STANLEY/{}'
+for s in lah1 swe6
+do
+  if [ $s == "lah1" ]; then
+     export N=344
+  else
+     export N=300
+  fi
+  ls work/STANLEY_${s}*gz | \
+  sed 's/work\///g' | \
+  parallel -j$threads --env N -C' ' '
+    gunzip -c work/{} | \
+    awk -vN=$N -f tryggve/STANLEY.awk | \
+    awk -f tryggve/order.awk | \
+    gzip -f > sumstats/STANLEY/{}'
+done
 
 # to pave way for QCGWAS
 mkdir $HOME/INF/sumstats/work

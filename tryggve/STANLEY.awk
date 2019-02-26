@@ -1,4 +1,4 @@
-# 15-12-2018 JHZ
+# 26-2-2019 JHZ
 
 !/BETA/{
   OFS="\t"
@@ -7,7 +7,7 @@
   POS=$3
   if (substr($2,1,2)=="rs") SNPID=$2; else SNPID="chr" CHR ":" POS
   STRAND="NA"
-  N="NA"
+  N=N
   EFFECT_ALLELE=$4
   REFERENCE_ALLELE=$5
   CODE_ALL_FQ=$6
