@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# 25-2-2019 JHZ
+# 26-2-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -147,7 +147,7 @@ function snptest_assoc()
     -use_raw_phenotypes \
     -use_long_column_naming_scheme \
     -hwe \
-    -log {1}-{2}.log;gzip -f {1}-{2}' ::: $(cat KORA.varlist) ::: $(seq 22)
+    -log {1}-{2}.log;gzip -f {1}-{2};gzip -f {1}-{2}.log' ::: $(cat KORA.varlist) ::: $(seq 22)
   for p in $(cat KORA.varlist)
   do
     export prot=$p
