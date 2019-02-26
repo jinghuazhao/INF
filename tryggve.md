@@ -8,7 +8,8 @@ doc/               | Oringal documents
  -- [KORA.prot.preproc.R*](doc/KORA.prot.preproc.R) | R code for data preprocessing
  -- kora.normalised.prot.txt* | sex, age, normalised proteins
  -- [KORA.pc.below.llod.pdf*](doc/KORA.pc.below.llod.pdf) | llod check
-cardio/            | Codes which run on CEU's cardio
+METAL/             | METAL/output scripts by protein
+sumstats/          | File lists and study directories
 tryggve/           | Auxiliary files
  -- [list.sh](tryggve/list.sh)         | Generation of file list and directory
  -- [format.sh](tryggve/format.sh)     | Code for format GWAS summary statistics
@@ -22,8 +23,6 @@ tryggve/           | Auxiliary files
  -- [KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
  -- [EURLD.bed](tryggve/EURLD.bed) | approximately independent LD blocks for Europeans.
 tryggve.md         | This document
-sumstats/          | File lists and study directories
-METAL/             | METAL/output scripts by protein
 
 \* from Jimmy
 
@@ -111,7 +110,9 @@ The latest version parallel-20190222 has new features and use them directly on T
 ```bash
 export src=/data/jinhua/parallel-20190222/bin
 for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
+export MANPATH=/data/jinhua/parallel-20190222/share/man:$MANPATH
 ```
+The last line enables `man parallel` and `info parallel`.
 
 ### qctool
 
