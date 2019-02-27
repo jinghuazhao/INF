@@ -1,15 +1,30 @@
+#!/bin/bash
+
+#SBATCH --ntasks=1
+#SBATCH --job-name=INF
+#SBATCH --time=4:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --partition=short
+#SBATCH --array=1-1936
+#SBATCH --output=KORA/snptest_%A_%a.out
+#SBATCH --error=KORA/snptest_%A_%a.err
+#SBATCH --export ALL
+
+. /etc/profile.d/modules.sh
+module load default-cardio
+module load slurm
+module load use.own
+
+export TMPDIR=/scratch/jhz22/tmp
+
+parallel echo {1} {2} ::: $(cat KORA/KORA.varlist) ::: $(seq 22) > cardio/KORA.list
+export prot=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' cardio/KORA.list | cut -d' ' -f1)
+export chr=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' cardio/KORA.list | cut -d' ' -f2)
+
+echo ${prot}-${chr}
+cardio/KORA.subs ${prot} ${chr}
 #!/bin/bash --login
 
-#SBATCH -J INF
-#SBATCH -n 10
-#SBATCH -c 4
-#SBATCH -o KORA.log
-#SBATCH -p medium
-#SBATCH -t 0-4:0
-#SBATCH --export ALL
-#SBATCH --workdir=$HOME/INF/KORA
-
-export parallel="parallel -N 1 --delay .2 -j $SLURM_NTASKS"
-export srun="/usr/local/Cluster-Apps/slurm/bin/srun -n1 -N1 --exclusive"
-
-$parallel "$srun $HOME/INF/cardio/KORA.subs {1} {2}" ::: $(cat KORA.varlist) ::: $(seq 22)
+# export parallel="parallel -N 1 --delay .2 -j $SLURM_NTASKS"
+# export srun="/usr/local/Cluster-Apps/slurm/bin/srun -n1 -N1 --exclusive"
+# $parallel "$srun $HOME/INF/cardio/KORA.subs {1} {2}" ::: $(cat KORA.varlist) ::: $(seq 22)
