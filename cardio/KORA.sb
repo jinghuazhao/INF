@@ -15,16 +15,11 @@ module load default-cardio
 module load slurm
 module load use.own
 
-export TMPDIR=/scratch/jhz22/tmp
-
 parallel echo {1} {2} ::: $(cat KORA/KORA.varlist) ::: $(seq 22) > cardio/KORA.list
+
+export TMPDIR=/scratch/jhz22/tmp
 export prot=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' cardio/KORA.list | cut -d' ' -f1)
 export chr=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' cardio/KORA.list | cut -d' ' -f2)
 
 echo ${prot}-${chr}
 cardio/KORA.subs ${prot} ${chr}
-#!/bin/bash --login
-
-# export parallel="parallel -N 1 --delay .2 -j $SLURM_NTASKS"
-# export srun="/usr/local/Cluster-Apps/slurm/bin/srun -n1 -N1 --exclusive"
-# $parallel "$srun $HOME/INF/cardio/KORA.subs {1} {2}" ::: $(cat KORA.varlist) ::: $(seq 22)
