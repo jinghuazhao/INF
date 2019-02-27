@@ -1,6 +1,6 @@
 # SCALLOP consortium analysis plan for INF panel proteins
 
-***Adapted from SCALLOP/CVD1 analysis plan, last updated 25/1/2019***
+***Adapted from SCALLOP/CVD1 analysis plan, last updated 27/2/2019***
 
 ---
 
@@ -117,7 +117,7 @@ qctool -g INTERVAL.bgen -s INTERVAL.sample -snp-stats -osnp INTERVAL.snp-stats -
 ```
 See also the full SLURM sbatch script in the Appendix.
 
-When a dosage format is used, PLINK also gives an INFO measure; see http://zzz.bwh.harvard.edu/plink/dosage.shtml.
+When a dosage format is used, PLINK also gives an INFO measure; see http://zzz.bwh.harvard.edu/plink/dosage.shtml. However, per-SNP sample size is not given, which again could be obtained from qctool as described above.
 
 ## 5. Meta-analysis
 
