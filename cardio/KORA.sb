@@ -1,0 +1,15 @@
+#!/bin/bash --login
+
+#SBATCH -J INF
+#SBATCH -n 10
+#SBATCH -c 4
+#SBATCH -o KORA.log
+#SBATCH -p medium
+#SBATCH -t 0-4:0
+#SBATCH --export ALL
+#SBATCH --workdir=$HOME/INF/KORA
+
+export parallel="parallel -N 1 --delay .2 -j $SLURM_NTASKS"
+export srun="/usr/local/Cluster-Apps/slurm/bin/srun -n1 -N1 --exclusive"
+
+$parallel "$srun $HOME/INF/cardio/KORA.subs {1} {2}" ::: $(cat KORA.varlist) ::: $(seq 22)
