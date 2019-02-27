@@ -1,4 +1,4 @@
-# 21-2-2019 JHZ
+# 27-2-2019 JHZ
 
 # --- INF list of proteins and file list ---
 
@@ -109,7 +109,7 @@ function MadCam()
   awk '{split($1,a,".");print a[2],a[3]}' | \
   sort -k1,1 | \
   join -11 -22 - prot.list | \
-  sed 's/P29459/P29459.IL-12B/g' > sumstats/MadCam.list
+  grep -v P29459 > sumstats/MadCam.list
 }
 
 function NSPHS_INF() {
