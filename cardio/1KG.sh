@@ -1,7 +1,7 @@
-# 15-12-2018 JHZ
+# 28-2-2019 JHZ
 
 # allele frequencies from 1KG phase 3
-sbatch -wait doc/1KG.sb
+sbatch -wait cardio/1KG.sb
 (
   awk -vOFS="\t" 'BEGIN{print "SNP","CHR","POS","MINOR","MAJOR","MAF"}'
   for chr in $(seq 22); do zgrep -v -w CHR 1KGp3v5-${chr}.txt.gz ; done
