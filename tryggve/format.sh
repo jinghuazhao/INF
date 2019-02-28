@@ -155,7 +155,7 @@ parallel -j$threads -C' ' '
      export MAF=0.03
   fi
   gunzip -c work/{} | \
-  awk -vOFS="\t" -vMAF -f tryggve/STABILITY.awk | \
+  awk -vOFS="\t" -vMAF=$MAF -f tryggve/STABILITY.awk | \
   awk -f tryggve/order.awk | \
   gzip -f > sumstats/STABILITY/{}'
 
