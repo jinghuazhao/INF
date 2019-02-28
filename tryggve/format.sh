@@ -149,7 +149,7 @@ parallel -j$threads -C' ' '
 ls work/STABILITY*gz | \
 sed 's/work\///g' | \
 parallel -j$threads -C' ' '
-  if [ "{}" == "STABILITY.IFN.gamma.gz" || "{}" == "STABILITY.IL.22.RA1.gz" || "{}" == "STABILITY.TSLP.gz" ]; then
+  if [ "{}" == "STABILITY.IFN.gamma.gz" ] || [ "{}" == "STABILITY.IL.22.RA1.gz" ] || [ "{}" == "STABILITY.TSLP.gz" ]; then
      export MAF=0.1
   else
      export MAF=0.03
