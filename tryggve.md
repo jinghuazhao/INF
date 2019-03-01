@@ -123,7 +123,7 @@ The last line enables `man parallel` and `info parallel`.
 
 ### qctool
 
-TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ and described its installation on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
+TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ and its installation described on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
 
 ### R/gap
 
