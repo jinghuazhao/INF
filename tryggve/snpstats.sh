@@ -2,9 +2,9 @@
 
 function EGCUT()
 {
+(
    awk "NR>11" /data/anekal/EGCUT_INF.snp-stats | \
-   awk "{
-      OFS="\t"
+   awk -vOFS="\t" "{
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
         CHR=\$3
@@ -20,7 +20,6 @@ function EGCUT()
         print snpid, N, MAF, HWE, info
       }
     }"
-  '
 ) | \
 awk '(NR==1||$3!="chromosome")' | \
 sort -k1,1 | \
@@ -65,8 +64,7 @@ function INTERVAL()
   seq 22 | \
   parallel -j1 -C' ' '
     gunzip -c /data/jinhua/data/INTERVAL/impute_{}_interval.snpstats.gz | \
-    awk "{
-      OFS="\t"
+    awk -vOFS="\t" "{
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
         CHR=\$3
@@ -115,12 +113,12 @@ gzip -f > snpstats/INTERVAL.snpstats.gz
 
 function ORCADES()
 {
+(
   seq 22 | \
   parallel -j1 -C' ' '
     gunzip -c /data/jinhua/data/ORCADES/orcades_chr_1_hrc.snp-stats.gz | \
     awk 'NR>13' | \
-    awk "{
-      OFS="\t"
+    awk -vOFS="\t" "{
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
         CHR=\$3
@@ -177,12 +175,12 @@ gzip -f > snpstats/ORCADES.snpstats.gz
 
 function VIS()
 {
+(
   seq 22 | \
   parallel -j1 -C' ' '
     gunzip -c /data/jinhua/data/VIS/vis_chr{}_HRC.r1-1_nomono_I4.snp-stats.gz | \
     awk 'NR>13' | \
-    awk "{
-      OFS="\t"
+    awk -vOFS="\t" "{
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
         CHR=\$3
@@ -243,8 +241,7 @@ function STABILITY()
   seq 22 | \
   parallel -j1 -C' ' '
     gunzip -c /data/jinhua/data/STABILITY/STABILITY_imputed_qc_maf_005_chr1_snp_stats.txt.gz | \
-    awk "{
-      OFS="\t"
+    awk -vOFS="\t" "{
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
         CHR=\$3
