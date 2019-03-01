@@ -94,15 +94,21 @@ This version can handle chi-squared statistics instead of p values in the joint/
 
 This is version 7.0.8-22, made available due to the inability to use the imagemagick/7.0.8-16 module, e.g.,
 ```bash
-export IM_dir=/data/jinhua/ImageMagick-7.0.8-22/bin
-$IM_dir/convert OPG.lz-1.png -resize 130% OPG.lz-3.png
-$IM_dir/convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
+export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
+convert OPG.lz-1.png -resize 130% OPG.lz-3.png
+convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
 ```
 used to generate the figure in the front page. Another very useful utility is its `display`.
 
 ### METAL
 
 The version as in /data/jinhua/METAL-2018-08-28 contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
+
+To avoid loading the default /usr/bin/metal, one can add
+```bash
+export PATH=$HOME/bin:/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
+```
+into $HOME/.bashrc.
 
 ### GNU parallel
 
@@ -116,7 +122,7 @@ The last line enables `man parallel` and `info parallel`.
 
 ### qctool
 
-TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ -- I have described its installation on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
+TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ and described its installation on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
 
 ### R/gap
 
