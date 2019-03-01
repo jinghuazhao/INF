@@ -106,6 +106,7 @@ The version as in /data/jinhua/METAL-2018-08-28 contains modification which allo
 
 To avoid loading the default /usr/bin/metal, one can add
 ```bash
+ln -sf /data/jinhua/METAL-2018-08-28/metal $HOME/bin/metal
 export PATH=$HOME/bin:/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
 ```
 into $HOME/.bashrc.
