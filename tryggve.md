@@ -45,7 +45,7 @@ module load gcta/1.91.0beta
 module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL rstudio/1.1.453
 module load libreoffice/6.0.5.2
 module load locuszoom/1.4
-module load metal/20110325
+module load metal/20180828
 module load pandoc/2.1
 module load parallel/20190122
 module load plink2/1.90beta5.4
