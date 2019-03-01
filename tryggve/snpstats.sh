@@ -4,24 +4,24 @@ function EGCUT()
 {
 (
    awk "NR>11" /data/anekal/EGCUT_INF.snp-stats | \
-   awk -vOFS="\t" "{
-      if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
+   awk -vOFS="\t" '{
+      if(NR==1) print "SNPID","N","MAF","HWE","info";
       else {
-        CHR=\$3
-        POS=\$4
-        a1=\$6
-        a2=\$7
-        N=\$26
-        MAF=\$14
-        HWE=\$8
-        info=\$18
-        if (a1>a2) snpid=\"chr\" CHR \":\" POS \"_\" a2 \"_\" a1;
-        else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
+        CHR=$3
+        POS=$4
+        a1=$6
+        a2=$7
+        N=$26
+        MAF=$14
+        HWE=$8
+        info=$18
+        if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+        else snpid="chr" CHR ":" POS "_" a1 "_" a2
         print snpid, N, MAF, HWE, info
       }
-    }"
+    }'
 ) | \
-awk '(NR==1||$3!="chromosome")' | \
+awk '(NR==1||$1!="SNPID")' | \
 sort -k1,1 | \
 gzip -f > snpstats/EGCUT.snpstats.gz
 }
@@ -82,7 +82,7 @@ function INTERVAL()
     }"
   '
 ) | \
-awk '(NR==1||$3!="chromosome")' | \
+awk '(NR==1||$1!="SNPID")' | \
 sort -k1,1 | \
 gzip -f > snpstats/INTERVAL.snpstats.gz
 }
@@ -136,7 +136,7 @@ function ORCADES()
     }"
   '
 ) | \
-awk '(NR==1||$3!="chromosome")' | \
+awk '(NR==1||$1!="SNPID")' | \
 sort -k1,1 | \
 gzip -f > snpstats/ORCADES.snpstats.gz
 }
@@ -198,7 +198,7 @@ function VIS()
     }"
   '
 ) | \
-awk '(NR==1||$3!="chromosome")' | \
+awk '(NR==1||$1!="SNPID")' | \
 sort -k1,1 | \
 gzip -f > snpstats/VIS.snpstats.gz
 }
@@ -259,7 +259,7 @@ function STABILITY()
     }"
   '
 ) | \
-awk '(NR==1||$3!="chromosome")' | \
+awk '(NR==1||$1!="SNPID")' | \
 sort -k1,1 | \
 gzip -f > snpstats/INTERVAL.snpstats.gz
 }
