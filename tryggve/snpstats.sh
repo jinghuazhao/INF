@@ -68,7 +68,6 @@ function INTERVAL()
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
         CHR=\$3
-        sub(/^0/,\"\",CHR)
         POS=\$4
         a1=\$5
         a2=\$6
@@ -124,8 +123,8 @@ function ORCADES()
       else {
         CHR=\$3
         POS=\$4
-        a1=\$6
-        a2=\$7
+        a1=\$5
+        a2=\$6
         N=\$26
         MAF=\$14
         HWE=\$8
@@ -186,8 +185,8 @@ function VIS()
       else {
         CHR=\$3
         POS=\$4
-        a1=\$6
-        a2=\$7
+        a1=\$5
+        a2=\$6
         N=\$26
         MAF=\$14
         HWE=\$8
