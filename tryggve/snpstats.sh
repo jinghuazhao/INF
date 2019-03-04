@@ -241,7 +241,7 @@ function STABILITY()
 (
   seq 22 | \
   parallel -j1 -C' ' '
-    gunzip -c /data/jinhua/data/STABILITY/STABILITY_imputed_qc_maf_005_chr1_snp_stats.txt.gz | \
+    gunzip -c /data/jinhua/data/STABILITY/STABILITY_imputed_qc_maf_005_chr{}_snp_stats.txt.gz | \
     awk -vOFS="\t" "{
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
