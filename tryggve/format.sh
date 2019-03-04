@@ -1,4 +1,4 @@
-# 28-2-2019 JHZ
+# 4-3-2019 JHZ
 
 export threads=8
 
@@ -34,6 +34,9 @@ parallel -j$threads -C' ' '
    /usr/bin/gunzip -c /data/jampet/upload-20170920/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
    awk -f tryggve/INTERVAL.awk | \
    awk -f tryggve/order.awk | \
+   sort -k1,1 | \
+   join -t$"\t" - snpstats/INTERVAL.snpstats | \
+   awk -f tryggve/addinfo.awk | \
    gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz'
 
 # LifeLinesDeep -- SNPID has no "chr" prefix for non-rsids
