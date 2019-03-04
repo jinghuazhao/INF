@@ -33,9 +33,8 @@ sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz\*//g;s/___/ /g' | \
 parallel -j$threads -C' ' '
    /usr/bin/gunzip -c /data/jampet/upload-20170920/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
    awk -f tryggve/INTERVAL.awk | \
-   awk -f tryggve/order.awk | \
    sort -k1,1 | \
-   join -t$"\t" - snpstats/INTERVAL.snpstats | \
+   join - snpstats/INTERVAL.snpstats | \
    awk -f tryggve/addinfo.awk | \
    gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz'
 
