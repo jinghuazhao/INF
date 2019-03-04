@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# 26-2-2019 JHZ
+# 4-3-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -186,7 +186,7 @@ function bolt_assoc()
     --covarFile=phenocovar.txt --covarCol sex --qCovarCol age \
     --remove remove.id \
     --lmm --statsFile={}.stats 2>&1 | \
-  tee {}.log' ::: $(cut -f5-92 phenocovar.txt|awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}')
+  tee {}.log' ::: $(cat KORA.varlist)
 }
 
 function qqman()
