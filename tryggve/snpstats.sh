@@ -1,4 +1,4 @@
-# 1-3-2019 JHZ
+# 4-3-2019 JHZ
 
 function EGCUT()
 {
@@ -9,8 +9,8 @@ function EGCUT()
       else {
         CHR=$3
         POS=$4
-        a1=$6
-        a2=$7
+        a1=$5
+        a2=$6
         N=$26
         MAF=$14
         HWE=$8
@@ -68,6 +68,7 @@ function INTERVAL()
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
         CHR=\$3
+        sub(/^0/,\"\",CHR)
         POS=\$4
         a1=\$5
         a2=\$6
@@ -116,8 +117,8 @@ function ORCADES()
 (
   seq 22 | \
   parallel -j1 -C' ' '
-    gunzip -c /data/jinhua/data/ORCADES/orcades_chr_1_hrc.snp-stats.gz | \
-    awk 'NR>13' | \
+    gunzip -c /data/jinhua/data/ORCADES/orcades_chr_{}_hrc.snp-stats.gz | \
+    awk "NR>13" | \
     awk -vOFS="\t" "{
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
@@ -179,7 +180,7 @@ function VIS()
   seq 22 | \
   parallel -j1 -C' ' '
     gunzip -c /data/jinhua/data/VIS/vis_chr{}_HRC.r1-1_nomono_I4.snp-stats.gz | \
-    awk 'NR>13' | \
+    awk "NR>13" | \
     awk -vOFS="\t" "{
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
