@@ -262,7 +262,7 @@ function STABILITY()
 ) | \
 awk '(NR==1||$1!="SNPID")' | \
 sort -k1,1 | \
-gzip -f > snpstats/INTERVAL.snpstats.gz
+gzip -f > snpstats/STABILITY.snpstats.gz
 }
 
 # gunzip -c STABILITY_imputed_qc_maf_005_chr1_snp_stats.txt.gz | \
