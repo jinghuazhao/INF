@@ -245,7 +245,8 @@ function STABILITY()
     awk -vOFS="\t" "{
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
-        CHR=\$3
+        split(\$2,a,\":\")
+        CHR=a[1]
         POS=\$4
         a1=\$5
         a2=\$6
@@ -265,6 +266,7 @@ sort -k1,1 | \
 gzip -f > snpstats/STABILITY.snpstats.gz
 }
 
+# all chromosome=NA so needs work on RSID
 # gunzip -c STABILITY_imputed_qc_maf_005_chr1_snp_stats.txt.gz | \
 # head -1 | \
 # awk '{gsub(/ /, "\n",$0);print}'| \
