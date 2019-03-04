@@ -1,6 +1,10 @@
 # 4-3-2019 JHZ
 
-# needs to deal with chromosome=NA for ORCADES, STABILITY and VIS
+# NOTES
+# ORCADES, STABILITY, VIS and MadCam actually contains INFO
+# - INTERVAL has SNPTEST outputs nevertheless info has NA's
+# - ORCADES, STABILITY and VIS have chromosome as NA
+# - BioFinder, NSPHS, STANLEY are pending on qctool -snp-stats
 
 function EGCUT()
 {
