@@ -68,6 +68,7 @@ function INTERVAL()
       if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
       else {
         CHR=\$3
+        sub(/^0/,\"\",CHR)
         POS=\$4
         a1=\$5
         a2=\$6
