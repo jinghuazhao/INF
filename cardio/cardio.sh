@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 28/2/19 JHZ
+# General notes, 4/3/19 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
@@ -106,6 +106,60 @@ function snpstats_imputed()
   rm INTERVAL.snpid-*.gz
   cd -
 }
+
+export TMPDIR=/scratch/jhz22/tmp
+
+(
+  seq 22 | \
+  parallel -j1 --env REF -C' ' '
+    cat $REF/impute_{}_interval.snpstats | \
+    awk -vOFS="\t" "{
+      if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
+      else {
+        CHR=\$3
+        sub(/^0/,\"\",CHR)
+        POS=\$4
+        a1=\$5
+        a2=\$6
+        N=\$9+\$10+\$11
+        MAF=\$15
+        HWE=\$16
+        info=\$19
+        if (a1>a2) snpid=\"chr\" CHR \":\" POS \"_\" a2 \"_\" a1;
+        else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
+        print snpid, N, MAF, HWE, info
+      }
+    }"
+  '
+) | \
+awk '(NR==1||$1!="SNPID")' | \
+sort -k1,1 | \
+gzip -f > INTERVAL.snpstats.gz
+
+# /scratch/curated_genetic_data/reference_files/interval/
+# gunzip -c impute_1_interval.snpstats.gz | \
+# head -1 | \
+# awk '{gsub(/\t/, "\n",$0)};1'| awk '{print "#" NR, $1}'
+
+#1 SNPID
+#2 RSID
+#3 chromosome
+#4 position
+#5 A_allele
+#6 B_allele
+#7 minor_allele
+#8 major_allele
+#9 AA
+#10 AB
+#11 BB
+#12 AA_calls
+#13 AB_calls
+#14 BB_calls
+#15 MAF
+#16 HWE
+#17 missing
+#18 missing_calls
+#19 information
 
 function clumped_jma()
 {
