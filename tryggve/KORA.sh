@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# 4-3-2019 JHZ
+# 6-3-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -150,6 +150,7 @@ function snptest_assoc()
       -log {1}-{2}.log;gzip -f {1}-{2};gzip -f {1}-{2}.log' ::: $(cat KORA.varlist) ::: $(seq 22)
   for p in $(cat KORA.varlist)
   do
+    echo $p
     export prot=$p
     seq 22 | \
     parallel -j1 --env prot -C' ' '
