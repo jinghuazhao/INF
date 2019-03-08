@@ -319,7 +319,7 @@ do
   }' | \
   gzip -f > ${s}.${p}.gz
   R --no-save -q <<\ \ END
-    s <- Sys.getenv("ss")
+    s <- Sys.getenv("s")
     p <- Sys.getenv("p")
     z <- paste(s,p,"gz",sep=".")
     gz <- gzfile(z)
