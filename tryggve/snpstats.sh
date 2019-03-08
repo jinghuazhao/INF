@@ -324,7 +324,7 @@ do
     p <- Sys.getenv("p")
     z <- paste(s,p,"gz",sep=".")
     gz <- gzfile(z)
-    d <- read.table(gz,as.is=TRUE,sep="\t")
+    d <- read.table(gz,as.is=TRUE,header=TRUE,sep="\t")
     summary(d)
   END
 ) > ${s}.${p}.log
