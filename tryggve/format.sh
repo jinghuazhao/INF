@@ -1,4 +1,4 @@
-# 7-3-2019 JHZ
+# 8-3-2019 JHZ
 
 export threads=8
 
@@ -68,7 +68,8 @@ parallel -j5 -C' ' '
 # MadCam
 cat sumstats/MadCam.list | \
 parallel -j5 -C' ' '
-   awk -f tryggve/order.awk /data/andmala/madcam/MadCAM.{1}.{2}.txt | \
+   sed 's/CODE_ALLELE_FQ/CODE_ALL_FQ/g' /data/andmala/madcam/MadCAM.{1}.{2}.txt | \
+   awk -f tryggve/order.awk | \
    gzip -f > sumstats/MadCam/MadCam.{3}.gz'
 
 # NSPHS_INF
