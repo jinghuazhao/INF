@@ -1,4 +1,4 @@
-# 4-3-2019 JHZ
+# 8-3-2019 JHZ
 
 # NOTES
 # ORCADES, STABILITY, VIS and MadCam actually contains INFO
@@ -299,7 +299,32 @@ gzip -f > snpstats/STABILITY.snpstats.gz
 #18 missing_calls
 #19 information
 
+export p=IFN.gamma
 for s in EGCUT INTERVAL ORCADES VIS STABILITY
 do
-  $s
+(
+  echo $s
+  export s=$s
+# to generate .snpstats
+# $s
+  if [ $s == "EGCUT" ]; then export d=EGCUT_INF;export ss=EGCUT_autosomal; else export d=$s;export ss=s;fi
+  gunzip -c snpstats/${s}.snpstats.gz > snpstats/${s}.snpstats
+  gunzip -c ${d}/${ss}.${p}.gz | \
+  awk 'NR>1' | \
+  join - snpstats/${s}.snpstats | \
+  awk -vOFS="\t" '{ 
+     if (NR==1) print "SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE", "CODE_ALL_FQ",
+                      "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP", "M", "MAF", "HWE"
+     if print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $18, $14, $15, $16, $17
+  }' | \
+  gzip -f > ${s}.${p}.gz
+  R --no-save -q <<\ \ END
+    s <- Sys.getenv("ss")
+    p <- Sys.getenv("p")
+    z <- paste(s,p,"gz",sep=".")
+    gz <- gzfile(z)
+    d <- read.table(gz,as.is=TRUE,sep="\t")
+    summary(d)
+  END
+) > ${s}.${p}.log
 done
