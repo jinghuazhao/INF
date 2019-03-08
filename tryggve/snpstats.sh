@@ -311,7 +311,7 @@ do
   gunzip -c snpstats/${s}.snpstats.gz > snpstats/${s}.snpstats
   gunzip -c sumstats/${d}/${ss}.${p}.gz | \
   awk 'NR>1' | \
-  join - snpstats/${d}/${s}.snpstats | \
+  join - snpstats/${s}.snpstats | \
   awk -vOFS="\t" '{ 
      if (NR==1) print "SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE", "CODE_ALL_FQ",
                       "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP", "M", "MAF", "HWE"
