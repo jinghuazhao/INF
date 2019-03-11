@@ -1,4 +1,4 @@
-# 8-3-2019 JHZ
+# 11-3-2019 JHZ
 
 # NOTES
 # ORCADES, STABILITY, VIS and MadCam actually contains INFO
@@ -299,7 +299,7 @@ gzip -f > snpstats/STABILITY.snpstats.gz
 #18 missing_calls
 #19 information
 
-export p=IFN.gamma
+export p=OPG
 for s in EGCUT INTERVAL ORCADES VIS STABILITY
 do
 (
@@ -315,8 +315,8 @@ do
   join - snpstats/${s}.snpstats | \
   awk -vOFS="\t" '{ 
      if (NR==1) print "SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE", "CODE_ALL_FQ",
-                      "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP", "M", "MAF", "HWE"
-     print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $18, $14, $15, $16, $17
+                      "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP", "M", "MAF", "HWE", "INFO"
+     print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18
   }' | \
   gzip -f > ${s}.${p}.gz
   R --no-save -q <<\ \ END
@@ -329,3 +329,25 @@ do
   END
 ) > ${s}.${p}.log
 done
+
+R --no-save -q <<END
+g <- "/data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.TNFRSF11B_zre_INFI.glm.linear"
+BioFinder <- read.table(g,as.is=TRUE,header=TRUE)
+summary(BioFinder)
+
+g <- "/data/andmala/madcam/MadCAM.O00300.OPG.txt"
+MadCam <- read.table(g,as.is=TRUE,header=TRUE)
+summary(MadCam)
+
+gz <- gzfile("/data/jampet/upload-20170920/INTERVAL_inf1_OPG___O00300_chr_merged.gz")
+INTERVAL <- read.table(gz,as.is=TRUE,header=TRUE)
+summary(INTERVAL)
+
+gz <- gzfile("work/STANLEY_lah1-OPG.gz")
+STANLEY_lah1 <- read.table(gz,as.is=TRUE,header=TRUE)
+summary(STANLEY_lah1)
+
+gz <- gzfile("work/STANLEY_swe6-OPG.gz")
+STANLEY_swe6 <- read.table(gz,as.is=TRUE,header=TRUE)
+summary(STANLEY_swe6)
+END
