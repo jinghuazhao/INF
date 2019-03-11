@@ -332,7 +332,7 @@ done
 
 R --no-save -q <<END
 g <- "/data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.TNFRSF11B_zre_INFI.glm.linear"
-BioFinder <- read.table(g,as.is=TRUE,header=TRUE)
+BioFinder <- read.table(g,as.is=TRUE,header=TRUE,comment.char='"')
 summary(BioFinder)
 
 g <- "/data/andmala/madcam/MadCAM.O00300.OPG.txt"
