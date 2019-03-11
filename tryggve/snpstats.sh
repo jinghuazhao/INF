@@ -332,7 +332,7 @@ done
 
 R --no-save -q <<END
 g <- "/data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.TNFRSF11B_zre_INFI.glm.linear"
-BioFinder <- read.table(g,as.is=TRUE,header=TRUE,comment.char='"')
+BioFinder <- read.table(g,as.is=TRUE,header=TRUE,comment.char='"',sep="\t")
 summary(BioFinder)
 
 g <- "/data/andmala/madcam/MadCAM.O00300.OPG.txt"
@@ -346,8 +346,10 @@ summary(INTERVAL)
 gz <- gzfile("work/STANLEY_lah1-OPG.gz")
 STANLEY_lah1 <- read.table(gz,as.is=TRUE,header=TRUE)
 summary(STANLEY_lah1)
+summary(as.numeric(STANLEY_lah1$INFO))
 
 gz <- gzfile("work/STANLEY_swe6-OPG.gz")
 STANLEY_swe6 <- read.table(gz,as.is=TRUE,header=TRUE)
 summary(STANLEY_swe6)
+summary(as.numeric(STANLEY_swe6$INFO))
 END
