@@ -339,6 +339,10 @@ g <- "/data/andmala/madcam/MadCAM.O00300.OPG.txt"
 MadCam <- read.table(g,as.is=TRUE,header=TRUE)
 summary(MadCam)
 
+gz <- gzfile("/data/stefane/NSPHS_INF/NSPHS_inf1_OPG_O00300.txt.gz")
+NSPHS <-  read.table(gz,as.is=TRUE,header=TRUE,sep="\t")
+summary(NSPHS)
+
 gz <- gzfile("/data/jampet/upload-20170920/INTERVAL_inf1_OPG___O00300_chr_merged.gz")
 INTERVAL <- read.table(gz,as.is=TRUE,header=TRUE)
 summary(INTERVAL)
