@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# 6-3-2019 JHZ
+# 11-3-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -55,6 +55,7 @@ function id()
     cat genotype.id
   ) > KORA.samples
   export llod=/data/jampet/KORA/kora.below.llod.normalised.prot.txt
+  export llod=/data/jampet/KORA/kora.below.llod.normalised.prot.2019-03-08.txt
   awk -vOFS="\t" '{
     $1=$1 OFS $1
     if($3=="M") $3=0; else if($3=="F") $3=1
