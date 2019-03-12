@@ -341,8 +341,7 @@ do
 (
   echo $s
   export s=$s
-# to generate .snpstats
-# $s
+  $s
   if [ $s == "EGCUT" ]; then export d=EGCUT_INF;export ss=EGCUT_autosomal; else export d=$s;export ss=$s;fi
   gunzip -c snpstats/${s}.snpstats.gz > snpstats/${s}.snpstats
   gunzip -c sumstats/${d}/${ss}.${p}.gz | \
