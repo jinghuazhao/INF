@@ -1,4 +1,4 @@
-# 27-2-2019 JHZ
+# 12-3-2019 JHZ
 
 # --- INF list of proteins and file list ---
 
@@ -159,6 +159,17 @@ function ORCADES_VIS() {
 
   ls /data/erimac/VIS | \
   grep INF1 > sumstats/VIS.list
+}
+
+function RECOMBINE() {
+  export wd=/data/jinhua/data/RECOMBINE
+  # tar xfz /data/asahed/RECOMBINE_INF1_pQTLs.tar.gz
+  ls $wd/RECOMBINE_pQTLs__meta_scallop/*gz | \
+  xargs -x -l basename | \
+  sed 's/_RECOMBINE.txt.gz//g;s/___/ /g;s/_/ /g' | \
+  cut -d' ' -f1-3 | \
+  sort -k1,1 -k2,2 -k3,3 | \
+  uniq > sumstats/RECOMBINE.list
 }
 
 function STABILITY() {
