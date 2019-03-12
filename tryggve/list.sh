@@ -76,6 +76,7 @@ function KORA() {
      if ($3=="CCL8") $3="MCP2"
      if ($3=="CCL7") $3="MCP3"
      if ($3=="CCL13") $3="MCP4"
+     if ($3=="NTF3") $3="NT3"
      if ($3=="TNFRSF11B") $3="OPG"
      if ($3=="CD274") $3="PDL1"
      if ($3=="KITLG") $3="SCF"
@@ -88,8 +89,7 @@ function KORA() {
      if ($3=="PLAU") $3="uPA"
   };1' inf1.gene | \
   sort -k3,3 > inf1.tmp
-  ls KORA/snptest.*.out.gz | \
-  awk '{gsub(/KORA\/snptest.|.out.gz/,"");print}' | \
+  sed 's/ /\n/g' KORA/KORA.varlist | \
   sort -k1,1 | \
   join -11 -23 - inf1.tmp > sumstats/KORA.list
 }
