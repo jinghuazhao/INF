@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# 11-3-2019 JHZ
+# 12-3-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -122,10 +122,10 @@ function phenocovar()
     eigenvec[PCs] <- eigenvec[PCs]*100
     pheno <- merge(missing_proportion,merge(eigenvec,phenocovar,by=c("FID","IID")),by=c("FID","IID"))
     names(pheno)[1:2] <- c("ID_1","ID_2")
-    l2 <- c(rep("0",3),rep("C",5+2),rep("P",88))
+    l2 <- c(rep("0",3),rep("C",5+2),rep("P",91))
     write.table(rbind(l2,pheno),file="KORA.pheno",quote=FALSE,row.names=FALSE)
   END
-  cut -f5-92 phenocovar.txt | \
+  cut -f5-95 phenocovar.txt | \
   awk 'NR==1{gsub(/UH_O_/,"");gsub(/\t/," ");print}' > KORA.varlist
 }
 
