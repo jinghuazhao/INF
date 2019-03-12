@@ -1,4 +1,4 @@
-# 11-3-2019 JHZ
+# 12-3-2019 JHZ
 
 # NOTES
 # ORCADES, STABILITY, VIS and MadCam actually contains INFO
@@ -6,12 +6,43 @@
 # - ORCADES, STABILITY and VIS have chromosome as NA
 # - BioFinder, NSPHS, STANLEY are pending on qctool -snp-stats
 
+function sumstats_snpstats()
+{
+R --no-save -q <<\ \ END
+  g <- "/data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.TNFRSF11B_zre_INFI.glm.linear"
+  BioFinder <- read.table(g,as.is=TRUE,header=TRUE,comment.char='"',sep="\t")
+  summary(BioFinder)
+
+  g <- "/data/andmala/madcam/MadCAM.O00300.OPG.txt"
+  MadCam <- read.table(g,as.is=TRUE,header=TRUE)
+  summary(MadCam)
+
+  gz <- gzfile("/data/stefane/NSPHS_INF/NSPHS_inf1_OPG_O00300.txt.gz")
+  NSPHS <-  read.table(gz,as.is=TRUE,header=TRUE,sep="\t")
+  summary(NSPHS)
+
+  gz <- gzfile("/data/jampet/upload-20170920/INTERVAL_inf1_OPG___O00300_chr_merged.gz")
+  INTERVAL <- read.table(gz,as.is=TRUE,header=TRUE)
+  summary(INTERVAL)
+
+  gz <- gzfile("work/STANLEY_lah1-OPG.gz")
+  STANLEY_lah1 <- read.table(gz,as.is=TRUE,header=TRUE)
+  summary(STANLEY_lah1)
+  summary(as.numeric(STANLEY_lah1$INFO))
+
+  gz <- gzfile("work/STANLEY_swe6-OPG.gz")
+  STANLEY_swe6 <- read.table(gz,as.is=TRUE,header=TRUE)
+  summary(STANLEY_swe6)
+  summary(as.numeric(STANLEY_swe6$INFO))
+  END
+}
+
 function EGCUT()
 {
 (
    awk "NR>11" /data/anekal/EGCUT_INF.snp-stats | \
    awk -vOFS="\t" '{
-      if(NR==1) print "SNPID","N","MAF","HWE","info";
+      if(NR==1) print "SNPID","N","MAC","MAF","HWE","info";
       else {
         CHR=$3
         POS=$4
@@ -19,11 +50,12 @@ function EGCUT()
         a2=$6
         N=$26
         MAF=$14
+        if($10<$11) MAC=$10; else MAC=$11
         HWE=$8
         info=$18
         if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
         else snpid="chr" CHR ":" POS "_" a1 "_" a2
-        print snpid, N, MAF, HWE, info
+        print snpid, N, MAC, MAF, HWE, info
       }
     }'
 ) | \
@@ -71,7 +103,7 @@ function INTERVAL()
   parallel -j1 -C' ' '
     gunzip -c /data/jinhua/data/INTERVAL/impute_{}_interval.snpstats.gz | \
     awk -vOFS="\t" "{
-      if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
+      if(NR==1) print \"SNPID\",\"N\",\"MAC\",\"MAF\",\"HWE\",\"info\";
       else {
         CHR=\$3
         sub(/^0/,\"\",CHR)
@@ -79,12 +111,13 @@ function INTERVAL()
         a1=\$5
         a2=\$6
         N=\$9+\$10+\$11
+        if(\$9<\$11) MAC=2*\$9+\$10; else MAC=$10+2*\$11
         MAF=\$15
         HWE=\$16
         info=\$19
         if (a1>a2) snpid=\"chr\" CHR \":\" POS \"_\" a2 \"_\" a1;
         else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
-        print snpid, N, MAF, HWE, info
+        print snpid, N, MAC, MAF, HWE, info
       }
     }"
   '
@@ -126,7 +159,7 @@ function ORCADES()
     gunzip -c /data/jinhua/data/ORCADES/orcades_chr_{}_hrc.snp-stats.gz | \
     awk "NR>13" | \
     awk -vOFS="\t" "{
-      if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
+      if(NR==1) print \"SNPID\",\"N\",\"MAC\",\"MAF\",\"HWE\",\"info\";
       else {
         split(\$1,a,\":\")
         CHR=a[1]
@@ -134,12 +167,13 @@ function ORCADES()
         a1=\$5
         a2=\$6
         N=\$26
+        if(\$10<\$11) MAC=\$10; else MAC=\$11
         MAF=\$14
         HWE=\$8
         info=\$18
         if (a1>a2) snpid=\"chr\" CHR \":\" POS \"_\" a2 \"_\" a1;
         else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
-        print snpid, N, MAF, HWE, info
+        print snpid, N, MAC, MAF, HWE, info
       }
     }"
   '
@@ -189,7 +223,7 @@ function VIS()
     gunzip -c /data/jinhua/data/VIS/vis_chr{}_HRC.r1-1_nomono_I4.snp-stats.gz | \
     awk "NR>13" | \
     awk -vOFS="\t" "{
-      if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
+      if(NR==1) print \"SNPID\",\"N\",\"MAC\",\"MAF\",\"HWE\",\"info\";
       else {
         split(\$1,a,\":\")
         CHR=a[1]
@@ -197,12 +231,13 @@ function VIS()
         a1=\$5
         a2=\$6
         N=\$26
+        if(\$10<\$11) MAC=\$10; else MAC=\$11
         MAF=\$14
         HWE=\$8
         info=\$18
         if (a1>a2) snpid=\"chr\" CHR \":\" POS \"_\" a2 \"_\" a1;
         else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
-        print snpid, N, MAF, HWE, info
+        print snpid, N, MAC, MAF, HWE, info
       }
     }"
   '
@@ -251,7 +286,7 @@ function STABILITY()
   parallel -j1 -C' ' '
     gunzip -c /data/jinhua/data/STABILITY/STABILITY_imputed_qc_maf_005_chr{}_snp_stats.txt.gz | \
     awk -vOFS="\t" "{
-      if(NR==1) print \"SNPID\",\"N\",\"MAF\",\"HWE\",\"info\";
+      if(NR==1) print \"SNPID\",\"N\",\"MAC\",\"MAF\",\"HWE\",\"info\";
       else {
         split(\$2,a,\":\")
         CHR=a[1]
@@ -259,12 +294,13 @@ function STABILITY()
         a1=\$5
         a2=\$6
         N=\$9+\$10+\$11
+        if(\$9<\$11) MAC=2*\$9+\$10; else MAC=$10+2*\$11
         MAF=\$15
         HWE=\$16
         info=\$19
         if (a1>a2) snpid=\"chr\" CHR \":\" POS \"_\" a2 \"_\" a1;
         else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
-        print snpid, N, MAF, HWE, info
+        print snpid, N, MAC, MAF, HWE, info
       }
     }"
   '
@@ -315,8 +351,8 @@ do
   join - snpstats/${s}.snpstats | \
   awk -vOFS="\t" '{ 
      if (NR==1) print "SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE", "CODE_ALL_FQ",
-                      "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP", "M", "MAF", "HWE", "INFO"
-     print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18
+                      "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP", "M", "MAC", "MAF", "HWE", "INFO"
+     print $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19
   }' | \
   gzip -f > ${s}.${p}.gz
   R --no-save -q <<\ \ END
@@ -329,31 +365,3 @@ do
   END
 ) > ${s}.${p}.log
 done
-
-R --no-save -q <<END
-g <- "/data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.TNFRSF11B_zre_INFI.glm.linear"
-BioFinder <- read.table(g,as.is=TRUE,header=TRUE,comment.char='"',sep="\t")
-summary(BioFinder)
-
-g <- "/data/andmala/madcam/MadCAM.O00300.OPG.txt"
-MadCam <- read.table(g,as.is=TRUE,header=TRUE)
-summary(MadCam)
-
-gz <- gzfile("/data/stefane/NSPHS_INF/NSPHS_inf1_OPG_O00300.txt.gz")
-NSPHS <-  read.table(gz,as.is=TRUE,header=TRUE,sep="\t")
-summary(NSPHS)
-
-gz <- gzfile("/data/jampet/upload-20170920/INTERVAL_inf1_OPG___O00300_chr_merged.gz")
-INTERVAL <- read.table(gz,as.is=TRUE,header=TRUE)
-summary(INTERVAL)
-
-gz <- gzfile("work/STANLEY_lah1-OPG.gz")
-STANLEY_lah1 <- read.table(gz,as.is=TRUE,header=TRUE)
-summary(STANLEY_lah1)
-summary(as.numeric(STANLEY_lah1$INFO))
-
-gz <- gzfile("work/STANLEY_swe6-OPG.gz")
-STANLEY_swe6 <- read.table(gz,as.is=TRUE,header=TRUE)
-summary(STANLEY_swe6)
-summary(as.numeric(STANLEY_swe6$INFO))
-END
