@@ -49,8 +49,8 @@ function EGCUT()
         a1=$5
         a2=$6
         N=$26
-        MAF=$14
         if($10<$11) MAC=$10; else MAC=$11
+        MAF=$14
         HWE=$8
         info=$18
         if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
@@ -111,7 +111,7 @@ function INTERVAL()
         a1=\$5
         a2=\$6
         N=\$9+\$10+\$11
-        if(\$9<\$11) MAC=2*\$9+\$10; else MAC=$10+2*\$11
+        if(\$9<\$11) MAC=2*\$9+\$10; else MAC=\$10+2*\$11
         MAF=\$15
         HWE=\$16
         info=\$19
@@ -294,7 +294,7 @@ function STABILITY()
         a1=\$5
         a2=\$6
         N=\$9+\$10+\$11
-        if(\$9<\$11) MAC=2*\$9+\$10; else MAC=$10+2*\$11
+        if(\$9<\$11) MAC=2*\$9+\$10; else MAC=\$10+2*\$11
         MAF=\$15
         HWE=\$16
         info=\$19
