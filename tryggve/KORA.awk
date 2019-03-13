@@ -1,4 +1,4 @@
-# 18-2-2019 JHZ
+# 13-3-2019 JHZ
 
 {
   OFS="\t"
@@ -20,7 +20,7 @@
     SE=$25
     PVAL=$22
     RSQ="NA"
-    RSQ_IMP=$23
+    RSQ_IMP=$9
     IMP="NA"
     print  SNPID, CHR, POS, STRAND, N, EFFECT_ALLELE, REFERENCE_ALLELE, CODE_ALL_FQ, BETA, SE, PVAL, RSQ, RSQ_IMP, IMP
   }
