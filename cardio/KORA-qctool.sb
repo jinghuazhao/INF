@@ -18,4 +18,6 @@ module load use.own
 export TMPDIR=/scratch/jhz22/tmp
 export ID=$SLURM_ARRAY_TASK_ID
 
-qctool -g KORA/KORA$ID.vcf.gz -excl-samples KORA/KORA.prune.relatedness -snp-stats -osnp KORA/KORA$ID.snp-stats
+cut -d' ' -f1-3 KORA/KORA.pheno > KORA/KORA.samples
+
+qctool -g KORA/KORA$ID.vcf.gz -s KORA/KORA.samples -excl-samples KORA/KORA.prune.relatedness -snp-stats -osnp KORA/KORA$ID.snp-stats
