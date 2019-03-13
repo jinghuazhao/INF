@@ -26,7 +26,7 @@ R --no-save -q <<\ \ END
   INTERVAL <- within(d,{c1=2*all_AA+all_AB;c2=all_AB+2*all_BB;MAC=ifelse(c1<c2,c1,c2);c=c1+c2})
   summary(INTERVAL)
 
-  gz <- gzfile("sumstats/KORA/KORA.OPG.gz")
+  gz <- gzfile("KORA/OPG.gz")
   d <- read.table(gz,as.is=TRUE,header=TRUE)
   KORA <- within(d,{c1=2*all_AA+all_AB;c2=all_AB+2*all_BB;MAC=ifelse(c1<c2,c1,c2);c=c1+c2})
   summary(KORA)
