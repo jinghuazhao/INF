@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=short
 #SBATCH --array=1-22
-#SBATCH --output=KORA/snptest_%A_%a.out
-#SBATCH --error=KORA/snptest_%A_%a.err
+#SBATCH --output=KORA/qctool_%A_%a.out
+#SBATCH --error=KORA/qctool_%A_%a.err
 #SBATCH --export ALL
 
 . /etc/profile.d/modules.sh
