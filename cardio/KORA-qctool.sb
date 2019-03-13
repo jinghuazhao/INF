@@ -18,7 +18,7 @@ module load use.own
 export TMPDIR=/scratch/jhz22/tmp
 export ID=$SLURM_ARRAY_TASK_ID
 
-if [ ! -f KORA/KORA.pheno ]; then
+if [ ! -f KORA/KORA.samples ]; then
    cut -d' ' -f1-3 KORA/KORA.pheno > KORA/KORA.samples
 fi
 
