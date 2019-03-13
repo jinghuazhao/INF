@@ -164,7 +164,7 @@ SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/
 -   **BioFinder**. 91 (no BDNF) proteins. sumstats file named after genes and converted to protein names.
 -   **NSPHS**. 91 (no BDNF) proteins, originally a tar.gz file is unpacked into \$HOME/INF/work leading to 10 proteins
 -   **EGCUT**. 91 (no BDNF) proteins, orginally only 18 proteins though stratified by chromsomes
--   **INTERVAL**. 92 proteins. raw SNPTEST output with information such as strand/chip SNPs to be added
+-   **INTERVAL**. 92 proteins. raw SNPTEST output with information such as info/chip SNPs to be added
 -   **KORA**. 91 (no BDNF) proteins, age, sex and individual level imputed genotypes
 -   **LifeLinesDeep**. Only 1/25 proteins (unused)
 -   **MadCam**. 91 (no IL.6) proteins
