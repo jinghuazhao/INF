@@ -1,4 +1,4 @@
-# 8-3-2019 JHZ
+# 13-3-2019 JHZ
 
 export threads=8
 
@@ -147,6 +147,38 @@ parallel -j$threads -C' ' '
   gunzip -c /data/erimac/VIS/VIS.INF1.{1}_rank.tsv.gz | \
   awk -f tryggve/order.awk | \
   gzip -f > sumstats/VIS/VIS.{2}.gz'
+
+# RECOMBINE
+
+export rt=/data/jinhua/data/RECOMBINE/RECOMBINE_pQTLs__meta_scallop
+sort -k2,2 inf1.list > inf1.tmp
+sort -k3,3 sumstats/RECOMBINE.list | \
+join -13 -22 - inf1.tmp | \
+parallel -j4 --env rt -C' ' '
+  (
+    for chr in `seq 22`
+    do
+      gunzip -c $rt/{2}_{3}___{1}_chr${chr}_RECOMBINE.txt.gz | \
+      cut -f3-7,9-17
+    done
+  ) | \
+  awk "NR==1||\$1!=SNPID" | \
+  awk -vOFS="\t" "
+  {
+    if (NR>1) 
+    {
+      CHR=\$2
+      POS=\$3
+      a1=\$6
+      a2=\$7
+      if (a1>a2) snpid=\"chr\" CHR \":\" POS \"_\" a2 \"_\" a1;
+      else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
+      \$1=snpid
+    }
+    print
+  }" | \
+  gzip -f > sumstats/RECOMBINE/RECOMBINE.{4}.gz
+'
 
 # STABILITY
 ls work/STABILITY*gz | \
