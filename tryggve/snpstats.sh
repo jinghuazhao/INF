@@ -31,6 +31,10 @@ R --no-save -q <<\ \ END
   KORA <- within(d,{c1=2*all_AA+all_AB;c2=all_AB+2*all_BB;MAC=ifelse(c1<c2,c1,c2);c=c1+c2})
   summary(KORA)
 
+  gz <- gzfile("sumstats/RECOMBINE/RECOMBINE.OPG.gz")
+  RECOMBINE <- read.table(gz,as.is=TRUE,header=TRUE)
+  summary(RECOMBINE)
+
   gz <- gzfile("work/STANLEY_lah1-OPG.gz")
   STANLEY_lah1 <- read.table(gz,as.is=TRUE,header=TRUE)
   summary(STANLEY_lah1)
