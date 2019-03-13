@@ -171,6 +171,7 @@ SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/
 -   **ULSAM**. 25 proteins (unused)
 -   **PIVUS**. 23 proteins (unused)
 -   **ORCADES**. 91 (no BDNF) protein results are available but adding CCL3 which overlaps with MMP.1
+-   **RECOMBINE**. 91 (no BDNF) protein results are available with information as described in the analysis plan
 -   **VIS**. 91 (no BDNF) protein restults as with ORCADES
 -   **STABILITY**. 90 (no BDNF, IL.2) protein.
 -   **STANLEY**. 92 largely complete protein results for lah1 and swe6
