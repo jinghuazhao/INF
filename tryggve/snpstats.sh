@@ -23,8 +23,13 @@ R --no-save -q <<\ \ END
 
   gz <- gzfile("/data/jampet/upload-20170920/INTERVAL_inf1_OPG___O00300_chr_merged.gz")
   d <- read.table(gz,as.is=TRUE,header=TRUE)
-  INTERVAL <- within(d,{c1=2*all_AA+all_AB;c2=all_AB+2*all_BB;MAC=ifelse(c1<c2,c1,c2)})
+  INTERVAL <- within(d,{c1=2*all_AA+all_AB;c2=all_AB+2*all_BB;MAC=ifelse(c1<c2,c1,c2);c=c1+c2})
   summary(INTERVAL)
+
+  gz <- gzfile("sumstats/KORA/KORA.OPG.gz")
+  d <- read.table(gz,as.is=TRUE,header=TRUE)
+  KORA <- within(d,{c1=2*all_AA+all_AB;c2=all_AB+2*all_BB;MAC=ifelse(c1<c2,c1,c2);c=c1+c2})
+  summary(KORA)
 
   gz <- gzfile("work/STANLEY_lah1-OPG.gz")
   STANLEY_lah1 <- read.table(gz,as.is=TRUE,header=TRUE)
