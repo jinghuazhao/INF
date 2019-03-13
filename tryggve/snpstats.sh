@@ -1,13 +1,13 @@
-# 12-3-2019 JHZ
+# 13-3-2019 JHZ
 
-# NOTES
 # ORCADES, STABILITY, VIS and MadCam actually contains INFO
-# - INTERVAL has SNPTEST outputs nevertheless info has NA's
-# - ORCADES, STABILITY and VIS have chromosome as NA
-# - BioFinder, NSPHS, STANLEY are pending on qctool -snp-stats
+# INTERVAL has SNPTEST outputs nevertheless info has NA's
+# ORCADES, STABILITY and VIS have chromosome as NA
+# BioFinder, NSPHS, STANLEY are pending on qctool -snp-stats
 
 function sumstats_snpstats()
 {
+(
 R --no-save -q <<\ \ END
   g <- "/data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.TNFRSF11B_zre_INFI.glm.linear"
   BioFinder <- read.table(g,as.is=TRUE,header=TRUE,comment.char='"',sep="\t")
@@ -22,7 +22,8 @@ R --no-save -q <<\ \ END
   summary(NSPHS)
 
   gz <- gzfile("/data/jampet/upload-20170920/INTERVAL_inf1_OPG___O00300_chr_merged.gz")
-  INTERVAL <- read.table(gz,as.is=TRUE,header=TRUE)
+  d <- read.table(gz,as.is=TRUE,header=TRUE)
+  INTERVAL <- within(d,{c1=2*all_AA+all_AB;c2=all_AB+2*all_BB;MAC=ifelse(c1<c2,c1,c2)})
   summary(INTERVAL)
 
   gz <- gzfile("work/STANLEY_lah1-OPG.gz")
@@ -35,7 +36,10 @@ R --no-save -q <<\ \ END
   summary(STANLEY_swe6)
   summary(as.numeric(STANLEY_swe6$INFO))
   END
+) > sumstats_snpstats.log
 }
+
+sumstats_snpstats
 
 function EGCUT()
 {
