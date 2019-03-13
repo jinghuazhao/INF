@@ -16,6 +16,6 @@ module load slurm
 module load use.own
 
 export TMPDIR=/scratch/jhz22/tmp
-export id=$SLURM_ARRAY_TASK_ID
+export ID=$SLURM_ARRAY_TASK_ID
 
 qctool -g KORA/KORA$ID.vcf.gz -snp-stats -osnp KORA/KORA$ID.snp-stats
