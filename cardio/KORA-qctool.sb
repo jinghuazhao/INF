@@ -5,7 +5,7 @@
 #SBATCH --time=4:00:00
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=short
-#SBATCH --array=1-1936
+#SBATCH --array=1-22
 #SBATCH --output=KORA/snptest_%A_%a.out
 #SBATCH --error=KORA/snptest_%A_%a.err
 #SBATCH --export ALL
@@ -16,10 +16,6 @@ module load slurm
 module load use.own
 
 export TMPDIR=/scratch/jhz22/tmp
-qctool -g KORA/KORA$SLURM_ARRAY_TASK_ID.vcf.gz -snp-stats -osnp KORA/KORA$SLURM_ARRAY_TASK_ID.snp-stats
+export id=$SLURM_ARRAY_TASK_ID
 
-export prot=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' cardio/KORA.list | cut -d' ' -f1)
-export chr=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' cardio/KORA.list | cut -d' ' -f2)
-
-echo ${prot}-${chr}
-cardio/KORA.subs ${prot} ${chr}
+qctool -g KORA/KORA$ID.vcf.gz -snp-stats -osnp KORA/KORA$ID.snp-stats
