@@ -3,6 +3,7 @@
 
 module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL
 
+(
 cat STABILITY.list | \
 parallel -j4 -C' ' '
   gunzip -c work/STABILITY.{}.gz | \
@@ -26,6 +27,7 @@ parallel -j4 -C' ' '
   export protein={};
   R --no-save -q < STABILITY.R
 '
+) > STABILITY.lambda
 # ls sumstats/STABILITY/*gz | \
 # sed 's|sumstats/STABILITY/STABILITY.||g;s/.gz//g' > STABILITY.list
 # ::: IL.20RA IL.22.RA1 IL.24 IL.2RB IL.33 LIF MCP.2 NRTN IL.10RA IL.5 TNF
