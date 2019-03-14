@@ -1,4 +1,4 @@
-# 13-3-2019 JHZ
+# 14-3-2019 JHZ
 
 export threads=8
 
@@ -151,6 +151,7 @@ parallel -j$threads -C' ' '
 # RECOMBINE
 
 export rt=/data/jinhua/data/RECOMBINE/RECOMBINE_pQTLs__meta_scallop
+export rt=/data/jinhua/data/RECOMBINE/RECOMBINE_INF1_pQTLs_updated_13thMarch_19
 sort -k2,2 inf1.list > inf1.tmp
 sort -k3,3 sumstats/RECOMBINE.list | \
 join -13 -22 - inf1.tmp | \

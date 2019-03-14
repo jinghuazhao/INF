@@ -1,4 +1,4 @@
-# 12-3-2019 JHZ
+# 14-3-2019 JHZ
 
 # --- INF list of proteins and file list ---
 
@@ -164,7 +164,9 @@ function ORCADES_VIS() {
 function RECOMBINE() {
   export wd=/data/jinhua/data/RECOMBINE
   # tar xfz /data/asahed/RECOMBINE_INF1_pQTLs.tar.gz
-  ls $wd/RECOMBINE_pQTLs__meta_scallop/*gz | \
+  # ls $wd/RECOMBINE_pQTLs__meta_scallop/*gz | \
+  # tar xfz /data/asahed/RECOMBINE_INF1_pQTLs_updated_13thMarch_19.tar.gz
+  ls $wd/RECOMBINE_INF1_pQTLs_updated_13thMarch_19/*gz | \
   xargs -x -l basename | \
   sed 's/_RECOMBINE.txt.gz//g;s/___/ /g;s/_/ /g' | \
   cut -d' ' -f1-3 | \
