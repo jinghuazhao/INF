@@ -31,7 +31,7 @@ R --no-save -q <<\ \ END
   KORA <- within(d,{c1=2*all_AA+all_AB;c2=all_AB+2*all_BB;MAC=ifelse(c1<c2,c1,c2);c=c1+c2})
   summary(KORA)
 
-  gz <- gzfile("sumstats/KORA/KORA.OPG.gz")
+  gz <- gzfile("KORA/KORA.snp-stats.gz")
   KORA <- read.table(gz,as.is=TRUE,header=TRUE)
   summary(KORA)
 
