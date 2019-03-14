@@ -11,7 +11,7 @@ parallel -j8 -C' ' '
     protein <- Sys.getenv("protein");
     print(protein);
     gz <- gzfile(paste0("sumstats/STABILITY/STABILITY.",protein,".gz"));
-    .libPaths("/services/tools/R/3.5.0/lib64/R/library:/data/jinhua/R")
+    .libPaths("/data/jinhua/R:/services/tools/R/3.5.0/lib64/R/library")
     require(qqman);
     tbl <- read.delim(gz,as.is=TRUE);
     tbl <- within(tbl,{
