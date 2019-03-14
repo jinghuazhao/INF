@@ -268,6 +268,7 @@ cd $HOME/INF/KORA
        print
     }" KORA{}.snp-stats'
 ) | \
+grep -v -E 'Completed' | \
 gzip -f > KORA.snp-stats.gz
 }
 
