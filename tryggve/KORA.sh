@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# 12-3-2019 JHZ
+# 14-3-2019 JHZ
 
 module load bcftools/1.9
 module load plink2/1.90beta5.4
@@ -247,6 +247,28 @@ function h2()
     sed 's/.hsq:Pval//g' | \
     join h2.out - 
   ) > h2.stats
+}
+
+function qctool()
+# tallying KORA[1-22].snp-stats from cardio/KORA-qctool.sb
+{
+cd $HOME/INF/KORA
+(
+  awk 'NR==11' KORA1.snp-stats
+  seq 22 | \
+  parallel -j1 -C' ' '
+    awk -vOFS="\t" "NR>11{
+       CHR=\$3
+       POS=\$4
+       a1=\$5
+       a2=\$6
+       if(a1<a2) snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2;
+       else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
+       \$1=snpid
+       print
+    }" KORA{}.snp-stats'
+) | \
+gzip -f > KORA.snp-stats.gz
 }
 
 snptest_assoc
