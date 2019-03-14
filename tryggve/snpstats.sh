@@ -1,9 +1,9 @@
-# 13-3-2019 JHZ
+# 14-3-2019 JHZ
 
 # ORCADES, STABILITY, VIS and MadCam actually contains INFO
-# INTERVAL has SNPTEST outputs nevertheless info has NA's
+# INTERVAL and KORA has SNPTEST outputs as well as qctool -snp-stats
 # ORCADES, STABILITY and VIS have chromosome as NA
-# BioFinder, NSPHS, STANLEY are pending on qctool -snp-stats
+# BioFinder, NSPHS, RECOMBINE and STANLEY are pending on qctool -snp-stats
 
 function sumstats_snpstats()
 {
@@ -29,6 +29,10 @@ R --no-save -q <<\ \ END
   gz <- gzfile("KORA/OPG.gz")
   d <- read.table(gz,as.is=TRUE,header=TRUE)
   KORA <- within(d,{c1=2*all_AA+all_AB;c2=all_AB+2*all_BB;MAC=ifelse(c1<c2,c1,c2);c=c1+c2})
+  summary(KORA)
+
+  gz <- gzfile("sumstats/KORA/KORA.OPG.gz")
+  KORA <- read.table(gz,as.is=TRUE,header=TRUE)
   summary(KORA)
 
   gz <- gzfile("sumstats/RECOMBINE/RECOMBINE.OPG.gz")
