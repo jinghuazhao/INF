@@ -26,7 +26,6 @@ grep .gz | \
 grep -v test | \
 sed 's/dos_bip_sw34_eur_rk-qc.hg19.ch.fl.chr//g;s/.out.dosage.fam//g;s/.out.dosage.gz//g;s/.out.dosage.map//g' > sw34.list
 cat sw34.list | \
-head -2 | \
 parallel -j5 --env rt --env c --env d --env p --env m -C' ' '
   $c --${d} $rt/dos_bip_sw34_eur_rk-qc.hg19.ch.fl.chr{}.out.dosage.gz \
      --${p} $rt/dos_bip_sw34_eur_rk-qc.hg19.ch.fl.chr{}.out.dosage.fam \
