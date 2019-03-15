@@ -17,17 +17,19 @@ function plink2()
   export m=map
 }
 
-plink2
+module load bgen/20180807
 module load $module
-
 export rt=/data/andmala/STANLEY
+
+plink2
+
 ls $rt/*gz | \
-head -2 | \
 sed 's/dos_bip_sw34_eur_rk-qc.hg19.ch.fl.chr//g;s/.out.dosage.fam//g;s/.out.dosage.gz//g;s/.out.dosage.map//g' | \
+head -2 | \
 parallel -j5 --env rt --env c --env d --env p --env m -C' ' '
   $c --${d} $rt/dos_bip_sw34_eur_rk-qc.hg19.ch.fl.chr{}.out.dosage.gz \
      --${p} $rt/dos_bip_sw34_eur_rk-qc.hg19.ch.fl.chr{}.out.dosage.fam \
      --${m} $rt/dos_bip_sw34_eur_rk-qc.hg19.ch.fl.chr{}.out.dosage.map \
-     --out {}
+     --bgen --log {} --out {}
 '
 module unload $module
