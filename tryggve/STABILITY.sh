@@ -29,7 +29,12 @@ parallel -j8 -C' ' '
      cat(protein,"GC.lambda=",gc.lambda(with(tbl,P)),"\n")
   END
 '
-) > STABILITY.lambda
+) > STABILITY.lambda.log
+
+grep GC.lambda STABILITY.lambda.log | \
+grep -v cat | \
+cut -d' ' -f1,3 | \
+sort -k2,2g > STABILITY.lambda.txt
 
 # ls sumstats/STABILITY/*gz | \
 # sed 's|sumstats/STABILITY/STABILITY.||g;s/.gz//g' > STABILITY.list
