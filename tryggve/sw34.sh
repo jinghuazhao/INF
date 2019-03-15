@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-function plink1()
+function plink19()
 {
   export module=plink2/1.90beta5.4
   export c=plink
@@ -8,7 +8,7 @@ function plink1()
   export p=fam
   export m=map
 }
-function plink2()
+function plink20()
 {
   export module=plink2/2.00alpha20181028
   export c=plink2
@@ -21,7 +21,7 @@ module load bgen/20180807
 module load $module
 export rt=/data/andmala/STANLEY
 
-plink2
+plink20
 
 ls $rt/*gz | \
 sed 's/dos_bip_sw34_eur_rk-qc.hg19.ch.fl.chr//g;s/.out.dosage.fam//g;s/.out.dosage.gz//g;s/.out.dosage.map//g' | \
