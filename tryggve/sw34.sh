@@ -35,4 +35,7 @@ parallel -j5 --env rt --env c --env d --env p --env m -C' ' '
 
 module unload $module
 module load bgen/20180807
-cat-bgen -g $(awk '{$1=$1 ".bgen";printf $1 " "}' sw34.list) -og sw34
+cat-bgen -g $(awk '{$1=$1 ".bgen";printf $1 " "}' sw34.list) -og sw34.bgen
+
+module load gcc/5.4.0 lapack/3.8.0 qctool/2.0.1
+qctool -g sw34.bgen -snp-stats -osnp sw34.snp-stats
