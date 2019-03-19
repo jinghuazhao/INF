@@ -176,9 +176,8 @@ function RECOMBINE() {
 
 function STABILITY() {
   # STABILITY
-  awk 'NR>1' doc/stability_inf_n_nmissing.csv | \
-  cut -d',' -f2-4 | \
-  sed 's/inf_//g;s|\"||g;s/,/ /g;
+  cut -d',' -f2-4 doc/stability_inf_n_nmissing.csv | \
+  sed '1d;s/inf_//g;s|\"||g;s/,/ /g;
      s/CCL3/MIP.1.alpha/;
      s/IL10/IL.10/;
      s/IL13/IL.13/;

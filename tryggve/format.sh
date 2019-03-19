@@ -1,4 +1,4 @@
-# 14-3-2019 JHZ
+# 19-3-2019 JHZ
 
 export threads=8
 
@@ -185,13 +185,9 @@ parallel -j4 --env rt -C' ' '
 ls work/STABILITY*gz | \
 sed 's/work\///g' | \
 parallel -j$threads -C' ' '
-  if [ "{}" == "STABILITY.IFN.gamma.gz" ] || [ "{}" == "STABILITY.IL.22.RA1.gz" ] || [ "{}" == "STABILITY.TSLP.gz" ]; then
-     export MAF=0.1
-  else
-     export MAF=0.03
-  fi
+  export N=$(grep -w {} STABILITY.N | cut -d" " -f2)
   gunzip -c work/{} | \
-  awk -vOFS="\t" -vMAF=$MAF -f tryggve/STABILITY.awk | \
+  awk -vOFS="\t" -vN=$N -f tryggve/STABILITY.awk | \
   awk -f tryggve/order.awk | \
   gzip -f > sumstats/STABILITY/{}'
 
