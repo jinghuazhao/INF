@@ -1,6 +1,6 @@
 {
    OFS="\t"
-   if (NR>1) 
+   if (NR>1)
    {
      CHR=$2
      POS=$3

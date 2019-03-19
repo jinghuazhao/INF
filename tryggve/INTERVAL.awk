@@ -20,7 +20,7 @@
      SE=$25
      PVAL=$22
      RSQ="NA"
-     RSQ_IMP=$23
+     RSQ_IMP=$9
      IMP="NA"
      a1=EFFECT_ALLELE
      a2=REFERENCE_ALLELE
