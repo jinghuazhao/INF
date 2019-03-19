@@ -1,4 +1,4 @@
-# 14-3-2019 JHZ
+# 19-3-2019 JHZ
 
 # --- INF list of proteins and file list ---
 
@@ -176,6 +176,22 @@ function RECOMBINE() {
 
 function STABILITY() {
   # STABILITY
+  awk 'NR>1' doc/stability_inf_n_nmissing.csv | \
+  cut -d',' -f2-4 | \
+  sed 's/inf_//g;s|\"||g;s/,/ /g;
+     s/CCL3/MIP.1.alpha/;
+     s/IL10/IL.10/;
+     s/IL13/IL.13/;
+     s/IL18/IL.18/;
+     s/IL33/IL.33/;
+     s/IL4/IL.4/;
+     s/IL5/IL.5/;
+     s/IL6/IL.6/;
+     s/IL7/IL.7/;
+     s/IL8/IL.8/;
+     s/VEGFA/VEGF.A/' | \
+  sort -k1,1 | \
+  awk '{print $1,$2}' > STABILITY.N
   sort -k2,2 inf1.list > inf1.tmp
   export STABILITY=/data/niceri/Stability_INF1
   ls $STABILITY | \
