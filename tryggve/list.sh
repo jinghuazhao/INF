@@ -125,12 +125,6 @@ function NSPHS() {
   }' | \
   sort -k2,2 | \
   join -j2 inf1.tmp - > sumstats/NSPHS.list
-
-  parallel -j8 --env NSPHS -C' ' '
-  gunzip -c $NSPHS/NSPHS_inf1_{3}_{1}.txt.gz | \
-  awk -f tryggve/NSPHS.awk | \
-  gzip -f > work/NSPHS.{2}.gz
-  '
 }
 
 function PIVUS_ULSAM() {
