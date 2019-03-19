@@ -1,9 +1,9 @@
-# 7-3-2019 JHZ
+# 19-3-2019 JHZ
 
 ## build the lists
 if [ ! -d METAL ]; then mkdir METAL; fi
 (
-for dir in INTERVAL BioFinder EGCUT_INF MadCam KORA NSPHS_INF ORCADES STABILITY STANLEY VIS
+for dir in INTERVAL BioFinder EGCUT MadCam KORA NSPHS ORCADES STABILITY STANLEY VIS
 do
    ls sumstats/$dir | \
    awk -vdir=$dir '{
@@ -75,7 +75,7 @@ parallel -j5 --env rt -C' ' '
 
 function largest_M()
 {
-  for dir in EGCUT_INF INTERVAL LifeLinesDeep ORCADES PIVUS STABILITY STANLEY ULSAM VIS
+  for dir in EGCUT INTERVAL LifeLinesDeep ORCADES PIVUS STABILITY STANLEY ULSAM VIS
   do
     export file=sumstats/$dir/$(ls sumstats/$dir -rS | tail -n 1 | sed 's/@//g;s/.gz//g')
     echo $file

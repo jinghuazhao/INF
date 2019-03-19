@@ -15,10 +15,10 @@ awk -f tryggve/BioFinder.awk | \
 awk -f tryggve/order.awk | \
 gzip -f > sumstats/BioFinder/BioFinder.TNF.gz
 
-# EGCUT_INF -- SNPID has prefix esv for non-rsids
+# EGCUT -- SNPID has prefix esv for non-rsids
 
 sort -k2,2 inf1.list > inf1.tmp
-cat sumstats/EGCUT_INF.list | \
+cat sumstats/EGCUT.list | \
 sed 's/EGCUT_autosomal_/_autosomal\t/g;s/EGCUT_X_female_/_X_female\t/g;s/EGCUT_X_male_/_X_male\t/g;s/_inf_280918.txt.gz//g' | \
 sort -k2,2 | \
 join -j2 - inf1.tmp | \
@@ -27,7 +27,7 @@ parallel -j$threads -C' ' '
   gunzip -c /data/anekal/EGCUT_INF/EGCUT{2}_{1}_inf_280918.txt.gz | \
   awk "{if(NR>1&&(index(\$1,\"esv\")||index(\$1,\"ss\"))) \$1=\"chr\" \$2 \":\" \$3;print}" | \
   awk -f tryggve/order.awk | \
-  gzip -f > sumstats/EGCUT_INF/EGCUT{2}.{3}.gz'
+  gzip -f > sumstats/EGCUT/EGCUT{2}.{3}.gz'
 
 # INTERVAL
 
@@ -72,14 +72,16 @@ parallel -j5 -C' ' '
    awk -f tryggve/order.awk | \
    gzip -f > sumstats/MadCam/MadCam.{3}.gz'
 
-# NSPHS_INF
+# NSPHS
 
-ls work/NSPHS*gz | \
-sed 's|work/NSPHS\.||g;s/\.gz//g' | \
-parallel -j$threads --env HOME=$HOME -C' ' '
-  gunzip -c work/NSPHS.{}.gz | \
+export NSPHS=/data/stefane/NSPHS_INF
+cat sumstats/NSPHS.list | \
+parallel -j$threads --env NSPHS -C' ' '
+  gunzip -c $NSPHS/NSPHS_inf1_{3}_{1}.txt.gz | \
+  awk -f tryggve/NSPHS.awk | \
   awk -f tryggve/order.awk | \
-  gzip -f > sumstats/NSPHS_INF/NSPHS.{}.gz'
+  gzip -f > sumstats/NSPHS/NSPHS.{2}.gz
+'
 
 # PIVUS and ULSAM SNPID has :I/D suffix and VG prefix
 
@@ -196,7 +198,7 @@ parallel -j10 --env STANLEY_lah1 --env N -C' ' '
 ) | \
 awk -vN=$N -f tryggve/STANLEY.awk | \
 awk -f tryggve/order.awk | \
-gzip -f > sumstats/STANLEY/STANLEY_lah1-{2}.gz'
+gzip -f > sumstats/STANLEY/STANLEY_lah1.{2}.gz'
 
 # STANLEY_swe6
 
@@ -209,7 +211,7 @@ parallel -j10 --env STANLEY_swe6 --env N -C' ' '
 ) | \
 awk -vN=$N -f tryggve/STANLEY.awk | \
 awk -f tryggve/order.awk | \
-gzip -f > sumstats/STANLEY/STANLEY_swe6-{2}.gz'
+gzip -f > sumstats/STANLEY/STANLEY_swe6.{2}.gz'
 
 # to pave way for QCGWAS
 mkdir $HOME/INF/sumstats/work

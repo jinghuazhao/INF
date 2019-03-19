@@ -49,10 +49,10 @@ BioFinder()
   join -11 -23 - inf1.tmp > sumstats/BioFinder.list
 }
 
-function EGCUT_INF() {
+function EGCUT() {
   # EGCUT_INF by autosomal, female, male
   ls /data/anekal/EGCUT_INF/ | \
-  grep inf > sumstats/EGCUT_INF.list
+  grep inf > sumstats/EGCUT.list
 }
 
 function INTERVAL() {
@@ -112,12 +112,11 @@ function MadCam()
   grep -v P29459 > sumstats/MadCam.list
 }
 
-function NSPHS_INF() {
-  # NSPHS_INF
-  export NSPHS_INF=/data/stefane/NSPHS_INF
-  ls $NSPHS_INF > sumstats/NSPHS_INF.list
+function NSPHS() {
+  # NSPHS
+  export NSPHS=/data/stefane/NSPHS_INF
   sort -k2,2 inf1.list > inf1.tmp
-  ls $NSPHS_INF | \
+  ls $NSPHS | \
   sed 's/NSPHS_inf1_//g;s/.txt.gz//g' | \
   tr '_' '\t' | \
   awk '{
@@ -125,9 +124,10 @@ function NSPHS_INF() {
     print $1,$NF
   }' | \
   sort -k2,2 | \
-  join -j2 inf1.tmp - | \
-  parallel -j8 --env NSPHS_INF -C' ' '
-  gunzip -c $NSPHS_INF/NSPHS_inf1_{3}_{1}.txt.gz | \
+  join -j2 inf1.tmp - > sumstats/NSPHS.list
+
+  parallel -j8 --env NSPHS -C' ' '
+  gunzip -c $NSPHS/NSPHS_inf1_{3}_{1}.txt.gz | \
   awk -f tryggve/NSPHS.awk | \
   gzip -f > work/NSPHS.{2}.gz
   '

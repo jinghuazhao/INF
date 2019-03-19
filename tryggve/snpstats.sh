@@ -1,4 +1,4 @@
-# 14-3-2019 JHZ
+# 19-3-2019 JHZ
 
 # ORCADES, STABILITY, VIS and MadCam actually contains INFO
 # INTERVAL and KORA has SNPTEST outputs as well as qctool -snp-stats
@@ -39,12 +39,12 @@ R --no-save -q <<\ \ END
   RECOMBINE <- read.table(gz,as.is=TRUE,header=TRUE)
   summary(RECOMBINE)
 
-  gz <- gzfile("work/STANLEY_lah1-OPG.gz")
+  gz <- gzfile("work/STANLEY_lah1.OPG.gz")
   STANLEY_lah1 <- read.table(gz,as.is=TRUE,header=TRUE)
   summary(STANLEY_lah1)
   summary(as.numeric(STANLEY_lah1$INFO))
 
-  gz <- gzfile("work/STANLEY_swe6-OPG.gz")
+  gz <- gzfile("work/STANLEY_swe6.OPG.gz")
   STANLEY_swe6 <- read.table(gz,as.is=TRUE,header=TRUE)
   summary(STANLEY_swe6)
   summary(as.numeric(STANLEY_swe6$INFO))
