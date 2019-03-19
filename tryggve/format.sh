@@ -3,6 +3,7 @@
 export threads=8
 
 # BioFinder
+
 grep -v -w TNF sumstats/BioFinder.list | \
 parallel -j5 -C' ' '
    awk -f tryggve/BioFinder.awk /data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.{1}_zre_INFI.glm.linear | \
@@ -15,6 +16,7 @@ awk -f tryggve/order.awk | \
 gzip -f > sumstats/BioFinder/BioFinder.TNF.gz
 
 # EGCUT_INF -- SNPID has prefix esv for non-rsids
+
 sort -k2,2 inf1.list > inf1.tmp
 cat sumstats/EGCUT_INF.list | \
 sed 's/EGCUT_autosomal_/_autosomal\t/g;s/EGCUT_X_female_/_X_female\t/g;s/EGCUT_X_male_/_X_male\t/g;s/_inf_280918.txt.gz//g' | \
@@ -28,17 +30,16 @@ parallel -j$threads -C' ' '
   gzip -f > sumstats/EGCUT_INF/EGCUT{2}.{3}.gz'
 
 # INTERVAL
+
 cat $HOME/INF/sumstats/INTERVAL.list | \
 sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz\*//g;s/___/ /g' | \
 parallel -j$threads -C' ' '
    /usr/bin/gunzip -c /data/jampet/upload-20170920/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
    awk -f tryggve/INTERVAL.awk | \
-   sort -k1,1 | \
-   join - snpstats/INTERVAL.snpstats | \
-   awk -f tryggve/addinfo.awk | \
    gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz'
 
 # LifeLinesDeep -- SNPID has no "chr" prefix for non-rsids
+
 cat sumstats/LifeLinesDeep.list | \
 sed 's/_/\t/g' | \
 cut -f2 | \
@@ -53,6 +54,7 @@ awk -f tryggve/order.awk | \
 gzip -f > sumstats/LifeLinesDeep/LifeLinesDeep.{1}.gz'
 
 # KORA
+
 cat sumstats/KORA.list | \
 parallel -j5 -C' ' '
    gunzip -c KORA/{1}.gz | \
@@ -60,12 +62,10 @@ parallel -j5 -C' ' '
    awk -f tryggve/order.awk | \
    gzip -f > sumstats/KORA/KORA.{3}.gz'
 
-# ps -- 89 proteins without the following,
-# BDNF P23560 BDNF
-# NRTN Q99748 NRTN
-# NTF3 P20783 NT.3
+# 91 proteins without BDNF P23560 BDNF
 
 # MadCam
+
 cat sumstats/MadCam.list | \
 parallel -j5 -C' ' '
    sed 's/CODE_ALLELE_FQ/CODE_ALL_FQ/g' /data/andmala/madcam/MadCAM.{1}.{2}.txt | \
@@ -73,6 +73,7 @@ parallel -j5 -C' ' '
    gzip -f > sumstats/MadCam/MadCam.{3}.gz'
 
 # NSPHS_INF
+
 ls work/NSPHS*gz | \
 sed 's|work/NSPHS\.||g;s/\.gz//g' | \
 parallel -j$threads --env HOME=$HOME -C' ' '
@@ -81,6 +82,7 @@ parallel -j$threads --env HOME=$HOME -C' ' '
   gzip -f > sumstats/NSPHS_INF/NSPHS.{}.gz'
 
 # PIVUS and ULSAM SNPID has :I/D suffix and VG prefix
+
 ls /data/stefang/pivus_ulsam/pivus* | \
 xargs -l -x basename | \
 sed 's/pivus.all.//g;s/.20161128.txt.gz//g' | \
@@ -105,6 +107,7 @@ parallel -j$threads -C' ' '
   gzip -f > sumstats/ULSAM/ULSAM.{2}.gz'
 
 # ORCADES and VIS
+
 awk -vOFS="\t" '{
   l=tolower($1)
   gsub(/il.10/,"il10",l)
@@ -164,48 +167,49 @@ parallel -j4 --env rt -C' ' '
     done
   ) | \
   awk "NR==1||\$1!=SNPID" | \
-  awk -vOFS="\t" "
-  {
-    if (NR>1) 
-    {
-      CHR=\$2
-      POS=\$3
-      a1=\$6
-      a2=\$7
-      if (a1>a2) snpid=\"chr\" CHR \":\" POS \"_\" a2 \"_\" a1;
-      else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
-      \$1=snpid
-    }
-    print
-  }" | \
+  awk -f tryggve/order.awk | \
   gzip -f > sumstats/RECOMBINE/RECOMBINE.{4}.gz
 '
 
 # STABILITY
-ls work/STABILITY*gz | \
-sed 's/work\///g' | \
-parallel -j$threads -C' ' '
-  export N=$(grep -w {} STABILITY.N | cut -d" " -f2)
-  gunzip -c work/{} | \
+
+export STABILITY=/data/niceri/Stability_INF1
+cat sumstats/STABILITY.list | \
+parallel -j8 --env STABILITY -C' ' '
+  export N=$(grep -w {3} STABILITY.N | cut -d" " -f2)
+  (
+    for chr in `seq 22`; do cat $STABILITY/STABILITY_{1}_{2}_chr${chr}.txt.gz; done
+  ) | \
+  awk "NR==1||\$1!=SNPID" | \
   awk -vOFS="\t" -vN=$N -f tryggve/STABILITY.awk | \
   awk -f tryggve/order.awk | \
-  gzip -f > sumstats/STABILITY/{}'
+  gzip -f > sumstats/STABILITY/{3}.gz'
 
-for s in lah1 swe6
-do
-  if [ $s == "lah1" ]; then
-     export N=344
-  else
-     export N=300
-  fi
-  ls work/STANLEY_${s}*gz | \
-  sed 's/work\///g' | \
-  parallel -j$threads --env N -C' ' '
-    gunzip -c work/{} | \
-    awk -vN=$N -f tryggve/STANLEY.awk | \
-    awk -f tryggve/order.awk | \
-    gzip -f > sumstats/STANLEY/{}'
-done
+# STANLEY_lah1
+
+export STANLEY_lah1=/data/andmala/STANLEY_20180911
+export N=344
+awk '{print $1, $2}' sumstats/STANLEY.list | \
+parallel -j10 --env STANLEY_lah1 --env N -C' ' '
+(
+  for chr in `seq 22`; do $STANLEY_lah1/STANLEY_lah1_inf_chr1_pheno{1}.txt.assoc.dosage.gz; done
+) | \
+awk -vN=$N -f tryggve/STANLEY.awk | \
+awk -f tryggve/order.awk | \
+gzip -f > sumstats/STANLEY/STANLEY_lah1-{2}.gz'
+
+# STANLEY_swe6
+
+export STANLEY_swe6=/data/andmala/STANLEY_20180911//swe6_inf
+export N=300
+awk '{print $1, $2}' sumstats/STANLEY.list | \
+parallel -j10 --env STANLEY_swe6 --env N -C' ' '
+(
+  for chr in `seq 22`; do cat $STANLEY_swe6/STANLEY_swe6_inf_chr1_pheno{1}.txt.assoc.dosage.gz; done
+) | \
+awk -vN=$N -f tryggve/STANLEY.awk | \
+awk -f tryggve/order.awk | \
+gzip -f > sumstats/STANLEY/STANLEY_swe6-{2}.gz'
 
 # to pave way for QCGWAS
 mkdir $HOME/INF/sumstats/work

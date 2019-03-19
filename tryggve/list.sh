@@ -206,107 +206,21 @@ function STABILITY() {
   }' | \
   sort -k1,1 | \
   join -11 -22 - inf1.tmp | \
-  parallel -j8 --env STABILITY -C' ' '
-    cat \
-    $STABILITY/STABILITY_{1}_{2}_chr1.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr2.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr3.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr4.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr5.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr6.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr7.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr8.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr9.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr10.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr11.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr12.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr13.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr14.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr15.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr16.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr17.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr18.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr19.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr20.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr21.txt.gz \
-    $STABILITY/STABILITY_{1}_{2}_chr22.txt.gz > work/STABILITY.{3}.gz'
-
-  ls work/STABILITY.* > sumstats/STABILITY.list
+  uniq > sumstats/STABILITY.list
 }
 
 function STANLEY() {
   # STANLEY, only genotype dosages by chromosomal regions, 10699721 lines
   # ls /data/andmala/STANLEY
   # Now it has INF1 results from PLINK for both lah1 and swe6
+  # for both lah1 and swe6, No. 3 phenotype has no results
 
   sort -k2,2 inf1.list > inf1.tmp
   awk -vFS="\t" -vOFS="\t" '{print $5,$2,$1}' doc/STANLEY_INF_I_annotation.tsv | \
   sort -k1,1 | \
   join -11 -22 -t$'\t' - inf1.tmp | \
   sort -k2,2n | \
-  awk -vFS="\t" -vOFS="\t" '{print $2,$4,$3,$1}' > STANLEY.tsv
-
-  # lah1, No. 3 phenotype has no results
-
-  export STANLEY_lah1=/data/andmala/STANLEY_20180911
-  awk -vFS="\t" '{print $1, $2}' STANLEY.tsv | \
-  parallel -j10 --env STANLEY_lah1 -C' ' ' 
-    cat \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr1_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr2_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr3_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr4_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr5_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr6_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr7_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr8_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr9_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr10_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr11_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr12_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr13_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr14_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr15_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr16_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr17_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr18_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr19_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr20_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr21_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_lah1/STANLEY_lah1_inf_chr22_pheno{1}.txt.assoc.dosage.gz > work/STANLEY_lah1-{2}.gz'
-
-  rm -f work/STANLEY_lah1-BDNF.gz
-  ls work/STANLEY_lah1* > sumstats/STANLEY.list
-
-  # swe6, No. 3 phenotype has no results
-  export STANLEY_swe6=/data/andmala/STANLEY_20180911//swe6_inf
-  awk -vFS="\t" '{print $1, $2}' STANLEY.tsv | parallel -j10 --env STANLEY_lah1 -C' ' '
-    cat \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr1_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr2_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr3_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr4_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr5_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr6_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr7_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr8_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr9_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr10_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr11_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr12_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr13_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr14_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr15_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr16_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr17_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr18_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr19_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr20_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr21_pheno{1}.txt.assoc.dosage.gz \
-    $STANLEY_swe6/STANLEY_swe6_inf_chr22_pheno{1}.txt.assoc.dosage.gz > work/STANLEY_swe6-{2}.gz'
-
-  rm -f work/STANLEY_swe6-BDNF.gz
-  ls work/STANLEY_swe6* >> sumstats/STANLEY.list
+  awk -vFS="\t" -vOFS="\t" '!/BDNF/{print $2,$4,$3,$1}' > sumstats/STANLEY.list
 }
 
 function list_all () {
