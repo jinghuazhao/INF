@@ -197,7 +197,7 @@ export N=344
 cut -d' ' -f1-3 sumstats/STANLEY.list | \
 parallel -j10 --env STANLEY_lah1 --env N -C' ' '
 (
-  for chr in `seq 22`; do gunzip -c $STANLEY_lah1/STANLEY_lah1_inf_chr${chr}_pheno{3}.txt.assoc.dosage.gz; done
+  for chr in `seq 22`; do gunzip -c $STANLEY_lah1/STANLEY_lah1_inf_chr${chr}_pheno{1}.txt.assoc.dosage.gz; done
 ) | \
 awk "NR==1||\$2!=SNP" | \
 awk -vN=$N -f tryggve/STANLEY.awk | \
@@ -211,7 +211,7 @@ export N=300
 cut -d' ' -f1-3 sumstats/STANLEY.list | \
 parallel -j10 --env STANLEY_swe6 --env N -C' ' '
 (
-  for chr in `seq 22`; do gunzip -c $STANLEY_swe6/STANLEY_swe6_inf_chr${chr}_pheno{3}.txt.assoc.dosage.gz; done
+  for chr in `seq 22`; do gunzip -c $STANLEY_swe6/STANLEY_swe6_inf_chr${chr}_pheno{1}.txt.assoc.dosage.gz; done
 ) | \
 awk "NR==1||\$2!=SNP" | \
 awk -vN=$N -f tryggve/STANLEY.awk | \
