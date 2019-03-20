@@ -1,6 +1,6 @@
-# 19-3-2019 JHZ
+# 20-3-2019 JHZ
 
-export threads=8
+export threads=6
 
 # BioFinder
 
