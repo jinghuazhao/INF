@@ -1,4 +1,4 @@
-# 19-3-2019 JHZ
+# 20-3-2019 JHZ
 
 # --- INF list of proteins and file list ---
 
@@ -248,7 +248,5 @@ function md()
   if [ ! -d sumstats ]; then mkdir sumstats; fi
   for l in $(ls sumstats/*list); do mkdir sumstats/$(echo $(basename $l)|sed 's/.list//g'); done
 }
-
-module load parallel/20190122
 
 $1
