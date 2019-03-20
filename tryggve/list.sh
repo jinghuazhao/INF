@@ -207,7 +207,7 @@ function STANLEY() {
   # STANLEY, only genotype dosages by chromosomal regions, 10699721 lines
   # ls /data/andmala/STANLEY
   # Now it has INF1 results from PLINK for both lah1 and swe6
-  # for both lah1 and swe6, No. 3 phenotype has no results
+  # for both lah1 and swe6, No. 3 phenotype (BDNF) has no results
 
   sort -k2,2 inf1.list > inf1.tmp
   awk -vFS="\t" -vOFS="\t" '{print $5,$2,$1}' doc/STANLEY_INF_I_annotation.tsv | \

@@ -140,6 +140,7 @@ sort | \
 join -a1 -11 -23 - inf1.tmp | \
 parallel -j$threads -C' ' '
   gunzip -c /data/erimac/ORCADES/ORCADES.INF1.{1}_rank.tsv.gz | \
+  awk "NR==1||\$13>0.4" | \
   awk -f tryggve/order.awk | \
   gzip -f > sumstats/ORCADES/ORCADES.{2}.gz'
 
@@ -150,6 +151,7 @@ sort | \
 join -a1 -11 -23 - inf1.tmp | \
 parallel -j$threads -C' ' '
   gunzip -c /data/erimac/VIS/VIS.INF1.{1}_rank.tsv.gz | \
+  awk "NR==1||\$13>0.4" | \
   awk -f tryggve/order.awk | \
   gzip -f > sumstats/VIS/VIS.{2}.gz'
 
@@ -180,22 +182,24 @@ cat sumstats/STABILITY.list | \
 parallel -j$threads --env STABILITY -C' ' '
   export N=$(grep -w {3} STABILITY.N | cut -d" " -f2)
   (
-    for chr in `seq 22`; do cat $STABILITY/STABILITY_{1}_{2}_chr${chr}.txt.gz; done
+    for chr in `seq 22`; do gunzip -c $STABILITY/STABILITY_{1}_{2}_chr${chr}.txt.gz; done
   ) | \
   awk "NR==1||\$1!=SNPID" | \
   awk -vOFS="\t" -vN=$N -f tryggve/STABILITY.awk | \
   awk -f tryggve/order.awk | \
-  gzip -f > sumstats/STABILITY/{3}.gz'
+  gzip -f > sumstats/STABILITY/STABILITY.{3}.gz
+'
 
 # STANLEY_lah1
 
 export STANLEY_lah1=/data/andmala/STANLEY_20180911
 export N=344
-awk '{print $1, $2}' sumstats/STANLEY.list | \
+awk '{print $1, $2, $3}' sumstats/STANLEY.list | \
 parallel -j10 --env STANLEY_lah1 --env N -C' ' '
 (
-  for chr in `seq 22`; do $STANLEY_lah1/STANLEY_lah1_inf_chr1_pheno{1}.txt.assoc.dosage.gz; done
+  for chr in `seq 22`; do gunzip -c $STANLEY_lah1/STANLEY_lah1_inf_chr{chr}_pheno{3}.txt.assoc.dosage.gz; done
 ) | \
+awk "NR==1||\$2!=SNP" | \
 awk -vN=$N -f tryggve/STANLEY.awk | \
 awk -f tryggve/order.awk | \
 gzip -f > sumstats/STANLEY/STANLEY_lah1.{2}.gz'
@@ -204,11 +208,12 @@ gzip -f > sumstats/STANLEY/STANLEY_lah1.{2}.gz'
 
 export STANLEY_swe6=/data/andmala/STANLEY_20180911//swe6_inf
 export N=300
-awk '{print $1, $2}' sumstats/STANLEY.list | \
+awk '{print $1, $2, $3}' sumstats/STANLEY.list | \
 parallel -j10 --env STANLEY_swe6 --env N -C' ' '
 (
-  for chr in `seq 22`; do cat $STANLEY_swe6/STANLEY_swe6_inf_chr1_pheno{1}.txt.assoc.dosage.gz; done
+  for chr in `seq 22`; do gunzip -c $STANLEY_swe6/STANLEY_swe6_inf_chr{chr}_pheno{3}.txt.assoc.dosage.gz; done
 ) | \
+awk "NR==1||\$2!=SNP" | \
 awk -vN=$N -f tryggve/STANLEY.awk | \
 awk -f tryggve/order.awk | \
 gzip -f > sumstats/STANLEY/STANLEY_swe6.{2}.gz'
