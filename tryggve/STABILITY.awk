@@ -1,10 +1,12 @@
-# 19-3-2019 JHZ
+# 20-3-2019 JHZ
 
-{
-  if (NR==1||($9>=1e-6 && $14>0.4)) print $1,$2,$3,$4,N,$6,$7,$8,$10,$11,$12,$13,$14,$15
+(NR==1||($9>=1e-6 && $14>0.4)){
+  $9="";
+  if (N>1500) print;
+  else if ($8 > 0.1 || 1-$8 > 0.1) print
 }
 
-# gunzip -c  work/STABILITY.4E.BP1.gz | head -1 | sed 's/ /\n/g' | awk '{print "#" NR, $1}'
+# gunzip -c /data/niceri/Stability_INF1/STABILITY_Q13541_4EBP1_chr1.txt.gz | head -1 | sed 's/ /\n/g' | awk '{print "#" NR, $1}'
 
 #1 SNPID
 #2 CHR
