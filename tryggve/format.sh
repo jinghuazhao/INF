@@ -177,7 +177,7 @@ parallel -j4 --env rt -C' ' '
 
 export STABILITY=/data/niceri/Stability_INF1
 cat sumstats/STABILITY.list | \
-parallel -j8 --env STABILITY -C' ' '
+parallel -jthreads --env STABILITY -C' ' '
   export N=$(grep -w {3} STABILITY.N | cut -d" " -f2)
   (
     for chr in `seq 22`; do cat $STABILITY/STABILITY_{1}_{2}_chr${chr}.txt.gz; done
