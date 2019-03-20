@@ -32,11 +32,11 @@ parallel -j$threads -C' ' '
 # INTERVAL
 
 cat $HOME/INF/sumstats/INTERVAL.list | \
-sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz\*//g;s/___/ /g' | \
 parallel -j$threads -C' ' '
    /usr/bin/gunzip -c /data/jampet/upload-20170920/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
    awk -f tryggve/INTERVAL.awk | \
-   gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz'
+   gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz
+'
 
 # LifeLinesDeep -- SNPID has no "chr" prefix for non-rsids
 
