@@ -178,16 +178,16 @@ parallel -j4 --env rt -C' ' '
 # STABILITY
 
 export STABILITY=/data/niceri/Stability_INF1
-cat sumstats/STABILITY.list | \
+sort -k3,3 sumstats/STABILITY.list | \
+join -13 -21 - STABILITY.N | \
 parallel -j$threads --env STABILITY -C' ' '
-  export N=$(grep -w {3} STABILITY.N | cut -d" " -f2)
   (
-    for chr in `seq 22`; do gunzip -c $STABILITY/STABILITY_{1}_{2}_chr${chr}.txt.gz; done
+    for chr in `seq 22`; do gunzip -c $STABILITY/STABILITY_{2}_{3}_chr${chr}.txt.gz; done
   ) | \
   awk "NR==1||\$1!=SNPID" | \
-  awk -vOFS="\t" -vN=$N -f tryggve/STABILITY.awk | \
+  awk -vOFS="\t" -vN={4} -f tryggve/STABILITY.awk | \
   awk -f tryggve/order.awk | \
-  gzip -f > sumstats/STABILITY/STABILITY.{3}.gz
+  gzip -f > sumstats/STABILITY/STABILITY.{1}.gz
 '
 
 # STANLEY_lah1
