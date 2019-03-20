@@ -149,11 +149,44 @@ function PIVUS_ULSAM() {
 
 function ORCADES_VIS() {
   # ORCADES, VIS, both 91 lines
-  ls /data/erimac/ORCADES/ | \
-  grep INF1 > sumstats/ORCADES.list
+  grep inf1 doc/olink.prot.list.txt | \
+  sed 's/inf1_//g;s/___/\t/g' | \
+  awk -vOFS="\t" '{
+    l=tolower($1)
+    gsub(/mip.1.alpha/,"ccl3",l)
+    gsub(/il.10/,"il10",l)
+    gsub(/il10ra/,"il.10ra",l)
+    gsub(/il10rb/,"il.10rb",l)
+    gsub(/il.2/,"il2",l)
+    gsub(/il20/,"il.20",l)
+    gsub(/il2rb/,"il.2rb",l)
+    gsub(/il22.ra1/,"il.22.ra1",l)
+    gsub(/il24/,"il.24",l)
+    gsub(/il.33/,"il33",l)
+    gsub(/il.4/,"il4",l)
+    gsub(/il.5/,"il5",l)
+    gsub(/il.6/,"il6",l)
+    gsub(/il.7/,"il7",l)
+    gsub(/il.8/,"il8",l)
+    gsub(/il.13/,"il13",l)
+    gsub(/il.18/,"il18",l)
+    gsub(/il18r1/,"il.18r1",l)
+    gsub(/vegf.a/,"vegfa",l)
+    print $1,$2,l
+  }' | \
+  sort -k3,3> inf1.tmp
 
-  ls /data/erimac/VIS | \
-  grep INF1 > sumstats/VIS.list
+  ls /data/erimac/ORCADES/ | \
+  grep INF1 | \
+  sed 's/ORCADES.INF1.//g;s/_rank.tsv.gz//g' | \
+  sort | \
+  join -11 -23 - inf1.tmp > sumstats/ORCADES.list
+
+  ls /data/erimac/VIS/ | \
+  grep INF1 | \
+  sed 's/VIS.INF1.//g;s/_rank.tsv.gz//g' | \
+  sort | \
+  join -11 -23 - inf1.tmp > sumstats/VIS.list
 }
 
 function RECOMBINE() {

@@ -110,45 +110,14 @@ parallel -j$threads -C' ' '
 
 # ORCADES and VIS
 
-awk -vOFS="\t" '{
-  l=tolower($1)
-  gsub(/il.10/,"il10",l)
-  gsub(/il10ra/,"il.10ra",l)
-  gsub(/il10rb/,"il.10rb",l)
-  gsub(/il.2/,"il2",l)
-  gsub(/il20/,"il.20",l)
-  gsub(/il2rb/,"il.2rb",l)
-  gsub(/il22.ra1/,"il.22.ra1",l)
-  gsub(/il24/,"il.24",l)
-  gsub(/il.33/,"il33",l)
-  gsub(/il.4/,"il4",l)
-  gsub(/il.5/,"il5",l)
-  gsub(/il.6/,"il6",l)
-  gsub(/il.7/,"il7",l)
-  gsub(/il.8/,"il8",l)
-  gsub(/il.13/,"il13",l)
-  gsub(/il.18/,"il18",l)
-  gsub(/il18r1/,"il.18r1",l)
-  gsub(/vegf.a/,"vegfa",l)
-  print $1,$2,l
-}' inf1.list > inf1.tmp
-
-ls /data/erimac/ORCADES/ | \
-grep INF1 | \
-sed 's/ORCADES.INF1.//g;s/_rank.tsv.gz//g' | \
-sort | \
-join -a1 -11 -23 - inf1.tmp | \
+cat sumstats/ORCADES.list | \
 parallel -j$threads -C' ' '
   gunzip -c /data/erimac/ORCADES/ORCADES.INF1.{1}_rank.tsv.gz | \
   awk "NR==1||\$13>0.4" | \
   awk -f tryggve/order.awk | \
   gzip -f > sumstats/ORCADES/ORCADES.{2}.gz'
 
-ls /data/erimac/VIS/ | \
-grep INF1 | \
-sed 's/VIS.INF1.//g;s/_rank.tsv.gz//g' | \
-sort | \
-join -a1 -11 -23 - inf1.tmp | \
+cat sumstats/VIS.list | \
 parallel -j$threads -C' ' '
   gunzip -c /data/erimac/VIS/VIS.INF1.{1}_rank.tsv.gz | \
   awk "NR==1||\$13>0.4" | \
