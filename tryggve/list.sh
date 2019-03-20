@@ -215,7 +215,7 @@ function STANLEY() {
   sort -k1,1 | \
   join -11 -22 -t$'\t' - inf1.tmp | \
   sort -k2,2n | \
-  awk -vFS="\t" -vOFS="\t" '!/BDNF/{print $2,$4,$3,$1}' > sumstats/STANLEY.list
+  awk -vFS="\t" '!/BDNF/{print $2,$4,$3,$1}' > sumstats/STANLEY.list
 }
 
 function list_all () {
