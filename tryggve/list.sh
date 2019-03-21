@@ -1,6 +1,6 @@
 # 21-3-2019 JHZ
 
-# --- INF list of proteins and file list ---
+# --- INF list of proteins ---
 
 function INF()
 # INF list of proteins
@@ -50,7 +50,6 @@ BioFinder()
 }
 
 function EGCUT() {
-  # EGCUT_INF by autosomal
   sort -k2,2 inf1.list > inf1.tmp
   ls /data/anekal/EGCUT_INF/ | \
   grep 'inf' | \
@@ -102,7 +101,6 @@ function KORA() {
 }
 
 function LifeLines() {
-  # LifeLines
   gunzip -c /data/darzhe/LifeLinesDeep.cistranspQTLs.20171220.txt.gz | \
   cut -f1 | \
   awk '(NR>1)' | \
@@ -120,7 +118,6 @@ function MadCam()
 }
 
 function NSPHS() {
-  # NSPHS
   export NSPHS=/data/stefane/NSPHS_INF
   sort -k2,2 inf1.list > inf1.tmp
   ls $NSPHS | \
@@ -135,16 +132,13 @@ function NSPHS() {
 }
 
 function PIVUS_ULSAM() {
-  # PIVIUS and ULSAM, 82 and 85 lines, respectively
   cut -f1 inf1_gene > inf1.tmp
-
   ls /data/stefang/pivus_ulsam/pivus* | \
   xargs -l -x basename | \
   sed 's/pivus.all.//g;s/.20161128.txt.gz//g' | \
   sort | \
   join - inf1.tmp | \
   awk '{print "pivus.all." $1 ".20161128.txt.gz"}' > sumstats/PIVUS.list
-
   ls /data/stefang/pivus_ulsam/ulsam* | \
   xargs -l -x basename | \
   sed 's/ulsam.all.//g;s/.20161128.txt.gz//g' | \
@@ -154,7 +148,6 @@ function PIVUS_ULSAM() {
 }
 
 function ORCADES_VIS() {
-  # ORCADES, VIS, both 91 lines
   grep inf1 doc/olink.prot.list.txt | \
   sed 's/inf1_//g;s/___/\t/g' | \
   awk -vOFS="\t" '{
@@ -181,13 +174,11 @@ function ORCADES_VIS() {
     print $1,$2,l
   }' | \
   sort -k3,3> inf1.tmp
-
   ls /data/erimac/ORCADES/ | \
   grep INF1 | \
   sed 's/ORCADES.INF1.//g;s/_rank.tsv.gz//g' | \
   sort | \
   join -11 -23 - inf1.tmp > sumstats/ORCADES.list
-
   ls /data/erimac/VIS/ | \
   grep INF1 | \
   sed 's/VIS.INF1.//g;s/_rank.tsv.gz//g' | \
@@ -209,7 +200,6 @@ function RECOMBINE() {
 }
 
 function STABILITY() {
-  # STABILITY
   cut -d',' -f2-4 doc/stability_inf_n_nmissing.csv | \
   sed '1d;s/inf_//g;s|\"||g;s/,/ /g;
      s/CCL3/MIP.1.alpha/;
@@ -293,4 +283,3 @@ function md()
 }
 
 $1
-
