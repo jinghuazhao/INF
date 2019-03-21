@@ -42,6 +42,9 @@ R --no-save -q <<\ \ END
   gz <- gzfile("sumstats/RECOMBINE/RECOMBINE.OPG.gz")
   RECOMBINE <- read.table(gz,as.is=TRUE,header=TRUE)
   summary(RECOMBINE)
+  summary(as.numeric(RECOMBINE$N))
+  summary(as.numeric(RECOMBINE$EFFECT_ALL_FQ))
+  summary(as.numeric(RECOMBINE$RSQ_IMP))
 
   gz <- gzfile("work/STANLEY_lah1.OPG.gz")
   STANLEY_lah1 <- read.table(gz,as.is=TRUE,header=TRUE)
