@@ -287,6 +287,10 @@ function md()
 # ready for format.sh
   if [ ! -d sumstats ]; then mkdir sumstats; fi
   for l in $(ls sumstats/*list); do mkdir sumstats/$(echo $(basename $l)|sed 's/.list//g'); done
+
+# to pave way for QCGWAS
+  mkdir $HOME/INF/sumstats/work
 }
 
 $1
+

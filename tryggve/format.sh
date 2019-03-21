@@ -5,7 +5,7 @@ export threads=6
 # BioFinder
 
 grep -v -w TNF sumstats/BioFinder.list | \
-parallel -j5 -C' ' '
+parallel -j$threads -C' ' '
    awk -f tryggve/BioFinder.awk /data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.{1}_zre_INFI.glm.linear | \
    awk -f tryggve/order.awk | \
    gzip -f > sumstats/BioFinder/BioFinder.{3}.gz'
@@ -51,7 +51,7 @@ gzip -f > sumstats/LifeLinesDeep/LifeLinesDeep.{1}.gz'
 # KORA
 
 cat sumstats/KORA.list | \
-parallel -j5 -C' ' '
+parallel -j$threads -C' ' '
    gunzip -c KORA/{1}.gz | \
    awk -f tryggve/KORA.awk | \
    awk -f tryggve/order.awk | \
@@ -160,7 +160,7 @@ parallel -j$threads --env STABILITY -C' ' '
 export STANLEY_lah1=/data/andmala/STANLEY_20180911
 export N=344
 cut -d' ' -f1-3 sumstats/STANLEY.list | \
-parallel -j10 --env STANLEY_lah1 --env N -C' ' '
+parallel -j$threads --env STANLEY_lah1 --env N -C' ' '
 (
   for chr in `seq 22`; do gunzip -c $STANLEY_lah1/STANLEY_lah1_inf_chr${chr}_pheno{1}.txt.assoc.dosage.gz; done
 ) | \
@@ -174,7 +174,7 @@ gzip -f > sumstats/STANLEY/STANLEY_lah1.{2}.gz'
 export STANLEY_swe6=/data/andmala/STANLEY_20180911//swe6_inf
 export N=300
 cut -d' ' -f1-3 sumstats/STANLEY.list | \
-parallel -j10 --env STANLEY_swe6 --env N -C' ' '
+parallel -j$threads --env STANLEY_swe6 --env N -C' ' '
 (
   for chr in `seq 22`; do gunzip -c $STANLEY_swe6/STANLEY_swe6_inf_chr${chr}_pheno{1}.txt.assoc.dosage.gz; done
 ) | \
@@ -182,6 +182,3 @@ awk "NR==1||\$2!=SNP" | \
 awk -vN=$N -f tryggve/STANLEY.awk | \
 awk -f tryggve/order.awk | \
 gzip -f > sumstats/STANLEY/STANLEY_swe6.{2}.gz'
-
-# to pave way for QCGWAS
-mkdir $HOME/INF/sumstats/work
