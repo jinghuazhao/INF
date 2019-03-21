@@ -1,4 +1,4 @@
-# 20-3-2019 JHZ
+# 21-3-2019 JHZ
 
 # --- INF list of proteins and file list ---
 
@@ -50,9 +50,15 @@ BioFinder()
 }
 
 function EGCUT() {
-  # EGCUT_INF by autosomal, female, male
+  # EGCUT_INF by autosomal
+  sort -k2,2 inf1.list > inf1.tmp
   ls /data/anekal/EGCUT_INF/ | \
-  grep inf > sumstats/EGCUT.list
+  grep 'inf' | \
+  grep 'autosomal' | \
+  sed 's/EGCUT_autosomal_/\t/g;s/_inf_280918.txt.gz//g' | \
+  sort -k1,1 | \
+  join -11 -22 - inf1.tmp | \
+  sort -k2,2 > sumstats/EGCUT.list
 }
 
 function INTERVAL() {

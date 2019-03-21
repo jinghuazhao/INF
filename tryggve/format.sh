@@ -1,4 +1,4 @@
-# 20-3-2019 JHZ
+# 21-3-2019 JHZ
 
 export threads=6
 
@@ -17,17 +17,12 @@ gzip -f > sumstats/BioFinder/BioFinder.TNF.gz
 
 # EGCUT -- SNPID has prefix esv for non-rsids
 
-sort -k2,2 inf1.list > inf1.tmp
 cat sumstats/EGCUT.list | \
-sed 's/EGCUT_autosomal_/_autosomal\t/g;s/EGCUT_X_female_/_X_female\t/g;s/EGCUT_X_male_/_X_male\t/g;s/_inf_280918.txt.gz//g' | \
-sort -k2,2 | \
-join -j2 - inf1.tmp | \
-sort -k2,2 | \
 parallel -j$threads -C' ' '
-  gunzip -c /data/anekal/EGCUT_INF/EGCUT{2}_{1}_inf_280918.txt.gz | \
-  awk "{if(NR>1&&(index(\$1,\"esv\")||index(\$1,\"ss\"))) \$1=\"chr\" \$2 \":\" \$3;print}" | \
+  gunzip -c /data/anekal/EGCUT_INF/EGCUT_autosomal_{1}_inf_280918.txt.gz | \
+  awk "{if(NR>1&&(index(\$1,\"esv\")||index(\$1,\"ss\"))) \$1=\"chr\" \$2 \":\" \$3;if(\$13>0.3) print}" | \
   awk -f tryggve/order.awk | \
-  gzip -f > sumstats/EGCUT/EGCUT{2}.{3}.gz'
+  gzip -f > sumstats/EGCUT/EGCUT.{2}.gz'
 
 # INTERVAL
 
