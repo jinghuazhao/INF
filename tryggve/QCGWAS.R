@@ -7,7 +7,7 @@ src <- "INTERVAL"
 src_in <- paste(src, prot, "gz", sep=".")
 src_out <- paste(src, prot, sep=".")
 STANLEY <- paste0("STANLEY_",c("lah1.","swe6."),prot)
-studies <- c("BioFinder", "EGCUT", "INTERVAL", "KORA", "MadCam", "NSPHS", "ORCADES", "STABILITY", "VIS")
+studies <- c("BioFinder", "EGCUT", "INTERVAL", "KORA", "MadCam", "NSPHS", "ORCADES", "RECOMBINE", "STABILITY", "VIS")
 QC_in <- c(paste(studies, prot, "gz", sep="."), paste0(STANLEY,".gz"))
 QC_out <- c(paste(studies, prot, sep="."), STANLEY)
 header_translations <- read.delim("tryggve/header_translations.tsv",as.is=TRUE)
