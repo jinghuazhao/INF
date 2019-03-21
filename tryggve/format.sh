@@ -127,7 +127,7 @@ export rt=/data/jinhua/data/RECOMBINE/RECOMBINE_INF1_pQTLs_updated_13thMarch_19
 sort -k2,2 inf1.list > inf1.tmp
 sort -k3,3 sumstats/RECOMBINE.list | \
 join -13 -22 - inf1.tmp | \
-parallel -j4 --env rt -C' ' '
+parallel -j$threads --env rt -C' ' '
   (
     for chr in `seq 22`
     do
