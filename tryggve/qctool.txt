@@ -1,6 +1,6 @@
 
-Cohorts with qctool -snp-stats results
-======================================
+Location of qctool -snp-stats results
+=====================================
 
 EGCUT, /data/anekal/EGCUT_INF.snp-stats
 
@@ -22,13 +22,13 @@ STANLEY
 MadCam
 BioFinder
 
-Cutoffs
-=======
+INFO cutoffs
+============
 
 NSPHS -- N/A as sequence data
 STABILITY -- INFO > 0.4 as in sumstats (Min=0.4001)
 STANLEY (lah1, swe6) -- INFO > 0.3 from sumstats as it appears to be r2hat
-ORCADES -- INFO > 0.4 from sumstats and slightly higher than 0.4 in sumstats
+ORCADES -- INFO > 0.4 from sumstats where the minimum is 0.4
 VIS -- INFO > 0.4 from sumstats as ORCADES
 INTERVAL -- INFO > 0.3 as proper_info is NA
 KORA -- INFO > 0.3 as for INTERVAL
