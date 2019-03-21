@@ -1,6 +1,6 @@
 
-Cohorts with qctool SNP-stats available
-=======================================
+Cohorts with qctool -snp-stats results
+======================================
 
 EGCUT, /data/anekal/EGCUT_INF.snp-stats
 
