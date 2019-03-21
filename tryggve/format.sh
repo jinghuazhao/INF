@@ -62,7 +62,7 @@ parallel -j5 -C' ' '
 # MadCam
 
 cat sumstats/MadCam.list | \
-parallel -j5 -C' ' '
+parallel -j$threads -C' ' '
    sed 's/CODE_ALLELE_FQ/CODE_ALL_FQ/g' /data/andmala/madcam/MadCAM.{1}.{2}.txt | \
    awk "\$13>0.3" | \
    awk -f tryggve/order.awk | \
