@@ -29,7 +29,7 @@ function EDCUT()
 
 function INTERVAL()
 {
-  cat $HOME/INF/sumstats/INTERVAL.list | \
+  cat sumstats/INTERVAL.list | \
   parallel -j$threads -C' ' '
      /usr/bin/gunzip -c /data/jampet/upload-20170920/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
      awk -f tryggve/INTERVAL.awk | \

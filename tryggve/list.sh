@@ -64,7 +64,7 @@ function INTERVAL() {
   # INTERVAL, 92 lines
   ls /data/jampet/upload-20170920/ | \
   grep inf | \
-  sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz\*//g;s/___/ /g' > sumstats/INTERVAL.list
+  sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz//g;s/___/ /g' > sumstats/INTERVAL.list
 }
 
 function KORA() {
