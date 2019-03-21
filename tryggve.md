@@ -23,7 +23,7 @@ tryggve/           | Auxiliary files
  -- [KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
  -- [EURLD.bed](tryggve/EURLD.bed) | approximately independent LD blocks for Europeans.
  -- [QCGWAS.sh](tryggve/QCGWAS.sh) | QCGWAS for specific proteins, calling [QCGWAS.R](tryggve/QCGWAS.R)
- -- [snpstats.sh](tryggve/snpstats.sh) | sumstats/qctool -snp-stats summary
+ -- [snpstats.sh](tryggve/snpstats.sh) | sumstats/qctool -snp-stats summary, see also [qctool.txt](tryggve/qctool.txt)
 tryggve.md         | This document
 
 \* from Jimmy

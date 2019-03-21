@@ -20,7 +20,7 @@ gzip -f > sumstats/BioFinder/BioFinder.TNF.gz
 cat sumstats/EGCUT.list | \
 parallel -j$threads -C' ' '
   gunzip -c /data/anekal/EGCUT_INF/EGCUT_autosomal_{1}_inf_280918.txt.gz | \
-  awk "{if(NR>1&&(index(\$1,\"esv\")||index(\$1,\"ss\"))) \$1=\"chr\" \$2 \":\" \$3;if(\$13>0.3) print}" | \
+  awk "{if(NR>1&&(index(\$1,\"esv\")||index(\$1,\"ss\"))) \$1=\"chr\" \$2 \":\" \$3;if(\$13>0.4) print}" | \
   awk -f tryggve/order.awk | \
   gzip -f > sumstats/EGCUT/EGCUT.{2}.gz'
 

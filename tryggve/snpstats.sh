@@ -1,4 +1,4 @@
-# 19-3-2019 JHZ
+# 21-3-2019 JHZ
 
 # ORCADES, STABILITY, VIS and MadCam actually contains INFO
 # INTERVAL and KORA has SNPTEST outputs as well as qctool -snp-stats
@@ -12,6 +12,10 @@ R --no-save -q <<\ \ END
   g <- "/data/andmala/biofinder_inf/rsannot_runGwas_plasmaImp.TNFRSF11B_zre_INFI.glm.linear"
   BioFinder <- read.table(g,as.is=TRUE,header=TRUE,comment.char='"',sep="\t")
   summary(BioFinder)
+
+  g <- "/data/anekal/EGCUT_INF/EGCUT_autosomal_P28325_inf_280918.txt.gz"
+  EGCUT <- read.table(g,as.is=TRUE,header=TRUE)
+  summary(EGCUT)
 
   g <- "/data/andmala/madcam/MadCAM.O00300.OPG.txt"
   MadCam <- read.table(g,as.is=TRUE,header=TRUE)
