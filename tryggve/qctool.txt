@@ -34,5 +34,5 @@ INTERVAL -- INFO > 0.3 as proper_info is NA
 KORA -- INFO > 0.3 as for INTERVAL
 EGCUT -- INFO > 0.4
 MadCam -- INFO > 0.3
-RECOMBINE -- NA
+RECOMBINE -- INFO > 0.3
 BioFInder -- NA

@@ -64,6 +64,7 @@ parallel -j5 -C' ' '
 cat sumstats/MadCam.list | \
 parallel -j5 -C' ' '
    sed 's/CODE_ALLELE_FQ/CODE_ALL_FQ/g' /data/andmala/madcam/MadCAM.{1}.{2}.txt | \
+   awk '$13>0.3' | \
    awk -f tryggve/order.awk | \
    gzip -f > sumstats/MadCam/MadCam.{3}.gz'
 
