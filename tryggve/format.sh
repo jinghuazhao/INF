@@ -64,7 +64,7 @@ parallel -j5 -C' ' '
 cat sumstats/MadCam.list | \
 parallel -j5 -C' ' '
    sed 's/CODE_ALLELE_FQ/CODE_ALL_FQ/g' /data/andmala/madcam/MadCAM.{1}.{2}.txt | \
-   awk '$13>0.3' | \
+   awk "\$13>0.3" | \
    awk -f tryggve/order.awk | \
    gzip -f > sumstats/MadCam/MadCam.{3}.gz'
 
@@ -135,7 +135,7 @@ parallel -j4 --env rt -C' ' '
       cut -f3-7,9-17
     done
   ) | \
-  awk "NR==1||\$1!=SNPID" | \
+  awk "NR==1||(\$1!=SNPID&&\$13>0.3)" | \
   awk -f tryggve/order.awk | \
   gzip -f > sumstats/RECOMBINE/RECOMBINE.{4}.gz
 '
