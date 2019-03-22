@@ -1,4 +1,4 @@
-# 21-3-2019 JHZ
+# 22-3-2019 JHZ
 
 export threads=6
 
@@ -147,7 +147,7 @@ function RECOMBINE()
         cut -f3-7,9-17
       done
     ) | \
-    awk "NR==1||(\$1!=SNPID&&\$13>0.3)" | \
+    awk "NR==1||(\$1!=SNPID&&\$13>0.3){sub(/EFFECT_ALL_FQ/,\"CODE_ALL_FQ\",\$8)}" | \
     awk -f tryggve/order.awk | \
     gzip -f > sumstats/RECOMBINE/RECOMBINE.{4}.gz'
 }
