@@ -1,4 +1,4 @@
-# 21-3-2019 JHZ
+# 22-3-2019 JHZ
 
 # --- INF list of proteins ---
 
@@ -64,7 +64,8 @@ function INTERVAL() {
   # INTERVAL, 92 lines
   ls /data/jampet/upload-20170920/ | \
   grep inf | \
-  sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz//g;s/___/ /g' > sumstats/INTERVAL.list
+  sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz//g;s/___/ /g' | \
+  sort -k1,1 > sumstats/INTERVAL.list
 }
 
 function KORA() {
