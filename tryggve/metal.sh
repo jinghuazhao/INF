@@ -23,7 +23,7 @@ function METAL_list()
   sort -k1,1 > METAL/METAL.list
 }
 
-function METAL_file()
+function METAL_files()
 {
 # generate METAL command files
   for p in $(cut -f1 inf1.list)
@@ -39,7 +39,6 @@ function METAL_file()
      echo AVERAGEFREQ ON
      echo MINMAXFREQ ON
      echo ADDFILTER N ">=" 10
-     echo ADDFILTER PVAL ">" 0
      echo MARKERLABEL SNPID
      echo ALLELELABELS EFFECT_ALLELE REFERENCE_ALLELE
      echo EFFECTLABEL BETA
