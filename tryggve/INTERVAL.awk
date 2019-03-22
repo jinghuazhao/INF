@@ -1,8 +1,9 @@
-# 19-3-2019 JHZ
+# 22-3-2019 JHZ
 
 {
   OFS="\t"
-  if (NR>1) {
+  if (NR==1) print "SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE", "CODE_ALL_FQ", "BETA", "SE","PVAL", "RSQ", "RSQ_IMP", "IMP"
+  else {
      OFS="\t"
      CHR=$3
      sub(/^0/,"",CHR)
@@ -22,10 +23,6 @@
      RSQ="NA"
      RSQ_IMP=$9
      IMP="NA"
-     a1=EFFECT_ALLELE
-     a2=REFERENCE_ALLELE
-     if (a1>a2) SNPID="chr" CHR ":" POS "_" a2 "_" a1;
-     else SNPID="chr" CHR ":" POS "_" a1 "_" a2
      if (RSQ_IMP>0.3) print SNPID,CHR,POS,STRAND,N,EFFECT_ALLELE,REFERENCE_ALLELE,CODE_ALL_FQ,BETA,SE,PVAL,RSQ,RSQ_IMP,IMP
   }
 }

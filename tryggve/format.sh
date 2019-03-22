@@ -33,6 +33,7 @@ function INTERVAL()
   parallel -j$threads -C' ' '
      /usr/bin/gunzip -c /data/jampet/upload-20170920/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
      awk -f tryggve/INTERVAL.awk | \
+     awk -f tryggve/order.awk | \
      gzip -f > sumstats/INTERVAL/INTERVAL.{1}.gz'
 }
 
