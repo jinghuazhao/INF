@@ -1,9 +1,9 @@
-# 20-3-2019 JHZ
+# 25-3-2019 JHZ
 
-(NR==1||($9>=1e-6 && $14>0.4)){
+(NR==1 || (($9>=1e-6 && $14>0.4) && (N>1500 || ($8 > 0.1 && 1-$8 < 1 - 0.1))))
+{
   $9="";
-  if (N>1500) print;
-  else if ($8 > 0.1 || 1-$8 > 0.1) print
+  print
 }
 
 # gunzip -c /data/niceri/Stability_INF1/STABILITY_Q13541_4EBP1_chr1.txt.gz | head -1 | sed 's/ /\n/g' | awk '{print "#" NR, $1}'
