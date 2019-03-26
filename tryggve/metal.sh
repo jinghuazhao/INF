@@ -64,7 +64,6 @@ function METAL_QCGWAS()
 # all in one directory to get ready for QCGWAS
   cd $HOME/INF/sumstats/work
   cat $HOME/INF/METAL/METAL.list | \
-  grep -v BDNF | \
   parallel -j10 -C' ' '
     echo {2}; \
     ln -sf {2}
@@ -79,7 +78,6 @@ function METAL_analysis()
   export rt=$HOME/INF
   ls METAL/*.metal | \
   sed 's/.metal//g' | \
-  grep -v BDNF | \
   parallel -j5 --env rt -C' ' '
     metal $rt/{}.metal 2>&1 | \
     tee $rt/{}-1.tbl.log; \
