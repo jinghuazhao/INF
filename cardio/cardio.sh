@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 4/3/19 JHZ
+# General notes, 26/3/19 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
@@ -280,10 +280,10 @@ function format_for_METAL()
   xargs -l basename | \
   sed 's/INTERVAL_inf1_//g;s/_chr_merged.gz\*//g' | \
   cut -d'_' --output-delimiter=' ' -f1,4 | \
-  parallel -j2 --env INTERVAL -C' ' '
+  parallel -j6 --env INTERVAL -C' ' '
     gunzip -c $INTERVAL/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
-    awk -f files/INTERVAL.awk | \
-    awk -f files/order.awk | \
+    awk -f tryggve/INTERVAL.awk | \
+    awk -f tryggve/order.awk | \
     gzip -f > sumstats/INTERVAL.{1}.gz
   '
 }
