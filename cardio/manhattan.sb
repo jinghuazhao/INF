@@ -20,13 +20,13 @@ export TMPDIR=/scratch/jhz22/tmp
 export rt=$HOME/INF/METAL
 
 echo ${p}
-export protein=$p{};
+export protein=${p};
 R --no-save -q <<END
     protein <- Sys.getenv("protein");
     print(protein);
     gz <- gzfile(paste0("/home/jhz22/INF/sumstats/INTERVAL/INTERVAL.",protein,".gz"));
     .libPaths("/home/jhz22/R:/home/jhz22/R-3.5.3/library")
-    require(qqman);
+    library(qqman,lib.loc="/home/jhz22/R");
     tbl <- read.delim(gz,as.is=TRUE);
     tbl <- within(tbl,{
        SNP <- SNPID
