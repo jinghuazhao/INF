@@ -1,4 +1,4 @@
-# 4-2-2019 JHZ
+#26-3-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -297,7 +297,7 @@ sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j6 --env rt -C' ' '
 plink --bfile EUR \
-      --clump $rt/METAL/{}-1.tbl.gz --clump-range rlist-hg19 \
+      --clump $rt/METAL/{}-1.tbl.gz --clump-range rlist-hg19 --clump-range-border 250 \
       --clump-snp-field MarkerName \
       --clump-field P-value \
       --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0 \
