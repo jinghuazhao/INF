@@ -29,6 +29,6 @@ plink --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
       --clump-kb 500 \
       --clump-p1 5e-10 \
       --clump-p2 0.01 \
-      --clump-r2 0 \
+      --clump-r2 0.1 \
       --mac 50 \
       --out $rt/${p}

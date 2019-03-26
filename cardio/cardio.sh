@@ -13,7 +13,6 @@
 #    - We then compiled the latest bedtools release 2.27.1 to /scratch/jhz22/bin and gcc/4.8.1 is customarily called.
 #    - The breakup of snpid leads to duplicate records in BED files so we employ uniq operation.
 # 5. format_for_METAL() is actually copied from format.sh.
-# 6. qqman() is modified from tryggve/analysis.sh
 
 export BGEN_DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 export BGEN=$BGEN_DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only
@@ -364,31 +363,7 @@ parallel -j${threads} -C' ' \
          --env LocusZoom \
           '$wd/cardio/fm.subs {1} {2} {3} {4} {5} {6} {7}'
 
-function qqman()
-{
-  ls /home/jhz22/INF/sumstats/INTERVAL/*gz | \
-  sed 's|/home/jhz22/INF/sumstats/INTERVAL/INTERVAL.||g;s/.gz//g' | \
-  parallel -j6 -C' ' '
-    export protein={};
-    echo {}
-    R --no-save -q <<\ \ END
-      protein <- Sys.getenv("protein");
-      print(protein);
-      gz <- gzfile(paste0("/home/jhz22/INF/sumstats/INTERVAL/INTERVAL.",protein,".gz"));
-      .libPaths("/home/jhz22/R:/home/jhz22/R-3.5.3/library")
-      require(qqman);
-      tbl <- read.delim(gz,as.is=TRUE);
-      tbl <- within(tbl,{
-         SNP <- SNPID
-         CHR <- as.numeric(CHR)
-         BP <- as.numeric(POS)
-         P <- as.numeric(PVAL)
-       })
-       tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
-       manhattan <- paste0("/home/jhz22/INF/sumstats/INTERVAL/INTERVAL.",protein,".manhattan.png");
-       png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
-       manhattan(tbl,main=protein,genomewideline=-log10(5e-10),cex=0.8, col=c("blue","orange"),suggestiveline=FALSE,ylim=c(0,25));
-       dev.off();
-  END
-'
-}
+ls /home/jhz22/INF/sumstats/INTERVAL/*gz | \
+sed 's|/home/jhz22/INF/sumstats/INTERVAL/INTERVAL.||g;s/.gz//g' > manhattan.list
+
+sbatch manhattan.sb
