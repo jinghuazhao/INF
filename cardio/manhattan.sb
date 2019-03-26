@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --partition=short
 #SBATCH --array=1-92
-#SBATCH --output=work/CLUMP_%A_%a.out
-#SBATCH --error=work/CLUMP_%A_%a.err
+#SBATCH --output=work/manhattan_%A_%a.out
+#SBATCH --error=work/manhattan_%A_%a.err
 #SBATCH --export ALL
 
 . /etc/profile.d/modules.sh
