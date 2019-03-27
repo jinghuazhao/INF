@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --ntasks=1
-#SBATCH --job-name=CLUMP
-#SBATCH --time=4:00:00
+#SBATCH --job-name=Manhattan
+#SBATCH --time=8:00:00
 #SBATCH --cpus-per-task=8
 #SBATCH --partition=short
 #SBATCH --array=1-92
@@ -20,13 +20,13 @@ export TMPDIR=/scratch/jhz22/tmp
 export rt=$HOME/INF/METAL
 
 echo ${p}
-export protein=$p{};
+export protein=${p};
 R --no-save -q <<END
     protein <- Sys.getenv("protein");
     print(protein);
     gz <- gzfile(paste0("/home/jhz22/INF/sumstats/INTERVAL/INTERVAL.",protein,".gz"));
     .libPaths("/home/jhz22/R:/home/jhz22/R-3.5.3/library")
-    require(qqman);
+    library(qqman,lib.loc="/home/jhz22/R");
     tbl <- read.delim(gz,as.is=TRUE);
     tbl <- within(tbl,{
        SNP <- SNPID
@@ -35,7 +35,7 @@ R --no-save -q <<END
        P <- as.numeric(PVAL)
      })
      tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
-     manhattan <- paste0("/home/jhz22/INF/METAL/INTERVAL.",protein,".manhattan.png");
+     manhattan <- paste0("INTERVAL.",protein,".manhattan.png");
      png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
      manhattan(tbl,main=protein,genomewideline=-log10(5e-10),cex=0.8, col=c("blue","orange"),suggestiveline=FALSE,ylim=c(0,25));
      dev.off();
