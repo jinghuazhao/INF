@@ -94,3 +94,7 @@ Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers 
 Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. *Hum Mol Genet* 23(24): 6684–669.
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
+
+## URLs
+
+[turbo.sh](cardio/turbo.sh) shows tweak of turboman, https://github.com/bpprins/turboman and turboqq, https://github.com/bpprins/turboqq.
