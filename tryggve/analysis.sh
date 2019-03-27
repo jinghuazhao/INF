@@ -1,4 +1,4 @@
-#26-3-2019 JHZ
+#27-3-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -288,33 +288,35 @@ gcta64 --bfile EUR --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-colli
 sed 's|'"$rt"'/||g;s/.jma.cojo:/\t/g' | \
 awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > INF1.jma
 
-echo "--> clumping and cojo with LDetect approximately independent LD blocks"
+echo "--> approximately independent LD blocks"
 
-awk 'NR>1{gsub(/chr/,"",$1);print}' tryggve/EURLD.bed > rlist-hg19
+awk 'NR>1{gsub(/chr/,"",$1);print}' tryggve/EURLD.bed > rlist-EURLD
 export rt=$HOME/INF
 ls $rt/METAL/*tbl.gz | \
 sed 's/-1.tbl.gz//g' | \
 xargs -l basename | \
 parallel -j6 --env rt -C' ' '
 plink --bfile EUR \
-      --clump $rt/METAL/{}-1.tbl.gz --clump-range rlist-hg19 --clump-range-border 250 \
+      --clump $rt/METAL/{}-1.tbl.gz --clump-range rlist-EURLD --clump-range-border 250 \
       --clump-snp-field MarkerName \
       --clump-field P-value \
-      --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0 \
+      --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0.1 \
       --mac 50 \
       --out $rt/LDBLOCK/{}'
+
 awk '(NR>1){
   chr=$1;
   gsub(/chr/,"",chr);
   flanking=($3-$2)/2/1000
   centre=$2+flanking
   print sprintf("%d %d %d %s", chr, centre, flanking,$4);
-}' tryggve/EURLD.bed > EURLD.region
+}' tryggve/EURLD.bed > rlist=EURLD.region
+
 for prot in $(ls $rt/METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
 do
   export p=$prot
   # bruteforceclumpingbyregion
-  cat EURLD.region | \
+  cat rlist=EURLD.region | \
   parallel -j8 --env p --env rt -C' ' '
    gcta64 --bfile EUR --cojo-file $rt/METAL/$p.ma --cojo-slct --cojo-p 5e-10 --maf 0.0001 \
           --extract-region-bp {1} {2} {3} --thread-num 3 --out $rt/LDBLOCK/$p-{4}'
@@ -323,34 +325,6 @@ do
      awk "NR>1" $rt/LDBLOCK/${p}*.jma.cojo
    ) > $rt/${p}.jma
 done
-
-echo "--> contrast studies"
-
-R --no-save -q <<END
-z1z2 <- function(study1,study2,protein)
-{
-  file1 <- paste0("sumstats/",study1,"/",study1,".",protein,".gz")
-  z1 <- gzfile(file1)
-  interval <- read.table(z1,as.is=TRUE,header=TRUE)
-  file2 <- paste0("sumstats/",study2,"/",study2,".",protein,".gz")
-  z2 <- gzfile(file2)
-  orcades <- read.table(z2,as.is=TRUE,header=TRUE)
-  vars <- c("SNPID","BETA","SE")
-  z <- merge(interval[vars],orcades[vars],by="SNPID")
-  z <- within(z,{
-    z1 <- BETA.x/SE.x
-    z2 <- BETA.y/SE.y
-  })
-  with(z,cor(z1,z2))
-  with(z,plot(z1,z2))
-}
-pdf("CXCL1.pdf")
-z1z2("INTERVAL","ORCADES","IFN.gamma")
-pdf()
-END
-
-# MAF x z plots
-# BioConductor and CRAN packages
 
 echo "--> Variant annotation"
 
@@ -364,29 +338,10 @@ $annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 $exampl
 echo "--> remove duplicates"
 
 # notes from https://www.biostars.org/p/264584/
-# export LC_ALL=C 
+# export LC_ALL=C
 #( \
 #  grep '^#' input.vcf ; \
-#  grep -v "^#" input.vcf | 
+#  grep -v "^#" input.vcf |
 #  sort -t $'\t' -k1,1 -k2,2n -k4,4 | \
 #  awk -F '\t' 'BEGIN {prev="";} {key=sprintf("%s\t%s\t%s",$1,$2,$4);if(key==prev) next;print;prev=key;}' \
-#) 
-
-function bruteforceclumpingbyregion()
-{
-  awk 'NR>1{gsub(/chr/,"",$1);print}' $rt/tryggve/EURLD.bed | \
-  parallel -j8 --env p --env rt -C' ' '
-  plink --bfile EUR \
-      --chr {1} --from-bp {2} --to-bp {3} \
-      --clump $rt/METAL/${p}-1.tbl.gz \
-      --clump-snp-field MarkerName \
-      --clump-field P-value \
-      --clump-kb 500 \
-      --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0 \
-      --mac 50 \
-      --out $rt/LDBLOCK/${p}-{4}'
-  (
-    cat $rt/LDBLOCK/${p}*.clumped | head -1
-    awk "NR>1" $rt/LDBLOCK/${p}*.clumped
-  ) > $rt/LDBLOCK/${p}.clumped
-}
+#)
