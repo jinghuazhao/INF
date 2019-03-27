@@ -304,10 +304,9 @@ plink --bfile EUR \
       --mac 50 \
       --out $rt/LDBLOCK/{}'
 (
-  grep $rt/LDBLOCK/*ranges | -l
-  for p in $(ls $rt/METAL/*tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g';
-      do  awk "NR>1" $rt/LDBLOCK/${p}*ranges; done
-) > $rt/INF1.ra ges
+  grep $rt/LDBLOCK/*ranges | head -1
+  for p in $(ls $rt/METAL/*tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g';do awk "NR>1" $rt/LDBLOCK/${p}*ranges; done
+) > $rt/INF1.clumped.ranges
 
 awk '(NR>1){
   chr=$1;
