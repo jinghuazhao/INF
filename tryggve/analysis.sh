@@ -303,6 +303,11 @@ plink --bfile EUR \
       --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0.1 \
       --mac 50 \
       --out $rt/LDBLOCK/{}'
+(
+  grep $rt/LDBLOCK/*ranges | -l
+  for p in $(ls $rt/METAL/*tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g';
+      do  awk "NR>1" $rt/LDBLOCK/${p}*ranges; done
+) > $rt/INF1.ra ges
 
 awk '(NR>1){
   chr=$1;
