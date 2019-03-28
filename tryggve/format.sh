@@ -1,4 +1,4 @@
-# 22-3-2019 JHZ
+# 28-3-2019 JHZ
 
 export threads=6
 
@@ -196,6 +196,19 @@ function STANLEY_swe6()
   awk -vN=$N -f tryggve/STANLEY.awk | \
   awk -f tryggve/order.awk | \
   gzip -f > sumstats/STANLEY/STANLEY_swe6.{2}.gz'
+}
+
+function checklines()
+# to check for number of SNPs for all proteins in a particular study
+# usage checklines KORA 3
+# where the protein names are the 3rd column in KORA.list
+{
+  export study=$1
+  export col=$2
+  parallel --env study --env col -C' ' '
+    echo $study-{}
+    gunzip -c sumstats/$study/${study}.{}.gz | \
+    wc -l' ::: $(cut -d" " -f$col sumstats/$study.list)
 }
 
 $1
