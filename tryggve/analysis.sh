@@ -33,7 +33,8 @@ function qml()
      awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M;\$2=start;\$3=end};1" > st.tmp
      read chrom start end gene prot < st.tmp
      gunzip -c METAL/{}-1.tbl.gz | \
-     awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end "(\$1 == chr && \$2 >= start && \$2 <= end){split(\$3,a,\"_\");print a[1],\$12,\$14}"
+     awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
+         "(\$1 == chr && \$2 >= start && \$2 <= end){split(\$3,a,\"_\");print a[1],\$12,\$14}"
   )  > METAL/{}.lz'
   ls METAL/*-1.tbl.gz | \
   sed 's|METAL/||g;s/-1.tbl.gz//g' | \
@@ -64,7 +65,7 @@ function clumping()
   sed 's/-1.tbl.gz//g' | \
   xargs -l basename | \
   parallel -j4 --env rt -C' ' '
-  if [ -f $rt/{}.clumped ]; then rm $rt/{}.clumped; fi; \
+  if [ -f $rt/{}.clumped ]; then rm $rt/{}.clumped; fi
   plink --bfile EUR \
         --clump $rt/{}-1.tbl.gz \
         --clump-snp-field MarkerName \
@@ -226,15 +227,15 @@ function top_signals()
   sed 's|METAL/||g;s/.clumped//g' | \
   xargs -l basename | \
   parallel -j4 --env rt -C' ' '
-  ( \
+  (
      grep -w {} st.bed | \
-     awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M;\$2=start;\$3=end};1" > st.tmp; \
-     read chrom start end gene prot < st.tmp; \
-     head -1 $rt/{}.clumped; \
+     awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M;\$2=start;\$3=end};1" > st.tmp
+     read chrom start end gene prot < st.tmp
+     head -1 $rt/{}.clumped
      awk -vchr=$chrom "(NR > 1 && \$1==chr)" $rt/{}.clumped | \
      sort -k3,3 | \
      join -v1 -13 -21 - MHC.snpid | \
-     sort -k2,2n -k3,3n \
+     sort -k2,2n -k3,3n
   ) > $rt/{}.top
   '
 }
@@ -325,7 +326,7 @@ function aild()
     gsub(/chr/,"",chr);
     flanking=($3-$2)/2/1000
     centre=$2+flanking
-    print sprintf("%d %d %d %s", chr, centre, flanking,$4);
+    print sprintf("%d %d %d %s", chr, centre, flanking,$4)
   }' tryggve/EURLD.bed > rlist=EURLD.region
 
   for prot in $(ls $rt/METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
@@ -358,7 +359,7 @@ function nodup()
   echo "--> remove duplicates"
   export LC_ALL=C
   (
-    grep '^#' input.vcf ;
+    grep '^#' input.vcf
     grep -v "^#" input.vcf | \
     sort -t $'\t' -k1,1 -k2,2n -k4,4 | \
     awk -F '\t' 'BEGIN {prev="";} {key=sprintf("%s\t%s\t%s",$1,$2,$4);if(key==prev) next;print;prev=key;}'
