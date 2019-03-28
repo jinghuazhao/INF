@@ -364,3 +364,5 @@ function nodup()
     awk -F '\t' 'BEGIN {prev="";} {key=sprintf("%s\t%s\t%s",$1,$2,$4);if(key==prev) next;print;prev=key;}'
   )
 }
+
+$1
