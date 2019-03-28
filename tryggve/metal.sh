@@ -21,7 +21,7 @@ function METAL_list()
   ) | \
   awk '{print $0, NR}' | \
   sort -k1,1 | \
-  awk '!/STABILITY/&&/IFN.gamma|IL.22.RA1|TSLP/' > METAL/METAL.list
+  awk '!(/STABILITY/&&/IFN.gamma|IL.22.RA1|TSLP/)' > METAL/METAL.list
 }
 
 function METAL_files()
