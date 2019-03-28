@@ -1,4 +1,4 @@
-# 26-3-2019 JHZ
+# 28-3-2019 JHZ
 
 function METAL_list()
 {
@@ -20,7 +20,8 @@ function METAL_list()
   done
   ) | \
   awk '{print $0, NR}' | \
-  sort -k1,1 > METAL/METAL.list
+  sort -k1,1 | \
+  awk '!/STABILITY/&&/IFN.gamma|IL.22.RA1|TSLP/' > METAL/METAL.list
 }
 
 function METAL_files()
