@@ -218,7 +218,7 @@ function turbo()
     export p={2}
     export g=$(grep -w inf1.gene | cut -d" " -f3)
     zcat sumstats/${s}/${s}.${p}.gz | \
-    awk "NR>1&&!/CHR/{print $2,$3,$11}" | \
+    awk "NR>1&&!/CHR/{print \$2,\$3,\$11}" | \
     gzip -f > ${s}.${p}.gz
   # Manhattan
   R --slave --vanilla --args \
