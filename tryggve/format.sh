@@ -220,7 +220,11 @@ function turbo()
     zcat sumstats/${s}/${s}.${p}.gz | \
     awk "NR>1&&!/CHR/{print \$2,\$3,\$11}" | \
     gzip -f > ${s}.${p}.gz
-    zgrep -w $g glist.gz | \
+    (
+      zcat glist.gz | \
+      head -1
+      zgrep -w $g glist.gz
+    ) | \
     gzip -f > ${s}.${p}.glist.gz
   # Manhattan
   R --slave --vanilla --args \
