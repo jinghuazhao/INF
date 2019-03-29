@@ -1,4 +1,4 @@
-# 28-3-2019 JHZ
+# 29-3-2019 JHZ
 
 function METAL_list()
 {
@@ -21,8 +21,11 @@ function METAL_list()
   ) | \
   awk '{print $0, NR}' | \
   sort -k1,1 | \
-  awk '!(/STABILITY/&&/IFN.gamma|IL.22.RA1|TSLP/)' > METAL/METAL.list
+  awk '!(/STABILITY/&&/IL.15RA|ST1A1|MCP.3|FGF.5|AXIN1|IL.17A|IL.17C|IL4|IL5|IL.10RA|TNF|LIF|IL13|IL.20RA|IL.24|IL.20|NRTN|ARTN|IL.1.alpha|IL.2RB|IL33|IFN.gamma|TSLP|IL.22.RA1/)' > METAL/METAL.list
 }
+
+
+
 
 function METAL_files()
 {
