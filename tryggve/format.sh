@@ -216,7 +216,7 @@ function turbo()
   parallel -j5 -C' ' '
     export s={1}
     export p={2}
-    export g=$(grep -w inf1.gene | cut -d" " -f3)
+    export g=$(grep -w {2} inf1.gene | cut -d" " -f3)
     zcat sumstats/${s}/${s}.${p}.gz | \
     awk "NR>1&&!/CHR/{print \$2,\$3,\$11}" | \
     gzip -f > ${s}.${p}.gz
@@ -233,6 +233,7 @@ function turbo()
     input_data_path=${s}.${p}.gz \
     output_data_rootname=${s}.${p}.qq \
     plot_title="Q-Q plot" < cardio/turboqq.r
+    rm ${s}.${p}.gz
   ' ::: INTERVAL BioFinder EGCUT MadCam KORA NSPHS ORCADES RECOMBINE STABILITY STANLEY VIS ::: $(cut -d' ' -f1 prot.list)
 }
 
