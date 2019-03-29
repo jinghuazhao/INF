@@ -24,9 +24,6 @@ function METAL_list()
   awk '!(/STABILITY/&&/IL.15RA|ST1A1|MCP.3|FGF.5|AXIN1|IL.17A|IL.17C|IL4|IL5|IL.10RA|TNF|LIF|IL13|IL.20RA|IL.24|IL.20|NRTN|ARTN|IL.1.alpha|IL.2RB|IL33|IFN.gamma|TSLP|IL.22.RA1/)' > METAL/METAL.list
 }
 
-
-
-
 function METAL_files()
 {
 # generate METAL command files
