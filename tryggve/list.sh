@@ -1,4 +1,4 @@
-# 22-3-2019 JHZ
+# 29-3-2019 JHZ
 
 # --- INF list of proteins ---
 
@@ -215,7 +215,7 @@ function STABILITY() {
      s/IL8/IL.8/;
      s/VEGFA/VEGF.A/' | \
   sort -k1,1 | \
-  awk '{print $1,$2}' > STABILITY.N
+  awk '{print $1,$2}' > work/STABILITY.N
   sort -k2,2 inf1.list > inf1.tmp
   export STABILITY=/data/niceri/Stability_INF1
   ls $STABILITY | \

@@ -1,4 +1,4 @@
-# 28-3-2019 JHZ
+# 29-3-2019 JHZ
 
 export threads=6
 
@@ -157,7 +157,7 @@ function STABILITY()
 {
   export STABILITY=/data/niceri/Stability_INF1
   sort -k3,3 sumstats/STABILITY.list | \
-  join -13 -21 - STABILITY.N | \
+  join -13 -21 - work/STABILITY.N | \
   parallel -j$threads --env STABILITY -C' ' '
     (
       for chr in `seq 22`; do gunzip -c $STABILITY/STABILITY_{2}_{3}_chr${chr}.txt.gz; done
