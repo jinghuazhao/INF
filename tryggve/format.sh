@@ -223,7 +223,7 @@ function turbo()
   # Manhattan
   R --slave --vanilla --args \
     input_data_path=${s}.${p}.gz \
-    output_data_rootname=${s}.${p}_man \
+    output_data_rootname=${s}.${p}.manhattan \
     custom_peak_annotation_file_path=glist.gz \
     reference_file_path=cardio/turboman_hg19_reference_data.rda \
     pvalue_sign=5e-10 \
@@ -231,7 +231,7 @@ function turbo()
   # QQ
   R --slave --vanilla --args \
     input_data_path=${s}.${p}.gz \
-    output_data_rootname=${s}.${p}_qq \
+    output_data_rootname=${s}.${p}.qq \
     plot_title="Q-Q plot" < cardio/turboqq.r
   ' ::: INTERVAL BioFinder EGCUT MadCam KORA NSPHS ORCADES RECOMBINE STABILITY STANLEY VIS ::: $(cut -d' ' -f1 prot.list)
 }
