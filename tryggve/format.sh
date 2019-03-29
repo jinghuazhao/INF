@@ -220,11 +220,13 @@ function turbo()
     zcat sumstats/${s}/${s}.${p}.gz | \
     awk "NR>1&&!/CHR/{print \$2,\$3,\$11}" | \
     gzip -f > ${s}.${p}.gz
+    zgrep -w $g glist.gz | \
+    gzip -f > ${s}.${p}.glist.gz
   # Manhattan
   R --slave --vanilla --args \
     input_data_path=${s}.${p}.gz \
     output_data_rootname=${s}.${p}.manhattan \
-    custom_peak_annotation_file_path=glist.gz \
+    custom_peak_annotation_file_path=${s}.${p}.glist.gz \
     reference_file_path=cardio/turboman_hg19_reference_data.rda \
     pvalue_sign=5e-10 \
     plot_title="Manhattan plot" < cardio/turboman.r
@@ -233,7 +235,7 @@ function turbo()
     input_data_path=${s}.${p}.gz \
     output_data_rootname=${s}.${p}.qq \
     plot_title="Q-Q plot" < cardio/turboqq.r
-    rm ${s}.${p}.gz
+    rm ${s}.${p}.gz ${s}.${p}.glist.gz
   ' ::: INTERVAL BioFinder EGCUT MadCam KORA NSPHS ORCADES RECOMBINE STABILITY STANLEY VIS ::: $(cut -d' ' -f1 prot.list)
 }
 

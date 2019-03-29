@@ -32,7 +32,6 @@ function INF()
   sort -k3,3 > inf1.gene
   (
     echo chromosome position nearest_gene_name
-    grep -w -E "$g" doc/glist-hg19 | \
     cut -d' ' -f1-2,4
   ) | \
   gzip -f > glist.gz
