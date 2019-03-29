@@ -160,9 +160,8 @@ function STABILITY()
   join -13 -21 - work/STABILITY.N | \
   parallel -j$threads --env STABILITY -C' ' '
     (
-      for chr in `seq 22`; do gunzip -c $STABILITY/STABILITY_{2}_{3}_chr${chr}.txt.gz; done
+      for chr in `seq 22`; do zgrep -v -w SNPID $STABILITY/STABILITY_{2}_{3}_chr${chr}.txt.gz; done
     ) | \
-    awk "NR==1||!/SNPID/" | \
     awk -vOFS="\t" -vN={4} -f tryggve/STABILITY.awk | \
     awk -f tryggve/order.awk | \
     gzip -f > sumstats/STABILITY/STABILITY.{1}.gz'
