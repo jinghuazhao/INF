@@ -175,7 +175,7 @@ print(paste0("  Data file path : ",input_data_path))
 initial_data_dims<-dim(as.data.frame(read.table(gzfile(input_data_path), header=TRUE, stringsAsFactors=FALSE, nrows=10)))[2]
 
 if (initial_data_dims==3) {
-initial_data <- data.frame(scan(input_data_path,
+initial_data <- data.frame(scan(gzfile(input_data_path),
                         what = list(chromosome = 0, position = 0,pvalue= 0),
                         skip=1,
                         sep=" ",
@@ -184,7 +184,7 @@ initial_data <- data.frame(scan(input_data_path,
 initial_data_contains_beta_se<-FALSE
 
 } else if (initial_data_dims==5) {
-initial_data <- data.frame(scan(input_data_path,
+initial_data <- data.frame(scan(gzfile(input_data_path),
                         what = list(chromosome = 0, position = 0,pvalue= 0, beta=0, se=0),
                         skip=1,
                         sep=" ",
