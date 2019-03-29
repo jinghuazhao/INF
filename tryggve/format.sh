@@ -162,7 +162,7 @@ function STABILITY()
     (
       for chr in `seq 22`; do gunzip -c $STABILITY/STABILITY_{2}_{3}_chr${chr}.txt.gz; done
     ) | \
-    awk "NR==1||\$1!=SNPID" | \
+    awk "NR==1||!/SNPID/" | \
     awk -vOFS="\t" -vN={4} -f tryggve/STABILITY.awk | \
     awk -f tryggve/order.awk | \
     gzip -f > sumstats/STABILITY/STABILITY.{1}.gz'
@@ -209,6 +209,31 @@ function checklines()
     echo $study-{}
     gunzip -c sumstats/$study/${study}.{}.gz | \
     wc -l' ::: $(cut -d" " -f$col sumstats/$study.list)
+}
+
+function turbo()
+{
+  parallel -j5 -C' ' '
+    export s={1}
+    export p={2}
+    export g=$(grep -w inf1.gene | cut -d" " -f3)
+    zcat sumstats/${s}/${s}.${p}.gz | \
+    awk "NR>1&&!/CHR/{print $2,$3,$11}" | \
+    gzip -f > ${s}.${p}.gz
+  # Manhattan
+  R --slave --vanilla --args \
+    input_data_path=${s}.${p}.gz \
+    output_data_rootname=${s}.${p}_man \
+    custom_peak_annotation_file_path=glist.gz \
+    reference_file_path=cardio/turboman_hg19_reference_data.rda \
+    pvalue_sign=5e-10 \
+    plot_title="Manhattan plot" < cardio/turboman.r
+  # QQ
+  R --slave --vanilla --args \
+    input_data_path=${s}.${p}.gz \
+    output_data_rootname=${s}.${p}_qq \
+    plot_title="Q-Q plot" < cardio/turboqq.r
+  ' ::: INTERVAL BioFinder EGCUT MadCam KORA NSPHS ORCADES RECOMBINE STABILITY STANLEY VIS ::: $(cut -d' ' -f1 prot.list)
 }
 
 $1
