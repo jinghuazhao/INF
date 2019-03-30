@@ -1,4 +1,4 @@
-# 29-3-2019 JHZ
+# 30-3-2019 JHZ
 
 function METAL_list()
 {
@@ -79,7 +79,7 @@ function METAL_analysis()
   export rt=$HOME/INF
   ls METAL/*.metal | \
   sed 's/.metal//g' | \
-  parallel -j5 --env rt -C' ' '
+  parallel -j4 --env rt -C' ' '
     metal $rt/{}.metal 2>&1 | \
     tee $rt/{}-1.tbl.log; \
     gzip -f $rt/{}-1.tbl
