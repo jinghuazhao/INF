@@ -207,7 +207,7 @@ function mpfr()
     gunzip -c $rt/{}-1.tbl.gz | \
     awk -vOFS="\t" "NR==1||\$12!=0"
     gunzip -c $rt/{}-1.tbl.gz | \
-    awk -vOFS="\t" '(NR==1||\$12==0)' > {}.z
+    awk -vOFS="\t" "(NR==1||\$12==0)" > {}.z
     R --no-save -q <<\ \ \ \ END
       prot <- Sys.getenv("prot")
       metal <- read.delim(paste0(prot,".z"),as.is=TRUE)
