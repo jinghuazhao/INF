@@ -247,11 +247,11 @@ function ma()
   ls METAL/*.tbl.gz | \
   sed 's/-1.tbl.gz//g' | \
   xargs -l basename | \
-  parallel -j3 --env rt -C' ' '
+  parallel -j4 --env rt -C' ' '
   (
     echo SNP A1 A2 freq b se p N;
     gunzip -c $rt/{}-1.tbl.gz | \
-    awk -vOFS="\t" "(NR>1 && \$14>50) {print \$3, \$4, \$5, \$6, \$10, \$11, \$12, \$14}"
+    awk "(NR>1 && \$14>50) {print \$3, \$4, \$5, \$6, \$10, \$11, \$12, \$14}"
   ) > $rt/{}.ma
   '
 }
