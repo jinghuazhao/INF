@@ -273,13 +273,14 @@ function ma()
 function cojo()
 {
   echo "--> COJO analysis"
+  export rt=$HOME/INF/METAL
   ls METAL/*.tbl.gz | \
   sed 's/-1.tbl.gz//g' | \
   xargs -l basename | \
-  parallel -j3 --env rt -C' ' '
+  parallel -j2 --env rt -C' ' '
   if [ -f $rt/{}.jma.cojo ]; then rm $rt/{}.jma.cojo $rt/{}.ldr.cojo; fi; \
   gcta64 --bfile EUR --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.1 --cojo-wind 500 \
-         --maf 0.0001 --thread-num 3 --out $rt/{}
+         --maf 0.01 --thread-num 2 --out $rt/{}
   '
   (
     grep SNP $rt/*.jma.cojo | \
