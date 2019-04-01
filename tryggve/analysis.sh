@@ -240,7 +240,7 @@ function top_signals()
   '
 }
 
-function cojo_ma()
+function ma()
 {
   echo "--> COJO analysis"
   export rt=$HOME/INF/METAL
