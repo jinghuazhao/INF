@@ -1,4 +1,4 @@
-#28-3-2019 JHZ
+#1-4-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -240,7 +240,7 @@ function top_signals()
   '
 }
 
-function cojo()
+function cojo_ma()
 {
   echo "--> COJO analysis"
   export rt=$HOME/INF/METAL
@@ -270,21 +270,24 @@ function cojo()
 #13 Direction
 #14 N
 
-ls METAL/*.tbl.gz | \
-sed 's/-1.tbl.gz//g' | \
-xargs -l basename | \
-parallel -j3 --env rt -C' ' '
-if [ -f $rt/{}.jma.cojo ]; then rm $rt/{}.jma.cojo $rt/{}.ldr.cojo; fi; \
-gcta64 --bfile EUR --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.01 --cojo-wind 500 \
-       --maf 0.0001 --thread-num 3 --out $rt/{}
-'
-(
-  grep SNP $rt/*.jma.cojo | \
-  head -1
-  grep -v -w SNP $rt/*.jma.cojo
-) | \
-sed 's|'"$rt"'/||g;s/.jma.cojo:/\t/g' | \
-awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > INF1.jma
+function cojo()
+{
+  ls METAL/*.tbl.gz | \
+  sed 's/-1.tbl.gz//g' | \
+  xargs -l basename | \
+  parallel -j3 --env rt -C' ' '
+  if [ -f $rt/{}.jma.cojo ]; then rm $rt/{}.jma.cojo $rt/{}.ldr.cojo; fi; \
+  gcta64 --bfile EUR --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.1 --cojo-wind 500 \
+         --maf 0.0001 --thread-num 3 --out $rt/{}
+  '
+  (
+    grep SNP $rt/*.jma.cojo | \
+    head -1
+    grep -v -w SNP $rt/*.jma.cojo
+  ) | \
+  sed 's|'"$rt"'/||g;s/.jma.cojo:/\t/g' | \
+  awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > INF1.jma
+}
 #1 MarkerName
 #2 Allele1
 #3 Allele2
