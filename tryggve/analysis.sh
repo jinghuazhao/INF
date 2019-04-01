@@ -242,7 +242,7 @@ function top_signals()
 
 function ma()
 {
-  echo "--> COJO analysis"
+  echo "--> .ma"
   export rt=$HOME/INF/METAL
   ls METAL/*.tbl.gz | \
   sed 's/-1.tbl.gz//g' | \
@@ -272,6 +272,7 @@ function ma()
 
 function cojo()
 {
+  echo "--> COJO analysis"
   ls METAL/*.tbl.gz | \
   sed 's/-1.tbl.gz//g' | \
   xargs -l basename | \
@@ -311,7 +312,7 @@ function aild()
   ls $rt/METAL/*tbl.gz | \
   sed 's/-1.tbl.gz//g' | \
   xargs -l basename | \
-  parallel -j6 --env rt -C' ' '
+  parallel -j5 --env rt -C' ' '
   plink --bfile EUR \
         --clump $rt/METAL/{}-1.tbl.gz --clump-range rlist-EURLD --clump-range-border 250 \
         --clump-snp-field MarkerName \
@@ -321,7 +322,7 @@ function aild()
         --out $rt/LDBLOCK/{}'
   (
     grep $rt/LDBLOCK/*ranges | head -1
-    for p in $(ls $rt/METAL/*tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g';do awk "NR>1" $rt/LDBLOCK/${p}*ranges; done
+    for p in $(ls $rt/METAL/*tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g');do awk "NR>1" $rt/LDBLOCK/${p}*ranges; done
   ) > $rt/INF1.clumped.ranges
 
   awk '(NR>1){
