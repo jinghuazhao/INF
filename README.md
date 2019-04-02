@@ -99,7 +99,7 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 
 [turbo.sh](cardio/turbo.sh) shows tweak of turboman, https://github.com/bpprins/turboman and turboqq, https://github.com/bpprins/turboqq.
 
-SCALLOP [consortium](https://www.olink.com/scallop/), GitHub repository](https://github.com/lassefolkersen/scallop), [securecloud](https://secureremote.dtu.dk/vpn/index.html).
+SCALLOP [consortium](https://www.olink.com/scallop/), [GitHub repository](https://github.com/lassefolkersen/scallop), [securecloud](https://secureremote.dtu.dk/vpn/index.html).
 
 SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/proteins.
 
