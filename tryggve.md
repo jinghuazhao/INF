@@ -161,16 +161,6 @@ The version contains fix to the use of HapMap reference as in software-notes abo
 
 The version is 18.1 rather than 9.2 and 8.6 currently online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.
 
-## URLs
-
-SCALLOP consortium, https://www.olink.com/scallop/
-
-SCALLOP GitHub repository, https://github.com/lassefolkersen/scallop
-
-SCALLOP securecloud, https://secureremote.dtu.dk/vpn/index.html
-
-SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/proteins
-
 ## Notes on studies
 
 -   **BioFinder**. 91 (no BDNF) proteins. sumstats file named after genes and converted to protein names.
