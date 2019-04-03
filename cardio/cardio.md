@@ -1,0 +1,13 @@
+# Manhattan plots by cohort
+
+location: /scratch/jhz22/INF/plots
+
+# Clumping results
+
+location: /scratch/jhz22/INF/clumping
+
+Files: study.reference.LD-cutoff.clumped_reults, e.g., INTERVAL.UK10K+1KG.r2-0.1.clumped
+
+# Meta-analysis sumstats + Manhattan/Q-Q plots
+
+location: /scratch/jhz22/INF/METAL
