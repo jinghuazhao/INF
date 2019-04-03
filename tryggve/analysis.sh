@@ -1,4 +1,4 @@
-#1-4-2019 JHZ
+# 3-4-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -309,7 +309,7 @@ function aild()
 {
   echo "--> approximately independent LD blocks"
   awk 'NR>1{gsub(/chr/,"",$1);print}' tryggve/EURLD.bed > rlist-EURLD
-  export rt=$HOME/INF
+  export rt=$HOME/INF/AILD
   ls $rt/METAL/*tbl.gz | \
   sed 's/-1.tbl.gz//g' | \
   xargs -l basename | \
@@ -320,12 +320,17 @@ function aild()
         --clump-field P-value \
         --clump-p1 5e-10 --clump-p2 0.01 --clump-r2 0.1 \
         --mac 50 \
-        --out $rt/LDBLOCK/{}'
+        --out $rt/{}'
   (
-    grep $rt/LDBLOCK/*ranges | head -1
-    for p in $(ls $rt/METAL/*tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g');do awk "NR>1" $rt/LDBLOCK/${p}*ranges; done
-  ) > $rt/INF1.clumped.ranges
-
+    grep CHR $rt/*.clumped.ranges | \
+    head -1
+    ls METAL/*-1.tbl.gz | \
+    sed 's|METAL/||g;s/-1.tbl.gz//g' | \
+    parallel -j1 --env rt -C' ' 'grep -H -v CHR $rt/{}.clumped.ranges | sed "s/.clumped.ranges://g"'
+  ) | \
+  sed 's|'"$rt"'/||g;s/.clumped://g' | \
+  awk '(NF>1){$3="";print}' | \
+  awk '{$1=$1;if(NR==1)$1="prot";print}' > INF1.ranges
   awk '(NR>1){
     chr=$1;
     gsub(/chr/,"",chr);
