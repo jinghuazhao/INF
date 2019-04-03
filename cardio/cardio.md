@@ -1,3 +1,11 @@
+# INTERVAL reference
+
+/scratch/jhz22/data/INTERVAL
+
+# INTERVAL sumstats
+
+location: /scratch/jhz22/INF/sumstats/INTERVAL
+
 # Manhattan plots by cohort
 
 location: /scratch/jhz22/INF/plots
