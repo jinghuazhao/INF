@@ -1,3 +1,4 @@
+clumping
 doc/.RData
 doc/.Rhistory
 doc/analysis-plan
@@ -5,6 +6,7 @@ doc/STANLEY_INF_I_annotation.txt
 tryggve/kora.normalised.prot.txt
 KORA
 METAL
+plots
 rlist-EURLD
 snpstats
 sumstats
