@@ -177,8 +177,3 @@ The version is 18.1 rather than 9.2 and 8.6 currently online, https://www.uni-re
 -   **VIS**. 91 (no BDNF) protein restults as with ORCADES
 -   **STABILITY**. 90 (no BDNF, IL.2) protein.
 -   **STANLEY**. 91 (no BDNF) largely complete protein results for lah1 and swe6
-
-96, MMP.12 (CVD II)
-97, MMP.9 (CVD III)
-153, TNFRSF12A (UnitProt ID Q9NP84) (reported in Sun et al. but nonoverlapped with CVD/INF)
-     ~ MMP.9 connection on PLoS One by Yang et al. (2018)
