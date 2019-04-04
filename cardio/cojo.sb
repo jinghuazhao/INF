@@ -5,6 +5,7 @@
 #SBATCH --time=4:00:00
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=long
+#SBATCH --mem=128800
 #SBATCH --array=1-92%1
 #SBATCH --output=work/cojo_%A_%a.out
 #SBATCH --error=work/cojo_%A_%a.err
