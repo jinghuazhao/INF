@@ -1,4 +1,4 @@
-# 3-4-2019 JHZ
+# 4-4-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -289,6 +289,22 @@ function cojo()
   ) | \
   sed 's|'"$rt"'/||g;s/.jma.cojo:/\t/g' | \
   awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > INF1.jma
+  sed 's/Chr/CHR/g;s/bp/BP/g' cojo/INF1.1KG.r2-0.1.jma > jma
+  R --no-save -q <<\ \ END
+    require(gap)
+    cojo <- read.table("jma",as.is=TRUE,header=TRUE)
+    hits <- merge(cojo[c("prot","CHR","BP","SNP")],inf1[c("prot","uniprot")],by="prot")
+    names(hits) <- c("prot","Chr","bp","SNP","uniprot")
+    cistrans <- cis.vs.trans.classification(hits)
+    sink("cojo/INF1.jma.out")
+    with(cistrans,table)
+    sink()
+    sum(with(cistrans,table))
+    pdf("INF1.jma.pdf")
+    circos.cis.vs.trans.plot(hits="jma")
+    dev.off()
+  END
+  rm jma
 }
 #1 MarkerName
 #2 Allele1
