@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#SBATCH --ntasks=1
+#SBATCH --job-name=ma
+#SBATCH --time=4:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --partition=long
+#SBATCH --array=1-92
+#SBATCH --output=work/ma_%A_%a.out
+#SBATCH --error=work/ma_%A_%a.err
+#SBATCH --export ALL
+
+. /etc/profile.d/modules.sh
+module load default-cardio
+module load slurm
+module load use.own
+
+export p=$(cut -f1 work/inf1.tmp | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
+export TMPDIR=/scratch/jhz22/tmp
+export rt=$HOME/INF/work
+
+echo ${p}
+
+if [ -f $rt/${p}.jma.cojo ]; then rm $rt/${p}.jma.cojo $rt/${p}.ldr.cojo; fi
+gcta64 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
+       --cojo-file $rt/work/${p}.ma \
+       --cojo-slct --cojo-p 5e-10 \
+       --cojo-collinear 0.1 \
+       --cojo-wind 500 \
+       --maf 0.01 \
+       --thread-num 2 \
+       --out $rt/${p}
+

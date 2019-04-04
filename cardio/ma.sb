@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#SBATCH --ntasks=1
+#SBATCH --job-name=ma
+#SBATCH --time=4:00:00
+#SBATCH --cpus-per-task=1
+#SBATCH --partition=long
+#SBATCH --array=1-92
+#SBATCH --output=work/ma_%A_%a.out
+#SBATCH --error=work/ma_%A_%a.err
+#SBATCH --export ALL
+
+. /etc/profile.d/modules.sh
+module load default-cardio
+module load slurm
+module load use.own
+
+export p=$(cut -f1 work/inf1.tmp | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
+export TMPDIR=/scratch/jhz22/tmp
+export rt=$HOME/INF
+
+echo ${p}
+
+(
+  echo SNP A1 A2 freq b se p N
+  gunzip -c $rt/METAL/${p}-1.tbl.gz | \
+  awk "(NR>1 && \$14>50) {print \$3, \$4, \$5, \$6, \$10, \$11, \$12, \$14}"
+) > $rt/work/${p}.ma
