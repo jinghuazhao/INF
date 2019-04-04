@@ -5,7 +5,7 @@
 #SBATCH --time=4:00:00
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=long
-#SBATCH --array=1-92%6
+#SBATCH --array=1-92%4
 #SBATCH --output=work/cojo_%A_%a.out
 #SBATCH --error=work/cojo_%A_%a.err
 #SBATCH --export ALL
