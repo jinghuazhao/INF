@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #SBATCH --ntasks=1
-#SBATCH --job-name=ma
+#SBATCH --job-name=cojo
 #SBATCH --time=4:00:00
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=long
 #SBATCH --array=1-92
-#SBATCH --output=work/ma_%A_%a.out
-#SBATCH --error=work/ma_%A_%a.err
+#SBATCH --output=work/cojo_%A_%a.out
+#SBATCH --error=work/cojo_%A_%a.err
 #SBATCH --export ALL
 
 . /etc/profile.d/modules.sh
@@ -30,4 +30,3 @@ gcta64 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
        --maf 0.01 \
        --thread-num 2 \
        --out $rt/${p}
-
