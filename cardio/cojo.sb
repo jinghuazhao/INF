@@ -23,7 +23,7 @@ echo ${p}
 
 if [ -f $rt/${p}.jma.cojo ]; then rm $rt/${p}.jma.cojo $rt/${p}.ldr.cojo; fi
 gcta64 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
-       --cojo-file $rt/work/${p}.ma \
+       --cojo-file $rt/${p}.ma \
        --cojo-slct --cojo-p 5e-10 \
        --cojo-collinear 0.1 \
        --cojo-wind 500 \
