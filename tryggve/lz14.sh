@@ -1,4 +1,4 @@
-# 14-12-2018 JHZ
+# 8-4-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -67,4 +67,15 @@ select * from snp_pos;
 select * from snp_set;
 END
 
-gzip -f snp_pos.tsv
+# to establish correspondence between snpid and rsid
+
+gzip -f snp_pos.tsv > snp_pos.tsv.gz
+
+zcat snp_pos.tsv.gz | \
+awk 'NR>1' | \
+awk '{chrpos="chr" $2 ":" $3; print $1,chrpos}' | \
+sort -k2,2n > snp_pos
+sort -k1,1 EUR.snpid | \
+join -j2 -a2 - snp_pos | \
+cut -d' ' -f2,3 | \
+sort -k1,1 > EUR.rsid
