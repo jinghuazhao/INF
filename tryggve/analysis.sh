@@ -35,7 +35,8 @@ function qml()
      gunzip -c METAL/{}-1.tbl.gz | \
      awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
          "(\$1 == chr && \$2 >= start && \$2 <= end){split(\$3,a,\"_\");print a[1],\$12,\$14}" | \
-     join EUR.rsid - | \
+     sort -k1,1 | \
+     join -12 -21 snp_pos - | \
      awk -vOFS="\t" "{print \$2, \$3, \$4}"
   )  > METAL/{}.lz'
   ls METAL/*-1.tbl.gz | \
@@ -174,8 +175,9 @@ function fp()
          a1[j] <- r[j]
          a2[j] <- e[j]
          c[j] <- -1
-         print(cbind(A1,A2,EFFECT_ALLELE,REFERENCE_ALLELE,BETA,a1,a2,BETA*c))
+         print(cbind(A1,A2,EFFECT_ALLELE,REFERENCE_ALLELE,a1,a2,format(BETA,digits=3),format(BETA*c,digits=3)))
          BETA <- BETA * c
+         title <- sprintf("%s [%s (%s/%s) N=%.0f]",p,m,A1,A2,tbl[i,"N"])
          tabletext <- cbind(c("Study",study,"Summary"),
                               c("Effect",format(BETA,digits=3),format(tbl[i,"Effect"],digits=3)),
                               c("SE",format(SE,digits=3),format(tbl[i,"StdErr"],digits=3)),
@@ -189,13 +191,16 @@ function fp()
                     is.summary=c(TRUE,rep(FALSE,length(BETA)),TRUE),
                     boxsize=0.75,
                     col=meta.colors(box="royalblue",line="darkblue", summary="royalblue"))
-         title(paste0(p," [",m," (",A1,"/",A2,")","]"))
+         title(title)
+         require(meta)
+         mg <- metagen(BETA,SE,sprintf("%s (%.0f)",study,N),title=title)
+         forest(mg,layout="JAMA")
          metaplot(BETA,SE,N,
                   labels=sprintf("%s (%.3f %.3f %.0f)",study,BETA,SE,N),
                   xlab="Effect distribution",ylab="",xlim=c(-1.5,1.5),
                   summn=tbl[i,"Effect"],sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"],
                   colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
-         title(paste0(p," [",m," (",A1,"/",A2,")", " N=",tbl[i,"N"],"]"))
+         title(title)
        })
     }
     dev.off()
