@@ -189,7 +189,7 @@ function fp()
                     col=meta.colors(box="royalblue",line="darkblue", summary="royalblue"))
          title(paste0(p," [",m," (",A1,"/",A2,")","]"))
          metaplot(BETA,SE,N,
-                  labels=paste0(study," (",format(BETA,digits=3),"/",format(SE,digits=3),")"),
+                  labels=sprintf("%s (%.3f %.3f %.0f)",study,BETA,SE,N),
                   xlab="Effect distribution",ylab="",xlim=c(-1.5,1.5),
                   summn=tbl[i,"Effect"],sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"],
                   colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
