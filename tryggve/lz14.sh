@@ -74,8 +74,8 @@ gzip -f snp_pos.tsv > snp_pos.tsv.gz
 zcat snp_pos.tsv.gz | \
 awk 'NR>1' | \
 awk '{chrpos="chr" $2 ":" $3; print $1,chrpos}' | \
-sort -k2,2n > snp_pos
-sort -k1,1 EUR.snpid | \
+sort -k2,2 > snp_pos
+sort -k2,2 EUR.snpid | \
 join -j2 -a2 - snp_pos | \
 cut -d' ' -f2,3 | \
 sort -k1,1 > EUR.rsid

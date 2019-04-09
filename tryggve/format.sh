@@ -1,4 +1,4 @@
-# 29-3-2019 JHZ
+# 9-4-2019 JHZ
 
 export threads=6
 
@@ -69,7 +69,8 @@ function MadCam()
 {
   cat sumstats/MadCam.list | \
   parallel -j$threads -C' ' '
-     sed 's/CODE_ALLELE_FQ/CODE_ALL_FQ/g' /data/andmala/madcam/MadCAM.{1}.{2}.txt | \
+     cut -f1-14 /data/andmala/madcam/MadCAM.{1}.{2}.txt | \
+     sed 's/CODE_ALLELE_FQ/CODE_ALL_FQ/g' | \
      awk "\$13>0.3" | \
      awk -f tryggve/order.awk | \
      gzip -f > sumstats/MadCam/MadCam.{3}.gz'
