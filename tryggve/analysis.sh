@@ -151,7 +151,7 @@ function fp()
     })
     require(rmeta)
     pdf("INF1.fp.pdf")
-    xlim <- c(-1.5,1.5)
+    xlim <- c(-1,1)
     for(i in 1:nrow(tbl))
     {
        p <- tbl[i,"prot"]
