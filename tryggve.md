@@ -15,7 +15,6 @@ tryggve/           | Auxiliary files
  -- [format.sh](tryggve/format.sh)     | Code for format GWAS summary statistics
  -- [lz14.sh](tryggve/lz14.sh)         | Code to extract LocusZoom 1.4 databases for [analysis.sh](tryggve/analysis.sh)
  -- [analysis.sh](tryggve/analysis.sh) | Bash code for analysis calling [analysis.ini](tryggve/analysis.ini)
- -- [fp.sh](tryggve/fp.sh) | Bash code for forest plot calling [analysis.ini](tryggve/analysis.ini)
  -- [metal.sh](tryggve/metal.sh)       | Generation/execution of METAL scripts
  -- [METAL.qsub](tryggve/METAL.qsub)   | TORQUE qsub script for METAL
  -- [INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis

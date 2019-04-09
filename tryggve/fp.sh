@@ -2,22 +2,18 @@
 
 source tryggve/analysis.ini
 
-function tbl()
+function fp()
 {
   (
     gunzip -c METAL/4E.BP1-1.tbl.gz | \
     head -1
-    awk 'NR>1' clumping/INF1.UK10K+1KG.r2-0.clumped | \
+    awk 'NR>1' clumping/INF1.clumped | \
     cut -d' ' -f1,3 | \
     parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
   ) | \
-  sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.UK10K+1KG.r2-0.clumped.tbl
-}
-
-function all()
-{
+  sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.clumped.tbl
   (
-    awk 'NR>1' INF1.UK10K+1KG.r2-0.clumped.tbl | \
+    awk 'NR>1' INF1.clumped.tbl | \
     cut -f1,3,13 | \
     awk '{split($1,a,":");print a[1],$2,$3}'
     parallel -j4 -C' ' '
@@ -31,14 +27,9 @@ function all()
       done
   '
   ) | \
-  sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.UK10K+1KG.r2-0.clumped.all
-}
-
-function fp()
-{
-  cut -f1-14 INF1.UK10K+1KG.r2-0.clumped.all > INF1.clumped.all
+  sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.clumped.all
   R -q --no-save <<\ \ END
-    tbl <- read.delim("INF1.UK10K+1KG.r2-0.clumped.tbl",as.is=TRUE)
+    tbl <- read.delim("INF1.clumped.tbl",as.is=TRUE)
     tbl <- within(tbl, {
       prot <- sapply(strsplit(Chromosome,":"),"[",1)
       Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
@@ -58,7 +49,7 @@ function fp()
       prot <- substring(study.prot,pos+1)
     })
     require(rmeta)
-    pdf("INF1.UK10K+1KG.r2-0.fp.pdf")
+    pdf("INF1.fp.pdf")
     xlim <- c(-1.5,1.5)
     for(i in 1:nrow(tbl))
     {
@@ -108,5 +99,3 @@ function fp()
     dev.off()
   END
 }
-
-fp
