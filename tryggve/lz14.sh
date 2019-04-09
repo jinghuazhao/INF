@@ -1,4 +1,4 @@
-# 8-4-2019 JHZ
+# 9-4-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -77,5 +77,4 @@ awk '{chrpos="chr" $2 ":" $3; print $1,chrpos}' | \
 sort -k2,2 > snp_pos
 sort -k2,2 EUR.snpid | \
 join -j2 -a2 - snp_pos | \
-cut -d' ' -f2,3 | \
 sort -k1,1 > EUR.rsid
