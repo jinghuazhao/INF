@@ -151,7 +151,6 @@ function fp()
     })
     require(rmeta)
     pdf("INF1.fp.pdf")
-    xlim <- c(-1,1)
     for(i in 1:nrow(tbl))
     {
        p <- tbl[i,"prot"]
@@ -191,7 +190,7 @@ function fp()
          title(paste0(p," [",m," (",A1,"/",A2,")","]"))
          metaplot(BETA,SE,N,
                   labels=paste0(study," (",format(BETA,digits=3),"/",format(SE,digits=3),")"),
-                  xlab="Effect distribution",ylab="",xlim=xlim,
+                  xlab="Effect distribution",ylab="",xlim=c(-1.5,1.5),
                   summn=tbl[i,"Effect"],sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"],
                   colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
          title(paste0(p," [",m," (",A1,"/",A2,")", " N=",tbl[i,"N"],"]"))
