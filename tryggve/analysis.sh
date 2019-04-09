@@ -108,7 +108,7 @@ function fp()
   (
     gunzip -c METAL/4E.BP1-1.tbl.gz | \
     head -1
-    awk 'NR>1' clumping/INF1.clumped | \
+    awk 'NR>1' INF1.clumped | \
     cut -d' ' -f1,3 | \
     parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
   ) | \
