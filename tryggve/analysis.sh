@@ -34,7 +34,9 @@ function qml()
      read chrom start end gene prot < st.tmp
      gunzip -c METAL/{}-1.tbl.gz | \
      awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
-         "(\$1 == chr && \$2 >= start && \$2 <= end){split(\$3,a,\"_\");print a[1],\$12,\$14}"
+         "(\$1 == chr && \$2 >= start && \$2 <= end){split(\$3,a,\"_\");print a[1],\$12,\$14}" | \
+     join EUR.rsid - | \
+     awk -vOFS="\t" "{print \$2, \$3, \$4}"
   )  > METAL/{}.lz'
   ls METAL/*-1.tbl.gz | \
   sed 's|METAL/||g;s/-1.tbl.gz//g' | \
