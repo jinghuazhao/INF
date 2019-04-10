@@ -103,6 +103,27 @@ convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) 
 ```
 used to generate the figure in the front page. Another very useful utility is its `display`.
 
+### LocusZoom 1.4
+
+This version has problem with R/3.5.0-ICC-MKL so the default call is converted to a function which can be invoked at the start of a session,
+```bash
+function R.3.5.0()
+{
+  export R_LIBS=/data/$USER/R:$HOME/R:/services/tools/R/3.5.0-ICC-MKL/lib64/R/library
+  module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL
+  source /data/jinhua/parallel-20190222/bin/env_parallel.bash
+  alias R='/services/tools/R/3.5.0-ICC-MKL/bin/R -q $@'
+}
+```
+then
+```bash
+module load gcc/5.4.0
+module load R/3.2.5
+module load anaconda2/4.4.0
+module load locuszoom/1.4
+```
+ /usr/bin/R (3.3.2) has no associate module.
+
 ### METAL
 
 The version as in /data/jinhua/METAL-2018-08-28 contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
