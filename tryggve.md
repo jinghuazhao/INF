@@ -84,24 +84,7 @@ ls METAL/*.run | parallel --dry-run --env HOME -j8 -C' ' 'metal $HOME/INF/{}'
 ```
 NB METAL add -1 to the filenames.
 
-## NEW SOFTWARE
-
-There are a number of software updates/additions which are worthy of note.
-
-### GCTA
-
-A more recenve version is available from /data/jinhua/gcta_1.91.7beta/.
-This version can handle chi-squared statistics instead of p values in the joint/conditional (COJO) analysis; it also allows for `--grm file --pca --out file`, i.e., same file root.
-
-### ImageMagick
-
-This is version 7.0.8-22, made available due to the inability to use the imagemagick/7.0.8-16 module, e.g.,
-```bash
-export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
-convert OPG.lz-1.png -resize 130% OPG.lz-3.png
-convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
-```
-used to generate the figure in the front page. Another very useful utility is its `display`.
+## SOFTWARE ISSUES
 
 ### LocusZoom 1.4
 
@@ -124,6 +107,30 @@ module load locuszoom/1.4
 ```
  /usr/bin/R (3.3.2) has no associate module.
 
+### qctool
+
+TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ and its installation described on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
+
+
+## NEW SOFTWARE
+
+There are a number of software updates/additions which are worthy of note.
+
+### GCTA
+
+A more recenve version is available from /data/jinhua/gcta_1.91.7beta/.
+This version can handle chi-squared statistics instead of p values in the joint/conditional (COJO) analysis; it also allows for `--grm file --pca --out file`, i.e., same file root.
+
+### ImageMagick
+
+This is version 7.0.8-22, made available due to the inability to use the imagemagick/7.0.8-16 module, e.g.,
+```bash
+export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
+convert OPG.lz-1.png -resize 130% OPG.lz-3.png
+convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
+```
+used to generate the figure in the front page. Another very useful utility is its `display`.
+
 ### METAL
 
 The version as in /data/jinhua/METAL-2018-08-28 contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
@@ -144,10 +151,6 @@ for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
 export MANPATH=/data/jinhua/parallel-20190222/share/man:$MANPATH
 ```
 The last line enables `man parallel` and `info parallel`.
-
-### qctool
-
-TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ and its installation described on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
 
 ### R/gap
 
