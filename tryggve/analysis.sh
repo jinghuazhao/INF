@@ -70,7 +70,7 @@ function qml()
      mv {}-000002.png {}.lz-2.png
      cd -
   '
-  export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin;%PATH
+  export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:%PATH
   convert OPG.lz-1.png -resize 130% OPG.lz-3.png
   convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
 }
