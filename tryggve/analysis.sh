@@ -1,16 +1,25 @@
 # 10-4-2019 JHZ
 
-# LocusZoom 1.4 is loaded separately, as it has problem to work with R/3.5.0
-# .$HOME/.bashrc also needs change by unaliasing R, resetting PATH and R_LIBS
+module unload R
+source tryggve/analysis.ini
 
-module load gcc/5.4.0
-module load R/3.2.5
-module load anaconda2/4.4.0
-module load locuszoom/1.4
+function R.3.5.0()
+{
+  export R_LIBS=/data/$USER/R:$HOME/R:/services/tools/R/3.5.0-ICC-MKL/lib64/R/library
+  module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL
+  source /data/jinhua/parallel-20190222/bin/env_parallel.bash
+  alias R='/services/tools/R/3.5.0-ICC-MKL/bin/R -q $@'
+}
 
 function qml()
 {
   echo "--> Q-Q/Manhattan/LocusZoom plots"
+# LocusZoom 1.4 requires R/3.5.0
+# $HOME/.bashrc also needs change by unaliasing R, resetting R_LIBS
+  unalias R
+  module unload R
+  export R_LIBS=
+  module load R/3.2.5
   export rt=$HOME/INF
   (
     echo -e "chrom\tstart\tend\tgene\tprot"
@@ -65,8 +74,6 @@ function qml()
   convert OPG.lz-1.png -resize 130% OPG.lz-3.png
   convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
 }
-
-source tryggve/analysis.ini
 
 function clumping()
 {
