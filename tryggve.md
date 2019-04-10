@@ -98,14 +98,14 @@ function R.3.5.0()
   alias R='/services/tools/R/3.5.0-ICC-MKL/bin/R -q $@'
 }
 ```
-then
+then one invokes R.5.0 when necessary. To use LocusZoom 1.4, one only needs to start with
 ```bash
 module load gcc/5.4.0
 module load R/3.2.5
 module load anaconda2/4.4.0
 module load locuszoom/1.4
 ```
- /usr/bin/R (3.3.2) has no associate module.
+Note that without these /usr/bin/R (3.3.2) is used by default nonetheless it has no associate module.
 
 ### qctool
 
