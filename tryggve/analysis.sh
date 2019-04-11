@@ -1,4 +1,4 @@
-# 10-4-2019 JHZ
+# 11-4-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -322,11 +322,15 @@ function cojo()
     grep -v -w SNP $rt/*.jma.cojo
   ) | \
   sed 's|'"$rt"'/||g;s/.jma.cojo:/\t/g' | \
-  awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > INF1.jma
-  sed 's/Chr/CHR/g;s/bp/BP/g' cojo/INF1.1KG.r2-0.1.jma > jma
+  awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > cojo/INF1.jma
+  sed 's/Chr/CHR/g;s/bp/BP/g' cojo/INF1.jma > jma
   R --no-save -q <<\ \ END
     require(gap)
-    cojo <- read.table("jma",as.is=TRUE,header=TRUE)
+    cojo <- read.delim("jma")
+    ni <- dim(subset(jma,p <= 5e-10))[1]
+    primary <- dim(subset(jma,p <= 5e-10 & pJ <= 5e-10))[1]
+    seconary <- dim(subset(jma,p > 5e-10 & pJ <= 5e-10))[1]
+    print(cbind(ni,primary,secondary))
     hits <- merge(cojo[c("prot","CHR","BP","SNP")],inf1[c("prot","uniprot")],by="prot")
     names(hits) <- c("prot","Chr","bp","SNP","uniprot")
     cistrans <- cis.vs.trans.classification(hits)
