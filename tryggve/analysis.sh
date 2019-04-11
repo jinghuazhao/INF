@@ -3,14 +3,6 @@
 module unload R
 source tryggve/analysis.ini
 
-function R.3.5.0()
-{
-  export R_LIBS=/data/$USER/R:$HOME/R:/services/tools/R/3.5.0-ICC-MKL/lib64/R/library
-  module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL
-  source /data/jinhua/parallel-20190222/bin/env_parallel.bash
-  alias R='/services/tools/R/3.5.0-ICC-MKL/bin/R -q $@'
-}
-
 function qml()
 {
   echo "--> Q-Q/Manhattan/LocusZoom plots"
@@ -88,7 +80,7 @@ function clumping()
         --clump $rt/{}-1.tbl.gz \
         --clump-snp-field MarkerName \
         --clump-field P-value \
-        --clump-kb 500 \
+        --clump-kb 1000 \
         --clump-p1 5e-10 \
         --clump-p2 0.01 \
         --clump-r2 0.1 \
@@ -313,7 +305,7 @@ function cojo()
   xargs -l basename | \
   parallel -j2 --env rt -C' ' '
   if [ -f $rt/{}.jma.cojo ]; then rm $rt/{}.jma.cojo $rt/{}.ldr.cojo; fi; \
-  gcta64 --bfile EUR --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.1 --cojo-wind 500 \
+  gcta64 --bfile EUR --cojo-file $rt/{}.ma --cojo-slct --cojo-p 5e-10 --cojo-collinear 0.1 --cojo-wind 1000 \
          --maf 0.01 --thread-num 2 --out $rt/{}
   '
   (
