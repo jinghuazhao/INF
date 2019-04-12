@@ -1,4 +1,4 @@
-# 11-4-2019 JHZ
+# 12-4-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -423,8 +423,3 @@ function nodup()
 }
 
 $1
-
-# 96, MMP.12 (CVD II)
-# 97, MMP.9 (CVD III)
-# 153, TNFRSF12A (UnitProt ID Q9NP84) (reported in Sun et al. but nonoverlapped with CVD/INF)
-#     ~ MMP.9 connection on PLoS One by Yang et al. (2018)
