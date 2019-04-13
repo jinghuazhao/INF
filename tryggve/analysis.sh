@@ -1,4 +1,4 @@
-# 12-4-2019 JHZ
+# 13-4-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -318,19 +318,19 @@ function cojo()
   sed 's/Chr/CHR/g;s/bp/BP/g' cojo/INF1.jma > jma
   R --no-save -q <<\ \ END
     require(gap)
-    cojo <- read.delim("jma")
+    jma <- read.delim("jma")
     ni <- dim(subset(jma,p <= 5e-10))[1]
     primary <- dim(subset(jma,p <= 5e-10 & pJ <= 5e-10))[1]
-    seconary <- dim(subset(jma,p > 5e-10 & pJ <= 5e-10))[1]
+    secondary <- dim(subset(jma,p > 5e-10 & pJ <= 5e-10))[1]
     print(cbind(ni,primary,secondary))
-    hits <- merge(cojo[c("prot","CHR","BP","SNP")],inf1[c("prot","uniprot")],by="prot")
+    hits <- merge(jma[c("prot","CHR","BP","SNP")],inf1[c("prot","uniprot")],by="prot")
     names(hits) <- c("prot","Chr","bp","SNP","uniprot")
     cistrans <- cis.vs.trans.classification(hits)
     sink("cojo/INF1.jma.out")
     with(cistrans,table)
     sink()
     sum(with(cistrans,table))
-    pdf("INF1.jma.pdf")
+    pdf("cojo/INF1.jma.pdf")
     circos.cis.vs.trans.plot(hits="jma")
     dev.off()
   END
