@@ -1,4 +1,4 @@
-# 13-4-2019 JHZ
+# 14-4-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -319,7 +319,7 @@ function cojo()
   R --no-save -q <<\ \ END
     require(gap)
     jma <- read.delim("jma")
-    ni <- dim(subset(jma,p <= 5e-10))[1]
+    ni <- dim(jma)[1]
     primary <- dim(subset(jma,p <= 5e-10 & pJ <= 5e-10))[1]
     secondary <- dim(subset(jma,p > 5e-10 & pJ <= 5e-10))[1]
     print(cbind(ni,primary,secondary))
