@@ -211,7 +211,7 @@ function fp()
   (
     awk 'NR>1' INF1.tbl | \
     cut -f1,3,13 | \
-    awk '{split($1,a,":");print a[1],$2,$3}'
+    awk '{split($1,a,":");print a[1],$2,$3}' | \
     parallel -j4 -C' ' '
       export direction=$(zgrep -w {2} METAL/{1}-1.tbl.gz | cut -f13)
       let j=1
@@ -336,7 +336,7 @@ function aild()
     gsub(/chr/,"",chr);
     flanking=($3-$2)/2/1000
     centre=$2+flanking
-    print sprintf("%d %d %d %s", chr, centre, flanking,$4)
+    print sprintf("%d %d %d %s", chr, centre, flanking, $4)
   }' tryggve/EURLD.bed > rlist=EURLD.region
 
   for prot in $(ls $rt/METAL/*tbl.gz | sed 's/-1.tbl.gz//g' | xargs -l basename)
