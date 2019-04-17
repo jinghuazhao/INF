@@ -1,4 +1,4 @@
-# 14-4-2019 JHZ
+# 17-4-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -113,159 +113,6 @@ function clumping()
   END
 }
 
-function fp()
-{
-  (
-    gunzip -c METAL/4E.BP1-1.tbl.gz | \
-    head -1
-    awk 'NR>1' INF1.clumped | \
-    cut -d' ' -f1,3 | \
-    parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
-  ) | \
-  sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.clumped.tbl
-  (
-    awk 'NR>1' INF1.clumped.tbl | \
-    cut -f1,3,13 | \
-    awk '{split($1,a,":");print a[1],$2,$3}'
-    parallel -j4 -C' ' '
-      export direction=$(zgrep -w {2} METAL/{1}-1.tbl.gz | cut -f13)
-      let j=1
-      for i in $(grep "Input File" METAL/{1}-1.tbl.info | cut -d" " -f7)
-      do
-         export n=$(awk -vj=$j "BEGIN{split(ENVIRON[\"direction\"],a,\"\");print a[j]}")
-         if [ "$n" != "?" ]; then zgrep -H -w {2} $i; fi
-         let j=$j+1
-      done
-  '
-  ) | \
-  sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.clumped.all
-  R -q --no-save <<\ \ END
-    test_forest <- function()
-    {
-      tabletext <- cbind(c("Study",study,"Summary"),
-                           c("Effect",format(BETA,digits=3),format(tbl[i,"Effect"],digits=3)),
-                           c("SE",format(SE,digits=3),format(tbl[i,"StdErr"],digits=3)),
-                           c("N",N,tbl[i,"N"]))
-      print(tabletext)
-      forestplot(tabletext,
-                 c(NA,BETA,tbl[i,"Effect"]),
-                 c(NA,BETA-1.96*SE,tbl[i,"Effect"]-1.96*tbl[i,"StdErr"]),
-                 c(NA,BETA+1.96*SE,tbl[i,"Effect"]+1.96*tbl[i,"StdErr"]),
-                 zero=0,
-                 is.summary=c(TRUE,rep(FALSE,length(BETA)),TRUE),
-                 boxsize=0.75,
-                 col=meta.colors(box="royalblue",line="darkblue", summary="royalblue"))
-      title(title)
-      metaplot(BETA,SE,N,
-               labels=sprintf("%s (%.3f %.3f %.0f)",study,BETA,SE,N),
-               xlab="Effect distribution",ylab="",xlim=c(-1.5,1.5),
-               summn=tbl[i,"Effect"],sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"],
-               colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
-      title(title)
-    }
-    tbl <- read.delim("INF1.clumped.tbl",as.is=TRUE)
-    tbl <- within(tbl, {
-      prot <- sapply(strsplit(Chromosome,":"),"[",1)
-      Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
-    })
-    all <- read.table("INF1.clumped.all",as.is=TRUE,
-           col.names=c("SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE",
-                       "CODE_ALL_FQ", "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP"))
-    all <- within(all, {
-      dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
-      p1 <- sapply(strsplit(SNPID,":"),"[",2)
-      p2 <- sapply(strsplit(SNPID,":"),"[",3)
-      MarkerName <- paste(p1,p2,sep=":")
-      study <- sapply(strsplit(dir.study.prot,"/"),"[",2)
-      study.prot <- sapply(strsplit(dir.study.prot,"/"),"[",3)
-      substudy <- sapply(strsplit(study.prot,"[.]"),"[",1)
-      pos <- unlist(lapply(gregexpr("[.]",study.prot),"[",1))
-      prot <- substring(study.prot,pos+1)
-    })
-    require(rmeta)
-    pdf("INF1.fp.pdf",width=8.75,height=5)
-    for(i in 1:nrow(tbl))
-    {
-       p <- tbl[i,"prot"]
-       m <- tbl[i,"MarkerName"]
-       d <- gsub("[?]","",tbl[i,"Direction"])
-       s <- unlist(strsplit(d,""))
-       f <- as.numeric(paste0(s,1))
-       A1 <- toupper(tbl[i,"Allele1"])
-       A2 <- toupper(tbl[i,"Allele2"])
-       print(paste0(i,"-",p,":",m))
-       with(subset(all,prot==p & MarkerName==m), {
-         e <- toupper(EFFECT_ALLELE)
-         r <- toupper(REFERENCE_ALLELE)
-         a1 <- a2 <- vector('character',length(e))
-         a1 <- e
-         a2 <- r
-         c <- rep(1,length(e))
-         j <- sapply(a1,'!=',A1)
-         a1[j] <- r[j]
-         a2[j] <- e[j]
-         c[j] <- -1
-         print(cbind(A1,A2,EFFECT_ALLELE,REFERENCE_ALLELE,a1,a2,format(BETA,digits=3),format(BETA*c,digits=3)))
-         BETA <- BETA * c
-         title <- sprintf("%s [%s (%s/%s) N=%.0f]",p,m,A1,A2,tbl[i,"N"])
-         require(meta)
-         mg <- metagen(BETA,SE,sprintf("%s (%.0f)",study,N),title=title)
-         forest(mg,colgap.forest.left = "1cm")
-         require(grid)
-         grid.text(title,0.5,0.9)
-#        test_forest()
-       })
-    }
-    dev.off()
-  END
-}
-
-function mpfr()
-{
-  echo "--> METAL results containing P-value=0"
-  awk '($5==0)' INF1.clumped | \
-  cut -d' ' -f1 | 
-  uniq > INF1.z
-  cat INF1.z | \
-  parall -j2 --env rt '
-  (
-    export port={}
-    gunzip -c $rt/{}-1.tbl.gz | \
-    awk -vOFS="\t" "NR==1||\$12!=0"
-    gunzip -c $rt/{}-1.tbl.gz | \
-    awk -vOFS="\t" "(NR==1||\$12==0)" > {}.z
-    R --no-save -q <<\ \ \ \ END
-      prot <- Sys.getenv("prot")
-      metal <- read.delim(paste0(prot,".z"),as.is=TRUE)
-      library(Rmpfr)
-      metal <- within(metal,{P.value=format(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE,log.p=FALSE))})
-      write.table(metal,file=paste0(prot,".p"),sep=\"\\t\",row.names=FALSE,quote=FALSE)
-    END
-    awk "NR>1" {}.p
-  )'
-}
-
-function top_signals()
-{
-  echo "--> top signals"
-  export rt=$HOME/INF/METAL
-  ls METAL/*clumped | \
-  sed 's|METAL/||g;s/.clumped//g' | \
-  xargs -l basename | \
-  parallel -j4 --env rt -C' ' '
-  (
-     grep -w {} st.bed | \
-     awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M;\$2=start;\$3=end};1" > st.tmp
-     read chrom start end gene prot < st.tmp
-     head -1 $rt/{}.clumped
-     awk -vchr=$chrom "(NR > 1 && \$1==chr)" $rt/{}.clumped | \
-     sort -k3,3 | \
-     join -v1 -13 -21 - MHC.snpid | \
-     sort -k2,2n -k3,3n
-  ) > $rt/{}.top
-  '
-}
-
 function ma()
 {
   echo "--> .ma"
@@ -351,6 +198,113 @@ function cojo()
 #13 POS
 #14 WEIGHT
 
+function fp()
+# replace jma with clumped for results from PLINK --clumping
+{
+  (
+    gunzip -c METAL/4E.BP1-1.tbl.gz | \
+    head -1
+    awk 'NR>1 {print $1,$3}' INF1.jma | \
+    parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
+  ) | \
+  sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.jma.tbl
+  (
+    awk 'NR>1' INF1.jma.tbl | \
+    cut -f1,3,13 | \
+    awk '{split($1,a,":");print a[1],$2,$3}'
+    parallel -j4 -C' ' '
+      export direction=$(zgrep -w {2} METAL/{1}-1.tbl.gz | cut -f13)
+      let j=1
+      for i in $(grep "Input File" METAL/{1}-1.tbl.info | cut -d" " -f7)
+      do
+         export n=$(awk -vj=$j "BEGIN{split(ENVIRON[\"direction\"],a,\"\");print a[j]}")
+         if [ "$n" != "?" ]; then zgrep -H -w {2} $i; fi
+         let j=$j+1
+      done
+  '
+  ) | \
+  sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.jma.all
+  R -q --no-save <<\ \ END
+    test_forest <- function()
+    {
+      tabletext <- cbind(c("Study",study,"Summary"),
+                           c("Effect",format(BETA,digits=3),format(tbl[i,"Effect"],digits=3)),
+                           c("SE",format(SE,digits=3),format(tbl[i,"StdErr"],digits=3)),
+                           c("N",N,tbl[i,"N"]))
+      print(tabletext)
+      forestplot(tabletext,
+                 c(NA,BETA,tbl[i,"Effect"]),
+                 c(NA,BETA-1.96*SE,tbl[i,"Effect"]-1.96*tbl[i,"StdErr"]),
+                 c(NA,BETA+1.96*SE,tbl[i,"Effect"]+1.96*tbl[i,"StdErr"]),
+                 zero=0,
+                 is.summary=c(TRUE,rep(FALSE,length(BETA)),TRUE),
+                 boxsize=0.75,
+                 col=meta.colors(box="royalblue",line="darkblue", summary="royalblue"))
+      title(title)
+      metaplot(BETA,SE,N,
+               labels=sprintf("%s (%.3f %.3f %.0f)",study,BETA,SE,N),
+               xlab="Effect distribution",ylab="",xlim=c(-1.5,1.5),
+               summn=tbl[i,"Effect"],sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"],
+               colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
+      title(title)
+    }
+    tbl <- read.delim("INF1.jma.tbl",as.is=TRUE)
+    tbl <- within(tbl, {
+      prot <- sapply(strsplit(Chromosome,":"),"[",1)
+      Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
+    })
+    all <- read.table("INF1.jma.all",as.is=TRUE,
+           col.names=c("SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE",
+                       "CODE_ALL_FQ", "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP"))
+    all <- within(all, {
+      dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
+      p1 <- sapply(strsplit(SNPID,":"),"[",2)
+      p2 <- sapply(strsplit(SNPID,":"),"[",3)
+      MarkerName <- paste(p1,p2,sep=":")
+      study <- sapply(strsplit(dir.study.prot,"/"),"[",2)
+      study.prot <- sapply(strsplit(dir.study.prot,"/"),"[",3)
+      substudy <- sapply(strsplit(study.prot,"[.]"),"[",1)
+      pos <- unlist(lapply(gregexpr("[.]",study.prot),"[",1))
+      prot <- substring(study.prot,pos+1)
+    })
+    require(rmeta)
+    pdf("INF1.jma-fp.pdf",width=8.75,height=5)
+    for(i in 1:nrow(tbl))
+    {
+       p <- tbl[i,"prot"]
+       m <- tbl[i,"MarkerName"]
+       d <- gsub("[?]","",tbl[i,"Direction"])
+       s <- unlist(strsplit(d,""))
+       f <- as.numeric(paste0(s,1))
+       A1 <- toupper(tbl[i,"Allele1"])
+       A2 <- toupper(tbl[i,"Allele2"])
+       print(paste0(i,"-",p,":",m))
+       with(subset(all,prot==p & MarkerName==m), {
+         e <- toupper(EFFECT_ALLELE)
+         r <- toupper(REFERENCE_ALLELE)
+         a1 <- a2 <- vector('character',length(e))
+         a1 <- e
+         a2 <- r
+         c <- rep(1,length(e))
+         j <- sapply(a1,'!=',A1)
+         a1[j] <- r[j]
+         a2[j] <- e[j]
+         c[j] <- -1
+         print(cbind(A1,A2,EFFECT_ALLELE,REFERENCE_ALLELE,a1,a2,format(BETA,digits=3),format(BETA*c,digits=3)))
+         BETA <- BETA * c
+         title <- sprintf("%s [%s (%s/%s) N=%.0f]",p,m,A1,A2,tbl[i,"N"])
+         require(meta)
+         mg <- metagen(BETA,SE,sprintf("%s (%.0f)",study,N),title=title)
+         forest(mg,colgap.forest.left = "1cm")
+         require(grid)
+         grid.text(title,0.5,0.9)
+#        test_forest()
+       })
+    }
+    dev.off()
+  END
+}
+
 function aild()
 {
   echo "--> approximately independent LD blocks"
@@ -398,6 +352,52 @@ function aild()
        awk "NR>1" $rt/LDBLOCK/${p}*.jma.cojo
      ) > $rt/${p}.jma
   done
+}
+
+function mpfr()
+{
+  echo "--> METAL results containing P-value=0"
+  awk '($5==0)' INF1.clumped | \
+  cut -d' ' -f1 | 
+  uniq > INF1.z
+  cat INF1.z | \
+  parall -j2 --env rt '
+  (
+    export port={}
+    gunzip -c $rt/{}-1.tbl.gz | \
+    awk -vOFS="\t" "NR==1||\$12!=0"
+    gunzip -c $rt/{}-1.tbl.gz | \
+    awk -vOFS="\t" "(NR==1||\$12==0)" > {}.z
+    R --no-save -q <<\ \ \ \ END
+      prot <- Sys.getenv("prot")
+      metal <- read.delim(paste0(prot,".z"),as.is=TRUE)
+      library(Rmpfr)
+      metal <- within(metal,{P.value=format(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE,log.p=FALSE))})
+      write.table(metal,file=paste0(prot,".p"),sep=\"\\t\",row.names=FALSE,quote=FALSE)
+    END
+    awk "NR>1" {}.p
+  )'
+}
+
+function top_signals()
+{
+  echo "--> top signals"
+  export rt=$HOME/INF/METAL
+  ls METAL/*clumped | \
+  sed 's|METAL/||g;s/.clumped//g' | \
+  xargs -l basename | \
+  parallel -j4 --env rt -C' ' '
+  (
+     grep -w {} st.bed | \
+     awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M;\$2=start;\$3=end};1" > st.tmp
+     read chrom start end gene prot < st.tmp
+     head -1 $rt/{}.clumped
+     awk -vchr=$chrom "(NR > 1 && \$1==chr)" $rt/{}.clumped | \
+     sort -k3,3 | \
+     join -v1 -13 -21 - MHC.snpid | \
+     sort -k2,2n -k3,3n
+  ) > $rt/{}.top
+  '
 }
 
 function annotate()
