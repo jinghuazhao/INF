@@ -85,7 +85,7 @@ edits Q4ACW9, [inf2.csv](doc/inf2.csv) is inline with UCSC with respect to P1203
 
 A version by Jimmy is [olink.inf.panel.annot.tsv](doc/olink.inf.panel.annot.tsv) from [olink.annotation.R](doc/olink.annotation.R).
 
-BDNF has recently been removed from the assay and replaced with CD8A, https://www.olink.com/bdnf-info/.
+BDNF has recently been removed from the assay and replaced with CD8A, https://www.olink.com/bdnf-info/ and also changes on TNF, https://www.olink.com/inflammation-upgrade/.
 
 ## References
 
@@ -102,3 +102,5 @@ SCALLOP [consortium](https://www.olink.com/scallop/), [GitHub repository](https:
 SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/proteins.
 
 [turbo.sh](cardio/turbo.sh) shows tweak of [turboman](https://github.com/bpprins/turboman) and [turboqq](https://github.com/bpprins/turboqq); see also aild() in tryggve/analysis.sh.
+
+[Olink publications](https://www.olink.com/data-you-can-trust/publications/).
