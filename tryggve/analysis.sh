@@ -199,17 +199,17 @@ function cojo()
 #14 WEIGHT
 
 function fp()
-# replace jma with clumped for results from PLINK --clumping
 {
   (
     gunzip -c METAL/4E.BP1-1.tbl.gz | \
     head -1
+  # replace jma with clumped for results from PLINK --clumping
     awk 'NR>1 {print $1,$3}' INF1.jma | \
     parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
   ) | \
-  sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.jma.tbl
+  sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.tbl
   (
-    awk 'NR>1' INF1.jma.tbl | \
+    awk 'NR>1' INF1.tbl | \
     cut -f1,3,13 | \
     awk '{split($1,a,":");print a[1],$2,$3}'
     parallel -j4 -C' ' '
@@ -223,7 +223,7 @@ function fp()
       done
   '
   ) | \
-  sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.jma.all
+  sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.all
   R -q --no-save <<\ \ END
     test_forest <- function()
     {
@@ -248,12 +248,12 @@ function fp()
                colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
       title(title)
     }
-    tbl <- read.delim("INF1.jma.tbl",as.is=TRUE)
+    tbl <- read.delim("INF1.tbl",as.is=TRUE)
     tbl <- within(tbl, {
       prot <- sapply(strsplit(Chromosome,":"),"[",1)
       Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
     })
-    all <- read.table("INF1.jma.all",as.is=TRUE,
+    all <- read.table("INF1.all",as.is=TRUE,
            col.names=c("SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE",
                        "CODE_ALL_FQ", "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP"))
     all <- within(all, {
@@ -268,7 +268,7 @@ function fp()
       prot <- substring(study.prot,pos+1)
     })
     require(rmeta)
-    pdf("INF1.jma-fp.pdf",width=8.75,height=5)
+    pdf("INF1.fp.pdf",width=8.75,height=5)
     for(i in 1:nrow(tbl))
     {
        p <- tbl[i,"prot"]
