@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#SBATCH --ntasks=1
+#SBATCH --job-name=_rma
+#SBATCH --time=8:00:00
+#SBATCH --partition=short
+#SBATCH --array=1-92%4
+#SBATCH --output=work/_rma_%A_%a.out
+#SBATCH --error=work/_rma_%A_%a.err
+#SBATCH --export ALL
+
+. /etc/profile.d/modules.sh
+module load default-cardio
+module load slurm
+module load use.own
+module load gcc/5.2.0
+
+export TMPDIR=/scratch/jhz22/tmp
+export rt=/home/jhz22/INF
+export prot=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' work/inf1.tmp)
+export p=$prot
+(
+  echo -e \#chrom "\t" Start "\t" End "\t" SNP "\t" A1 "\t" A2 "\t" freq "\t" b "\t" se "\t" p "\t" N
+  gunzip -c $rt/METAL/${p}-1.tbl.gz | \
+  awk 'NR>1 && $14>50' | \
+  sort -k1,1n -k2,2 | \
+  awk -vOFS="\t" '{print "chr" $1, $2-1, $2, $3, $4, $5, $6, $10, $11, $12, $14}'
+) | \
+bedtools intersect -a tryggve/EURLD.bed -b - -loj | \
+cut -f4,8-15 > work/${p}.rma
