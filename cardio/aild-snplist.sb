@@ -20,4 +20,4 @@ export r=${SLURM_ARRAY_TASK_ID}
 awk -vr="region${r}" 'NR>1 && $4==r {sub(/chr/,"",$1);print $1,$2,$3}' tryggve/EURLD.bed > work/EURLD.${r}
 read chr start end < work/EURLD.${r}
 awk -vchr=$chr -vstart=$start -vend=$end '($1==chr&&$4>=start&&$4<=end){print $2}' \
-    /scratch/jhz22/data/INTERVAL/INTERVAL.bim > work/${p}.${r}.snplist
+    /scratch/jhz22/data/INTERVAL/INTERVAL.bim > work/EURLD.${r}.snplist
