@@ -5,7 +5,7 @@
 #SBATCH --time=8:00:00
 #SBATCH --partition=short
 #SBATCH --mem=128800
-#SBATCH --array=1-92%4
+#SBATCH --array=1-92%2
 #SBATCH --output=work/_rma_%A_%a.out
 #SBATCH --error=work/_rma_%A_%a.err
 #SBATCH --export ALL
