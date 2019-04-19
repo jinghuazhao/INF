@@ -2,7 +2,7 @@
 
 #SBATCH --ntasks=1
 #SBATCH --job-name=_cojo
-#SBATCH --time=10-8:00:00
+#SBATCH --time=8:00:00
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=short
 #SBATCH --array=1-1703%5
