@@ -16,7 +16,7 @@ module load slurm
 module load use.own
 
 export TMPDIR=/scratch/jhz22/tmp
-if [ -f work/prot-region.list ]; then
+if [ ! -f work/prot-region.list ]; then
 (
    for p in $(awk '{print $1}' work/inf.tmp)
    do
