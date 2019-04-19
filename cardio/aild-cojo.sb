@@ -27,6 +27,7 @@ do
 
    if [ -f work/${p}.${r}.jma.cojo ]; then rm work/${p}.${r}.jma.cojo work/${p}.${r}.ldr.cojo; fi; \
    gcta64 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL --extract work/EURLD.${r}.snplist \
-          --cojo-file work/${p}.${r}.rma --cojo-slct --cojo-p 5e-10 --cojo-wind 30000 --cojo-collinear 0.9 \
+          --cojo-file work/${p}.${r}.rma --cojo-slct \
+          --cojo-p 5e-10 --cojo-wind 30000 --cojo-collinear 0.9 \
           --maf 0.01 --thread-num 2 --out work/${p}.${r}
 done
