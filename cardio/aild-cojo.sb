@@ -4,7 +4,7 @@
 #SBATCH --job-name=_cojo
 #SBATCH --time=10-8:00:00
 #SBATCH --cpus-per-task=2
-#SBATCH --partition=long
+#SBATCH --partition=short
 #SBATCH --array=1-1703%5
 #SBATCH --output=work/_cojo_%A_%a.out
 #SBATCH --error=work/_cojo_%A_%a.err
@@ -20,14 +20,9 @@ export r=$SLURM_ARRAY_TASK_ID
 for prot in $(cut -d' ' -f1 work/inf1.tmp)
 do
    export p=$prot
-   (
-     echo SNP A1 A2 freq b se p N
-     awk -vregion="region${r}" '$1==region {print $2,$3,$4,$5,$6,$7,$8,$9}' work/${p}.rma
-   ) > work/${p}.${r}.rma
-
    if [ -f work/${p}.${r}.jma.cojo ]; then rm work/${p}.${r}.jma.cojo work/${p}.${r}.ldr.cojo; fi; \
    gcta64 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL --extract work/EURLD.${r}.snplist \
-          --cojo-file work/${p}.${r}.rma --cojo-slct \
+          --cojo-file work/${p}.ma --cojo-slct \
           --cojo-p 5e-10 --cojo-wind 30000 --cojo-collinear 0.9 \
           --maf 0.01 --thread-num 2 --out work/${p}.${r}
 done
