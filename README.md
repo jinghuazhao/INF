@@ -2,7 +2,7 @@
 
 ---
 
-# SCALLOP-INF analysis
+# SCALLOP Olink/INF analysis
 
 ---
 
