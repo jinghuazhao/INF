@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --partition=long
 #SBATCH --mem=128800
-#SBATCH --array=1-92%1
+#SBATCH --array=1-92%2
 #SBATCH --output=work/cojo_%A_%a.out
 #SBATCH --error=work/cojo_%A_%a.err
 #SBATCH --export ALL
@@ -16,7 +16,7 @@ module load default-cardio
 module load slurm
 module load use.own
 
-export p=$(cut -f1 work/inf1.tmp | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
+export p=$(cut -d' ' -f1 work/inf1.tmp | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
 export TMPDIR=/scratch/jhz22/tmp
 export rt=$HOME/INF/work
 
