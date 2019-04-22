@@ -16,7 +16,7 @@ module load default-cardio
 module load slurm
 module load use.own
 
-export p=$(cut -d' ' -f1 work/inf1.tmp | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
+export p=$(cut -f1 work/inf1.tmp | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
 export TMPDIR=/scratch/jhz22/tmp
 export rt=$HOME/INF/work
 
