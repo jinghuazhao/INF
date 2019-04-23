@@ -9,7 +9,7 @@ EURLD <- within(EURLD, {
            in10m <- ifelse(flanking<10000,1,0)
          })
 ord <- with(EURLD, order(dist_kb))
-with(EURLD,summary(dist))
+with(EURLD,summary(dist_kb))
 with(EURLD,table(in250k))
 with(EURLD,table(in500k))
 with(EURLD,table(in10m))
