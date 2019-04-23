@@ -17,7 +17,7 @@ module load use.own
 export TMPDIR=/scratch/jhz22/tmp
 export r=$SLURM_ARRAY_TASK_ID
 
-plink --bfile /scratch/jhz22/INF/data/INTERVAL \
+plink --bfile /scratch/jhz22/data/INTERVAL \
       --extract work/EURLD.${r}.snplist \
       --make-bed \
-      --out ${r}
+      --out work/INTERVAL-${r}
