@@ -25,4 +25,4 @@ export p=$(awk -vr=$r 'NR==r{print $1}' work/inf1.tmp)
          echo $p $i
       fi
   done
-) > work/${p}.list
+) > work/${p}.ailist
