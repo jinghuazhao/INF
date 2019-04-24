@@ -4,7 +4,7 @@
 #SBATCH --job-name=_bfile
 #SBATCH --time=8:00:00
 #SBATCH --partition=long
-#SBATCH --array=1-1703%6
+#SBATCH --array=1-1703%4
 #SBATCH --output=work/_bfile_%A_%a.out
 #SBATCH --error=work/_bfile_%A_%a.err
 #SBATCH --export ALL
