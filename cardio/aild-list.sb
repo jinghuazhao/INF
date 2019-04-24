@@ -21,7 +21,7 @@ export p=$(awk -vr=$r 'NR==r{print $1}' work/inf1.tmp)
   for i in $(seq 1703)
   do
       export flag=$(grep -w region${i} work/${p}.rma | awk '$8<=5e-10' | wc -l)
-      if [ $flag -eq 0 ]; then
+      if [ $flag -ne 0 ]; then
          echo $p $i
       fi
   done
