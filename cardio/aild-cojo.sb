@@ -25,7 +25,7 @@ gcta64 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
        --extract work/EURLD.${r}.snplist \
        --cojo-file work/${p}.ma \
        --cojo-slct \
-       --cojo-p 5e-10 \
+       --cojo-p 5.4e-10 \
        --cojo-wind 30000 \
        --cojo-collinear 0.9 \
        --maf 0.01 \
