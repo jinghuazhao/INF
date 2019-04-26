@@ -21,12 +21,12 @@ export r=$(awk -vline=$line '(NR==line){print $2}' work/INF1.ailist)
 if [ -f work/${p}.${r}.jma.cojo ]; then
    rm work/${p}-${r}.jma.cojo work/${p}-${r}.ldr.cojo
 fi
-gcta64 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
-       --extract work/EURLD.${r}.snplist \
-       --cojo-file work/${p}.ma \
-       --cojo-slct \
-       --cojo-p 5.4e-10 \
-       --cojo-wind 30000 \
-       --cojo-collinear 0.9 \
-       --maf 0.01 \
-       --out work/${p}-${r}
+gcta64-1.9 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
+           --extract work/EURLD.${r}.snplist \
+           --cojo-file work/${p}.ma \
+           --cojo-slct \
+           --cojo-p 5.4e-10 \
+           --cojo-wind 30000 \
+           --cojo-collinear 0.9 \
+           --maf 0.01 \
+           --out work/${p}-${r}
