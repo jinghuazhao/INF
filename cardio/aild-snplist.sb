@@ -2,7 +2,7 @@
 
 #SBATCH --ntasks=1
 #SBATCH --job-name=_snplist
-#SBATCH --time=1-8:00:00
+#SBATCH --time=8:00:00
 #SBATCH --partition=medium
 #SBATCH --array=1-1703%5
 #SBATCH --output=work/_snplist_%A_%a.out
