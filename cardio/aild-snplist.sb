@@ -3,7 +3,7 @@
 #SBATCH --ntasks=1
 #SBATCH --job-name=_snplist
 #SBATCH --time=1-8:00:00
-#SBATCH --partition=long
+#SBATCH --partition=medium
 #SBATCH --array=1-1703%5
 #SBATCH --output=work/_snplist_%A_%a.out
 #SBATCH --error=work/_snplist_%A_%a.err
@@ -17,8 +17,10 @@ module load use.own
 export TMPDIR=/scratch/jhz22/tmp
 export r=$SLURM_ARRAY_TASK_ID
 
-awk -vr="region${r}" 'NR>1 && $4==r {sub(/chr/,"",$1);print $1,$2,$3}' tryggve/EURLD.bed > work/EURLD.${r}
+if [ ! -f work/EURLD.${r} ]; then
+   awk -vr="region${r}" 'NR>1 && $4==r {sub(/chr/,"",$1);print $1,$2,$3}' tryggve/EURLD.bed > work/EURLD.${r}
+fi
 read chr start end < work/EURLD.${r}
 awk -vchr=$chr -vstart=$start -vend=$end '
-    ($1==chr&&$4>=start&&$4<end){print $2}
+    ($1==chr&&$4>=start&&$4<end&&length($5)==1&&length($6)==1){print $2}
   ' /scratch/jhz22/data/INTERVAL/INTERVAL.bim > work/EURLD.${r}.snplist
