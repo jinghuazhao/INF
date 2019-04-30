@@ -23,6 +23,8 @@ Optionally, the repository can be downloaded with
 git clone https://github.com/jinghua/INF
 ```
 
+<img src="doc/OPG-qml.png" width="400" height="800" align="right">
+
 ## A summary of files
 
 File     | Description
@@ -33,8 +35,6 @@ File     | Description
 [SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | Analysis plan
 [SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
 [tryggve.md](tryggve.md) | TRYGGVE notes
-
-<img src="doc/OPG-qml.png" width="400" height="800" align="right">
 
 ## Analysis
 
