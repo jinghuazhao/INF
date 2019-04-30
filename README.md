@@ -15,16 +15,6 @@
 * [References](https://github.com/jinghuazhao/INF#references)
 * [URLs](https://github.com/jinghuazhao/INF#urls)
 
-## Installation
-
-Optionally, the repository can be downloaded with
-
-``` {.bash}
-git clone https://github.com/jinghua/INF
-```
-
-<img src="doc/OPG-qml.png" width="400" height="800" align="right">
-
 ## A summary of files
 
 File     | Description
@@ -35,6 +25,8 @@ File     | Description
 [SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | Analysis plan
 [SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
 [tryggve.md](tryggve.md) | TRYGGVE notes
+
+<img src="doc/OPG-qml.png" width="400" height="800" align="right">
 
 ## Analysis
 
@@ -105,3 +97,11 @@ SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/
 [turbo.sh](cardio/turbo.sh) shows tweak of [turboman](https://github.com/bpprins/turboman) and [turboqq](https://github.com/bpprins/turboqq); see also aild() in tryggve/analysis.sh.
 
 [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
+
+## Installation
+
+Optionally, the repository can be downloaded with
+
+``` {.bash}
+git clone https://github.com/jinghua/INF
+```
