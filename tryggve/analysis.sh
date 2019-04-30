@@ -65,6 +65,10 @@ function qml()
   export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:%PATH
   convert OPG.lz-1.png -resize 130% OPG.lz-3.png
   convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
+#  convert OPG.lz-1.png -resize 130% OPG.lz-3.png
+#  pdftopng -r 300 -f 310 -l 310 INF1.fp.pdf 310
+#  convert 310-000310.png -resize 150% 310.png
+#  convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append 310.png -append \) +append OPG-qml.png
 }
 
 function clumping()
