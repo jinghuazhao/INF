@@ -212,6 +212,10 @@ function fp()
     parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
   ) | \
   sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.tbl
+  cut -f3 INF1.tbl | \
+  awk '{split($1,a,"_");print a[1]}' | \
+  sort -k1,1 | \
+  join -12 snp_pos - > INF1.rsid
   (
     awk 'NR>1' INF1.tbl | \
     cut -f1,3,13 | \
@@ -252,6 +256,7 @@ function fp()
                colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
       title(title)
     }
+    rsid <- read.table("INF1.rsid")
     tbl <- read.delim("INF1.tbl",as.is=TRUE)
     tbl <- within(tbl, {
       prot <- sapply(strsplit(Chromosome,":"),"[",1)
