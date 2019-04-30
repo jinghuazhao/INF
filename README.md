@@ -12,8 +12,7 @@
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
 * [References](https://github.com/jinghuazhao/INF#references)
 * [Notes on UniProt IDs](https://github.com/jinghuazhao/INF#notes-on-uniprot-ids)
-* [URLs](https://github.com/jinghuazhao/INF#urls)
-* [Installation](https://github.com/jinghuazhao/INF#installation)
+* [URLs and installation](https://github.com/jinghuazhao/INF#urls)
 
 ## A summary of files
 
@@ -90,7 +89,7 @@ A version by Jimmy is [olink.inf.panel.annot.tsv](doc/olink.inf.panel.annot.tsv)
 
 BDNF has recently been removed from the assay and replaced with CD8A, https://www.olink.com/bdnf-info/, and there are also changes on TNF and IFN.gamma, https://www.olink.com/inflammation-upgrade/.
 
-## URLs
+## URLs and installation
 
 SCALLOP [consortium](https://www.olink.com/scallop/), [GitHub repository](https://github.com/lassefolkersen/scallop), [securecloud](https://secureremote.dtu.dk/vpn/index.html).
 
@@ -99,8 +98,6 @@ SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/
 [turbo.sh](cardio/turbo.sh) shows tweak of [turboman](https://github.com/bpprins/turboman) and [turboqq](https://github.com/bpprins/turboqq); see also aild() in tryggve/analysis.sh.
 
 [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
-
-## Installation
 
 Optionally, the repository can be downloaded with
 
