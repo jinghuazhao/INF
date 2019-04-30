@@ -12,7 +12,7 @@
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
 * [References](https://github.com/jinghuazhao/INF#references)
 * [Notes on UniProt IDs](https://github.com/jinghuazhao/INF#notes-on-uniprot-ids)
-* [URLs-and-installation](https://github.com/jinghuazhao/INF#urls)
+* [URLs and installation](https://github.com/jinghuazhao/INF#urls-and-installation)
 
 ## A summary of files
 
