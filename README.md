@@ -2,7 +2,7 @@
 
 ---
 
-# SCALLOP Olink/INF analysis
+# SCALLOP Olink/Inflammation analysis
 
 ---
 
