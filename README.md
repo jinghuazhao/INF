@@ -26,7 +26,7 @@ File     | Description
 [SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
 [tryggve.md](tryggve.md) | TRYGGVE notes
 
-<img src="doc/OPG-qml.png" width="400" height="800" align="right">
+<img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
 
 ## Analysis
 
