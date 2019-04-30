@@ -10,8 +10,8 @@
 
 * [A summary of files](https://github.com/jinghuazhao/INF#a-summary-of-files)
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
-* [Notes on UniProt IDs](https://github.com/jinghuazhao/INF#notes-on-uniprot-ids)
 * [References](https://github.com/jinghuazhao/INF#references)
+* [Notes on UniProt IDs](https://github.com/jinghuazhao/INF#notes-on-uniprot-ids)
 * [URLs](https://github.com/jinghuazhao/INF#urls)
 * [Installation](https://github.com/jinghuazhao/INF#installation)
 
@@ -43,6 +43,14 @@ association analysis section of [software-notes](https://github.com/jinghuazhao/
 as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/master/BMI).
 
 5. TRYGGVE-specific issues were noted in [tryggve.md](tryggve.md). The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page), `log10p`, `gc.lambda`, `invnormal` functions are now all in [R/gap](https://github.com/jinghuazhao/R/tree/master/gap) repository, to be uploaded to CRAN in due course.
+
+## References
+
+Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. *PLoS Genetics* 13(4), doi.org/10.1371/journal.pgen.1006706.
+
+Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. *Hum Mol Genet* 23(24): 6684–6693.
+
+Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
 
 ## Notes on UniProt IDs
 
@@ -79,14 +87,6 @@ edits Q4ACW9, [inf2.csv](doc/inf2.csv) is inline with UCSC with respect to P1203
 A version by Jimmy is [olink.inf.panel.annot.tsv](doc/olink.inf.panel.annot.tsv) from [olink.annotation.R](doc/olink.annotation.R).
 
 BDNF has recently been removed from the assay and replaced with CD8A, https://www.olink.com/bdnf-info/, and there are also changes on TNF and IFN.gamma, https://www.olink.com/inflammation-upgrade/.
-
-## References
-
-Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. *PLoS Genetics* 13(4), doi.org/10.1371/journal.pgen.1006706.
-
-Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. *Hum Mol Genet* 23(24): 6684–6693.
-
-Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
 
 ## URLs
 
