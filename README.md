@@ -52,6 +52,8 @@ Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identi
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
 
+---
+
 ## Notes on UniProt IDs
 
 The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](cardio/OLINK.R), which also attempts to compromise earlier version and annotations.
