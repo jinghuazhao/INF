@@ -1,4 +1,4 @@
-# 17-4-2019 JHZ
+# 30-4-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -377,27 +377,6 @@ function mpfr()
     END
     awk "NR>1" {}.p
   )'
-}
-
-function top_signals()
-{
-  echo "--> top signals"
-  export rt=$HOME/INF/METAL
-  ls METAL/*clumped | \
-  sed 's|METAL/||g;s/.clumped//g' | \
-  xargs -l basename | \
-  parallel -j4 --env rt -C' ' '
-  (
-     grep -w {} st.bed | \
-     awk -vOFS="\t" -vM=1000000 "{start=\$2-M;if(start<0) start=0;end=\$3+M;\$2=start;\$3=end};1" > st.tmp
-     read chrom start end gene prot < st.tmp
-     head -1 $rt/{}.clumped
-     awk -vchr=$chrom "(NR > 1 && \$1==chr)" $rt/{}.clumped | \
-     sort -k3,3 | \
-     join -v1 -13 -21 - MHC.snpid | \
-     sort -k2,2n -k3,3n
-  ) > $rt/{}.top
-  '
 }
 
 function annotate()
