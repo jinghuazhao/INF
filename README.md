@@ -8,12 +8,12 @@
 
 ## TABLE OF CONTENTS
 
-* [Installation](https://github.com/jinghuazhao/INF#inf)
 * [A summary of files](https://github.com/jinghuazhao/INF#a-summary-of-files)
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
 * [Notes on UniProt IDs](https://github.com/jinghuazhao/INF#notes-on-uniprot-ids)
 * [References](https://github.com/jinghuazhao/INF#references)
 * [URLs](https://github.com/jinghuazhao/INF#urls)
+* [Installation](https://github.com/jinghuazhao/INF#installation)
 
 ## A summary of files
 
