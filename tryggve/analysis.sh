@@ -216,7 +216,8 @@ function fp()
   awk '{split($1,a,"_");print a[1], $1}' | \
   sort -k1,1 | \
   join -12 snp_pos - | \
-  cut -d' ' -f2,3 > INF1.rsid
+  cut -d' ' -f2,3 | \
+  sort -k2,2 > INF1.rsid
   (
     awk 'NR>1' INF1.tbl | \
     cut -f1,3,13 | \
@@ -257,18 +258,15 @@ function fp()
                colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
       title(title)
     }
-    rsid <- read.table("INF1.rsid",as.is=TRUE,col.names=c("SNP","SNPID"))
     t <- read.delim("INF1.tbl",as.is=TRUE)
-    tbl <- merge(t,rsid,by.x="MarkerName",by.y="SNPID")
-    tbl <- within(tbl, {
+    tbl <- within(t, {
       prot <- sapply(strsplit(Chromosome,":"),"[",1)
       Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
     })
     a <- read.table("INF1.all",as.is=TRUE,
          col.names=c("SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE",
                      "CODE_ALL_FQ", "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP"))
-    all <- merge(a,rsid,by.x="SNPID",by.y="SNPID")
-    all <- within(all, {
+    all <- within(a, {
       dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
       p1 <- sapply(strsplit(SNPID,":"),"[",2)
       p2 <- sapply(strsplit(SNPID,":"),"[",3)
@@ -279,6 +277,9 @@ function fp()
       pos <- unlist(lapply(gregexpr("[.]",study.prot),"[",1))
       prot <- substring(study.prot,pos+1)
     })
+    rsid <- read.table("INF1.rsid",as.is=TRUE,col.names=c("SNP","MarkerName"))
+    t <- merge(tbl,rsid,by="MarkerName")
+    a <- merge(all,rsid,by="MarkerName")
     require(rmeta)
     pdf("INF1.fp.pdf",width=8.75,height=5)
     for(i in 1:nrow(tbl))
