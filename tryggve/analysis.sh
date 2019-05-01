@@ -285,7 +285,7 @@ function fp()
     for(i in 1:nrow(tbl))
     {
        p <- tbl[i,"prot"]
-       m <- tbl[i,"SNP"]
+       m <- tbl[i,"MarkerName"]
        d <- gsub("[?]","",tbl[i,"Direction"])
        s <- unlist(strsplit(d,""))
        f <- as.numeric(paste0(s,1))
