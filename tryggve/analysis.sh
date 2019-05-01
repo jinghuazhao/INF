@@ -1,4 +1,4 @@
-# 30-4-2019 JHZ
+# 1-5-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -213,9 +213,10 @@ function fp()
   ) | \
   sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.tbl
   cut -f3 INF1.tbl | \
-  awk '{split($1,a,"_");print a[1]}' | \
+  awk '{split($1,a,"_");print a[1], $1}' | \
   sort -k1,1 | \
-  join -12 snp_pos - > INF1.rsid
+  join -12 snp_pos - | \
+  cut -d' ' -f2,3 > INF1.rsid
   (
     awk 'NR>1' INF1.tbl | \
     cut -f1,3,13 | \
@@ -256,15 +257,17 @@ function fp()
                colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
       title(title)
     }
-    rsid <- read.table("INF1.rsid")
-    tbl <- read.delim("INF1.tbl",as.is=TRUE)
+    rsid <- read.table("INF1.rsid",as.is=TRUE,col.names=c("SNP","SNPID"))
+    t <- read.delim("INF1.tbl",as.is=TRUE)
+    tbl <- merge(t,rsid,by.x="MarkerName",by.y="SNPID")
     tbl <- within(tbl, {
       prot <- sapply(strsplit(Chromosome,":"),"[",1)
       Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
     })
-    all <- read.table("INF1.all",as.is=TRUE,
-           col.names=c("SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE",
-                       "CODE_ALL_FQ", "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP"))
+    a <- read.table("INF1.all",as.is=TRUE,
+         col.names=c("SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE",
+                     "CODE_ALL_FQ", "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP"))
+    all <- merge(a,rsid,by.x="SNPID",by.y="SNPID")
     all <- within(all, {
       dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
       p1 <- sapply(strsplit(SNPID,":"),"[",2)
@@ -281,7 +284,7 @@ function fp()
     for(i in 1:nrow(tbl))
     {
        p <- tbl[i,"prot"]
-       m <- tbl[i,"MarkerName"]
+       m <- tbl[i,"SNP"]
        d <- gsub("[?]","",tbl[i,"Direction"])
        s <- unlist(strsplit(d,""))
        f <- as.numeric(paste0(s,1))
