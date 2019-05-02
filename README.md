@@ -8,22 +8,11 @@
 
 ## TABLE OF CONTENTS
 
-* [A summary of files](https://github.com/jinghuazhao/INF#a-summary-of-files)
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
 * [References](https://github.com/jinghuazhao/INF#references)
+* [A summary of files](https://github.com/jinghuazhao/INF#a-summary-of-files)
 * [Notes on UniProt IDs](https://github.com/jinghuazhao/INF#notes-on-uniprot-ids)
 * [URLs and installation](https://github.com/jinghuazhao/INF#urls-and-installation)
-
-## A summary of files
-
-File     | Description
----------|--------------------------------------------------------
-[doc/](doc) | Some documents and auxiliary files
-[cardio/](cardio) | Work on CEU's cardio
-[tryggve/](tryggve) | Analysis programs on TRYGGVE
-[SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | Analysis plan
-[SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
-[tryggve.md](tryggve.md) | TRYGGVE notes
 
 <img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
 
@@ -54,6 +43,17 @@ Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
 
 ---
+
+## A summary of files
+
+File     | Description
+---------|--------------------------------------------------------
+[doc/](doc) | Some documents and auxiliary files
+[cardio/](cardio) | Work on CEU's cardio
+[tryggve/](tryggve) | Analysis programs on TRYGGVE
+[SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | Analysis plan
+[SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
+[tryggve.md](tryggve.md) | TRYGGVE notes
 
 ## Notes on UniProt IDs
 
