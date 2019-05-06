@@ -12,7 +12,7 @@ cd ps
 for i in $(cut -f1 INF1.jma | awk 'NR>1' | uniq )
 do
   echo $i
-  awk -vprot=$i '$1==prot{print $1, "chr" $2 ":" $4}' INF1.jma > $i.ps
+  awk -vprot=$i '$1==prot{print "chr" $2 ":" $4}' INF1.jma > $i.ps
 # default -r 0.6
   phenoscanner -c All -l 1000G -p 0.0000001 -i $i.ps -o $i
 done
