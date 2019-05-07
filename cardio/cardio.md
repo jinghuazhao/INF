@@ -24,7 +24,7 @@ where aild-indel/ and aild-snp/ contain results for all variants and SNPs, respe
 
 # PhenoScanner outputs
 
-# /scratch/jhz22/INF/ps
+Location, /scratch/jhz22/INF/ps
 
 which contains protein-specific and whole (INF1_* and INF1r_*, see below) results.
 
