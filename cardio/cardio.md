@@ -76,14 +76,14 @@ No | option | [cis, trans, total] | Comments and locations (cojo|clumping|doc)
 
 **no** | **Option** | **cis** | **trans** | **total** | **comments**
 -----------|----------|--------------|-----------|------------|--------------------------------------------------------------
-CAVIAR | CAVIAR | finemapping | z, correlation matrix | causal sets and probabilities | Hormozdiari, et al. (2014)
-CAVIARBF | CAVIARBF | finemapping | z, correlation matrix | BF and probabilities for all configurations | Chen, et al. (2015)
-GCTA | GCTA | joint/conditional analysis | .sumstats, reference data | association results | Yang, et al. (2012)
-FM_summary | FM-summary | finemapping | .sumstats | posterior probability & credible set | Huang, et al. (2017)
-JAM | JAM | finemapping | beta, individual reference data | Bayes Factor of being causal | Newcombe, et al. (2016)
-LocusZoom | LocusZoom | regional plot | .sumstats | .pdf/.png plots | Pruim, et al. (2010)
-fgwas | fgwas | functional GWAS | .sumstats | functional significance | Pickrell (2014)
-finemap | finemap | finemapping | z, correlation matrix | causal SNPs and configuration | Benner, et al. (2016)
+1 | CAVIAR | finemapping | z, correlation matrix | causal sets and probabilities | Hormozdiari, et al. (2014)
+2 | CAVIARBF | finemapping | z, correlation matrix | BF and probabilities for all configurations | Chen, et al. (2015)
+~ | GCTA | joint/conditional analysis | .sumstats, reference data | association results | Yang, et al. (2012)
+4 | FM-summary | finemapping | .sumstats | posterior probability & credible set | Huang, et al. (2017)
+5 | JAM | finemapping | beta, individual reference data | Bayes Factor of being causal | Newcombe, et al. (2016)
+6 | LocusZoom | regional plot | .sumstats | .pdf/.png plots | Pruim, et al. (2010)
+7 | fgwas | functional GWAS | .sumstats | functional significance | Pickrell (2014)
+8 | finemap | finemapping | z, correlation matrix | causal SNPs and configuration | Benner, et al. (2016)
 
 Factors on number of signals,
 
