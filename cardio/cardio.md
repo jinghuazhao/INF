@@ -29,11 +29,11 @@ Location, /scratch/jhz22/INF/ps
 which contains protein-specific and whole (INF1_* and INF1r_*, see below) results.
 ```bash
 # those INF1_*
-# default all results, no LD, p=1e-5
+# All results, no LD, p=1e-5
 # phenoscanner -c All -l No -p 0.00001 -i INF1.ps -o INF1
 
 # revised
-# GWAS only, LD r=0.6, p=1e-7
+# All results, no LD, p=1e-7
 phenoscanner -c All -l No -p 0.0000001 -i INF1.ps -o INF1r
 ```
 The results on GWAS with LD r2=0.6 in INF1r_* are available from R as follows,
