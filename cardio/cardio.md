@@ -61,15 +61,15 @@ location: /scratch/jhz22/INF/METAL
 # GCTA (1-3) and Clumping (4-7) results
 
 No | File | cis | trnas | total | Comments and locations (/scratch/jhz22/INF/cojo[clumping|doc])
----|------|-----|-------|-------|---------------------------------------------------------------------------------------
-1  | LD blocks | 228 |  182  | 410   | only SNPs, /scratch/jhz22/INF/cojo/aild-snp/INF1.jma.\*, also doc/INF1.paper.xlsx
--  | - | 254 |  191  | 445   | SNPs+indels, /scratch/jhz22/INF/cojo/aild-indel/INF1.jma.\*
-2  | default  | 234 |  173  | 407   | --cojo-collinear 0.9 --cojo-wind 10000, /scratch/jhz22/INF/doc/SCALLOP_INF1-260419.xlsx
-3  | small R2 & window | 189 |  186  | 375   | --cojo-collinear 0.1 --cojo-wind 500, /scratch/jhz22/INF/doc/SCALLOP_INF1-260419.xlsx
-4  | INTERVAL LD panel | 659 |  275  | 934   | --clump-r2 0.1 --clump-kb 500, /scratch/jhz22/INF/doc/SCALLOP_INF1-120419.xlsx
-5  | 1000G LD panel | 405 |  229  | 634   | --clump-r2 0.1 --clump-kb 500, /scratch/jhz22/INF/clumping/INF1.1KG.r2-0.1.clumped*
-6  | INTERVAL data  | 424 |  188  | 612   | --clump-r2 0.1 --clump-kb 500, /scratch/jhz22/INF/doc/SCALLOP_INF1-120419.xlsx
-7  | 1000G LD panel | 402 |  226  | 628   | --clump-r2 0.1 --clump-kb 1000, on tryggve
+---|------|-----|-------|-------|---------------------------------------------------------------
+ 1  | LD blocks | 228 | 182 | 410 | only SNPs, /scratch/jhz22/INF/cojo/aild-snp/INF1.jma.\*, also doc/INF1.paper.xlsx
+ -  | - | 254 | 191 | 445 | SNPs+indels, /scratch/jhz22/INF/cojo/aild-indel/INF1.jma.\*
+ 2  | default  | 234 | 173 | 407   | --cojo-collinear 0.9 --cojo-wind 10000, /scratch/jhz22/INF/doc/SCALLOP_INF1-260419.xlsx
+ 3  | small R2 & window | 189 | 186 | 375  | --cojo-collinear 0.1 --cojo-wind 500, /scratch/jhz22/INF/doc/SCALLOP_INF1-260419.xlsx
+ 4  | INTERVAL LD panel | 659 | 275 | 934  | --clump-r2 0.1 --clump-kb 500, /scratch/jhz22/INF/doc/SCALLOP_INF1-120419.xlsx
+ 5  | 1000G LD panel | 405 | 229 | 634 | --clump-r2 0.1 --clump-kb 500, /scratch/jhz22/INF/clumping/INF1.1KG.r2-0.1.clumped*
+ 6  | INTERVAL data  | 424 | 188 | 612 | --clump-r2 0.1 --clump-kb 500, /scratch/jhz22/INF/doc/SCALLOP_INF1-120419.xlsx
+ 7  | 1000G LD panel | 402 | 226 | 628 | --clump-r2 0.1 --clump-kb 1000, on tryggve
 
 Factors on number of signals,
 
