@@ -62,7 +62,7 @@ location: /scratch/jhz22/INF/METAL
 
 The directories are relative to /scratch/jhz22/INF,
 
-**No** | **Option** | **cis** | **trans** | **total** | **comments**
+**Run** | **Option** | **cis** | **trans** | **total** | **comments**
 -----------|----------|--------------|-----------|------------|--------------------------------------------------------------
 **GCTA** |
 1 | LD blocks | 228 | 182 | 410 | only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx
