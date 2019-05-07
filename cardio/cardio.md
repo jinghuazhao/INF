@@ -62,22 +62,10 @@ location: /scratch/jhz22/INF/METAL
 
 The directories are relative to /scratch/jhz22/INF,
 
-No | option | [cis, trans, total] | Comments and locations (cojo|clumping|doc)
--- | ------ | ------------------- | -----------------------------------------------------------
-1 | LD blocks | [228, 182, 410] | only SNPs, cojo/aild-snp/INF1.jma.\*, also doc/INF1.paper.xlsx
-~ | ~ | [254,  191, 445] | SNPs+indels, cojo/aild-indel/INF1.jma.\*
-2 | default  | [234, 173, 407] | --cojo-collinear 0.9 --cojo-wind 10000, doc/SCALLOP_INF1-260419.xlsx
-3 | small R2 & window | [189, 186, 375] | --cojo-collinear 0.1 --cojo-wind 500, doc/SCALLOP_INF1-260419.xlsx
-4 | INTERVAL LD panel | [659, 275, 934] | --clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx
-5 | 1000G LD panel | [405, 229, 634] | --clump-r2 0.1 --clump-kb 500, clumping/INF1.1KG.r2-0.1.clumped*
-6 | INTERVAL data  | [424, 188, 612] | --clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx
-7 | 1000G LD panel | [402, 226, 628] | --clump-r2 0.1 --clump-kb 1000, on tryggve
-
-
-**no** | **Option** | **cis** | **trans** | **total** | **comments**
+**No** | **Option** | **cis** | **trans** | **total** | **comments**
 -----------|----------|--------------|-----------|------------|--------------------------------------------------------------
-1 | LD blocks | 228 | 182 | 410 | only SNPs, cojo/aild-snp/INF1.jma.\*, also doc/INF1.paper.xlsx
-~ | ~ | 254 | 191 | 445 | SNPs+indels, cojo/aild-indel/INF1.jma.\*
+1 | LD blocks | 228 | 182 | 410 | only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx
+~ | ~ | 254 | 191 | 445 | SNPs+indels, cojo/aild-indel/INF1.jma.*
 2 | default | 234 | 173 | 407 | --cojo-collinear 0.9 --cojo-wind 10000, doc/SCALLOP_INF1-260419.xlsx
 3 | small R2 & window | 189 | 186 | 375 | --cojo-collinear 0.1 --cojo-wind 500, doc/SCALLOP_INF1-260419.xlsx
 4 | INTERVAL LD panel | 659 | 275 | 934 | --clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx
