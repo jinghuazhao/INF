@@ -64,7 +64,7 @@ No | File              | cis | trnas | total | Comments and locations (/scratch/
 ---|-------------------|-----|-------|-------|---------------------------------------------------------------
 GCTA   |
 1  | LD blocks         | 228 |  182  | 410   | only SNPs, /scratch/jhz22/INF/cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx
-   |                   | 254 |  191  | 445   | SNPs+indels, /scratch/jhz22/INF/cojo/aild-indel/INF1.jma.*
+-  | -                 | 254 |  191  | 445   | SNPs+indels, /scratch/jhz22/INF/cojo/aild-indel/INF1.jma.*
 2  | default           | 234 |  173  | 407   | --cojo-collinear 0.9 --cojo-wind 10000, /scratch/jhz22/INF/doc/SCALLOP_INF1-260419.xlsx
 3  | small R2 & window | 189 |  186  | 375   | --cojo-collinear 0.1 --cojo-wind 500, /scratch/jhz22/INF/doc/SCALLOP_INF1-260419.xlsx
 Cluming |
