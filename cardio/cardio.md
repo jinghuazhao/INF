@@ -81,4 +81,4 @@ Factors on number of signals,
 * increase with value of --cojo-collinear and --cojo-wind (2, 3), yet moderate changes in LD window have less impact than panel (5, 7).
 * PLINK --clump gives more signals than GCTA --cojo (3, 4).
 * INTERVAL as LD reference leads to more signals than 1000Genomes (4,  5).
-* sample size. INF1 has more than INTERVAL alone (5, 6).
+* Larger sample size gives more signals (5, 6).
