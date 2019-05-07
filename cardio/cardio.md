@@ -73,6 +73,18 @@ No | option | [cis, trans, total] | Comments and locations (cojo|clumping|doc)
 6 | INTERVAL data  | [424, 188, 612] | --clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx
 7 | 1000G LD panel | [402, 226, 628] | --clump-r2 0.1 --clump-kb 1000, on tryggve
 
+
+**no** | **Option** | **cis** | **trans** | **total** | **comments**
+-----------|----------|--------------|-----------|------------|--------------------------------------------------------------
+CAVIAR | CAVIAR | finemapping | z, correlation matrix | causal sets and probabilities | Hormozdiari, et al. (2014)
+CAVIARBF | CAVIARBF | finemapping | z, correlation matrix | BF and probabilities for all configurations | Chen, et al. (2015)
+GCTA | GCTA | joint/conditional analysis | .sumstats, reference data | association results | Yang, et al. (2012)
+FM_summary | FM-summary | finemapping | .sumstats | posterior probability & credible set | Huang, et al. (2017)
+JAM | JAM | finemapping | beta, individual reference data | Bayes Factor of being causal | Newcombe, et al. (2016)
+LocusZoom | LocusZoom | regional plot | .sumstats | .pdf/.png plots | Pruim, et al. (2010)
+fgwas | fgwas | functional GWAS | .sumstats | functional significance | Pickrell (2014)
+finemap | finemap | finemapping | z, correlation matrix | causal SNPs and configuration | Benner, et al. (2016)
+
 Factors on number of signals,
 
 * indels lead to more signals (1, 2).
