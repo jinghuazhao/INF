@@ -34,9 +34,9 @@ which contains protein-specific and whole (INF1_* and INF1r_*, see below) result
 
 # revised
 # GWAS only, LD r=0.6, p=1e-7
-phenoscanner -c GWAS -l 1000G -p 0.0000001 -i INF1.ps -o INF1r
+phenoscanner -c All -l No -p 0.0000001 -i INF1.ps -o INF1r
 ```
-The results in INF1r_* are also available from R as follows,
+The results on GWAS with LD r2=0.6 in INF1r_* are available from R as follows,
 ```bash
 R --no-save -q <<END
   library(MendelianRandomization)
