@@ -76,14 +76,14 @@ No | option | [cis, trans, total] | Comments and locations (cojo|clumping|doc)
 
 **no** | **Option** | **cis** | **trans** | **total** | **comments**
 -----------|----------|--------------|-----------|------------|--------------------------------------------------------------
-1 | LD blocks | finemapping | z, correlation matrix | causal sets and probabilities | Hormozdiari, et al. (2014)
-~ | ~ | finemapping | z, correlation matrix | BF and probabilities for all configurations | Chen, et al. (2015)
-2 | default | joint/conditional analysis | .sumstats, reference data | association results | Yang, et al. (2012)
-3 | small R2 & window | finemapping | .sumstats | posterior probability & credible set | Huang, et al. (2017)
-4 | INTERVAL LD panel | finemapping | beta, individual reference data | Bayes Factor of being causal | Newcombe, et al. (2016)
-5 | 1000G LD panel | regional plot | .sumstats | .pdf/.png plots | Pruim, et al. (2010)
-6 | INTERVAL data | functional GWAS | .sumstats | functional significance | Pickrell (2014)
-7 | 1000G LD panel | finemapping | z, correlation matrix | causal SNPs and configuration | Benner, et al. (2016)
+1 | LD blocks | 228 | 182 | 410 | only SNPs, cojo/aild-snp/INF1.jma.\*, also doc/INF1.paper.xlsx
+~ | ~ | 254 | 191 | 445 | SNPs+indels, cojo/aild-indel/INF1.jma.\*
+2 | default | 234 | 173 | 407 | --cojo-collinear 0.9 --cojo-wind 10000, doc/SCALLOP_INF1-260419.xlsx
+3 | small R2 & window | 189 | 186 | 375 | --cojo-collinear 0.1 --cojo-wind 500, doc/SCALLOP_INF1-260419.xlsx
+4 | INTERVAL LD panel | 659 | 275 | 934 | --clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx
+5 | 1000G LD panel | 405 | 229 | 634 | --clump-r2 0.1 --clump-kb 500, clumping/INF1.1KG.r2-0.1.clumped*
+6 | INTERVAL data | 424 | 180 | 612 | --clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx
+7 | 1000G LD panel | 402 | 226 | 620 | --clump-r2 0.1 --clump-kb 1000, on tryggve
 
 Factors on number of signals,
 
