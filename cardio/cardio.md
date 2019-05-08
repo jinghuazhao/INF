@@ -60,7 +60,7 @@ location: /scratch/jhz22/INF/METAL
 
 # GCTA (1-3) and Clumping (4-7) results
 
-The directories are relative to /scratch/jhz22/INF,
+The directories are relative to /scratch/jhz22/INF, esp. cojo/ and clumping/ there,
 
 **Run** | **Option** | **cis** | **trans** | **total** | **comments**
 -----------|----------|--------------|-----------|------------|--------------------------------------------------------------
