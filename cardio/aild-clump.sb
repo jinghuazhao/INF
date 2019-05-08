@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #SBATCH --ntasks=1
-#SBATCH --job-name=_cojo
+#SBATCH --job-name=_clump
 #SBATCH --time=1-0:00:00
 #SBATCH --partition=long
 #SBATCH --array=1-257%8
-#SBATCH --output=work/_cojo_%A_%a.out
-#SBATCH --error=work/_cojo_%A_%a.err
+#SBATCH --output=work/_clump_%A_%a.out
+#SBATCH --error=work/_clump_%A_%a.err
 #SBATCH --export ALL
 
 . /etc/profile.d/modules.sh
@@ -31,5 +31,4 @@ plink --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
       --clump-p2 0.01 \
       --clump-r2 0.1 \
       --mac 50 \
-      --out woek/${p}-${r}
-
+      --out work/${p}-${r}
