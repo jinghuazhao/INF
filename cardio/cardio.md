@@ -82,6 +82,6 @@ Factors on number of signals,
 * PLINK --clump gives more signals than GCTA --cojo (3, 4).
 * INTERVAL as LD reference leads to more signals than 1000Genomes (4,  5).
 * Larger sample size gives more signals (5, 6).
-* Unpruned results for both GCTA and PLINK give more cis signals.
+* Unpruned results give more cis signals.
 
 It is desirable to employ approximately independent LD blocks for both GCTA and PLINK.
