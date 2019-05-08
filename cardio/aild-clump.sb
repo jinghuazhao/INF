@@ -21,7 +21,7 @@ export p=$(awk -vline=$line '(NR==line){print $1}' work/INF1.ailist)
 export r=$(awk -vline=$line '(NR==line){print $2}' work/INF1.ailist)
 if [ -f $rt/${p}.clumped ]; then rm $rt/${p}.clumped; fi
 plink --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
-      --extract work/EURLD.${r}.snplist \
+      --extract ailist/EURLD.${r}.snplist \
       --exclude range tryggve/high-LD-regions-hg19.txt \
       --maf 0.01 \
       --clump METAL/${p}-1.tbl.gz \
