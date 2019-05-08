@@ -4,8 +4,8 @@
 #SBATCH --job-name=_clump
 #SBATCH --time=1-0:00:00
 #SBATCH --partition=long
-#SBATCH --array=1-257%3
-#SBATCH --mem=20880
+#SBATCH --array=1-257%1
+#SBATCH --mem=128800
 #SBATCH --output=work/_clump_%A_%a.out
 #SBATCH --error=work/_clump_%A_%a.err
 #SBATCH --export ALL
