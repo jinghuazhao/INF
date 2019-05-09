@@ -27,5 +27,5 @@ export p=$prot
   sort -k1,1n -k2,2 | \
   awk -vOFS="\t" '{print "chr" $1, $2-1, $2, $3, $4, $5, $6, $10, $11, $12, $14}'
 ) | \
-bedtools intersect -a tryggve/EURLD.bed -b - -loj | \
+bedtools intersect -a tryggve/EURLD-no-high-LD-regions-hg19.bed -b - -loj | \
 cut -f4,8-15 > work/${p}.rma
