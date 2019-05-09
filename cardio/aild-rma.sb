@@ -3,11 +3,11 @@
 #SBATCH --ntasks=1
 #SBATCH --job-name=_rma
 #SBATCH --time=8:00:00
-#SBATCH --partition=short
+#SBATCH --partition=long
 #SBATCH --mem=128800
 #SBATCH --array=1-92%2
-#SBATCH --output=work/_rma_%A_%a.out
-#SBATCH --error=work/_rma_%A_%a.err
+#SBATCH --output=rma/_rma_%A_%a.out
+#SBATCH --error=rma/_rma_%A_%a.err
 #SBATCH --export ALL
 
 . /etc/profile.d/modules.sh
@@ -28,4 +28,4 @@ export p=$prot
   awk -vOFS="\t" '{print "chr" $1, $2-1, $2, $3, $4, $5, $6, $10, $11, $12, $14}'
 ) | \
 bedtools intersect -a tryggve/EURLD-no-high-LD-regions-hg19.bed -b - -loj | \
-cut -f4,8-15 > work/${p}.rma
+cut -f4,8-15 > rma/${p}.rma
