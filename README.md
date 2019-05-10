@@ -10,9 +10,9 @@
 
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
 * [References](https://github.com/jinghuazhao/INF#references)
-* [A summary of files](https://github.com/jinghuazhao/INF#a-summary-of-files)
+* [Use of approximately independent LD blocks](https://github.com/jinghuazhao/INF#use-of-approximately-independent-ld-blocks)
 * [Notes on UniProt IDs](https://github.com/jinghuazhao/INF#notes-on-uniprot-ids)
-* [URLs and installation](https://github.com/jinghuazhao/INF#urls-and-installation)
+* [Files, URLs, and downloading](https://github.com/jinghuazhao/INF#Files, URLs, and installation)
 
 <img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
 
@@ -23,7 +23,7 @@ Jimmy's competitive log10(p) calculator is also documented in [log10p.md](doc/lo
 
 2. Data preprocessig was done with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh). The meta-analysis was according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with addtional investigation.
 
-3. The main analysis follows [analysis.sh](tryggve/analysis.sh), which contains codes for Q-Q/Manhattan/LocusZoom/Forest plots (see the figure on the right for the OPG example, which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has increasingly been done locally with [cardio](cardio). In particular, approximately independent LD blocks are utilised as described in [aild.md](aild.md).
+3. The main analysis follows [analysis.sh](tryggve/analysis.sh), which contains codes for Q-Q/Manhattan/LocusZoom/Forest plots (see the figure on the right for the OPG example, which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has increasingly been done locally with [cardio](cardio). In particular, approximately independent LD blocks are utilised as descrbed below.
 
 4. Further downstream analysis will be considered. The CAD summary statistics used for MAGMA and MR is described [here](https://github.com/jinghuazhao/Omics-analysis/tree/master/CAD)
 -- as noted in MMP12.sh, the MMP12 case could have been done genomewide. A colocalisation analysis on simulated data can be found in the
@@ -43,17 +43,6 @@ Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
 
 ---
-
-## A summary of files
-
-File     | Description
----------|--------------------------------------------------------
-[doc/](doc) | Some documents and auxiliary files
-[cardio/](cardio) | Work on CEU's cardio
-[tryggve/](tryggve) | Analysis programs on TRYGGVE
-[SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | Analysis plan
-[SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
-[tryggve.md](tryggve.md) | TRYGGVE notes
 
 ## Use of approximately independent LD blocks
 
@@ -110,7 +99,20 @@ A version by Jimmy is [olink.inf.panel.annot.tsv](doc/olink.inf.panel.annot.tsv)
 
 BDNF has recently been removed from the assay and replaced with CD8A, https://www.olink.com/bdnf-info/, and there are also changes on TNF and IFN.gamma, https://www.olink.com/inflammation-upgrade/.
 
-## URLs and installation
+## Files, URLs and downloading
+
+### Files
+
+File     | Description
+---------|--------------------------------------------------------
+[doc/](doc) | Some documents and auxiliary files
+[cardio/](cardio) | Work on CEU's cardio
+[tryggve/](tryggve) | Analysis programs on TRYGGVE
+[SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | Analysis plan
+[SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
+[tryggve.md](tryggve.md) | TRYGGVE notes
+
+### URLs
 
 SCALLOP [consortium](https://www.olink.com/scallop/), [GitHub repository](https://github.com/lassefolkersen/scallop), [securecloud](https://secureremote.dtu.dk/vpn/index.html).
 
@@ -120,7 +122,7 @@ SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/
 
 [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
 
-Optionally, the repository can be downloaded with
+### downloading
 
 ``` {.bash}
 git clone https://github.com/jinghua/INF
