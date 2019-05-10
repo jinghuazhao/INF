@@ -2,6 +2,8 @@
 
 The regions are predefined. As shown in [EURLD.tsv](tryggve/EURLD.tsv) by [EURLD.R](tryggve/EURLD.R), the LD patterns across the genome are more variable than the norm in a typical genomewide association analysis and it not reasonable to set slide windows such as 250kb (36), 500kb (300), or even 10Mb (1071), considering the sentinel variant may not necessarily lie right in the middle of a window. The number of signals would be underestimated (by GCGA) or overestimated (by PLINK) as in [cardio.md](cardio/cardio.md).
 
+Steps to use:
+
 1. Set up 1703 autosomal regions as defined in [EURLD.bed](tryggve/EURLD.bed).
 2. Extract variants outside the [12 regions in high LD](tryggve/high-LD-regions-hg19.txt) to [1672 regions](tryggve/EURLD-no-high-LD-regions-hg19.bed) by [EURLD.sh](tryggve/EURLD.sh).
 3. Overlap regions and GWAS sumstats:
