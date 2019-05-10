@@ -20,7 +20,7 @@ export bed=tryggve/EURLD-no-high-LD-regions-hg19.bed
 export r=$(awk 'NR>1{sub(/region/,"",$4);print NR-1, $4}' $bed | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"] {print $2}')
 
 if [ ! -f aild/AILD.${r} ]; then
-   awk 'NR==ENVIRON["r"]+1{sub(/chr/,"",$1);print $1,$2,$3}' $bed > aild/AILD.${r}
+   awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{sub(/chr/,"",$1);print $1,$2,$3}' $bed > aild/AILD.${r}
 fi
 read chr start end < aild/AILD.${r}
 awk '$1==chr && $4>=start && $4<end && length($5)==1 && length($6)==1{print $2}' chr=$chr start=$start end=$end $bim \
