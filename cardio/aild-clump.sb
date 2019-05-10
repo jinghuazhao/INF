@@ -17,7 +17,7 @@ module load use.own
 
 export TMPDIR=/scratch/jhz22/tmp
 export line=$SLURM_ARRAY_TASK_ID
-export line=$(awk '(NR>1){sub(/region/,"",$4);print $4}' tryggve/EURLD-no-high-LD-regions-hg19.bed | grep -w $SLURM_ARRAY_TASK_ID)
+export line=$(awk '(NR>1){print NR-1, $4}' tryggve/EURLD-no-high-LD-regions-hg19.bed | grep -w "regionSLURM_ARRAY_TASK_ID" | cut -d' ' -f1')
 export p=$(awk -vline=$line '(NR==line){print $1}' work/INF1.aild)
 export r=$(awk -vline=$line '(NR==line){print $2}' work/INF1.aild)
 if [ -f $rt/${p}.clumped ]; then rm $rt/${p}.clumped; fi
