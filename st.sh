@@ -10,8 +10,6 @@ git add SCALLOP_INF1_analysis_plan.*
 git commit -m "Analysis plan"
 git add cardio
 git commit -m "Work on CEU's cardio"
-git add aild.md
-git commit -m "Notes on AILD"
 git add tryggve tryggve.*
 git commit -m "Notes and programs on TRYGGVE"
 git add st.sh
