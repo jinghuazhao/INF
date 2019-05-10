@@ -1,4 +1,4 @@
-# 1-5-2019 JHZ
+# 10-5-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -110,7 +110,7 @@ function clumping()
     sink("INF1.clumped.out")
     with(cistrans,table)
     sink()
-    sum(with(cistrans,table))
+    with(cistrans,total)
     pdf("INF1.circlize.pdf")
     circos.cis.vs.trans.plot(hits="INF1.clumped")
     dev.off()
