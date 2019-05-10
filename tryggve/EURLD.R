@@ -13,5 +13,5 @@ with(EURLD,table(within500k))
 with(EURLD,table(within10m))
 ord <- with(EURLD, order(dist))
 EURLD <- EURLD[ord,]
-write.table(EURLD,file="tryggve/EURLD.tsv",quote=FALSE,row.names=FALSE)
+write.table(EURLD,file="tryggve/EURLD.tsv",quote=FALSE,row.names=FALSE,sep="\t")
 EURLD
