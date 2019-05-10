@@ -8,9 +8,11 @@ Steps to use:
 2. Extract variants outside the [regions in high LD](tryggve/high-LD-regions-hg19.txt) to [1672 regions](tryggve/EURLD-no-high-LD-regions-hg19.bed) by [EURLD.sh](tryggve/EURLD.sh).
 3. Overlap regions and GWAS sumstats:
    * Tag GWAS sumstats with regions through [aild-rma.sb](cardio/aild-rma.sb).
-   * List variants by region in the reference panel by [aild-snplist.sb](cardio/aild-snplist.sb); to facilitate variant annotation only SNPs are kept.
    * Pair protein-region which contains genomewide significance by [aild-list.sb](cardio/aild-list.sb).
+   * List variants by region in the reference panel by [aild-snplist.sb](cardio/aild-snplist.sb); to facilitate variant annotation only SNPs are kept.
 4. clump via [aild-clump.sb](cardio/aild-clump.sb).
 5. cojo via [aild-cojo.sb](cardio/aild-cojo.sb).
+
+Note that pairing regions of interest would reduce the burden of genomewide analysis, and also that region-specific reference will not affect results from steps 4 and 5.
 
 Results from 4 and 5 are classified as in [analysis.sh](tryggve/analysis.sh).
