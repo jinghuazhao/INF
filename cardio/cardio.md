@@ -79,11 +79,13 @@ The directories are relative to /scratch/jhz22/INF, esp. cojo/ and clumping/ the
 
 Factors on number of signals,
 
-* indels lead to more signals (1, 4).
+* indels lead to more signals in cojo (1) and clumping (4) analyses.
+* **default GCTA perameters yields smaller number of signals** (1, 2).
 * increase with value of --cojo-collinear and --cojo-wind (2, 3), yet moderate changes in LD window have less impact than panel (5, 8).
 * PLINK --clump gives more signals than GCTA --cojo (1, 4).
-* INTERVAL as LD reference leads to more signals than 1000Genomes (5,  6).
+* **Specification in clumping of sliding LD windows disregarding LD patterns gives more signals** (4, 5).
+* INTERVAL as LD reference leads to more signals than 1000Genomes (5, 6).
 * Larger sample size gives more signals (5, 7).
 * Unpruned results are likely to give more cis signals.
 
-It is desirable to employ approximately independent LD blocks for both GCTA (1) and PLINK (4).
+As highlighted, it is desirable to employ approximately independent LD blocks for both GCTA (1) and PLINK (4).
