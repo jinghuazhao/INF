@@ -4,7 +4,7 @@
 #SBATCH --job-name=_snplist
 #SBATCH --time=8:00:00
 #SBATCH --partition=medium
-#SBATCH --array=1
+#SBATCH --array=1-1672%5
 #SBATCH --output=aild/_snplist_%A_%a.out
 #SBATCH --error=aild/_snplist_%A_%a.err
 #SBATCH --export ALL
