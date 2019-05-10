@@ -4,9 +4,9 @@
 #SBATCH --job-name=_snplist
 #SBATCH --time=8:00:00
 #SBATCH --partition=medium
-#SBATCH --array=1-1636%5
-#SBATCH --output=work/_snplist_%A_%a.out
-#SBATCH --error=work/_snplist_%A_%a.err
+#SBATCH --array=1-1672%5
+#SBATCH --output=aild/_snplist_%A_%a.out
+#SBATCH --error=aild/_snplist_%A_%a.err
 #SBATCH --export ALL
 
 . /etc/profile.d/modules.sh
@@ -15,12 +15,12 @@ module load slurm
 module load use.own
 
 export TMPDIR=/scratch/jhz22/tmp
+export bim=/scratch/jhz22/data/INTERVAL/INTERVAL.bim
 export r=$SLURM_ARRAY_TASK_ID
 
-if [ ! -f work/EURLD.${r} ]; then
-   awk -vr="region${r}" 'NR>1 && $4==r {sub(/chr/,"",$1);print $1,$2,$3}' tryggve/EURLD-no-high-LD-regions-hg19.bed > work/aild.${r}
+if [ ! -f aild/aild.${r} ]; then
+   awk 'NR==ENVIRON["r"]+1{sub(/chr/,"",$1);print $1,$2,$3}' tryggve/EURLD-no-high-LD-regions-hg19.bed > aild/aild.${r}
 fi
-read chr start end < work/EURLD.${r}
-awk -vchr=$chr -vstart=$start -vend=$end '
-    ($1==chr&&$4>=start&&$4<end&&length($5)==1&&length($6)==1){print $2}
-  ' /scratch/jhz22/data/INTERVAL/INTERVAL.bim > ailist/aild.${r}.snplist
+read chr start end < aild/aild.${r}
+awk -vchr=$chr -vstart=$start -vend=$end '($1==chr&&$4>=start&&$4<end&&length($5)==1&&length($6)==1)
+   {print $2}' $bim > aild/aild.${r}.snplist
