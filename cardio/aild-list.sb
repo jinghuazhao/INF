@@ -17,8 +17,10 @@ module load use.own
 export TMPDIR=/scratch/jhz22/tmp
 export r=$SLURM_ARRAY_TASK_ID
 export p=$(awk -vr=$r 'NR==r{print $1}' work/inf1.tmp)
+export bed=tryggve/EURLD-no-high-LD-regions-hg19.bed
+
 (
-  for i in $(awk 'NR>1' tryggve/EURLD-no-high-LD-regions-hg19.bed | cut -f4 | sed 's/region//g')
+  for i in $(awk 'NR>1' $bed | cut -f4 | sed 's/region//g')
   do
       export flag=$(grep -w region${i} rma/${p}.rma | awk '$8<=5e-10' | wc -l)
       if [ $flag -ne 0 ]; then
