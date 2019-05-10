@@ -57,7 +57,7 @@ Steps to use:
 4. clump via [aild-clump.sb](cardio/aild-clump.sb).
 5. cojo via [aild-cojo.sb](cardio/aild-cojo.sb).
 
-The regions are predefined. As shown in [EURLD.tsv](tryggve/EURLD.tsv) by [EURLD.R](tryggve/EURLD.R), the LD patterns across the genome are more variable than the norm in a typical genomewide association analysis therefore slide windows such as 250kb (36), 500kb (300), or even 10Mb (1071), seeing that the sentinel variant may not necessarily lie right in the middle of a window. The number of signals in our case would be underestimated (slightly by GCTA) or overestimated (by PLINK) as in [cardio.md](cardio/cardio.md). For instance, it is often seen from the PLINK --clump-range outputs that sliding windows can give results in two neighbouring LD blocks.
+The regions are predefined. As shown in [EURLD.tsv](tryggve/EURLD.tsv) by [EURLD.R](tryggve/EURLD.R), the LD patterns across the genome are more variable than the norm in a typical genomewide association analysis therefore slide windows such as 250kb (36), 500kb (300), or even 10Mb (1071), seeing that the sentinel variant may not necessarily lie right in the middle of a window. The number of signals in our case would be underestimated (slightly by GCTA) or overestimated (by PLINK) as in [clump-cojo.md](cardio/clump-cojo.md). For instance, it is often seen from the PLINK --clump-range outputs that sliding windows can give results in two neighbouring LD blocks.
 
 Note that pairing regions of interest would reduce the burden of genomewide analysis, and also that region-specific reference will not affect results from steps 4 and 5.
 
