@@ -20,6 +20,8 @@ export TMPDIR=/scratch/jhz22/tmp
 export rt=/home/jhz22/INF
 export prot=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' work/inf1.tmp)
 export p=$prot
+export bed=tryggve/EURLD-no-high-LD-regions-hg19.bed
+
 (
   echo -e \#chrom "\t" Start "\t" End "\t" SNP "\t" A1 "\t" A2 "\t" freq "\t" b "\t" se "\t" p "\t" N
   gunzip -c $rt/METAL/${p}-1.tbl.gz | \
@@ -27,5 +29,5 @@ export p=$prot
   sort -k1,1n -k2,2 | \
   awk -vOFS="\t" '{print "chr" $1, $2-1, $2, $3, $4, $5, $6, $10, $11, $12, $14}'
 ) | \
-bedtools intersect -a tryggve/EURLD-no-high-LD-regions-hg19.bed -b - -loj | \
+bedtools intersect -a $bed -b - -loj | \
 cut -f4,8-15 > rma/${p}.rma
