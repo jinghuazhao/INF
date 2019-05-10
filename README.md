@@ -46,7 +46,7 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 
 ## Use of approximately independent LD blocks
 
-The regions are predefined. As shown in [EURLD.tsv](tryggve/EURLD.tsv) by [EURLD.R](tryggve/EURLD.R), the LD patterns across the genome are more variable than the norm in a typical genomewide association analysis and it not reasonable to set slide windows such as 250kb (36), 500kb (300), or even 10Mb (1071), considering the sentinel variant may not necessarily lie right in the middle of a window. The number of signals would be underestimated (by GCGA) or overestimated (by PLINK) as in [cardio.md](cardio/cardio.md). It is often seen that sliding windows can give results in two neighbouring LD blocks.
+The regions are predefined. As shown in [EURLD.tsv](tryggve/EURLD.tsv) by [EURLD.R](tryggve/EURLD.R), the LD patterns across the genome are more variable than the norm in a typical genomewide association analysis therefore slide windows such as 250kb (36), 500kb (300), or even 10Mb (1071), seeing that the sentinel variant may not necessarily lie right in the middle of a window. The number of signals would be underestimated (slightly by GCGA) or overestimated (by PLINK) as in [cardio.md](cardio/cardio.md). It is often seen that sliding windows can give results in two neighbouring LD blocks.
 
 Steps to use:
 
