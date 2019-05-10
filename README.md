@@ -12,7 +12,7 @@
 * [References](https://github.com/jinghuazhao/INF#references)
 * [Use of approximately independent LD blocks](https://github.com/jinghuazhao/INF#use-of-approximately-independent-ld-blocks)
 * [Notes on UniProt IDs](https://github.com/jinghuazhao/INF#notes-on-uniprot-ids)
-* [Files, URLs, and downloading](https://github.com/jinghuazhao/INF#Files, URLs, and installation)
+* [Files, URLs, and downloading](https://github.com/jinghuazhao/INF#files-urls-and-downloading)
 
 <img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
 
