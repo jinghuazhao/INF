@@ -5,8 +5,8 @@
 #SBATCH --time=1-0:00:00
 #SBATCH --partition=long
 #SBATCH --array=1-233%8
-#SBATCH --output=aild/_cojo_%A_%a.out
-#SBATCH --error=aild/_cojo_%A_%a.err
+#SBATCH --output=aild/cojo/_cojo_%A_%a.out
+#SBATCH --error=aild/cojo/_cojo_%A_%a.err
 #SBATCH --export ALL
 
 . /etc/profile.d/modules.sh
@@ -28,4 +28,4 @@ gcta-1.9 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
          --cojo-wind 30000 \
          --cojo-collinear 0.9 \
          --maf 0.01 \
-         --out aild/${p}-${r}
+         --out aild/cojo/${p}-${r}

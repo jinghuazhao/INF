@@ -6,8 +6,8 @@
 #SBATCH --partition=long
 #SBATCH --array=1-233%1
 #SBATCH --mem=128800
-#SBATCH --output=aild/_clump_%A_%a.out
-#SBATCH --error=aild/_clump_%A_%a.err
+#SBATCH --output=aild/clump/_clump_%A_%a.out
+#SBATCH --error=aild/clump/_clump_%A_%a.err
 #SBATCH --export ALL
 
 . /etc/profile.d/modules.sh
@@ -30,4 +30,4 @@ plink --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
       --clump-p2 0.01 \
       --clump-r2 0.1 \
       --mac 50 \
-      --out aild/${p}-${r}
+      --out aild/clump/${p}-${r}
