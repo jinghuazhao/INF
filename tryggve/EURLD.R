@@ -1,11 +1,11 @@
-# 10-5-2019 JHZ
+# 11-5-2019 JHZ
 
 EURLD <- read.delim("tryggve/EURLD.bed")
 EURLD <- within(EURLD, {
            dist <- round((End-Start)/2/1000)
-           within250k <- ifelse(dist<250,0,1)
-           within500k <- ifelse(dist<500,0,1)
-           within10m <- ifelse(dist<10000,0,1)
+           within250k <- ifelse(dist<250,1,0)
+           within500k <- ifelse(dist<500,1,0)
+           within10m <- ifelse(dist<10000,1,0)
          })
 with(EURLD,summary(dist))
 with(EURLD,table(within250k))
