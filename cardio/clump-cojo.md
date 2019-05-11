@@ -24,8 +24,8 @@ A few observations can be made,
 * the number of signals increase with the values of GCTA parameters (2, 3), yet moderate changes in LD window have less impact than the reference panel (5, 8).
 * PLINK --clump gives more signals than GCTA --cojo (1, 4 and 2, 5).
 * **Specification of sliding LD windows disregarding LD patterns in clumping gives 52 additional signals** (4, 5).
-* INTERVAL as LD reference leads to more signals than 1000Genomes (5, 6). Althogh INTERVAL has larger sample size, the latter may have value in greater number of variants.
-* Larger sample size gives more signals (5, 7).
-* Unpruned results are likely to give more cis signals.
+* Thanks to the larger sample size and perhaps greater variant number, INTERVAL as LD reference leads to more signals than 1000Genomes (5, 6).
+* Summary statistics from larger sample size gives more signals (5, 7).
+* Unpruned results are likely to give more cis signals but this is subject to scrutiny perhaps on individual basis.
 
 It can be concluded that it is desirable to employ approximately independent LD blocks for both GCTA (1) and PLINK (4), and also that reference such as UK10K+1KG would be desirable with respect to both sample size and variant number.
