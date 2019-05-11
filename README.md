@@ -61,7 +61,7 @@ The regions are predefined. As shown in [EURLD.tsv](tryggve/EURLD.tsv) by [EURLD
 
 Note that pairing regions of interest would reduce the burden of genomewide analysis, and also that region-specific reference will not affect results from steps 4 and 5.
 
-Results from 4 and 5 are classified as in [analysis.sh](tryggve/analysis.sh). In particular, counterpart for 5 is explicit [here](cardio/aild.sh).
+Results from 4 and 5 are classified as in [analysis.sh](tryggve/analysis.sh). In particular, for 5 this is done with [aild.sh](cardio/aild.sh).
 
 ## Notes on UniProt IDs
 
