@@ -6,12 +6,12 @@ The directories are relative to /scratch/jhz22/INF, esp. cojo/ and clumping/ the
 -----------|----------|--------------|-----------|------------|--------------------------------------------------------------
 **GCTA** |
 1 | LD blocks | 228 | 182 | 410 | only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx
-+ indels | LD blocks | 254 | 191 | 445 | SNPs+indels, cojo/aild-indel/INF1.jma.*
+\+ indels | LD blocks | 254 | 191 | 445 | SNPs+indels, cojo/aild-indel/INF1.jma.*
 2 | default | 234 | 173 | 407 | --cojo-collinear 0.9 --cojo-wind 10000, doc/SCALLOP_INF1-260419.xlsx
 3 | small R2 & window | 189 | 186 | 375 | --cojo-collinear 0.1 --cojo-wind 500, doc/SCALLOP_INF1-260419.xlsx
 **PLINK** |
 4 | LD blocks | 594 | 252 | 846 | only SNPs, clumping/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx
-+ indels | LD blocks | 621 | 258 | 879 | SNPs+indels, clumping/aild-indel/INF1.jma.*
+\+ indels | LD blocks | 621 | 258 | 879 | SNPs+indels, clumping/aild-indel/INF1.jma.*
 5 | INTERVAL LD panel | 657 | 275 | 932 | --clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx
 6 | 1000G LD panel | 405 | 229 | 634 | --clump-r2 0.1 --clump-kb 500, clumping/INF1.1KG.r2-0.1.clumped.*
 7 | INTERVAL data | 424 | 188 | 612 | --clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx
