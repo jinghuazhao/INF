@@ -1,6 +1,6 @@
 # Near-independent signals from cojo and clumping
 
-**Run** | **Option** | **cis** | **trans** | **total** | **Comments/location\+**
+**Run** | **Option** | **cis** | **trans** | **total** | **Comments/location<sup>\+</sup>**
 -----------|----------|--------------|-----------|------------|--------------------------------------------------------------
 **GCTA** |
 1 | LD blocks | 228 | 182 | 410 | only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx
@@ -15,7 +15,7 @@
 7 | INTERVAL data | 424 | 188 | 612 | --clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx
 8 | 1000G LD panel | 402 | 226 | 628 | --clump-r2 0.1 --clump-kb 1000, on tryggve
 
-\+ The directories are relative to /scratch/jhz22/INF, i.e., doc/, cojo/ and clumping/,
+<sup>\+</sup>The directories are relative to /scratch/jhz22/INF, i.e., doc/, cojo/ and clumping/,
 
 A few observations can be made,
 
