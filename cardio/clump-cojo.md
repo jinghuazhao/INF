@@ -1,4 +1,4 @@
-# Comparison of cojo and clumping results
+# Near-independent signals from cojo and clumping
 
 The directories are relative to /scratch/jhz22/INF, esp. cojo/ and clumping/ there,
 
