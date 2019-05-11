@@ -4,7 +4,7 @@
 #SBATCH --job-name=_clump
 #SBATCH --time=1-0:00:00
 #SBATCH --partition=long
-#SBATCH --array=1-257%1
+#SBATCH --array=1-233%1
 #SBATCH --mem=128800
 #SBATCH --output=aild/_clump_%A_%a.out
 #SBATCH --error=aild/_clump_%A_%a.err

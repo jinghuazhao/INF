@@ -4,7 +4,7 @@
 #SBATCH --job-name=_cojo
 #SBATCH --time=1-0:00:00
 #SBATCH --partition=long
-#SBATCH --array=1-257%8
+#SBATCH --array=1-233%8
 #SBATCH --output=aild/_cojo_%A_%a.out
 #SBATCH --error=aild/_cojo_%A_%a.err
 #SBATCH --export ALL
