@@ -46,7 +46,7 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 
 ## Use of approximately independent LD blocks
 
-The implementation involve several steps:
+The implementation involves several steps:
 
 1. Set up 1703 autosomal regions as defined in [EURLD.bed](tryggve/EURLD.bed).
 2. Extract variants outside the [regions in high LD](tryggve/high-LD-regions-hg19.txt) to [1672 regions](tryggve/EURLD-no-high-LD-regions-hg19.bed) by [EURLD.sh](tryggve/EURLD.sh).
