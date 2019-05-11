@@ -61,7 +61,7 @@ The regions are predefined. As shown in [EURLD.tsv](tryggve/EURLD.tsv) by [EURLD
 
 Note that pairing regions of interest would reduce the burden of genomewide analysis, and also that region-specific reference will not affect results from steps 4 and 5 regarding use of variants from GWAS sumstats.
 
-Results from steps 4 and 5 are classified as in [analysis.sh](tryggve/analysis.sh). In particular, for step 5 this is done with [aild.sh](cardio/aild.sh).
+INF1.aild contains all the protein-region pairs for steps 4 and 5, whose results are classified as in [analysis.sh](tryggve/analysis.sh). In particular, for step 5 this is done with [aild.sh](cardio/aild.sh).
 
 ## Notes on UniProt IDs
 
