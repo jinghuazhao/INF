@@ -46,7 +46,7 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 
 ## Use of approximately independent LD blocks
 
-Steps to use:
+The implementation involve several steps:
 
 1. Set up 1703 autosomal regions as defined in [EURLD.bed](tryggve/EURLD.bed).
 2. Extract variants outside the [regions in high LD](tryggve/high-LD-regions-hg19.txt) to [1672 regions](tryggve/EURLD-no-high-LD-regions-hg19.bed) by [EURLD.sh](tryggve/EURLD.sh).
@@ -61,7 +61,7 @@ The regions are predefined. As shown in [EURLD.tsv](tryggve/EURLD.tsv) by [EURLD
 
 Note that pairing regions of interest would reduce the burden of genomewide analysis, and also that region-specific reference will not affect results from steps 4 and 5 regarding use of variants from GWAS sumstats.
 
-Results from 4 and 5 are classified as in [analysis.sh](tryggve/analysis.sh). In particular, for 5 this is done with [aild.sh](cardio/aild.sh).
+Results from steps 4 and 5 are classified as in [analysis.sh](tryggve/analysis.sh). In particular, for step 5 this is done with [aild.sh](cardio/aild.sh).
 
 ## Notes on UniProt IDs
 
