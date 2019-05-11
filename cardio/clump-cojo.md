@@ -1,4 +1,4 @@
-# GCTA (1-3) and clumping (4-8) results
+# Comparison of GCTA and clumping results
 
 The directories are relative to /scratch/jhz22/INF, esp. cojo/ and clumping/ there,
 
