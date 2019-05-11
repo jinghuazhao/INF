@@ -26,6 +26,6 @@ A few observations can be made,
 * **Specification of sliding LD windows disregarding LD patterns in clumping gives 52 additional signals** (4, 5).
 * Thanks to the larger sample size and perhaps greater variant number, INTERVAL as LD reference leads to more signals than 1000Genomes (5, 6).
 * Summary statistics from larger sample size gives more signals (5, 7).
-* Unpruned results are likely to give more cis signals but this is subject to scrutiny perhaps on individual basis.
+* Unpruned results are likely to give more cis signals but this is subject to scrutiny perhaps on individual cases.
 
 It can be concluded that it is desirable to employ approximately independent LD blocks for both GCTA (1) and PLINK (4), and also that reference such as UK10K+1KG would be desirable with respect to both sample size and variant number.
