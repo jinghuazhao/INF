@@ -1,10 +1,10 @@
-# 30-4-2019 JHZ
+# 12-5-2019 JHZ
 
 # code to summarise protein-region results
 (
   echo -e "prot\tregion\t$(cat *jma.cojo | head -1)"
-  cat INF1.ailist | \
-  parallel -j1 -C' ' 'awk "NR>1 {print p, r, \$0}" OFS="\t" p={1} r={2} {1}-{2}.jma.cojo'
+  cat work/INF1.aild | \
+  parallel -j1 -C' ' 'awk "NR>1 {print p, r, \$0}" OFS="\t" p={1} r={2} aild/cojo/{1}-{2}.jma.cojo'
 ) > INF1.txt
 
 R --no-save -q <<END
