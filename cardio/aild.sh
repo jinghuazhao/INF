@@ -2,7 +2,7 @@
 
 # code to summarise protein-region results
 (
-  echo -e "prot\tregion\t$(cat *jma.cojo | head -1)"
+  echo -e "prot\tregion\t$(cat aild/cojo/*jma.cojo | head -1)"
   cat work/INF1.aild | \
   parallel -j1 -C' ' 'awk "NR>1 {print p, r, \$0}" OFS="\t" p={1} r={2} aild/cojo/{1}-{2}.jma.cojo'
 ) > INF1.txt
