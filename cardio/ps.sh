@@ -28,6 +28,8 @@ module load R/3.4.2 phenoscanner/phenoscanner_v2
 export R_LIBS=
 
 cd $INF/ps
+cut -d' ' -f2 INF1.rsid > INF1.ps
+phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i INF1.ps -o INF1
 ln -sf $INF/cojo/aild-indel/INF1.jma
 for i in $(cut -f1 INF1.jma | awk 'NR>1' | uniq )
 do
@@ -38,8 +40,6 @@ do
   awk '{print $2}'> $i.ps;
   phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i $i.ps -o $i
 done
-cut -d' ' -f2 INF1.rsid > INF1.ps
-phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i INF1.ps -o INF1
 cd -
 
 module load gcc/5.2.0
