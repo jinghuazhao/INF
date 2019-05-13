@@ -56,7 +56,7 @@ The implementation involves several steps:
    * List variants by region in the reference panel by [aild-snplist.sb](cardio/aild-snplist.sb); to facilitate variant annotation only SNPs are kept.
 4. clump via [aild-clump.sb](cardio/aild-clump.sb).
 5. cojo via [aild-cojo.sb](cardio/aild-cojo.sb).
-6. Downstream analyses with PhenoScanner (preferably v2) as in [ps.sh](cardio/ps.sh) and forest plots on TRYGGVE with study-specific sumstats.
+6. Downstream analyses with PhenoScanner (preferably v2) as in [ps.sh](cardio/ps.sh) and forest plots on TRYGGVE (with study-specific sumstats).
 
 The regions are predefined. As shown in [EURLD.tsv](tryggve/EURLD.tsv) by [EURLD.R](tryggve/EURLD.R), the LD patterns across the genome are more variable than the norm in a typical genomewide association analysis therefore slide windows such as 250kb (36), 500kb (300), or even 10Mb (1071), seeing that the sentinel variant may not necessarily lie right in the middle of a window. The number of signals in our case would be underestimated (38 by GCTA) or overestimated (53 by PLINK) as in [clump-cojo.md](cardio/clump-cojo.md). For instance, it is often seen from the PLINK --clump-range outputs that sliding windows can give results in two neighbouring LD blocks.
 
