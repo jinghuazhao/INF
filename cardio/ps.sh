@@ -38,6 +38,8 @@ do
   awk '{print $2}'> $i.ps;
   phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i $i.ps -o $i
 done
+cut -d' ' -f2 INF1.rsid > INF1.ps
+phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i INF1.ps -o INF1
 cd -
 
 function MR()
