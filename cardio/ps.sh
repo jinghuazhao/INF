@@ -40,6 +40,8 @@ do
 done
 cd -
 
+module load gcc/5.2.0
+
 function MR()
 {
 # Fine with R 3.6.0 but only possible with 100 SNPs as query from the Web
