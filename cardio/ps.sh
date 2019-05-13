@@ -42,6 +42,8 @@ cut -d' ' -f2 INF1.rsid > INF1.ps
 phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i INF1.ps -o INF1
 cd -
 
+module load gcc/5.2.0
+
 function MR()
 {
 # Fine with R 3.6.0 but only possible with 100 SNPs as query from the Web
