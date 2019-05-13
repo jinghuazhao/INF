@@ -2,9 +2,9 @@
 
 #SBATCH --ntasks=1
 #SBATCH --job-name=_cojo
-#SBATCH --time=1-0:00:00
+#SBATCH --time=12:00:00
 #SBATCH --partition=medium
-#SBATCH --array=1-233%1
+#SBATCH --array=1-233%2
 #SBATCH --mem=128800
 #SBATCH --output=aild/cojo/_cojo_%A_%a.out
 #SBATCH --error=aild/cojo/_cojo_%A_%a.err
