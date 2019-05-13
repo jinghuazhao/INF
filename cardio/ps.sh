@@ -36,7 +36,7 @@ do
   sort -k1,1 | \
   join INF1.rsid - | \
   awk '{print $2}'> $i.ps;
-  phenoscanner -s T -c All -x EUR -p 0.0000001 -i $i.ps -o $i
+  phenoscanner -s T -c All -x EUR -p 0.0000001 -r2 0.6 -i $i.ps -o $i
 done
 cd -
 
