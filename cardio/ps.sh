@@ -15,6 +15,7 @@ function rsid()
   uniq | \
   sort -k1,1 | \
   join - INTERVAL.rsid > $HOME/ps/INF1.rsid
+  cut -d' ' -f2 INF1.rsid > INF1.ps
   cd -
 }
 
@@ -28,7 +29,6 @@ module load R/3.4.2 phenoscanner/phenoscanner_v2
 export R_LIBS=
 
 cd $INF/ps
-cut -d' ' -f2 INF1.rsid > INF1.ps
 phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i INF1.ps -o INF1
 ln -sf $INF/cojo/aild-indel/INF1.jma
 for i in $(cut -f1 INF1.jma | awk 'NR>1' | uniq )
@@ -50,7 +50,7 @@ function MR()
 R --no-save -q <<END
   library(MendelianRandomization)
 # rsid prepared from INTERVAL data
-  rsid <- with(read.table("INF1.rsid",as.is=TRUE,col.names=c("SNPID","rsid")), rsid)
+  rsid <- with(read.table("INF1.ps",as.is=TRUE,col.names=c("rsid")), rsid)
   r1 <- phenoscanner(snpquery=  rsid[1:100], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
   r2 <- phenoscanner(snpquery=rsid[101:200], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
   r3 <- phenoscanner(snpquery=rsid[201:300], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
