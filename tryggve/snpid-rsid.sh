@@ -12,9 +12,8 @@ function INTERVAL()
         POS=\$4
         a1=\$5
         a2=\$6
-        if (a1>a2) snpid=\"chr\" CHR \":\" POS \"_\" a2 \"_\" a1;
-        else snpid=\"chr\" CHR \":\" POS \"_\" a1 \"_\" a2
-        print snpid, $1
+        if (a1>a2) print \"chr\" CHR \":\" POS \"_\" a2 \"_\" a1, \$1;
+        else print \"chr\" CHR \":\" POS \"_\" a1 \"_\" a2, \$1
       }
     }"
   '
