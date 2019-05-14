@@ -1,30 +1,56 @@
-# INTERVAL reference
+# GWAS sumstats and plots
+
+## INTERVAL reference
 
 /scratch/jhz22/data/INTERVAL
 
-# INTERVAL sumstats
+## INTERVAL sumstats
 
 location: /scratch/jhz22/INF/sumstats/INTERVAL
 
-# Manhattan plots by cohort
+## Manhattan plots by cohort
 
 location: /scratch/jhz22/INF/plots
 
-# Clumping results
+## Meta-analysis sumstats + Manhattan/Q-Q/LocusZoom plots
+
+location: /scratch/jhz22/INF/METAL
+
+---
+
+# Results based on aproximately independent LD blocks (AILD)
+
+*See https://bitbucket.org/nygcresearch/ldetect-data*
+
+## SNPs only
+
+location, /scratch/jhz22/INF/snps
+
+* cojo/, GCTA --cojo-slct results for all (INF1*) and individual proteins
+  * ps/, PhenoScanner_v2 results for all (INF1*) and individual proteins. code as in /scratch/jhz22/INF/cardio/ps.sh
+* clump/, PLINK --clump results for all (INF1*) and individual proteins
+
+## SNPs+indels
+
+location, /scratch/jhz22/INF/aild
+
+---
+
+# Genomewide results based on slide windows
+
+## Clumping results
 
 location: /scratch/jhz22/INF/clumping
 
-Files: study.reference.LD-cutoff.clumped_reults, e.g., INTERVAL.UK10K+1KG.r2-0.1.clumped, while AILD is approximately independent linkage disequilibrium as described in FM-pipeline.
+Files: study.reference.LD-cutoff.clumped_reults, e.g., INTERVAL.UK10K+1KG.r2-0.1.clumped
 
-# Conditional/joint analysis
+## Conditional/joint analysis
 
 location: /scratch/jhz22/INF/cojo
 
-where aild-indel/ and aild-snp/ contain results for all variants and SNPs, respectively.
+where aild-indel/ and aild-snp/ contain results for all variants and SNPs (including regions in high LD), respectively.
 
-# PhenoScanner outputs
-
-Location, /scratch/jhz22/INF/ps
+aild-indel also has results from PhenoScanner
 
 which contains protein-specific and whole (INF1_* and INF1r_*, see below) results.
 ```bash
@@ -51,7 +77,3 @@ R --no-save -q <<END
   save(r1,r2,r3,r4,file="INF1r.rda",version=2)
 END
 ```
-
-# Meta-analysis sumstats + Manhattan/Q-Q/LocusZoom plots
-
-location: /scratch/jhz22/INF/METAL
