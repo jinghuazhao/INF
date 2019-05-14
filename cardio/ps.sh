@@ -33,7 +33,7 @@ rsid
 for i in $(cut -f1 INF1.jma | awk 'NR>1' | uniq )
 do
   echo $i;
-  awk -vprot=$i '$1==prot{print $4}' INF1.jma | \
+  awk -vprot=$i '$1==prot{print $4}' $INF/aild/cojo/INF1.jma | \
   sort -k1,1 | \
   join INF1.rsid - | \
   awk '{print $2}'> $i.ps;
