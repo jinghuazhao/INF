@@ -14,22 +14,17 @@ export R_LIBS=
 
 #### snpstats
 
-function rsid()
-{
-  gunzip -c $INF/work/INTERVAL.rsid.gz | \
-  awk '$2!="."' > INTERVAL.rsid
-  cut -f3 $INF/aild/cojo/INF1.jma | \
-  awk 'NR>1' | \
-  uniq | \
-  sort -k1,1 | \
-  join - INTERVAL.rsid > INF1.rsid
-  cut -d' ' -f2 INF1.rsid > INF1.ps
-}
-
 cd $INF/ps
+gunzip -c $INF/work/INTERVAL.rsid.gz | \
+awk '$2!="."' > INTERVAL.rsid
+cut -f3 $INF/aild/cojo/INF1.jma | \
+awk 'NR>1' | \
+uniq | \
+sort -k1,1 | \
+join - INTERVAL.rsid > INF1.rsid
+cut -d' ' -f2 INF1.rsid > INF1.ps
 
 phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i INF1.ps -o INF1
-rsid
 for i in $(cut -f1 INF1.jma | awk 'NR>1' | uniq )
 do
   echo $i;
