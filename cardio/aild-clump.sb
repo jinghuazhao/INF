@@ -2,8 +2,8 @@
 
 #SBATCH --ntasks=1
 #SBATCH --job-name=_clump
-#SBATCH --time=1-0:00:00
-#SBATCH --partition=long
+#SBATCH --time=12:00:00
+#SBATCH --partition=medium
 #SBATCH --array=1-233%1
 #SBATCH --mem=128800
 #SBATCH --output=aild/clump/_clump_%A_%a.out

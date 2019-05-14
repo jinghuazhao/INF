@@ -3,22 +3,6 @@
 export TMPDIR=/scratch/jhz22/tmp
 export INF=$HOME/INF
 
-#### snpstats
-
-function rsid()
-{
-  cd $INF/work
-  gunzip -c INTERVAL.rsid.gz | \
-  awk '$2!="."' > INTERVAL.rsid
-  cut -f4 $INF1.jma | \
-  awk 'NR>1' | \
-  uniq | \
-  sort -k1,1 | \
-  join - INTERVAL.rsid > $HOME/ps/INF1.rsid
-  cut -d' ' -f2 INF1.rsid > INF1.ps
-  cd -
-}
-
 #### PhenoScanner
 
 . /etc/profile.d/modules.sh
@@ -29,8 +13,25 @@ module load R/3.4.2 phenoscanner/phenoscanner_v2
 export R_LIBS=
 
 cd $INF/ps
+ln -sf $INF/aild/cojo/INF1.jma
+
+#### snpstats
+
+function rsid()
+{
+  gunzip -c $INF/work/INTERVAL.rsid.gz | \
+  awk '$2!="."' > INTERVAL.rsid
+  cut -f4 INF1.jma | \
+  awk 'NR>1' | \
+  uniq | \
+  sort -k1,1 | \
+  join - INTERVAL.rsid > $INF/ps/INF1.rsid
+  cut -d' ' -f2 INF1.rsid > INF1.ps
+}
+
+rsid
 phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i INF1.ps -o INF1
-ln -sf $INF/cojo/aild-indel/INF1.jma
+rsid
 for i in $(cut -f1 INF1.jma | awk 'NR>1' | uniq )
 do
   echo $i;
