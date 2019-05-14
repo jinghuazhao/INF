@@ -48,11 +48,15 @@ Files: study.reference.LD-cutoff.clumped_reults, e.g., INTERVAL.UK10K+1KG.r2-0.1
 
 location: /scratch/jhz22/INF/cojo
 
-where aild-indel/ and aild-snp/ contain results for all variants and SNPs (including regions in high LD), respectively.
+## Conditional/joint analysis with regions in high LD
 
-aild-indel also has results from PhenoScanner
+location: /scratch/jhz22/INF/aild-ld
 
-which contains protein-specific and whole (INF1_* and INF1r_*, see below) results.
+* aild-indel/, all variants
+  * ps, PhenoScanner v2 and v1.1/ 
+* aild-snp/,  SNPs only
+
+Results from PhenoScanner which contains protein-specific and whole (INF1_* and INF1r_*, see below) results.
 ```bash
 # those INF1_*
 # All results, no LD, p=1e-5
