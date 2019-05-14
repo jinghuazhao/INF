@@ -18,7 +18,7 @@ function rsid()
 {
   gunzip -c $INF/work/INTERVAL.rsid.gz | \
   awk '$2!="."' > INTERVAL.rsid
-  cut -f4 INF1.jma | \
+  cut -f4 $INF/aild/cojo/INF1.jma | \
   awk 'NR>1' | \
   uniq | \
   sort -k1,1 | \
@@ -27,7 +27,6 @@ function rsid()
 }
 
 cd $INF/ps
-ln -sf $INF/aild/cojo/INF1.jma
 
 phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i INF1.ps -o INF1
 rsid
@@ -40,7 +39,6 @@ do
   awk '{print $2}'> $i.ps;
   phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i $i.ps -o $i
 done
-cd -
 
 module load gcc/5.2.0
 
