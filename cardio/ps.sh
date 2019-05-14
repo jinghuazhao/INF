@@ -12,9 +12,6 @@ module load use.own
 module load R/3.4.2 phenoscanner/phenoscanner_v2
 export R_LIBS=
 
-cd $INF/ps
-ln -sf $INF/aild/cojo/INF1.jma
-
 #### snpstats
 
 function rsid()
@@ -29,7 +26,9 @@ function rsid()
   cut -d' ' -f2 INF1.rsid > INF1.ps
 }
 
-rsid
+cd $INF/ps
+ln -sf $INF/aild/cojo/INF1.jma
+
 phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i INF1.ps -o INF1
 rsid
 for i in $(cut -f1 INF1.jma | awk 'NR>1' | uniq )
