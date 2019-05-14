@@ -22,7 +22,7 @@ function rsid()
   awk 'NR>1' | \
   uniq | \
   sort -k1,1 | \
-  join - INTERVAL.rsid > $INF/ps/INF1.rsid
+  join - INTERVAL.rsid > INF1.rsid
   cut -d' ' -f2 INF1.rsid > INF1.ps
 }
 
