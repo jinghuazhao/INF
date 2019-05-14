@@ -18,7 +18,7 @@ function rsid()
 {
   gunzip -c $INF/work/INTERVAL.rsid.gz | \
   awk '$2!="."' > INTERVAL.rsid
-  cut -f4 $INF/aild/cojo/INF1.jma | \
+  cut -f3 $INF/aild/cojo/INF1.jma | \
   awk 'NR>1' | \
   uniq | \
   sort -k1,1 | \
