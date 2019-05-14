@@ -15,6 +15,7 @@ export R_LIBS=
 #### snpstats
 
 cd $INF/ps
+ln -sf $INF/aild/cojo/INF1.jma
 gunzip -c $INF/work/INTERVAL.rsid.gz | \
 awk '$2!="."' > INTERVAL.rsid
 cut -f3 $INF/aild/cojo/INF1.jma | \
@@ -28,7 +29,7 @@ phenoscanner -s T -c All -x EUR -p 0.0000001 -r 0.6 -i INF1.ps -o INF1
 for i in $(cut -f1 INF1.jma | awk 'NR>1' | uniq )
 do
   echo $i;
-  awk -vprot=$i '$1==prot{print $4}' $INF/aild/cojo/INF1.jma | \
+  awk -vprot=$i '$1==prot{print $4}' INF1.jma | \
   sort -k1,1 | \
   join INF1.rsid - | \
   awk '{print $2}'> $i.ps;
