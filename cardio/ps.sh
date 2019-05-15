@@ -45,20 +45,21 @@ do
 done
 
 module load gcc/5.2.0
+module unload R/3.4.2
+export R_LIBS=/scratch/jhz22/R
 
 function MR()
 {
 # Fine with R 3.6.0 but only possible with 100 SNPs as query from the Web
-R --no-save -q <<END
+/scratch/jhz22/bin/R --no-save -q <<END
   library(MendelianRandomization)
 # rsid prepared from INTERVAL data
   rsid <- with(read.table("INF1.ps",as.is=TRUE,col.names=c("rsid")), rsid)
   r1 <- phenoscanner(snpquery=  rsid[1:100], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
   r2 <- phenoscanner(snpquery=rsid[101:200], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
   r3 <- phenoscanner(snpquery=rsid[201:300], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
-  r4 <- phenoscanner(snpquery=rsid[301:400], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
-  r5 <- phenoscanner(snpquery=rsid[401:437], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
-  save(r1,r2,r3,r4,r5,file="INF1r.rda",version=2)
+  r4 <- phenoscanner(snpquery=rsid[301:357], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  save(r1,r2,r3,r4,file="INF1r.rda",version=2)
 END
 }
 
