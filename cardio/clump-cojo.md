@@ -3,8 +3,8 @@
 **Run** | **Option** | **cis** | **trans** | **total** | **Comments/location<sup>\+</sup>**
 -----------|----------|--------------|-----------|------------|--------------------------------------------------------------
 **GCTA** |
-1 | LD blocks | 228 | 182 | 410 | only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx
-\+ indels | LD blocks | 254 | 191 | 445 | SNPs+indels, cojo/aild-indel/INF1.jma.*
+1 | LD blocks | 218 | 147 | 357 | only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx
+\+ indels | LD blocks | 220 | 135 | 375 | SNPs+indels, cojo/aild-indel/INF1.jma.*
 2 | default | 234 | 173 | 407 | --cojo-collinear 0.9 --cojo-wind 10000, doc/SCALLOP_INF1-260419.xlsx
 3 | small R2 & window | 189 | 186 | 375 | --cojo-collinear 0.1 --cojo-wind 500, doc/SCALLOP_INF1-260419.xlsx
 **PLINK** |
@@ -20,7 +20,7 @@
 A few observations can be made,
 
 * indels lead to more signals in cojo (1) and clumping (4) analyses.
-* **default GCTA --cojo-collinear and --cojo-wind  perameters yields 38 less signals** (1, 2).
+* **default GCTA --cojo-collinear and --cojo-wind parameters did quite well in numbers, esp. taking ~30 away regions in LD** (1, 2).
 * the number of signals increase with the values of GCTA parameters (2, 3), yet moderate changes in LD window have less impact than the reference panel (5, 8).
 * PLINK --clump gives more signals than GCTA --cojo (1, 4 and 2, 5).
 * **Specification of sliding LD windows disregarding LD patterns in clumping gives 52 additional signals** (4, 5).
