@@ -1,4 +1,4 @@
-# 10-5-2019 JHZ
+# 15-5-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -180,7 +180,7 @@ function cojo()
     sink("cojo/INF1.jma.out")
     with(cistrans,table)
     sink()
-    sum(with(cistrans,table))
+    with(cistrans,total)
     pdf("cojo/INF1.jma.pdf")
     circos.cis.vs.trans.plot(hits="jma")
     dev.off()
