@@ -423,7 +423,7 @@ function lambda()
   sed 's/-1.tbl.gz//g' | \
   xargs -l basename | \
   parallel -j4 --env rt -C' ' '
-    gunzip -c $rt/{}-1.tbl.gz | \
+    gunzip -c $rt/METAL/{}-1.tbl.gz | \
     cut -f1,11 | \
     gzip -f > work/INF1.{}.p.gz
     export protein={}
