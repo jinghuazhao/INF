@@ -414,16 +414,15 @@ function nodup()
   )
 }
 
-export rt=$HOME/INF
 function lambda()
 {
   echo "--> GC lambda"
   (
-  ls $rt/METAL/*-1.tbl.gz | \
-  sed 's/-1.tbl.gz//g' | \
+  ls METAL/*-1.tbl.gz | \
+  sed 's|METAL/||g;s/-1.tbl.gz//g'
   xargs -l basename | \
   parallel -j4 --env rt -C' ' '
-    gunzip -c $rt/METAL/{}-1.tbl.gz | \
+    gunzip -c METAL/{}-1.tbl.gz | \
     cut -f1,11 | \
     gzip -f > work/INF1.{}.p.gz
     export protein={}
