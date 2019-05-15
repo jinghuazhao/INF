@@ -27,7 +27,7 @@ location: /scratch/jhz22/INF/METAL
 location, /scratch/jhz22/INF/aild
 
 * cojo/, GCTA --cojo-slct results for all (INF1*) and individual proteins
-  * ps/, PhenoScanner_v2 results for all (INF1*) and individual proteins. code as in /scratch/jhz22/INF/cardio/ps.sh
+  * ps/, PhenoScanner v2 results. coded as in /scratch/jhz22/INF/cardio/ps.sh
 * clump/, PLINK --clump results for all (INF1*) and individual proteins
 
 ## SNPs only
@@ -35,6 +35,7 @@ location, /scratch/jhz22/INF/aild
 location, /scratch/jhz22/INF/snps
 
 * cojo/, GCTA --cojo-slct results for all (INF1*) and individual proteins
+  * ps/, PhenoScanner v2 results.
 * clump/, PLINK --clump results for all (INF1*) and individual proteins
 
 ---
