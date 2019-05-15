@@ -419,8 +419,7 @@ function lambda()
   echo "--> GC lambda"
   (
   ls METAL/*-1.tbl.gz | \
-  sed 's|METAL/||g;s/-1.tbl.gz//g'
-  xargs -l basename | \
+  sed 's|METAL/||g;s/-1.tbl.gz//g' | \
   parallel -j4 --env rt -C' ' '
     gunzip -c METAL/{}-1.tbl.gz | \
     cut -f1,11 | \
