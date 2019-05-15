@@ -3,8 +3,8 @@
 **Run** | **Option** | **cis** | **trans** | **total** | **Comments/location<sup>\+</sup>**
 -----------|----------|--------------|-----------|------------|----------------------------------------------
 **GCTA** |
-1 | LD blocks | 218 | 147 | 357 | only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx
-\+ indels | LD blocks | 220 | 135 | 375 | SNPs+indels, cojo/aild-indel/INF1.jma.*
+1 | LD blocks | 210 | 147 | 357 | only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx
+\+ indels | LD blocks | 220 | 155 | 375 | SNPs+indels, cojo/aild-indel/INF1.jma.*
 2 | default | 234 | 173 | 407 | --cojo-collinear 0.9 --cojo-wind 10000, doc/SCALLOP_INF1-260419.xlsx
 3 | small R2 & window | 189 | 186 | 375 | --cojo-collinear 0.1 --cojo-wind 500, doc/SCALLOP_INF1-260419.xlsx
 **PLINK** |
