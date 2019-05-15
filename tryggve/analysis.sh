@@ -414,4 +414,31 @@ function nodup()
   )
 }
 
+export rt=$HOME/INF
+function lambda()
+{
+  echo "--> GC lambda"
+  (
+  ls $rt/METAL/*-1.tbl.gz | \
+  sed 's/-1.tbl.gz//g' | \
+  xargs -l basename | \
+  parallel -j4 --env rt -C' ' '
+    gunzip -c $rt/{}-1.tbl.gz | \
+    cut -f1,11 | \
+    gzip -f > work/INF1.{}.p.gz; \
+    export protein={}; \
+    R --no-save -q <<\ \ END
+    library(gap); \
+    rt <- Sys.getenv("rt"); \
+    protein <- Sys.getenv("protein"); \
+    gz <- gzfile(paste0("work/INF1.",protein,".p.gz")); \
+    p <- read.table(gz,as.is=TRUE,header=TRUE); \
+    cat(protein,"GC.lambda=",gc.lambda(with(p,PVAL)),"\n")
+  END'
+  ) > work/INF1.lambda.log
+  grep GC.lambda work/INF1.lambda.log | \
+  grep -v gc.lambda | \
+  sed 's/GC.lambda=//g' > work/INF1.lambda.dat
+}
+
 $1
