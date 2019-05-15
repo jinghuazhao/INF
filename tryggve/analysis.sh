@@ -422,7 +422,7 @@ function lambda()
   sed 's|METAL/||g;s/-1.tbl.gz//g' | \
   parallel -j4 --env rt -C' ' '
     gunzip -c METAL/{}-1.tbl.gz | \
-    cut -f1,11 | \
+    cut -f3,12 | \
     gzip -f > work/INF1.{}.p.gz
     export protein={}
     R --no-save -q <<\ \ END
