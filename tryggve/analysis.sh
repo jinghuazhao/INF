@@ -1,4 +1,4 @@
-# 15-5-2019 JHZ
+# 16-5-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -427,10 +427,9 @@ function lambda()
     export protein={}
     R --no-save -q <<\ \ END
       library(gap)
-      rt <- Sys.getenv("rt")
       protein <- Sys.getenv("protein")
       gz <- gzfile(paste0("work/INF1.",protein,".p.gz"))
-      p <- read.table(gz,as.is=TRUE,header=TRUE)
+      p <- read.delim(gz,as.is=TRUE)
       cat(protein,"GC.lambda=",gc.lambda(with(p,P.value)),"\n")
   END'
   ) > work/INF1.lambda.log
