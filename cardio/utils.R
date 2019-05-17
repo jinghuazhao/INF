@@ -40,7 +40,25 @@ dev.off()
 
 # add rsid to jma
 
+module load gcc/5.2.0
+
+require(dplyr)
 jma <- read.delim("snps/cojo/INF1.jma",as.is=TRUE)
-rsid <- read.table("snps/cojo/ps/INF1.rsid",col.names=c("SNP","rsid"))
-m <- merge(jma,rsid,by="SNP")
-jma <- m[with(m,order(prot,SNP)),]
+rsid <- read.table("snps/cojo/ps/INF1.rsid",as.is=TRUE,col.names=c("SNP","rsid"))
+m <- within(nest_join(jma,rsid),{
+  rsid <- unlist(lapply(lapply(y,"[[",1),"[",1))
+})
+
+tbl <- read.delim("snps/cojo/INF1.jma.tbl",as.is=TRUE)
+m <- merge(tbl,rsid,by.x="MarkerName",by.y="SNP")
+
+all <- read.delim("snps/cojo/INF1.jma.all",as.is=TRUE)
+names(all) <- c("ID", "CHR", "POS", "STRAND", "N",
+                "EFFECT_ALLELE", "REFERENCE_ALLELE", "CODE_ALL_FQ",
+                "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP")
+all <- within(all, {
+       ID <- unlist(strsplit("EGCUT/EGCUT.ADA:chr19:54321933_A_G",":"))
+       rtprot <- unlist(strsplit(ID[1],"."))
+       SNPID <- paste(ID[2],ID[3],sep=":")
+})
+m <- merge(all,rsid,by.x="MarkerName",by.y="SNP")
