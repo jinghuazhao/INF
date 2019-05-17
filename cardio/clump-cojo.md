@@ -21,7 +21,7 @@ A few observations can be made,
 
 * indels lead to more signals in cojo (1) and clumping (4) analyses.
 * **default GCTA --cojo-collinear and --cojo-wind parameters did quite well in numbers, esp. taking ~30 away regions in LD** (1, 2).
-* Although it looks close, GCTA --cojo-collinear produces considerably less signals compared to --cojo-collinear 0.9 (3).
+* Although it looks close, GCTA --cojo-collinear 0.1 produces considerably less signals compared to --cojo-collinear 0.9 (3).
 * the number of signals increase with the values of GCTA parameters (2, 3), yet moderate changes in LD window have less impact than the reference panel (5, 8).
 * PLINK --clump gives more signals than GCTA --cojo (1, 4 and 2, 5).
 * **Specification of sliding LD windows disregarding AILD patterns in clumping gives 53 additional signals** (4, 5).
