@@ -1,4 +1,4 @@
-# 16-5-2019 JHZ
+# 17-5-2019 JHZ
 
 # Effect size ~ MAF plot
 
@@ -37,3 +37,10 @@ with(INF1, hist(lambda,main="",xlab=expression(paste("INF1-",lambda))))
 with(lambda, plot(lambda.x,lambda.y,cex=0.6,
      xlab=expression(paste("INTERVAL-",lambda)),ylab=expression(paste("INF1-",lambda))))
 dev.off()
+
+# add rsid to jma
+
+jma <- read.delim("snps/cojo/INF1.jma",as.is=TRUE)
+rsid <- read.table("snps/cojo/ps/INF1.rsid",col.names=c("SNP","rsid"))
+m <- merge(jma,rsid,by="SNP")
+jma <- m[with(m,order(prot,SNP)),]
