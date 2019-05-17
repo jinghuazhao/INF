@@ -1,4 +1,4 @@
-# 16-5-2019 JHZ
+# 17-5-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -177,6 +177,8 @@ function cojo()
     hits <- merge(jma[c("prot","CHR","BP","SNP")],inf1[c("prot","uniprot")],by="prot")
     names(hits) <- c("prot","Chr","bp","SNP","uniprot")
     cistrans <- cis.vs.trans.classification(hits)
+    cis.vs.trans <- with(cistrans,data)
+    write.table(cis.vs.trans,file="INF1.jma.cis.vs.trans",quota=FALSE,row.names=FALSE)
     sink("cojo/INF1.jma.out")
     with(cistrans,table)
     sink()
