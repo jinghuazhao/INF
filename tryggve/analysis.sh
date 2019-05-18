@@ -217,8 +217,8 @@ function fp()
   cut -f3 INF1.tbl | \
   awk 'NR>1' | \
   sort -k1,1 | \
-  join work/INTERVAL.rsid - | \
-  uniq > INF1.rsid
+  uniq | \
+  join work/INTERVAL.rsid - > INF1.rsid
   (
     awk 'NR>1' INF1.tbl | \
     cut -f1,3,13 | \
