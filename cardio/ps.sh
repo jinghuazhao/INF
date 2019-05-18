@@ -28,8 +28,8 @@ cd $INF/snps/cojo/ps
 ln -sf $INF/snps/cojo/INF1.jma
 cut -f3 INF1.jma | \
 awk 'NR>1' | \
-uniq | \
 sort -k1,1 | \
+uniq | \
 join - $INF/work/INTERVAL.rsid > INF1.rsid
 cut -d' ' -f2 INF1.rsid > INF1.ps
 
