@@ -311,7 +311,7 @@ function fp()
          c[j] <- -1
          print(cbind(A1,A2,EFFECT_ALLELE,REFERENCE_ALLELE,a1,a2,format(BETA,digits=3),format(BETA*c,digits=3)))
          BETA <- BETA * c
-         title <- sprintf("%s [%s (%s/%s) N=%.0f]",p,t[i,"rsid"],A1,A2,tbl[i,"N"])
+         title <- sprintf("%s [%s (%s) (%s/%s) N=%.0f]",p,m,t[i,"rsid"],A1,A2,tbl[i,"N"])
          require(meta)
          mg <- metagen(BETA,SE,sprintf("%s (%.0f)",study,N),title=title)
          forest(mg,colgap.forest.left = "1cm")
