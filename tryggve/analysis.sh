@@ -1,4 +1,4 @@
-# 17-5-2019 JHZ
+# 18-5-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -215,11 +215,10 @@ function fp()
   ) | \
   sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.tbl
   cut -f3 INF1.tbl | \
-  awk '{split($1,a,"_");print a[1], $1}' | \
+  awk 'NR>1' | \
   sort -k1,1 | \
-  join -12 snp_pos - | \
-  cut -d' ' -f2,3 | \
-  sort -k2,2 > INF1.rsid
+  join work/INTERVAL.rsid - | \
+  uniq > INF1.rsid
   (
     awk 'NR>1' INF1.tbl | \
     cut -f1,3,13 | \
