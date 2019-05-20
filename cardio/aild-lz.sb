@@ -3,9 +3,8 @@
 #SBATCH --ntasks=1
 #SBATCH --job-name=_lz
 #SBATCH --time=12:00:00
-#SBATCH --partition=medium
+#SBATCH --partition=long
 #SBATCH --array=1-201%1
-#SBATCH --mem=128800
 #SBATCH --output=snps/cojo/log/_lz_%A_%a.out
 #SBATCH --error=snps/cojo/log/_lz_%A_%a.err
 #SBATCH --export ALL
@@ -28,13 +27,13 @@ awk 'NR==ENVIRON["r"]' > work/lz.tmp
 read chr start end < work/lz.tmp
 (
    echo -e "MarkerName\tP-value\tWeight"
-   gunzip -c METAL/{}-1.tbl.gz | \
+   gunzip -c METAL/${p}-1.tbl.gz | \
    awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
-       "(\$1 == chr && \$2 >= start && \$2 <= end){split(\$3,a,\"_\");print a[1],\$12,\$14}" | \
+       '($1 == chr && $2 >= start && $2 <= end){split($3,a,"_");print a[1],$12,$14}' | \
    sort -k1,1 | \
    join -12 -21 work/snp_pos - | \
-   awk -vOFS="\t" "{print \$2, \$3, \$4}"
-) > snps/cojo/${p}-${r}.lz'
+   awk -vOFS="\t" "{print $2, $3, $4}"
+) > snps/cojo/${p}-${r}.lz
 cd snps/cojo/lz
 rm -f ld_cache.db
 locuszoom-1.4 --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${p}-${r}.lz \
