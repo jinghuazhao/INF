@@ -28,7 +28,7 @@ read chr start end < work/lz.tmp
 (
    echo -e "MarkerName\tP-value\tWeight"
    gunzip -c METAL/${p}-1.tbl.gz | \
-   awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
+   awk -vOFS="\t" -vchr=$chr -vstart=$start -vend=$end \
        '($1 == chr && $2 >= start && $2 <= end){split($3,a,"_");print a[1],$12,$14}' | \
    sort -k1,1 | \
    join -12 -21 work/snp_pos - | \
@@ -40,6 +40,6 @@ locuszoom-1.4 --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${p}-${r}.lz
               --plotonly --chr $chr --start $start --end $end --no-date --rundir .
 mv chr${chrom}_${start}-${end}.pdf ${p}-${r}.lz.pdf
 pdftopng -r 300 ${p}-${r}.lz.pdf ${p}-${r}
-mv {}-000001.png ${p}-${r}.lz-1.png
-mv {}-000002.png ${p}-${r}.lz-2.png
+mv ${p}-${r}-000001.png ${p}-${r}.lz-1.png
+mv ${p}-${r}-000002.png ${p}-${r}.lz-2.png
 cd -
