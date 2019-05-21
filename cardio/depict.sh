@@ -16,6 +16,8 @@ R --no-save <<END
     tbl <- within(t, {
       prot <- sapply(strsplit(Chromosome,":"),"[",1)
       Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
+      Allele1 <- toupper(Allele1)
+      Allele2 <- toupper(Allele2)
     })
     rsid <- read.table("depict.rsid",as.is=TRUE,col.names=c("MarkerName","rsid"))
     m <- within(nest_join(tbl,rsid),{rsid <- unlist(lapply(lapply(y,"[[",1),"[",1))})
