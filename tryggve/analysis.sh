@@ -107,6 +107,10 @@ function clumping()
     hits <- merge(clumped[c("CHR","BP","SNP","prot")],inf1[c("prot","uniprot")],by="prot")
     names(hits) <- c("prot","Chr","bp","SNP","uniprot")
     cistrans <- cis.vs.trans.classification(hits)
+    cis.vs.trans <- with(cistrans,data)
+    write.table(cis.vs.trans,file="INF1.clumped.cis.vs.trans",row.names=FALSE,quote=TRUE)
+    cis <- subset(cis.vs.trans,cis.trans=="cis")["SNP"]
+    write.table(cis,file="INF1.clumped.cis",col.names=FALSE,row.names=FALSE,quote=FALSE)
     sink("INF1.clumped.out")
     with(cistrans,table)
     sink()
@@ -165,8 +169,8 @@ function cojo()
     grep -v -w SNP $rt/*.jma.cojo
   ) | \
   sed 's|'"$rt"'/||g;s/.jma.cojo:/\t/g' | \
-  awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > cojo/INF1.jma
-  sed 's/Chr/CHR/g;s/bp/BP/g' cojo/INF1.jma > jma
+  awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > INF1.jma
+  sed 's/Chr/CHR/g;s/bp/BP/g' INF1.jma > jma
   R --no-save -q <<\ \ END
     require(gap)
     jma <- read.delim("jma")
@@ -178,12 +182,14 @@ function cojo()
     names(hits) <- c("prot","Chr","bp","SNP","uniprot")
     cistrans <- cis.vs.trans.classification(hits)
     cis.vs.trans <- with(cistrans,data)
-    write.table(cis.vs.trans,file="cojo/INF1.jma.cis.vs.trans",quote=FALSE,row.names=FALSE)
-    sink("cojo/INF1.jma.out")
+    write.table(cis.vs.trans,file="INF1.jma.cis.vs.trans",row.names=FALSE,quote=TRUE)
+    cis <- subset(cis.vs.trans,cis.trans=="cis")["SNP"]
+    write.table(cis,file="INF1.jma.cis",col.names=FALSE,row.names=FALSE,quote=FALSE)
+    sink("INF1.jma.out")
     with(cistrans,table)
     sink()
     with(cistrans,total)
-    pdf("cojo/INF1.jma.pdf")
+    pdf("INF1.jma.pdf")
     circos.cis.vs.trans.plot(hits="jma")
     dev.off()
   END
