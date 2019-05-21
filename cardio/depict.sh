@@ -24,6 +24,6 @@ R --no-save <<END
     h <- c("Allele1","Allele2","Freq1","Effect","StdErr","P.value","N","Chromosome","Position")
     s <- subset(aggregate(x = t[h], by = list(with(t,rsid)), FUN = "min"), substr(Group.1,1,2)=="rs")
     names(s)[1] <- "SNP"
-    write.table(s,file="INF1.sumstats",col.names=FALSE,row.names=FALSE,quote=FALSE)
+    write.table(s,file="INF1",col.names=FALSE,row.names=FALSE,quote=FALSE)
 END
 cd -
