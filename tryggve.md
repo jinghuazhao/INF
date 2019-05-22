@@ -152,6 +152,10 @@ export MANPATH=/data/jinhua/parallel-20190222/share/man:$MANPATH
 ```
 The last line enables `man parallel` and `info parallel`.
 
+### OpenVPN
+
+In case you see message "All TAP-Windows aapters on this system are currently in use", read [this post](https://vpn.ac/knowledgebase/64/OpenVPN-Error-All-TAP-Windows-adapters-on-this-system-are-currently-in-use.html), esp. install [tap-windows-8.21.2](https://swupdate.openvpn.org/community/releases/tap-windows-9.21.2.exe).
+
 ### R/gap
 
 The version at TRYGGVE and CRAN are not the latest, which contains functions cis.vs.trans.classification, gc.lambda, invnormal, and here is the way to go
