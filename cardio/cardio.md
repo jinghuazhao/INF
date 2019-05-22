@@ -36,6 +36,7 @@ location, /scratch/jhz22/INF/snps
 
 * cojo/, GCTA --cojo-slct results for all (INF1*) and individual proteins
   * ps/, PhenoScanner v2 results.
+  * lz/, LocusZoom plots
 * clump/, PLINK --clump results for all (INF1*) and individual proteins
 
 ---
