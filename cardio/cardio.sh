@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 26/3/19 JHZ
+# General notes, 23/5/19 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
@@ -338,6 +338,53 @@ awk 'NR>1 {print $1,$2,$3}' INF1.clumped | \
 parallel -j3 -C' ' '
   gunzip -c METAL/{1}-1.tbl.gz | \
   awk -vchr={2} "chr==\$1{print \$3,toupper(\$4),toupper(\$5),\$6,\$10,\$11,\$12,\$14,\$1,\$2}" > METAL/{1}-{3}
+'
+
+export wd=${PWD}
+export rt=$wd/METAL/
+source $wd/cardio/fm.ini
+export FM_location=$HOME/FM-pipeline
+
+awk 'NR>1' st.bed | \
+parallel -j${threads} -C' ' \
+         --env wd \
+         --env rt \
+         --env FM_location \
+         --env GEN_location  \
+         --env CAVIAR \
+         --env CAVIARBF \
+         --env FM_summary \
+         --env fgwas \
+         --env finemap \
+         --env GCTA \
+         --env JAM \
+         --env LD_MAGIC \
+         --env LD_PLINK \
+         --env LocusZoom \
+          '$wd/cardio/fm.subs {1} {2} {3} {4} {5} {6} {7}'
+
+## finemapping cojo results
+
+export rt=snps/cojo
+(
+  echo "chr start end snpid pos r prot"
+  (
+    echo -e "chrom start end SNPID pos prot"
+    awk 'NR>1{print "chr" $2, $4-1, $4, $3, $4, $1}' $rt/INF1.jma 
+  ) | \
+  sed 's/ /\t/g' | \
+  bedtools intersect -a /scratch/jhz22/FM-pipeline/1KG/EUR.bed -b - -loj | \
+  awk '$5!="." {
+    gsub(/chr/,"",$1);
+    gsub(/region/,"",$4);
+    $5="";$6="";$7="";
+    print $1,$2,$3,$8,$9,$4,$10}'
+) > st.bed
+
+awk 'NR>1 {print $1,$2,$3}' $rt/INF1.jma | \
+parallel -j3 -C' ' '
+  gunzip -c METAL/{1}-1.tbl.gz | \
+  awk -vchr={2} "chr==\$1{print \$3,toupper(\$4),toupper(\$5),\$6,\$10,\$11,\$12,\$14,\$1,\$2}" > work/{1}-{3}
 '
 
 export wd=${PWD}
