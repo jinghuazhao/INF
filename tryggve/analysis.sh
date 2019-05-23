@@ -1,4 +1,4 @@
-# 21-5-2019 JHZ
+# 23-5-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -242,29 +242,7 @@ function fp()
   ) | \
   sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.all
   R -q --no-save <<\ \ END
-    test_forest <- function()
-    {
-      tabletext <- cbind(c("Study",study,"Summary"),
-                           c("Effect",format(BETA,digits=3),format(tbl[i,"Effect"],digits=3)),
-                           c("SE",format(SE,digits=3),format(tbl[i,"StdErr"],digits=3)),
-                           c("N",N,tbl[i,"N"]))
-      print(tabletext)
-      forestplot(tabletext,
-                 c(NA,BETA,tbl[i,"Effect"]),
-                 c(NA,BETA-1.96*SE,tbl[i,"Effect"]-1.96*tbl[i,"StdErr"]),
-                 c(NA,BETA+1.96*SE,tbl[i,"Effect"]+1.96*tbl[i,"StdErr"]),
-                 zero=0,
-                 is.summary=c(TRUE,rep(FALSE,length(BETA)),TRUE),
-                 boxsize=0.75,
-                 col=meta.colors(box="royalblue",line="darkblue", summary="royalblue"))
-      title(title)
-      metaplot(BETA,SE,N,
-               labels=sprintf("%s (%.3f %.3f %.0f)",study,BETA,SE,N),
-               xlab="Effect distribution",ylab="",xlim=c(-1.5,1.5),
-               summn=tbl[i,"Effect"],sumse=tbl[i,"StdErr"],sumnn=tbl[i,"N"],
-               colors=meta.colors(box="red",lines="blue", zero="green", summary="red", text="black"))
-      title(title)
-    }
+    require(gap)
     t <- read.delim("INF1.tbl",as.is=TRUE)
     tbl <- within(t, {
       prot <- sapply(strsplit(Chromosome,":"),"[",1)
@@ -284,49 +262,8 @@ function fp()
       pos <- unlist(lapply(gregexpr("[.]",study.prot),"[",1))
       prot <- substring(study.prot,pos+1)
     })
-    require(dplyr)
     rsid <- read.table("INF1.rsid",as.is=TRUE,col.names=c("MarkerName","rsid"))
-    m <- within(nest_join(tbl,rsid),{rsid <- unlist(lapply(lapply(y,"[[",1),"[",1))})
-    isna <- with(m, is.na(rsid))
-    t <- within(m, {rsid[isna] <- MarkerName[isna]})
-    m <- within(nest_join(all,rsid),{rsid <- unlist(lapply(lapply(y,"[[",1),"[",1))})
-    isna <- with(m, is.na(rsid))
-    a <- within(m, {rsid[isna] <- MarkerName[isna]})
-    require(rmeta)
-    pdf("INF1.fp.pdf",width=8.75,height=5)
-    for(i in 1:nrow(tbl))
-    {
-       p <- tbl[i,"prot"]
-       m <- tbl[i,"MarkerName"]
-       d <- gsub("[?]","",tbl[i,"Direction"])
-       s <- unlist(strsplit(d,""))
-       f <- as.numeric(paste0(s,1))
-       A1 <- toupper(tbl[i,"Allele1"])
-       A2 <- toupper(tbl[i,"Allele2"])
-       print(paste0(i,"-",p,":",m))
-       with(subset(all,prot==p & MarkerName==m), {
-         e <- toupper(EFFECT_ALLELE)
-         r <- toupper(REFERENCE_ALLELE)
-         a1 <- a2 <- vector('character',length(e))
-         a1 <- e
-         a2 <- r
-         c <- rep(1,length(e))
-         j <- sapply(a1,'!=',A1)
-         a1[j] <- r[j]
-         a2[j] <- e[j]
-         c[j] <- -1
-         print(cbind(A1,A2,EFFECT_ALLELE,REFERENCE_ALLELE,a1,a2,format(BETA,digits=3),format(BETA*c,digits=3)))
-         BETA <- BETA * c
-         title <- sprintf("%s [%s (%s) (%s/%s) N=%.0f]",p,m,t[i,"rsid"],A1,A2,tbl[i,"N"])
-         require(meta)
-         mg <- metagen(BETA,SE,sprintf("%s (%.0f)",study,N),title=title)
-         forest(mg,colgap.forest.left = "1cm")
-         require(grid)
-         grid.text(title,0.5,0.9)
-#        test_forest()
-       })
-    }
-    dev.off()
+    METAL_forest(tbl,all,rsid,"INF1.fp.pdf")
   END
 }
 
