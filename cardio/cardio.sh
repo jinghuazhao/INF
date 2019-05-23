@@ -388,7 +388,7 @@ parallel -j3 -C' ' '
 '
 
 export wd=${PWD}
-export rt=$wd/METAL/
+export rt=$wd/work/
 source $wd/cardio/fm.ini
 export FM_location=$HOME/FM-pipeline
 
