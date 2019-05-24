@@ -1,5 +1,5 @@
 #!/bin/bash
-# 23-5-2019 JHZ
+# 24-5-2019 JHZ
 
 export f=${7}-chr${1}_${2}_${3}
 
@@ -8,7 +8,7 @@ cd $rt/$f
 
 echo "--> binary_ped"
 if [ ! -d work ]; then mkdir work; fi
-gunzip -c $GEN_location/$f.gen.gz | \
+gunzip -c $GEN_location/chr${1}_${2}_${3}.gen.gz | \
 awk -f $FM_location/files/order.awk chr=${1} > work/$f.ord
 qctool -filetype gen -g work/$f.ord -s ${sample_file} -ofiletype binary_ped -og work/$f \
        -excl-range 1:48227413-52227412 2:86146489-101133568 2:183291755-190291755 \
