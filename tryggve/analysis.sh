@@ -265,7 +265,7 @@ function fp()
     droplist <- c("SNPID","dir.study.prot","p1","p2","pos","study.prot","substudy")
     all <- all[setdiff(names(all),droplist)]
     rsid <- read.table("INF1.rsid",as.is=TRUE,col.names=c("MarkerName","rsid"))
-    save(tbl,all,rsid,file="INF1.jma.rda")
+    save(tbl,all,rsid,file="INF1.jma.rda",version=2)
     METAL_forestplot(tbl,all,rsid,"INF1.fp.pdf",width=8.75,height=5)
   END
 }
