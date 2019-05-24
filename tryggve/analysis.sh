@@ -1,4 +1,4 @@
-# 23-5-2019 JHZ
+# 24-5-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -263,7 +263,7 @@ function fp()
       prot <- substring(study.prot,pos+1)
     })
     rsid <- read.table("INF1.rsid",as.is=TRUE,col.names=c("MarkerName","rsid"))
-    METAL_forest(tbl,all,rsid,"INF1.fp.pdf")
+    METAL_forestplot(tbl,all,rsid,"INF1.fp.pdf",width=8.75,height=5)
   END
 }
 
