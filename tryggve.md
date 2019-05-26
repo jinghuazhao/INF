@@ -1,37 +1,6 @@
 # SCALLOP/INFlammation anlaysis on TRYGGVE
 
-The repository contains the following files,
-
-File specification | Descrription
--------------------|---------------------------------------------------------------
-doc/               | Oringal documents
- -- [KORA.prot.preproc.R*](doc/KORA.prot.preproc.R) | R code for data preprocessing
- -- kora.normalised.prot.txt* | sex, age, normalised proteins
- -- [KORA.pc.below.llod.pdf*](doc/KORA.pc.below.llod.pdf) | llod check
-METAL/             | METAL/output scripts by protein
-sumstats/          | File lists and study directories
-tryggve/           | Auxiliary files
- -- [list.sh](tryggve/list.sh)         | Generation of file list and directory
- -- [format.sh](tryggve/format.sh)     | Code for format GWAS summary statistics
- -- [lz14.sh](tryggve/lz14.sh)         | Code to extract LocusZoom 1.4 databases for [analysis.sh](tryggve/analysis.sh)
- -- [analysis.sh](tryggve/analysis.sh) | Bash code for analysis calling [analysis.ini](tryggve/analysis.ini)
- -- [metal.sh](tryggve/metal.sh)       | Generation/execution of METAL scripts
- -- [METAL.qsub](tryggve/METAL.qsub)   | TORQUE qsub script for METAL
- -- [INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis
- -- [KORA.sh](tryggve/KORA.sh) | Bash/R scripts to hand KORA data
- -- [KORA.txt](tryggve/KORA.txt) | obsolete version to use simulated data
- -- [KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
- -- [EURLD.bed](tryggve/EURLD.bed) | approximately independent LD blocks for Europeans.
- -- [QCGWAS.sh](tryggve/QCGWAS.sh) | QCGWAS for specific proteins, calling [QCGWAS.R](tryggve/QCGWAS.R)
- -- [snpstats.sh](tryggve/snpstats.sh) | sumstats/qctool -snp-stats summary, see also [qctool.txt](tryggve/qctool.txt)
-tryggve.md         | This document
-
-\* from Jimmy
-
-In total, 92 proteins are expected as given in
-[olink.prot.list.txt](doc/olink.prot.list.txt). Data processing so far
-is done for all studies altogether; it might be appropriate to furnish
-individually though this has been done by cut and paste interactively.
+The repository covers various aspects such as software and data.
 
 ## Modules and related applications
 
@@ -189,7 +158,35 @@ The version contains fix to the use of HapMap reference as in software-notes abo
 
 The version is 18.1 rather than 9.2 and 8.6 currently online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.
 
-## Notes on studies
+## A summary of files
+
+File specification | Descrription
+-------------------|---------------------------------------------------------------
+doc/               | Oringal documents
+ -- [KORA.prot.preproc.R*](doc/KORA.prot.preproc.R) | R code for data preprocessing
+ -- kora.normalised.prot.txt* | sex, age, normalised proteins
+ -- [KORA.pc.below.llod.pdf*](doc/KORA.pc.below.llod.pdf) | llod check
+METAL/             | METAL/output scripts by protein
+sumstats/          | File lists and study directories
+tryggve/           | Auxiliary files
+ -- [list.sh](tryggve/list.sh)         | Generation of file list and directory
+ -- [format.sh](tryggve/format.sh)     | Code for format GWAS summary statistics
+ -- [lz14.sh](tryggve/lz14.sh)         | Code to extract LocusZoom 1.4 databases for [analysis.sh](tryggve/analysis.sh)
+ -- [analysis.sh](tryggve/analysis.sh) | Bash code for analysis calling [analysis.ini](tryggve/analysis.ini)
+ -- [metal.sh](tryggve/metal.sh)       | Generation/execution of METAL scripts
+ -- [METAL.qsub](tryggve/METAL.qsub)   | TORQUE qsub script for METAL
+ -- [INTERVAL.sh](tryggve/INTERVAL.sh) | INTERVAL analysis
+ -- [KORA.sh](tryggve/KORA.sh) | Bash/R scripts to hand KORA data
+ -- [KORA.txt](tryggve/KORA.txt) | obsolete version to use simulated data
+ -- [KORA.R](tryggve/KORA.R) | R code to simulate phenotypes
+ -- [EURLD.bed](tryggve/EURLD.bed) | approximately independent LD blocks for Europeans.
+ -- [QCGWAS.sh](tryggve/QCGWAS.sh) | QCGWAS for specific proteins, calling [QCGWAS.R](tryggve/QCGWAS.R)
+ -- [snpstats.sh](tryggve/snpstats.sh) | sumstats/qctool -snp-stats summary, see also [qctool.txt](tryggve/qctool.txt)
+tryggve.md         | This document
+
+\* from Jimmy
+
+In total, 92 proteins are expected as given in [olink.prot.list.txt](doc/olink.prot.list.txt).
 
 -   **BioFinder**. 91 (no BDNF) proteins. sumstats file named after genes and converted to protein names.
 -   **NSPHS**. 91 (no BDNF) proteins, originally a tar.gz file is unpacked into \$HOME/INF/work leading to 10 proteins
