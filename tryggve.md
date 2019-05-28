@@ -127,6 +127,8 @@ In case you see message "All TAP-Windows aapters on this system are currently in
 
 ### R/gap
 
+First, run R.3.5.0 as defined above.
+
 The version at TRYGGVE and CRAN are not the latest, which contains functions cis.vs.trans.classification, gc.lambda, invnormal, and here is the way to go
 ```bash
 module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.0-ICC-MKL
