@@ -1,4 +1,4 @@
-# 24-5-2019 JHZ
+# 28-5-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -106,7 +106,7 @@ function clumping()
     clumped <- read.table("INF1.clumped",as.is=TRUE,header=TRUE)
     hits <- merge(clumped[c("CHR","BP","SNP","prot")],inf1[c("prot","uniprot")],by="prot")
     names(hits) <- c("prot","Chr","bp","SNP","uniprot")
-    cistrans <- cis.vs.trans.classification(hits)
+    cistrans <- cis.vs.trans.classification(hits,inf1,"uniprot")
     cis.vs.trans <- with(cistrans,data)
     write.table(cis.vs.trans,file="INF1.clumped.cis.vs.trans",row.names=FALSE,quote=TRUE)
     cis <- subset(cis.vs.trans,cis.trans=="cis")["SNP"]
@@ -116,7 +116,7 @@ function clumping()
     sink()
     with(cistrans,total)
     pdf("INF1.circlize.pdf")
-    circos.cis.vs.trans.plot(hits="INF1.clumped")
+    circos.cis.vs.trans.plot(hits="INF1.clumped",inf1,"uniprot")
     dev.off()
   END
 }
@@ -180,7 +180,7 @@ function cojo()
     print(cbind(ni,primary,secondary))
     hits <- merge(jma[c("prot","CHR","BP","SNP")],inf1[c("prot","uniprot")],by="prot")
     names(hits) <- c("prot","Chr","bp","SNP","uniprot")
-    cistrans <- cis.vs.trans.classification(hits)
+    cistrans <- cis.vs.trans.classification(hits,inf1,"uniprot")
     cis.vs.trans <- with(cistrans,data)
     write.table(cis.vs.trans,file="INF1.jma.cis.vs.trans",row.names=FALSE,quote=TRUE)
     cis <- subset(cis.vs.trans,cis.trans=="cis")["SNP"]
@@ -190,7 +190,7 @@ function cojo()
     sink()
     with(cistrans,total)
     pdf("INF1.jma.pdf")
-    circos.cis.vs.trans.plot(hits="jma")
+    circos.cis.vs.trans.plot(hits="jma",inf1,"uniprot")
     dev.off()
   END
   rm jma
