@@ -38,6 +38,7 @@ location, /scratch/jhz22/INF/snps
   * ps/, PhenoScanner v2 results.
   * lz/, LocusZoom plots
 * clump/, PLINK --clump results for all (INF1*) and individual proteins
+* clump0/ PLINK --clump-r2 0 for independent signals
 
 ---
 
