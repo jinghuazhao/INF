@@ -3,7 +3,7 @@
 pp <- function(p,st,debug=FALSE,flanking=1e6)
 {
   nr <- nrow(p)
-  p <- within(p[st:nr],{
+  p <- within(p[st:nr,],{
     d <- c(0,diff(End))
     s <- cumsum(d)
   })
@@ -15,7 +15,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e6)
     pmin <- with(p,min(P.value))
     x <- subset(p, P.value==pmin)
     m <- x[1,"End"]
-    cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", pmin, "row =", row, "\n")
+    cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", pmin, "row =", row.names(x), "\n")
   }
   else
   {
