@@ -31,5 +31,5 @@ done
 for prot in $(ls *.p | sed 's|\.p||g')
 do 
   export prot=${prot}
-  R --no-save -q < sentinels.R > ${prot}.o
+  R --no-save -q < tryggve/sentinels.R > ${prot}.o
 done
