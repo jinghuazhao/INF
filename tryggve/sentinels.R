@@ -16,7 +16,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e6)
     x <- subset(z, P.value==p1)
     r1 <- row.names(x)[1]
     m <- x[1,"End"]
-    cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", p1, "row =", r1, "(case 1)\n")
+    cat("prottein =",prot, l, "-", u, "d =", u-l, "m =", m, "p =", p1, "row =", r1, "(case 1)\n")
   }
   else
   {
@@ -36,7 +36,7 @@ print(r1)
       u <- p[nrow(t), "End"]
       r2 <- row.names(t)[nrow(t)]
       if (p2 > p1) {
-        cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", p1, "row =", r1, "(case 2)\n")
+        cat("protein =", prot, l, "-", u, "d =", u-l, "m =", m, "p =", p1, "row =", r1, "(case 2)\n")
         if (r2 < nr) pp(p, r2)
       } else {
         r2 <- row.names(y)[nrow(y)]
