@@ -26,16 +26,22 @@ pp <- function(p,st,debug=FALSE,flanking=1e6)
     r1 <- row.names(x)[1]
     m <- x[1, "End"]
     t <- subset(z, End > m & End < m + flanking)
-    p2 <- with(t, min(P.value))
-    y <- subset(t, P.value==p2)
-    u <- p[nrow(t), "End"]
-    if (p2 > p1) {
-      r2 <- row.names(t)[nrow(t)]
-      cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", p1, "row =", r1, "(case 2)\n")
+    if (nrow(t)==0) {
+print(r1)
+      r2 <- as.numeric(r1) + 1
       pp(p, r2)
     } else {
-      r2 <- row.names(y)[nrow(y)]
-      pp(p, r2)
+      p2 <- with(t, min(P.value))
+      y <- subset(t, P.value==p2)
+      u <- p[nrow(t), "End"]
+      r2 <- row.names(t)[nrow(t)]
+      if (p2 > p1) {
+        cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", p1, "row =", r1, "(case 2)\n")
+        if (r2 < nr) pp(p, r2)
+      } else {
+        r2 <- row.names(y)[nrow(y)]
+        if (r2 < nr) pp(p, r2)
+      }
     }
   }
 }
