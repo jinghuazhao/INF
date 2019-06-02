@@ -19,17 +19,17 @@ pp <- function(p,st,debug=FALSE,flanking=1e6)
   }
   else
   {
-    ss <- subset(p,s < flanking)
-    pmin <- with(ss,min(P.value))
-    x <- subset(ss, P.value==pmin)
+    s <- subset(p,s < flanking)
+    pmin <- with(s,min(P.value))
+    x <- subset(s, P.value==pmin)
     m <- x[1,"End"]
-    tt <- subset(p, m+flanking < End)
-    qmin <- with(tt,min(P.value))
-    y <- subset(tt, P.value==pmin)
-    u <- p[nrow(tt), "End"]
+    t <- subset(p, m+flanking < End)
+    qmin <- with(t,min(P.value))
+    y <- subset(t, P.value==pmin)
+    u <- p[nrow(t), "End"]
     if (qmin>pmin) {
       cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", pmin, "row =", row.names(x), "(case 2)\n")
-      pp(p,row.names(tt[nrow(tt),]))
+      pp(p,row.names(t[nrow(t),]))
     }
     else pp(p,row.names(y[nrow(y),]))
   }
