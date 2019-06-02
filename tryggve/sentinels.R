@@ -23,7 +23,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e6)
     p1 <- with(s,min(P.value))
     x <- subset(s, P.value==p1)
     m <- x[1,"End"]
-    t <- subset(p, m+flanking < End)
+    t <- subset(p, End > m & End < m + flanking)
     p2 <- with(t,min(P.value))
     y <- subset(t, P.value==p2)
     u <- p[nrow(t), "End"]
