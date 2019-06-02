@@ -14,13 +14,15 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
     x <- subset(z, P.value==p1)
     r1 <- row.names(x)[1]
     m <- x[1,"End"]
-    cat(prot, chr, l, u, u-l, m, p1, r1, "I\n", sep=",")
+    n <- x[1, "MarkerName"]
+    cat(prot, chr, n, l, u, u-l, m, p1, r1, "I\n", sep=",")
   } else {
     s <- subset(z, s < flanking)
     p1 <- with(s, min(P.value))
     x <- subset(s, P.value==p1)
     r1 <- row.names(x)[1]
     m <- x[1, "End"]
+    n <- x[1, "MarkerName"]
     t <- subset(z, End > m & End < m + flanking)
     if (nrow(t)==0) {
       r2 <- as.numeric(r1) + 1
@@ -31,7 +33,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
       u <- p[nrow(t), "End"]
       r2 <- row.names(t)[nrow(t)]
       if (p2 > p1) {
-        cat(prot, chr, l, u, u-l, m, p1, r1, "II\n", sep=",")
+        cat(prot, chr, n, l, u, u-l, m, p1, r1, "II\n", sep=",")
         if (r2 < nr) pp(p, r2)
       } else {
         r2 <- row.names(y)[nrow(y)]
