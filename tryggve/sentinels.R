@@ -1,4 +1,4 @@
-# 1-6-2019 JHZ
+# 2-6-2019 JHZ
 
 pp <- function(p,st,debug=FALSE,flanking=1e6)
 {
@@ -23,8 +23,15 @@ pp <- function(p,st,debug=FALSE,flanking=1e6)
     pmin <- with(ss,min(P.value))
     x <- subset(ss, P.value==pmin)
     m <- x[1,"End"]
-    u <- ss[nrow(ss),"End"]
-    pp(p,row.names(x))
+    tt <- subset(p, m+flanking < End)
+    qmin <- with(tt,min(P.value))
+    y <- subset(tt, P.value==pmin)
+    u <- p[nrow(tt), "End"]
+    if (qmin>pmin) {
+      cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", pmin, "row =", row.names(x), "\n")
+      pp(p,row.names(tt[nrow(tt),]))
+    }
+    else pp(p,row.names(y[nrow(y),]))
   }
 }
 prot <- Sys.getenv("prot")
