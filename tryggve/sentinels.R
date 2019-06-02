@@ -1,5 +1,4 @@
-# 2-6-2019 JHZ
-
+options(echo=FALSE)
 pp <- function(p,st,debug=FALSE,flanking=1e+6)
 {
   nr <- nrow(p)
@@ -15,7 +14,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
     x <- subset(z, P.value==p1)
     r1 <- row.names(x)[1]
     m <- x[1,"End"]
-    cat("Prottein =", prot, chr, ":", l, "-", u, "d =", u-l, "m =", m, "p =", p1, "row =", r1, "(case 1)\n")
+    cat(prot, chr, l, u, u-l, m, p1, r1, "I\n", sep=",")
   } else {
     s <- subset(z, s < flanking)
     p1 <- with(s, min(P.value))
@@ -32,7 +31,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
       u <- p[nrow(t), "End"]
       r2 <- row.names(t)[nrow(t)]
       if (p2 > p1) {
-        cat("Protein =", prot, chr, ":", l, "-", u, "d =", u-l, "m =", m, "p =", p1, "row =", r1, "(case 2)\n")
+        cat(prot, chr, l, u, u-l, m, p1, r1, "II\n", sep=",")
         if (r2 < nr) pp(p, r2)
       } else {
         r2 <- row.names(y)[nrow(y)]
