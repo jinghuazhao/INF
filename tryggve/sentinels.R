@@ -10,7 +10,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
   if (debug) print(z[c("Chrom","End","d","s","MarkerName","P.value")])
   l <- z[1, "End"]
   u <- z[nrow(p), "End"]
-  if (z[nrow(z),s) < flanking) {
+  if (z[nrow(z),"s"] < flanking) {
     p1 <- with(z, min(P.value))
     x <- subset(z, P.value==p1)
     r1 <- row.names(x)[1]
