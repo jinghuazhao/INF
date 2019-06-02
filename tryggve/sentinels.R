@@ -3,29 +3,29 @@
 pp <- function(p,st,debug=FALSE,flanking=1e6)
 {
   nr <- nrow(p)
-  p <- within(p[st:nr,],{
+  z <- within(p[st:nr,],{
     d <- c(0,diff(End))
     s <- cumsum(d)
   })
-  if (debug) print(p[c("Chrom","End","d","s","MarkerName","P.value")])
-  l <- p[1,"End"]
-  u <- p[nrow(p), "End"]
-  len <- with(p,max(s))
+  if (debug) print(z[c("Chrom","End","d","s","MarkerName","P.value")])
+  l <- z[1, "End"]
+  u <- z[nrow(p), "End"]
+  len <- with(z, max(s))
   if (len < flanking) {
-    p1 <- with(p,min(P.value))
-    x <- subset(p, P.value==p1)
+    p1 <- with(z, min(P.value))
+    x <- subset(z, P.value==p1)
     r1 <- row.names(x)[1]
     m <- x[1,"End"]
     cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", p1, "row =", r1, "(case 1)\n")
   }
   else
   {
-    s <- subset(p, s < flanking)
+    s <- subset(z, s < flanking)
     p1 <- with(s, min(P.value))
     x <- subset(s, P.value==p1)
     r1 <- row.names(x)[1]
     m <- x[1, "End"]
-    t <- subset(p, End > m & End < m + flanking)
+    t <- subset(z, End > m & End < m + flanking)
     p2 <- with(t, min(P.value))
     y <- subset(t, P.value==p2)
     u <- p[nrow(t), "End"]
@@ -46,6 +46,5 @@ for(s in chr)
 {
   cat("prot =",prot,"Chromosome =",s,"\n")
   ps <- subset(p,Chrom==s)
-  pp(ps,1)
+  pp(ps, 1)
 }
-
