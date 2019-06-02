@@ -15,7 +15,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e6)
     pmin <- with(p,min(P.value))
     x <- subset(p, P.value==pmin)
     m <- x[1,"End"]
-    cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", pmin, "row =", row.names(x), "\n")
+    cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", pmin, "row =", row.names(x), "(case 1)\n")
   }
   else
   {
@@ -28,7 +28,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e6)
     y <- subset(tt, P.value==pmin)
     u <- p[nrow(tt), "End"]
     if (qmin>pmin) {
-      cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", pmin, "row =", row.names(x), "\n")
+      cat(prot, l, "-", u, "d =", u-l, "m =", m, "p =", pmin, "row =", row.names(x), "(case 2)\n")
       pp(p,row.names(tt[nrow(tt),]))
     }
     else pp(p,row.names(y[nrow(y),]))
