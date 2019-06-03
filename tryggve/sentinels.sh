@@ -46,7 +46,6 @@ cd work
       print
   }' *.o
 ) | sed 's/,/ /g' > INF1.sentinels
-cd -
 
 R --no-save -q <<END
     require(gap)
@@ -66,4 +65,4 @@ R --no-save -q <<END
     circos.cis.vs.trans.plot(hits="INF1.sentinels",inf1,"uniprot")
     dev.off()
 END
-
+cd -
