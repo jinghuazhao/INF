@@ -43,7 +43,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
   }
 }
 prot <- Sys.getenv("prot")
-p <- read.delim(paste0(prot,".p"),as.is=TRUE)
+p <- read.delim(paste0("work/",prot,".p"),as.is=TRUE)
 chrs <- with(p,unique(Chrom))
 for(chr in chrs)
 {
