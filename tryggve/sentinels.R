@@ -7,7 +7,6 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
     s <- cumsum(d)
   })
   if (debug) print(z[c("Chrom","End","d","s","MarkerName","P.value")])
-  cat("st=",st, "nr=",nr)
   if (z[nrow(z),"s"] <= flanking) {
     l <- z[1, "End"]
     u <- z[nrow(z), "End"]
