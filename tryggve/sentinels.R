@@ -41,7 +41,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
         if (r2 < nr) pp(p, r2)
       } else {
         r2 <- as.numeric(row.names(y)[nrow(y)])
-        if (r2 < nr) pp(p, r2 + 1)
+        if(r2 < nr) pp(p, r2)
       }
     }
   }
