@@ -12,13 +12,14 @@ parallel -j3 -C' ' '
 ) | gzip -f > work/{}.p.gz 
 
 # removing those in high LD regions'
+awk '($4!=8)' tryggve/high-LD-regions-hg19.bed > tryggve/high-LD-regions-HLA-hg19.bed
 for p in $(ls METAL/*-1.tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g')
 do
   (
     zcat METAL/${p}-1.tbl.gz | head -1 | awk -vOFS="\t" '{$1="Chrom";$2="Start" "\t" "End";print}'
     zcat work/${p}.p.gz | \
     awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}'
-  ) | bedtools subtract -header -a - -b tryggve/high-LD-regions-hg19.bed > work/${p}.p
+  ) | bedtools subtract -header -a - -b tryggve/high-LD-regions-HLA-hg19.bed > work/${p}.p
 # echo $(zcat ${p}.p.gz | wc -l) $(wc -l ${p}.p)
   export lines=$(wc -l work/${p}.p|cut -d' ' -f1)
   if [ $lines -eq 1 ]; then
