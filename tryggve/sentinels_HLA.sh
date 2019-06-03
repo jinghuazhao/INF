@@ -28,12 +28,23 @@ do
   fi
 done
 
+for prot in $(ls work/*_HLA.p | sed 's|work/||;s/_HLA.p//g')
+do
+  echo ${prot}
+  (
+    cat work/${prot}.p
+    awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' work/${prot}.p | \
+    sort -k13,13g | \
+    awk 'NR==1'
+  ) > work/${prot}_HLA.p
+done
+
 # find sentinels
-for prot in $(ls work/*.p | sed 's|work/||g;s|\.p||g')
+for prot in $(ls work/*_HLA.p | sed 's|work/||g;s|_HLA.p||g')
 do 
   export prot=${prot}
   echo ${prot}
-  R --no-save -q < tryggve/sentinels.R > work/${prot}.o
+  R --no-save -q < tryggve/sentinels_HLA.R > work/${prot}_HLA.o
 done
 cd work
 (
@@ -45,25 +56,25 @@ cd work
       gsub(/chr/,"",a[1])
       $1=$1 "," a[1] "," b[1]
       print
-  }' *.o
-) | sed 's/,/ /g' > INF1.sentinels
+  }' *_HLA.o
+) | sed 's/,/ /g' > INF1_HLA.sentinels
 
 R --no-save -q <<END
     require(gap)
-    clumped <- read.table("INF1.sentinels",as.is=TRUE,header=TRUE)
+    clumped <- read.table("INF1_HLA.sentinels",as.is=TRUE,header=TRUE)
     hits <- merge(clumped[c("CHR","BP","SNP","prot","log10p")],inf1[c("prot","uniprot")],by="prot")
     names(hits) <- c("prot","Chr","bp","SNP","log10p","uniprot")
     cistrans <- cis.vs.trans.classification(hits,inf1,"uniprot")
     cis.vs.trans <- with(cistrans,data)
-    write.table(cis.vs.trans,file="INF1.sentinels.cis.vs.trans",row.names=FALSE,quote=TRUE)
+    write.table(cis.vs.trans,file="INF1_HLA.sentinels.cis.vs.trans",row.names=FALSE,quote=TRUE)
     cis <- subset(cis.vs.trans,cis.trans=="cis")["SNP"]
-    write.table(cis,file="INF1.sentinels.cis",col.names=FALSE,row.names=FALSE,quote=FALSE)
-    sink("INF1.sentinels.out")
+    write.table(cis,file="INF1_HLA.sentinels.cis",col.names=FALSE,row.names=FALSE,quote=FALSE)
+    sink("INF1_HLA.sentinels.out")
     with(cistrans,table)
     sink()
     with(cistrans,total)
-    pdf("INF1.sentinels.circlize.pdf")
-    circos.cis.vs.trans.plot(hits="INF1.sentinels",inf1,"uniprot")
+    pdf("INF1_HLA.sentinels.circlize.pdf")
+    circos.cis.vs.trans.plot(hits="INF1_HLA.sentinels",inf1,"uniprot")
     dev.off()
 END
 cd -
