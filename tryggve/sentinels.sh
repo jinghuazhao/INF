@@ -35,5 +35,15 @@ do
   R --no-save -q < tryggve/sentinels.R > work/${prot}.o
 done
 cd work
-awk '!/option/' *.o > INF1.sentinels
+(
+  awk -vOFS="," 'BEGIN{print "prot","CHR","BP","SNP","l","u","d","log10p","Groupid", "Type"}'
+  awk -vFS="," -vOFS="," '!/option/{
+      SNPID=$2
+      split(SNPID,a,":")
+      split(a[2],b,"_")
+      gsub(/chr/,"",a[1])
+      $1=$1 "," a[1] "," b[1]
+      print
+  }' *.o
+) > INF1.sentinels
 cd -
