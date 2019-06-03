@@ -32,5 +32,8 @@ for prot in $(ls work/*.p | sed 's|work/||g;s|\.p||g')
 do 
   export prot=${prot}
   echo ${prot}
-  R --no-save -q < tryggve/sentinels.R > ${prot}.o
+  R --no-save -q < tryggve/sentinels.R > work/${prot}.o
 done
+cd work
+awk '!/option/' *.o > INF1.sentinels
+cd -
