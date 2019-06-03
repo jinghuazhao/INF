@@ -45,5 +45,25 @@ cd work
       $1=$1 "," a[1] "," b[1]
       print
   }' *.o
-) > INF1.sentinels
+) | sed 's/,/ /g' > INF1.sentinels
 cd -
+
+R --no-save -q <<END
+    require(gap)
+    clumped <- read.table("INF1.sentinels",as.is=TRUE,header=TRUE)
+    hits <- merge(clumped[c("CHR","BP","SNP","prot")],inf1[c("prot","uniprot")],by="prot")
+    names(hits) <- c("prot","Chr","bp","SNP","uniprot")
+    cistrans <- cis.vs.trans.classification(hits,inf1,"uniprot")
+    cis.vs.trans <- with(cistrans,data)
+    write.table(cis.vs.trans,file="INF1.sentinels.cis.vs.trans",row.names=FALSE,quote=TRUE)
+    cis <- subset(cis.vs.trans,cis.trans=="cis")["SNP"]
+    write.table(cis,file="INF1.sentinels.cis",col.names=FALSE,row.names=FALSE,quote=FALSE)
+    sink("INF1.sentinels.out")
+    with(cistrans,table)
+    sink()
+    with(cistrans,total)
+    pdf("INF1.sentinels.circlize.pdf")
+    circos.cis.vs.trans.plot(hits="INF1.sentinels",inf1,"uniprot")
+    dev.off()
+END
+
