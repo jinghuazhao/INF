@@ -32,7 +32,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
     n <- x[1, "MarkerName"]
     t <- subset(z, End > m & End < m + flanking)
     if (nrow(t)==0) {
-      if (u-l > 0) cat(prot, n, l, u, u-l, log10p1, r1, "II\n", sep=",")
+      cat(prot, n, l, u, u-l, log10p1, r1, "II\n", sep=",")
       message(paste0("No variants +1 MB downstream so move to next block (",prot,")"))
       r2 <- as.numeric(r1) + 1
       pp(p, r2)
