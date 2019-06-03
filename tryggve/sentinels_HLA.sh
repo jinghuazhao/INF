@@ -2,42 +2,51 @@
 
 module load bedtools/2.27.1
 
-# extract all significant SNPs
-ls METAL/*-1.tbl.gz | \
-sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-parallel -j3 -C' ' '
-(
-# zcat METAL/{}-1.tbl.gz | head -1
-  zcat METAL/{}-1.tbl.gz | awk "NR>1 && length(\$4)==1 && length(\$5)==1 && \$12<5e-10" | sort -k1,1n -k2,2n
-) | gzip -f > work/{}.p.gz 
-
-# removing those in high LD regions'
-awk '($4!=8)' tryggve/high-LD-regions-hg19.bed > tryggve/high-LD-regions-HLA-hg19.bed
-for p in $(ls METAL/*-1.tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g')
-do
+function pgz()
+{
+  # extract all significant SNPs
+  ls METAL/*-1.tbl.gz | \
+  sed 's|METAL/||g;s/-1.tbl.gz//g' | \
+  parallel -j3 -C' ' '
   (
-    zcat METAL/${p}-1.tbl.gz | head -1 | awk -vOFS="\t" '{$1="Chrom";$2="Start" "\t" "End";print}'
-    zcat work/${p}.p.gz | \
-    awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}'
-  ) | bedtools subtract -header -a - -b tryggve/high-LD-regions-HLA-hg19.bed > work/${p}.p
-# echo $(zcat ${p}.p.gz | wc -l) $(wc -l ${p}.p)
-  export lines=$(wc -l work/${p}.p|cut -d' ' -f1)
-  if [ $lines -eq 1 ]; then
-    echo removing ${p} with $lines lines
-    rm work/${p}.p
-  fi
-done
+  # zcat METAL/{}-1.tbl.gz | head -1
+    zcat METAL/{}-1.tbl.gz | awk "NR>1 && length(\$4)==1 && length(\$5)==1 && \$12<5e-10" | sort -k1,1n -k2,2n
+  ) | gzip -f > work/{}.p.gz 
+}
 
-for prot in $(ls work/*_HLA.p | sed 's|work/||;s/_HLA.p//g')
-do
-  echo ${prot}
-  (
-    cat work/${prot}.p
-    awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' work/${prot}.p | \
-    sort -k13,13g | \
-    awk 'NR==1'
-  ) > work/${prot}_HLA.p
-done
+function nold_HLA()
+{
+  # removing those in high LD regions'
+  awk '($4!=8)' tryggve/high-LD-regions-hg19.bed > tryggve/high-LD-regions-HLA-hg19.bed
+  for p in $(ls METAL/*-1.tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g')
+  do
+    (
+      zcat METAL/${p}-1.tbl.gz | head -1 | awk -vOFS="\t" '{$1="Chrom";$2="Start" "\t" "End";print}'
+      zcat work/${p}.p.gz | \
+      awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}'
+    ) | bedtools subtract -header -a - -b tryggve/high-LD-regions-HLA-hg19.bed > work/${p}.p
+  # echo $(zcat ${p}.p.gz | wc -l) $(wc -l ${p}.p)
+    export lines=$(wc -l work/${p}.p|cut -d' ' -f1)
+    if [ $lines -eq 1 ]; then
+      echo removing ${p} with $lines lines
+      rm work/${p}.p
+    fi
+  done
+}
+
+function _HLA.p()
+{
+  for prot in $(ls work/*.p | sed 's|work/||;s/\.p//g')
+  do
+    echo ${prot}
+    (
+      cat work/${prot}.p
+      awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' work/${prot}.p | \
+      sort -k13,13g | \
+      awk 'NR==1'
+    ) > work/${prot}_HLA.p
+  done
+}
 
 # find sentinels
 for prot in $(ls work/*_HLA.p | sed 's|work/||g;s|_HLA.p||g')
