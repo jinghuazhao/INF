@@ -339,8 +339,7 @@ function aild_cojo()
     for i in $(ls *jma.cojo); do awk -vi=$i 'NR>1{split(i,a,"-");print a[1],$0}' $i; done
   ) | \
   sed 's/.jma.cojo://g' | \
-  awk '(NF>1){$3="";print}' | \
-  awk '{$1=$1;if(NR==1)$1="prot";print}' > INF1.jma
+  awk '{$1=$1;if(NR==1)$1="prot";print}'| sed 's/ /\t/g' > INF1.jma
 }
 
 echo "--> finemapping"
