@@ -32,7 +32,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
     n <- x[1, "MarkerName"]
     t <- subset(z, End > m & End < m + flanking)
     if (nrow(t)==0) {
-      cat(prot, n, l, u, u-l, log10p1, r1, "II\n", sep=",")
+      # cat(prot, n, l, u, u-l, log10p1, r1, "II\n", sep=",")
       message(paste0("No variants +1 MB downstream so move to next block (",prot,")"))
       r2 <- as.numeric(r1) + 1
       pp(p, r2)
@@ -52,7 +52,8 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
   }
 }
 prot <- Sys.getenv("prot")
-p <- read.delim(paste0("work/",prot,".p"),as.is=TRUE)
+tag <- Sys.getenv("tag")
+p <- read.delim(paste0("work/",prot,tag,".p"),as.is=TRUE)
 chrs <- with(p,unique(Chrom))
 for(chr in chrs)
 {
