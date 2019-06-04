@@ -3,7 +3,7 @@
 #SBATCH --ntasks=1
 #SBATCH --job-name=_rma
 #SBATCH --time=8:00:00
-#SBATCH --partition=long
+#SBATCH --partition=medium
 #SBATCH --mem=128800
 #SBATCH --array=1-92%2
 #SBATCH --output=INTERVAL/_rma_%A_%a.out
