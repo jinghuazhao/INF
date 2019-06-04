@@ -1,4 +1,4 @@
-# 28-5-2019 JHZ
+# 4-6-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -102,7 +102,7 @@ function clumping()
   awk '(NF>1){$3="";print}' | \
   awk '{$1=$1;if(NR==1)$1="prot";print}' > INF1.clumped
   R --no-save -q <<\ \ END
-    require(gap)
+    require(gap); require(gap.examples)
     clumped <- read.table("INF1.clumped",as.is=TRUE,header=TRUE)
     hits <- merge(clumped[c("CHR","BP","SNP","prot")],inf1[c("prot","uniprot")],by="prot")
     names(hits) <- c("prot","Chr","bp","SNP","uniprot")
@@ -172,7 +172,7 @@ function cojo()
   awk -vOFS="\t" '{if(NR==1) $1="prot";print}' > INF1.jma
   sed 's/Chr/CHR/g;s/bp/BP/g' INF1.jma > jma
   R --no-save -q <<\ \ END
-    require(gap)
+    require(gap);require(gap.examples)
     jma <- read.delim("jma")
     ni <- dim(jma)[1]
     primary <- dim(subset(jma,p <= 5e-10 & pJ <= 5e-10))[1]
