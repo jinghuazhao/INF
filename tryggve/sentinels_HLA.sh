@@ -25,16 +25,18 @@ function nold_HLA()
       zcat work/${p}.p.gz | \
       awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}'
     ) | bedtools subtract -header -a - -b work/high-LD-regions-HLA-hg19.bed > work/${p}.p
-    export lines=$(wc -l work/${p}.p | cut -d' ' -f1)
-    if [ $lines -eq 1 ]; then
-      echo removing ${p} with $lines lines
-      rm work/${p}.p
-    fi
     (
-      cat work/${p}.p
-      awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' work/${p}.p | \
-      sort -k13,13g | \
-      awk 'NR==1'
+      head -1 work/${p}.p
+      export lines=$(wc -l work/${p}.p | cut -d' ' -f1)
+      if [ $lines -eq 1 ]; then
+        echo removing ${p} with $lines lines
+        rm work/${p}.p
+      else
+        awk 'NR>1' work/${p}.p
+        awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' work/${p}.p | \
+        sort -k13,13g | \
+        awk 'NR==1'
+      fi
     ) > work/${p}_HLA.p
   done
 }
