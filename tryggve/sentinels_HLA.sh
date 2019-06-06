@@ -28,16 +28,14 @@ function nold_HLA()
     (
       head -1 work/${p}.p
       export lines=$(wc -l work/${p}.p | cut -d' ' -f1)
-      if [ $lines -eq 1 ]; then
-        echo removing ${p} with $lines lines
-        rm work/${p}.p
-      else
+      if [ $lines -gt 1 ]; then
         awk 'NR>1' work/${p}.p
         awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' work/${p}.p | \
         sort -k13,13g | \
         awk 'NR==1'
       fi
     ) > work/${p}_HLA.p
+    rm work/${p}.p
   done
 }
 
