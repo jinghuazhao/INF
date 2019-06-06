@@ -12,7 +12,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
     log10p <- -log10p(Effect/StdErr)
   })
   if (debug) print(z[c("Chrom","End","d","s","MarkerName","P.value")])
-  if (z[nrow(z),"s"] <= flanking & first) {
+  if (z[nrow(z),"s"] <= flanking) {
     l <- z[1, "End"]
     u <- z[nrow(z), "End"]
     log10p1 <- with(z, max(log10p))
