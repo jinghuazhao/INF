@@ -1,4 +1,4 @@
-# 4-6-2019 JHZ
+# 6-6-2019 JHZ
 
 module load bedtools/2.27.1
 
@@ -31,11 +31,11 @@ function nold_HLA()
       rm work/${p}.p
     fi
     (
-      cat work/${prot}.p
-      awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' work/${prot}.p | \
+      cat work/${p}.p
+      awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' work/${p}.p | \
       sort -k13,13g | \
       awk 'NR==1'
-    ) > work/${prot}_HLA.p
+    ) > work/${p}_HLA.p
   done
 }
 
