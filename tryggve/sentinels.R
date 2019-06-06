@@ -3,8 +3,9 @@ options(echo=FALSE)
 log10p <- function(z)
   log(2, base=10)+pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)/log(10)
 
-pp <- function(p,st,debug=FALSE,flanking=1e+6,first=TRUE)
+pp <- function(p,st,debug=FALSE,flanking=1e+6)
 {
+  first <- TRUE
   nr <- nrow(p)
   z <- within(p[st:nr,],{
     d <- c(0,diff(End))
@@ -22,6 +23,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6,first=TRUE)
     n <- x[1, "MarkerName"]
     cat(prot, n, l, u, u-l, log10p1, r1, "I\n", sep=",")
   } else {
+    first <- FALSE
     s <- subset(z, s <= flanking)
     l <- s[1, "End"]
     u <- s[nrow(s), "End"]
@@ -35,7 +37,7 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6,first=TRUE)
       # cat(prot, n, l, u, u-l, log10p1, r1, "II\n", sep=",")
       message(paste0("No variants +1 MB downstream so move to next block (",prot,")"))
       r2 <- as.numeric(r1) + 1
-      pp(p, r2, first=FALSE)
+      pp(p, r2)
     } else {
       log10p2 <- with(t, max(log10p))
       y <- subset(t, log10p==log10p2)
@@ -43,10 +45,10 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6,first=TRUE)
       r2 <- row.names(t)[nrow(t)]
       if (log10p2 < log10p1) {
         cat(prot, n, l, u, u-l, log10p1, r1, "III\n", sep=",")
-        if (r2 < nr) pp(p, r2, first=FALSE)
+        if (r2 < nr) pp(p, r2)
       } else {
         r2 <- as.numeric(row.names(y)[nrow(y)])
-        if(r2 < nr) pp(p, r2, first=FALSE)
+        if(r2 < nr) pp(p, r2)
       }
     }
   }
