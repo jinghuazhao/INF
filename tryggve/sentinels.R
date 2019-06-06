@@ -10,6 +10,6 @@ for(chr in chrs)
   ps <- subset(p,Chrom==chr)
   row.names(ps) <- 1:nrow(ps)
  # lines 42 and 45 has r2 in gap_1.2.1 rather than as.numeric(r2)+1
-  prot=sunique(ps["prot"])
+  prot=unique(ps["prot"])
   sentinels(ps, 1, prot=prot)
 }
