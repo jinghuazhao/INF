@@ -14,7 +14,7 @@ module load perl/5.24.0 annovar/2018apr16
 module load bcftools/1.9
 module load emacs/26.1
 module load gcta/1.91.0beta
-module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.3-ICC-MKL rstudio/1.1.453
+module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 lapack/3.8.0 R/3.5.3-ICC-MKL rstudio/1.1.453
 module load libreoffice/6.0.5.2
 module load locuszoom/1.4
 module load metal/20180828
