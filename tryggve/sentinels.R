@@ -5,7 +5,6 @@ log10p <- function(z)
 
 pp <- function(p,st,debug=FALSE,flanking=1e+6)
 {
-  first <- TRUE
   nr <- nrow(p)
   z <- within(p[st:nr,],{
     d <- c(0,diff(End))
@@ -23,7 +22,6 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
     n <- x[1, "MarkerName"]
     cat(prot, n, l, u, u-l, log10p1, r1, "I\n", sep=",")
   } else {
-    first <- FALSE
     s <- subset(z, s <= flanking)
     l <- s[1, "End"]
     u <- s[nrow(s), "End"]
@@ -45,10 +43,10 @@ pp <- function(p,st,debug=FALSE,flanking=1e+6)
       r2 <- row.names(t)[nrow(t)]
       if (log10p2 < log10p1) {
         cat(prot, n, l, u, u-l, log10p1, r1, "III\n", sep=",")
-        if (r2 < nr) pp(p, r2)
+        if (r2 < nr) pp(p, as.numeric(r2)+1)
       } else {
         r2 <- as.numeric(row.names(y)[nrow(y)])
-        if(r2 < nr) pp(p, r2)
+        if(r2 < nr) pp(p, as.numeric(r2)+1)
       }
     }
   }
