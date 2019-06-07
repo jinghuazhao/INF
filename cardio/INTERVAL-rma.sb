@@ -31,3 +31,10 @@ export bed=tryggve/EURLD-no-high-LD-regions-hg19.bed
 ) | \
 bedtools intersect -a $bed -b - -loj | \
 cut -f4,8-15 > INTERVAL/${p}.rma
+
+(
+  echo SNP A1 A2 freq b se p N
+  awk "!/NA/ {print $2, $3, $4, $5, $6, $7, $8, $9}" INTERVAL/${p}.rma
+) > INTERVAL/${p}.ma'
+
+
