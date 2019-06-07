@@ -18,7 +18,7 @@ function _HLA()
 # 2. handling HLA
 {
   for p in $(ls sumstats/INTERVAL/INTERVAL*.gz | \
-| xargs -l basename | \
+  xargs -l basename | \
   sed 's|INTERVAL.||g;s/.gz//g')
   do
     (
