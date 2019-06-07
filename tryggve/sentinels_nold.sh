@@ -40,7 +40,7 @@ function _HLA()
 }
 
 function sentinels()
-# find sentinels
+# 3. find sentinels
 {
   for prot in $(ls work/*${tag}.p | sed 's|work/||g;s|'"$tag"'.p||g')
   do 
@@ -64,7 +64,7 @@ function sentinels()
 }
 
 function cvt()
-# cis.vs.classification, requiring R-3.5.0 at TRYGGVE
+# 4. cis.vs.classification, requiring R-3.5.0 at TRYGGVE
 {
   cd work
   R --no-save -q <<\ \ END
@@ -90,4 +90,4 @@ function cvt()
   cd -
 }
 
-$1
+for cmd in pgz _HLA sentinels cvt; do $cmd; done
