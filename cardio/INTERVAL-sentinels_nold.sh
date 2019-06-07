@@ -68,7 +68,7 @@ function sentinels()
 function cvt()
 # 4. cis.vs.classification
 {
-  cd work
+  cd INTERVAL
   R --no-save -q <<\ \ END
     require(gap)
     tag <- Sys.getenv("tag")
