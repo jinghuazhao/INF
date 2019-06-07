@@ -7,10 +7,10 @@ function pgz()
 {
   ls sumstats/INTERVAL/INTERVAL*.gz | \
   xargs -l basename | \
-  sed 's|INTERVAL/||g;s/.gz//g' | \
+  sed 's|INTERVAL.||g;s/.gz//g' | \
   parallel -j3 -C' ' '
   (
-    zcat sumstats/INTERVAL/INTERVAL.{}.gz | awk "NR>1 && length(\$4)==1 && length(\$5)==1 && \$12<5e-10" | sort -k1,1n -k2,2n
+    zcat sumstats/INTERVAL/INTERVAL.{}.gz | awk "NR>1 && length(\$6)==1 && length(\$7)==1 && \$11<5e-10" | sort -k2,2n -k3,3n
   ) | gzip -f > INTERVAL/{}.p.gz'
 }
 
@@ -19,17 +19,17 @@ function _HLA()
 {
   for p in $(ls sumstats/INTERVAL/INTERVAL*.gz | \
 | xargs -l basename | \
-  sed 's|INTERVAL/||g;s/.gz//g')
+  sed 's|INTERVAL.||g;s/.gz//g')
   do
     (
       zcat sumstats/INTERVAL/INTERVAL.${p}.gz | head -1 | awk -vOFS="\t" '{$1="Chrom";$2="Start" "\t" "End";print}'
       zcat INTERVAL/${p}.p.gz | \
-      awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}' | \
+      awk -vOFS="\t" '{$1="chr" $2; start=$3-1;$2=start "\t" $3;print}' | \
       awk '!($1 == "chr6" && $3 >= 25392021 && $3 < 33392022)'
       zcat INTERVAL/${p}.p.gz | \
-      awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}' | \
+      awk -vOFS="\t" '{$1="chr" $2; start=$3-1;$2=start "\t" $3;print}' | \
       awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' | \
-      sort -k13,13g | \
+      sort -k12,12g | \
       awk 'NR==1'
     ) > INTERVAL/${p}${tag}.p
     export lines=$(wc -l INTERVAL/${p}${tag}.p | cut -d' ' -f1)
