@@ -47,7 +47,7 @@ function sentinels()
   do 
     export prot=${prot}
     echo ${prot}${tag}
-    R --no-save -q < tryggve/sentinels.R > INTERVAL/${prot}${tag}.o
+    R --no-save -q < cardio/sentinels.R > INTERVAL/${prot}${tag}.o
   done
   cd INTERVAL
   (
