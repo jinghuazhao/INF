@@ -6,7 +6,7 @@ function pgz()
 # 1. extract all significant SNPs to .p.gz
 {
   ls sumstats/INTERVAL/INTERVAL*.gz | \
-| xargs -l basename | \
+  xargs -l basename | \
   sed 's|INTERVAL/||g;s/.gz//g' | \
   parallel -j3 -C' ' '
   (
