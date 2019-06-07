@@ -22,13 +22,14 @@ function _HLA()
   sed 's|INTERVAL.||g;s/.gz//g')
   do
     (
-      zcat sumstats/INTERVAL/INTERVAL.${p}.gz | head -1 | awk -vOFS="\t" '{$1="Chrom";$2="Start" "\t" "End";print}'
+      zcat sumstats/INTERVAL/INTERVAL.${p}.gz | head -1 | \
+      awk -vOFS="\t" '{$1="MarkerName";$2="Chrom";$3="Start" "\t" "End";print}'
       zcat INTERVAL/${p}.p.gz | \
-      awk -vOFS="\t" '{$1="chr" $2; start=$3-1;$2=start "\t" $3;print}' | \
-      awk '!($1 == "chr6" && $3 >= 25392021 && $3 < 33392022)'
+      awk -vOFS="\t" '{$2="chr" $2; start=$3-1;$3=start "\t" $3;print}' | \
+      awk '!($2 == "chr6" && $4 >= 25392021 && $4 < 33392022)'
       zcat INTERVAL/${p}.p.gz | \
-      awk -vOFS="\t" '{$1="chr" $2; start=$3-1;$2=start "\t" $3;print}' | \
-      awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' | \
+      awk -vOFS="\t" '{$2="chr" $2; start=$3-1;$3=start "\t" $3;print}' | \
+      awk '$2 == "chr6" && $4 >= 25392021 && $4 < 33392022' | \
       sort -k12,12g | \
       awk 'NR==1'
     ) > INTERVAL/${p}${tag}.p
