@@ -5,7 +5,7 @@ prot <- Sys.getenv("prot")
 tag <- Sys.getenv("tag")
 p <- read.delim(paste0("INTERVAL/",prot,tag,".p"),as.is=TRUE)
 require(reshape)
-p <- rename(p, c(PVAL="P.value"))
+p <- rename(p, c(PVAL="P.value",BETA="Effect", SE="StdErr"))
 chrs <- with(p,unique(Chrom))
 for(chr in chrs)
 {
