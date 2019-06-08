@@ -22,7 +22,7 @@ if [ -f INTERVAL/${p}-${r}.jma.cojo ]; then
    rm INTERVAL/${p}-${r}.jma.cojo INTERVAL/${p}-${r}.ldr.cojo
 fi
 gcta-1.9 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
-         --extract aild/AILD.${r}.snplist \
+         --extract snps/AILD.${r}.snplist \
          --cojo-file INTERVAL/${p}.ma \
          --cojo-slct \
          --cojo-p 5e-10 \
