@@ -19,7 +19,8 @@ tabix -f -S 1 -s 1 -b 2 -e 2 bmi.sumstats.gz
   awk -vOFS="\t" 'BEGIN{print "chr", "snp_pos", "alt", "ref", "chisq", "pvalue"}'
   gunzip -c /scratch/jhz22/INF/METAL/VEGF.A-1.tbl.gz | \
   awk 'NR>1' | \
-  awk -vOFS="\t" '(NR>1 && $11!=0) {print $1,$2,$4,$5,($10/$11)^2,$12}'
+  awk -vOFS="\t" '(NR>1 && $11!=0) {print $1,$2,$4,$5,($10/$11)^2,$12}' | \
+  sort -k1,1n -k2,2n
 ) > VEGF.A.sumstats
 bgzip -f VEGF.A.sumstats
 tabix -f -S 1 -s 1 -b 2 -e 2 VEGF.A.sumstats.gz
