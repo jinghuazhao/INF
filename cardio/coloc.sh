@@ -25,6 +25,10 @@ tabix -f -S 1 -s 1 -b 2 -e 2 bmi.sumstats.gz
 bgzip -f VEGF.A.sumstats
 tabix -f -S 1 -s 1 -b 2 -e 2 VEGF.A.sumstats.gz
 
+. /etc/profile.d/modules.sh
+module load python/2.7.10
+python -m pip install matplotlib --user
+
 # coloc
 export p3v5=/scratch/public_databases/1000_Genomes_phase3v5a/ALL.chr6.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
 python scripts/dispatch.py -g bmi.sumstats.gz -e VEGF.A.sumstats.gz -v ${p3v5} -N 2504 -c 6 -s 43737921
