@@ -1,4 +1,4 @@
-# 4-6-2019 JHZ
+# 12-6-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
