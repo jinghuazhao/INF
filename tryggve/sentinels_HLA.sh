@@ -1,18 +1,6 @@
-# 6-6-2019 JHZ
+# 13-6-2019 JHZ
 
 module load bedtools/2.27.1
-
-function pgz()
-# extract all significant SNPs to .p.gz
-{
-  ls METAL/*-1.tbl.gz | \
-  sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-  parallel -j3 -C' ' '
-  (
-  # zcat METAL/{}-1.tbl.gz | head -1
-    zcat METAL/{}-1.tbl.gz | awk "NR>1 && length(\$4)==1 && length(\$5)==1 && \$12<5e-10" | sort -k1,1n -k2,2n
-  ) | gzip -f > work/{}.p.gz'
-}
 
 function nold_HLA()
 # removing those in high LD regions'
@@ -22,7 +10,7 @@ function nold_HLA()
   do
     (
       zcat METAL/${p}-1.tbl.gz | head -1 | awk -vOFS="\t" '{$1="Chrom";$2="Start" "\t" "End";print}'
-      zcat work/${p}.p.gz | \
+      zcat sentinels/${p}.p.gz | \
       awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}'
     ) | bedtools subtract -header -a - -b work/high-LD-regions-HLA-hg19.bed > work/${p}.p
     (
