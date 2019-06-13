@@ -1,19 +1,7 @@
-# 6-6-2019 JHZ
+# 13-6-2019 JHZ
 
 module load bedtools/2.27.1
 export tag=_nold
-
-function pgz()
-# 1. extract all significant SNPs to .p.gz
-{
-  ls METAL/*-1.tbl.gz | \
-  sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-  parallel -j3 -C' ' '
-  (
-  # zcat METAL/{}-1.tbl.gz | head -1
-    zcat METAL/{}-1.tbl.gz | awk "NR>1 && length(\$4)==1 && length(\$5)==1 && \$12<5e-10" | sort -k1,1n -k2,2n
-  ) | gzip -f > work/{}.p.gz'
-}
 
 function _HLA()
 # 2. handling HLA
@@ -22,10 +10,10 @@ function _HLA()
   do
     (
       zcat METAL/${p}-1.tbl.gz | head -1 | awk -vOFS="\t" '{$1="Chrom";$2="Start" "\t" "End";print}'
-      zcat work/${p}.p.gz | \
+      zcat sentinels/${p}.p.gz | \
       awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}' | \
       awk '!($1 == "chr6" && $3 >= 25392021 && $3 < 33392022)'
-      zcat work/${p}.p.gz | \
+      zcat sentinels/${p}.p.gz | \
       awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}' | \
       awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' | \
       sort -k13,13g | \

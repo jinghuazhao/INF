@@ -1,4 +1,4 @@
-# 4-6-2019 JHZ
+# 13-6-2019 JHZ
 
 module load bedtools/2.27.1
 
@@ -8,8 +8,14 @@ sed 's|METAL/||g;s/-1.tbl.gz//g' | \
 parallel -j3 -C' ' '
 (
 # zcat METAL/{}-1.tbl.gz | head -1
-  zcat METAL/{}-1.tbl.gz | awk "NR>1 && length(\$4)==1 && length(\$5)==1 && \$12<5e-10" | sort -k1,1n -k2,2n
-) | gzip -f > work/{}.p.gz'
+  zcat METAL/{}-1.tbl.gz | awk "
+  function abs(x)
+  {
+    if (x<0) return -x;
+    else return x;
+  }
+  NR>1 && length(\$4)==1 && length(\$5)==1 && abs(\$10/\$11)>=6.219105" | sort -k1,1n -k2,2n
+) | gzip -f > sentinels/{}.p.gz'
 
 # removing those in high LD regions'
 for p in $(ls METAL/*-1.tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g')
@@ -20,7 +26,7 @@ do
     awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}'
   ) | bedtools subtract -header -a - -b tryggve/high-LD-regions-hg19.bed > work/${p}.p
 # echo $(zcat ${p}.p.gz | wc -l) $(wc -l ${p}.p)
-  export lines=$(wc -l work/${p}.p|cut -d' ' -f1)
+  export lines=$(wc -l sentinels/${p}.p|cut -d' ' -f1)
   if [ $lines -eq 1 ]; then
     echo removing ${p} with $lines lines
     rm work/${p}.p
