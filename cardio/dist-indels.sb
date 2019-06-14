@@ -18,7 +18,7 @@ module load use.own
 export TMPDIR=/scratch/jhz22/tmp
 export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' sentinels/INF1_nold.sentinels)
 export c=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $2}' sentinels/INF1_nold.sentinels)
-export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' sentinels/INF1_nold.sentinels)
-export m=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $2}' sentinels/INF1_nold.sentinels)
+export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $3}' sentinels/INF1_nold.sentinels)
+export m=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' sentinels/INF1_nold.sentinels)
 cat /scratch/jhz22/data/INTERVAL/INTERVAL.bim | \
-awk -vchr=${c} -vpos=${r} '($1==chr && $4>=pos-1e6 && $4<pos+1e6){if (length($5)>1||length($6)>1) print $4}' > dist/indels/${p}-${m}.indels
+awk -vchr=${c} -vpos=${r} '($1==chr && $4>=pos-1e6 && $4<pos+1e6){if (length($5)>1||length($6)>1) print $2}' > dist/indels/${p}-${m}.indels
