@@ -1,4 +1,4 @@
-# 13-6-2019 JHZ
+# 14-6-2019 JHZ
 
 library(reshape)
 Olink <- "INF/doc/olink.inf.panel.annot.tsv"
@@ -12,3 +12,5 @@ os <- merge(o,s,by="uniprot")
 
 library(dplyr)
 nj <- nest_join(o,s,by="uniprot")
+unique(unlist(lapply(nj[["y"]],"[",7)))
+
