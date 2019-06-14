@@ -441,3 +441,13 @@ ls /home/jhz22/INF/sumstats/INTERVAL/*gz | \
 sed 's|/home/jhz22/INF/sumstats/INTERVAL/INTERVAL.||g;s/.gz//g' > manhattan.list
 
 sbatch manhattan.sb
+
+# distcojo
+(
+  cat *jma.cojo | \
+  head -1 | \
+  awk -vOFS="\t" '{print "prot","MarkerName",$0}'
+  ls *jma.cojo | \
+  sed 's/-/ /g;s/.jma.cojo//g' | \
+  parallel -j1 -C' ' 'awk -vOFS="\t" -vprot={1} -vMarkerName={2} "NR > 1{print prot,MarkerName,\$0}" {1}-{2}.jma.cojo'
+) > INF1.jma
