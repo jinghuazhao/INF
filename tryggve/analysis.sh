@@ -1,4 +1,4 @@
-# 12-6-2019 JHZ
+# 17-6-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -215,8 +215,9 @@ function fp()
   (
     gunzip -c METAL/4E.BP1-1.tbl.gz | \
     head -1
-  # replace jma with clumped for results from PLINK --clumping
-  # also works with R/gap/sentinels output but SNPID is $4 below
+  # 1. PLINK --clumping. The default.
+  # 3. GCTA --cojo.  Change Chr, Pos to CHR, BP as in 1.
+  # 2. R/gap/sentinels output. use  SNPID or $4 below
     awk 'NR>1 {print $1,$3}' INF1.jma | \
     parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
   ) | \
