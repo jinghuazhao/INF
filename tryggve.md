@@ -59,12 +59,18 @@ NB METAL add -1 to the filenames.
 
 This version has problem with R/3.5.3-ICC-MKL so the default call is converted to a function which can be invoked at the start of a session,
 ```bash
+# This is very slow
 function R.3.5.3()
 {
   export R_LIBS=/data/$USER/R:$HOME/R:/services/tools/R/3.5.3-ICC-MKL/lib64/R/library
   module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 lapack/3.8.0 R/3.5.3-ICC-MKL
   source /data/jinhua/parallel-20190222/bin/env_parallel.bash
   alias R='/services/tools/R/3.5.3-ICC-MKL/bin/R -q $@'
+}
+# An alternative
+function R.3.3.1()
+{
+  module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.3.1-ICC-MKL
 }
 ```
 then one invokes R.3.5.3 when necessary. To use LocusZoom 1.4, one only needs to start with
@@ -74,7 +80,7 @@ module load R/3.2.5
 module load anaconda2/4.4.0
 module load locuszoom/1.4
 ```
-Somehow this is very slow and without these /usr/bin/R (3.3.2) is used by default nonetheless it has no associate module.
+Somehow R 3.5.x is very slow so we also resort to R 3.3.x below.
 
 ### qctool
 
