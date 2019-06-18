@@ -39,7 +39,7 @@ function sentinels()
   done
   cd work
   (
-    awk -vOFS="," 'BEGIN{print "prot","CHR","BP","SNP","l","u","d","logp","Groupid", "Type"}'
+    awk -vOFS="," 'BEGIN{print "prot","CHR","BP","SNP","l","u","d","log10p","Groupid", "Type"}'
     awk -vFS="," -vOFS="," '!/option/{
         SNPID=$2
         split(SNPID,a,":")
@@ -59,8 +59,8 @@ function cvt()
   R --no-save -q <<\ \ END
     require(gap)
     clumped <- read.table("INF1_HLA.sentinels",as.is=TRUE,header=TRUE)
-    hits <- merge(clumped[c("CHR","BP","SNP","prot","logp")],inf1[c("prot","uniprot")],by="prot")
-    names(hits) <- c("prot","Chr","bp","SNP","logp","uniprot")
+    hits <- merge(clumped[c("CHR","BP","SNP","prot","log10p")],inf1[c("prot","uniprot")],by="prot")
+    names(hits) <- c("prot","Chr","bp","SNP","log10p","uniprot")
     cistrans <- cis.vs.trans.classification(hits,inf1,"uniprot")
     cis.vs.trans <- with(cistrans,data)
     write.table(cis.vs.trans,file="INF1_HLA.sentinels.cis.vs.trans",row.names=FALSE,quote=TRUE)
