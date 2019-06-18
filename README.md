@@ -30,7 +30,7 @@ Jimmy's competitive log10(p) calculator is also documented in [log10p.md](doc/lo
 association analysis section of [software-notes](https://github.com/jinghuazhao/software-notes)
 as well as the [BMI example](https://github.com/jinghuazhao/Omics-analysis/tree/master/BMI).
 
-5. TRYGGVE-specific issues were noted in [tryggve.md](tryggve.md). The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page); together with `log10p`, `gc.lambda`, `invnormal`, `METAL_foresplot`, `mhtplot.trunc` functions they are now in [R/gap](https://github.com/jinghuazhao/R/tree/master/gap) repository, as well as gap 1.2.1 at CRAN.
+5. TRYGGVE-specific issues were noted in [tryggve.md](tryggve.md). The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page); together with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc` functions they are now with gap at CRAN and latest updates at [R/gap](https://github.com/jinghuazhao/R/tree/master/gap) repository.
 
 ## References
 
