@@ -451,15 +451,3 @@ sbatch manhattan.sb
   sed 's/-/ /g;s/.jma.cojo//g' | \
   parallel -j1 -C' ' 'awk -vOFS="\t" -vprot={1} -vMarkerName={2} "NR > 1{print prot,MarkerName,\$0}" {1}-{2}.jma.cojo'
 ) > INF1.jma
-
-# IL.12B
-
-function ps()
-{
-  grep $1 INF1_nold.sentinels | \
-  cut -d' ' -f4 | \
-  grep -f - INF1.rsid | \
-  cut -d' ' -f2 > $1.ps
-  module load phenoscanner/phenoscanner_v2
-  phenoscanner -c All -l No -p 0.00001 -i $1.ps -o INF1_${1}
-}
