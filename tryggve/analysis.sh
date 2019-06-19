@@ -1,4 +1,4 @@
-# 17-6-2019 JHZ
+# 19-6-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -319,6 +319,39 @@ function aild()
        awk "NR>1" $rt/LDBLOCK/${p}*.jma.cojo
      ) > $rt/${p}.jma
   done
+}
+
+function h2()
+{
+R -q --no-save -q <<END
+  t <- read.delim("INF1.tbl",as.is=TRUE)
+  tbl <- within(t, {
+    prot <- sapply(strsplit(Chromosome,":"),"[",1)
+    Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
+    chi2n <- (Effect/StdErr)^2/N
+  })
+  s <- with(tbl, aggregate(chi2n,list(prot),sum))
+  names(s) <- c("prot", "h2")
+  sd <- with(tbl, aggregate(chi2n,list(prot),sd))
+  names(sd) <- c("p1","sd")
+  m <- with(tbl, aggregate(chi2n,list(prot),length))
+  names(m) <- c("p2","m")
+  h2 <- cbind(s,sd,m)
+  ord <- with(h2, order(h2))
+  sink("h2.dat")
+  print(h2[ord, c("prot","h2","sd","m")], row.names=FALSE)
+  sink()
+  png("h2.png", res=300, units="in", width=6, height=4)
+  np <- nrow(h2)
+  with(h2[ord,], {
+    plot(h2, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(h^2))
+    xtick <- seq(1, np, by=1)
+    axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.2)
+    text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.3)
+  })
+  dev.off()
+  write.csv(tbl,file="INF1.csv",quote=FALSE,row.names=FALSE)
+END
 }
 
 function mpfr()
