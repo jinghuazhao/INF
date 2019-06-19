@@ -3,7 +3,7 @@
 #SBATCH --ntasks=1
 #SBATCH --job-name=_cojo-cond
 #SBATCH --time=12:00:00
-#SBATCH --partition=long
+#SBATCH --partition=medium
 #SBATCH --array=1-228%5
 #SBATCH --mem=128800
 #SBATCH --output=dist/cojo/_cojo-cond_%A_%a.out
