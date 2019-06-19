@@ -1,4 +1,4 @@
-<img src="doc/INF1.circlize.png" width="200" height="200" align="right">
+<img src="doc/INF1.circlize.png" width="300" height="300" align="right">
 
 ---
 
