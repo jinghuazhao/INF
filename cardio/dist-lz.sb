@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#SBATCH --ntasks=1
+#SBATCH --job-name=_dist-lz
+#SBATCH --time=12:00:00
+#SBATCH --partition=medium
+#SBATCH --array=1-201%1
+#SBATCH --output=snps/cojo/log/_dist-lz_%A_%a.out
+#SBATCH --error=snps/cojo/log/_dist-lz_%A_%a.err
+#SBATCH --export ALL
+
+. /etc/profile.d/modules.sh
+module load default-cardio slurm use.own python/2.7.5 R/3.4.2
+export TMPDIR=/scratch/jhz22/tmp
+export R_LIBS=
+
+export prot=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' dist/INF1_nold.sentinels)
+export chr=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $2}' dist/INF1_nold.sentinels)
+export pos=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $3}' dist/INF1_nold.sentinels)
+export name=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' dist/INF1_nold.sentinels)
+export start=$(awk -vpos=${pos} 'BEGIN{if(pos <= 1e6) print 0; else print pos-1e6}')
+export end=$(awk -vpos=${pos} 'BEGIN{print pos-1e6}')
+(
+   echo -e "MarkerName\tP-value\tWeight"
+   gunzip -c METAL/${p}-1.tbl.gz | \
+   awk -vOFS="\t" -vchr=$chr -vpos=$pos \
+       '($1 == chr && $2 >= pos-1e6 && $2 < pos+1e6){split($3,a,"_");print a[1],$12,$14}' | \
+   sort -k1,1 | \
+   join -12 -21 work/snp_pos - | \
+   awk -vOFS="\t" '{print $2, $3, $4}'
+) > dist/${p}-${r}.lz
+cd dist
+rm -f ld_cache.db
+locuszoom-1.4 --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${p}-${r}.lz \
+              --plotonly --chr $chr --start $start --end $end --no-date --rundir .
+mv chr${chr}_${start}-${end}.pdf ${p}-${r}.lz.pdf
+pdftopng -r 300 ${p}-${r}.lz.pdf ${p}-${r}
+mv ${p}-${r}-000001.png ${p}-${r}.lz-1.png
+mv ${p}-${r}-000002.png ${p}-${r}.lz-2.png
+cd -
