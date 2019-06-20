@@ -4,7 +4,7 @@
 #SBATCH --job-name=_dist-lz
 #SBATCH --time=12:00:00
 #SBATCH --partition=medium
-#SBATCH --array=1-201%1
+#SBATCH --array=1-228%1
 #SBATCH --output=snps/cojo/log/_dist-lz_%A_%a.out
 #SBATCH --error=snps/cojo/log/_dist-lz_%A_%a.err
 #SBATCH --export ALL
