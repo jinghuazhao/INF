@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 29/5/19 JHZ
+# General notes, 20/6/19 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
@@ -327,7 +327,7 @@ function aild_clump()
   ) | \
   sed 's/.clumped://g' | \
   awk '(NF>1){$3="";print}' | \
-  awk '{$1=$1;if(NR==1)$1="prot";print}' > INF1.clumped
+  awk '{$1=$1;if(NR==1)$1="prot";print}'
 }
 
 function aild_cojo()
@@ -339,7 +339,7 @@ function aild_cojo()
     for i in $(ls *jma.cojo); do awk -vi=$i 'NR>1{split(i,a,"-");print a[1],$0}' $i; done
   ) | \
   sed 's/.jma.cojo://g' | \
-  awk '{$1=$1;if(NR==1)$1="prot";print}'| sed 's/ /\t/g' > INF1.jma
+  awk '{$1=$1;if(NR==1)$1="prot";print}'| sed 's/ /\t/g'
 }
 
 echo "--> finemapping"
@@ -450,4 +450,4 @@ sbatch manhattan.sb
   ls *jma.cojo | \
   sed 's/-/ /g;s/.jma.cojo//g' | \
   parallel -j1 -C' ' 'awk -vOFS="\t" -vprot={1} -vMarkerName={2} "NR > 1{print prot,MarkerName,\$0}" {1}-{2}.jma.cojo'
-) > INF1.jma
+)
