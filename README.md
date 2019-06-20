@@ -8,11 +8,13 @@
 
 ## TABLE OF CONTENTS
 
+* [Analysis plan](SCALLOP_INF1_analysis_plan.md)
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
 * [References](https://github.com/jinghuazhao/INF#references)
 * [Use of approximately independent LD blocks](https://github.com/jinghuazhao/INF#use-of-approximately-independent-ld-blocks)
 * [Notes on UniProt IDs](https://github.com/jinghuazhao/INF#notes-on-uniprot-ids)
 * [Files, URLs, and downloading](https://github.com/jinghuazhao/INF#files-urls-and-downloading)
+* [Web site](https://jinghuazhao.github.io/INF/)
 
 <img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
 
