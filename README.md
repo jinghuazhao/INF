@@ -8,6 +8,7 @@
 
 ## TABLE OF CONTENTS
 
+* [Analysis plan](https://github.com/jinghuazhao/INF/blob/master/SCALLOP_INF1_analysis_plan.md)
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
 * [References](https://github.com/jinghuazhao/INF#references)
 * [Use of approximately independent LD blocks](https://github.com/jinghuazhao/INF#use-of-approximately-independent-ld-blocks)
