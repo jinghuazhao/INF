@@ -328,8 +328,8 @@ R -q --no-save <<END
   max1 <- function(bf) return(bf/max(bf, na.rm = TRUE))
   t <- read.delim("INF1.jma",as.is=TRUE)
   tbl <- within(t, {
-    BF.normal <- max1(abf.Wakefield(b, se, 0.05))
-    BF.numeric <- max1(abf.normal(b, se, 0.05))
+    BF.normal <- max1(abf.Wakefield(b, se, 5e-10))
+    BF.numeric <- max1(abf.normal(b, se, 5e-10))
     BF.cs <- credset(BF.numeric)
   })
   tbl[c("prot","Chr","p","BF.numeric","BF.cs")]
