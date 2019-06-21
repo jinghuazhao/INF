@@ -1,4 +1,4 @@
-# 19-6-2019 JHZ
+# 21-6-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -319,6 +319,24 @@ function aild()
        awk "NR>1" $rt/LDBLOCK/${p}*.jma.cojo
      ) > $rt/${p}.jma
   done
+}
+
+function cs()
+{
+R -q --no-save <<END
+  require(gtx)
+  max1 <- function(bf) return(bf/max(bf, na.rm = TRUE))
+  t <- read.delim("INF1.tbl",as.is=TRUE)
+  tbl <- within(t, {
+    prot <- sapply(strsplit(Chromosome,":"),"[",1)
+    Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
+    chi2n <- (Effect/StdErr)^2/N
+    BF.normal <- max1(abf.Wakefield(Effect, StdErr, 0.05))
+    BF.numeric <- max1(abf.normal(Effect, StdErr, 0.05))
+    BF.cs <- credset(BF.numeric)
+  })
+  tbl[c("prot","Chromosome","P.value","BF.numeric","BF.cs")]
+END
 }
 
 function h2()
