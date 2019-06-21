@@ -19,7 +19,7 @@ module load use.own
 export TMPDIR=/scratch/jhz22/tmp
 export rt=/scratch/jhz22/data/INTERVAL/INTERVAL
 export s=/home/jp549/post-doc/genetics/r2-test/sample_files/o5000-inf1-outlier_out-r2.sample
-export p=$(cut -d' ' -f1-2,29- ${s} | head -1 | sed 's/ /\n/g' | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+2{split($1,a,"__"); print a[1]}')
+export p=$(cut -d' ' -f29- ${s} | head -1 | sed 's/ /\n/g' | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+2{split($1,a,"__"); print a[1]}')
 
 gcta64 --reml \
        --grm ${rt} \
