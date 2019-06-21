@@ -10,8 +10,4 @@ cut -d' ' -f1-2,29- ${s} | awk 'NR>3' > ${rt}.pheno
 
 plink --bfile ${rt} --indep-pairwise 500kb 1 0.80 --maf 0.01 --out $rt
 plink --bfile ${rt} --extract ${rt}.prune.in --make-bed --out ${rt}.prune
-
-plink --bfile ${rt}.prine \
-      --make-grm-bin \
-      --threads 2 \
-      --out ${rt}
+plink --bfile ${rt}.prune --make-grm-bin --threads 2 --out ${rt}
