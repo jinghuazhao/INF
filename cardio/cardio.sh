@@ -1,7 +1,7 @@
 #!/bin/bash
 . /etc/profile.d/modules.sh
 
-# General notes, 20/6/19 JHZ
+# General notes, 24/6/19 JHZ
 # 1. The overall design considers the fact that snpid (chr:pos_a1_a2) instead of rsid is used in the metal-analysis.
 # 2. The snpid-rsid correspondence is obtained from snpstats_typed() and snpstats_imputed(), respectively.
 # 3. PLINK clumping (clumped) provides corroborative result to GCTA -cojo (jma) used for PhenoScanner|cis/trans expliotation.
@@ -436,6 +436,10 @@ parallel -j${threads} -C' ' \
          --env LD_PLINK \
          --env LocusZoom \
           '$wd/cardio/fm.subs {1} {2} {3} {4} {5} {6} {7}'
+
+cd /scratch/jhz22/data/INTERVAL
+qctool -g INTERVAL.bed -filetype binary_ped -og INTERVAL -ofiletype bgen
+cd -
 
 ls /home/jhz22/INF/sumstats/INTERVAL/*gz | \
 sed 's|/home/jhz22/INF/sumstats/INTERVAL/INTERVAL.||g;s/.gz//g' > manhattan.list
