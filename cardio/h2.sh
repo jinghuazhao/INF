@@ -31,6 +31,7 @@ R --no-save -q <<END
     axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.01)
     text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.3)
   })
+  title("(a)")
   dev.off()
 END
 cd -
