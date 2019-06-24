@@ -28,7 +28,7 @@ R --no-save -q <<END
   with(h2[ord,], {
     plot(h2, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(h^2))
     xtick <- seq(1, np, by=1)
-    axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.2)
+    axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.01)
     text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.3)
   })
   dev.off()
