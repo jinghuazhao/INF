@@ -19,7 +19,7 @@ export chr=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $2}' dist/INF1_nold
 export pos=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $3}' dist/INF1_nold.sentinels)
 export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' dist/INF1_nold.sentinels)
 export start=$(awk -vpos=${pos} 'BEGIN{if(pos <= 1e6) print 0; else print pos-1e6}')
-export end=$(awk -vpos=${pos} 'BEGIN{print pos-1e6}')
+export end=$(awk -vpos=${pos} 'BEGIN{print pos+1e6}')
 (
    echo -e "MarkerName\tP-value\tWeight"
    gunzip -c METAL/${p}-1.tbl.gz | \
