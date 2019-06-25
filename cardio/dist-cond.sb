@@ -16,8 +16,8 @@ module load slurm
 module load use.own
 
 export TMPDIR=/scratch/jhz22/tmp
-export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' sentinels/INF1_nold.sentinels)
-export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' sentinels/INF1_nold.sentinels)
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' dist/INF1_nold.sentinels)
+export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' dist/INF1_nold.sentinels)
 if [ -f dist/cojo/${p}-${r}.cma.cojo ]; then
    rm dist/cojo/${p}-${r}.cma.cojo
 fi
