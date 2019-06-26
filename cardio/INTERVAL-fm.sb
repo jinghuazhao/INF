@@ -16,22 +16,23 @@ module load slurm
 module load use.own
 
 export TMPDIR=/scratch/jhz22/tmp
-exoirt flanking=1e6
+export flanking=1e6
 export job=${SLURM_ARRAY_TASK_ID}
 export p=$(awk 'NR==job+1{print $1}' job=${job} dist/INF1_nold.sentinels)
 export chr=$(awk 'NR==job+1{print $2}' job=${job} dist/INF1_nold.sentinels)
 export pos=$(awk 'NR==job+1{print $3}' job=${job} dist/INF1_nold.sentinels)
 export r=$(awk 'NR==job+1{print $4}' job=${job} dist/INF1_nold.sentinels)
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
-export end=${awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}'}
-export rt=/scratch/jhz22/data/INTERAL/INTERVAL
+export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
+export rt=/scratch/jhz22/data/INTERVAL/INTERVAL
+export pr=${p}-${r}
 
 # master
 (
-  export pr=${p}-${r}
   echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
   echo "${pr}.z;;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;4994"
 ) > INTERVAL/${pr}.master
+
 # z
 zcat sumstats/INTERVAL/INTERVAL.${p}.gz | \
 awk -vchr=${chr} -vstart=${start} -vend=${end} '{
@@ -41,8 +42,10 @@ awk -vchr=${chr} -vstart=${start} -vend=${end} '{
     print $1, $2, $3, $6, $7, maf, $9, $10
   }
 }' > INTERVAL/${pr}.z
+
 # bgen
-qctool -g ${INTERVAL}.bed -filetype binary_ped -og INTERVAL/${pr} -ofiletype bgen -include-range $(chr}:${start}-${end}
+qctool -g ${rt}.bed -filetype binary_ped -og INTERVAL/${pr} -ofiletype bgen -incl-range chr${chr}:${start}-${end}
+
 # finemap 1.3
 cd INTERVAL
 finemap --sss --in-files ${pr}.master
