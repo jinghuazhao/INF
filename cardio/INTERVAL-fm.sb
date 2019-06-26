@@ -39,12 +39,14 @@ awk -vchr=${chr} -vstart=${start} -vend=${end} '{
   if (NR==1) print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"
   else if ($2==chr && $3 >= start && $3 < end) {
     if ($8 < 0.5) maf=$8; else maf=1-$8
-    if (maf > 0 && maf <= 0.5) print $1, $2, $3, $6, $7, maf, $9, $10
+    if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $6, $7, maf, $9, $10
   }
 }' > INTERVAL/${pr}.z
 
 zcat sumstats/INTERVAL/INTERVAL.${p}.gz | \
-awk -vchr=${chr} -vstart=${start} -vend=${end} '($2==chr && $3 >= start && $3 < end && $8==0){print $1}' > INTERVAL/${pr}.excl
+awk -vchr=${chr} -vstart=${start} -vend=${end} '
+    (NR > 1 && $2==chr && $3 >= start && $3 < end) && ($8==0 || $9 == "NA" || $10 == "NA")
+    {print $1}' > INTERVAL/${pr}.excl
 
 cd INTERVAL
 
