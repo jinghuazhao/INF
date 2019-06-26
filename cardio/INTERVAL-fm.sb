@@ -17,31 +17,33 @@ module load use.own
 
 export TMPDIR=/scratch/jhz22/tmp
 exoirt flanking=1e6
-export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' sentinels/INF1_nold.sentinels)
-export chr=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $2}' sentinels/INF1_nold.sentinels)
-export pos=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $3}' sentinels/INF1_nold.sentinels)
-export start=$(awk '{start=ENVIRON["pos"]-ENVIRON["flanking"];if(start<0) start=0;print start}')
-export end=${awk '{print ENVIRON["pos"]+ENVIRON["flanking"]}'}
-export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' sentinels/INF1_nold.sentinels)
+export job=${SLURM_ARRAY_TASK_ID}
+export p=$(awk 'NR==job+1{print $1}' job=${job} dist/INF1_nold.sentinels)
+export chr=$(awk 'NR==job+1{print $2}' job=${job} dist/INF1_nold.sentinels)
+export pos=$(awk 'NR==job+1{print $3}' job=${job} dist/INF1_nold.sentinels)
+export r=$(awk 'NR==job+1{print $4}' job=${job} dist/INF1_nold.sentinels)
+export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
+export end=${awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}'}
 export rt=/scratch/jhz22/data/INTERAL/INTERVAL
 
 # master
 (
   export pr=${p}-${r}
-  echo "z;ld;bgen;bgi;dose;snp;config;cred;log;n_samples"
+  echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
   echo "${pr}.z;;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;4994"
-) > ${p}-${r}.master
+) > INTERVAL/${pr}.master
 # z
 zcat sumstats/INTERVAL/INTERVAL.${p}.gz | \
-awk '{
+awk -vchr=${chr} -vstart=${start} -vend=${end} '{
   if (NR==1) print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"
-  else if ($2==ENVIRON["chr"] && $3 >= ENVIRON["start"] && $3 < ENVIRON["end"]) {
+  else if ($2==chr && $3 >= start && $3 < end) {
     if ($8 < 0.5) maf=$8; else maf=1-$8
     print $1, $2, $3, $6, $7, maf, $9, $10
   }
-}' > ${p}-${r}.z
+}' > INTERVAL/${pr}.z
 # bgen
-qctool -g INTERVAL.bed -filetype binary_ped -og ${p}-${r} -ofiletype bgen -include-range $(chr}:${start}-${end}
-# ld
+qctool -g ${INTERVAL}.bed -filetype binary_ped -og INTERVAL/${pr} -ofiletype bgen -include-range $(chr}:${start}-${end}
 # finemap 1.3
-finemap -sss ${p}-${r}
+cd INTERVAL
+finemap --sss --in-files ${pr}.master
+cd -
