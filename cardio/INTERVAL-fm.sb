@@ -44,7 +44,7 @@ awk -vchr=${chr} -vstart=${start} -vend=${end} '{
 }' > INTERVAL/${pr}.z
 
 # bgen
-qctool -g ${rt}.bed -filetype binary_ped -og INTERVAL/${pr} -ofiletype bgen -incl-range chr${chr}:${start}-${end}
+qctool -g ${rt}.bed -filetype binary_ped -og INTERVAL/${pr}.bgen -ofiletype bgen -incl-range chr${chr}:${start}-${end}
 
 # finemap 1.3
 cd INTERVAL
