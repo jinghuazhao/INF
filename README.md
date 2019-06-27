@@ -14,7 +14,7 @@
 * [Competitive logp/log10p functions](doc/logplog10p.md)
 * [Use of approximately independent LD blocks](doc/aild.md)
 * [Notes on UniProt IDs](doc/uniprot.md)
-* [Files, URLs, and downloading](https://github.com/jinghuazhao/INF#files-urls-and-downloading)
+* [URLs and downloading](https://github.com/jinghuazhao/INF#urls-and-downloading)
 * [Web site](https://jinghuazhao.github.io/INF/)
 
 <img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
@@ -47,17 +47,6 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 ---
 
 ## Files, URLs and downloading
-
-### Files
-
-File     | Description
----------|--------------------------------------------------------
-[doc/](doc) | Some documents and auxiliary files
-[cardio/](cardio) | Work on CEU's cardio
-[tryggve/](tryggve) | Analysis programs on TRYGGVE
-[SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | Analysis plan
-[SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
-[tryggve.md](tryggve.md) | TRYGGVE notes
 
 ### URLs
 
