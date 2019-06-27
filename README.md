@@ -54,8 +54,6 @@ SCALLOP [consortium](https://www.olink.com/scallop/), [GitHub repository](https:
 
 SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/proteins.
 
-[turbo.sh](cardio/turbo.sh) shows tweak of [turboman](https://github.com/bpprins/turboman) and [turboqq](https://github.com/bpprins/turboqq); see also aild() in tryggve/analysis.sh.
-
 [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
 
 ### downloading
