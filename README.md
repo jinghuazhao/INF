@@ -21,7 +21,7 @@
 ## Analysis
 
 1. To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](cardio/cardio.sh), which includes cis/trans classification via Jimmy's [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) and a Bash version via bedtools, [cistrans.sh](cardio/cistrans.sh).
-A competitive log10(p) calculator is also documented in [log10p.md](doc/log10p.md) in comparison with R/Rmpfr. 
+A competitive log(p)/log10(p) calculator is also documented in [logplog10p.md](doc/logplog10p.md) in comparison with R/Rmpfr. 
 
 2. Data preprocessig was done with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh). The meta-analysis was according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with addtional investigation.
 
