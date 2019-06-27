@@ -1,13 +1,17 @@
-# log10(p) and p for a very large z from Normal(0,1)
+# log(p), log10(p) and p for a very large z from Normal(0,1)
 
 When a Normally distributed association statistic z is very large, its corresponding p value is very small. A genomewide significance is declared at 0.05/1000000=5e-8 with Bonferroni correction assuming 1 million SNPs are tested. This short note describes how to get -log10(p), which can be used in a Q-Q plot and software such as DEPICT. The solution here is generic since z is also the square root of a chi-squared statistic, for instance.
 
 ## log10(p)
-First thing first, here is the anwser for log10(p) given z,
+First thing first, here are the answers for log(p) and log10(p) given z,
 ```r
+# log(p) for a standard normal deviate z based on log()
+logp <- function(z) log(2)+pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)
+
 # log10(p) for a standard normal deviate z based on log()
 log10p <- function(z) log(2, base=10)+pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)/log(10)
 ```
+Note `logp()` will be used for functions such as `qnorm()` as used in R/gap function `cs()` whereas `log10p()` is more appropriate for Manhattan plot and used in R/gap `sentinels()`.
 
 ## Rationale
 We start with z=1.96 whose corresponding p value is approximately 0.05.
