@@ -40,6 +40,7 @@ awk -vchr=${chr} -vstart=${start} -vend=${end} 'NR > 1 {
   }
 }' > ${pr}.z0
 
+ln -sf ${pr}.z0 ${pr}.z
 awk 'NR > 1 {print $1} ' ${pr}.z0 > ${pr}.incl
 
 # bgen
@@ -52,8 +53,8 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
 # master
 (
   echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
-  echo "${pr}.z0;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;4994"
-) > ${pr}.master0
+  echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;4994"
+) > ${pr}.master
 
 # finemap 1.3
 finemap --sss --in-files ${pr}.master0 | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
@@ -70,7 +71,6 @@ if [ $(wc -l ${pr}.excl | awk '{print $1}') -gt 0 ]; then
      sort -k1,1 | \
      join -v1 - ${pr}.excl
    ) > ${pr}.z
-   sed 's/z0/z/g' ${pr}.master0 > ${pr}.master
    # finemap 1.3
    finemap --sss --in-files ${pr}.master
 fi
