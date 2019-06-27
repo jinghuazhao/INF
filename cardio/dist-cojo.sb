@@ -27,7 +27,7 @@ gcta-1.9 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
          --cojo-file work/${p}.ma \
          --cojo-slct \
          --cojo-p 5e-10 \
-         --cojo-wind 10000 \
+         --cojo-wind 1000 \
          --cojo-collinear 0.9 \
          --maf 0.01 \
          --out dist/cojo/${p}-${r}
