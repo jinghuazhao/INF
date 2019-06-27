@@ -4,7 +4,7 @@
 #SBATCH --job-name=_finemap
 #SBATCH --time=12:00:00
 #SBATCH --partition=medium
-#SBATCH --array=1-114%5
+#SBATCH --array=1-228%5
 #SBATCH --mem=128800
 #SBATCH --output=dist/_finemap_%A_%a.out
 #SBATCH --error=dist/_finemap_%A_%a.err
@@ -18,10 +18,10 @@ module load use.own
 export TMPDIR=/scratch/jhz22/tmp
 export flanking=1e6
 export job=${SLURM_ARRAY_TASK_ID}
-export p=$(awk 'NR==job+1{print $1}' job=${job} INTERVAL/INTERVAL_nold.sentinels)
-export chr=$(awk 'NR==job+1{print $2}' job=${job} INTERVAL/INTERVAL_nold.sentinels)
-export pos=$(awk 'NR==job+1{print $3}' job=${job} INTERVAL/INTERVAL_nold.sentinels)
-export r=$(awk 'NR==job+1{print $4}' job=${job} INTERVAL/INTERVAL_nold.sentinels)
+export p=$(awk 'NR==job+1{print $1}' job=${job} dist/INF1_nold.sentinels)
+export chr=$(awk 'NR==job+1{print $2}' job=${job} dist/INF1_nold.sentinels)
+export pos=$(awk 'NR==job+1{print $3}' job=${job} dist/INF1_nold.sentinels)
+export r=$(awk 'NR==job+1{print $4}' job=${job} dist/INF1_nold.sentinels)
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export rt=/scratch/jhz22/data/INTERVAL/INTERVAL
