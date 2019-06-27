@@ -59,19 +59,20 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
 finemap --sss --in-files ${pr}.master0 | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
 
 if [ $(wc -l ${pr}.excl | awk '{print $1}') -gt 0 ]; then
-  # bgen
-  qctool -g ${rt}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -excl-rsids ${pr}.excl
-  # bgi
-  bgenix -g ${pr}.bgen -index -clobber
-  ln -sf ${pr}.bgen.bgi ${pr}.bgi
-  (
-    awk 'BEGIN{print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"}'
-    awk 'NR > 1' ${pr}.z0 | \
-    sort -k1,1 | \
-    join -v1 - ${pr}.excl
-  ) > ${pr}.z
-  sed 's/z0/z/g' ${pr}.master0 > ${pr}.master
-  finemap --sss --in-files ${pr}.master
+   # bgen
+   qctool -g ${rt}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -excl-rsids ${pr}.excl
+   # bgi
+   bgenix -g ${pr}.bgen -index -clobber
+   ln -sf ${pr}.bgen.bgi ${pr}.bgi
+   (
+     awk 'BEGIN{print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"}'
+     awk 'NR > 1' ${pr}.z0 | \
+     sort -k1,1 | \
+     join -v1 - ${pr}.excl
+   ) > ${pr}.z
+   sed 's/z0/z/g' ${pr}.master0 > ${pr}.master
+   # finemap 1.3
+   finemap --sss --in-files ${pr}.master
 fi
 
 cd -
