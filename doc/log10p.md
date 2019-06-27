@@ -11,7 +11,7 @@ logp <- function(z) log(2)+pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)
 # log10(p) for a standard normal deviate z based on log()
 log10p <- function(z) log(2, base=10)+pnorm(-abs(z), lower.tail=TRUE, log.p=TRUE)/log(10)
 ```
-Note `logp()` will be used for functions such as `qnorm()` as used in R/gap function `cs()` whereas `log10p()` is more appropriate for Manhattan plot and used in R/gap `sentinels()`.
+Note `logp()` will be used for functions such as `qnorm()` as in R/gap function `cs()` whereas `log10p()` is more appropriate for Manhattan plot and used in R/gap `sentinels()`.
 
 ## Rationale
 We start with z=1.96 whose corresponding p value is approximately 0.05.
