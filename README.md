@@ -14,7 +14,7 @@
 * [Competitive logp/log10p functions](doc/logplog10p.md)
 * [Use of approximately independent LD blocks](doc/aild.md)
 * [Notes on UniProt IDs](doc/uniprot.md)
-* [Files, URLs, and downloading](https://github.com/jinghuazhao/INF#files-urls-and-downloading)
+* [URLs and downloading](https://github.com/jinghuazhao/INF#urls-and-downloading)
 * [Web site](https://jinghuazhao.github.io/INF/)
 
 <img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
@@ -46,26 +46,13 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 
 ---
 
-## Files, URLs and downloading
-
-### Files
-
-File     | Description
----------|--------------------------------------------------------
-[doc/](doc) | Some documents and auxiliary files
-[cardio/](cardio) | Work on CEU's cardio
-[tryggve/](tryggve) | Analysis programs on TRYGGVE
-[SCALLOP_INF1_analysis_plan.md](SCALLOP_INF1_analysis_plan.md) | Analysis plan
-[SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx) |
-[tryggve.md](tryggve.md) | TRYGGVE notes
+## URLs and downloading
 
 ### URLs
 
 SCALLOP [consortium](https://www.olink.com/scallop/), [GitHub repository](https://github.com/lassefolkersen/scallop), [securecloud](https://secureremote.dtu.dk/vpn/index.html).
 
 SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/proteins.
-
-[turbo.sh](cardio/turbo.sh) shows tweak of [turboman](https://github.com/bpprins/turboman) and [turboqq](https://github.com/bpprins/turboqq); see also aild() in tryggve/analysis.sh.
 
 [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
 
