@@ -1,4 +1,4 @@
-# 24-6-2019 JHZ
+# 28-6-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -243,6 +243,8 @@ function fp()
   '
   ) | \
   sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.all
+  if [ -f INF1.log ]; then rm INF1.log; fi
+  script INF1.log
   R -q --no-save <<\ \ END
     require(gap)
     t <- read.delim("INF1.tbl",as.is=TRUE)
@@ -270,6 +272,8 @@ function fp()
     save(tbl,all,rsid,file="INF1.jma.rda",version=2)
     METAL_forestplot(tbl,all,rsid,"INF1.fp.pdf",width=8.75,height=5)
   END
+  exit
+  grep I2 INF1.log | awk '{gsub(/prot|=|MarkerName|Q|lower.I2|upper.I2|I2/,"");print}' > INF1.Q
 }
 
 function aild()
