@@ -16,18 +16,19 @@ module load slurm
 module load use.own
 
 export TMPDIR=/scratch/jhz22/tmp
-export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' sentinels/INF1_nold.sentinels)
-export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' sentinels/INF1_nold.sentinels)
-if [ -f dist/cojo/${p}-${r}.jma.cojo ]; then
-   rm dist/cojo/${p}-${r}.jma.cojo dist/cojo/${p}-${r}.ldr.cojo
+export INF=/scratch/jhz22/INF
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' ${INF}/dist/INF1_nold.sentinels)
+export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' ${INF}/dist/INF1_nold.sentinels)
+if [ -f ${INF}/dist/cojo/${p}-${r}.jma.cojo ]; then
+   rm ${INF}/dist/cojo/${p}-${r}.jma.cojo ${INF}/dist/cojo/${p}-${r}.ldr.cojo
 fi
 gcta-1.9 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
-         --exclude /scratch/jhz22/INF/dist/indels/${p}-${r}.indels \
+         --exclude ${INF}/dist/indels/${p}-${r}.indels \
          --extract-region-snp ${r} 10000 \
-         --cojo-file work/${p}.ma \
+         --cojo-file ${INF}/work/${p}.ma \
          --cojo-slct \
          --cojo-p 5e-10 \
          --cojo-wind 1000 \
          --cojo-collinear 0.9 \
          --maf 0.01 \
-         --out dist/cojo/${p}-${r}
+         --out ${INF}/dist/cojo/${p}-${r}
