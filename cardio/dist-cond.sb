@@ -24,7 +24,7 @@ fi
 echo ${r} > dist/cojo/${p}-${r}
 gcta-1.9 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
          --exclude dist/indels/${p}-${r}.indels \
-         --extract-region-snp ${r} 10000 \
+         --extract-region-snp ${r} 1000 \
          --cojo-file work/${p}.ma \
          --cojo-cond dist/cojo/${p}-${r}\
          --cojo-p 5e-10 \
