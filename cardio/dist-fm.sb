@@ -25,13 +25,13 @@ export r=$(awk 'NR==job+1{print $4}' job=${job} dist/INF1_nold.sentinels)
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export rt=/scratch/jhz22/data/INTERVAL/INTERVAL
-export sumstats=/scratch/jhz22/INF/sumstats/INTERVAL
+export sumstats=/scratch/jhz22/INF/METAL
 export pr=${p}-${r}
 
-cd INTERVAL
+cd dist
 
 # z0
-zcat ${sumstats}/INTERVAL.${p}.gz | \
+zcat ${sumstats}/${p}-1.tbl.gz | \
 awk -vchr=${chr} -vstart=${start} -vend=${end} 'NR > 1 {
   if (NR == 1) print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"
   else if ($2==chr && $3 >= start && $3 < end) {
