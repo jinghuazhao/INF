@@ -57,7 +57,7 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
 ) > ${pr}.master
 
 # finemap 1.3
-finemap --sss --in-files ${pr}.master0 | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
+finemap --sss --in-files ${pr}.master | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
 
 if [ $(wc -l ${pr}.excl | awk '{print $1}') -gt 0 ]; then
    # bgen
