@@ -6,8 +6,8 @@
 #SBATCH --partition=medium
 #SBATCH --array=1-114%5
 #SBATCH --mem=128800
-#SBATCH --output=dist/_finemap_%A_%a.out
-#SBATCH --error=dist/_finemap_%A_%a.err
+#SBATCH --output=INTERVAL/_finemap_%A_%a.out
+#SBATCH --error=INTERVAL/_finemap_%A_%a.err
 #SBATCH --export ALL
 
 . /etc/profile.d/modules.sh
@@ -57,7 +57,7 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
 ) > ${pr}.master
 
 # finemap 1.3
-finemap --sss --in-files ${pr}.master0 | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
+finemap --sss --in-files ${pr}.master | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
 
 if [ $(wc -l ${pr}.excl | awk '{print $1}') -gt 0 ]; then
    # bgen
