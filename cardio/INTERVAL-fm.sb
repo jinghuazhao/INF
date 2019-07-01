@@ -6,8 +6,8 @@
 #SBATCH --partition=medium
 #SBATCH --array=1-114%5
 #SBATCH --mem=128800
-#SBATCH --output=dist/_finemap_%A_%a.out
-#SBATCH --error=dist/_finemap_%A_%a.err
+#SBATCH --output=INTERVAL/_finemap_%A_%a.out
+#SBATCH --error=INTERVAL/_finemap_%A_%a.err
 #SBATCH --export ALL
 
 . /etc/profile.d/modules.sh
