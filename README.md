@@ -32,7 +32,7 @@
 association analysis section of [software-notes](https://jinghuazhao.github.io/software-notes/)
 as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
 
-5. TRYGGVE-specific issues were noted in [tryggve.md](tryggve.md). The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page); together with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc` functions are now part of gap at CRAN with latest updates at [R/gap](https://github.com/jinghuazhao/R/tree/master/gap) repository.
+5. TRYGGVE-specific issues were noted in [tryggve.md](tryggve.md). The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page); together with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc` functions are now part of R/gap at [CRAN](https://cran.r-project.org/web/packages/gap/index.html) with latest updates at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
 
 ## References
 
