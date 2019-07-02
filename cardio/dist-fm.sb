@@ -33,7 +33,7 @@ cd dist
 # z0
 (
   awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"}'
-  zcat ${sumstats}/INTERVAL.${p}.gz | \
+  zcat ${sumstats}/${p}-1.tbl.gz | \
   awk 'NR > 1' | \
   sort -k1,1 | \
   awk 'BEGIN {prev="";} {key=$1; if(key==prev) next;print;prev=key}' | \
