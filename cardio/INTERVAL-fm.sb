@@ -41,6 +41,7 @@ cd INTERVAL
     if ($2==chr && $3 >= start && $3 < end) {
     if ($8 < 0.5) maf = $8; else maf = 1-$8
     if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $6, $7, maf, $9, $10
+  }
   } '
 ) > ${pr}.z0
 
