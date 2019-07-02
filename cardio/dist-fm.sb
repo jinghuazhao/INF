@@ -35,8 +35,8 @@ cd dist
   awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"}'
   zcat ${sumstats}/${p}-1.tbl.gz | \
   awk 'NR > 1' | \
-  sort -k1,1 | \
-  awk 'BEGIN {prev="";} {key=$1; if(key==prev) next;print;prev=key}' | \
+  sort -k3,3 | \
+  awk 'BEGIN {prev="";} {key=$3; if(key==prev) next;print;prev=key}' | \
   awk -vchr=${chr} -vstart=${start} -vend=${end} '{
     if ($2==chr && $3 >= start && $3 < end) {
     if ($8 < 0.5) maf = $8; else maf = 1-$8
