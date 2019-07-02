@@ -12,7 +12,7 @@
 ) > INF1.cma
 
 (
-  awk -vOFS="," 'BEGIN{print "prot","CHR","BP","SNP","l","u","d","log10p","Groupid", "Type"}'
+  awk -vOFS="\t" 'BEGIN{print "prot","CHR","BP","SNP","l","u","d","log10p","Groupid", "Type"}'
   (
   R --no-save -q <<\ \ END
   options(echo=FALSE)
@@ -30,21 +30,20 @@
     {
       ps <- subset(p,Chrom==chr)
       row.names(ps) <- 1:nrow(ps)
-      sentinels(ps, protein, 1)
+      sentinels(ps, protein, 1, sep="\t")
     }
   }
   END
   ) | \
-  awk -vFS="," -vOFS="," '!/option/{
+  awk -vFS="\t" -vOFS="\t" '!/option/{
        SNPID=$2
        split(SNPID,a,":")
        split(a[2],b,"_")
        gsub(/chr/,"",a[1])
-       $1=$1 "," a[1] "," b[1]
+       $1=$1 "\t" a[1] "\t" b[1]
        print
   }'
-) | \
-sed 's/,/\t/g' > INF1.cma.sentinels
+) > INF1.cma.sentinels
 
 R --no-save -q <<END
     require(gap)
@@ -64,4 +63,3 @@ R --no-save -q <<END
     circos.cis.vs.trans.plot(hits="INF1.cma.sentinels",inf1,"uniprot")
     dev.off()
 END
-
