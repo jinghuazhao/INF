@@ -18,7 +18,7 @@
   options(echo=FALSE)
   require(gap)
   require(reshape)
-  cma <- read.delim("INF1.cma", as.is=TRUE)
+  cma <- read.delim("INF1.cma", as.is=TRUE)[c("prot","Chr","bp","bC","bC_se","SNP")]
   cma <- rename(cma,c(Chr="Chrom",bp="End",bC="Effect",bC_se="StdErr",SNP="MarkerName"))
   tag <- "_cma"
 
