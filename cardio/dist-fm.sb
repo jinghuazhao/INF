@@ -45,8 +45,8 @@ cd dist
   } '
 ) > ${pr}.z0
 
-ln -sf ${pr}.z0 ${pr}.z
 awk 'NR > 1 {print $1} ' ${pr}.z0 > ${pr}.incl
+cp ${pr}.z0 ${pr}.z
 
 # bgen
 qctool -g ${rt}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
