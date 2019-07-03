@@ -1,11 +1,11 @@
-# 2-4-2019 JHZ
+# 3-7-2019 JHZ
 
 function METAL_list()
 {
 # build the lists
   if [ ! -d METAL ]; then mkdir METAL; fi
   (
-  for dir in INTERVAL BioFinder EGCUT MadCam KORA NSPHS ORCADES RECOMBINE STABILITY STANLEY VIS
+  for dir in INTERVAL BioFinder EGCUT KORA NSPHS ORCADES RECOMBINE STABILITY STANLEY VIS
   do
      ls sumstats/$dir | \
      awk -vdir=$dir '{
@@ -49,12 +49,13 @@ function METAL_files()
      echo STDERRLABEL SE
      echo SCHEME STDERR
      echo GENOMICCONTROL OFF
+     echo LOGPVALUE ON
      echo OUTFILE $HOME/INF/METAL/$p- .tbl
      echo $p | \
      join METAL/METAL.list - | \
      sort -k3,3n | \
      awk '{print "PROCESS", $2}'
-     echo ANALYZE
+     echo ANALYZE HETEROGENEITY
      echo CLEAR
   ) > METAL/$p.metal
   done
