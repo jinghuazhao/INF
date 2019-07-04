@@ -77,9 +77,9 @@ function METAL_analysis()
 {
 # conduct the analysis 
 # module load metal/20110325 parallel/20170822
-  export rt=$HOME/INF
-  ls METAL/*.metal | \
-  sed 's/.metal//g' | \
+  export rt=$HOME/INF/METAL
+  ls $rt/*.metal | \
+  sed 's|'"$rt"'/||g;s|.metal||g' | \
   parallel -j4 --env rt -C' ' '
     metal $rt/{}.metal 2>&1 | \
     tee $rt/{}-1.tbl.log; \
