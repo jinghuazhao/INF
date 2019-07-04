@@ -93,7 +93,7 @@ function METAL_analysis()
              else if (d3 == \"nnn\" || d3 == \"ppp\") print
           }
     }" $rt/{}-1.tbl | \
-    gzip -f > $rt/{}-1.tbl.gz
+    gzip -f > $rt/{}-1.tbl.gz; \
     rm $rt/{}-1.tbl
   '
 }
