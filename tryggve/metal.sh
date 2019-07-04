@@ -80,7 +80,7 @@ function METAL_analysis()
   export rt=$HOME/INF/METAL
   ls $rt/*.metal | \
   sed 's|'"$rt"'/||g;s|.metal||g' | \
-  parallel -j4 --env rt -C' ' '
+  parallel -j3 --env rt -C' ' '
     metal $rt/{}.metal 2>&1 | \
     tee $rt/{}-1.tbl.log; \
     awk "{
