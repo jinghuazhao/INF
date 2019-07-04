@@ -110,6 +110,8 @@ used to generate the figure in the front page. Another very useful utility is it
 
 The version as in /data/jinhua/METAL-2018-08-28 contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format as in [software-notes](https://github.com/jinghuazhao/software-notes/blob/master/AA.md).
 
+An extension was made with the Direction column so that if a variant with '+' and '-' effects becomes 'p' and 'n', respectively with P <= 0.05.
+
 To avoid loading the default /usr/bin/metal, one can add
 ```bash
 ln -sf /data/jinhua/METAL-2018-08-28/metal $HOME/bin/metal
