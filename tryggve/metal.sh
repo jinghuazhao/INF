@@ -39,7 +39,6 @@ function METAL_files()
      echo TRACKPOSITIONS ON
      echo AVERAGEFREQ ON
      echo MINMAXFREQ ON
-     echo ADDFILTER N ">=" 10
      echo ADDFILTER FREQ ">=" 0.01
      echo ADDFILTER FREQ "<=" 0.99
      echo MARKERLABEL SNPID
