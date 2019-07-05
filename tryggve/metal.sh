@@ -40,6 +40,8 @@ function METAL_files()
      echo AVERAGEFREQ ON
      echo MINMAXFREQ ON
      echo ADDFILTER N ">=" 10
+     echo ADDFILTER FREQ ">=" 0.01
+     echo ADDFILTER FREQ "<=" 0.99
      echo MARKERLABEL SNPID
      echo ALLELELABELS EFFECT_ALLELE REFERENCE_ALLELE
      echo EFFECTLABEL BETA
