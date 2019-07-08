@@ -1,4 +1,4 @@
-# 4-7-2019 JHZ
+# 8-7-2019 JHZ
 
 function METAL_list()
 {
@@ -87,7 +87,7 @@ function METAL_analysis()
     awk "{
        d3=\$13;
        gsub(/?/,\"\",d3)
-       if (length(d3 >= 3) && \$18 >= 3500)
+       if (length(d3) >= 3 && \$18 >= 3500)
           if (\$12 > -9.30103) print;
           else {
              if (\$14 < 30) print;
