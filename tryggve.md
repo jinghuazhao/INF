@@ -159,7 +159,7 @@ R --no-save -q <<END
   estlambda(with(STABILITY,PVAL), method="median")
 END
 ```
-Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1 via [gap.3.3.1.sh](tryggve/gap.3.3.1.sh) which requires registration of routine `family` (defined in pfc.f) altered to `family_` say. It is also necessary to explicitly indicate package location as in library(gap,lib.loc="/home/jinhua/R").
+Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1 via [gap.3.3.1.sh](tryggve/gap.3.3.1.sh) which requires registration of routine `family` (defined in pfc.f) altered to `family_` say. It is also necessary to explicitly indicate package location as in library(gap,lib.loc="/home/jinhua/R"); making sure we have done `module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.3.1-ICC-MKL` already.
 
 ### R/QCGWAS
 
