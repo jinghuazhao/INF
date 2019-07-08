@@ -1,4 +1,4 @@
-# 28-6-2019 JHZ
+# 8-7-2019 JHZ
 
 module unload R
 source tryggve/analysis.ini
@@ -218,7 +218,7 @@ function fp()
   # 1. PLINK --clumping. The default.
   # 3. GCTA --cojo.  Change Chr, Pos to CHR, BP as in 1.
   # 2. R/gap/sentinels output. use  SNPID or $4 below
-    awk 'NR>1 {print $1,$3}' INF1.jma | \
+    awk 'NR>1 {print $1,$4}' work/INF1_nold.sentinels | \
     parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
   ) | \
   sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.tbl
