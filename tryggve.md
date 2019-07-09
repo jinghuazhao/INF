@@ -57,7 +57,7 @@ NB METAL add -1 to the filenames.
 
 ### LocusZoom 1.4
 
-This version has problem with R/3.5.3-ICC-MKL so the default call is converted to a function which can be invoked at the start of a session through [.bashrc](tryggve/.bashrc),
+This version has problem with R/3.5.3-ICC-MKL so the default call is converted to a function which can be invoked at the start of a session,
 ```bash
 # This is very slow
 function R.3.5.3()
@@ -70,7 +70,6 @@ function R.3.5.3()
 # An alternative
 function R.3.3.1()
 {
-  export R_LIBS=/data/$USER/R:$HOME/R:/services/tools/R/3.3.1-ICC-MKL/lib64/R/library
   module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.3.1-ICC-MKL
 }
 ```
@@ -160,7 +159,7 @@ R --no-save -q <<END
   estlambda(with(STABILITY,PVAL), method="median")
 END
 ```
-Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1 via [gap.3.3.1.sh](tryggve/gap.3.3.1.sh) which requires registration of routine `family` (defined in pfc.f) altered to `family_` say. It is also necessary to explicitly indicate package location as in library(gap,lib.loc="/home/jinhua/R"); making sure we have done `module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.3.1-ICC-MKL` already.
+Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1 via [gap.3.3.1.sh](tryggve/gap.3.3.1.sh) which requires registration of routine `family` (defined in pfc.f) altered to `family_` say.
 
 ### R/QCGWAS
 
