@@ -5,8 +5,6 @@ source tryggve/analysis.ini
 function qml()
 {
   echo "--> Q-Q/Manhattan/LocusZoom plots"
-  export R_LIBS=
-  module load R/3.2.5
   export rt=$HOME/INF
   (
     echo -e "chrom\tstart\tend\tgene\tprot"
