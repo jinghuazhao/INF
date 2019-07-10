@@ -1,15 +1,10 @@
-# 8-7-2019 JHZ
+# 10-7-2019 JHZ
 
-module unload R
 source tryggve/analysis.ini
 
 function qml()
 {
   echo "--> Q-Q/Manhattan/LocusZoom plots"
-# LocusZoom 1.4 requires R/3.5.0
-# $HOME/.bashrc also needs change by unaliasing R, resetting R_LIBS
-  unalias R
-  module unload R
   export R_LIBS=
   module load R/3.2.5
   export rt=$HOME/INF
