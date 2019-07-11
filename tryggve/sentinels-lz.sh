@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source tryggve/analysis.ini
+module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.3.1-ICC-MKL
+module load anaconda2/4.4.0 locuszoom/1.4
 
 awk 'NR>1' work/INF1_nold.sentinels | \
 parallel -j1 -C' ' '
