@@ -14,7 +14,7 @@ parallel -j1 -C' ' '
      echo -e "MarkerName\tP-value\tWeight"
      gunzip -c METAL/${p}-1.tbl.gz | \
      awk -vOFS="\t" -vchr=${chr} -vpos=${pos} -vstart=${start} -vend=${end} \
-         "(\$1 == chr && \$2 >= start && \$2 < end){split(\$3,a,\"_\");print a[1],10^$12,$\18}" | \
+         "(\$1 == chr && \$2 >= start && \$2 < end){split(\$3,a,\"_\");print a[1],10^$12,\$18}" | \
      sort -k1,1 | \
      join -12 -21 work/snp_pos - | \
      awk -vOFS="\t" "{print \$2, \$3, \$4}"
