@@ -125,7 +125,7 @@ function ma()
   (
     echo SNP A1 A2 freq b se p N;
     gunzip -c $rt/{}-1.tbl.gz | \
-    awk "(NR>1 && \$14>50) {print \$3, \$4, \$5, \$6, \$10, \$11, \$12, \$14}"
+    awk "(NR>1 && \$14>50) {print \$3, \$4, \$5, \$6, \$10, \$11, 10^\$12, \$18}"
   ) > $rt/{}.ma
   '
 }
