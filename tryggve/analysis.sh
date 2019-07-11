@@ -1,4 +1,4 @@
-# 10-7-2019 JHZ
+# 11-7-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -36,7 +36,7 @@ function qml()
      awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
          "(\$1 == chr && \$2 >= start && \$2 <= end){split(\$3,a,\"_\");print a[1],10^\$12,\$18}" | \
      sort -k1,1 | \
-     join -12 -21 snp_pos - | \
+     join -12 -21 work/snp_pos - | \
      awk -vOFS="\t" "{print \$2, \$3, \$4}"
   )  > METAL/{}.lz'
   ls METAL/*-1.tbl.gz | \
