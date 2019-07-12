@@ -5,7 +5,7 @@
 #SBATCH --job-name=_cojo-cond
 #SBATCH --time=12:00:00
 #SBATCH --partition=skylake
-#SBATCH --array=1-147%5
+#SBATCH --array=1-146%5
 #SBATCH --mem=128800
 #SBATCH --output=work/_cojo-cond_%A_%a.out
 #SBATCH --error=work/_cojo-cond_%A_%a.err
