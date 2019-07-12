@@ -15,7 +15,7 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' work/INF1_nold.sentinels)
 export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' work/INF1_nold.sentinels)
 if [ -f work/${p}-${r}.cma.cojo ]; then rm work/${p}-${r}.cma.cojo; fi
-echo ${r} > dist/cojo/${p}-${r}
+echo ${r} > work/${p}-${r}
 gcta-1.9 --bfile /rds/user/jhz22/hpc-work/data/INTERVAL/INTERVAL \
          --extract-region-snp ${r} 1000 \
          --cojo-file work/${p}.ma \
