@@ -7,7 +7,7 @@
 #SBATCH --partition=skylake
 #SBATCH --array=1-114%5
 #SBATCH --output=INTERVAL/_cojo-cond_%A_%a.out
-#SBATCH --error=wINTERVAL/_cojo-cond_%A_%a.err
+#SBATCH --error=INTERVAL/_cojo-cond_%A_%a.err
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -18,7 +18,8 @@ echo ${r} > INTERVAL/${p}-${r}
 gcta-1.9 --bfile /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/INTERVAL \
          --extract-region-snp ${r} 1000 \
          --cojo-file INTERVAL/${p}.ma \
-         --cojo-cond INTERVAL/${p}-${r}\
+         --cojo-cond INTERVAL/${p}-${r} \
+         --cojo-actual-geno \
          --cojo-p 5e-10 \
          --cojo-wind 1000 \
          --cojo-collinear 0.9 \
