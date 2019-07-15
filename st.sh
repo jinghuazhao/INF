@@ -1,4 +1,4 @@
-# 10-5-2019 JHZ
+# 11-7-2019 JHZ
 
 git add .gitignore
 git commit -m ".gitignore"
@@ -10,6 +10,8 @@ git add SCALLOP_INF1_analysis_plan.*
 git commit -m "Analysis plan"
 git add cardio
 git commit -m "Work on CEU's cardio"
+git add csd3
+git commit -m "Work on CSD3"
 git add tryggve tryggve.*
 git commit -m "Notes and programs on TRYGGVE"
 git add st.sh

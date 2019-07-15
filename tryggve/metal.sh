@@ -1,11 +1,11 @@
-# 2-4-2019 JHZ
+# 8-7-2019 JHZ
 
 function METAL_list()
 {
 # build the lists
   if [ ! -d METAL ]; then mkdir METAL; fi
   (
-  for dir in INTERVAL BioFinder EGCUT MadCam KORA NSPHS ORCADES RECOMBINE STABILITY STANLEY VIS
+  for dir in INTERVAL BioFinder EGCUT KORA NSPHS ORCADES RECOMBINE STABILITY STANLEY VIS
   do
      ls sumstats/$dir | \
      awk -vdir=$dir '{
@@ -39,7 +39,8 @@ function METAL_files()
      echo TRACKPOSITIONS ON
      echo AVERAGEFREQ ON
      echo MINMAXFREQ ON
-     echo ADDFILTER N ">=" 10
+     echo ADDFILTER FREQ ">=" 0.01
+     echo ADDFILTER FREQ "<=" 0.99
      echo MARKERLABEL SNPID
      echo ALLELELABELS EFFECT_ALLELE REFERENCE_ALLELE
      echo EFFECTLABEL BETA
@@ -49,12 +50,13 @@ function METAL_files()
      echo STDERRLABEL SE
      echo SCHEME STDERR
      echo GENOMICCONTROL OFF
+     echo LOGPVALUE ON
      echo OUTFILE $HOME/INF/METAL/$p- .tbl
      echo $p | \
      join METAL/METAL.list - | \
      sort -k3,3n | \
      awk '{print "PROCESS", $2}'
-     echo ANALYZE
+     echo ANALYZE HETEROGENEITY
      echo CLEAR
   ) > METAL/$p.metal
   done
@@ -76,15 +78,48 @@ function METAL_analysis()
 {
 # conduct the analysis 
 # module load metal/20110325 parallel/20170822
-  export rt=$HOME/INF
-  ls METAL/*.metal | \
-  sed 's/.metal//g' | \
-  parallel -j4 --env rt -C' ' '
+  export rt=$HOME/INF/METAL
+  ls $rt/*.metal | \
+  sed 's|'"$rt"'/||g;s|.metal||g' | \
+  parallel -j3 --env rt -C' ' '
     metal $rt/{}.metal 2>&1 | \
     tee $rt/{}-1.tbl.log; \
-    gzip -f $rt/{}-1.tbl
+    awk "{
+       d3=\$13;
+       gsub(/?/,\"\",d3)
+       if (length(d3) >= 3 && \$18 >= 3500)
+          if (\$12 > -9.30103) print;
+          else {
+             if (\$14 < 30) print;
+             else if (d3 == \"nnn\" || d3 == \"ppp\") print
+          }
+    }" $rt/{}-1.tbl | \
+    gzip -f > $rt/{}-1.tbl.gz; \
+    rm $rt/{}-1.tbl
   '
 }
+# R
+# > -log10(5e-10)
+# [1] 9.30103
+# head -1 METAL/4E.BP1-1.tbl | sed 's|\t|\n|g' | awk '{print "#" NR,$1}'
+#1 Chromosome
+#2 Position
+#3 MarkerName
+#4 Allele1
+#5 Allele2
+#6 Freq1
+#7 FreqSE
+#8 MinFreq
+#9 MaxFreq
+#10 Effect
+#11 StdErr
+#12 log(P)
+#13 Direction
+#14 HetISq
+#15 HetChiSq
+#16 HetDf
+#17 logHetP
+#18 N
 
 function largest_M()
 # the union of SNP lists as initially requested by NSPHS

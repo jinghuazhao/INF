@@ -1,7 +1,25 @@
-# 18-6-2019 JHZ
+# 8-7-2019 JHZ
 
 module load bedtools/2.27.1
 export tag=_nold
+
+function pgz()
+# 1. extract all significant SNPs
+{
+  ls METAL/*-1.tbl.gz | \
+  sed 's|METAL/||g;s/-1.tbl.gz//g' | \
+  parallel -j3 -C' ' '
+  (
+  # zcat METAL/{}-1.tbl.gz | head -1
+    zcat METAL/{}-1.tbl.gz | awk "
+    function abs(x)
+    {
+      if (x<0) return -x;
+      else return x;
+    }
+    NR>1 && length(\$4)==1 && length(\$5)==1 && abs(\$10/\$11)>=6.219105" | sort -k1,1n -k2,2n
+  ) | gzip -f > sentinels/{}.p.gz'
+}
 
 function _HLA()
 # 2. handling HLA

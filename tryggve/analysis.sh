@@ -1,17 +1,10 @@
-# 28-6-2019 JHZ
+# 11-7-2019 JHZ
 
-module unload R
 source tryggve/analysis.ini
 
 function qml()
 {
   echo "--> Q-Q/Manhattan/LocusZoom plots"
-# LocusZoom 1.4 requires R/3.5.0
-# $HOME/.bashrc also needs change by unaliasing R, resetting R_LIBS
-  unalias R
-  module unload R
-  export R_LIBS=
-  module load R/3.2.5
   export rt=$HOME/INF
   (
     echo -e "chrom\tstart\tend\tgene\tprot"
@@ -41,9 +34,9 @@ function qml()
      read chrom start end gene prot < st.tmp
      gunzip -c METAL/{}-1.tbl.gz | \
      awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
-         "(\$1 == chr && \$2 >= start && \$2 <= end){split(\$3,a,\"_\");print a[1],\$12,\$14}" | \
+         "(\$1 == chr && \$2 >= start && \$2 <= end){split(\$3,a,\"_\");print a[1],10^\$12,\$18}" | \
      sort -k1,1 | \
-     join -12 -21 snp_pos - | \
+     join -12 -21 work/snp_pos - | \
      awk -vOFS="\t" "{print \$2, \$3, \$4}"
   )  > METAL/{}.lz'
   ls METAL/*-1.tbl.gz | \
@@ -132,7 +125,7 @@ function ma()
   (
     echo SNP A1 A2 freq b se p N;
     gunzip -c $rt/{}-1.tbl.gz | \
-    awk "(NR>1 && \$14>50) {print \$3, \$4, \$5, \$6, \$10, \$11, \$12, \$14}"
+    awk "(NR>1 && \$18>50) {print \$3, \$4, \$5, \$6, \$10, \$11, 10^\$12, \$18}"
   ) > $rt/{}.ma
   '
 }
@@ -218,7 +211,7 @@ function fp()
   # 1. PLINK --clumping. The default.
   # 3. GCTA --cojo.  Change Chr, Pos to CHR, BP as in 1.
   # 2. R/gap/sentinels output. use  SNPID or $4 below
-    awk 'NR>1 {print $1,$3}' INF1.jma | \
+    awk 'NR>1 {print $1,$4}' work/INF1_nold.sentinels | \
     parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
   ) | \
   sed 's|METAL/||g;s/-1.tbl.gz//g' > INF1.tbl
@@ -269,11 +262,11 @@ function fp()
     droplist <- c("SNPID","dir.study.prot","p1","p2","pos","study.prot","substudy")
     all <- all[setdiff(names(all),droplist)]
     rsid <- read.table("INF1.rsid",as.is=TRUE,col.names=c("MarkerName","rsid"))
-    save(tbl,all,rsid,file="INF1.jma.rda",version=2)
+    save(tbl,all,rsid,file="INF1.rda",version=2)
     METAL_forestplot(tbl,all,rsid,"INF1.fp.pdf",width=8.75,height=5)
   END
   exit
-  grep I2 INF1.log | awk '{gsub(/prot|=|MarkerName|Q|lower.I2|upper.I2|I2/,"");print}' > INF1.Q
+  grep I2 INF1.log | awk '{gsub(/prot|=|MarkerName|Q|df|p|lower.I2|upper.I2|I2/,"");print}' > INF1.Q
 }
 
 function aild()
