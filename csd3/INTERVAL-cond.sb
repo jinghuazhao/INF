@@ -19,7 +19,6 @@ gcta-1.9 --bfile /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/
          --extract-region-snp ${r} 1000 \
          --cojo-file INTERVAL/${p}.ma \
          --cojo-cond INTERVAL/${p}-${r} \
-         --cojo-actual-geno \
          --cojo-p 5e-10 \
          --cojo-wind 1000 \
          --cojo-collinear 0.9 \
