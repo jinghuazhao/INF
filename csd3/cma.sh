@@ -1,4 +1,4 @@
-# 2-7-2019 JHZ
+# 15-7-2019 JHZ
 
 (
   cat work/*cma.cojo | \
