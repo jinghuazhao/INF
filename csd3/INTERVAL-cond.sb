@@ -18,9 +18,9 @@ if [ -f INTERVAL/${p}-${r}.cma.cojo ]; then rm INTERVAL/${p}-${r}.cma.cojo; fi
 echo ${r} > INTERVAL/${p}-${r}
 gcta-1.9 --bfile /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/INTERVAL \
          --cojo-file INTERVAL/${p}.ma \
+         --extract-region-snp ${r} 1000 \
          --cojo-cond INTERVAL/${p}-${r} \
          --cojo-p 5e-10 \
-         --cojo-wind 1000 \
          --cojo-collinear 0.9 \
          --maf 0.01 \
          --out INTERVAL/${p}-${r}
