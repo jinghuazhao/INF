@@ -28,7 +28,7 @@
 3. The main analysis follows [analysis.sh](tryggve/analysis.sh), which contains codes for Q-Q/Manhattan/LocusZoom/Forest plots (see the figure on the right for the OPG example, which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has increasingly been done locally with [cardio](cardio). In particular, approximately independent LD blocks are utilised as descrbed below. cis/trans classificaiton has been done via [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) as validated by [cistrans.sh](cardio/cistrans.sh).
 
 4. Further downstream analysis will be considered. The CAD summary statistics used for MAGMA and MR is described [here](https://jinghuazhao.github.io/Omics-analysis/CAD/)
--- as noted in MMP12.sh, the MMP12 case could have been done genomewide. A colocalisation analysis on simulated data can be found in the
+-- using Generalised Summary-data-based Mendelian Randomisation (GSMR). A colocalisation analysis on simulated data can be found in the
 association analysis section of [software-notes](https://jinghuazhao.github.io/software-notes/)
 as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
 
