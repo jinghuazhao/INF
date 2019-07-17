@@ -47,11 +47,12 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 
 ### URLs
 
-[SCALLOP consortium](http://www.scallop-consortium.com/), [Olink location](https://www.olink.com/scallop/), [GitHub repository](https://github.com/lassefolkersen/scallop), [securecloud](https://secureremote.dtu.dk/vpn/index.html).
-
-SomaLogic plasma protein GWAS summary statistics, http://www.phpc.cam.ac.uk/ceu/proteins.
-
-[Olink publications](https://www.olink.com/data-you-can-trust/publications/).
+* [SCALLOP consortium](http://www.scallop-consortium.com/)
+* [Olink location](https://www.olink.com/scallop/)
+* [GitHub repository](https://github.com/lassefolkersen/scallop) for the 2017 paper.
+* [securecloud](https://secureremote.dtu.dk/vpn/index.html).
+* [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
+* [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
 
 ### downloading
 
