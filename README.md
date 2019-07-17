@@ -47,8 +47,8 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 
 ### URLs
 
-* [SCALLOP consortium](http://www.scallop-consortium.com/)
-* [Olink location](https://www.olink.com/scallop/)
+* [SCALLOP consortium](http://www.scallop-consortium.com/).
+* [Olink location](https://www.olink.com/scallop/).
 * [GitHub repository](https://github.com/lassefolkersen/scallop) for the 2017 paper.
 * [securecloud](https://secureremote.dtu.dk/vpn/index.html).
 * [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
