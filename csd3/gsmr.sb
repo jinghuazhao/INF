@@ -2,13 +2,13 @@
 
 #SBATCH --account=PETERS-SL3-CPU
 #SBATCH --ntasks=1
-#SBATCH --job-name=_mr_cad
+#SBATCH --job-name=_gsmr_cad
 #SBATCH --time=12:00:00
 #SBATCH --partition=skylake
 #SBATCH --array=1-92%12
 #SBATCH --mem=128800
-#SBATCH --output=work/_mr-cad_%A_%a.out
-#SBATCH --error=work/_mr-cad_%A_%a.err
+#SBATCH --output=work/_gsmr-cad_%A_%a.out
+#SBATCH --error=work/_gsmr-cad_%A_%a.err
 #SBATCH --export ALL
 
 cd work
