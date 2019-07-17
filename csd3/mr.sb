@@ -27,7 +27,7 @@ R --no-save -q <<END
   source("http://cnsgenomics.com/software/gcta/static/gsmr_plot.r")
   gsmr_data <- read_gsmr_data(paste0("gsmr_result_",p,".eff_plot.gz"))
   gsmr_summary(gsmr_data)
-  pdf(paste0("gsmr_result_",p,".eff_plot.gz"))
+  pdf(paste0("gsmr_result_",p,".eff_plot.pdf"))
   plot_gsmr_effect(gsmr_data, p, "CAD", colors()[75])
   dev.off()
 END
