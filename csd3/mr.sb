@@ -14,8 +14,9 @@
 cd work
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' inf1.tmp)
+export r=/rds/user/jhz22/hpc-work/results
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
-if [ ! -f gsmr_outcome ]; then echo CAD gsmr_outcome.txt > gsmr_outcome; fi
+if [ ! -f gsmr_outcome ]; then echo CAD $r/gsmr_outcome.txt > gsmr_outcome; fi
 if [ ! -f gsmr_ref_data ]; then echo $INF/INTERVAL/INTERVAL > gsmr_ref_data; fi
 echo $p $INF/work/$p.ma > gsmr_$p
 
