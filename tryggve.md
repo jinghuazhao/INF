@@ -169,6 +169,10 @@ The version contains fix to the use of HapMap reference as in software-notes abo
 
 The version is 18.1 rather than 9.2 and 8.6 currently online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.
 
+## Code extraction
+
+This is possible with codedown, as noted [here](https://github.com/jinghuazhao/physalia/blob/master/NOTES.md).
+
 ## A summary of files
 
 File specification | Descrription
