@@ -1,0 +1,16 @@
+<html>
+<body>
+<p>Let's begin...</p>
+   <script src="cs/gwas-credible-sets.min.js" type="application/javascript">
+    alert( 'Hello, world!' );
+    /// Calculate Bayes factors and process into a form that can be used for the credible set
+    var scores = gwasCredibleSets.scoring.bayesFactors(nlogpvals);
+    var posteriorProbabilities = gwasCredibleSets.scoring.normalizeProbabilities(scores);
+    // Identify the credible set and apply filters for visualization
+    var credibleSet = gwasCredibleSets.marking.findCredibleSet(posteriorProbabilities, 0.95);
+    var credibleSetBoolean = gwasCredibleSets.marking.markBoolean(credibleSet);
+   </script>
+ <p>Aftermath.</p>
+</body>
+</html>
+
