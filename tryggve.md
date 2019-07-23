@@ -141,7 +141,7 @@ into $HOME/.bashrc.
 
 In case you see message "All TAP-Windows aapters on this system are currently in use", read [this post](https://vpn.ac/knowledgebase/64/OpenVPN-Error-All-TAP-Windows-adapters-on-this-system-are-currently-in-use.html), esp. install [tap-windows-8.21.2](https://swupdate.openvpn.org/community/releases/tap-windows-9.21.2.exe).
 
-The log is usually with "%USERPROFILE%/OpenVPN/log".
+The log is usually located at "%USERPROFILE%/OpenVPN/log".
 
 ### R
 
