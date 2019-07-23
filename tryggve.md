@@ -100,6 +100,16 @@ There are a number of software updates/additions which are worthy of note.
 A more recenve version is available from /data/jinhua/gcta_1.91.7beta/.
 This version can handle chi-squared statistics instead of p values in the joint/conditional (COJO) analysis; it also allows for `--grm file --pca --out file`, i.e., same file root.
 
+### GNU parallel
+
+The latest version parallel-20190222 has new features and use them directly on TRYGGVE without invoking modules as follows,
+```bash
+export src=/data/jinhua/parallel-20190222/bin
+for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
+export MANPATH=/data/jinhua/parallel-20190222/share/man:$MANPATH
+```
+The last line enables `man parallel` and `info parallel`.
+
 ### ImageMagick
 
 This is version 7.0.8-22, made available due to the inability to use the imagemagick/7.0.8-16 module, e.g.,
@@ -122,16 +132,6 @@ ln -sf /data/jinhua/METAL-2018-08-28/metal $HOME/bin/metal
 export PATH=$HOME/bin:/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
 ```
 into $HOME/.bashrc.
-
-### GNU parallel
-
-The latest version parallel-20190222 has new features and use them directly on TRYGGVE without invoking modules as follows,
-```bash
-export src=/data/jinhua/parallel-20190222/bin
-for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
-export MANPATH=/data/jinhua/parallel-20190222/share/man:$MANPATH
-```
-The last line enables `man parallel` and `info parallel`.
 
 ### OpenVPN
 
