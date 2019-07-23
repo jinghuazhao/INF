@@ -179,7 +179,7 @@ Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1
 
 The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.
 
-## A summary of files
+## A SUMMARY OF FILES
 
 File specification | Descrription
 -------------------|---------------------------------------------------------------
