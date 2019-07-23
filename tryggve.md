@@ -137,6 +137,10 @@ into $HOME/.bashrc.
 
 In case you see message "All TAP-Windows aapters on this system are currently in use", read [this post](https://vpn.ac/knowledgebase/64/OpenVPN-Error-All-TAP-Windows-adapters-on-this-system-are-currently-in-use.html), esp. install [tap-windows-8.21.2](https://swupdate.openvpn.org/community/releases/tap-windows-9.21.2.exe).
 
+### R/EasyQC and R/EasyStrata
+
+The version is 18.1 rather than 9.2 and 8.6 currently online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.
+
 ### R/gap
 
 First, run R.3.5.3 as defined above.
@@ -168,10 +172,6 @@ Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1
 ### R/QCGWAS
 
 The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.
-
-### R/EasyQC and R/EasyStrata
-
-The version is 18.1 rather than 9.2 and 8.6 currently online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.
 
 ## Code extraction
 
