@@ -74,6 +74,7 @@ function R.3.3.1()
   module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.3.1-ICC-MKL
 }
 ```
+We also use R 3.3.x below.
 
 ### LocusZoom 1.4
 
@@ -84,7 +85,6 @@ module load R/3.2.5
 module load anaconda2/4.4.0
 module load locuszoom/1.4
 ```
-We also resort to R 3.3.x below.
 
 ### qctool
 
