@@ -57,7 +57,7 @@ NB METAL add -1 to the filenames.
 
 ### Bash functions
 
-There might be problems with R/3.5.3-ICC-MKL so functions are defined in .bashrc which can be invoked at the start of a session,
+There might be problems with R/3.5.3-ICC-MKL so functions are defined in `.bashrc` which can be invoked at the start of a session,
 then one invokes R.3.5.3 when necessary. 
 ```bash
 # This could be very slow
