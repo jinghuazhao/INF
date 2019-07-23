@@ -55,11 +55,12 @@ NB METAL add -1 to the filenames.
 
 ## SOFTWARE ISSUES
 
-### LocusZoom 1.4
+### Bash functions
 
-This version has problem with R/3.5.3-ICC-MKL so the default call is converted to a function which can be invoked at the start of a session,
+There might be problems with R/3.5.3-ICC-MKL so functions are defined in .bashrc which can be invoked at the start of a session,
+then one invokes R.3.5.3 when necessary. 
 ```bash
-# This is very slow
+# This could be very slow
 function R.3.5.3()
 {
   export R_LIBS=/data/$USER/R:$HOME/R:/services/tools/R/3.5.3-ICC-MKL/lib64/R/library
@@ -73,14 +74,17 @@ function R.3.3.1()
   module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.3.1-ICC-MKL
 }
 ```
-then one invokes R.3.5.3 when necessary. To use LocusZoom 1.4, one only needs to start with
+
+### LocusZoom 1.4
+
+To use LocusZoom 1.4, one only needs to start with
 ```bash
 module load gcc/5.4.0
 module load R/3.2.5
 module load anaconda2/4.4.0
 module load locuszoom/1.4
 ```
-Somehow R 3.5.x is very slow so we also resort to R 3.3.x below.
+We also resort to R 3.3.x below.
 
 ### qctool
 
