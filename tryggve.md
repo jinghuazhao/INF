@@ -76,6 +76,10 @@ function R.3.3.1()
 ```
 We also use R 3.3.x below.
 
+## Code extraction
+
+This is possible with codedown, as noted [here](https://github.com/jinghuazhao/physalia/blob/master/NOTES.md).
+
 ### LocusZoom 1.4
 
 To use LocusZoom 1.4, one only needs to start with
@@ -172,10 +176,6 @@ Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1
 ### R/QCGWAS
 
 The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.
-
-## Code extraction
-
-This is possible with codedown, as noted [here](https://github.com/jinghuazhao/physalia/blob/master/NOTES.md).
 
 ## A summary of files
 
