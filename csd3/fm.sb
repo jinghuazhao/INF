@@ -63,7 +63,7 @@ gcta-1.9 --bfile $rt \
 R -q --no-save <<END
   p <- Sys.getenv("p")
   r <- Sys.getenv("r")
-  jma <- read.delim(paste0("work/",p,"-",".jma.cojo"),as.is=TRUE)
+  jma <- read.delim(paste0("work/",p,"-",r,".jma.cojo"),as.is=TRUE)
   tbl <- jma[setdiff(names(jma),c("b","se","p"))]
   library(gap)
   tbl <- within(tbl, {lp <- log10p(bJ/bJ_se)})
