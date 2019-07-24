@@ -53,7 +53,7 @@ if [ -f work/${pr}.cma.cojo ]; then rm work/${pr}.cma.cojo; fi
 echo ${r} > work/${pr}
 gcta-1.9 --bfile $rt \
          --cojo-file work/${p}.ma \
-         --extract ${pr}.prune.in \
+         --extract work/${pr}.prune.in \
          --cojo-slct \
          --cojo-p 5e-10 \
          --cojo-collinear 0.9 \
