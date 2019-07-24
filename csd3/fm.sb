@@ -36,7 +36,7 @@ if [ $(grep ${r} work/${pr}.prune.in | wc -l) -eq 0 ]; then
              --r2 square \
              --out $TMPDIR/${pr}
    export i=$(paste $TEMPDIR/${pr} $TMPDIR/${pr}.ld | cut -f1,2 | sort -k2,2g | awk 'NR==1 {print $1}')
-   sed -i 's/'"$r"'/'"$i"'/g' work/${pr}.prune.in
+   sed -i 's/'"$i"'/'"$r"'/g' work/${pr}.prune.in
 fi
 
 sort -k1,1 work/${pr}.prune.in > $TMPDIR/${pr}.prune.in
