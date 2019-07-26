@@ -1,4 +1,4 @@
-# 25-7-2019 JHZ
+# 26-7-2019 JHZ
 (
   cat work/*jma.cojo | \
   head -1 | \
@@ -6,7 +6,7 @@
   cut -d' ' -f1,4 work/INF1_nold.sentinels | \
   parallel -j1 -C' ' '
     if [ -f work/{1}-{2}.jma.cojo ]; then
-       awk -vprot={1} -v snpid={2} -vOFS="\t" "\$NF <= 5e-10 {print prot, snpid, \$0}" work/{1}-{2}.jma.cojo
+       awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot, snpid, \$0}" work/{1}-{2}.jma.cojo
     fi'
 ) > INF1.jma
 sed 's/Chr/CHR/g;s/bp/BP/g' INF1.jma > jma
