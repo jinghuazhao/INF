@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#SBATCH --account=PETERS-SL3-CPU
+#SBATCH --ntasks=1
+#SBATCH --job-name=_h2
+#SBATCH --time=8:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --partition=skylake
+#SBATCH --mem=128800
+#SBATCH --array=1-92%15
+#SBATCH --output=work/_h2_%A_%a.out
+#SBATCH --error=work/_h2_%A_%a.err
+#SBATCH --export ALL
+
+. /etc/profile.d/modules.sh
+module load default-cardio
+module load slurm
+module load use.own
+
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export rt=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/INTERVAL
+export s=INTERVAL/o5000-inf1-outlier_in-r2.sample
+export p=$(cut -d' ' -f29- ${s} | head -1 | sed 's/ /\n/g' | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{split($1,a,"__"); print a[1]}')
+
+gcta64 --reml \
+       --grm ${rt} \
+       --pheno ${rt}.pheno \
+       --covar ${rt}.covar \
+       --qcovar ${rt}.qcovar \
+       --mpheno ${SLURM_ARRAY_TASK_ID} \
+       --thread-num 2 \
+       --out work/${p}
