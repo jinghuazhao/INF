@@ -12,11 +12,6 @@
 #SBATCH --error=work/_h2_%A_%a.err
 #SBATCH --export ALL
 
-. /etc/profile.d/modules.sh
-module load default-cardio
-module load slurm
-module load use.own
-
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export rt=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/INTERVAL
 export s=INTERVAL/o5000-inf1-outlier_in-r2.sample
