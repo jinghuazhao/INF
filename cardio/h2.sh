@@ -12,7 +12,7 @@ plink --bfile ${rt} --indep-pairwise 500kb 1 0.80 --maf 0.01 --out $rt
 plink --bfile ${rt} --extract ${rt}.prune.in --make-bed --out ${rt}.prune
 plink --bfile ${rt}.prune --make-grm-bin --threads 2 --out ${rt}
 
-sbatch --wait csd3/h2.sb
+sbatch --wait cardio/h2.sb
 
 export wd=$(dirname $rt)
 cd $wd
