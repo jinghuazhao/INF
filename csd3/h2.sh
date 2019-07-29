@@ -14,8 +14,7 @@ cut -d' ' -f1-2,29- ${s} | awk 'NR>3' > ${rt}.pheno
 
 sbatch --wait csd3/h2.sb
 
-export wd=$(dirname $rt)
-cd $wd
+cd work
 grep V\(G\) *hsq | grep Vp | sed 's|.hsq:V(G)/Vp||g' > h2.tsv
 R --no-save -q <<END
   h2 <- read.table("h2.tsv",as.is=TRUE,col.names=c("prot","h2","se"))
