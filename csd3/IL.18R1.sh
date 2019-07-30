@@ -4,7 +4,7 @@
 
 function jma_cojo()
 {
-  cut -f2 ${1}/IL.18R1-chr2:102810080_A_G.jma.cojo | awk 'NR>1' | sort -k1,1 > l
+  cut -f2 ${1}/${2} | awk 'NR>1' | sort -k1,1 > l
   awk /chr2:/ work/INTERVAL.rsid | sort -k1,1 | join - l > ll
   cut -d' ' -f2 ll > lll
   export s=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/o5000-inf1-outlier_in-r2.sample
@@ -49,8 +49,21 @@ function assoc_test()
                  -frequentist 1 -method em -use_raw_phenotypes -use_raw_covariates -cov_all -o IL.18R1.out
 }
 
-jma_cojo work/test
-jma_cojo work
-assoc_test
+function INF1()
+# INF1
+{
+  jma_cojo work/test chr2:102810080_A_G.jma.cojo
+  jma_cojo work chr2:102810080_A_G.jma.cojo
+  assoc_test
+}
+
+function INTERVAL()
+# INTERVAL
+{
+  jma_cojo INTERVAL IL.18R1-chr2:102992675_C_T.jma.cojo
+  assoc_test
+}
+
+INTERVAL
 
 # rm l ll lll phenocovar geno IL18R1.gen.gz

@@ -49,7 +49,7 @@ awk '{print $1}' > work/${pr}
 
 ### (1) GCTA
 
-if [ -f work/${pr}.cma.cojo ]; then rm work/${pr}.cma.cojo; fi
+if [ -f work/${pr}.jma.cojo ]; then rm work/${pr}.jma.cojo; fi
 echo ${r} > work/${pr}
 gcta-1.9 --bfile $rt \
          --cojo-file work/${p}.ma \
