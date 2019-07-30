@@ -24,7 +24,7 @@ function jma_cojo()
      }
   }' | \
   awk 'NR != 1 && NR !=3 && NR != 4 && NR != 5 && NR != 6' > geno
-  awk 'NR != 2' $s > phencovar
+  awk 'NR != 2' $s > phenocovar
 
   R --no-save -q <<\ \ END
     g <- read.table("geno",as.is=TRUE,header=TRUE)
@@ -37,21 +37,20 @@ function jma_cojo()
     m1 <- with(gpc, lm(as.formula(paste0("IL.18R1___Q13478~",rhs))))
     summary(m1)
   END
-# rm l ll lll phenocovar geno IL18R1.gen.gz
+}
+
+function assoc_test()
+## SNPTEST v2.5.2 for CKDGen-type finemap analysis
+{
+  qctool  -filetype bgen -g INTERVAL/per_chr/interval.imputed.olink.chr_2.bgen \
+          -ofiletype gen -og IL18R1.gen.gz -incl-range 101810080-103810080 -assume-chromosome 2 -s ${s}
+  snptest_v2.5.2 -data IL18R1.gen.gz ${s} -pheno IL.18R1___Q13478 -full_parameter_estimates \
+                 -condition_on $(cat lll) \
+                 -frequentist 1 -method newml -use_raw_phenotypes -use_raw_covariates -cov_all -o IL.18R1.log
 }
 
 jma_cojo work/test
 jma_cojo work
+assoc_test
 
-## SNPTEST v2.5.2
-
-function test()
-{
-awk '' phenotype
-snptest_v2.5.2 -data IL18.gen.gz ${s} \
-        -condition_on rs1558649 rs78545931 rs77152652 rs11683213 rs141398063 rs76565432 rs2160203 \
-                      rs56151044 rs4851005 rs12987260 rs113030214 rs116635243 rs57942946 rs115725744 rs112893345
-        -condtion_on chr2:102810080_A_G chr2:102882352_A_G chr2:102892093_C_T chr2:102904244_A_C chr2:102927130_A_G \
-                     chr2:102927649_A_G chr2:102960824_A_G chr2:103011329_A_G chr2:103011552_C_T chr2:103055634_G_T \
-                     chr2:103064186_G_T chr2:103074113_A_G chr2:103076057_A_G chr2:103088622_A_G chr2:103236159_C_T
-}
+# rm l ll lll phenocovar geno IL18R1.gen.gz
