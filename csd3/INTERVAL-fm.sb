@@ -5,15 +5,15 @@
 #SBATCH --job-name=_fm
 #SBATCH --time=12:00:00
 #SBATCH --partition=skylake
-#SBATCH --array=1-146%15
+#SBATCH --array=1-110%15
 #SBATCH --mem=128800
-#SBATCH --output=work/_fm_%A_%a.out
-#SBATCH --error=work/_fm_%A_%a.err
+#SBATCH --output=INTERVAL/_fm_%A_%a.out
+#SBATCH --error=INTERVAL/_fm_%A_%a.err
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
-export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' work/INF1_nold.sentinels)
-export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' work/INF1_nold.sentinels)
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' INTERVAL/INTERVAL_nold.sentinels)
+export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' INTERVAL/INTERVAL_nold.sentinels)
 export pr=${p}-${r}
 export rt=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/INTERVAL
 
@@ -24,46 +24,46 @@ plink-1.9 --bfile $rt \
          --window 1000 \
          --maf 0.01 \
          --indep-pairwise 1000kb 1 0.8 \
-         --out work/${pr}
+         --out INTERVAL/${pr}
 
-if [ $(grep ${r} work/${pr}.prune.in | wc -l) -eq 0 ]; then
+if [ $(grep ${r} INTERVAL/${pr}.prune.in | wc -l) -eq 0 ]; then
    (
      echo ${r}
-     cat work/${pr}.prune.in
+     cat INTERVAL/${pr}.prune.in
    ) > $TMPDIR/${pr}
    plink-1.9 --bfile $rt \
              --extract $TMPDIR/${pr} \
              --r2 square \
              --out $TMPDIR/${pr}
    export i=$(paste $TMPDIR/${pr} $TMPDIR/${pr}.ld | cut -f1,2 | sort -r -k2,2g | awk 'NR==1 {print $1}')
-   sed -i 's/'"$i"'/'"$r"'/g' work/${pr}.prune.in
+   sed -i 's/'"$i"'/'"$r"'/g' INTERVAL/${pr}.prune.in
 fi
 
-sort -k1,1 work/${pr}.prune.in > $TMPDIR/${pr}.prune.in
-awk 'NR > 1' work/${p}.ma | \
+sort -k1,1 INTERVAL/${pr}.prune.in > $TMPDIR/${pr}.prune.in
+awk 'NR > 1' INTERVAL/${p}.ma | \
 sort -k1,1 | \
 join -j1 - $TMPDIR/${pr}.prune.in | \
-awk '{print $1}' > work/${pr}
+awk '{print $1}' > INTERVAL/${pr}
 
 ## 2. Analysis
 
 ### (1) GCTA
 
-if [ -f work/${pr}.jma.cojo ]; then rm work/${pr}.jma.cojo; fi
-echo ${r} > work/${pr}
+if [ -f INTERVAL/${pr}.jma.cojo ]; then rm INTERVAL/${pr}.jma.cojo; fi
+echo ${r} > INTERVAL/${pr}
 gcta-1.9 --bfile $rt \
-         --cojo-file work/${p}.ma \
-         --extract work/${pr}.prune.in \
+         --cojo-file INTERVAL/${p}.ma \
+         --extract INTERVAL/${pr}.prune.in \
          --cojo-slct \
          --cojo-p 5e-10 \
          --cojo-collinear 0.9 \
          --maf 0.01 \
-         --out work/${pr}
+         --out INTERVAL/${pr}
 
 R -q --no-save <<END
   p <- Sys.getenv("p")
   r <- Sys.getenv("r")
-  jma <- read.delim(paste0("work/",p,"-",r,".jma.cojo"),as.is=TRUE)
+  jma <- read.delim(paste0("INTERVAL/",p,"-",r,".jma.cojo"),as.is=TRUE)
   tbl <- jma[setdiff(names(jma),c("b","se","p"))]
   library(gap)
   tbl <- within(tbl, {lp <- log10p(bJ/bJ_se)})
@@ -72,7 +72,7 @@ END
 
 ### (2) JAM
 
-cd work
+cd INTERVAL
 
 R -q --no-save <<END
   require(plink2R)
@@ -126,10 +126,10 @@ END
 
 export flanking=1e6
 export job=${SLURM_ARRAY_TASK_ID}
-export p=$(awk 'NR==job+1{print $1}' job=${job} work/INF1__nold.sentinels)
-export chr=$(awk 'NR==job+1{print $2}' job=${job} work/INF1_nold.sentinels)
-export pos=$(awk 'NR==job+1{print $3}' job=${job} work/INF1_nold.sentinels)
-export r=$(awk 'NR==job+1{print $4}' job=${job} work/INF1_nold.sentinels)
+export p=$(awk 'NR==job+1{print $1}' job=${job} INTERVAL/INTERVAL__nold.sentinels)
+export chr=$(awk 'NR==job+1{print $2}' job=${job} INTERVAL/INTERVAL_nold.sentinels)
+export pos=$(awk 'NR==job+1{print $3}' job=${job} INTERVAL/INTERVAL_nold.sentinels)
+export r=$(awk 'NR==job+1{print $4}' job=${job} INTERVAL/INTERVAL_nold.sentinels)
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export sumstats=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/METAL
