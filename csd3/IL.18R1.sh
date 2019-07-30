@@ -46,7 +46,7 @@ function assoc_test()
           -ofiletype gen -og IL18R1.gen.gz -incl-range 101810080-103810080 -assume-chromosome 2 -s ${s}
   snptest_v2.5.2 -data IL18R1.gen.gz ${s} -pheno IL.18R1___Q13478 -full_parameter_estimates \
                  -condition_on $(cat lll) \
-                 -frequentist 1 -method newml -use_raw_phenotypes -use_raw_covariates -cov_all -o IL.18R1.log
+                 -frequentist 1 -method em -use_raw_phenotypes -use_raw_covariates -cov_all -o IL.18R1.log
 }
 
 jma_cojo work/test
