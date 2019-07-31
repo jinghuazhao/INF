@@ -91,7 +91,7 @@ function finemap()
   finemap --sss --in-files ${pr}.master | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
   if [ $(wc -l ${pr}.excl | awk '{print $1}') -gt 0 ]; then
    # bgen
-     qctool -g ${rt}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -excl-rsids ${pr}.excl
+     qctool -g ${bfile.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -excl-rsids ${pr}.excl
    # bgi
      bgenix -g ${pr}.bgen -index -clobber
      ln -sf ${pr}.bgen.bgi ${pr}.bgi
