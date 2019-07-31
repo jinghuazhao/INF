@@ -195,6 +195,42 @@ function jam()
     cat("\nModel size Bayes Factors\n")
     msbf
     sink()
+    n.col <- ncol(tm)
+    n.snps <- n.col-1
+    post.prob <- tm[,n.col]
+    n.sel <- apply(tm[,1:n.snps],1,sum)
+    sink(paste0(f,".sum"))
+    cbind(n.sel,post.prob)
+    sink()
+    sink(paste0(f,".cs"))
+    cbind(subset(ssr,ssnpid%in%cs),subset(pst,rownames(pst)%in%cs))
+    sink()
+    if(identical(cs,character(0))) unlink(paste0(f,".cs"))
+    tm1 <- tm[1,-n.col]
+    selected <- names(tm1[tm1==1])
+    if(n.sel[1]>0&n.sel[1]!=n.snps)
+    {
+       PostProb_model <- rep(post.prob[1],n.sel[1])
+       t <- cbind(subset(ssr,ssnpid%in%selected), PostProb_model, subset(pst,rownames(pst)%in%selected))
+       write.table(t,paste0(f,".sel"),row.names=FALSE,quote=FALSE)
+    }
+    require(openxlsx)
+    xlsx <- paste0(f,"-JAM.xlsx")
+    wb <- createWorkbook(xlsx)
+    addWorksheet(wb, "ID")
+    writeDataTable(wb, "ID", ssr)
+    addWorksheet(wb, "TopModels")
+    writeDataTable(wb, "TopModels", as.data.frame(tm))
+    addWorksheet(wb, "Model.1")
+    PostProb_model <- rep(post.prob[1],n.sel[1])
+    writeDataTable(wb, "Model.1", cbind(subset(ssr,ssnpid%in%selected),PostProb_model,subset(pst,rownames(pst)%in%selected)))
+    addWorksheet(wb, "CredibleSet")
+    writeDataTable(wb, "CredibleSet", cbind(subset(ssr,ssnpid%in%cs),subset(pst,rownames(pst)%in%cs)))
+    addWorksheet(wb, "ModelSizeBayesFactors")
+    writeDataTable(wb, "ModelSizeBayesFactors", as.data.frame(msbf))
+    addWorksheet(wb, "posterior.summary.table")
+    writeDataTable(wb, "posterior.summary.table", cbind(ID=rownames(pst), as.data.frame(pst)))
+    saveWorkbook(wb, file=xlsx, overwrite=TRUE)
   END
   cd -
 }
