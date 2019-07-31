@@ -21,10 +21,10 @@ export chr=$(awk -v job=${job} 'NR==62{print $2}' ${list})
 export pos=$(awk -v job=${job} 'NR==62{print $3}' ${list})
 export r=$(awk -v job=${job} 'NR==62{print $4}' ${list})
 export pr=${p}-${r}
+export sumstats=${INF}/sumstats/INTERVAL/INTERVAL.${p}.gz
 export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
-export sumstats=${INF}/sumstats/INTERVAL
 export bfile=${INF}/INTERVAL/INTERVAL
 export sample=o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
@@ -63,7 +63,7 @@ function finemap()
 # z0
   (
     awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"}'
-    zcat ${sumstats}/INTERVAL.${p}.gz | \
+    zcat ${sumstats} | \
     awk 'NR > 1' | \
     sort -k1,1 | \
     awk -vchr=${chr} -vstart=${start} -vend=${end} '
