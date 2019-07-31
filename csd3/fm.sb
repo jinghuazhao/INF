@@ -153,26 +153,25 @@ function jam()
     fam <- paste0(f,".fam")
     p <- read_plink(f)
   # summary statistics
-    sumstats.name <- c("RS_ID","A1","A2","freqA1","b","se","P","N","chr","pos","SNP_ID")
-    sumstats <- read.table(paste0(fp,".dat"), as.is=TRUE, col.names=sumstats.name)
-#  # reference panel with mean substitution for (small) proportion of missing data
+    sumstats <- read.table(paste0(f,".z"), as.is=TRUE, header=TRUE)
+  # reference panel with mean substitution for (small) proportion of missing data
     R <- with(p, as.data.frame(2-bed))
-    # p <- read.plink(bed,bim,fam)
-    # R <- as(with(p,genotypes),"numeric")
+  # p <- read.plink(bed,bim,fam)
+  # R <- as(with(p,genotypes),"numeric")
     R[] <- lapply(R, function(x) {
       x[is.na(x)] <- mean(x, na.rm = TRUE)
       x
     })
     X.ref <- R
-    ss <- subset(sumstats,SNP_ID%in%p$bim$V2)
-    beta <- with(ss, b)
-    rsid <- with(ss, RS_ID)
-    snpid <- with(ss, SNP_ID)
+    ss <- subset(sumstats,rsid%in%p$bim$V2)
+    beta <- with(ss, beta)
+    rsid <- with(ss, rsid)
+    snpid <- with(ss, rsid)
     require(R2BGLiMS)
     ssnpid <- paste0("snp", 1:length(beta))
     names(beta) <- colnames(X.ref) <- ssnpid
     priors <- list("a"=1, "b"=length(beta), "Variables"=ssnpid)
-    n <- 15234
+    n <- Sys.getenv("N")
     j <- JAM(marginal.betas=beta, n=n, X.ref=X.ref, n.mil=5, tau=n, full.mcmc.sampling = FALSE, model.space.priors=priors)
     save(j,file=paste0(fp,".j"))
     pst <- slot(j, "posterior.summary.table")
