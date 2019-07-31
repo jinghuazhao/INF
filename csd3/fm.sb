@@ -11,9 +11,11 @@
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_fm_%A_%a.err
 #SBATCH --export ALL
 
-export dir=INTERVAL
+export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=${SLURM_ARRAY_TASK_ID}
+export dir=${INF}/INTERVAL
+export list=${dir}/INTERVAL_nold.sentinels
 export p=$(awk -v job=${job} 'NR==62{print $1}' ${list})
 export chr=$(awk -v job=${job} 'NR==62{print $2}' ${list})
 export pos=$(awk -v job=${job} 'NR==62{print $3}' ${list})
@@ -22,7 +24,6 @@ export pr=${p}-${r}
 export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
-export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export sumstats=${INF}/sumstats/INTERVAL
 export bfile=${INF}/INTERVAL/INTERVAL
 export sample=o5000-inf1-outlier_in-r2.sample
@@ -157,6 +158,9 @@ function jam()
     p <- read_plink(f)
   # summary statistics
     sumstats <- read.table(paste0(f,".z"), as.is=TRUE, header=TRUE)
+    snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
+    nmiss <- with(snpid_rsid,{is.na(name)})
+    snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
   # reference panel with mean substitution for (small) proportion of missing data
     R <- with(p, as.data.frame(2-bed))
   # p <- read.plink(bed,bim,fam)
@@ -174,15 +178,15 @@ function jam()
     ssnpid <- paste0("snp", 1:length(beta))
     names(beta) <- colnames(X.ref) <- ssnpid
     priors <- list("a"=1, "b"=length(beta), "Variables"=ssnpid)
-    n <- Sys.getenv("N")
+    n <- as.numeric(Sys.getenv("N"))
     j <- JAM(marginal.betas=beta, n=n, X.ref=X.ref, n.mil=5, tau=n, full.mcmc.sampling = FALSE, model.space.priors=priors)
-    save(j,file=paste0(fp,".j"))
+    save(j,file=paste0(f,".j"))
     pst <- slot(j, "posterior.summary.table")
     tm <- TopModels(j)
     ssr <- data.frame(ssnpid=ssnpid, snpid=snpid, rsid=rsid)
     cs <- CredibleSet(j, credible.percentile.threshold=0.75)
     msbf <- ModelSizeBayesFactors(j)[[1]]
-    sink(paste0(fp, ".jam"))
+    sink(paste0(f, ".jam"))
     pst
     ssr
     cat("\nCredible set\n")
