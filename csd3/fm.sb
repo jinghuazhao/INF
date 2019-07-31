@@ -1,26 +1,33 @@
 #!/bin/bash
 
-export dir=work
-export list=${dir}/INF1_nold.sentinels
-export tasks=146
-
 #SBATCH --account=PETERS-SL3-CPU
 #SBATCH --ntasks=1
 #SBATCH --job-name=_fm
 #SBATCH --time=12:00:00
 #SBATCH --partition=skylake
-#SBATCH --array=1-$tasks%15
+#SBATCH --array=1
 #SBATCH --mem=128800
-#SBATCH --output=${dir}/_fm_%A_%a.out
-#SBATCH --error=${dir}/_fm_%A_%a.err
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_fm_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_fm_%A_%a.err
 #SBATCH --export ALL
 
+export dir=INTERVAL
+export list=${dir}/INTERVAL_nold.sentinels
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=${SLURM_ARRAY_TASK_ID}
-export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' ${list})
-export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' ${list})
+export p=$(awk -v job=${job} 'NR==62{print $1}' ${list})
+export chr=$(awk -v job=${job} 'NR==62{print $2}' ${list})
+export pos=$(awk -v job=${job} 'NR==62{print $3}' ${list})
+export r=$(awk -v job=${job} 'NR==62{print $4}' ${list})
 export pr=${p}-${r}
+export flanking=1e6
+export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
+export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
+export sumstats=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/sumstats/INTERVAL
 export rt=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/INTERVAL
+export sample=o5000-inf1-outlier_in-r2.sample
+export study=INTERVAL
+export N=4994
 
 plink-1.9 --bfile $rt \
           --snp ${r} \
@@ -43,13 +50,62 @@ if [ $(grep ${r} ${dir}/${pr}.prune.in | wc -l) -eq 0 ]; then
 fi
 
 sort -k1,1 ${dir}/${pr}.prune.in > $TMPDIR/${pr}.prune.in
-awk 'NR > 1' {dir}/${p}.ma | \
+awk 'NR > 1' ${dir}/${p}.ma | \
 sort -k1,1 | \
 join -j1 - $TMPDIR/${pr}.prune.in | \
 awk '{print $1}' > ${dir}/${pr}
 
+function finemap()
+{
+  cd ${dir}
+# z0
+  (
+    awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"}'
+    zcat ${sumstats}/INTERVAL.${p}.gz | \
+    awk 'NR > 1' | \
+    sort -k1,1 | \
+    awk -vchr=${chr} -vstart=${start} -vend=${end} '
+    {
+      if ($2==chr && $3 >= start && $3 < end) {
+      if ($8 < 0.5) maf = $8; else maf = 1-$8
+      if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $6, $7, maf, $9, $10
+    }
+    } ' | \
+    join ${dir}/${pr} -
+  ) > ${pr}.z0
+  awk 'NR > 1 {print $1} ' ${pr}.z0 > ${pr}.incl
+  cp ${pr}.z0 ${pr}.z
+# bgen
+  qctool -g ${rt}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
+# bgi
+  bgenix -g ${pr}.bgen -index -clobber
+  ln -sf ${pr}.bgen.bgi ${pr}.bgi
+# master
+  (
+    echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
+    echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
+  ) > ${pr}.master
+# finemap 1.3
+  finemap --sss --in-files ${pr}.master | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
+  if [ $(wc -l ${pr}.excl | awk '{print $1}') -gt 0 ]; then
+   # bgen
+     qctool -g ${rt}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -excl-rsids ${pr}.excl
+   # bgi
+     bgenix -g ${pr}.bgen -index -clobber
+     ln -sf ${pr}.bgen.bgi ${pr}.bgi
+     (
+       awk 'BEGIN{print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"}'
+       awk 'NR > 1' ${pr}.z0 | \
+       sort -k1,1 | \
+       join -v1 - ${pr}.excl
+     ) > ${pr}.z
+   # finemap 1.3
+     finemap --sss --in-files ${pr}.master
+  fi
+  cd -
+}
+
 function gcta()
-### GCTA
 {
   if [ -f ${dir}/${pr}.jma.cojo ]; then rm ${dir}/${pr}.jma.cojo ${dir}/${}.ldr.cojo; fi
   echo ${r} > ${dir}/${pr}
@@ -75,23 +131,30 @@ function gcta()
 }
 
 function jam()
-### JAM
 {
   cd ${dir}
-  R -q --no-save <<END
-    require(plink2R)
+  cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id
+  R -q --no-save <<\ \ END
     require(R2BGLiMS)
-    require(methods)
     require(openxlsx)
+    require(rbgen)
     p <- Sys.getenv("p")
     r <- Sys.getenv("r")
     f <- paste0(p,"-",r)
+    incl <- scan(paste0(f,".incl"), what="")
+    excl <- scan(paste0(f,".excl"), what="")
+    s <- Sys.getenv('study')
+  # bgen
+    samples <- matrix(scan(paste0(s,".id"), what=c("","")),4994,2,byrow=TRUE)
+    d <- bgen.load(paste0(f,".bgen"), rsids=setdiff(incl,excl))
+    dimnames(d$data)[[2]] <- samples[,1]
+  # plink
     bed <- paste0(f,".bed")
     bim <- paste0(f,".bim")
     fam <- paste0(f,".fam")
+    p <- read_plink(f)
 
     # reference panel with mean substitution for (small) proportion of missing data
-    p <- read_plink(f)
     R <- with(p, as.data.frame(2-bed))
     # p <- read.plink(bed,bim,fam)
     # R <- as(with(p,genotypes),"numeric")
@@ -125,64 +188,6 @@ function jam()
     msbf
     sink()
   END
-  cd -
-}
-
-function finemap()
-### finemap
-{
-  cd ${dir}
-  export flanking=1e6
-  export p=$(awk -v job=${job} 'NR==job+1{print $1}' ${list})
-  export chr=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
-  export pos=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
-  export r=$(awk -v job=${job} 'NR==job+1{print $4}' ${list})
-  export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
-  export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
-  export sumstats=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/METAL
-# z0
-  (
-    awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"}'
-    zcat ${sumstats}/${p}-1.tbl.gz | \
-    awk 'NR > 1' | \
-    sort -k1,1 | \
-    awk 'BEGIN {prev="";} {key=$1; if(key==prev) next;print;prev=key}' | \
-    awk -vchr=${chr} -vstart=${start} -vend=${end} '{
-      if ($2==chr && $3 >= start && $3 < end) {
-      if ($8 < 0.5) maf = $8; else maf = 1-$8
-      if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $6, $7, maf, $9, $10
-    }
-    } '
-  ) > ${pr}.z0
-  awk 'NR > 1 {print $1} ' ${pr}.z0 > ${pr}.incl
-  cp ${pr}.z0 ${pr}.z
-# bgen
-  qctool -g ${rt}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
-# bgi
-  bgenix -g ${pr}.bgen -index -clobber
-  ln -sf ${pr}.bgen.bgi ${pr}.bgi
-# master
-  (
-    echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
-    echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;4994"
-  ) > ${pr}.master
-# finemap 1.3
-  finemap --sss --in-files ${pr}.master | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
-  if [ $(wc -l ${pr}.excl | awk '{print $1}') -gt 0 ]; then
-   # bgen
-     qctool -g ${rt}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -excl-rsids ${pr}.excl
-   # bgi
-     bgenix -g ${pr}.bgen -index -clobber
-     ln -sf ${pr}.bgen.bgi ${pr}.bgi
-     (
-       awk 'BEGIN{print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se"}'
-       awk 'NR > 1' ${pr}.z0 | \
-       sort -k1,1 | \
-       join -v1 - ${pr}.excl
-     ) > ${pr}.z
-   # finemap 1.3
-     finemap --sss --in-files ${pr}.master
-  fi
   cd -
 }
 
