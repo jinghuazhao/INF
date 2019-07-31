@@ -70,7 +70,7 @@ function finemap()
     {
       if ($2==chr && $3 >= start && $3 < end) {
       if ($8 < 0.5) maf = $8; else maf = 1-$8
-      if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $6, $7, maf, $9, $10
+      if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $7, $6, maf, $9, $10
     }
     } ' | \
     join ${dir}/${pr} -
@@ -173,9 +173,7 @@ function jam()
   R -q --no-save <<\ \ END
     options(scipen=20, width=2000)
     require(rbgen)
-    p <- Sys.getenv("p")
-    r <- Sys.getenv("r")
-    f <- paste0(p,"-",r)
+    f <- Sys.getenv("pr")
     incl <- scan(paste0(f,".incl"), what="")
     excl <- scan(paste0(f,".excl"), what="")
     s <- Sys.getenv('study')
