@@ -177,8 +177,8 @@ function jam()
     snpid <- with(ss, rsid)
     require(R2BGLiMS)
     ssnpid <- paste0("snp", 1:length(beta))
-    names(beta) <- colnames(X.ref) <- rsid
-    priors <- list("a"=1, "b"=length(beta), "Variables"=ssnpid)
+    names(beta) <- colnames(X.ref) <- rsid # ssnpid
+    priors <- list("a"=1, "b"=length(beta), "Variables"=rsid) # ssnpid
     n <- as.numeric(Sys.getenv("N"))
     j <- JAM(marginal.betas=beta, n=n, X.ref=X.ref, n.mil=5, tau=n, full.mcmc.sampling = FALSE, model.space.priors=priors)
     save(j,file=paste0(f,".j"))
