@@ -17,17 +17,17 @@ export tasks=146
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=${SLURM_ARRAY_TASK_ID}
-export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' ${dir}/${list})
-export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' ${dir}/${list})
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' ${list})
+export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' ${list})
 export pr=${p}-${r}
 export rt=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/INTERVAL
 
 plink-1.9 --bfile $rt \
-         --snp ${r} \
-         --window 1000 \
-         --maf 0.01 \
-         --indep-pairwise 1000kb 1 0.8 \
-         --out ${dir}/${pr}
+          --snp ${r} \
+          --window 1000 \
+          --maf 0.01 \
+          --indep-pairwise 1000kb 1 0.8 \
+          --out ${dir}/${pr}
 
 if [ $(grep ${r} ${dir}/${pr}.prune.in | wc -l) -eq 0 ]; then
    (
