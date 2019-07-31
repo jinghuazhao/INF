@@ -22,13 +22,15 @@ export pr=${p}-${r}
 export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
-export sumstats=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/sumstats/INTERVAL
-export rt=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/INTERVAL
+export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+export sumstats=${INF}/sumstats/INTERVAL
+export bfile=${INF}/INTERVAL/INTERVAL
 export sample=o5000-inf1-outlier_in-r2.sample
+export snpid_rsid=${INF}/work/INTERVAL.rsid
 export study=INTERVAL
 export N=4994
 
-plink-1.9 --bfile $rt \
+plink-1.9 --bfile ${bfile} \
           --snp ${r} \
           --window 1000 \
           --maf 0.01 \
@@ -40,7 +42,7 @@ if [ $(grep ${r} ${dir}/${pr}.prune.in | wc -l) -eq 0 ]; then
      echo ${r}
      cat ${dir}/${pr}.prune.in
    ) > $TMPDIR/${pr}
-   plink-1.9 --bfile $rt \
+   plink-1.9 --bfile ${bfile} \
              --extract $TMPDIR/${pr} \
              --r2 square \
              --out $TMPDIR/${pr}
@@ -108,7 +110,7 @@ function gcta()
 {
   if [ -f ${dir}/${pr}.jma.cojo ]; then rm ${dir}/${pr}.jma.cojo ${dir}/${}.ldr.cojo; fi
   echo ${r} > ${dir}/${pr}
-  gcta-1.9 --bfile $rt \
+  gcta-1.9 --bfile ${bfile} \
            --cojo-file ${dir}/${p}.ma \
            --extract ${dir}/${pr}.prune.in \
            --cojo-slct \
@@ -134,6 +136,7 @@ function jam()
   cd ${dir}
   cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id
   qctool -g ${p}-${r}.bgen -s ${sample} -ofiletype binary_ped -og ${r}
+  sort -k1,1 ${snpid_rsid} | join - ${dir}/${p}-${r}
   R -q --no-save <<\ \ END
     require(rbgen)
     p <- Sys.getenv("p")
