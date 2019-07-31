@@ -12,7 +12,6 @@
 #SBATCH --export ALL
 
 export dir=INTERVAL
-export list=${dir}/INTERVAL_nold.sentinels
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=${SLURM_ARRAY_TASK_ID}
 export p=$(awk -v job=${job} 'NR==62{print $1}' ${list})
@@ -134,9 +133,8 @@ function jam()
 {
   cd ${dir}
   cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id
+  qctool -g ${p}-${r}.bgen -s ${sample} -ofiletype binary_ped -og ${r}
   R -q --no-save <<\ \ END
-    require(R2BGLiMS)
-    require(openxlsx)
     require(rbgen)
     p <- Sys.getenv("p")
     r <- Sys.getenv("r")
@@ -148,13 +146,16 @@ function jam()
     samples <- matrix(scan(paste0(s,".id"), what=c("","")),4994,2,byrow=TRUE)
     d <- bgen.load(paste0(f,".bgen"), rsids=setdiff(incl,excl))
     dimnames(d$data)[[2]] <- samples[,1]
-  # plink
+  # plink binary_ped files
+    library(plink2R)
     bed <- paste0(f,".bed")
     bim <- paste0(f,".bim")
     fam <- paste0(f,".fam")
     p <- read_plink(f)
-
-    # reference panel with mean substitution for (small) proportion of missing data
+  # summary statistics
+    sumstats.name <- c("RS_ID","A1","A2","freqA1","b","se","P","N","chr","pos","SNP_ID")
+    sumstats <- read.table(paste0(fp,".dat"), as.is=TRUE, col.names=sumstats.name)
+#  # reference panel with mean substitution for (small) proportion of missing data
     R <- with(p, as.data.frame(2-bed))
     # p <- read.plink(bed,bim,fam)
     # R <- as(with(p,genotypes),"numeric")
@@ -167,7 +168,7 @@ function jam()
     beta <- with(ss, b)
     rsid <- with(ss, RS_ID)
     snpid <- with(ss, SNP_ID)
-
+    require(R2BGLiMS)
     ssnpid <- paste0("snp", 1:length(beta))
     names(beta) <- colnames(X.ref) <- ssnpid
     priors <- list("a"=1, "b"=length(beta), "Variables"=ssnpid)
