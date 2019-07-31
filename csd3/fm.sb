@@ -136,7 +136,7 @@ function jam()
   cd ${dir}
   cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id
   qctool -g ${p}-${r}.bgen -s ${sample} -ofiletype binary_ped -og ${r}
-  sort -k1,1 ${snpid_rsid} | join - ${dir}/${p}-${r}
+  sort -k1,1 ${snpid_rsid} | join -a2 - ${dir}/${p}-${r}
   R -q --no-save <<\ \ END
     require(rbgen)
     p <- Sys.getenv("p")
