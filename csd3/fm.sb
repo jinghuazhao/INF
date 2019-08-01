@@ -83,13 +83,15 @@ function finemap()
 # bgi
   bgenix -g ${pr}.bgen -index -clobber
   ln -sf ${pr}.bgen.bgi ${pr}.bgi
+  rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
 # master
   (
     echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
     echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
   ) > ${pr}.master
 # finemap 1.3.1
-  ${bindir}/finemap --sss --in-files ${pr}.master | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
+  ${bindir}/finemap --sss --in-files ${pr}.master > ${pr}.check
+  awk 'NR>41{print $6}' ${pr}.check | sed "s/'//g" > ${pr}.excl
   if [ $(wc -l ${pr}.excl | awk '{print $1}') -gt 0 ]; then
    # bgen
      qctool -g ${bfile}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -excl-rsids ${pr}.excl
@@ -129,8 +131,7 @@ function finemap()
 
 function gcta()
 {
-  if [ -f ${dir}/${pr}.jma.cojo ]; then rm ${dir}/${pr}.jma.cojo ${dir}/${}.ldr.cojo; fi
-  echo ${r} > ${dir}/${pr}
+  if [ -f ${dir}/${pr}.jma.cojo ]; then rm ${dir}/${pr}.jma.cojo ${dir}/${pr}.ldr.cojo; fi
   gcta-1.9 --bfile ${bfile} \
            --cojo-file ${dir}/${p}.ma \
            --extract ${dir}/${pr}.prune.in \
@@ -143,7 +144,7 @@ function gcta()
   R -q --no-save <<\ \ END
     options(scipen=20, width=2000)
     d <- Sys.getenv("dir")
-    p <- Sys.getenv("pr")
+    pr <- Sys.getenv("pr")
     jma <- read.delim(paste0(d,"/",pr,".jma.cojo"),as.is=TRUE)
     ldr <- read.delim(paste0(d,"/",pr,".ldr.cojo"), as.is=TRUE)
     tbl <- jma[setdiff(names(jma),c("b","se","p"))]
@@ -168,7 +169,7 @@ function jam()
 {
   cd ${dir}
   cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id
-  qctool -g ${p}-${r}.bgen -s ${sample} -ofiletype binary_ped -og ${r}
+  qctool -g ${pr}.bgen -s ${sample} -ofiletype binary_ped -og ${pr}
   sort -k1,1 ${snpid_rsid} | join -a2 - ${pr} > ${pr}.rsid
   R -q --no-save <<\ \ END
     options(scipen=20, width=2000)
@@ -267,3 +268,5 @@ function jam()
 }
 
 finemap
+gcta
+jam
