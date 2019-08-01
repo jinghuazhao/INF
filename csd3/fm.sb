@@ -68,7 +68,6 @@ END
 
 function finemap()
 {
-  cd ${dir}
 # z0
   (
     zcat ${sumstats} | \
@@ -128,7 +127,6 @@ function finemap()
     writeDataTable(wb, paste0(f, ".cs"), cred)
     saveWorkbook(wb, file=xlsx, overwrite=TRUE)
   END
-  cd -
 }
 
 function gcta()
@@ -150,6 +148,7 @@ function gcta()
     jma <- read.delim(paste0(d,"/",pr,".jma.cojo"),as.is=TRUE)
     ldr <- read.delim(paste0(d,"/",pr,".ldr.cojo"), as.is=TRUE)
     tbl <- jma[setdiff(names(jma),c("b","se","p"))]
+    load(paste0(pr,".rda"))
     library(gap)
     tbl <- within(tbl, {lp <- log10p(bJ/bJ_se)})
     cred <- cs(tbl, log_p="lp", cutoff=0.95)
@@ -169,7 +168,6 @@ function gcta()
 
 function jam()
 {
-  cd ${dir}
   cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id
   qctool -g ${pr}.bgen -s ${sample} -ofiletype binary_ped -og ${pr}
   R -q --no-save <<\ \ END
@@ -263,7 +261,6 @@ function jam()
     writeDataTable(wb, "posterior.summary.table", cbind(ID=rownames(pst), as.data.frame(pst)))
     saveWorkbook(wb, file=xlsx, overwrite=TRUE)
   END
-  cd -
 }
 
 finemap
