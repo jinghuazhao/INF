@@ -14,6 +14,7 @@
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=${SLURM_ARRAY_TASK_ID}
+export bindir=/rds-d4/user/jhz22/hpc-work/bin
 export dir=${INF}/INTERVAL
 export list=${dir}/INTERVAL_nold.sentinels
 export p=$(awk -v job=${job} 'NR==62{print $1}' ${list})
@@ -87,8 +88,8 @@ function finemap()
     echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
     echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
   ) > ${pr}.master
-# finemap 1.3
-  finemap --sss --in-files ${pr}.master | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
+# finemap 1.3.1
+  ${bindir}/finemap --sss --in-files ${pr}.master | awk 'NR>41{print $6}' | sed "s/'//g" > ${pr}.excl
   if [ $(wc -l ${pr}.excl | awk '{print $1}') -gt 0 ]; then
    # bgen
      qctool -g ${bfile}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -excl-rsids ${pr}.excl
@@ -101,8 +102,7 @@ function finemap()
        sort -k1,1 | \
        join -v1 - ${pr}.excl
      ) > ${pr}.z
-   # finemap 1.3
-     finemap --sss --in-files ${pr}.master
+     ${bindir}/finemap --sss --in-files ${pr}.master
   fi
   R -q --no-save <<\ \ END
     options(digits=3, scipen=20, width=500)
