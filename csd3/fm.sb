@@ -92,7 +92,7 @@ function finemap()
   qctool -g ${pr}.bgen -snp-stats -osnp ${pr}.snp-stats
   (
     join <(cut -d' ' -f1,4,5 ${pr}.z | sort -k1,1) <(awk '!/\#/' ${pr}.snp-stats | cut -f1,5,6 | awk 'NR>1' | sort -k1,1) | \
-    awk '{print $1, ($2==$4)}'
+    awk '{print $1, ($2!=$4)}'
   ) > ${pr}.flip
 # master
   (
