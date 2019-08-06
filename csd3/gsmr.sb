@@ -20,7 +20,8 @@ if [ ! -f gsmr_outcome ]; then echo CAD $r/gsmr_outcome.txt > gsmr_outcome; fi
 if [ ! -f gsmr_ref_data ]; then echo $INF/INTERVAL/INTERVAL > gsmr_ref_data; fi
 echo $p $INF/work/$p.ma > gsmr_$p
 
-gcta-1.9 --mbfile gsmr_ref_data --gsmr-file gsmr_$p gsmr_outcome --gsmr-direction 0 --effect-plot --out gsmr_result_$p
+gcta-1.9 --mbfile gsmr_ref_data --gsmr-file gsmr_$p gsmr_outcome --gsmr-direction 0 \
+         --gwas-thresh 5e-10 --heidi-thresh 0.01 --gsmr-snp-min 10 --effect-plot --out gsmr_result_$p
 
 R --no-save -q <<END
   p <- Sys.getenv("p")
