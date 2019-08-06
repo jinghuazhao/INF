@@ -182,6 +182,7 @@ function jam()
     samples <- matrix(scan(paste0(s,".id"), what=c("","")),4994,2,byrow=TRUE)
     d <- bgen.load(paste0(f,".bgen"), rsids=setdiff(incl,excl))
     dimnames(d$data)[[2]] <- samples[,1]
+    R <- apply(d$data,1:2,"%*%",0:2)
   # plink binary_ped files
     library(plink2R)
     bed <- paste0(f,".bed")
