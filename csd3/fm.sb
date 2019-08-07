@@ -2,10 +2,10 @@
 
 #SBATCH --account=PETERS-SL3-CPU
 #SBATCH --ntasks=1
-#SBATCH --job-name=_fm_INF1
+#SBATCH --job-name=_fm_INTERVAL
 #SBATCH --time=12:00:00
 #SBATCH --partition=skylake
-#SBATCH --array=1-146%15
+#SBATCH --array=1
 #SBATCH --mem=128800
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_fm_%A_%a.out
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_fm_%A_%a.err
@@ -15,14 +15,14 @@ export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=${SLURM_ARRAY_TASK_ID}
 export bindir=/rds-d4/user/jhz22/hpc-work/bin
-export dir=${INF}/work
-export list=${dir}/INF1_nold.sentinels
-export p=$(awk -v job=${job} 'NR==job+1{print $1}' ${list})
-export chr=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
-export pos=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
-export r=$(awk -v job=${job} 'NR==job+1{print $4}' ${list})
+export dir=${INF}/INTERVAL
+export list=${dir}/INTERVAL_nold.sentinels
+export p=$(awk -v job=${job} 'NR==62{print $1}' ${list})
+export chr=$(awk -v job=${job} 'NR==62{print $2}' ${list})
+export pos=$(awk -v job=${job} 'NR==62{print $3}' ${list})
+export r=$(awk -v job=${job} 'NR==62{print $4}' ${list})
 export pr=${p}-${r}
-export sumstats=${INF}/METAL/${p}-1.tbl.gz
+export sumstats=${INF}/sumstats/INTERVAL/INTERVAL.${p}.gz
 export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
@@ -30,7 +30,7 @@ export bfile=${INF}/INTERVAL/INTERVAL
 export sample=o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 export study=INTERVAL
-export N=15150
+export N=4994
 
 plink-1.9 --bfile ${bfile} \
           --snp ${r} \
@@ -173,35 +173,38 @@ function jam()
   qctool -g ${pr}.bgen -s ${sample} -ofiletype binary_ped -og ${pr}
   R -q --no-save <<\ \ END
     options(scipen=20, width=2000)
-    require(rbgen)
+    read.reference <- function(f, pkg="rbgen")
+    {
+      if (pkg == "rbgen")
+      {
+      # bgen
+        require(rbgen)
+        samples <- matrix(scan(paste0(s,".id"), what=c("","")),ncol=2,byrow=TRUE)
+        d <- bgen.load(paste0(f,".bgen"), rsids=scan(paste0(f,".incl"), what=""))
+        dimnames(d$data)[[2]] <- samples[,1]
+        R <- t(apply(d$data,1:2,"%*%",2:0))
+      } else {
+      # plink binary_ped files
+        library(plink2R)
+        p <- read_plink(f)
+        R <- with(p, as.data.frame(bed))
+      # R <- as(with(p,genotypes),"numeric")
+      }
+    }
     f <- Sys.getenv("pr")
-    incl <- scan(paste0(f,".incl"), what="")
-    excl <- scan(paste0(f,".excl"), what="")
     s <- Sys.getenv('study')
-  # bgen
-    samples <- matrix(scan(paste0(s,".id"), what=c("","")),4994,2,byrow=TRUE)
-    d <- bgen.load(paste0(f,".bgen"), rsids=setdiff(incl,excl))
-    dimnames(d$data)[[2]] <- samples[,1]
-    R <- apply(d$data,1:2,"%*%",0:2)
-  # plink binary_ped files
-    library(plink2R)
-    bed <- paste0(f,".bed")
-    bim <- paste0(f,".bim")
-    fam <- paste0(f,".fam")
-    p <- read_plink(f)
   # summary statistics
     sumstats <- read.table(paste0(f,".z"), as.is=TRUE, header=TRUE)
+  # snpid-rsid mapping
     load(paste0(f,".rda"))
     sumstats <- merge(sumstats, snpid_rsid, by="rsid")
   # reference panel with mean substitution for (small) proportion of missing data
-    R <- with(p, as.data.frame(2-bed))
-  # p <- read.plink(bed,bim,fam)
-  # R <- as(with(p,genotypes),"numeric")
+    R <- read.reference(f)
     R[] <- lapply(R, function(x) {
       x[is.na(x)] <- mean(x, na.rm = TRUE)
       x
     })
-    X.ref <- R
+    X.ref <- 2-R
     ss <- subset(sumstats,rsid%in%p$bim$V2)
     beta <- with(ss, beta)
     rsid <- with(ss, name)

@@ -173,35 +173,38 @@ function jam()
   qctool -g ${pr}.bgen -s ${sample} -ofiletype binary_ped -og ${pr}
   R -q --no-save <<\ \ END
     options(scipen=20, width=2000)
-    require(rbgen)
+    read.reference <- function(f, pkg="rbgen")
+    {
+      if (pkg == "rbgen")
+      {
+      # bgen
+        require(rbgen)
+        samples <- matrix(scan(paste0(s,".id"), what=c("","")),ncol=2,byrow=TRUE)
+        d <- bgen.load(paste0(f,".bgen"), rsids=scan(paste0(f,".incl"), what=""))
+        dimnames(d$data)[[2]] <- samples[,1]
+        R <- t(apply(d$data,1:2,"%*%",2:0))
+      } else {
+      # plink binary_ped files
+        library(plink2R)
+        p <- read_plink(f)
+        R <- with(p, as.data.frame(bed))
+      # R <- as(with(p,genotypes),"numeric")
+      }
+    }
     f <- Sys.getenv("pr")
-    incl <- scan(paste0(f,".incl"), what="")
-    excl <- scan(paste0(f,".excl"), what="")
     s <- Sys.getenv('study')
-  # bgen
-    samples <- matrix(scan(paste0(s,".id"), what=c("","")),4994,2,byrow=TRUE)
-    d <- bgen.load(paste0(f,".bgen"), rsids=setdiff(incl,excl))
-    dimnames(d$data)[[2]] <- samples[,1]
-    R <- apply(d$data,1:2,"%*%",0:2)
-  # plink binary_ped files
-    library(plink2R)
-    bed <- paste0(f,".bed")
-    bim <- paste0(f,".bim")
-    fam <- paste0(f,".fam")
-    p <- read_plink(f)
   # summary statistics
     sumstats <- read.table(paste0(f,".z"), as.is=TRUE, header=TRUE)
+  # snpid-rsid mapping
     load(paste0(f,".rda"))
     sumstats <- merge(sumstats, snpid_rsid, by="rsid")
   # reference panel with mean substitution for (small) proportion of missing data
-    R <- with(p, as.data.frame(2-bed))
-  # p <- read.plink(bed,bim,fam)
-  # R <- as(with(p,genotypes),"numeric")
+    R <- read.reference(f)
     R[] <- lapply(R, function(x) {
       x[is.na(x)] <- mean(x, na.rm = TRUE)
       x
     })
-    X.ref <- R
+    X.ref <- 2-R
     ss <- subset(sumstats,rsid%in%p$bim$V2)
     beta <- with(ss, beta)
     rsid <- with(ss, name)
