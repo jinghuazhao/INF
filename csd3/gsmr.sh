@@ -1,5 +1,6 @@
-# 17-7-2019 JHZ
+# 7-8-2019 JHZ
 
+if [ -f work/INF1.gsmr ]; then rm work/INF1.gsmr; fi
 (
   cat work/*.gsmr | \
   head -1

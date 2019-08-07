@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#SBATCH --account=PETERS-SL3-CPU
+#SBATCH --ntasks=1
+#SBATCH --job-name=_gsmr_fev1
+#SBATCH --time=12:00:00
+#SBATCH --partition=skylake
+#SBATCH --array=1-92%12
+#SBATCH --mem=128800
+#SBATCH --output=work/_gsmr-fev1_%A_%a.out
+#SBATCH --error=work/_gsmr-fev1_%A_%a.err
+#SBATCH --export ALL
+
+cd work
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' inf1.tmp)
+export r=/rds/user/jhz22/hpc-work/results/LF
+export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+if [ ! -f gsmr_FEV1 ]; then echo FEV1 $r/gsmr_FEV1.txt > gsmr_FEV1; fi
+if [ ! -f gsmr_ref_data ]; then echo $INF/INTERVAL/INTERVAL > gsmr_ref_data; fi
+if [ ! -f gsmr_$p ]; then echo $p $INF/work/$p.ma > gsmr_$p; fi
+
+gcta-1.9 --mbfile gsmr_ref_data --gsmr-file gsmr_$p gsmr_FEV1 \
+         --gsmr-direction 0 --effect-plot \
+         --clump-r2 0.05 --gwas-thresh 5e-8 --heidi-thresh 0.01 --gsmr-snp-min 10 \
+         --out gsmr_FEV1_$p
+
+R --no-save -q <<END
+  p <- Sys.getenv("p")
+  source("http://cnsgenomics.com/software/gcta/static/gsmr_plot.r")
+  gsmr_data <- read_gsmr_data(paste0("gsmr_FEV1_",p,".eff_plot.gz"))
+  gsmr_summary(gsmr_data)
+  pdf(paste0("gsmr_FEV1_",p,".eff_plot.pdf"))
+  plot_gsmr_effect(gsmr_data, p, "FEV1", colors()[75])
+  dev.off()
+END
+cd -
