@@ -1,4 +1,4 @@
-# 6-8-2019 JHZ
+# 7-8-2019 JHZ
 
 (
   echo "SNP A1 A2 freq b se p N"
@@ -14,5 +14,27 @@
   }'
 ) > gsmr_FEV1.txt
 
-# SpiroMeta: 1. SNP 2. Chromosome 3. Position_b37 4. Coded 5. Non_coded 6. N 7. Neff 8. Coded_freq 9. beta 10. SE 11. P
-# UKB: 1. SNP 2. Chromosome 3. Position_b37 4. Coded 5. Non_coded INFO 7. Coded_freq 8. beta 9. SE_GC 10. P_GC
+# gunzip -c UKB_FEV1_results.txt.gz | head -1 | sed 's/\t/\n/g' | awk '{print "#" NR, $1}'
+#1 #SNP
+#2 Chromosome
+#3 Position_b37
+#4 Coded
+#5 Non_coded
+#6 INFO
+#7 Coded_freq
+#8 beta
+#9 SE_GC
+#10 P_GC
+
+# gunzip -c SpiroMeta_FEV1_results.txt.gz | head -1 | sed 's/\t/\n/g' | awk '{print "#" NR, $1}'
+#1 #SNP
+#2 Chromosome
+#3 Position_b37
+#4 Coded
+#5 Non_coded
+#6 N
+#7 Neff
+#8 Coded_freq
+#9 beta
+#10 SE
+#11 P
