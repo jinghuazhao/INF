@@ -7,8 +7,8 @@
 #SBATCH --partition=skylake
 #SBATCH --array=1-146%15
 #SBATCH --mem=128800
-#SBATCH --output=work/_cojo-slct_%A_%a.out
-#SBATCH --error=work/_cojo-slct_%A_%a.err
+#SBATCH --output=work/_finemap_%A_%a.out
+#SBATCH --error=work/_finemap_%A_%a.err
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
