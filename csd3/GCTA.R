@@ -1,0 +1,23 @@
+# 8-8-2019 JHZ
+
+options(scipen=20, width=2000)
+d <- Sys.getenv("dir")
+pr <- Sys.getenv("pr")
+jma <- read.delim(paste0(d,"/",pr,".jma.cojo"),as.is=TRUE)
+ldr <- read.delim(paste0(d,"/",pr,".ldr.cojo"), as.is=TRUE)
+tbl <- jma[setdiff(names(jma),c("b","se","p"))]
+load(paste0(pr,".rda"))
+library(gap)
+tbl <- within(tbl, {lp <- log10p(bJ/bJ_se)})
+cred <- cs(tbl, log_p="lp", cutoff=0.95)
+require(openxlsx)
+xlsx <- paste0(pr,"-GCTA.xlsx")
+wb <- createWorkbook(xlsx)
+f <- make.names(pr)
+addWorksheet(wb, paste0(f, ".jma"))
+writeDataTable(wb, paste0(f, ".jma"), merge(snpid_rsid,jma,by.x="rsid",by.y="SNP"))
+addWorksheet(wb, paste0(f, ".ldr"))
+writeDataTable(wb, paste0(f, ".ldr"), merge(snpid_rsid,ldr,by.x="rsid",by.y="SNP"))
+addWorksheet(wb, paste0(f, ".cs"))
+writeDataTable(wb, paste0(f, ".cs"),  merge(snpid_rsid,cred,by.x="rsid",by.y="SNP"))
+saveWorkbook(wb, file=xlsx, overwrite=TRUE)
