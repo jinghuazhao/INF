@@ -2,10 +2,10 @@
 
 #SBATCH --account=PETERS-SL3-CPU
 #SBATCH --ntasks=1
-#SBATCH --job-name=_fm_INTERVAL
+#SBATCH --job-name=_fm_INF1
 #SBATCH --time=12:00:00
 #SBATCH --partition=skylake
-#SBATCH --array=1
+#SBATCH --array=1-146%15
 #SBATCH --mem=128800
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_fm_%A_%a.out
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_fm_%A_%a.err
@@ -17,10 +17,10 @@ export job=${SLURM_ARRAY_TASK_ID}
 export bindir=/rds-d4/user/jhz22/hpc-work/bin
 export dir=${INF}/INTERVAL
 export list=${dir}/INTERVAL_nold.sentinels
-export p=$(awk -v job=${job} 'NR==62{print $1}' ${list})
-export chr=$(awk -v job=${job} 'NR==62{print $2}' ${list})
-export pos=$(awk -v job=${job} 'NR==62{print $3}' ${list})
-export r=$(awk -v job=${job} 'NR==62{print $4}' ${list})
+export p=$(awk -v job=${job} 'NR==job+1{print $1}' ${list})
+export chr=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
+export pos=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
+export r=$(awk -v job=${job} 'NR==job+1{print $4}' ${list})
 export pr=${p}-${r}
 export sumstats=${INF}/sumstats/INTERVAL/INTERVAL.${p}.gz
 export flanking=1e6
@@ -30,7 +30,7 @@ export bfile=${INF}/INTERVAL/INTERVAL
 export sample=o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 export study=INTERVAL
-export N=4994
+export N=15150
 
 function init()
 {
