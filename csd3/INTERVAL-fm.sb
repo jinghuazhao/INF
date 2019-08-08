@@ -80,10 +80,6 @@ function init()
     join ${dir}/${pr} -
   ) > ${pr}.z0
   awk '{print $1} ' ${pr}.z0 > ${pr}.incl
-}
-
-function finemap()
-{
 # bgen
   qctool -g ${bfile}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
 # bgi
@@ -94,15 +90,19 @@ function finemap()
     join <(cut -d' ' -f1,4,5 ${pr}.z0 | sort -k1,1) <(awk '!/\#/' ${pr}.snp-stats | cut -f1,5,6 | awk 'NR>1' | sort -k1,1) | \
     awk '{print $1, ($2!=$4)}'
   ) > ${pr}.flip
+  (
+    awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se", "flip"}'
+    join ${pr}.z0 ${pr}.flip | awk '{if($9==1) {t=$4;$4=$5;$5=t};$7=-$7; print}'
+  ) > ${pr}.z
+}
+
+function finemap()
+{
 # master
   (
     echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
     echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
   ) > ${pr}.master
-  (
-    awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se", "flip"}'
-    join ${pr}.z0 ${pr}.flip | awk '{if($9==1) {t=$4;$4=$5;$5=t};$7=-$7; print}'
-  ) > ${pr}.z
 # finemap
   rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
   ${bindir}/finemap --sss --in-files ${pr}.master
