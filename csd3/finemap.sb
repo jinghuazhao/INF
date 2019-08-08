@@ -22,7 +22,7 @@ export chr=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
 export pos=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
 export r=$(awk -v job=${job} 'NR==job+1{print $4}' ${list})
 export pr=${p}-${r}
-export sumstats=${INF}/METAL/${p}-1.log.gz
+export sumstats=${INF}/METAL/${p}-1.tbl.gz
 export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
