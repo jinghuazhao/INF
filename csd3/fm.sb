@@ -190,7 +190,7 @@ function jam()
       samples <- matrix(scan(paste0(s,".id"), what=c("","")), ncol=2, byrow=TRUE)
       d <- bgen.load(paste0(f,".bgen"), rsids=scan(paste0(f,".incl"), what=""))
       dimnames(d$data)[[2]] <- samples[,1]
-      rsid <- with(with(d, variants), rsid)
+      rsid <- as.character(with(with(d, variants), rsid))
       R <- t(apply(d$data,1:2,"%*%",2:0))
     } else if (data_type == "binary_ped" ) {
       library(plink2R)
