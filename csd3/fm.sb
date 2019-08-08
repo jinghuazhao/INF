@@ -15,8 +15,8 @@ export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=${SLURM_ARRAY_TASK_ID}
 export bindir=/rds-d4/user/jhz22/hpc-work/bin
-export dir=${INF}/INTERVAL
-export list=${dir}/INTERVAL_nold.sentinels
+export dir=${INF}/work
+export list=${dir}/INF1_nold.sentinels
 export p=$(awk -v job=${job} 'NR==job+1{print $1}' ${list})
 export chr=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
 export pos=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
