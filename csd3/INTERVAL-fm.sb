@@ -133,6 +133,12 @@ function finemap()
 
 function gcta()
 {
+  if [ ! -f ${dir}/${p}.ma ]; then
+  (
+    echo SNP A1 A2 freq b se p N
+    gunzip -c ${sumstats} | \
+    awk "(NR>1 && $18>50) {print $3, $4, $5, $6, $10, $11, 10^$12, $18}"
+  ) > ${dir}/${p}.ma
   if [ -f ${dir}/${pr}.jma.cojo ]; then rm ${dir}/${pr}.jma.cojo ${dir}/${pr}.ldr.cojo; fi
   gcta-1.9 --bfile ${bfile} \
            --cojo-file ${dir}/${p}.ma \
