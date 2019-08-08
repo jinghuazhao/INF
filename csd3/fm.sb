@@ -170,7 +170,7 @@ function gcta()
 
 function jam()
 {
-  data_type <- "bgen"
+  export data_type=bgen
   if [ $data_type == "bgen" ]; then cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id; fi
   if [ $data_type == "binary_ped" ]; then qctool -g ${pr}.bgen -s ${sample} -ofiletype binary_ped -og ${pr}; fi
   R -q --no-save <<\ \ END
