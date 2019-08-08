@@ -65,10 +65,6 @@ function init()
       snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
       save(snpid_rsid, file=paste0(f,".rda"))
   END
-}
-
-function finemap()
-{
 # z0
   (
     zcat ${sumstats} | \
@@ -84,6 +80,10 @@ function finemap()
     join ${dir}/${pr} -
   ) > ${pr}.z0
   awk '{print $1} ' ${pr}.z0 > ${pr}.incl
+}
+
+function finemap()
+{
 # bgen
   qctool -g ${bfile}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
 # bgi
