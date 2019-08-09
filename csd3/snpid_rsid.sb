@@ -1,0 +1,74 @@
+#!/bin/bash
+
+#SBATCH --account=PETERS-SL3-CPU
+#SBATCH --ntasks=1
+#SBATCH --job-name=_snpid_rsid
+#SBATCH --time=12:00:00
+#SBATCH --partition=skylake
+#SBATCH --array=1-146%15
+#SBATCH --mem=128800
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_snpid_rsid_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_snpid_rsid_%A_%a.err
+#SBATCH --export ALL
+
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+export job=${SLURM_ARRAY_TASK_ID}
+export bindir=/rds-d4/user/jhz22/hpc-work/bin
+export dir=${INF}/work
+export list=${dir}/INF1_nold.sentinels
+export p=$(awk -v job=${job} 'NR==job+1{print $1}' ${list})
+export chr=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
+export pos=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
+export r=$(awk -v job=${job} 'NR==job+1{print $4}' ${list})
+export pr=${p}-${r}
+export flanking=1e6
+export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
+export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
+export bfile=${INF}/INTERVAL/INTERVAL
+export sample=o5000-inf1-outlier_in-r2.sample
+export snpid_rsid=${INF}/work/INTERVAL.rsid
+
+# unpruned
+awk -vlower=$start -vupper=$end '$4>=lower && $4 < upper{print $2}' ${bfile}.bim > ${dir}/${pr}
+sort -k1,1 ${snpid_rsid} | join -a2 - ${pr} > ${pr}.rsid
+R --no-save -q <<\ \ END
+    f <- Sys.getenv("pr")
+    snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
+    nmiss <- with(snpid_rsid,name=="")
+    snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
+    save(snpid_rsid, file=paste0(f,".rda"))
+END
+
+# pruned
+plink-1.9 --bfile ${bfile} \
+          --snp ${r} \
+          --window 1000 \
+          --maf 0.01 \
+          --indep-pairwise 1000kb 1 0.8 \
+          --out ${dir}/${pr}
+if [ $(grep ${r} ${dir}/${pr}.prune.in | wc -l) -eq 0 ]; then
+   (
+     echo ${r}
+     cat ${dir}/${pr}.prune.in
+   ) > $TMPDIR/${pr}
+   plink-1.9 --bfile ${bfile} \
+             --extract $TMPDIR/${pr} \
+             --r2 square \
+             --out $TMPDIR/${pr}
+   export i=$(paste $TMPDIR/${pr} $TMPDIR/${pr}.ld | cut -f1,2 | sort -r -k2,2g | awk 'NR==1 {print $1}')
+   sed -i 's/'"$i"'/'"$r"'/g' ${dir}/${pr}.prune.in
+fi
+sort -k1,1 ${dir}/${pr}.prune.in > $TMPDIR/${pr}.prune.in
+awk 'NR > 1' ${dir}/${p}.ma | \
+sort -k1,1 | \
+join -j1 - $TMPDIR/${pr}.prune.in | \
+awk '{print $1}' > ${dir}/${pr}-pruned
+sort -k1,1 ${snpid_rsid} | join -a2 - ${pr}-pruned > ${pr}-pruned.rsid
+R --no-save -q <<\ \ END
+    f <- Sys.getenv("pr")
+    snpid_rsid <- read.table(paste0(f,"-pruned.rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
+    nmiss <- with(snpid_rsid,name=="")
+    snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
+    save(snpid_rsid, file=paste0(f,"-pruned.rda"))
+END

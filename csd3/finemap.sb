@@ -32,16 +32,6 @@ export snpid_rsid=${INF}/work/INTERVAL.rsid
 export study=INTERVAL
 export N=15150
 
-awk -vlower=$start -vupper=$end '$4>=lower && $4 < upper{print $2}' ${bfile}.bim > ${dir}/${pr}
-sort -k1,1 ${snpid_rsid} | join -a2 - ${pr} > ${pr}.rsid
-R --no-save -q <<\ \ END
-    f <- Sys.getenv("pr")
-    snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
-    nmiss <- with(snpid_rsid,name=="")
-    snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
-    save(snpid_rsid, file=paste0(f,".rda"))
-END
-
 # z0
 (
   zcat ${sumstats} | \
@@ -87,4 +77,5 @@ rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
 ${bindir}/finemap --sss --in-files ${pr}.master
 
 # xlsx
+export snpid_rsid=${pr}
 R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log

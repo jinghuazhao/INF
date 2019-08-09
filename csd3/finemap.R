@@ -1,12 +1,13 @@
-# 8-8-2019 JHZ
+# 9-8-2019 JHZ
 
 options(digits=3, scipen=20, width=500)
 pr <- Sys.getenv("pr")
+snpid_rsid <- Sys.getenv("snpid_rsid")
 cat(pr, "\n")
 snp <- read.table(paste0(pr, ".snp"), as.is=TRUE, header=TRUE)
 config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE)
 cred <- read.table(paste0(pr,".cred"),as.is=TRUE,header=TRUE)
-load(paste0(pr,".rda"))
+load(paste0(snpid_rsid,".rda"))
 library(openxlsx)
 xlsx <- paste0(pr, "-finemap.xlsx")
 unlink(xlsx, recursive = FALSE, force = TRUE)

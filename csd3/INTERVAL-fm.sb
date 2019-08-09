@@ -28,43 +28,12 @@ export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export bfile=${INF}/INTERVAL/INTERVAL
 export sample=o5000-inf1-outlier_in-r2.sample
-export snpid_rsid=${INF}/work/INTERVAL.rsid
 export study=INTERVAL
 export N=4994
+export snpid_rsid=${pr}-pruned
 
 function init()
 {
-  plink-1.9 --bfile ${bfile} \
-            --snp ${r} \
-            --window 1000 \
-            --maf 0.01 \
-            --indep-pairwise 1000kb 1 0.8 \
-            --out ${dir}/${pr}
-  if [ $(grep ${r} ${dir}/${pr}.prune.in | wc -l) -eq 0 ]; then
-     (
-       echo ${r}
-       cat ${dir}/${pr}.prune.in
-     ) > $TMPDIR/${pr}
-     plink-1.9 --bfile ${bfile} \
-               --extract $TMPDIR/${pr} \
-               --r2 square \
-               --out $TMPDIR/${pr}
-     export i=$(paste $TMPDIR/${pr} $TMPDIR/${pr}.ld | cut -f1,2 | sort -r -k2,2g | awk 'NR==1 {print $1}')
-     sed -i 's/'"$i"'/'"$r"'/g' ${dir}/${pr}.prune.in
-  fi
-  sort -k1,1 ${dir}/${pr}.prune.in > $TMPDIR/${pr}.prune.in
-  awk 'NR > 1' ${dir}/${p}.ma | \
-  sort -k1,1 | \
-  join -j1 - $TMPDIR/${pr}.prune.in | \
-  awk '{print $1}' > ${dir}/${pr}
-  sort -k1,1 ${snpid_rsid} | join -a2 - ${pr} > ${pr}.rsid
-  R --no-save -q <<\ \ END
-      f <- Sys.getenv("pr")
-      snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
-      nmiss <- with(snpid_rsid,name=="")
-      snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
-      save(snpid_rsid, file=paste0(f,".rda"))
-  END
 # z0
   (
     zcat ${sumstats} | \
