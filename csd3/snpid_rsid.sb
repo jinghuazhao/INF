@@ -64,7 +64,7 @@ sort -k1,1 ${dir}/${pr}.prune.in > $TMPDIR/${pr}.prune.in
 awk 'NR > 1' ${dir}/${p}.ma | \
 sort -k1,1 | \
 join -j1 - $TMPDIR/${pr}.prune.in | \
-awk '{print $1}' > ${dir}/${pr}-pruned
+awk '{print $1}' > ${dir}/${pr}-prune
 sort -k1,1 ${snpid_rsid} | join -a2 - ${pr}-prune > ${pr}-prune.rsid
 R --no-save -q <<END
     f <- Sys.getenv("pr")
