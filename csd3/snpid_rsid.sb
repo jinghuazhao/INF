@@ -32,7 +32,7 @@ export snpid_rsid=${INF}/work/INTERVAL.rsid
 # unpruned
 awk -vlower=$start -vupper=$end '$4>=lower && $4 < upper{print $2}' ${bfile}.bim > ${dir}/${pr}
 sort -k1,1 ${snpid_rsid} | join -a2 - ${pr} > ${pr}.rsid
-R --no-save -q <<\ \ END
+R --no-save -q <<END
     f <- Sys.getenv("pr")
     snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
     nmiss <- with(snpid_rsid,name=="")
@@ -65,7 +65,7 @@ sort -k1,1 | \
 join -j1 - $TMPDIR/${pr}.prune.in | \
 awk '{print $1}' > ${dir}/${pr}-pruned
 sort -k1,1 ${snpid_rsid} | join -a2 - ${pr}-pruned > ${pr}-pruned.rsid
-R --no-save -q <<\ \ END
+R --no-save -q <<END
     f <- Sys.getenv("pr")
     snpid_rsid <- read.table(paste0(f,"-pruned.rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
     nmiss <- with(snpid_rsid,name=="")
