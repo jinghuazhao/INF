@@ -32,52 +32,59 @@ export snpid_rsid=${INF}/work/INTERVAL.rsid
 export study=INTERVAL
 export N=15150
 
-  awk -vlower=$start -vupper=$end '$4>=lower && $4 < upper{print $2}' ${bfile}.bim > ${dir}/${pr}
-  sort -k1,1 ${snpid_rsid} | join -a2 - ${pr} > ${pr}.rsid
-  R --no-save -q <<\ \ END
-      f <- Sys.getenv("pr")
-      snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
-      nmiss <- with(snpid_rsid,name=="")
-      snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
-      save(snpid_rsid, file=paste0(f,".rda"))
-  END
+awk -vlower=$start -vupper=$end '$4>=lower && $4 < upper{print $2}' ${bfile}.bim > ${dir}/${pr}
+sort -k1,1 ${snpid_rsid} | join -a2 - ${pr} > ${pr}.rsid
+R --no-save -q <<\ \ END
+    f <- Sys.getenv("pr")
+    snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
+    nmiss <- with(snpid_rsid,name=="")
+    snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
+    save(snpid_rsid, file=paste0(f,".rda"))
+END
+
 # z0
-  (
-    zcat ${sumstats} | \
-    awk 'NR > 1' | \
-    sort -k1,1 | \
-    awk -vchr=${chr} -vstart=${start} -vend=${end} '
-    {
-      if ($2==chr && $3 >= start && $3 < end) {
-      if ($8 < 0.5) maf = $8; else maf = 1-$8
-      if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $7, $6, maf, $9, $10
-    }
-    } ' | \
-    join ${dir}/${pr} -
-  ) > ${pr}.z0
-  awk '{print $1} ' ${pr}.z0 > ${pr}.incl
+(
+  zcat ${sumstats} | \
+  awk 'NR > 1' | \
+  sort -k1,1 | \
+  awk -vchr=${chr} -vstart=${start} -vend=${end} '
+  {
+    if ($2==chr && $3 >= start && $3 < end) {
+    if ($8 < 0.5) maf = $8; else maf = 1-$8
+    if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $7, $6, maf, $9, $10
+  }
+  } ' | \
+  join ${dir}/${pr} -
+) > ${pr}.z0
+awk '{print $1} ' ${pr}.z0 > ${pr}.incl
+
 # bgen
-  qctool -g ${bfile}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
+qctool -g ${bfile}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
+
 # bgi
-  bgenix -g ${pr}.bgen -index -clobber
-  ln -sf ${pr}.bgen.bgi ${pr}.bgi
+bgenix -g ${pr}.bgen -index -clobber
+ln -sf ${pr}.bgen.bgi ${pr}.bgi
+
 # z
-  qctool -g ${pr}.bgen -snp-stats -osnp - > ${pr}.snp-stats
-  (
-    join <(cut -d' ' -f1,4,5 ${pr}.z0 | sort -k1,1) <(awk '!/\#/' ${pr}.snp-stats | cut -f1,5,6 | awk 'NR>1' | sort -k1,1) | \
-    awk '{print $1, ($2!=$4)}'
-  ) > ${pr}.flip
-  (
-    awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se", "flip"}'
-    join ${pr}.z0 ${pr}.flip | awk '{if($9==1) {t=$4;$4=$5;$5=t};$7=-$7; print}'
-  ) > ${pr}.z
+qctool -g ${pr}.bgen -snp-stats -osnp - > ${pr}.snp-stats
+(
+  join <(cut -d' ' -f1,4,5 ${pr}.z0 | sort -k1,1) <(awk '!/\#/' ${pr}.snp-stats | cut -f1,5,6 | awk 'NR>1' | sort -k1,1) | \
+  awk '{print $1, ($2!=$4)}'
+) > ${pr}.flip
+(
+  awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se", "flip"}'
+  join ${pr}.z0 ${pr}.flip | awk '{if($9==1) {t=$4;$4=$5;$5=t};$7=-$7; print}'
+) > ${pr}.z
+
 # master
-  (
-    echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
-    echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
-  ) > ${pr}.master
+(
+  echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
+  echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
+) > ${pr}.master
+
 # finemap
-  rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
-  ${bindir}/finemap --sss --in-files ${pr}.master
+rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
+${bindir}/finemap --sss --in-files ${pr}.master
+
 # xlsx
-  R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
+R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
