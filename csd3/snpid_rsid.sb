@@ -29,6 +29,7 @@ export bfile=${INF}/INTERVAL/INTERVAL
 export sample=o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 
+cd work
 # unpruned
 awk -vlower=$start -vupper=$end '$4>=lower && $4 < upper{print $2}' ${bfile}.bim > ${dir}/${pr}
 sort -k1,1 ${snpid_rsid} | join -a2 - ${pr} > ${pr}.rsid
@@ -72,3 +73,4 @@ R --no-save -q <<END
     snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
     save(snpid_rsid, file=paste0(f,"-pruned.rda"))
 END
+cd -
