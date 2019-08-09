@@ -1,8 +1,9 @@
-# 8-8-2019 JHZ
+# 9-8-2019 JHZ
 
 options(scipen=20, width=2000)
 f <- Sys.getenv("pr")
 s <- Sys.getenv('study')
+snpid_rsid <- Sys.getenv("snpid_rsid")
 data_type <- Sys.getenv("data_type")
 # summary statistics
 sumstats <- read.table(paste0(f,".z"), as.is=TRUE, header=TRUE)
@@ -56,7 +57,7 @@ if(n.sel[1]>0&n.sel[1]!=n.snps)
    write.table(t,paste0(f,".sel"),row.names=FALSE,quote=FALSE)
 }
 require(openxlsx)
-xlsx <- paste0(f,"-JAM.xlsx")
+xlsx <- paste0(f,"-jam.xlsx")
 wb <- createWorkbook(xlsx)
 addWorksheet(wb, "ID")
 writeDataTable(wb, "ID", ssr)

@@ -30,7 +30,7 @@ export bfile=${INF}/INTERVAL/INTERVAL
 export sample=o5000-inf1-outlier_in-r2.sample
 export study=INTERVAL
 export N=4994
-export snpid_rsid=${pr}-pruned
+export snpid_rsid=${pr}-prune
 
 function init()
 {
@@ -96,7 +96,7 @@ function gcta()
            --maf 0.01 \
            --out ${dir}/${pr}
 
-  R -q --no-save < ${INF}/csd3/GCTA.R > ${pr}-GCTA.log
+  R -q --no-save < ${INF}/csd3/gcta.R > ${pr}-gcta.log
 }
 
 function jam()
@@ -104,7 +104,7 @@ function jam()
   export data_type=bgen
   if [ $data_type == "bgen" ]; then cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id; fi
   if [ $data_type == "binary_ped" ]; then qctool -g ${pr}.bgen -s ${sample} -ofiletype binary_ped -og ${pr}; fi
-  R -q --no-save < ${INF}/csd3/JAM.R > ${pr}-JAM.log
+  R -q --no-save < ${INF}/csd3/jam.R > ${pr}-jam.log
 }
 
 init

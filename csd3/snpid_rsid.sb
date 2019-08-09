@@ -65,12 +65,12 @@ awk 'NR > 1' ${dir}/${p}.ma | \
 sort -k1,1 | \
 join -j1 - $TMPDIR/${pr}.prune.in | \
 awk '{print $1}' > ${dir}/${pr}-pruned
-sort -k1,1 ${snpid_rsid} | join -a2 - ${pr}-pruned > ${pr}-pruned.rsid
+sort -k1,1 ${snpid_rsid} | join -a2 - ${pr}-prune > ${pr}-prune.rsid
 R --no-save -q <<END
     f <- Sys.getenv("pr")
-    snpid_rsid <- read.table(paste0(f,"-pruned.rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
+    snpid_rsid <- read.table(paste0(f,"-prune.rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
     nmiss <- with(snpid_rsid,name=="")
     snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
-    save(snpid_rsid, file=paste0(f,"-pruned.rda"))
+    save(snpid_rsid, file=paste0(f,"-prune.rda"))
 END
 cd -
