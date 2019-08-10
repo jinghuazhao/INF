@@ -31,7 +31,8 @@ export snpid_rsid=${INF}/work/INTERVAL.rsid
 
 cd work
 # unpruned
-awk -vchr=$chr -vlower=$start -vupper=$end '$1==chr && $4>=lower && $4 < upper{print $2}' ${bfile}.bim > ${dir}/${pr}
+awk -vchr=$chr -vlower=$start -vupper=$end '$1==chr && $4>=lower && $4 < upper{print $2}' ${bfile}.bim | \
+sort -k1,1 > ${pr}
 sort -k1,1 ${snpid_rsid} | join -a2 - ${pr} > ${pr}.rsid
 R --no-save -q <<END
     f <- Sys.getenv("pr")
