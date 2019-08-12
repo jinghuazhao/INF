@@ -41,7 +41,7 @@ export N=15150
   {
     if ($1==chr && $2 >= start && $2 < end) {
     if ($6 < 0.5) maf = $6; else maf = 1-$6
-    if (maf > 0 && maf <= 0.5 && $10 != "NA" && $11 != "NA") print $3, $1, $2, $4, $5, maf, $10, $11
+    if (maf > 0 && maf <= 0.5 && $10 != "NA" && $11 != "NA") print $3, $1, $2, toupper($4), toupper($5), maf, $10, $11
   }
   } ' | \
   join ${dir}/${pr} -
