@@ -30,7 +30,7 @@ export bfile=${INF}/INTERVAL/INTERVAL
 export sample=o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 export study=INTERVAL
-export N=15150
+export N=4994
 
 # z0
 (
