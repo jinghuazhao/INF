@@ -54,7 +54,7 @@ function init()
 # bgi
   bgenix -g ${pr}.bgen -index -clobber
   ln -sf ${pr}.bgen.bgi ${pr}.bgi
-  qctool -g ${pr}.bgen -snp-stats -osnp - > ${pr}.snp-stats
+  qctool -g ${pr}.bgen -filetype bgen -snp-stats -osnp - > ${pr}.snp-stats
   (
     join <(cut -d' ' -f1,4,5 ${pr}.z0 | sort -k1,1) <(awk '!/\#/' ${pr}.snp-stats | cut -f1,5,6 | awk 'NR>1' | sort -k1,1) | \
     awk '{print $1, ($2!=$4)}'
@@ -103,7 +103,7 @@ function jam()
 {
   export data_type=bgen
   if [ $data_type == "bgen" ]; then cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id; fi
-  if [ $data_type == "binary_ped" ]; then qctool -g ${pr}.bgen -s ${sample} -ofiletype binary_ped -og ${pr}; fi
+  if [ $data_type == "binary_ped" ]; then qctool -g ${pr}.bgen -filetype bgen -s ${sample} -ofiletype binary_ped -og ${pr}; fi
   R -q --no-save < ${INF}/csd3/jam.R > ${pr}-jam.log
 }
 
