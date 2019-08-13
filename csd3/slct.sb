@@ -16,7 +16,6 @@ export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' work/INF1_nold.sentinels)
 export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' work/INF1_nold.sentinels)
 export pr=${p}-${r}
-export snpid_rsid=${pr}
 
 if [ -f work/${pr}.jma.cojo ]; then rm work/${pr}.jma.cojo work/${pr}.ldr.cojo; fi
 gcta-1.9 --bfile /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/INTERVAL \
