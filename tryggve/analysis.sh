@@ -1,4 +1,4 @@
-# 11-7-2019 JHZ
+# 14-8-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -168,7 +168,7 @@ function cojo()
     require(gap);require(gap.examples)
     jma <- read.delim("jma")
     ni <- dim(jma)[1]
-    primary <- dim(subset(jma,p <= 5e-10 & pJ <= 5e-10))[1]
+    primary <- dim(subset(jma,p <= 5e-10))[1]
     secondary <- dim(subset(jma,p > 5e-10 & pJ <= 5e-10))[1]
     print(cbind(ni,primary,secondary))
     hits <- merge(jma[c("prot","CHR","BP","SNP")],inf1[c("prot","uniprot")],by="prot")
