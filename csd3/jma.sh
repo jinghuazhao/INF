@@ -1,4 +1,4 @@
-# 5-8-2019 JHZ
+# 14-8-2019 JHZ
 (
   cat work/*jma.cojo | \
   head -1 | \
@@ -13,7 +13,7 @@ sed 's/Chr/CHR/g;s/bp/BP/g' INF1.jma > jma
 R --no-save -q <<END
   require(gap);require(gap.examples)
   jma <- read.delim("jma", as.is=TRUE)
-  primary <- subset(jma,p <= 5e-10 & pJ <= 5e-10)
+  primary <- subset(jma,p <= 5e-10)
   secondary <- subset(jma,p > 5e-10 & pJ <= 5e-10)
   print(cbind(nrow(jma),nrow(primary),nrow(secondary)))
   hits <- merge(jma[c("prot","CHR","BP","SNP")],inf1[c("prot","uniprot")],by="prot")
