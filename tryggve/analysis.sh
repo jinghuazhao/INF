@@ -236,7 +236,7 @@ function fp()
   '
   ) | \
   sed 's|/data/jinhua/INF/sumstats||g;s/.gz//g' > INF1.all
-  if [ -f INF1.log ]; then rm INF1.log; fi
+  if [ -f INF1.fp.log ]; then rm INF1.fp.log; fi
   script INF1.fp.log
   R -q --no-save <<\ \ END
     require(gap)
