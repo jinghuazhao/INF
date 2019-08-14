@@ -29,5 +29,5 @@ gcta-1.9 --bfile /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/
          --out ${pr}
 
 export snpid_rsid=${{pr}
-R --no-save -q < ${INF}/csd3/gcta.R > ${pr}-gcta.log
+if [ -f ${pr}.jma.cojo ]; then R --no-save -q < ${INF}/csd3/gcta.R > ${pr}-gcta.log; fi
 cd -
