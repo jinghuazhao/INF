@@ -1,0 +1,31 @@
+# 15-8-2019 JHZ
+
+require(gap)
+t <- read.delim("INF1.tbl",as.is=TRUE)
+tbl <- within(t, {
+    prot <- sapply(strsplit(Chromosome,":"),"[",1)
+    Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
+})
+## to obtain variance explained
+tbl <- within(tbl, chi2n <- (Effect/StdErr)^2/N)
+s <- with(tbl, aggregate(chi2n,list(prot),sum))
+names(s) <- c("prot", "pve")
+sd <- with(tbl, aggregate(chi2n,list(prot),sd))
+names(sd) <- c("p1","sd")
+m <- with(tbl, aggregate(chi2n,list(prot),length))
+names(m) <- c("p2","m")
+pve <- cbind(s,sd,m)
+ord <- with(pve, order(pve))
+sink("pve.dat")
+print(pve[ord, c("prot","pve","sd","m")], row.names=FALSE)
+sink()
+png("pve.png", res=300, units="in", width=12, height=8)
+np <- nrow(pve)
+with(pve[ord,], {
+    plot(pve, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(pve))
+    xtick <- seq(1, np, by=1)
+    axis(side=1, at=xtick, labels = FALSE)
+    text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.5)
+})
+dev.off()
+write.csv(tbl,file="INF1.csv",quote=FALSE,row.names=FALSE)

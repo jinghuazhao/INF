@@ -13,6 +13,7 @@
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+export dir=${INF}/work
 export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' INF1_nold.sentinels)
 export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' INF1_nold.sentinels)
 export pr=${p}-${r}
