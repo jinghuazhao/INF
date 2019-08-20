@@ -90,8 +90,8 @@ function METAL_analysis()
        l=length(d3)
        d3r=d3
        gsub(/n/,\"-\",d3r)
-       gsub(/p/,\"+\",d3r)
        n=gensub(/ /, \"-\", \"g\", sprintf(\"%*s\", l, \"\"))
+       gsub(/p/,\"+\",d3r)
        p=gensub(/ /, \"+\", \"g\", sprintf(\"%*s\", l, \"\"))
        if (l >= 3 && \$18 >= 3500)
           if (\$12 > -9.30103) print;
