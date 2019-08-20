@@ -1,15 +1,15 @@
 {
-   d3=$13; gsub(/?/,"",d3); l=length(d3); s=sprintf("%*s", l, "")
-   d3r=d3
-   gsub(/n/,"-",d3r); n=gensub(/ /, "-", "g", s)
-   gsub(/p/,"+",d3r); p=gensub(/ /, "+", "g", s)
+   d3=$13; gsub(/?/,"",d3); l=length(d3)
    if (l >= 3 && $18 >= 3500)
-      if ($12 > -9.30103) print;
+   if ($12 > -9.30103) print;
+   else {
+      if ($14 < 30) print;
       else {
-         if ($14 < 30) print;
-         else if (d3 == "nnn" || d3 == "ppp") print;
-         else if (d3r == n || d3r == p ) print
+        d3n=d3; d3p=d3;
+        gsub(/+|-|p/,"",d3n); gsub(/+|-|n/,"",d3p);
+        if (length(d3n) >= 3 || length(d3p) >= 3) print;
       }
+   }
 }
 # R
 # > log10(5e-10)
