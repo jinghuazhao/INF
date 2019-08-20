@@ -1,4 +1,4 @@
-# 8-7-2019 JHZ
+# 20-8-2019 JHZ
 
 function METAL_list()
 {
@@ -85,13 +85,17 @@ function METAL_analysis()
     metal $rt/{}.metal 2>&1 | \
     tee $rt/{}-1.tbl.log; \
     awk "{
-       d3=\$13;
+       d3=\$13
        gsub(/?/,\"\",d3)
+       d3r=\$13
+       gsub(/n/,\"-\",d3r)
+       gsub(/p/,\"+\",d3r)
        if (length(d3) >= 3 && \$18 >= 3500)
           if (\$12 > -9.30103) print;
           else {
              if (\$14 < 30) print;
-             else if (d3 == \"nnn\" || d3 == \"ppp\") print
+             else if (d3 == \"nnn\" || d3 == \"ppp\") print;
+             else if (d3r == \"-----------\" || d3r == \"+++++++++++\") print)
           }
     }" $rt/{}-1.tbl | \
     gzip -f > $rt/{}-1.tbl.gz; \
