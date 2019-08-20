@@ -1,6 +1,6 @@
 {
-   d3=$13; gsub(/?/,"",d3); l=length(d3)
-   if (l >= 3 && $18 >= 3500)
+   d3=$13; gsub(/?/,"",d3)
+   if (length(d3) >= 3 && $18 >= 3500)
    if ($12 > -9.30103) print;
    else {
       if ($14 < 30) print;
