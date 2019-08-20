@@ -87,15 +87,18 @@ function METAL_analysis()
     awk "{
        d3=\$13
        gsub(/?/,\"\",d3)
-       d3r=\$13
+       l=length(d3)
+       d3r=d3
        gsub(/n/,\"-\",d3r)
        gsub(/p/,\"+\",d3r)
-       if (length(d3) >= 3 && \$18 >= 3500)
+       n=gensub(/ /, \"-\", \"g\", sprintf(\"%*s\", l, \"\"))
+       p=gensub(/ /, \"+\", \"g\", sprintf(\"%*s\", l, \"\"))
+       if (l >= 3 && \$18 >= 3500)
           if (\$12 > -9.30103) print;
           else {
              if (\$14 < 30) print;
              else if (d3 == \"nnn\" || d3 == \"ppp\") print;
-             else if (d3r == \"-----------\" || d3r == \"+++++++++++\") print
+             else if (d3r == n || d3r == p ) print
           }
     }" $rt/{}-1.tbl | \
     gzip -f > $rt/{}-1.tbl.gz; \
