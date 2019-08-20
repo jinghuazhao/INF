@@ -95,7 +95,7 @@ function METAL_analysis()
           else {
              if (\$14 < 30) print;
              else if (d3 == \"nnn\" || d3 == \"ppp\") print;
-             else if (d3r == \"-----------\" || d3r == \"+++++++++++\") print)
+             else if (d3r == \"-----------\" || d3r == \"+++++++++++\") print
           }
     }" $rt/{}-1.tbl | \
     gzip -f > $rt/{}-1.tbl.gz; \
