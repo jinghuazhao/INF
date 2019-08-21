@@ -1,4 +1,4 @@
-# 20-8-2019 JHZ
+# 21-8-2019 JHZ
 
 function METAL_list()
 {
@@ -39,8 +39,8 @@ function METAL_files()
      echo TRACKPOSITIONS ON
      echo AVERAGEFREQ ON
      echo MINMAXFREQ ON
-     echo ADDFILTER CODE_ALL_FQ ">=" 0.01
-     echo ADDFILTER CODE_ALL_FQ "<=" 0.99
+     echo ADDFILTER CODE_ALL_FQ ">=" 0.001
+     echo ADDFILTER CODE_ALL_FQ "<=" 0.999
      echo MARKERLABEL SNPID
      echo ALLELELABELS EFFECT_ALLELE REFERENCE_ALLELE
      echo EFFECTLABEL BETA
