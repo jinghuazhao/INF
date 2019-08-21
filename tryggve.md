@@ -2,7 +2,7 @@
 
 The repository covers various aspects such as software and data.
 
-## Modules and related applications
+## Modules
 
 Instances are exemplified as follows,
 
