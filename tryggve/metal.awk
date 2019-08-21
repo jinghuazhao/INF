@@ -5,8 +5,8 @@
    else {
       if ($14 < 30) print;
       else {
-        d3n=d3; d3p=d3;
-        gsub(/+|-|p/,"",d3n); gsub(/+|-|n/,"",d3p);
+        d3n=d3; gsub(/+|-|p/,"",d3n);
+        d3p=d3; gsub(/+|-|n/,"",d3p);
         if (length(d3n) >= 3 || length(d3p) >= 3) print;
       }
    }
