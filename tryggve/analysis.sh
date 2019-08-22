@@ -1,4 +1,4 @@
-# 14-8-2019 JHZ
+# 22-8-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -26,7 +26,7 @@ function qml()
   parallel -j4 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/tryggve/qqman.R'
   ls METAL/*-1.tbl.gz | \
   sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-  parallel -j3 -C' ' '
+  parallel -j1 -C' ' '
   (
      echo -e "MarkerName\tP-value\tWeight"
      grep -w {} st.bed | \
