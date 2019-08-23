@@ -8,4 +8,6 @@ seq 22 | parallel --env f -j1 -C' ' 'qctool -g ${f}{}.bgen -map-id-data work/INT
 seq 22 | parallel --env f -j1 -C' ' 'bgenix -g work/INTERVAL-{}.bgen -index'
 
 cat-bgen -g $(seq 22|awk '{printf "work/INTERVAL-" $1 ".bgen "}') -og work/INTERVAL.bgen
-qctool -g work/INTERVAL.bgen -s ${f}10.sample -ofiletype binary_ped -og work/INTERVAL
+qctool -g work/INTERVAL.bgen -s ${f}10.sample -excl-range 19:54296855-54311176 -ofiletype binary_ped -og work/INTERVAL
+
+# NLRP12 - chr19:54,296,855-54,311,176
