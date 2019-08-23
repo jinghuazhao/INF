@@ -1,4 +1,4 @@
-# 22-8-2019 JHZ
+# 23-8-2019 JHZ
 
 export f=INTERVAL/per_chr/interval.imputed.olink.chr_
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -8,3 +8,4 @@ seq 22 | parallel --env f -j1 -C' ' 'qctool -g ${f}{}.bgen -map-id-data work/INT
 seq 22 | parallel --env f -j1 -C' ' 'bgenix -g work/INTERVAL-{}.bgen -index'
 
 cat-bgen -g $(seq 22|awk '{printf "work/INTERVAL-" $1 ".bgen "}') -og work/INTERVAL.bgen
+qctool -g work/INTERVAL.bgen -ofiletype binary_ped -og work/INTERVAL
