@@ -1,6 +1,9 @@
-# 22-8-2019 JHZ
+# 23-8-2019 JHZ
 
 source tryggve/analysis.ini
+
+gunzip -c sumstats/INTERVAL/INTERVAL.4E.BP1.gz | head -1 > work/sumstats.hdr
+gunzip -c METAL/4E.BP1-1.tbl.gz | head -1 > work/METAL.hdr
 
 function qml()
 {
@@ -206,8 +209,7 @@ function cojo()
 function fp()
 {
   (
-    gunzip -c METAL/4E.BP1-1.tbl.gz | \
-    head -1
+    cat work/METAL.hdr
   # 1. PLINK --clumping. The default.
   # 3. GCTA --cojo.  Change Chr, Pos to CHR, BP as in 1.
   # 2. R/gap/sentinels output. use  SNPID or $4 below
@@ -221,6 +223,7 @@ function fp()
   uniq | \
   join work/INTERVAL.rsid - > INF1.rsid
   (
+    cat work/sumstat.hdr
     awk 'NR>1' INF1.tbl | \
     cut -f1,3,13 | \
     awk '{split($1,a,":");print a[1],$2,$3}' | \
@@ -245,9 +248,7 @@ function fp()
       prot <- sapply(strsplit(Chromosome,":"),"[",1)
       Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
     })
-    a <- read.table("INF1.all",as.is=TRUE,
-         col.names=c("SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE",
-                     "CODE_ALL_FQ", "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP"))
+    a <- read.table("INF1.all",as.is=TRUE, header=TRUE)
     all <- within(a, {
       dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
       p1 <- sapply(strsplit(SNPID,":"),"[",2)
