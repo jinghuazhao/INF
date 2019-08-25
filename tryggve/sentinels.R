@@ -1,5 +1,4 @@
 options(echo=FALSE)
-require(gap)
 
 prot <- Sys.getenv("prot")
 tag <- Sys.getenv("tag")
