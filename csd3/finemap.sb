@@ -74,7 +74,7 @@ qctool -g ${pr}.bgen -filetype bgen -snp-stats -osnp - > ${pr}.snp-stats
 
 # finemap
 rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
-${bindir}/finemap --log --sss --in-files ${pr}.master
+${bindir}/finemap --log --sss --in-files ${pr}.master --n-causal-snps 10
 
 # xlsx
 export snpid_rsid=${pr}

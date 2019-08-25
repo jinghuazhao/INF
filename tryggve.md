@@ -2,7 +2,7 @@
 
 The repository covers various aspects such as software and data.
 
-## Modules and related applications
+## Modules
 
 Instances are exemplified as follows,
 
@@ -175,7 +175,7 @@ R --no-save -q <<END
   estlambda(with(STABILITY,PVAL), method="median")
 END
 ```
-Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1 via [gap.3.3.1.sh](tryggve/gap.3.3.1.sh) which requires registration of routine `family` (defined in `pfc.f`) altered to `family_` say.
+Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1 via [gap.3.3.1.sh](tryggve/gap.3.3.1.sh) which requires registration of routine `family` (defined in `pfc.f`) altered to `family_` and the change is made as default.
 
 **QCGWAS**
 

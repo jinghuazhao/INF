@@ -1,6 +1,9 @@
-# 14-8-2019 JHZ
+# 23-8-2019 JHZ
 
 source tryggve/analysis.ini
+
+gunzip -c sumstats/INTERVAL/INTERVAL.4E.BP1.gz | head -1 > work/sumstats.hdr
+gunzip -c METAL/4E.BP1-1.tbl.gz | head -1 > work/METAL.hdr
 
 function qml()
 {
@@ -26,7 +29,7 @@ function qml()
   parallel -j4 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/tryggve/qqman.R'
   ls METAL/*-1.tbl.gz | \
   sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-  parallel -j3 -C' ' '
+  parallel -j1 -C' ' '
   (
      echo -e "MarkerName\tP-value\tWeight"
      grep -w {} st.bed | \
@@ -129,20 +132,25 @@ function ma()
   ) > $rt/{}.ma
   '
 }
-#1 Chromosome
-#2 Position
-#3 MarkerName
-#4 Allele1
-#5 Allele2
-#6 Freq1
-#7 FreqSE
-#8 MinFreq
-#9 MaxFreq
-#10 Effect
-#11 StdErr
-#12 P-value
-#13 Direction
-#14 N
+sed 's/\t/\n/g' work/METAL.hdr| awk '{print "# " NR " " $1}'
+# 1 Chromosome
+# 2 Position
+# 3 MarkerName
+# 4 Allele1
+# 5 Allele2
+# 6 Freq1
+# 7 FreqSE
+# 8 MinFreq
+# 9 MaxFreq
+# 10 Effect
+# 11 StdErr
+# 12 log(P)
+# 13 Direction
+# 14 HetISq
+# 15 HetChiSq
+# 16 HetDf
+# 17 logHetP
+# 18 N
 
 function cojo()
 {
@@ -206,8 +214,7 @@ function cojo()
 function fp()
 {
   (
-    gunzip -c METAL/4E.BP1-1.tbl.gz | \
-    head -1
+    cat work/METAL.hdr
   # 1. PLINK --clumping. The default.
   # 3. GCTA --cojo.  Change Chr, Pos to CHR, BP as in 1.
   # 2. R/gap/sentinels output. use  SNPID or $4 below
@@ -221,6 +228,7 @@ function fp()
   uniq | \
   join work/INTERVAL.rsid - > INF1.rsid
   (
+    cat work/sumstat.hdr
     awk 'NR>1' INF1.tbl | \
     cut -f1,3,13 | \
     awk '{split($1,a,":");print a[1],$2,$3}' | \
@@ -245,9 +253,7 @@ function fp()
       prot <- sapply(strsplit(Chromosome,":"),"[",1)
       Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
     })
-    a <- read.table("INF1.all",as.is=TRUE,
-         col.names=c("SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE",
-                     "CODE_ALL_FQ", "BETA", "SE", "PVAL", "RSQ", "RSQ_IMP", "IMP"))
+    a <- read.table("INF1.all",as.is=TRUE, header=TRUE)
     all <- within(a, {
       dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
       p1 <- sapply(strsplit(SNPID,":"),"[",2)

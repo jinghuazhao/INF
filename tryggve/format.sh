@@ -1,4 +1,4 @@
-# 9-4-2019 JHZ
+# 20-8-2019 JHZ
 
 export threads=6
 
@@ -145,11 +145,17 @@ function RECOMBINE()
     (
       for chr in `seq 22`
       do
+        if [ $chr -eq 1 ]; then
+           gunzip -c $rt/{2}_{3}___{1}_chr${chr}_RECOMBINE.txt.gz | \
+           awk "NR == 1"
+        fi
         gunzip -c $rt/{2}_{3}___{1}_chr${chr}_RECOMBINE.txt.gz | \
-        cut -f3-7,9-17
+        awk "NR > 1" 
       done
     ) | \
-    awk "NR==1||(\$1!=SNPID&&\$13>0.3){sub(/EFFECT_ALL_FQ/,\"CODE_ALL_FQ\",\$8);print}" | \
+    awk "NR==1||(\$16>0.3){sub(/EFFECT_ALL_FQ/,\"CODE_ALL_FQ\",\$11);print}" | \
+    sed "s/ /\t/g" | \
+    cut -f3-7,9-17 | \
     awk -f tryggve/order.awk | \
     gzip -f > sumstats/RECOMBINE/RECOMBINE.{4}.gz'
 }
