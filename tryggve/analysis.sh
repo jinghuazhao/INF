@@ -122,13 +122,13 @@ function ma()
   echo "--> .ma"
   export rt=$HOME/INF/METAL
   ls METAL/*.tbl.gz | \
-  sed 's/-1.tbl.gz//g' | \
+  sed 's/-1.tbl.gz\*//g' | \
   xargs -l basename | \
   parallel -j4 --env rt -C' ' '
   (
     echo SNP A1 A2 freq b se p N;
     gunzip -c $rt/{}-1.tbl.gz | \
-    awk "(NR>1 && \$18>50) {print \$3, \$4, \$5, \$6, \$10, \$11, 10^\$12, \$18}"
+    awk "(NR>1 && \$18>50) {print \$3, toupper(\$4), toupper(\$5), \$6, \$10, \$11, 10^\$12, \$18}"
   ) > $rt/{}.ma
   '
 }
