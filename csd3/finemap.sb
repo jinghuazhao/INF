@@ -49,7 +49,7 @@ export N=4994
 awk '{print $1} ' ${pr}.z0 > ${pr}.incl
 
 # bgen
-qctool -g ${bfile}.bed -filetype binary_ped -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
+qctool -g ${bfile}.bgen -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
 
 # bgi
 bgenix -g ${pr}.bgen -index -clobber
