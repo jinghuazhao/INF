@@ -6,7 +6,7 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 # snpid - rsid mapping
 
 seq 22 | parallel --env f -j1 -C' ' '(cat csd3/ld-map.hdr;awk -f csd3/ld-map.awk ${f}{}.bim) > work/INTERVAL-{}.map'
-cat $(seq 22 | awk '{printf "work/INTERVAL-" $1 ".map "}') | awk '{print $8,$7}' | sort -k1,1 | gzip -f > ~/INTERVAL.rsid.gz
+cat $(seq 22 | awk '{printf "work/INTERVAL-" $1 ".map "}') | awk -vOFS="\t" '{print $8,$7}' | sort -k1,1 | gzip -f > ~/INTERVAL.rsid.gz
 
 # bgen + bgen.bgi
 
