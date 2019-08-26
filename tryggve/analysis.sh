@@ -226,7 +226,7 @@ function fp()
   awk 'NR>1' | \
   sort -k1,1 | \
   uniq | \
-  join work/INTERVAL.rsid - > INF1.rsid
+  join -a2 work/INTERVAL.rsid - > INF1.rsid
   (
     cat work/sumstats.hdr
     awk 'NR>1' INF1.tbl | \
@@ -272,7 +272,7 @@ function fp()
     METAL_forestplot(tbl,all,rsid,"INF1.fp.pdf",width=8.75,height=5)
   END
   exit
-  grep I2 INF1.log | awk '{gsub(/prot|=|MarkerName|Q|df|p|lower.I2|upper.I2|I2/,"");print}' > INF1.Q
+  grep I2 INF1.fp.log | awk '{gsub(/prot|=|MarkerName|Q|df|p|lower.I2|upper.I2|I2/,"");print}' > INF1.Q
 }
 
 function aild()
