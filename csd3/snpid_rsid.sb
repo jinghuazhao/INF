@@ -27,7 +27,7 @@ export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export bfile=${INF}/INTERVAL/INTERVAL
 export sample=o5000-inf1-outlier_in-r2.sample
-export snpid_rsid=${INF}/INTERVAL/INTERVAL.rsid
+export snpid_rsid=${INF}/work/INTERVAL.rsid
 
 cd work
 # unpruned
