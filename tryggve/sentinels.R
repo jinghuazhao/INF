@@ -1,5 +1,6 @@
 options(echo=FALSE)
 
+library(gap)
 prot <- Sys.getenv("prot")
 tag <- Sys.getenv("tag")
 p <- read.delim(paste0("work/",prot,tag,".p"),as.is=TRUE)

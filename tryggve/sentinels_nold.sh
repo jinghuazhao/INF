@@ -1,4 +1,4 @@
-# 25-8-2019 JHZ
+# 26-8-2019 JHZ
 
 module load bedtools/2.27.1
 export tag=_nold
@@ -48,7 +48,8 @@ function _HLA()
 function sentinels()
 # 3. find sentinels
 {
-  R.3.3.1
+  module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.3.1-ICC-MKL
+  export R_LIBS=/home/jinhua/R:$R_LIBS
   for prot in $(ls work/*${tag}.p | sed 's|work/||g;s|'"$tag"'.p||g')
   do 
     export prot=${prot}
