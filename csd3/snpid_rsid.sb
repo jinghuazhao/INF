@@ -26,7 +26,7 @@ export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export bfile=${INF}/INTERVAL/INTERVAL
-export sample=o5000-inf1-outlier_in-r2.sample
+export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 
 cd work
@@ -42,22 +42,23 @@ R --no-save -q <<END
     save(snpid_rsid, file=paste0(f,".rda"))
 END
 
+module load plink/2.00-alpha
 # pruned
-plink-1.9 --bgen ${bfile}.bgen --sample ${sample} \
-          --snp ${r} \
-          --window 1000 \
-          --maf 0.01 \
-          --indep-pairwise 1000kb 1 0.8 \
-          --out ${dir}/${pr}
+plink2  --bgen ${bfile}.bgen -sample ${sample} \
+        --snp ${r} \
+        --window 1000 \
+        --maf 0.01 \
+        --indep-pairwise 1000kb 1 0.8 \
+        --out ${dir}/${pr}
 if [ $(grep ${r} ${dir}/${pr}.prune.in | wc -l) -eq 0 ]; then
    (
      echo ${r}
      cat ${dir}/${pr}.prune.in
    ) > $TMPDIR/${pr}
-   plink-1.9 --bfile ${bfile}.bgen \
-             --extract $TMPDIR/${pr} \
-             --r square \
-             --out $TMPDIR/${pr}
+   plink2 --bgen ${bfile} -sample ${sample} \
+          --extract $TMPDIR/${pr} \
+          --r square \
+          --out $TMPDIR/${pr}
    export i=$(paste $TMPDIR/${pr} $TMPDIR/${pr}.ld | cut -f1,2 | sort -r -k2,2g | awk 'NR==1 {print $1}')
    sed -i 's/'"$i"'/'"$r"'/g' ${dir}/${pr}.prune.in
 fi
