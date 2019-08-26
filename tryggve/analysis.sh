@@ -1,4 +1,4 @@
-# 23-8-2019 JHZ
+# 26-8-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -228,7 +228,7 @@ function fp()
   uniq | \
   join work/INTERVAL.rsid - > INF1.rsid
   (
-    cat work/sumstat.hdr
+    cat work/sumstats.hdr
     awk 'NR>1' INF1.tbl | \
     cut -f1,3,13 | \
     awk '{split($1,a,":");print a[1],$2,$3}' | \
