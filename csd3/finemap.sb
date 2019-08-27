@@ -5,15 +5,15 @@
 #SBATCH --job-name=_finemap
 #SBATCH --time=12:00:00
 #SBATCH --partition=skylake
-#SBATCH --array=1-146%15
+#SBATCH --array=1-192%15
 #SBATCH --mem=128800
-#SBATCH --output=work/_finemap_%A_%a.out
-#SBATCH --error=work/_finemap_%A_%a.err
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_finemap_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_finemap_%A_%a.err
 #SBATCH --export ALL
 
+export job=${SLURM_ARRAY_TASK_ID}
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
-export job=${SLURM_ARRAY_TASK_ID}
 export bindir=/rds-d4/user/jhz22/hpc-work/bin
 export dir=${INF}/work
 export list=${dir}/INF1_nold.sentinels
@@ -27,7 +27,7 @@ export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export bfile=${INF}/INTERVAL/INTERVAL
-export sample=o5000-inf1-outlier_in-r2.sample
+export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 export study=INTERVAL
 export N=4994
