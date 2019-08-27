@@ -35,5 +35,7 @@ qctool -g work/INTERVAL.bgen -s ${f}10.sample -ofiletype binary_ped -og work/INT
 join -v2 <(cat $(seq 22 | \
            awk '{printf "INTERVAL/INTERVAL-" $1 ".map "}') | \
            awk -vOFS="\t" '!($9==19 && $10 >= 53296855 && $10 < 54500000){print $8,$7}' | \
-           sort -k1,1) dup.rmdup.list | > work/INTERVAL.rsid
+           sort -k1,1) \
+         <(sort -k1,1 dup.rmdup.list) \
+         > work/INTERVAL.rsid
 
