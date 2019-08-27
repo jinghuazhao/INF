@@ -1,4 +1,4 @@
-# 24-8-2019 JHZ
+# 27-8-2019 JHZ
 
 {
   OFS="\t"
@@ -23,7 +23,7 @@
      RSQ="NA"
      RSQ_IMP=$9
      IMP="NA"
-     if (RSQ_IMP>0.3 && !(CHR==19 && POS >= 54296855 && POS < 54500000))
+     if (RSQ_IMP>0.3 && !(CHR==19 && POS >= 53296855 && POS < 54500000))
         print SNPID,CHR,POS,STRAND,N,EFFECT_ALLELE,REFERENCE_ALLELE,CODE_ALL_FQ,BETA,SE,PVAL,RSQ,RSQ_IMP,IMP
   }
 }
