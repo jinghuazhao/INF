@@ -63,4 +63,4 @@
 
 # drop header but avoid order.awk so as to make up for addinfo.awk
 
-# exclusion of NLRP12 -- CHR19:54296855-54311176
+# exclusion of NLRP12 -- chr19:54296855-54311176
