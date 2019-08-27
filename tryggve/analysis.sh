@@ -1,4 +1,4 @@
-# 26-8-2019 JHZ
+# 27-8-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -121,7 +121,7 @@ function ma()
 {
   echo "--> .ma"
   export rt=$HOME/INF/METAL
-  ls METAL/*.tbl.gz | \
+  ls $rt/*.tbl.gz | \
   sed 's/-1.tbl.gz\*//g' | \
   xargs -l basename | \
   parallel -j4 --env rt -C' ' '
@@ -129,7 +129,7 @@ function ma()
     echo SNP A1 A2 freq b se p N;
     gunzip -c $rt/{}-1.tbl.gz | \
     awk "(NR>1 && \$18>50) {print \$3, toupper(\$4), toupper(\$5), \$6, \$10, \$11, 10^\$12, \$18}"
-  ) > $rt/{}.ma
+  ) > work/{}.ma
   '
 }
 sed 's/\t/\n/g' work/METAL.hdr| awk '{print "# " NR " " $1}'
