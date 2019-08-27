@@ -226,7 +226,7 @@ function fp()
   awk 'NR>1' | \
   sort -k1,1 | \
   uniq | \
-  join -a2 work/INTERVAL.rsid - > INF1.rsid
+  join -a2 -e "-" work/INTERVAL.rsid - > INF1.rsid
   (
     cat work/sumstats.hdr
     awk 'NR>1' INF1.tbl | \
