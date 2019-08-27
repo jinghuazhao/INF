@@ -26,7 +26,7 @@ export sumstats=${INF}/sumstats/INTERVAL/INTERVAL.${p}.gz
 export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
-export bfile=${INF}/INTERVAL/INTERVAL
+export bfile=${INF}/work/INTERVAL
 export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export study=INTERVAL
 export N=4994

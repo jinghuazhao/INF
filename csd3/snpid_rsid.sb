@@ -25,7 +25,7 @@ export pr=${p}-${r}
 export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
-export bfile=${INF}/INTERVAL/INTERVAL
+export bfile=${INF}/work/INTERVAL
 export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 
@@ -33,7 +33,7 @@ cd work
 # unpruned
 awk -vchr=$chr -vlower=$start -vupper=$end '$1==chr && $4>=lower && $4 < upper{print $2}' ${bfile}.bim | \
 sort -k1,1 > ${pr}
-join -a2 ${snpid_rsid} ${pr} > ${pr}.rsid
+join ${snpid_rsid} ${pr} > ${pr}.rsid
 R --no-save -q <<END
     f <- Sys.getenv("pr")
     snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)

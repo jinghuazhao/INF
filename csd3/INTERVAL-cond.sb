@@ -15,7 +15,7 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' INTERVAL/INTERVAL_nold.sentinels)
 export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' INTERVAL/INTERVAL_nold.sentinels)
-export bfile=${INF}/INTERVAL/INTERVAL
+export bfile=${INF}/work/INTERVAL
 export pr=${p}-${r}
 
 if [ -f INTERVAL/${pr}.cma.cojo ]; then rm INTERVAL/${pr}.cma.cojo; fi
