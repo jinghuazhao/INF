@@ -38,4 +38,4 @@ qctool -g INTERVAL/INTERVAL.bgen -incl-rsids work/INTERVAL.snpid -threads 5 -og 
 
 ## bed + bim + fam
 
-qctool -g work/INTERVAL.bgen -s ${f}10.sample -threads 5 -ofiletype binary_ped -og work/INTERVAL
+qctool -g work/INTERVAL.bgen -s INTERVAL/o5000-inf1-outlier_out-r2.sample -threads 5 -ofiletype binary_ped -og work/INTERVAL
