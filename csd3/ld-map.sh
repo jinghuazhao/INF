@@ -22,14 +22,6 @@ cat-bgen -g $(seq 22|awk '{printf "INTERVAL/INTERVAL-" $1 ".bgen "}') -og INTERV
 module load plink/2.00-alpha
 plink2 --bgen INTERVAL/INTERVAL.bgen -sample o5000-inf1-outlier_out-r2.sample --rm-dup force-first list --out dup
 
-## bgen
-
-qctool -g INTERVAL/INTERVAL.bgen -excl-range 19:53296855-54500000 -excl-rsids dup.rmdup.list -threads 5 -og work/INTERVAL.bgen
-
-## bed + bim + fam
-
-qctool -g work/INTERVAL.bgen -s ${f}10.sample -threads 5 -ofiletype binary_ped -og work/INTERVAL
-
 ## snpid - rsid
 
 join -v1 <(cat $(seq 22 | \
@@ -38,4 +30,12 @@ join -v1 <(cat $(seq 22 | \
            sort -k1,1) \
          <(sort -k1,1 dup.rmdup.list) \
          > work/INTERVAL.rsid
+cut -d' ' -f1 work/INTERVAL.rsid > work/INTERVAL.snpid
 
+## bgen
+
+qctool -g INTERVAL/INTERVAL.bgen -excl-range 19:53296855-54500000 -excl-rsids dup.rmdup.list -threads 5 -og work/INTERVAL.bgen
+
+## bed + bim + fam
+
+qctool -g work/INTERVAL.bgen -s ${f}10.sample -threads 5 -ofiletype binary_ped -og work/INTERVAL
