@@ -20,7 +20,7 @@ cat-bgen -g $(seq 22|awk '{printf "INTERVAL/INTERVAL-" $1 ".bgen "}') -og INTERV
 # version with no duplicates and extended (chr19:53296855-54500000) NLRP12 region (chr19:54296855-54311176) in work/ directory
 
 module load plink/2.00-alpha
-plink2 --bgen INTERVAL/INTERVAL.bgen -sample o5000-inf1-outlier_out-r2.sample --rm-dup force-first list --out dup
+plink2 --bgen INTERVAL/INTERVAL.bgen -sample INTERVAL/o5000-inf1-outlier_out-r2.sample --rm-dup force-first list --out dup
 
 ## snpid - rsid
 
@@ -34,7 +34,7 @@ cut -d' ' -f1 work/INTERVAL.rsid > work/INTERVAL.snpid
 
 ## bgen
 
-qctool -g INTERVAL/INTERVAL.bgen -excl-range 19:53296855-54500000 -excl-rsids dup.rmdup.list -threads 5 -og work/INTERVAL.bgen
+qctool -g INTERVAL/INTERVAL.bgen -incl-rsids work/INTERVAL.snpid -threads 5 -og work/INTERVAL.bgen
 
 ## bed + bim + fam
 
