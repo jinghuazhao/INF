@@ -24,11 +24,11 @@ plink2 --bgen INTERVAL/INTERVAL.bgen -sample o5000-inf1-outlier_out-r2.sample --
 
 ## bgen
 
-qctool -g INTERVAL/INTERVAL.bgen -excl-range 19:53296855-54500000 -excl-rsids dup.rmdup.list -og work/INTERVAL.bgen
+qctool -g INTERVAL/INTERVAL.bgen -excl-range 19:53296855-54500000 -excl-rsids dup.rmdup.list -threads 5 -og work/INTERVAL.bgen
 
 ## bed + bim + fam
 
-qctool -g work/INTERVAL.bgen -s ${f}10.sample -ofiletype binary_ped -og work/INTERVAL
+qctool -g work/INTERVAL.bgen -s ${f}10.sample -threads 5 -ofiletype binary_ped -og work/INTERVAL
 
 ## snpid - rsid
 
