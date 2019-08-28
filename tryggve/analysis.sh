@@ -458,6 +458,20 @@ function lambda()
   grep GC.lambda work/INF1.lambda.log | \
   grep -v gc.lambda | \
   sed 's/GC.lambda=//g' > work/INF1.lambda.dat
+  R --no-save -q <<\ \ END
+    t <- subset(read.table("INF1.lambda.dat",as.is=TRUE, col.names=c("prot","lambda")),!is.na(lambda))
+    ord <- with(t, order(lambda))
+    print(t[ord, c("prot","lambda")], row.names=FALSE)
+    png("INF1.lambda.png", res=300, units="in", width=12, height=8)
+    np <- nrow(t)
+    with(t[ord,], {
+        plot(t, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(lambda))
+        xtick <- seq(1, np, by=1)
+        axis(side=1, at=xtick, labels = FALSE)
+        text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.5)
+    })
+    dev.off()
+  END
 }
 
 $1
