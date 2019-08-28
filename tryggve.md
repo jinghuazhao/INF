@@ -63,7 +63,7 @@ then one invokes R.3.5.3 when necessary.
 # This could be very slow
 function R.3.5.3()
 {
-  export R_LIBS=/data/$USER/R:$HOME/R:/services/tools/R/3.5.3-ICC-MKL/lib64/R/library
+  export R_LIBS=/data/$USER/R:/services/tools/R/3.5.3-ICC-MKL/lib64/R/library
   module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 lapack/3.8.0 R/3.5.3-ICC-MKL
   source /data/jinhua/parallel-20190222/bin/env_parallel.bash
   alias R='/services/tools/R/3.5.3-ICC-MKL/bin/R -q $@'
