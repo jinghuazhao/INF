@@ -1,4 +1,4 @@
-# 27-8-2019 JHZ
+# 28-8-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -356,7 +356,7 @@ R -q --no-save <<END
 END
 }
 
-function h2()
+function pve()
 {
 R -q --no-save -q <<END
   t <- read.delim("INF1.tbl",as.is=TRUE)
@@ -376,7 +376,7 @@ R -q --no-save -q <<END
   sink("h2.dat")
   print(h2[ord, c("prot","h2","sd","m")], row.names=FALSE)
   sink()
-  png("h2.png", res=300, units="in", width=6, height=4)
+  png("pve.png", res=300, units="in", width=6, height=4)
   np <- nrow(h2)
   with(h2[ord,], {
     plot(h2, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(h^2))
