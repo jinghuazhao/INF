@@ -465,7 +465,7 @@ function lambda()
     png("INF1.lambda.png", res=300, units="in", width=12, height=8)
     np <- nrow(t)
     with(t[ord,], {
-        plot(t, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(lambda))
+        plot(lambda, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(lambda))
         xtick <- seq(1, np, by=1)
         axis(side=1, at=xtick, labels = FALSE)
         text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.5)
