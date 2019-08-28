@@ -452,7 +452,7 @@ function lambda()
       protein <- Sys.getenv("protein")
       gz <- gzfile(paste0("work/INF1.",protein,".p.gz"))
       p <- 10^read.delim(gz,as.is=TRUE)
-      cat(protein,"GC.lambda=",gc.lambda(with(p,P.value)),"\n")
+      cat(protein,"GC.lambda=",gc.lambda(with(p,10^log.P.)),"\n")
   END'
   ) > work/INF1.lambda.log
   grep GC.lambda work/INF1.lambda.log | \
