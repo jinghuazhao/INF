@@ -27,7 +27,7 @@ gcta-1.9 --mbfile gsmr_ref_data --gsmr-file gsmr_$p gsmr_FEV1 \
 
 R --no-save -q <<END
   p <- Sys.getenv("p")
-  source("http://cnsgenomics.com/software/gcta/static/gsmr_plot.r")
+  source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
   gsmr_data <- read_gsmr_data(paste0("gsmr_FEV1_",p,".eff_plot.gz"))
   gsmr_summary(gsmr_data)
   pdf(paste0("gsmr_FEV1_",p,".eff_plot.pdf"))
