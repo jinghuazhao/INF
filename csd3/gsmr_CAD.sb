@@ -23,14 +23,14 @@ echo $p $INF/work/$p.ma > gsmr_$p
 gcta-1.9 --mbfile gsmr_ref_data --gsmr-file gsmr_$p gsmr_outcome \
          --gsmr-direction 0 \
          --clump-r2 0.05 --gwas-thresh 5e-8 --heidi-thresh 0.01 --gsmr-snp-min 10 --effect-plot \
-         --out gsmr_result_$p
+         --out gsmr_CAD_$p
 
 R --no-save -q <<END
   p <- Sys.getenv("p")
   source("http://cnsgenomics.com/software/gcta/static/gsmr_plot.r")
   gsmr_data <- read_gsmr_data(paste0("gsmr_result_",p,".eff_plot.gz"))
   gsmr_summary(gsmr_data)
-  pdf(paste0("gsmr_result_",p,".eff_plot.pdf"))
+  pdf(paste0("gsmr_CAD_",p,".eff_plot.pdf"))
   plot_gsmr_effect(gsmr_data, p, "CAD", colors()[75])
   dev.off()
 END
