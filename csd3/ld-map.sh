@@ -23,7 +23,8 @@ module load plink/2.00-alpha
 plink2 --bgen INTERVAL/INTERVAL.bgen -sample INTERVAL/o5000-inf1-outlier_out-r2.sample --rm-dup force-first list --out dup
 
 ## snpid - rsid with no duplicates and NLRP12
-## It is considerably shorter than those from fully imputed/genotyped data (tryggve/snpid-rsid.sh), which will be used instead.
+## INTERVAL.rsid is part of those from fully imputed/genotyped data (tryggve/snpid-rsid.sh, +34684915), which will used for annotation.
+## INTERVAL.snpid will be used for data extraction from INTERVAL as such.
 
 join -v1 <(cat $(seq 22 | \
            awk '{printf "INTERVAL/INTERVAL-" $1 ".map "}') | \
