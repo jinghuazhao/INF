@@ -1,4 +1,4 @@
-# 29-8-2019 JHZ
+# 30-8-2019 JHZ
 
 export f=INTERVAL/per_chr/interval.imputed.olink.chr_
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -34,7 +34,7 @@ join -v1 <(cat $(seq 22 | \
          > work/INTERVAL.rsid
 cut -d' ' -f1 work/INTERVAL.rsid > work/INTERVAL.snpid
 
-## bgen -- ~30hr, effectively impossible
+## bgen -- >30hr, effectively impossible under HPC
 
 qctool -g INTERVAL/INTERVAL.bgen -incl-rsids work/INTERVAL.snpid -threads 5 -og work/INTERVAL.bgen
 
