@@ -34,10 +34,10 @@ join -v1 <(cat $(seq 22 | \
          > work/INTERVAL.rsid
 cut -d' ' -f1 work/INTERVAL.rsid > work/INTERVAL.snpid
 
-## bgen -- >30hr, effectively impossible under HPC
-
-qctool -g INTERVAL/INTERVAL.bgen -incl-rsids work/INTERVAL.snpid -threads 5 -og work/INTERVAL.bgen
+## bgen -- ~35hr, effectively impossible under HPC
+## Below the bgen file is actually replaced with the version with no duplicates, and there are symbolic links at work/
+## qctool -g INTERVAL/INTERVAL.bgen -incl-rsids work/INTERVAL.snpid -threads 5 -og work/INTERVAL.bgen
 
 ## bed + bim + fam
 
-qctool -g work/INTERVAL.bgen -s INTERVAL/o5000-inf1-outlier_out-r2.sample -threads 5 -ofiletype binary_ped -og work/INTERVAL
+qctool -g INTERVAL.bgen -s o5000-inf1-outlier_out-r2.sample -threads 5 -ofiletype binary_ped -og INTERVAL
