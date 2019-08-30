@@ -1,4 +1,4 @@
-# 29-8-2019 JHZ
+# 30-8-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -59,11 +59,11 @@ function qml()
      mv {}-000002.png {}.lz-2.png
      cd -
   '
-  export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:%PATH
+  export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
   convert OPG.lz-1.png -resize 130% OPG.lz-3.png
   ln -sf /home/jinhua/INF/INF1.fp.pdf
   pdftopng -r 300 -f 133 -l 133 INF1.fp.pdf 133
-  convert 133-000310.png -resize 150% 133.png
+  convert 133-000133.png -resize 150% 133.png
   convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append 133.png -append \) +append OPG-qml.png
 }
 
