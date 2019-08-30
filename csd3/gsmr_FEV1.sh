@@ -1,4 +1,4 @@
-# 7-8-2019 JHZ
+# 19-8-2019 JHZ
 
 if [ -f work/INF1_FEV1.gsmr ]; then rm work/INF1_FEV1.gsmr; fi
 (
