@@ -14,11 +14,11 @@
 cd work
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' inf1.tmp)
-export r=/rds/user/jhz22/hpc-work/results
+export r=/rds/user/jhz22/hpc-work/results/CAD
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 if [ ! -f gsmr_CAD ]; then echo CAD $r/gsmr_CAD.txt > gsmr_CAD; fi
 if [ ! -f gsmr_ref_data ]; then echo $INF/work/INTERVAL > gsmr_ref_data; fi
-echo $p $INF/work/$p.ma > gsmr_$p
+if [ ! -f gsmr_$p ]; then echo $p $INF/work/$p.ma > gsmr_$p; fi
 
 gcta-1.9 --mbfile gsmr_ref_data --gsmr-file gsmr_$p gsmr_CAD \
          --gsmr-direction 0 \
@@ -28,7 +28,7 @@ gcta-1.9 --mbfile gsmr_ref_data --gsmr-file gsmr_$p gsmr_CAD \
 R --no-save -q <<END
   p <- Sys.getenv("p")
   source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
-  gsmr_data <- read_gsmr_data(paste0("gsmr_result_",p,".eff_plot.gz"))
+  gsmr_data <- read_gsmr_data(paste0("gsmr_CAD_",p,".eff_plot.gz"))
   gsmr_summary(gsmr_data)
   pdf(paste0("gsmr_CAD_",p,".eff_plot.pdf"))
   plot_gsmr_effect(gsmr_data, p, "CAD", colors()[75])
