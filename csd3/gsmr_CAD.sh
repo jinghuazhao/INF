@@ -1,6 +1,6 @@
-# 29-8-2019 JHZ
+# 30-8-2019 JHZ
 
-if [ -f work/INF1.gsmr ]; then rm work/INF1.gsmr; fi
+if [ -f work/INF1_CAD.gsmr ]; then rm work/INF1_CAD.gsmr; fi
 (
   cat work/gsmr_CAD*.gsmr | \
   head -1
@@ -11,4 +11,4 @@ if [ -f work/INF1.gsmr ]; then rm work/INF1.gsmr; fi
     fi
   '
 ) | \
-grep -v nan > INF1_CAD.gsmr
+grep -v nan > work/INF1_CAD.gsmr

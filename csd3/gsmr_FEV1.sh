@@ -11,4 +11,4 @@ if [ -f work/INF1_FEV1.gsmr ]; then rm work/INF1_FEV1.gsmr; fi
     fi
   '
 ) | \
-grep -v nan > INF1_FEV1.gsmr
+grep -v nan > work/INF1_FEV1.gsmr
