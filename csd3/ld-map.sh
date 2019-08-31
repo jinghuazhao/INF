@@ -1,4 +1,4 @@
-# 30-8-2019 JHZ
+# 31-8-2019 JHZ
 
 export f=INTERVAL/per_chr/interval.imputed.olink.chr_
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -23,21 +23,21 @@ module load plink/2.00-alpha
 plink2 --bgen INTERVAL/INTERVAL.bgen -sample INTERVAL/o5000-inf1-outlier_out-r2.sample --rm-dup force-first list --out dup
 
 ## snpid - rsid with no duplicates and NLRP12
-## INTERVAL.rsid is part of those from fully imputed/genotyped data (tryggve/snpid-rsid.sh, +34684915), which will used for annotation.
+## INTERVAL.rsid is part of those from fully imputed/genotyped data (tryggve/snpid-rsid.sh, +34684915), which can be used for annotation.
 ## INTERVAL.snpid will be used for data extraction from INTERVAL as such.
 
 join -v1 <(cat $(seq 22 | \
            awk '{printf "INTERVAL/INTERVAL-" $1 ".map "}') | \
            awk -vOFS="\t" '!($9==19 && $10 >= 53296855 && $10 < 54500000){print $8,$7}' | \
            sort -k1,1) \
-         <(sort -k1,1 dup.rmdup.list) \
+         <(sort -k1,1 INTERVAL/dup.rmdup.list) \
          > work/INTERVAL.rsid
 cut -d' ' -f1 work/INTERVAL.rsid > work/INTERVAL.snpid
 
-## bgen -- ~35hr, effectively impossible under HPC
-## Below the bgen file is actually replaced with the version with no duplicates, and there are symbolic links at work/
+## bgen -- ~35hr, nearly impossible under HPC
 ## qctool -g INTERVAL/INTERVAL.bgen -incl-rsids work/INTERVAL.snpid -threads 5 -og work/INTERVAL.bgen
 
 ## bed + bim + fam
 
+## The bgen file below has no duplicates
 qctool -g INTERVAL.bgen -s o5000-inf1-outlier_out-r2.sample -threads 5 -ofiletype binary_ped -og INTERVAL
