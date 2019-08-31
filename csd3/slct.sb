@@ -31,5 +31,5 @@ gcta-1.9 --bfile ${bfile} \
          --out ${pr}
 
 export snpid_rsid=${pr}
-if [ -f ${pr}.jma.cojo ]; then R --no-save -q < ${INF}/csd3/gcta.R > ${pr}-gcta.log; fi
+if [ -f ${pr}.jma.cojo ]; then R --no-save -q < ${INF}/csd3/slct.R > ${pr}-slct.log; fi
 cd -
