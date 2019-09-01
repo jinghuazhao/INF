@@ -32,6 +32,7 @@ export snpid_rsid=${INF}/work/INTERVAL.rsid
 export study=INTERVAL
 export N=4994
 
+cd work
 # z0
 (
   zcat ${sumstats} | \
@@ -44,7 +45,7 @@ export N=4994
     if (maf > 0 && maf <= 0.5 && $10 != "NA" && $11 != "NA") print $3, $1, $2, toupper($4), toupper($5), maf, $10, $11
   }
   } ' | \
-  join ${dir}/${pr} -
+  join ${pr} -
 ) > ${pr}.z0
 awk '{print $1} ' ${pr}.z0 > ${pr}.incl
 
@@ -80,3 +81,5 @@ ${bindir}/finemap --log --sss --in-files ${pr}.master --n-causal-snps 10
 # xlsx
 export snpid_rsid=${pr}
 R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
+
+cd -
