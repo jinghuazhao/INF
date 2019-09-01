@@ -60,7 +60,7 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
 (
   join <(cut -d' ' -f1,4,5 ${pr}.z0 | sort -k1,1) \
        <(qctool -g ${pr}.bgen -filetype bgen -snp-stats -osnp - | \
-         awk '!/\#/' ${pr}.snp-stats | cut -f2,5,6 | awk 'NR>1' | sort -k1,1) | \
+         awk '!/\#/' | cut -f2,5,6 | awk 'NR>1' | sort -k1,1) | \
   awk '{print $1, ($2!=$4)}'
 ) > ${pr}.flip
 (
