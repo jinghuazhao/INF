@@ -1,4 +1,4 @@
-# 23-7-2019 JHZ
+# 2-9-2019 JHZ
 
 export tag=_nold
 
@@ -65,6 +65,10 @@ function sentinels()
         print
     }' *${tag}.o
   ) | sed 's/,/ /g' > INF1${tag}.sentinels
+  awk '$1 != "total" && NR > 1' INF1${tag}.sentinels.out | wc -l
+  awk '$1 != "total" && NR > 1 && $2 > 0 && $3 == 0' INF1${tag}.sentinels.out | wc -l
+  awk '$1 != "total" && NR > 1 && $2 == 0 && $3 > 0' INF1${tag}.sentinels.out | wc -l
+  awk '$1 != "total" && NR > 1 && $2 > 0 && $3 > 0' INF1${tag}.sentinels.out | wc -l
   cd -
 }
 
