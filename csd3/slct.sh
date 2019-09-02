@@ -10,6 +10,8 @@
     fi'
 ) > INF1.jma
 sed 's/Chr/CHR/g;s/bp/BP/g' INF1.jma > jma
+awk 'NR==1 || $10 <= 5e-10' jma > jma.1
+awk 'NR==1 || $10 > 5e-10 && $15 <= 5e-10' jma > jma.2
 R --no-save -q <<END
   require(gap);require(gap.examples)
   jma <- read.delim("jma", as.is=TRUE)
@@ -37,11 +39,19 @@ R --no-save -q <<END
   sink("INF1.jma.1.out")
   with(cistrans1,table)
   sink()
+  with(cistrans,total)
+  pdf("INF1.jma.1.pdf")
+  circos.cis.vs.trans.plot(hits="jma.1",inf1,"uniprot")
+  dev.off()
 # secondary
   cistrans2 <- cis.vs.trans.classification(subset(hits,p > 5e-10 & pJ <= 5e-10),inf1,"uniprot")
   cis.vs.trans2 <- with(cistrans2,data)
   sink("INF1.jma.2.out")
   with(cistrans2,table)
   sink()
+  with(cistrans,total)
+  pdf("INF1.jma.2.pdf")
+  circos.cis.vs.trans.plot(hits="jma.2",inf1,"uniprot")
+  dev.off()
 END
-rm jma
+rm jma jma.1 jma.2
