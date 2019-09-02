@@ -1,4 +1,4 @@
-# 14-8-2019 JHZ
+# 2-9-2019 JHZ
 
 options(scipen=20, width=2000)
 d <- Sys.getenv("dir")
@@ -9,10 +9,10 @@ ldr <- read.delim(paste0(d,"/",pr,".ldr.cojo"), as.is=TRUE)
 tbl <- jma[setdiff(names(jma),c("b","se","p"))]
 load(paste0(snpid_rsid,".rda"))
 library(gap)
-tbl <- within(tbl, {lp <- log10p(bJ/bJ_se)})
+tbl <- within(tbl, {lp <- logp(bJ/bJ_se)})
 cred <- cs(tbl, log_p="lp", cutoff=0.95)
 require(openxlsx)
-xlsx <- paste0(pr,"-gcta.xlsx")
+xlsx <- paste0(pr,"-slct.xlsx")
 wb <- createWorkbook(xlsx)
 f <- make.names(pr)
 addWorksheet(wb, "jma")
