@@ -1,4 +1,4 @@
-# 14-8-2019 JHZ
+# 2-9-2019 JHZ
 (
   cat work/*jma.cojo | \
   head -1 | \
@@ -16,8 +16,8 @@ R --no-save -q <<END
   primary <- subset(jma,p <= 5e-10)
   secondary <- subset(jma,p > 5e-10 & pJ <= 5e-10)
   print(cbind(nrow(jma),nrow(primary),nrow(secondary)))
-  hits <- merge(jma[c("prot","CHR","BP","SNP")],inf1[c("prot","uniprot")],by="prot")
-  names(hits) <- c("prot","Chr","bp","SNP","uniprot")
+  hits <- merge(jma[c("prot","CHR","BP","SNP","p","pJ")],inf1[c("prot","uniprot")],by="prot")
+  names(hits) <- c("prot","Chr","bp","SNP","p","pJ","uniprot")
 # total
   cistrans <- cis.vs.trans.classification(hits,inf1,"uniprot")
   cis.vs.trans <- with(cistrans,data)
@@ -32,13 +32,13 @@ R --no-save -q <<END
   circos.cis.vs.trans.plot(hits="jma",inf1,"uniprot")
   dev.off()
 # primary
-  cistrans1 <- cis.vs.trans.classification(subset(hits,SNP%in%with(primary,SNP)),inf1,"uniprot")
+  cistrans1 <- cis.vs.trans.classification(subset(hits,p <= 5e-10),inf1,"uniprot")
   cis.vs.trans1 <- with(cistrans1,data)
   sink("INF1.jma.1.out")
   with(cistrans1,table)
   sink()
 # secondary
-  cistrans2 <- cis.vs.trans.classification(subset(hits,SNP%in%with(secondary,SNP)),inf1,"uniprot")
+  cistrans2 <- cis.vs.trans.classification(subset(hits,p > 5e-10 & pJ <= 5e-10),inf1,"uniprot")
   cis.vs.trans2 <- with(cistrans2,data)
   sink("INF1.jma.2.out")
   with(cistrans2,table)
