@@ -16,6 +16,8 @@ ldstore --bcor ${pr} --matrix ${pr}.ld
 # ldstore-2 (and finemap-1.4)
 
 ldstore-2 --in-files ${pr}.master2 --write-bcor --write-bdose
+
+finemap-1.4 --sss --in-files ${pr}.master2 --n-causal-snps 10
 ```
 where ${pr}.master2 contains two lines,
 ```
