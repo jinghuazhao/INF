@@ -1,4 +1,4 @@
-# 31-8-2019 JHZ
+# 5-9-2019 JHZ
 
 export f=INTERVAL/per_chr/interval.imputed.olink.chr_
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -7,7 +7,7 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 
 ## snpid - rsid mapping
 
-seq 22 | parallel --env f -j1 -C' ' '(cat csd3/ld-map.hdr;awk -f csd3/ld-map.awk ${f}{}.bim) > INTERVAL/INTERVAL-{}.map'
+seq 22 | parallel --env f -j1 -C' ' '(cat csd3/ld.hdr;awk -f csd3/ld.awk ${f}{}.bim) > INTERVAL/INTERVAL-{}.map'
 
 ## bgen
 
