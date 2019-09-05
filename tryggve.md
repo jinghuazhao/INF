@@ -94,6 +94,7 @@ module load locuszoom/1.4
 
 TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ and its installation described on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
 
+It is then possible to issue `module load gcc/5.4.0 lapack/3.8.0 qctool/2.0.1`.
 
 ## NEW SOFTWARE
 
