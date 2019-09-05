@@ -5,7 +5,7 @@
 * `finemap.sb` and `slct.sb` use the unpruned version.
 * `fm.sb` and `INTERVAL-fm.sb` use a version which only contains pruned variants to comproise `JAM`. The `.z` file is also appropriate for both `finemap` and `JAM`.
 ```bash
-# ldstore-1
+# ldstore v1.1
 
 export pr=IL.6-chr1:154426970_A_C
 
@@ -13,7 +13,7 @@ ldstore --bcor ${pr} --bgen ${pr}.bgen
 ldstore --bcor ${pr} --merge 1
 ldstore --bcor ${pr} --matrix ${pr}.ld
 
-# ldstore-2 (and finemap-1.4)
+# ldstore 2.0b (and finemap-1.4)
 
 ldstore-2 --in-files ${pr}.master2 --write-bcor --write-bdose
 
