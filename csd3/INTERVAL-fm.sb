@@ -107,7 +107,9 @@ function jam()
   R -q --no-save < ${INF}/csd3/jam.R > ${pr}-jam.log
 }
 
+cd work
 init
 finemap
 gcta
 jam
+cd -
