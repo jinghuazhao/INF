@@ -42,7 +42,7 @@ cd work
   {
     if ($1==chr && $2 >= start && $2 < end) {
     if ($6 < 0.5) maf = $6; else maf = 1-$6
-    if (maf > 0 && maf <= 0.5 && $10 != "NA" && $11 != "NA") print $3, $1, $2, toupper($4), toupper($5), maf, $10, $11
+    if (maf > 0 && maf <= 0.5 && $10 != "NA" && $11 != "NA") print $3, $1, $2, toupper($5), toupper($4), maf, $10, $11
   }
   } ' | \
   join ${pr} -
@@ -76,7 +76,7 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
 
 # finemap
 rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
-${bindir}/finemap --log --sss --in-files ${pr}.master --n-causal-snps 10
+${bindir}/finemap --log --sss --in-files ${pr}.master --n-causal-snps 10 --corr-config 0.9 --corr-group 0.9 --group-snps
 
 # xlsx
 export snpid_rsid=${pr}
