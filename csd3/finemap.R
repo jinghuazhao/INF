@@ -1,4 +1,4 @@
-# 6-9-2019 JHZ
+# 7-9-2019 JHZ
 
 options(digits=3, scipen=20, width=500)
 pr <- Sys.getenv("pr")
@@ -11,7 +11,7 @@ snp <- read.table(paste0(pr, ".snp"), as.is=TRUE, header=TRUE)
 snp <- within(snp,{pos<-position/1e6})
 png(paste0(pr,".png"),height=6,width=8,units="in",res=300)
 with(snp, {
-  plot(pos,prob,cex=0.4,xlab="Position",ylab="PIP")
+  plot(pos,prob,cex=0.4,xlab="Position (MB)",ylab="PIP")
   points(pos[prob>0.8],prob[prob>0.8],cex=0.4,col="red")
 })
 dev.off()
