@@ -67,7 +67,7 @@ awk 'NR > 1' ${dir}/${p}.ma | \
 sort -k1,1 | \
 join -j1 - $TMPDIR/${pr}.prune.in | \
 awk '{print $1}' > ${dir}/${pr}.prune
-sort -k1,1 ${snpid_rsid} | join -a2 - ${pr}.prune > ${pr}.prune.rsid
+join -a2 -e "NA" <(sort -k1,1 ${snpid_rsid}) ${pr}.prune -o2.1,1.2 > ${pr}.prune.rsid
 R --no-save -q <<END
     f <- Sys.getenv("pr")
     snpid_rsid <- read.table(paste0(f,".prune.rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
