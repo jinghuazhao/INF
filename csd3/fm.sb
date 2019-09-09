@@ -30,7 +30,6 @@ export bfile=${INF}/work/INTERVAL
 export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export study=INTERVAL
 export N=4994
-export snpid_rsid=${pr}.prune
 
 function init()
 {
