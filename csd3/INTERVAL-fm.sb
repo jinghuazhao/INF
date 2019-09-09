@@ -45,7 +45,7 @@ function init()
       if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $7, $6, maf, $9, $10
     }
     } ' | \
-    join ${dir}/${pr} -
+    join ${pr} -
   ) > ${pr}.z0
   awk '{print $1} ' ${pr}.z0 > ${pr}.incl
 # bgen
