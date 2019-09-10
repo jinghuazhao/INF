@@ -93,7 +93,7 @@ function bcor2()
 }
 
 # finemap
-rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
+rm -rf ${pr}.cred* ${pr}.dose ${pr}.snp ${pr}.config
 ${bindir}/finemap --sss --in-files ${pr}.master --log --n-causal-snps 10 --corr-config 0.9 --corr-group 0.9 --group-snps
 
 # xlsx
