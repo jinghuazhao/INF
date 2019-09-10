@@ -1,4 +1,4 @@
-# 7-9-2019 JHZ
+# 10-9-2019 JHZ
 
 options(digits=3, scipen=20, width=500)
 pr <- Sys.getenv("pr")
@@ -16,7 +16,6 @@ with(snp, {
 })
 dev.off()
 config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE)
-cred <- read.table(paste0(pr,".cred"),as.is=TRUE,header=TRUE)
 load(paste0(snpid_rsid,".rda"))
 library(openxlsx)
 xlsx <- paste0(pr, "-finemap.xlsx")
@@ -33,6 +32,4 @@ addWorksheet(wb, "pip.plot")
 insertImage(wb, "pip.plot", paste0(pr,".png"),width=16,height=10)
 addWorksheet(wb, paste0(f, ".cfg"))
 writeDataTable(wb, paste0(f, ".cfg"), config)
-addWorksheet(wb, paste0(f, ".cs"))
-writeDataTable(wb, paste0(f, ".cs"), cred)
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)

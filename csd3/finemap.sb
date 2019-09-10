@@ -15,8 +15,7 @@ export job=${SLURM_ARRAY_TASK_ID}
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export bindir=/rds-d4/user/jhz22/hpc-work/bin
-export dir=${INF}/work
-export list=${dir}/INF1_nold.sentinels
+export list=${INF}/work/INF1_nold.sentinels
 export p=$(awk -v job=${job} 'NR==job+1{print $1}' ${list})
 export chr=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
 export pos=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
@@ -70,13 +69,35 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
 
 # master
 (
-  echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
-  echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
+  echo "z;ld;snp;config;cred;log;n_samples"
+  echo "${pr}.z;${pr}.ld;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
 ) > ${pr}.master
+
+# ldstore 1.1
+
+ldstore --bcor ${pr}-1 --bgen ${pr}.bgen
+ldstore --bcor ${pr}-1 --merge 1
+ldstore --bcor ${pr}-1 --matrix ${pr}.ld
+rm ${pr}-1_*
+mv ${pr}-1 ${pr}.bcor
+
+function bcor2()
+# ldstore 2.0b
+{
+  (
+    echo "z;ld;bgen;bgi;bcor;bdose;snp;config;cred;log;n_samples"
+    echo "${pr}.z;${pr}.ld;${pr}.bgen;${pr}.bgi;${pr}.bcor;${pr}.bdose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
+  ) > ${pr}.master2
+  ldstore-2 --in-files ${pr}.master2 --write-bcor
+  ldstore-2 --in-files ${pr}.master2 --bcor-to-text
+}
 
 # finemap
 rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
-${bindir}/finemap --log --sss --in-files ${pr}.master --n-causal-snps 10 --corr-config 0.9 --corr-group 0.9 --group-snps
+${bindir}/finemap --sss --in-files ${pr}.master --log --n-causal-snps 10 --corr-config 0.9 --corr-group 0.9 --group-snps
+
+# zld
+R --no-save -q < ${INF}/csd3/zld.R > ${pr}-zld.log
 
 # xlsx
 export snpid_rsid=${pr}
