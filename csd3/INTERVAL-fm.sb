@@ -5,7 +5,7 @@
 #SBATCH --job-name=_fm_INTERVAL
 #SBATCH --time=12:00:00
 #SBATCH --partition=skylake
-#SBATCH --array=1-110%15
+#SBATCH --array=1-189%15
 #SBATCH --mem=128800
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_fm_%A_%a.out
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_fm_%A_%a.err
@@ -16,7 +16,7 @@ export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export bindir=/rds-d4/user/jhz22/hpc-work/bin
 export dir=${INF}/INTERVAL
-export list=${dir}/INTERVAL_nold.sentinels
+export list=${INF}/work/INF1_nold.sentinels
 export p=$(awk -v job=${job} 'NR==job+1{print $1}' ${list})
 export chr=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
 export pos=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
@@ -46,7 +46,7 @@ function init()
       if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $7, $6, maf, $9, $10
     }
     } ' | \
-    join ${pr} -
+    join $INF/work/${pr} -
   ) > ${pr}.z0
   awk 'NR > 1{print $1} ' ${pr}.z0 > ${pr}.incl
 # bgen
@@ -108,7 +108,7 @@ function jam()
   R -q --no-save < ${INF}/csd3/jam.R > ${pr}-jam.log
 }
 
-cd work
+cd INTERVAL
 init
 finemap
 gcta
