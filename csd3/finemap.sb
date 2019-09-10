@@ -34,7 +34,7 @@ export N=4994
 cd work
 # z0
 (
-  zcat ${sumstats} | head -1
+  zcat ${sumstats} | head -1 | awk '{print $3,$1,$2,$5,$4,"MAF",$10,$11}'
   zcat ${sumstats} | \
   awk 'NR > 1' | \
   sort -k3,3 | \
