@@ -96,11 +96,11 @@ function bcor2()
 rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
 ${bindir}/finemap --sss --in-files ${pr}.master --log --n-causal-snps 10 --corr-config 0.9 --corr-group 0.9 --group-snps
 
-# zld
-R --no-save -q < ${INF}/csd3/zld.R > ${pr}-zld.log
-
 # xlsx
 export snpid_rsid=${pr}
 R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
+
+# zld
+R --no-save -q < ${INF}/csd3/zld.R > ${pr}-zld.log
 
 cd -
