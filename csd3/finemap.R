@@ -1,6 +1,7 @@
-# 10-9-2019 JHZ
+# 11-9-2019 JHZ
 
 options(digits=3, scipen=20, width=500)
+k <- Sys.getenv("k")
 pr <- Sys.getenv("pr")
 snpid_rsid <- Sys.getenv("snpid_rsid")
 cat(pr, "\n")
@@ -16,6 +17,7 @@ with(snp, {
 })
 dev.off()
 config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE)
+cred <- read.table(paste0(pr,".cred"),as.is=TRUE,header=TRUE)
 load(paste0(snpid_rsid,".rda"))
 library(openxlsx)
 xlsx <- paste0(pr, "-finemap.xlsx")
@@ -27,9 +29,13 @@ writeDataTable(wb, "snpid_rsid", snpid_rsid)
 addWorksheet(wb, paste0(f, ".log"))
 writeDataTable(wb, paste0(f, ".log"), as.data.frame(log))
 addWorksheet(wb, paste0(f, ".snp"))
-writeDataTable(wb, paste0(f, ".snp"), snp)
+snpk <- snp[1:k,]
+writeDataTable(wb, paste0(f, ".snp"), snpk)
 addWorksheet(wb, "pip.plot")
 insertImage(wb, "pip.plot", paste0(pr,".png"),width=16,height=10)
 addWorksheet(wb, paste0(f, ".cfg"))
-writeDataTable(wb, paste0(f, ".cfg"), config)
+config1 <- config[1,]
+writeDataTable(wb, paste0(f, ".cfg"), config1)
+addWorksheet(wb, "cred")
+writeDataTable(wb, "cred", cred)
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
