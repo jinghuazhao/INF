@@ -14,6 +14,8 @@ plink --bfile ${rt} \
 plink --bfile ${rt} --extract ${rt}.prune.in --make-bed --out ${rt}.prune
 plink --bfile ${rt}.prune --make-grm-bin --threads 2 --out ${rt}
 
+cut -d' ' -f29- ${s} | head -1 | sed 's/ /\n/g' | awk '{split($1,a,"__"); print a[1]}' > h2.list
+
 sbatch --wait csd3/h2.sb
 
 cd work
