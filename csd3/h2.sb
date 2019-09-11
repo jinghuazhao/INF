@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 #SBATCH --account=PETERS-SL3-CPU
 #SBATCH --ntasks=1
@@ -24,6 +24,6 @@ gcta64 --reml \
        --pheno ${rt}.pheno \
        --covar ${rt}.covar \
        --qcovar ${rt}.qcovar \
-       --mpheno ${SLURM_ARRAY_TASK_ID} \
+       --mpheno ${job} \
        --thread-num 2 \
        --out ${INF}/work/${p}
