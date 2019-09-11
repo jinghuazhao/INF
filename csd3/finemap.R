@@ -17,7 +17,7 @@ with(snp, {
 })
 dev.off()
 config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE)
-cred <- read.table(paste0(pr,".cred"),as.is=TRUE,header=TRUE)
+if (file.exists(paste0(pr,".cred"))) cred <- read.table(paste0(pr,".cred"),as.is=TRUE,header=TRUE)
 load(paste0(snpid_rsid,".rda"))
 library(openxlsx)
 xlsx <- paste0(pr, "-finemap.xlsx")
@@ -36,6 +36,8 @@ insertImage(wb, "pip.plot", paste0(pr,".png"),width=16,height=10)
 addWorksheet(wb, paste0(f, ".cfg"))
 config1 <- config[1,]
 writeDataTable(wb, paste0(f, ".cfg"), config1)
-addWorksheet(wb, "cred")
-writeDataTable(wb, "cred", cred)
+if (exists(cred) {
+  addWorksheet(wb, "cred")
+  writeDataTable(wb, "cred", cred)
+}
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
