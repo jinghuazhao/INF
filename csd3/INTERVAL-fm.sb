@@ -14,7 +14,6 @@
 export job=${SLURM_ARRAY_TASK_ID}
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export TMPDIR=/rds/user/jhz22/hpc-work/work
-export bindir=/rds-d4/user/jhz22/hpc-work/bin
 export dir=${INF}/INTERVAL
 export list=${INF}/work/INF1_nold.sentinels
 export p=$(awk -v job=${job} 'NR==job+1{print $1}' ${list})
@@ -75,7 +74,7 @@ function finemap()
   ) > ${pr}.master
 # finemap
   rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
-  ${bindir}/finemap --log --sss --in-files ${pr}.master --n-causal-snps 10 --corr-config 0.9 --corr-group 0.9 --group-snps
+  finemap-1.3.1 --log --sss --in-files ${pr}.master --n-causal-snps 10 --corr-config 0.9 --corr-group 0.9 --group-snps
   R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
 }
 
