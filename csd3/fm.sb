@@ -74,7 +74,7 @@ function finemap()
   ) > ${pr}.master
 # finemap
   rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
-  finemap-1.3.1 --log --sss --in-files ${pr}.master --n-causal-snps 10 --corr-config 0.9 --corr-group 0.9 --group-snps
+  finemap-1.3.1 --log --sss --in-files ${pr}.master --n-causal-snps 10 --corr-config 0.999 --corr-group 0.999 --group-snps
   R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
 }
 
