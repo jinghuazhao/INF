@@ -90,6 +90,15 @@ module load anaconda2/4.4.0
 module load locuszoom/1.4
 ```
 
+### finemap/ldstore
+
+finemap 1.3.1 and ldstore 1.1 are available from /data/jinhua and can be enabled as follows,
+```bash
+ln -fs /data/jinhua/ldstore_v1.1_x86_64/ $HOME/bin/ldstore_v1.1
+ls -fs /data/jinhua/finemap_v1.3.1_x86_64/ $HOME/bin/finemap_v1.3.1
+````
+finemap 1.4 and ldstore 2.0b are available from /data/jinhua/finemap-1.4.
+
 ### qctool
 
 TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ and its installation described on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
