@@ -4,9 +4,9 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 export rt=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/INTERVAL
 export s=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/o5000-inf1-outlier_in-r2.sample
 
-cut -d' ' -f1-2,5-7 ${s} | awk 'NR>2 {$1=NR-2;print}' > ${rt}.covar
-cut -d' ' -f1-2,4,8-28 ${s} | awk 'NR>2 {$1=NR-2;print}' > ${rt}.qcovar
-cut -d' ' -f1-2,29- ${s} | awk 'NR>2 {$1=NR-2;print}' > ${rt}.pheno
+cut -d' ' -f1-2,5-7 ${s} | awk 'NR>2' > ${rt}.covar
+cut -d' ' -f1-2,4,8-28 ${s} | awk 'NR>2' > ${rt}.qcovar
+cut -d' ' -f1-2,29- ${s} | awk 'NR>2' > ${rt}.pheno
 
 plink --bfile ${rt} \
       --exclude range tryggve/high-LD-regions-hg19.txt \
