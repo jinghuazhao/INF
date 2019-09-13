@@ -40,6 +40,6 @@ cut -d' ' -f1 work/INTERVAL.rsid > work/INTERVAL.snpid
 ## bed + bim + fam
 
 ## The bgen file below has no duplicates
-### qctool -g work/INTERVAL.bgen -s INTERVAL/o5000-inf1-outlier_in-r2.sample -threads 5 -ofiletype binary_ped -og INTERVAL/INTERVAL
+### plink2 --bgen work/INTERVAL.bgen -sample INTERVAL/o5000-inf1-outlier_in-r2.sample --make-bed --out INTERVAL/INTERVAL
 
-plink2 --bgen work/INTERVAL.bgen -sample INTERVAL/o5000-inf1-outlier_in-r2.sample --make-bed --out INTERVAL/INTERVAL
+qctool -g work/INTERVAL.bgen -s INTERVAL/o5000-inf1-outlier_in-r2.sample -threads 5 -ofiletype binary_ped -og INTERVAL/INTERVAL

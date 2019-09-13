@@ -94,7 +94,8 @@ function bcor2()
 # finemap
 export k=10
 rm -rf ${pr}.cred* ${pr}.dose ${pr}.snp ${pr}.config
-finemap_v1.3.1 --sss --in-files ${pr}.master --log --n-causal-snps $k --corr-config 0.95 --corr-group 0.9999 --group-snps
+finemap_v1.3.1 --sss --in-files ${pr}.master --log --n-causal-snps $k \
+               --n-configs-top 500 --corr-config 0.95 --corr-group 0.9999 --group-snps
 
 # xlsx
 export snpid_rsid=${pr}
