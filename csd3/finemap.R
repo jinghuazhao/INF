@@ -11,7 +11,7 @@ snp <- read.table(paste0(pr, ".snp"), as.is=TRUE, header=TRUE)
 png(paste0(pr,".png"),height=12,width=8,units="in",res=300)
 par(mfrow=c(2,1))
 with(snp, {
-  plot(pos,prob,cex=0.3,xlab="",ylab="PIP",axes=FALSE)
+  plot(position/1e6,prob,cex=0.3,xlab="",ylab="PIP",axes=FALSE)
   points(position[prob>0.8]/1e6,prob[prob>0.8],cex=0.3,col="red")
   axis(2)
   plot(position/1e6,log10bf,cex=0.3,xlab="Position (MB)", ylab="log10(BF)", axes=FALSE)
