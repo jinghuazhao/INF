@@ -20,7 +20,7 @@ cat-bgen -g $(seq 22|awk '{printf "INTERVAL/INTERVAL-" $1 ".bgen "}') -og INTERV
 ## duplicates
 
 module load plink/2.00-alpha
-plink2 --bgen INTERVAL.bgen -sample INTERVAL/o5000-inf1-outlier_in-r2.sample --rm-dup force-first list --out dup
+plink2 --bgen INTERVAL/INTERVAL.bgen -sample INTERVAL/o5000-inf1-outlier_in-r2.sample --rm-dup force-first list --out dup
 
 ## snpid - rsid with no duplicates and NLRP12
 ## INTERVAL.rsid can alsb be from fully imputed/genotyped data (tryggve/snpid-rsid.sh, +34684915) for annotation.
@@ -40,4 +40,4 @@ cut -d' ' -f1 work/INTERVAL.rsid > work/INTERVAL.snpid
 ## bed + bim + fam
 
 ## The bgen file below has no duplicates
-qctool -g work/INTERVAL.bgen -s o5000-inf1-outlier_in-r2.sample -threads 5 -ofiletype binary_ped -og INTERVAL/INTERVAL
+qctool -g work/INTERVAL.bgen -s INTERVAL/o5000-inf1-outlier_in-r2.sample -threads 5 -ofiletype binary_ped -og INTERVAL/INTERVAL
