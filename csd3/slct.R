@@ -1,11 +1,10 @@
-# 2-9-2019 JHZ
+# 13-9-2019 JHZ
 
 options(scipen=20, width=2000)
-d <- Sys.getenv("dir")
 pr <- Sys.getenv("pr")
 snpid_rsid <- Sys.getenv("snpid_rsid")
-jma <- read.delim(paste0(d,"/",pr,".jma.cojo"),as.is=TRUE)
-ldr <- read.delim(paste0(d,"/",pr,".ldr.cojo"), as.is=TRUE)
+jma <- read.delim(paste0(pr,".jma.cojo"),as.is=TRUE)
+ldr <- read.delim(paste0(pr,".ldr.cojo"), as.is=TRUE)
 tbl <- jma[setdiff(names(jma),c("b","se","p"))]
 load(paste0(snpid_rsid,".rda"))
 library(gap)
