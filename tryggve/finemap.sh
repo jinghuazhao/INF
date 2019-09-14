@@ -38,9 +38,11 @@ cd work
 awk 'NR > 1{print $1} ' ${pr}.z0 > ${pr}.incl
 
 # bgen
-qctool -g ${bfile}.bgen -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
+module load gcc/5.4.0 lapack/3.8.0 qctool/2.0.1
+qctool -g ${bfile}.bed -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
 
 # bgi
+module load bgen/20180807
 bgenix -g ${pr}.bgen -index -clobber
 ln -sf ${pr}.bgen.bgi ${pr}.bgi
 
