@@ -1,4 +1,4 @@
-# 13-9-2019 JHZ
+# 14-9-2019 JHZ
 
 options(digits=3, scipen=20, width=500)
 pr <- Sys.getenv("pr")
@@ -19,7 +19,7 @@ with(snp, {
   axis(2)
 })
 dev.off()
-config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE)
+config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE,nrows=501)
 if (file.exists(paste0(pr,".cred"))) cred <- read.table(paste0(pr,".cred"),as.is=TRUE,header=TRUE)
 load(paste0(snpid_rsid,".rda"))
 library(openxlsx)
