@@ -2,7 +2,7 @@
 
 options(digits=3, scipen=20, width=10000)
 pr <- Sys.getenv("pr")
-z <- read.table(paste0(pr, ".z", as.is=TRUE, header=TRUE)
+z <- read.table(paste0(pr, ".z"), as.is=TRUE, header=TRUE)
 ld <- read.table(paste0(pr, ".ld"),col.names=with(z,rsid))
 snp <- read.table(paste0(pr, ".snp"), as.is=TRUE, header=TRUE)
 z <- subset(snp, abs(z) > 6.47)
