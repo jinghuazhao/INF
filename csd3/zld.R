@@ -1,6 +1,6 @@
 # 15-9-2019 JHZ
 
-function <- chk(z)
+zld <- function(z)
 {
   id <- with(z,index)
   rank <- 1:with(z,length(index))
