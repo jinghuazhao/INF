@@ -74,7 +74,7 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
 
 # ldstore 1.1
 
-ldstore_v1.1 --bcor ${pr}-1 --bgen ${pr}.bgen --n-threads 1
+ldstore_v1.1 --bcor ${pr}-1 --bgen ${pr}.bgen --ld-n-samples-avail-prop 0.95 --n-threads 1
 ldstore_v1.1 --bcor ${pr}-1 --merge 1
 ldstore_v1.1 --bcor ${pr}-1 --matrix ${pr}.ld
 rm ${pr}-1_*
