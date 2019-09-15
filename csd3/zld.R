@@ -4,7 +4,7 @@ zld <- function(z)
 {
   id <- with(z,index)
   rank <- 1:with(z,length(index))
-  ldt <- ld[id,id][rank,rank]
+  ldt <- ld[id,id]
   ldt[upper.tri(ldt, diag=TRUE)] <- NA
   chk <- cbind(rank,z[rank,c("index","rsid","z","log10bf","group","corr_group","prob_group","log10bf_group")],ldt)
 }
@@ -13,7 +13,7 @@ pr <- Sys.getenv("pr")
 z <- read.table(paste0(pr, ".z"), as.is=TRUE, header=TRUE)
 ld <- read.table(paste0(pr, ".ld"),col.names=with(z,rsid))
 snp <- read.table(paste0(pr, ".snp"), as.is=TRUE, header=TRUE)
-z1 <- head(snp, abs(z)>=6.47)
+z1 <- subset(snp, abs(z)>=6.47)
 zld1 <- zld(z1)
 z2 <- head(snp, nrows(z1))
 zld2 <- chk(z2)
