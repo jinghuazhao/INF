@@ -6,7 +6,7 @@ zld <- function(z)
   rank <- 1:with(z,length(index))
   ldt <- ld[id,id]
   ldt[upper.tri(ldt, diag=TRUE)] <- NA
-  chk <- cbind(rank,z[rank,c("index","rsid","z","log10bf","group","corr_group","prob_group","log10bf_group")],ldt)
+  cbind(rank,z[rank,c("index","rsid","z","log10bf","group","corr_group","prob_group","log10bf_group")],ldt)
 }
 options(digits=3, scipen=20, width=10000)
 pr <- Sys.getenv("pr")
