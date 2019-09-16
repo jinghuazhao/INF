@@ -64,14 +64,14 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
   join <(awk 'NR > 1' ${pr}.z0) ${pr}.flip | awk '{if($9==1) {t=$4;$4=$5;$5=t};$7=-$7; print}'
 ) > ${pr}.z
 
-# LD-based finemapping in attempt to save spaces by avoiding .ld
+# LD-based finemapping
 rm -rf ${pr}.cred* ${pr}.log_sss ${pr}.snp ${pr}.config
 function dose_finemap()
 ## ldstore_v1.1 and finemap_v1.3.1
 {
   (
-    echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
-    echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
+    echo "z;bgen;bgi;ld;snp;config;cred;log;n_samples"
+    echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.ld;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
   ) > ${pr}.master
   # ldstore_v1.1 --bcor ${pr}-1 --bgen ${pr}.bgen --ld-n-samples-avail-prop 0.95 --ld-thold 0.01 --n-threads 1
   # ldstore_v1.1 --bcor ${pr}-1 --merge 1
@@ -88,7 +88,6 @@ function dose_finemap()
   echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.bcor;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
 ) > ${pr}.master2
 ldstore_v2.0b --in-files ${pr}.master2 --write-bcor
-ldstore_v2.0b --in-files ${pr}.master2 --bcor-to-text
 finemap_v1.4 --sss --in-files ${pr}.master2 --log --n-causal-snps 10 \
              --corr-config 0.95 --corr-group 0.9999 --group-snps
 
@@ -97,7 +96,8 @@ export snpid_rsid=${pr}
 R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
 
 # zld
-R --no-save -q < ${INF}/csd3/zld.R > ${pr}-zld.log
+ldstore_v2.0b --in-files ${pr}.master2 --bcor-to-text
 gzip -f ${pr}.ld
+R --no-save -q < ${INF}/csd3/zld.R > ${pr}-zld.log
 
 cd -
