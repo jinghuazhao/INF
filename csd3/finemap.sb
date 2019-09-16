@@ -84,8 +84,8 @@ function ld_finemap()
 
 ## ldstore_v2.0b and finemap_v1.4
 (
-  echo "z;bgen;bgi;bcor;snp;config;cred;log;n_samples"
-  echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.bcor;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
+  echo "z;bgen;bgi;bcor;ld;snp;config;cred;log;n_samples"
+  echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.bcor;${pr}.ld;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
 ) > ${pr}.master2
 ldstore_v2.0b --in-files ${pr}.master2 --write-bcor
 finemap_v1.4 --sss --in-files ${pr}.master2 --log --n-causal-snps 10 \
