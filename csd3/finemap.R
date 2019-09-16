@@ -1,8 +1,7 @@
-# 14-9-2019 JHZ
+# 16-9-2019 JHZ
 
 options(digits=3, scipen=20, width=500)
 pr <- Sys.getenv("pr")
-snpid_rsid <- Sys.getenv("snpid_rsid")
 cat(pr, "\n")
 con <- file(paste0(pr, ".log_sss"))
 log <- readLines(con)
@@ -21,7 +20,7 @@ with(snp, {
 dev.off()
 config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE,nrows=501)
 if (file.exists(paste0(pr,".cred"))) cred <- read.table(paste0(pr,".cred"),as.is=TRUE,header=TRUE)
-load(paste0(snpid_rsid,".rda"))
+load(paste0(pr,".rda"))
 library(openxlsx)
 xlsx <- paste0(pr, "-finemap.xlsx")
 unlink(xlsx, recursive = FALSE, force = TRUE)
