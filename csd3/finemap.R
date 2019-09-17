@@ -7,7 +7,7 @@ con <- file(paste0(pr, ".log_sss"))
 log <- readLines(con)
 close(con)
 snp <- read.table(paste0(pr, ".snp"), as.is=TRUE, header=TRUE)
-snp <- snp[setdiff(names(snp),c("chromosome","position","allele1","allele2","beta","se"))]
+snp <- snp[setdiff(names(snp),c("chromosome","position","allele1","allele2","maf","beta","se"))]
 png(paste0(pr,".png"),height=12,width=8,units="in",res=300)
 par(mfrow=c(2,1))
 with(snp, {
