@@ -7,7 +7,6 @@ con <- file(paste0(pr, ".log_sss"))
 log <- readLines(con)
 close(con)
 snp <- read.table(paste0(pr, ".snp"), as.is=TRUE, header=TRUE)
-snp <- snp[setdiff(names(snp),c("chromosome","position","allele1","allele2","maf","beta","se"))]
 png(paste0(pr,".png"),height=12,width=8,units="in",res=300)
 par(mfrow=c(2,1))
 with(snp, {
@@ -19,9 +18,11 @@ with(snp, {
   axis(2)
 })
 dev.off()
-config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE,nrows=101)
+snp <- snp[setdiff(names(snp),c("chromosome","position","allele1","allele2","maf","beta","se"))]
+config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE,nrows=51)
 if (file.exists(paste0(pr,".cred"))) cred <- read.table(paste0(pr,".cred"),as.is=TRUE,header=TRUE)
 load(paste0(pr,".rda"))
+snpid_rsid <- subset(snpid_rsid, rsid%in%with(snp,rsid))
 library(openxlsx)
 xlsx <- paste0(pr, "-finemap.xlsx")
 unlink(xlsx, recursive = FALSE, force = TRUE)
