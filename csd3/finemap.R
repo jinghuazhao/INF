@@ -15,11 +15,13 @@ with(snp, {
   axis(2)
 })
 dev.off()
-snp <- snp[setdiff(names(snp),c("chromosome","position","allele1","allele2","maf","beta","se"))]
 config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE,nrows=31)
 if (file.exists(paste0(pr,".cred"))) cred <- read.table(paste0(pr,".cred"),as.is=TRUE,header=TRUE)
 load(paste0(pr,".rda"))
-snp <- merge(snpid_rsid,snp,by="rsid")
+snp <- within(snp, {rank <- 1:nrow(snp)})
+d <- merge(snpid_rsid,snp,by="rsid",all.y=TRUE)
+ord <-order(with(d,rank))
+snp <- d[ord,setdiff(names(d),c("chromosome","position","allele1","allele2","maf","beta","se","rank"))]
 library(openxlsx)
 xlsx <- paste0(pr, "-finemap.xlsx")
 unlink(xlsx, recursive = FALSE, force = TRUE)
