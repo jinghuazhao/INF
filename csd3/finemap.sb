@@ -92,11 +92,8 @@ finemap_v1.4 --sss --in-files ${pr}.master2 --log --n-causal-snps 10 \
              --corr-config 0.95 --corr-group 0.9999 --group-snps
 
 # xlsx
-R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
-
-# zld
 ldstore_v2.0b --in-files ${pr}.master2 --bcor-to-text
 gzip -f ${pr}.ld
-R --no-save -q < ${INF}/csd3/zld.R > ${pr}-zld.log
+R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
 
 cd -
