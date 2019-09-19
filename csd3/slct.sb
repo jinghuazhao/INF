@@ -17,7 +17,7 @@ export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export list=${INF}/work/INF1_nold.sentinels
 export p=$(awk -v job=$job 'NR==job+1{print $1}' ${list})
 export r=$(awk -v job=$job 'NR==job+1{print $4}' ${list})
-export bfile=${INF}/work/INTERVAL
+export bfile=${INF}/work/EUR
 export pr=${p}-${r}
 
 cd ${INF}/work
