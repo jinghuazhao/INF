@@ -43,7 +43,7 @@ END
 
 module load plink/2.00-alpha
 # pruned
-plink2  --bgen ${bfile}.bgen -sample ${sample} \
+plink2  --bfile ${bfile} \
         --snp ${r} \
         --window 1000 \
         --maf 0.01 \
