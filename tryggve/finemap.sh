@@ -14,8 +14,7 @@ export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export bfile=${INF}/EUR
-export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
-export snpid_rsid=${INF}/work/INTERVAL.rsid
+export sample=${INF}/work/o5000-inf1-outlier_in-r2.sample
 export study=INTERVAL
 export N=4994
 
@@ -57,21 +56,24 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
   join <(awk 'NR > 1' ${pr}.z0) ${pr}.flip | awk '{if($9==1) {t=$4;$4=$5;$5=t};$7=-$7; print}'
 ) > ${pr}.z
 
-# master
-(
-  echo "z;ld;snp;config;cred;log;n_samples"
-  echo "${pr}.z;${pr}.ld;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
-) > ${pr}.master
+function ld_finemap()
+# ldstore 1.1 and finemap 1.3.1.
+{
+  (
+    echo "z;ld;snp;config;cred;log;n_samples"
+    echo "${pr}.z;${pr}.ld;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
+  ) > ${pr}.master
+  ldstore_v1.1 --bcor ${pr}-1 --bgen ${pr}.bgen --n-threads 1
+  ldstore_v1.1 --bcor ${pr}-1 --merge 1
+  ldstore_v1.1 --bcor ${pr}-1 --matrix ${pr}.ld
+  rm ${pr}-1_*
+  mv ${pr}-1 ${pr}.bcor
+  rm -rf ${pr}.cred* ${pr}.dose ${pr}.snp ${pr}.config
+  finemap_v1.3.1 --sss --in-files ${pr}.master --log --n-causal-snps 10 \
+               --corr-config 0.95 --corr-group 0.9999 --group-snps
+}
 
-# ldstore 1.1
-
-ldstore_v1.1 --bcor ${pr}-1 --bgen ${pr}.bgen --n-threads 1
-ldstore_v1.1 --bcor ${pr}-1 --merge 1
-ldstore_v1.1 --bcor ${pr}-1 --matrix ${pr}.ld
-rm ${pr}-1_*
-mv ${pr}-1 ${pr}.bcor
-
-function bcor2()
+function ld_finemap2()
 # ldstore 2.0b
 {
   (
@@ -80,19 +82,12 @@ function bcor2()
   ) > ${pr}.master2
   ldstore_v2.0b --in-files ${pr}.master2 --write-bcor
   ldstore_v2.0b --in-files ${pr}.master2 --bcor-to-text
-}
-
-# finemap
-export k=10
-rm -rf ${pr}.cred* ${pr}.dose ${pr}.snp ${pr}.config
-finemap_v1.3.1 --sss --in-files ${pr}.master --log --n-causal-snps $k \
-               --n-configs-top 500 --corr-config 0.95 --corr-group 0.9999 --group-snps
+  finemap_v1.4 --sss --in-files ${pr}.master2 --log --n-causal-snps 10 \
+               --corr-config 0.95 --corr-group 0.9999 --group-snps
+}}
 
 # xlsx
-export snpid_rsid=${pr}
+gzip -f ${pr}.ld
 R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
-
-# zld
-R --no-save -q < ${INF}/csd3/zld.R > ${pr}-zld.log
 
 cd -
