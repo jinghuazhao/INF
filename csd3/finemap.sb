@@ -28,6 +28,7 @@ export bfile=${INF}/work/INTERVAL
 export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 export study=INTERVAL
+export n=3500
 export N=4994
 
 cd work
@@ -37,11 +38,12 @@ cd work
   zcat ${sumstats} | \
   awk 'NR > 1' | \
   sort -k3,3 | \
-  awk -vchr=${chr} -vstart=${start} -vend=${end} '
+  awk -vchr=${chr} -vstart=${start} -vend=${end} -vn=$n '
   {
     if ($1==chr && $2 >= start && $2 < end) {
     if ($6 < 0.5) maf = $6; else maf = 1-$6
-    if (maf > 0 && maf <= 0.5 && $10 != "NA" && $11 != "NA") print $3, $1, $2, toupper($5), toupper($4), maf, $10, $11
+    if (maf > 0 && maf <= 0.5 && $10 != "NA" && $11 != "NA" && $NF >= n)
+       print $3, $1, $2, toupper($5), toupper($4), maf, $10, $11
   }
   } ' | \
   join ${pr} -
