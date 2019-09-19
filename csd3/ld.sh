@@ -43,3 +43,11 @@ cut -d' ' -f1 work/INTERVAL.rsid > work/INTERVAL.snpid
 ### plink2 --bgen work/INTERVAL.bgen -sample INTERVAL/o5000-inf1-outlier_in-r2.sample --make-bed --out INTERVAL/INTERVAL
 
 qctool -g work/INTERVAL.bgen -s INTERVAL/o5000-inf1-outlier_in-r2.sample -threads 5 -ofiletype binary_ped -og INTERVAL/INTERVAL
+
+# UKB IL.6
+
+export position=154426970
+export flank=1000000
+export start=$(bc -l <<<$position-$flank)
+export end=$(bc -l <<<$position+$flank)
+qctool -g /rds-d4/user/jhz22/hpc-work/data/ukb/ukb_imp_chr1_v3.bgen -incl-range $start-$end -og IL.6.bgen
