@@ -70,7 +70,7 @@ join -a2 -e "NA" <(sort -k1,1 ${snpid_rsid}) ${pr}.prune -o2.1,1.2 > ${pr}.prune
 R --no-save -q <<END
     f <- Sys.getenv("pr")
     snpid_rsid <- read.table(paste0(f,".prune.rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
-    nmiss <- with(snpid_rsid,name=="")
+    nmiss <- with(snpid_rsid,is.na(name))
     snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
     save(snpid_rsid, file=paste0(f,".prune.rda"))
 END

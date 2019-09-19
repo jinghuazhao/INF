@@ -50,4 +50,11 @@ export position=154426970
 export flank=1000000
 export start=$(bc -l <<<$position-$flank)
 export end=$(bc -l <<<$position+$flank)
-qctool -g /rds-d4/user/jhz22/hpc-work/data/ukb/ukb_imp_chr1_v3.bgen -incl-range $start-$end -og IL.6.bgen
+export ukbgen=/rds-d4/user/jhz22/hpc-work/data/ukb/ukb_imp_chr1_v3.bgen
+export ukbsample=/rds-d4/user/jhz22/hpc-work/data/ukb/ukb20480_imp_chr1_v3_s487395.sample
+
+qctool -g $ukbgen -incl-range $start-$end -og IL.6.bgen
+
+echo 01 $start $end > IL.6.range
+module load plink/2.00-alpha
+plink2 --bgen $ukbgen --sample $ukbsample --extract range IL.6.range --make-bed --out IL.6
