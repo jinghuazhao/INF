@@ -17,7 +17,7 @@ export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export list=${INF}/work/INF1_nold.sentinels
 export p=$(awk -v job=$job 'NR==job+1{print $1}' ${list})
 export r=$(awk -v job=$job 'NR==job+1{print $4}' ${list})
-export bfile=${INF}/work/EUR
+export bfile=${INF}/EUR
 export pr=${p}-${r}
 
 cd ${INF}/work
@@ -34,3 +34,5 @@ gcta-1.9 --bfile ${bfile} \
 export snpid_rsid=${pr}
 if [ -f ${pr}.jma.cojo ]; then R --no-save -q < ${INF}/csd3/slct.R > ${pr}-slct.log; fi
 cd -
+
+# plink-1.9 --bfile work/EUR --exclude region tryggve/high-LD-regions-hg19.txt --make-bed --out EUR
