@@ -4,9 +4,29 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export tag=_nold
 
-for p in $(ls sentinels/*${tag}.p | sed 's|sentinels/||g;s|'"$tag"'.p||g'); do
+for p in $(ls sentinels/*${tag}.p | sed 's|sentinels/||g;s|'"$tag"'.p||g') | awk 'NR==1'; do
 
 echo $p
+export p=${p}
+R --no-save -q <<END
+  require(Rmpfr)
+  INF <- Sys.getenv("INF")
+  p <- Sys.getenv("p")
+  tag <- Sys.getenv("tag")
+  d <- read.delim(paste0(INF,"/sentinels/",p,tag,".p"))
+  d <- within(d, {
+    CHR <- sub("chr","",Chrom)
+    POS <- End
+    EPACTS <- sprintf("%s:%d_%s/%s",CHR,POS,toupper(Allele1),toupper(Allele2))
+    PVALUE <- as.numeric(2*pnorm(mpfr(-abs(Effect/StdErr),100),lower.tail=TRUE,log.p=FALSE))
+    log10p <- log.P./log(10)
+    prot <- p
+  })[c("MarkerName","EPACTS","CHR","POS","PVALUE","Effect","StdErr","log10p","prot")]
+  write.table(d,file=paste0(INF,"/work/",p,".p"),quote=FALSE,row.names=FALSE,sep="\t")
+END
+
+function dummy()
+{
 awk -v OFS="\t" -v prot=$p '
 {
    if (NR==1) print "MarkerName","EPACTS","CHR","POS","PVALUE","Effect","StdErr","log10p","prot";
@@ -16,6 +36,7 @@ awk -v OFS="\t" -v prot=$p '
      print $4,EPACTS,$1,$3,exp($13),$11,$12,$13/log(10),prot
    }
 }' ${INF}/sentinels/${p}${tag}.p > work/${p}.p
+}
 
 swiss --assoc ${INF}/work/${p}.p \
       --variant-col EPACTS \
