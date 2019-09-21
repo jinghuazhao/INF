@@ -26,7 +26,7 @@ awk 'NR==1 || $7 <= 5e-10' ${p}.ma > ${p}-p.ma
 gcta-1.9 --bfile ${bfile} \
          --cojo-file ${p}-p.ma \
          --extract-region-snp ${r} 1000 \
-         --exclde ${bfile}.dup
+         --exclde ${bfile}.dup \
          --cojo-slct \
          --cojo-p 5e-10 \
          --cojo-collinear 0.9 \
