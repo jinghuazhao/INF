@@ -22,7 +22,7 @@ export pr=${p}-${r}
 
 cd ${INF}/work
 if [ -f ${pr}.jma.cojo ]; then rm ${pr}.jma.cojo ${pr}.ldr.cojo; fi
-awk '{NR==1 || $7 <= 5e-10}' ${p}.ma > ${p}-p.ma
+awk 'NR==1 || $7 <= 5e-10' ${p}.ma > ${p}-p.ma
 gcta-1.9 --bfile ${bfile} \
          --cojo-file ${p}-p.ma \
          --extract-region-snp ${r} 1000 \
