@@ -17,13 +17,14 @@ export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export list=${INF}/work/INF1_nold.sentinels
 export p=$(awk -v job=$job 'NR==job+1{print $1}' ${list})
 export r=$(awk -v job=$job 'NR==job+1{print $4}' ${list})
-export bfile=${INF}/EUR
+export bfile=${INF}/work/INTERVAL1kg
 export pr=${p}-${r}
 
 cd ${INF}/work
 if [ -f ${pr}.jma.cojo ]; then rm ${pr}.jma.cojo ${pr}.ldr.cojo; fi
+awk '{NR==1 || $7 <= 5e-10}' ${p}.ma > ${p}-p.ma
 gcta-1.9 --bfile ${bfile} \
-         --cojo-file ${p}.ma \
+         --cojo-file ${p}-p.ma \
          --extract-region-snp ${r} 1000 \
          --cojo-slct \
          --cojo-p 5e-10 \
