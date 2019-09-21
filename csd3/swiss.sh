@@ -15,7 +15,7 @@ awk -v OFS="\t" '
      EPACTS=$1 ":" $3 "_" toupper($5) "/" toupper($6)
      print $4,EPACTS,$1,$3,exp($13)
    }
-}' ${INF}/sentinels/${p}_${tag}.p > work/${p}.p
+}' ${INF}/sentinels/${p}${tag}.p > work/${p}.p
 
 swiss --assoc ${INF}/work/${p}.p \
       --variant-col EPACTS \
