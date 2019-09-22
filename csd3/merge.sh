@@ -23,8 +23,8 @@ export p=${p}
   cut -f1-5,9,10 | \
   awk -v OFS="\t" '
   {
-    if(NR==1) print "Chrom", "Start", "End", "log10p", "prot", "MarkerName", "check", "CHR", "POS", "SNP", "BP"
-    CHR=sub("chr","",$1)
+    if(NR==1) print "Chrom", "Start", "End", "log10p", "prot", "MarkerName", "log10p_check", "CHR", "POS", "SNP", "BP"
+    CHR=substr($1,4)
     POS=$3
     SNP=$6
     BP=$3
@@ -57,5 +57,38 @@ R --no-save -q <<END
   with(cistrans,total)
   pdf(paste0(rt,".merge.circlize.pdf"))
   circos.cis.vs.trans.plot(hits=paste0(rt,".merge"),inf1,"uniprot")
+  dev.off()
+END
+
+R --no-save -q <<END
+  merge.out <- read.table("INF1.merge.out",as.is=TRUE,header=TRUE)
+  n <- nrow(merge.out)
+  merged <- merge.out[-n,]
+  cis.only <- with(merged,cis>0 & trans==0)
+  trans.only <- with(merged,cis==0 & trans>0)
+  both.cis.and.trans <- with(merged, cis>0 & trans>0)
+  nrow(merged[cis.only,])
+  nrow(merged[trans.only,])
+  nrow(merged[both.cis.and.trans,])
+END
+
+pdftopng -r 300 INF1.merge.circlize.pdf INF1.merge.circlize
+mv INF1.merge.circlize-000001.png INF1.merge.circlize.png
+
+R --no-save -q <<END
+  library(gap)
+  library(Rmpfr)
+  gz <- gzfile("METAL/IL.17C-1.tbl.gz")
+  IL.17C <- within(read.delim(gz,as.is=TRUE), {Z <- Effect/StdErr;P <- as.numeric(2*pnorm(mpfr(abs(Z),100),lower.tail=FALSE))})
+  subset(IL.17C, P==0)
+  png("IL.17C.png", res=300, units="in", width=9, height=6)
+  par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
+  mhtplot.trunc(IL.17C, chr="Chromosome", bp="Position", p="P", snp="MarkerName", z = "Z",
+                suggestiveline=FALSE, genomewideline=-log10(5e-10), logp = TRUE,
+                cex.mtext=0.6, cex.text=0.7,
+                mtext.line=4, y.brk1=200, y.brk2=280, cex.axis=0.6, cex.y=0.6, cex=0.5,
+                y.ax.space=20,
+                col = c("blue4", "skyblue")
+  )
   dev.off()
 END
