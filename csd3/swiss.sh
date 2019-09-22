@@ -1,4 +1,4 @@
-# 21-9-2019 JHZ
+# 22-9-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -60,4 +60,3 @@ R --no-save -q <<END
   circos.cis.vs.trans.plot(hits=paste0(rt,".hits"),inf1,"uniprot")
   dev.off()
 END
-
