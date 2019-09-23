@@ -1,4 +1,4 @@
-# 22-9-2019 JHZ
+# 23-9-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -25,9 +25,11 @@ export p=${p}
   {
     if(NR==1) print "Chrom", "Start", "End", "log10p", "prot", "MarkerName", "log10p_check", "CHR", "POS", "SNP", "BP"
     CHR=substr($1,4)
-    POS=$3
+    split($6,noalleles,"_")
+    split(noalleles[1],chrpos,":")
+    POS=chrpos[2]
     SNP=$6
-    BP=$3
+    BP=chrpos[2]
     print $0,CHR,POS,SNP,BP
   }'
 ) > ${INF}/work/${p}.sentinels
