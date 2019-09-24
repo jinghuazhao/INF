@@ -187,6 +187,8 @@ END
 ```
 Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1 via [gap.3.3.1.sh](tryggve/gap.3.3.1.sh) which requires registration of routine `family` (defined in `pfc.f`) altered to `family_` and the change is made as default.
 
+The `fp()` function requires `R.3.3.1` to be called.
+
 **QCGWAS**
 
 The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.
