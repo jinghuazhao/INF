@@ -43,8 +43,9 @@ END
 module load plink/2.00-alpha
 # pruned
 plink2  --bfile ${bfile} \
-        --snp ${r} \
-        --window 1000 \
+        --chr ${$chr} \
+        --from-bp ${start} \
+        --to-bp ${end}
         --maf 0.01 \
         --indep-pairwise 1000kb 1 0.8 \
         --out ${dir}/${pr}
