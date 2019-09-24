@@ -187,7 +187,7 @@ END
 ```
 Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1 via [gap.3.3.1.sh](tryggve/gap.3.3.1.sh) which requires registration of routine `family` (defined in `pfc.f`) altered to `family_` and the change is made as default.
 
-The `fp()` function requires `R.3.3.1` to be called.
+The `fp()` function in `tryggve/analysis.sh` requires `R.3.3.1` to be called.
 
 **QCGWAS**
 
