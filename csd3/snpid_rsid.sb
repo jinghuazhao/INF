@@ -43,7 +43,7 @@ END
 module load plink/2.00-alpha
 # pruned
 plink2  --bfile ${bfile} \
-        --chr ${$chr} \
+        --chr ${chr} \
         --from-bp ${start} \
         --to-bp ${end} \
         --maf 0.01 \
