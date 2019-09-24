@@ -279,7 +279,7 @@ function fp()
     grep I2 INF1.fp.log | \
     awk '{gsub(/prot|=|MarkerName|Q|df|p|lower.I2|upper.I2|I2/,"");print}' | \
     sed '1d'
-  ) | sed 's/  //1' > INF1.Q
+  ) | sed 's/  //1;s/   / /g' > INF1.Q
 }
 
 function aild()
