@@ -4,7 +4,6 @@ export p=IL.6
 export srcdir=/rds-d4/user/jhz22/hpc-work/data/ukb
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 
-module load plink/2.00-alpha
 cd ${INF}
 #
 # will be exceedingly slow
@@ -13,13 +12,9 @@ cd ${INF}
 module load plink/2.00-alpha
 plink2 --bgen ${srcdir}/ukb_imp_chr1_v3.bgen -sample ${srcdir}/ukb20480_imp_chr1_v3_s487395.sample \
        --chr 01 --from-bp 153426970 --to-bp 155426970 --rm-dup force-first list --out dup
-
-function dummy()
-{
 plink2 --bgen ${p}.bgen --sample ${srcdir}/ukb20480_imp_chr1_v3_s487395.sample \
-       --chr 01 --from-bp 153426970 --to-bp 155426970 \
-       --make-bed --out ${p}_nodup
-}
+       --chr 01 --from-bp 153426970 --to-bp 155426970 --exclude dup.rmdup.list \
+       --make-bed --out ${p}
 awk '
 {
    CHR=$1
@@ -29,8 +24,8 @@ awk '
    if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
    else snpid="chr" CHR ":" POS "_" a1 "_" a2
    print snpid, $2
-}' ${p}_nodup.bim > ${p}.id
+}' ${p}.bim > ${p}.id
 
-plink --bfile ${p}_nodup --update-name ${p}.id 1 2 --exclude ${p}.excl --make-bed --out ${p}_snpid
+plink --bfile ${p} --update-name ${p}.id 1 2 --exclude ${p}.excl --make-bed --out ${p}_snpid
 
 cd -
