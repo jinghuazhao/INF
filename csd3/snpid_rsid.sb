@@ -5,7 +5,7 @@
 #SBATCH --job-name=_snpid_rsid
 #SBATCH --time=12:00:00
 #SBATCH --partition=skylake
-#SBATCH --array=1-189%15
+#SBATCH --array=1-181%15
 #SBATCH --mem=128800
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_snpid_rsid_%A_%a.out
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_snpid_rsid_%A_%a.err
@@ -15,16 +15,15 @@ export job=${SLURM_ARRAY_TASK_ID}
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export dir=${INF}/work
-export list=${dir}/INF1_nold.sentinels
-export p=$(awk -v job=${job} 'NR==job+1{print $1}' ${list})
-export chr=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
-export pos=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
-export r=$(awk -v job=${job} 'NR==job+1{print $4}' ${list})
+export list=${dir}/INF1.merge
+export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
+export chr=$(awk -v job=${job} 'NR==job+1{print $8}' ${list})
+export pos=$(awk -v job=${job} 'NR==job+1{print $9}' ${list})
+export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
+export start=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
+export end=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
 export pr=${p}-${r}
-export flanking=1e6
-export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
-export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
-export bfile=${INF}/work/EUR
+export bfile=${INF}/work/INTERVAL1kg
 export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 
