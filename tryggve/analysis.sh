@@ -1,4 +1,4 @@
-# 23-9-2019 JHZ
+# 24-9-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -274,7 +274,12 @@ function fp()
     METAL_forestplot(tbl,all,rsid,"INF1.fp.pdf",width=8.75,height=5)
   END
   exit
-  grep I2 INF1.fp.log | awk '{gsub(/prot|=|MarkerName|Q|df|p|lower.I2|upper.I2|I2/,"");print}' > INF1.Q
+  (
+    echo  prot MarkerName Q df p I2 lower.I2 upper.I2
+    grep I2 INF1.fp.log | \
+    awk '{gsub(/prot|=|MarkerName|Q|df|p|lower.I2|upper.I2|I2/,"");print}' | \
+    sed '1d'
+  ) | sed 's/  //1' > INF1.Q
 }
 
 function aild()
