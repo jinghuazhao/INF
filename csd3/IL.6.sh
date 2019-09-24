@@ -6,8 +6,8 @@ export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 
 cd ${INF}
 #
-# will be exceedingly slow
-# qctool -bgen ${srcdir}/ukb_imp_chr1_v3.bgen -incl-range 01:153426970-155426970 -ofiletype bgen -og ${p}.bgen
+# exceedingly slow?
+# qctool -g ${srcdir}/ukb_imp_chr1_v3.bgen -incl-range 01:153426970-155426970 -ofiletype bgen -og ${p}.bgen
 #
 module load plink/2.00-alpha
 plink2 --bgen ${srcdir}/ukb_imp_chr1_v3.bgen -sample ${srcdir}/ukb20480_imp_chr1_v3_s487395.sample \
