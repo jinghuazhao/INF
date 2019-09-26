@@ -19,10 +19,10 @@ export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
 export chr=$(awk -v job=${job} 'NR==job+1{print $8}' ${list})
 export pos=$(awk -v job=${job} 'NR==job+1{print $9}' ${list})
 export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
-export pr=${p}-${r}
-export sumstats=${INF}/METAL/${p}-1.tbl.gz
 export start=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
 export end=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
+export pr=${p}-${r}
+export sumstats=${INF}/METAL/${p}-1.tbl.gz
 export bfile=${INF}/work/INTERVAL1kg
 export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export study=INTERVAL
