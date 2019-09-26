@@ -12,10 +12,13 @@
 export list=work/INF1.merge
 export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $5}' ${list})
 export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $6}' ${list})
-export start=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $2}' ${list})
-export end=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $3}' ${list})
 export chr=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $8}' ${list})
 export pos=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $9}' ${list})
+
+export flanking=1e6
+export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
+export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
+
 (
    echo -e "MarkerName\tP-value\tWeight"
    gunzip -c METAL/${p}-1.tbl.gz | \

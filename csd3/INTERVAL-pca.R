@@ -6,7 +6,7 @@ out <- read.table(outfile,skip=2,as.is=TRUE,col.names=colnames)
 dim(out)
 pdf("INTERVAL-pca.pdf")
 ppc <- with(out, princomp(na.omit(out), cor=TRUE))
-screeplot(ppc, npcs=20, type="lines", main="INTERVAL p-PCA(invnorm(protein)) screeplot")
+screeplot(ppc, npcs=20, type="lines", main="INTERVAL proteins PCA(invnorm(protein)) screeplot")
 with(ppc, plot(scores[,1:2], main="INTERVAL PCA(invnorm(protein)) PC1 -- PC2"))
 scores <- out[paste0("PC",1:20)]
 names(scores) <- paste0("Comp.",1:20)
