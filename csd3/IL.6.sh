@@ -1,8 +1,8 @@
-# 25-9-2019 JHZ
+# 27-9-2019 JHZ
 
 export p=IL.6
-export srcdir=/rds-d4/user/jhz22/hpc-work/data/ukb
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+export srcdir=${INF}/ukb
 
 cd ${INF}
 qctool -g ${srcdir}/ukb_imp_chr1_v3.bgen -incl-range 01:153426970-155426970 -ofiletype bgen -og ${p}.bgen
