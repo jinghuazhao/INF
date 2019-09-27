@@ -30,6 +30,8 @@ R --no-save -q <<END
   np <- nrow(h2)
   with(h2[ord,], {
     plot(h2, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(h^2))
+    xy <- xy.coords(h2)
+    segments(xy$x,h2-1.96*se, xy$x,h2+1.96*se)
     xtick <- seq(1, np, by=1)
     axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.01)
     text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.3)
