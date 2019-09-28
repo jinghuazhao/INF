@@ -41,7 +41,7 @@ do
        echo
        echo "awk -v job=\${job} 'NR==job' work/ukb-\${i}.list | bash"
      ) > work/ukb-${i}.sb
-     # sbatch work/ukb-${i}.sb
+     sbatch --wait work/ukb-${i}.sb
   fi; 
 done
 
