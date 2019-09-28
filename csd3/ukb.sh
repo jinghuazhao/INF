@@ -18,6 +18,7 @@ awk -v srcdir=${srcdir} -v flanking=1e6 -v INF=${INF} '
 }' > work/ukb.list
 for i in $(seq 22); 
 do 
+  export i=${i}
   if [ -f ${srcdir}/ukb_imp_chr${i}_v3.bgen ]; then 
      grep chr${i}_ work/ukb.list > work/ukb-${i}.list; 
      export jobs=$(wc -l work/ukb-${i}.list | cut -d' ' -f1)
