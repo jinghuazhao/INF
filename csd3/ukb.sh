@@ -1,4 +1,4 @@
-# 27-9-2019 JHZ
+# 28-9-2019 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export srcdir=${INF}/ukb
@@ -22,6 +22,8 @@ do
      grep chr${i}_ work/ukb.list > work/ukb-${i}.list; 
      export jobs=$(wc -l work/ukb-${i}.list | cut -d' ' -f1)
      (
+       echo \#\!/bin/bash
+       echo
        echo \#SBATCH --account=PETERS-SL3-CPU
        echo \#SBATCH --ntasks=1
        echo \#SBATCH --job-name=_ukb
@@ -37,7 +39,7 @@ do
        echo export job=\${SLURM_ARRAY_TASK_ID}
        echo export TMPDIR=/rds/user/jhz22/hpc-work/work
        echo
-       echo awk -v job=\${job} 'NR==job' work/ukb-\${i}.list | bash
+       echo "awk -v job=\${job} 'NR==job' work/ukb-\${i}.list | bash"
      ) > work/ukb-${i}.sb
      # sbatch work/ukb-${i}.sb
   fi; 
