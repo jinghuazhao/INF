@@ -1,4 +1,4 @@
-# 29-9-2019 JHZ
+# 30-9-2019 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export srcdir=${INF}/ukb
@@ -43,7 +43,7 @@ do
        echo
        echo "awk -v job=\${job} 'NR==job' work/ukb-\${i}.list | bash"
      ) > work/ukb-${i}.sb
-     sbatch --wait work/ukb-${i}.sb
+     sbatch work/ukb-${i}.sb
   fi; 
 done
 
