@@ -38,7 +38,7 @@ function ukb_plink()
 {
   module load plink/2.00-alpha
   plink2 --bgen ${srcdir}/bgen/${pr}.bgen --rm-dup force-first list --out ${srcdir}/nodup/${pr}
-  plink2 --bgen ${srcdir}/bgen/${pr} --sample ${srcdir}/doc/ukb20480_imp_chr1_v3_s487395.sample \
+  plink2 --bgen ${srcdir}/bgen/${pr}.bgen --sample ${sample} \
          --exclude ${srcdir}/nodup/${pr}.rmdup.list --make-bed --out ${srcdir}/nodup/${pr}_nodup
   awk '
   {
