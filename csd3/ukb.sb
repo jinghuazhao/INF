@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#SBATCH --account=PETERS-SL3-CPU
+#SBATCH --ntasks=1
+#SBATCH --job-name=_ukb
+#SBATCH --time=12:00:00
+#SBATCH --partition=skylake
+#SBATCH --array=1-181%15
+#SBATCH --mem=128800
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_ukb_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_ukb_%A_%a.err
+#SBATCH --export ALL
+
+export job=${SLURM_ARRAY_TASK_ID}
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+export srcdir=${INF}/ukb
+export list=${INF}/work/INF1.merge
+export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
+export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
+export pr=${p}-${r}
+
+module load plink/2.00-alpha
+plink2 --bgen ${srcdir}/bgen/${p}.bgen --rm-dup force-first list --out ${srcdir}/nodup/${p}
+plink2 --bgen ${srcdir}/bgen/${p} --sample ${srcdir}/doc/ukb20480_imp_chr1_v3_s487395.sample \
+       --exclude ${srcdir}/nodup/${p}.rmdup.list --make-bed --out ${srcdir}/nodup/${p}_nodup
+
+awk '
+{
+   CHR=$1
+   POS=$4
+   a1=$5
+   a2=$6
+   if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+   else snpid="chr" CHR ":" POS "_" a1 "_" a2
+   print snpid, $2
+}' ${srcdir}/nodup/${p}_nodup.bim > ${srcdir}/nodup/${p}.id
+
+plink --bfile ${srcdir}/nodup/${p}_nodup --update-name ${srcdir}/nodup/${p}.id 1 2 \
+      --make-bed --out ${srcdir}/nodup/${p}_snpid
