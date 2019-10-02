@@ -1,4 +1,4 @@
-# 24-8-2019 JHZ
+# 2-10-2019 JHZ
 
 {
   if ($1<10) CHR= "0" $1;
@@ -11,5 +11,3 @@
   snpid="chr" $1 ":" POS "_" a1 "_" a2
   print SNP, SNP, CHR, POS, $5, $6, SNP, snpid, $1, POS, a1, a2
 }
-
-
