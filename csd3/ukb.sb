@@ -21,9 +21,9 @@ export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
 export pr=${p}-${r}
 
 module load plink/2.00-alpha
-plink2 --bgen ${srcdir}/bgen/${p}.bgen --rm-dup force-first list --out ${srcdir}/nodup/${p}
-plink2 --bgen ${srcdir}/bgen/${p} --sample ${srcdir}/doc/ukb20480_imp_chr1_v3_s487395.sample \
-       --exclude ${srcdir}/nodup/${p}.rmdup.list --make-bed --out ${srcdir}/nodup/${p}_nodup
+plink2 --bgen ${srcdir}/bgen/${pr}.bgen --rm-dup force-first list --out ${srcdir}/nodup/${pr}
+plink2 --bgen ${srcdir}/bgen/${pr} --sample ${srcdir}/doc/ukb20480_imp_chr1_v3_s487395.sample \
+       --exclude ${srcdir}/nodup/${pr}.rmdup.list --make-bed --out ${srcdir}/nodup/${pr}_nodup
 
 awk '
 {
@@ -34,7 +34,7 @@ awk '
    if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
    else snpid="chr" CHR ":" POS "_" a1 "_" a2
    print snpid, $2
-}' ${srcdir}/nodup/${p}_nodup.bim > ${srcdir}/nodup/${p}.id
+}' ${srcdir}/nodup/${pr}_nodup.bim > ${srcdir}/nodup/${pr}.id
 
-plink --bfile ${srcdir}/nodup/${p}_nodup --update-name ${srcdir}/nodup/${p}.id 1 2 \
-      --make-bed --out ${srcdir}/nodup/${p}_snpid
+plink --bfile ${srcdir}/nodup/${pr}_nodup --update-name ${srcdir}/nodup/${pr}.id 1 2 \
+      --make-bed --out ${srcdir}/nodup/${pr}_snpid
