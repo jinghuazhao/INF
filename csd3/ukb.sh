@@ -1,4 +1,4 @@
-# 30-9-2019 JHZ
+# 3-10-2019 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export srcdir=${INF}/ukb
@@ -13,7 +13,7 @@ awk -v srcdir=${srcdir} -v flanking=1e6 -v INF=${INF} '
   range = $1 ":" start "-" end;
   if($1<=9) range0=0 range;
   else range0=range
-  cmd=sprintf("qctool -g %s/ukb_imp_chr%d_v3.bgen -incl-range %s -ofiletype bgen -og ukb/%s-chr%s.bgen", srcdir, $1, range0, $5, $6)
+  cmd=sprintf("qctool -g %s/ukb_imp_chr%d_v3.bgen -incl-range %s -ofiletype bgen -og ukb/%s-chr%s.bgen", srcdir, $1, range0, $5, $6, $5, $6)
   print cmd
 }' > work/ukb.list
 for i in `seq 22`; do grep chr${i}_ work/ukb.list | wc -l | awk -v chr=${i} '{print chr, $1}'; done
