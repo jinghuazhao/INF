@@ -8,5 +8,5 @@
   a2=$7
   if (a1>a2) {t=a1; a1=a2; a2=t}
   snpid="chr" CHR ":" POS "_" a1 "_" a2
-  print SNP, SNP, CHR, POS, $6, $7, SNP, snpid, CHR, POS, a1, a2
+  print SNP, SNP, CHR, POS, $6, $7, SNP, snpid, CHR+0, POS, a1, a2
 }
