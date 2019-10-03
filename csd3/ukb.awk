@@ -1,4 +1,4 @@
-# 2-10-2019 JHZ
+# 3-10-2019 JHZ
 
 {
   CHR=$3
@@ -7,6 +7,6 @@
   a1=$6
   a2=$7
   if (a1>a2) {t=a1; a1=a2; a2=t}
-  snpid="chr" $1 ":" POS "_" a1 "_" a2
-  print SNP, SNP, CHR, POS, $6, $7, SNP, snpid, $1, POS, a1, a2
+  snpid="chr" CHR ":" POS "_" a1 "_" a2
+  print SNP, SNP, CHR, POS, $6, $7, SNP, snpid, CHR, POS, a1, a2
 }
