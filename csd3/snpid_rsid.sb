@@ -18,21 +18,12 @@ export dir=${INF}/work
 export list=${dir}/INF1.merge
 export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
 export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
-export chr=$(awk -v job=${job} 'NR==job+1{print $8}' ${list})
-export pos=$(awk -v job=${job} 'NR==job+1{print $9}' ${list})
-export Start=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
-export End=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
-export flanking=1e6
-export start=$(awk -vpos=${Start} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
-export end=$(awk -vpos=${End} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export pr=${p}-${r}
-export bfile=${INF}/work/INTERVAL1kg
-export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 
 cd work
 # unpruned
-awk -vchr=$chr -vlower=$start -vupper=$end '$1==chr && $4>=lower && $4 < upper{print $2}' ${bfile}.bim | \
+awk ${INF}/ukb/nodup/${pr}.bim | \
 sort -k1,1 > ${pr}
 join -a2 -e "NA" ${snpid_rsid} ${pr} -o2.1,1.2 > ${pr}.rsid
 R --no-save -q <<END
@@ -42,25 +33,12 @@ R --no-save -q <<END
     snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
     save(snpid_rsid, file=paste0(f,".rda"))
 END
-
-module load plink/2.00-alpha
 # pruned
-plink2  --bfile ${bfile} \
-        --chr ${chr} \
-        --from-bp ${start} \
-        --to-bp ${end} \
-        --maf 0.01 \
-        --indep-pairwise 1000kb 1 0.8 \
-        --out ${dir}/${pr}
+module load plink/2.00-alpha
+plink2  --bfile ${INF}/ukb/nodup/${pr} --maf 0.01 --indep-pairwise 1000kb 1 0.8 --out ${dir}/${pr}
 if [ $(grep ${r} ${dir}/${pr}.prune.in | wc -l) -eq 0 ]; then
-   (
-     echo ${r}
-     cat ${dir}/${pr}.prune.in
-   ) > $TMPDIR/${pr}
-   plink-1.9 --bfile ${bfile} \
-             --extract $TMPDIR/${pr} \
-             --r2 square \
-             --out $TMPDIR/${pr}
+   ( echo ${r}; cat ${dir}/${pr}.prune.in ) > $TMPDIR/${pr}
+   plink-1.9 --bfile ${INF}/ukb/nodup/${pr} --r2 square --out $TMPDIR/${pr}
    export i=$(paste $TMPDIR/${pr} $TMPDIR/${pr}.ld | cut -f1,2 | sort -r -k2,2g | awk 'NR==1 {print $1}')
    sed -i 's/'"$i"'/'"$r"'/g' ${dir}/${pr}.prune.in
 fi
