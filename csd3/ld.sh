@@ -1,4 +1,4 @@
-# 13-9-2019 JHZ
+# 4-10-2019 JHZ
 
 export f=INTERVAL/per_chr/interval.imputed.olink.chr_
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -43,18 +43,3 @@ cut -d' ' -f1 work/INTERVAL.rsid > work/INTERVAL.snpid
 ### plink2 --bgen work/INTERVAL.bgen -sample INTERVAL/o5000-inf1-outlier_in-r2.sample --make-bed --out INTERVAL/INTERVAL
 
 qctool -g work/INTERVAL.bgen -s INTERVAL/o5000-inf1-outlier_in-r2.sample -threads 5 -ofiletype binary_ped -og INTERVAL/INTERVAL
-
-# UKB IL.6
-
-export position=154426970
-export flank=1000000
-export start=$(bc -l <<<$position-$flank)
-export end=$(bc -l <<<$position+$flank)
-export ukbgen=/rds-d4/user/jhz22/hpc-work/data/ukb/ukb_imp_chr1_v3.bgen
-export ukbsample=/rds-d4/user/jhz22/hpc-work/data/ukb/ukb20480_imp_chr1_v3_s487395.sample
-
-qctool -g $ukbgen -incl-range $start-$end -og IL.6.bgen
-
-echo 01 $start $end > IL.6.range
-module load plink/2.00-alpha
-plink2 --bgen $ukbgen --sample $ukbsample --extract range IL.6.range --make-bed --out IL.6
