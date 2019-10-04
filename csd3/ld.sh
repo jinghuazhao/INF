@@ -34,7 +34,7 @@ join -v1 <(cat $(seq 22 | \
          > work/INTERVAL.rsid
 cut -d' ' -f1 work/INTERVAL.rsid > work/INTERVAL.snpid
 
-## bgen -- ~35hr, infeasible under HPC
+## bgen -- ~35hr, infeasible under HPC interactive mode
 ## qctool -g INTERVAL.bgen -incl-rsids work/INTERVAL.snpid -threads 5 -og work/INTERVAL.bgen
 
 ## bed + bim + fam
