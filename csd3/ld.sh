@@ -13,7 +13,7 @@ seq 22 | parallel --env f -j1 -C' ' '(cat csd3/ld.hdr;awk -f csd3/ld.awk ${f}{}.
 
 seq 22 | parallel --env f -j1 -C' ' 'qctool -g ${f}{}.bgen -map-id-data INTERVAL/INTERVAL-{}.map -og INTERVAL/INTERVAL-{}.bgen'
 
-cat-bgen -g $(seq 22|awk '{printf "INTERVAL/INTERVAL-" $1 ".bgen "}') -og INTERVAL.bgen -clobber
+cat-bgen -g $(seq 22|awk '{printf "INTERVAL/INTERVAL-" $1 ".bgen "}') -og INTERVAL/INTERVAL.bgen -clobber
 
 # version with no duplicates and extended (chr19:53296855-54500000) NLRP12 region (chr19:54296855-54311176) in work/ directory
 
