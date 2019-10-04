@@ -1,11 +1,11 @@
-# 3-10-2019 JHZ
+# 4-10-2019 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
-export srcdir=${INF}/ukb
+export ukbdir=${INF}/ukb
 
 sed '1d' work/INF1.merge | \
 sed 's/chr//g' | \
-awk -v srcdir=${srcdir} -v flanking=1e6 -v INF=${INF} '
+awk -v ukbdir=${ukbdir} -v flanking=1e6 -v INF=${INF} '
 {
   if ($2 >= flanking) start=$2-flanking;
   else start = 0;
@@ -13,14 +13,14 @@ awk -v srcdir=${srcdir} -v flanking=1e6 -v INF=${INF} '
   range = $1 ":" start "-" end;
   if($1<=9) range0=0 range;
   else range0=range
-  cmd=sprintf("qctool -g %s/ukb_imp_chr%d_v3.bgen -incl-range %s -ofiletype bgen -og ukb/%s-chr%s.bgen", srcdir, $1, range0, $5, $6, $5, $6)
+  cmd=sprintf("qctool -g %s/ukb_imp_chr%d_v3.bgen -incl-range %s -ofiletype bgen -og ukb/%s-chr%s.bgen", ukbdir, $1, range0, $5, $6, $5, $6)
   print cmd
 }' > work/ukb.list
 for i in `seq 22`; do grep chr${i}_ work/ukb.list | wc -l | awk -v chr=${i} '{print chr, $1}'; done
 for i in $(seq 22); 
 do 
   export i=${i}
-  if [ -f ${srcdir}/ukb_imp_chr${i}_v3.bgen ]; then 
+  if [ -f ${ukbdir}/ukb_imp_chr${i}_v3.bgen ]; then 
      grep chr${i}_ work/ukb.list > work/ukb-${i}.list; 
      export jobs=$(wc -l work/ukb-${i}.list | cut -d' ' -f1)
      (
@@ -47,18 +47,18 @@ do
   fi; 
 done
 
-function combined ()
+function sentinels_combined ()
 {
   sed '1d' work/INF1.merge | \
   sortBed -i | \
   mergeBed -i - -d 1000000 | \
   sed 's/chr//g' | \
-  awk -v srcdir=${srcdir} -v INF=${INF} '
+  awk -v ukbdir=${ukbdir} '
   {
     range = $1 ":" $2 "-" $3;
     if($1<=9) range0=0 range;
     else range0=range
-    cmd=sprintf("qctool -g %s/ukb_imp_chr%d_v3.bgen -incl-range %s -ofiletype bgen -og ukb/chr%s.bgen", srcdir, $1, range0, range)
+    cmd=sprintf("qctool -g %s/ukb_imp_chr%d_v3.bgen -incl-range %s -ofiletype bgen -og ukb/chr%s.bgen", ukbdir, $1, range0, range)
     print cmd
-  }'
+  }' > ${INF}/work/ukb.list
 }

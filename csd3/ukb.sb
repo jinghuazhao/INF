@@ -21,26 +21,26 @@ export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
 export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
 export pr=${p}-${r}
 
-cd ${ukbdir}
-bgenix -g bgen/${pr}.bgen -index -clobber
 module load plink/2.00-alpha
 plink2 --bgen bgen/${pr}.bgen --sample ${sample} --rm-dup force-first list --out bgen/${pr}
-(
-  cat ${INF}/csd3/ld.hdr
-  bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7'| awk -f ${INF}/csd3/ukb.awk
-) > bgen/${pr}.map
-qctool -g bgen/${pr}.bgen -excl-rsids bgen/${pr}.rmdup.list -map-id-data bgen/${pr}.map -og nodup/${pr}.bgen
-bgenix -g nodup/${pr}.bgen -index -clobber
-qctool -g nodup/${pr}.bgen -s ${sample} -ofiletype binary_ped -og nodup/${pr}
-bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7'| cut -f1,2 > nodup/${pr}.id
-plink --bfile nodup/${pr} --make-bed --update-name nodup/${pr}.id 1 2 --out nodup/${pr}_snpid
-cd -
+
+function ukb_qctool()
+{
+  bgenix -g bgen/${pr}.bgen -index -clobber
+  (
+    cat ${INF}/csd3/ld.hdr
+    bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7'| awk -f ${INF}/csd3/ukb.awk
+  ) > bgen/${pr}.map
+  qctool -g bgen/${pr}.bgen -excl-rsids bgen/${pr}.rmdup.list -map-id-data bgen/${pr}.map -og nodup/${pr}.bgen
+  bgenix -g nodup/${pr}.bgen -index -clobber
+  qctool -g nodup/${pr}.bgen -s ${sample} -ofiletype binary_ped -og nodup/${pr}
+  bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7'| cut -f1,2 > nodup/${pr}.id
+  plink --bfile nodup/${pr} --make-bed --update-name nodup/${pr}.id 1 2 --out nodup/${pr}_snpid
+}
 
 function ukb_plink()
 {
-  plink2 --bgen bgen/${pr}.bgen --rm-dup force-first list --out nodup/${pr}
-  plink2 --bgen bgen/${pr}.bgen --sample ${sample} \
-         --exclude nodup/${pr}.rmdup.list --make-bed --out nodup/${pr}_nodup
+  plink2 --bgen bgen/${pr}.bgen --sample ${sample} --exclude bgen/${pr}.rmdup.list --make-bed --out nodup/${pr}
   awk '
   {
      CHR=$1
@@ -50,7 +50,10 @@ function ukb_plink()
      if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
      else snpid="chr" CHR ":" POS "_" a1 "_" a2
      print snpid, $2
-  }' nodup/${pr}_nodup.bim > nodup/${pr}.id
-  plink --bfile nodup/${pr}_nodup --update-name nodup/${pr}.id 1 2 \
-        --make-bed --out nodup/${pr}_snpid
+  }' nodup/${pr}.bim > nodup/${pr}.id
+  plink --bfile nodup/${pr} --update-name nodup/${pr}.id 1 2 --make-bed --out nodup/${pr}_snpid
 }
+
+cd ${ukbdir}
+ukb_qctool
+cd -
