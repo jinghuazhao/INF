@@ -3,7 +3,7 @@
 #SBATCH --account=PETERS-SL3-CPU
 #SBATCH --ntasks=1
 #SBATCH --job-name=_ukb
-#SBATCH --time=12:00:00
+#SBATCH --time=15:00:00
 #SBATCH --partition=skylake
 #SBATCH --array=1-181
 #SBATCH --mem=128800
@@ -34,8 +34,6 @@ function ukb_qctool()
   qctool -g bgen/${pr}.bgen -excl-rsids bgen/${pr}.rmdup.list -map-id-data bgen/${pr}.map -og nodup/${pr}.bgen
   bgenix -g nodup/${pr}.bgen -index -clobber
   qctool -g nodup/${pr}.bgen -s ${sample} -ofiletype binary_ped -og nodup/${pr}
-  bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7'| cut -f1,2 > nodup/${pr}.id
-  plink --bfile nodup/${pr} --make-bed --update-name nodup/${pr}.id 1 2 --out nodup/${pr}_snpid
 }
 
 function ukb_plink()

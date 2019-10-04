@@ -21,7 +21,7 @@ export pr=${p}-${r}
 
 cd ${INF}/work
 if [ -f ${pr}.jma.cojo ]; then rm ${pr}.jma.cojo ${pr}.ldr.cojo; fi
-gcta-1.9 --bfile ${INF}/ukb/nodup/${pr}_snpid \
+gcta-1.9 --bfile ${INF}/ukb/nodup/${pr} \
          --cojo-file ${p}.ma \
          --extract ${pr} \
          --cojo-slct \
