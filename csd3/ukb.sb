@@ -26,7 +26,7 @@ plink2 --bgen bgen/${pr}.bgen --sample ${sample} --rm-dup force-first list --out
 
 function ukb_qctool()
 {
-  bgenix -g bgen/${pr}.bgen -index -clobber
+  if [ ! -f bgen/${pr}.bgen.bgi ]; then bgenix -g bgen/${pr}.bgen -index -clobber; fi
   (
     cat ${INF}/csd3/ld.hdr
     bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7'| awk -f ${INF}/csd3/ukb.awk
