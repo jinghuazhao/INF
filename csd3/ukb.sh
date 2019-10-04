@@ -29,7 +29,7 @@ do
        echo \#SBATCH --account=PETERS-SL3-CPU
        echo \#SBATCH --ntasks=1
        echo \#SBATCH --job-name=_ukb
-       echo \#SBATCH --time=8:00:00
+       echo \#SBATCH --time=12:00:00
        echo \#SBATCH --cpus-per-task=2
        echo \#SBATCH --partition=skylake
        echo \#SBATCH --mem=128800
