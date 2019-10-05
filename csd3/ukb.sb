@@ -3,7 +3,7 @@
 #SBATCH --account=PETERS-SL3-CPU
 #SBATCH --ntasks=1
 #SBATCH --job-name=_ukb
-#SBATCH --time=15:00:00
+#SBATCH --time=12:00:00
 #SBATCH --partition=skylake
 #SBATCH --array=1-181
 #SBATCH --mem=128800
