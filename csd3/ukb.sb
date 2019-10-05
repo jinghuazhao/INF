@@ -38,7 +38,7 @@ function ukb_qctool()
 
 function ukb_plink()
 {
-  plink2 --bgen bgen/${pr}.bgen --sample ${sample} --exclude bgen/${pr}.rmdup.list --make-bed --out nodup/${pr}
+  plink2 --bgen bgen/${pr}.bgen --sample ${sample} --exclude bgen/${pr}.rmdup.list --make-bed --out nodup/${pr}_nodup
   awk '
   {
      CHR=$1
@@ -48,8 +48,8 @@ function ukb_plink()
      if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
      else snpid="chr" CHR ":" POS "_" a1 "_" a2
      print snpid, $2
-  }' nodup/${pr}.bim > nodup/${pr}.id
-  plink --bfile nodup/${pr} --update-name nodup/${pr}.id 1 2 --make-bed --out nodup/${pr}_snpid
+  }' nodup/${pr}_nodup.bim > nodup/${pr}.id
+  plink --bfile nodup/${pr}_nodup --update-name nodup/${pr}.id 1 2 --make-bed --out nodup/${pr}_snpid
 }
 
 cd ${ukbdir}
