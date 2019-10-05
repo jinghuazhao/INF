@@ -21,11 +21,6 @@ export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
 export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
 export pr=${p}-${r}
 
-module load plink/2.00-alpha
-if [ ! -f bgen/${pr}.rmdup.list ]; then
-   plink2 --bgen bgen/${pr}.bgen --sample ${sample} --rm-dup force-first list --out bgen/${pr}
-fi
-
 function ukb_qctool()
 {
   if [ ! -f bgen/${pr}.bgen.bgi ]; then bgenix -g bgen/${pr}.bgen -index -clobber; fi
@@ -56,5 +51,9 @@ function ukb_plink()
 }
 
 cd ${ukbdir}
+module load plink/2.00-alpha
+if [ ! -f bgen/${pr}.rmdup.list ]; then
+   plink2 --bgen bgen/${pr}.bgen --sample ${sample} --rm-dup force-first list --out bgen/${pr}
+fi
 ukb_plink
 cd -
