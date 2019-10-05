@@ -22,7 +22,9 @@ export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
 export pr=${p}-${r}
 
 module load plink/2.00-alpha
-plink2 --bgen bgen/${pr}.bgen --sample ${sample} --rm-dup force-first list --out bgen/${pr}
+if [ ! -f bgen/${pr}.rmdup.list ]; then
+   plink2 --bgen bgen/${pr}.bgen --sample ${sample} --rm-dup force-first list --out bgen/${pr}
+fi
 
 function ukb_qctool()
 {
@@ -50,8 +52,9 @@ function ukb_plink()
      print snpid, $2
   }' nodup/${pr}_nodup.bim > nodup/${pr}.id
   plink --bfile nodup/${pr}_nodup --update-name nodup/${pr}.id 1 2 --make-bed --out nodup/${pr}_snpid
+  rm nodup/${pr}_nodup.*
 }
 
 cd ${ukbdir}
-ukb_qctool
+ukb_plink
 cd -
