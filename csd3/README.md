@@ -24,3 +24,11 @@ where ${pr}.master2 contains two lines,
 z;bgen;bgi;bcor;bdose;snp;config;cred;log;n_samples
 IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.bgi;IL.6-chr1:154426970_A_C.bcor;IL.6-chr1:154426970_A_C.bdose;IL.6-chr1:154426970_A_C.snp;IL.6-chr1:154426970_A_C.config;IL.6-chr1:154426970_A_C.cred;IL.6-chr1:154426970_A_C.log;4994
 ```
+
+# ukb
+
+`ukb.sh` extracts region-specific data into `bgen` from Cardio according to INF1.merge.
+
+`ukb.sb` is used to generate `binary_ped` with SNPIDs
+* by qctool -- it has `bgen` with SNPIDs.
+* by PLINK.
