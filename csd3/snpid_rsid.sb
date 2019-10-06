@@ -23,7 +23,7 @@ export snpid_rsid=${INF}/work/INTERVAL.rsid
 
 cd work
 # unpruned
-cut -d' ' -f2 ${INF}/ukb/nodup/${pr}.bim | \
+awk '{print $2}' ${INF}/ukb/nodup/${pr}.bim | \
 sort -k1,1 > ${pr}
 join -a2 -e "NA" ${snpid_rsid} ${pr} -o2.1,1.2 > ${pr}.rsid
 R --no-save -q <<END
