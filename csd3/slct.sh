@@ -1,9 +1,9 @@
-# 2-9-2019 JHZ
+# 6-10-2019 JHZ
 (
   cat work/*jma.cojo | \
   head -1 | \
   awk -v OFS="\t" '{print "prot", "SNPID", $0}'
-  cut -d' ' -f1,4 work/INF1_nold.sentinels | \
+  cut -d' ' -f5,6 work/INF1_nold.sentinels | \
   parallel -j1 -C' ' '
     if [ -f work/{1}-{2}.jma.cojo ]; then
        awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot, snpid, \$0}" work/{1}-{2}.jma.cojo
