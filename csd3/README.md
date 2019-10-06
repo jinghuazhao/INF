@@ -27,7 +27,12 @@ IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.b
 
 # ukb
 
-`ukb.sh` extracts region-specific data into `bgen` from Cardio according to INF1.merge.
+`ukb.sh` extracts from ukb_imp_chr[x-xx]_v3.bgen from
+```
+/DO-NOT-MODIFY-SCRATCH/uk_biobank/500k/imputed_v3
+/DO-NOT-MODIFY-SCRATCH/curated_genetic_data/uk_biobank/reference_files/full_release
+```
+on Cardio into region-specific data in `bgen` format according to `INF1.merge`.
 
 `ukb.sb` is used to generate `binary_ped` with SNPIDs
 * by qctool -- it has `bgen` with SNPIDs.
