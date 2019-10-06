@@ -34,7 +34,7 @@ The utility `ukb.sh` extracts from ukb_imp_chr[x-xx]_v3.bgen as in
 ```
 on Cardio into region-specific data in `bgen` format (ukb/bgen) according to work/INF1.merge.
 
-The utility `ukb.sb` is used to generate `binary_ped` with SNPIDs (bgen/*map)
+It involves a utility called `ukb.sb` to generate `binary_ped` with SNPIDs (bgen/*map)
 * by qctool -- it also creates `bgen` with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
 * by PLINK -- it has a `_snpid` tag.
 

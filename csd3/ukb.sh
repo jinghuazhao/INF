@@ -1,4 +1,4 @@
-# 4-10-2019 JHZ
+# 6-10-2019 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ukbdir=${INF}/ukb
@@ -46,6 +46,18 @@ do
      sbatch work/ukb-${i}.sb
   fi; 
 done
+
+sbatch csd3/ukb.sb
+
+cd ukb/nodup
+ls *bgen | sed 's/.bgen//g' > ../../nodup.list
+cd -
+cd ukb/bgen
+ls *bgen | sed 's/.bgen//g' > ../../bgen.list
+cd -
+sdiff bgen.list nodup.list
+sdiff bgen.list nodup.list | awk '/</' | cut -f1 > 112
+awk 'NR>1{print $5 "-" $6}' work/INF1.merge | grep -n -f 112 - | awk '{split($1,a,":");printf a[1] ","}' > 112.list
 
 function sentinels_combined ()
 {
