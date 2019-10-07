@@ -1,4 +1,4 @@
-# 23-9-2019 JHZ
+# 7-10-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -76,6 +76,17 @@ END
 
 pdftopng -r 300 INF1.merge.circlize.pdf INF1.merge.circlize
 mv INF1.merge.circlize-000001.png INF1.merge.circlize.png
+
+R --no-save -q <<END
+  library(gap)
+  d <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
+  pdf("INF1.merge.pdf")
+  mhtplot2d(d)
+  dev.off()
+END
+
+dftopng -r 300 INF1.merge.pdf INF1.merge
+mv INF1.merge-000001.png INF1.merge.png
 
 R --no-save -q <<END
   library(gap)
