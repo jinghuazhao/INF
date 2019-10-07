@@ -86,11 +86,11 @@ function ld_finemap()
 {
   ldstore_v2.0b --in-files ${pr}.master2 --write-bcor
   ldstore_v2.0b --in-files ${pr}.master2 --bcor-to-text
-  finemap_v1.3.1 --sss --in-files ${pr}.master --log --n-causal-snps 10 --corr-group 0.7 --group-snps
+  finemap_v1.3.1 --sss --in-files ${pr}.master --log --n-causal-snps 10 --corr-group 0.99 --group-snps
 }
 
 ## finemap_v1.4
-finemap_v1.4 --sss --in-files ${pr}.master --log --n-causal-snps 10 --corr-group 0.7 --group-snps
+finemap_v1.4 --sss --in-files ${pr}.master --log --n-causal-snps 10 --corr-group 0.99 --group-snps
 
 # xlsx
 gzip -f ${pr}.ld
