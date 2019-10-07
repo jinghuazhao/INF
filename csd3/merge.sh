@@ -85,7 +85,7 @@ R --no-save -q <<END
   dev.off()
 END
 
-dftopng -r 300 INF1.merge.pdf INF1.merge
+pdftopng -r 300 INF1.merge.pdf INF1.merge
 mv INF1.merge-000001.png INF1.merge.png
 
 R --no-save -q <<END
