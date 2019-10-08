@@ -1,4 +1,4 @@
-# 7-10-2019 JHZ
+# 8-10-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -87,6 +87,9 @@ END
 
 pdftopng -r 300 INF1.merge.pdf INF1.merge
 mv INF1.merge-000001.png INF1.merge.png
+
+bedtools subtract -a work/INF1.merge -b tryggve/high-LD-regions-hg19.bed | \
+diff -  work/INF1.merge
 
 R --no-save -q <<END
   library(gap)
