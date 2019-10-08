@@ -48,7 +48,7 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 ### URLs
 
 * [SCALLOP consortium](http://www.scallop-consortium.com/).
-* [Olink location](https://www.olink.com/scallop/), [What is NPX](https://www.olink.com/question/what-is-npx/), [F2F London meeting](https://www.olink.com/scallop-f2f-2019/), [https://www.olink.com/data-science-workshop-2019/](https://www.olink.com/data-science-workshop-2019/).
+* [Olink location](https://www.olink.com/scallop/), [What is NPX](https://www.olink.com/question/what-is-npx/), [F2F London meeting](https://www.olink.com/scallop-f2f-2019/), [Data Science Workshop 2019](https://www.olink.com/data-science-workshop-2019/).
 * [GitHub repository](https://github.com/lassefolkersen/scallop) for the 2017 *PLoS Genetics* paper above.
 * [securecloud](https://secureremote.dtu.dk/vpn/index.html).
 * [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
