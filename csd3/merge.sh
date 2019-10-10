@@ -1,4 +1,4 @@
-# 8-10-2019 JHZ
+# 10-10-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -88,8 +88,18 @@ END
 pdftopng -r 300 INF1.merge.pdf INF1.merge
 mv INF1.merge-000001.png INF1.merge.png
 
-bedtools subtract -a work/INF1.merge -b tryggve/high-LD-regions-hg19.bed | \
-diff -  work/INF1.merge
+(
+  bedtools subtract -a work/INF1.merge -b tryggve/high-LD-regions-hg19.bed | \
+  diff -  work/INF1.merge | \
+  awk '/Chr|chr/'| \
+  awk '{OFS="\t";$1="";print}'| \
+  awk '{$1=$1;print}' | \
+  sed '1d;s/ /\t/g' | \
+  sortBed -header -i - | \
+  mergeBed -i - -d 1000000 | \
+  sed 's/chr//g' | \
+  awk '{print 0 $1 ":" $2 "-" $3}'
+) > ukb/ukb.excl-range
 
 R --no-save -q <<END
   library(gap)

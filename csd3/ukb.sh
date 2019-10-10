@@ -1,4 +1,4 @@
-# 6-10-2019 JHZ
+# 10-10-2019 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ukbdir=${INF}/ukb
@@ -49,15 +49,38 @@ done
 
 sbatch csd3/ukb.sb
 
-cd ukb/nodup
-ls *bgen | sed 's/.bgen//g' > ../../nodup.list
-cd -
-cd ukb/bgen
-ls *bgen | sed 's/.bgen//g' > ../../bgen.list
-cd -
-sdiff bgen.list nodup.list
-sdiff bgen.list nodup.list | awk '/</' | cut -f1 > 112
-awk 'NR>1{print $5 "-" $6}' work/INF1.merge | grep -n -f 112 - | awk '{split($1,a,":");printf a[1] ","}' > 112.list
+function excl()
+{
+  for chr in 3 6
+  do
+    bgenix -g ukb/ukb_imp_chr${chr}_v3.bgen -list -incl-range ukb/ukb.excl-range 2>&1 | \
+    awk 'NR>9 && NF==7'| \
+    cut -f3,4,6,7 | \
+    awk '
+    {
+      CHR=$1
+      POS=$2
+      a1=$3
+      a2=$4
+      if (a1>a2) {t=a1; a1=a2; a2=t}
+      snpid="chr" CHR+0 ":" POS "_" a1 "_" a2
+      print snpid
+    }' > ukb/ukb-${chr}.excl
+  done
+}
+
+function checklist()
+{
+  cd ukb/nodup
+  ls *bgen | sed 's/.bgen//g' > ../../nodup.list
+  cd -
+  cd ukb/bgen
+  ls *bgen | sed 's/.bgen//g' > ../../bgen.list
+  cd -
+  sdiff bgen.list nodup.list
+  sdiff bgen.list nodup.list | awk '/</' | cut -f1 > 112
+  awk 'NR>1{print $5 "-" $6}' work/INF1.merge | grep -n -f 112 - | awk '{split($1,a,":");printf a[1] ","}' > 112.list
+}
 
 function sentinels_combined ()
 {
