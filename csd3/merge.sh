@@ -89,17 +89,12 @@ pdftopng -r 300 INF1.merge.pdf INF1.merge
 mv INF1.merge-000001.png INF1.merge.png
 
 (
-  bedtools subtract -a work/INF1.merge -b tryggve/high-LD-regions-hg19.bed | \
-  diff -  work/INF1.merge | \
-  awk '/Chr|chr/'| \
-  awk '{OFS="\t";$1="";print}'| \
-  awk '{$1=$1;print}' | \
-  sed '1d;s/ /\t/g' | \
-  sortBed -header -i - | \
+  bedtools intersect -a work/INF1.merge -b tryggve/high-LD-regions-hg19.bed | \
+  sortBed | \
   mergeBed -i - -d 1000000 | \
   sed 's/chr//g' | \
   awk '{print 0 $1 ":" $2 "-" $3}'
-) > ukb/ukb.excl-range
+) > ukb/ukb.range
 
 R --no-save -q <<END
   library(gap)

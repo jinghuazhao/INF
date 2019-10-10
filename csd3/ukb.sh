@@ -53,7 +53,7 @@ function excl()
 {
   for chr in 3 6
   do
-    bgenix -g ukb/ukb_imp_chr${chr}_v3.bgen -list -incl-range ukb/ukb.excl-range 2>&1 | \
+    bgenix -g ukb/ukb_imp_chr${chr}_v3.bgen -list -incl-range ukb/ukb.range 2>&1 | \
     awk 'NR>9 && NF==7'| \
     cut -f3,4,6,7 | \
     awk '
