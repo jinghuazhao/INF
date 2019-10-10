@@ -51,7 +51,6 @@ cd work
 awk 'NR > 1{print $1} ' ${pr}.z0 > ${pr}.incl
 qctool -g ${INF}/ukb/nodup/${pr}.bgen -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
 bgenix -g ${pr}.bgen -index -clobber
-ln -sf ${pr}.bgen.bgi ${pr}.bgi
 
 # z
 (
@@ -70,7 +69,7 @@ ln -sf ${pr}.bgen.bgi ${pr}.bgi
 ) > ${pr}.master
 (
   echo "z;bgen;bgi;bcor;ld;snp;config;cred;log;n_samples"
-  echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.bcor;${pr}.ld;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
+  echo "${pr}.z;${pr}.bgen;${pr}.bgen.bgi;${pr}.bcor;${pr}.ld;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
 ) > ${pr}.master2
 
 # LD-based finemapping
