@@ -19,10 +19,17 @@ export list=${dir}/INF1.merge
 export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
 export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
 export pr=${p}-${r}
+export chr=$(awk -v job=${job} 'NR==job+1{print $8}' ${list})
+export pos=$(awk -v job=${job} 'NR==job+1{print $9}' ${list})
+export flanking=1e6
+export start=$(awk -vpos=${Start} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
+export end=$(awk -vpos=${End} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 
 cd work
 # unpruned
+# INTERVAL instead of ukb
+# awk -vchr=$chr -vstart=$start -vend=$end '($1==chr && $4>=start && $4 <=end){print $2}' ${dir}/INTERVAL.bim | \
 awk '{print $2}' ${INF}/ukb/nodup/${pr}.bim | \
 sort -k1,1 > ${pr}
 join -a2 -e "NA" ${snpid_rsid} ${pr} -o2.1,1.2 > ${pr}.rsid
