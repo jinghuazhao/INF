@@ -21,8 +21,21 @@ export pr=${p}-${r}
 
 cd ${INF}/work
 if [ -f ${pr}.jma.cojo ]; then rm ${pr}.jma.cojo ${pr}.ldr.cojo; fi
-# INTERVAL
-# --bfile ${INF}/work/INTERVAL \
+
+function slct_INTERVAL()
+{
+gcta-1.9 --bfile --bfile ${INF}/work/INTERVAL \
+         --cojo-file ${p}.ma \
+         --extract-region-snp ${r} 1000 \
+         --cojo-slct \
+         --cojo-p 5e-10 \
+         --cojo-collinear 0.9 \
+         --maf 0.01 \
+         --out ${pr}
+}
+
+function slct_ukb()
+{
 gcta-1.9 --bfile ${INF}/ukb/nodup/${pr} \
          --cojo-file ${p}.ma \
          --extract ${pr} \
@@ -31,7 +44,9 @@ gcta-1.9 --bfile ${INF}/ukb/nodup/${pr} \
          --cojo-collinear 0.9 \
          --maf 0.01 \
          --out ${pr}
+}
 
+slct_INTERVAL
 export snpid_rsid=${pr}
 if [ -f ${pr}.jma.cojo ]; then R --no-save -q < ${INF}/csd3/slct.R > ${pr}-slct.log; fi
 cd -

@@ -1,4 +1,4 @@
-# 6-10-2019 JHZ
+# 11-10-2019 JHZ
 (
   cat work/*jma.cojo | \
   head -1 | \
@@ -55,3 +55,8 @@ R --no-save -q <<END
   dev.off()
 END
 rm jma jma.1 jma.2
+for f in INF1.jma INF1.jma.1 INF1.jma.2
+do
+  pdftopng -r 300 ${f}.pdf ${f}
+  mv ${f}-000001.png ${f}.png
+done
