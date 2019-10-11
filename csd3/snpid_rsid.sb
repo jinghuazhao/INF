@@ -30,20 +30,17 @@ cd work
 # unpruned
 function snpid_rsid_INTERVAL()
 {
-  awk -vchr=$chr -vstart=$start -vend=$end '($1==chr && $4>=start && $4 <=end){print $2}' ${dir}/INTERVAL.bim | \
-  awk '{print $2}' ${INF}/ukb/nodup/${pr}.bim | \
-  sort -k1,1 > ${pr}
-  join -a2 -e "NA" ${snpid_rsid} ${pr} -o2.1,1.2 > ${pr}.rsid
+  awk -vchr=$chr -vstart=$start -vend=$end '($1==chr && $4>=start && $4 <=end){print $2}' ${dir}/INTERVAL.bim 
 }
 
 function snpid_rsid_ukb()
 {
-  awk '{print $2}' ${INF}/ukb/nodup/${pr}.bim | \
-  sort -k1,1 > ${pr}
-  join -a2 -e "NA" ${snpid_rsid} ${pr} -o2.1,1.2 > ${pr}.rsid
+  awk '{print $2}' ${INF}/ukb/nodup/${pr}.bim 
 }
 
-snpid_rsid_INTERVAL
+snpid_rsid_INTERVAL | \
+sort -k1,1 > ${pr}
+join -a2 -e "NA" ${snpid_rsid} ${pr} -o2.1,1.2 > ${pr}.rsid
 R --no-save -q <<END
     f <- Sys.getenv("pr")
     snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
