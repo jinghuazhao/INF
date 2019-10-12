@@ -24,7 +24,7 @@ if [ -f ${pr}.jma.cojo ]; then rm ${pr}.jma.cojo ${pr}.ldr.cojo; fi
 
 function slct_INTERVAL()
 {
-gcta-1.9 --bfile ${INF}/INTERVAL/nodup/${pr} \
+gcta-1.9 --bfile ${INF}/INTERVAL/nodup/${pr}_snpid \
          --cojo-file ${p}.ma \
          --extract ${pr} \
          --cojo-slct \
@@ -36,7 +36,7 @@ gcta-1.9 --bfile ${INF}/INTERVAL/nodup/${pr} \
 
 function slct_ukb()
 {
-gcta-1.9 --bfile ${INF}/ukb/nodup/${pr} \
+gcta-1.9 --bfile ${INF}/ukb/nodup/${pr}_snpid \
          --cojo-file ${p}.ma \
          --extract ${pr} \
          --cojo-slct \
