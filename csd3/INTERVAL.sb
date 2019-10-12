@@ -55,5 +55,5 @@ module load plink/2.00-alpha
 if [ ! -f bgen/${pr}.rmdup.list ]; then
    plink2 --bgen bgen/${pr}.bgen --sample ${sample} --rm-dup force-first list --out bgen/${pr}
 fi
-INTERVAL_plink
+INTERVAL_qctool
 cd -
