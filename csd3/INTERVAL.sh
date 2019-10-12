@@ -13,7 +13,7 @@ awk -v intervaldir=${intervaldir} -v flanking=1e6 -v INF=${INF} '
   range = $1 ":" start "-" end;
   if($1<=9) range0=0 range;
   else range0=range
-  cmd=sprintf("qctool -g %s/interval.imputed.olink.chr_%d.bgen -incl-range %s -ofiletype bgen -og INTERVAL/%s-chr%s.bgen", 
+  cmd=sprintf("qctool -g %s/interval.imputed.olink.chr_%d.bgen -incl-range %s -ofiletype bgen -og INTERVAL/bgen/%s-chr%s.bgen", 
               intervaldir, $1, range0, $5, $6, $5, $6)
   print cmd
 }' > work/interval.list
