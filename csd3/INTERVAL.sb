@@ -15,7 +15,7 @@ export job=${SLURM_ARRAY_TASK_ID}
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export intervaldir=${INF}/INTERVAL
-export sample=${intervaldir}/doc/o5000-inf1-outlier_in-r2.sample
+export sample=${intervaldir}/o5000-inf1-outlier_in-r2.sample
 export list=${INF}/work/INF1.merge
 export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
 export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
