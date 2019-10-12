@@ -31,13 +31,14 @@ export snpid_rsid=${INF}/work/INTERVAL.rsid
 cd work
 # unpruned
 function snpid_rsid_INTERVAL()
+#awk -vchr=$chr -vstart=$start -vend=$end '($1==chr && $4>=start && $4 <=end){print $2}' ${dir}/INTERVAL.bim 
 {
-  awk -vchr=$chr -vstart=$start -vend=$end '($1==chr && $4>=start && $4 <=end){print $2}' ${dir}/INTERVAL.bim 
+  awk '{print $2}' ${INF}/INTERVAL/nodup/${pr}_snpid.bim 
 }
 
 function snpid_rsid_ukb()
 {
-  awk '{print $2}' ${INF}/ukb/nodup/${pr}.bim 
+  awk '{print $2}' ${INF}/ukb/nodup/${pr}_snpid.bim 
 }
 
 snpid_rsid_INTERVAL | \
