@@ -1,0 +1,59 @@
+#!/bin/bash
+
+#SBATCH --account=PETERS-SL3-CPU
+#SBATCH --ntasks=1
+#SBATCH --job-name=_INTERVAL
+#SBATCH --time=12:00:00
+#SBATCH --partition=skylake
+#SBATCH --array=1-181
+#SBATCH --mem=128800
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_INTERVAL_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_INTERVAL_%A_%a.err
+#SBATCH --export ALL
+
+export job=${SLURM_ARRAY_TASK_ID}
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+export intervaldir=${INF}/INTERVAL
+export sample=${intervaldir}/doc/o5000-inf1-outlier_in-r2.sample
+export list=${INF}/work/INF1.merge
+export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
+export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
+export pr=${p}-${r}
+
+function INTERVAL_qctool()
+{
+  if [ ! -f bgen/${pr}.bgen.bgi ]; then bgenix -g bgen/${pr}.bgen -index -clobber; fi
+  (
+    cat ${INF}/csd3/ld.hdr
+    bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7'| awk -f ${INF}/csd3/ld.awk
+  ) > bgen/${pr}.map
+  qctool -g bgen/${pr}.bgen -excl-rsids bgen/${pr}.rmdup.list -map-id-data bgen/${pr}.map -og nodup/${pr}.bgen
+  bgenix -g nodup/${pr}.bgen -index -clobber
+  qctool -g nodup/${pr}.bgen -s ${sample} -ofiletype binary_ped -og nodup/${pr}
+}
+
+function INTERVAL_plink()
+{
+  plink2 --bgen bgen/${pr}.bgen --sample ${sample} --exclude bgen/${pr}.rmdup.list --make-bed --out nodup/${pr}_nodup
+  awk '
+  {
+     CHR=$1
+     POS=$4
+     a1=$5
+     a2=$6
+     if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+     else snpid="chr" CHR ":" POS "_" a1 "_" a2
+     print snpid, $2
+  }' nodup/${pr}_nodup.bim > nodup/${pr}.id
+  plink --bfile nodup/${pr}_nodup --update-name nodup/${pr}.id 1 2 --make-bed --out nodup/${pr}_snpid
+  rm nodup/${pr}_nodup.*
+}
+
+cd ${intervaldir}
+module load plink/2.00-alpha
+if [ ! -f bgen/${pr}.rmdup.list ]; then
+   plink2 --bgen bgen/${pr}.bgen --sample ${sample} --rm-dup force-first list --out bgen/${pr}
+fi
+INTERVAL_plink
+cd -
