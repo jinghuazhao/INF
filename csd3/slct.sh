@@ -1,4 +1,4 @@
-# 11-10-2019 JHZ
+# 13-10-2019 JHZ
 (
   cat work/*jma.cojo | \
   head -1 | \
@@ -60,3 +60,12 @@ do
   pdftopng -r 300 ${f}.pdf ${f}
   mv ${f}-000001.png ${f}.png
 done
+(
+  awk 'NR>1{print $5,$6}' work/INF1.merge | \
+  parallel -j1 -C' ' '
+    if [ -f work/slct-INTERVAL-pr/{1}-{2}.jma.cojo ]; then
+       awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot \"-\" snpid, NR-1}" work/slct-INTERVAL-pr/{1}-{2}.jma.cojo | \
+       awk "{arr[\$1]=\$2} END {for (i in arr) print i, arr[i]}"
+    fi'
+) > work/slct.list
+
