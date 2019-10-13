@@ -80,6 +80,14 @@ ldstore_v1.1 --bcor ${pr}-1 --matrix ${pr}.ld
 rm ${pr}-1_*
 mv ${pr}-1 ${pr}.bcor
 
+export n_causal_snps=10
+if [ -f work/slct.list ]; then
+   export greped=$(grep $pr work/slct.list | cut -d' ' -f2)
+   if [ $greped gt 0 ]; then
+      export n_causal_snps=${greped}
+   fi
+fi
+
 function ld_finemap()
 ## ldstore_v2.0b and finemap_v1.3.1/finemap_v1.4
 {
@@ -89,7 +97,7 @@ function ld_finemap()
 }
 
 ## finemap_v1.4
-finemap_v1.4 --sss --in-files ${pr}.master --log --n-causal-snps 10 --corr-group 0.99 --group-snps
+finemap_v1.4 --sss --in-files ${pr}.master --log --n-causal-snps ${n_causal_snps} --corr-group 0.99 --group-snps
 
 # xlsx
 gzip -f ${pr}.ld
