@@ -28,7 +28,11 @@ function INTERVAL_qctool()
     cat ${INF}/csd3/INTERVAL.hdr
     bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | awk -f ${INF}/csd3/INTERVAL.awk
   ) > bgen/${pr}.map
-  qctool -g bgen/${pr}.bgen -excl-rsids bgen/${pr}.rmdup.list -map-id-data bgen/${pr}.map -og nodup/${pr}.bgen
+  qctool -g bgen/${pr}.bgen -excl-rsids bgen/${pr}.rmdup.list -map-id-data bgen/${pr}.map -og bgen/${pr}_2.bgen
+  if [ ! -f bgen/${pr}_2.rmdup.list ]; then
+     plink2 --bgen bgen/${pr}_2.bgen --sample ${sample} --rm-dup force-first list --out bgen/${pr}_2
+  fi
+  qctool -g bgen/${pr}_2.bgen -excl-rsids bgen/${pr}_2.rmdup.list -og nodup/${pr}.bgen
   bgenix -g nodup/${pr}.bgen -index -clobber
   qctool -g nodup/${pr}.bgen -s ${sample} -ofiletype binary_ped -og nodup/${pr}
 }
