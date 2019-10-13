@@ -26,7 +26,7 @@ function INTERVAL_qctool()
   if [ ! -f bgen/${pr}.bgen.bgi ]; then bgenix -g bgen/${pr}.bgen -index -clobber; fi
   (
     cat ${INF}/csd3/INTERVAL.hdr
-    bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7'| awk -f ${INF}/csd3/INTERVAL.awk
+    bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | awk -f ${INF}/csd3/INTERVAL.awk
   ) > bgen/${pr}.map
   qctool -g bgen/${pr}.bgen -excl-rsids bgen/${pr}.rmdup.list -map-id-data bgen/${pr}.map -og nodup/${pr}.bgen
   bgenix -g nodup/${pr}.bgen -index -clobber

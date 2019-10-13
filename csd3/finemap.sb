@@ -60,7 +60,7 @@ bgenix -g ${pr}.bgen -index -clobber
 ) > ${pr}.flip
 (
   awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se", "flip"}'
-  join <(awk 'NR > 1' ${pr}.z0) ${pr}.flip | awk '{if($9==1) {t=$4;$4=$5;$5=t};$7=-$7; print}'
+  join <(awk 'NR > 1' ${pr}.z0 | sort -k1,1) ${pr}.flip | awk '{if($9==1) {t=$4;$4=$5;$5=t};$7=-$7; print}'
 ) > ${pr}.z
 
 (
