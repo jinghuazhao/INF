@@ -63,9 +63,8 @@ done
 (
   awk 'NR>1{print $5,$6}' work/INF1.merge | \
   parallel -j1 -C' ' '
-    if [ -f work/slct-INTERVAL-pr/{1}-{2}.jma.cojo ]; then
-       awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot \"-\" snpid, NR-1}" work/slct-INTERVAL-pr/{1}-{2}.jma.cojo | \
-       awk "{arr[\$1]=\$2} END {for (i in arr) print i, arr[i]}"
+    if [ -f work/{1}-{2}.jma.cojo ]; then
+       awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot \"-\" snpid, NR-1}" work/{1}-{2}.jma.cojo | \
+       awk "{a[\$1]=\$2} END {for (i in a) print i, a[i]}"
     fi'
 ) > work/slct.list
-
