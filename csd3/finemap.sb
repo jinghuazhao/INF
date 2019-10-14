@@ -82,8 +82,8 @@ mv ${pr}-1 ${pr}.bcor
 
 export n_causal_snps=10
 if [ -f work/slct.list ]; then
-   export greped=$(grep $pr work/slct.list | cut -d' ' -f2)
-   if [[ $greped -gt 0 ] && [ $greped -lt 10 ]]; then
+   export greped=$(grep $pr work/slct-ukb.list | cut -d' ' -f2)
+   if [ ${greped} -gt 0 ] && [ ${greped} -lt 10 ]; then
       export n_causal_snps=${greped}
    fi
 fi
