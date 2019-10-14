@@ -27,7 +27,7 @@ z;bgen;bgi;bcor;bdose;snp;config;cred;log;n_samples
 IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.bgi;IL.6-chr1:154426970_A_C.bcor;IL.6-chr1:154426970_A_C.bdose;IL.6-chr1:154426970_A_C.snp;IL.6-chr1:154426970_A_C.config;IL.6-chr1:154426970_A_C.cred;IL.6-chr1:154426970_A_C.log;4994
 ```
 
-# LD reference panels
+## LD reference panels
 
 The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to generate `binary_ped` with SNPIDs (bgen/*map)
 * by qctool -- it also creates `bgen` with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
@@ -35,16 +35,16 @@ The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to
 
 In both cases the duplicates (bgen/*rmdup.list) are excluded.
 
-## INTERVAL.sh (INTERVAL.sb)
+### INTERVAL.sh (INTERVAL.sb)
 
 The utility `INTERVAL.sh` extracts data from  
 ```
 /DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 /DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_imputed_info_0.4_phwe_1e-4_filtered/per_chr
-``
+```
 on Cardio into region-specific data in `bgen` format according to work/INF1.merge.
 
-## ukb (ukb.sh)
+### ukb (ukb.sh)
 
 The utility `ukb.sh` extracts data from ukb_imp_chr[x-xx]_v3.bgen as in
 ```
@@ -53,6 +53,6 @@ The utility `ukb.sh` extracts data from ukb_imp_chr[x-xx]_v3.bgen as in
 ```
 on Cardio into region-specific data in `bgen` format (ukb/bgen) according to work/INF1.merge.
 
-# Procedures
+## Procedures
 
 snpid-rsid.sb --> slct.sb/finemap.sb
