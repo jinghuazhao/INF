@@ -1,6 +1,8 @@
 # scripts on CSD3
 
-`rsid.sb` generates two versions of SNPID-rsid mapping in `.rsid` files to be used by `finemap.R`, `gcta.R` and `jam.R`.
+## SNPID-rsid mappings
+
+This is furnished with `snpid_rsid.sb`, whose results will be attached to GCTA/finemap results via `finemap.R`, `gcta.R` and `jam.R`.
 
 * `finemap.sb` and `slct.sb` use the unpruned version.
 * `fm.sb` and `INTERVAL-fm.sb` use a version which only contains pruned variants to comproise `JAM`. The `.z` file is also appropriate for both `finemap` and `JAM`.
@@ -25,21 +27,32 @@ z;bgen;bgi;bcor;bdose;snp;config;cred;log;n_samples
 IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.bgi;IL.6-chr1:154426970_A_C.bcor;IL.6-chr1:154426970_A_C.bdose;IL.6-chr1:154426970_A_C.snp;IL.6-chr1:154426970_A_C.config;IL.6-chr1:154426970_A_C.cred;IL.6-chr1:154426970_A_C.log;4994
 ```
 
-# ukb
+# LD reference panels
 
-The utility `ukb.sh` extracts from ukb_imp_chr[x-xx]_v3.bgen as in
+The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to generate `binary_ped` with SNPIDs (bgen/*map)
+* by qctool -- it also creates `bgen` with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
+* by PLINK -- it has a `_snpid` tag.
+
+In both cases the duplicates (bgen/*rmdup.list) are excluded.
+
+## INTERVAL.sh (INTERVAL.sb)
+
+The utility `INTERVAL.sh` extracts data from  
+```
+/DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
+/DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_imputed_info_0.4_phwe_1e-4_filtered/per_chr
+``
+on Cardio into region-specific data in `bgen` format according to work/INF1.merge.
+
+## ukb (ukb.sh)
+
+The utility `ukb.sh` extracts data from ukb_imp_chr[x-xx]_v3.bgen as in
 ```
 /DO-NOT-MODIFY-SCRATCH/uk_biobank/500k/imputed_v3
 /DO-NOT-MODIFY-SCRATCH/curated_genetic_data/uk_biobank/reference_files/full_release
 ```
 on Cardio into region-specific data in `bgen` format (ukb/bgen) according to work/INF1.merge.
 
-It involves a utility called `ukb.sb` to generate `binary_ped` with SNPIDs (bgen/*map)
-* by qctool -- it also creates `bgen` with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
-* by PLINK -- it has a `_snpid` tag.
+# Procedures
 
-In both cases the duplicates (bgen/*rmdup.list) are excluded.
-
-# SNPID-rsid mappings
-
-This is furnished with `snpid_rsid.sb`, whose results will be attached to GCTA/finemap results.
+snpid-rsid.sb --> slct.sb/finemap.sb
