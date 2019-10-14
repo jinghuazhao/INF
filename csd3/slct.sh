@@ -62,6 +62,24 @@ do
   pdftopng -r 300 ${f}.pdf ${f}
   mv ${f}-000001.png ${f}.png
 done
+
+R --no-save -q <<END
+  library(gap)
+  d <- read.table("INF1.jma.1.cis.vs.trans",as.is=TRUE,header=TRUE)
+  pdf("INF1.jma.1.m2d.pdf")
+  mhtplot2d(d)
+  dev.off()
+  d <- read.table("INF1.jma.2.cis.vs.trans",as.is=TRUE,header=TRUE)
+  pdf("INF1.jma.2.m2d.pdf")
+  mhtplot2d(d)
+  dev.off()
+END
+
+pdftopng -r 300 INF1.jma.1.m2d.pdf INF1.jma.1.m2d
+mv INF1.jma.1.m2d-000001.png INF1.jma.1.m2d.png
+pdftopng -r 300 INF1.jma.2.m2d.pdf INF1.jma.2.m2d
+mv INF1.jma.2.m2d-000001.png INF1.jma.2.m2d.png
+
 (
   awk 'NR>1{print $5,$6}' work/INF1.merge | \
   parallel -j1 -C' ' '
