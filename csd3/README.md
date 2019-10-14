@@ -1,4 +1,8 @@
-# scripts on CSD3
+# Scripts on CSD3
+
+## Sentinel identification
+
+This is furnished with `merge.sh`.
 
 ## LD reference panels
 
@@ -58,3 +62,9 @@ IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.b
 After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `slct.sh`.
 
 Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
+
+## Additional analyses
+
+A pure distance-based approach is avaiable as `sentinels_nold.sh` but is superseded with its failure to handle long LD regions.
+
+There are scripts for heritability analysis and proportion of variance explained.
