@@ -53,6 +53,8 @@ z;bgen;bgi;bcor;bdose;snp;config;cred;log;n_samples
 IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.bgi;IL.6-chr1:154426970_A_C.bcor;IL.6-chr1:154426970_A_C.bdose;IL.6-chr1:154426970_A_C.snp;IL.6-chr1:154426970_A_C.config;IL.6-chr1:154426970_A_C.cred;IL.6-chr1:154426970_A_C.log;4994
 ```
 
-## Procedures
+## Conditional analysis and finemapping
 
-snpid-rsid.sb --> slct.sb/finemap.sb
+After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `slct.sh`.
+
+Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
