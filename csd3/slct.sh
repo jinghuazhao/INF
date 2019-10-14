@@ -1,4 +1,4 @@
-# 13-10-2019 JHZ
+# 15-10-2019 JHZ
 (
   cat work/*jma.cojo | \
   head -1 | \
@@ -36,6 +36,7 @@ R --no-save -q <<END
 # primary
   cistrans1 <- cis.vs.trans.classification(subset(hits,p <= 5e-10),inf1,"uniprot")
   cis.vs.trans1 <- with(cistrans1,data)
+  write.table(cis.vs.trans1,file="INF1.jma.1.cis.vs.trans",row.names=FALSE,quote=TRUE)
   sink("INF1.jma.1.out")
   with(cistrans1,table)
   sink()
@@ -46,6 +47,7 @@ R --no-save -q <<END
 # secondary
   cistrans2 <- cis.vs.trans.classification(subset(hits,p > 5e-10 & pJ <= 5e-10),inf1,"uniprot")
   cis.vs.trans2 <- with(cistrans2,data)
+  write.table(cis.vs.trans2,file="INF1.jma.2.cis.vs.trans",row.names=FALSE,quote=TRUE)
   sink("INF1.jma.2.out")
   with(cistrans2,table)
   sink()
