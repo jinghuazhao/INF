@@ -68,3 +68,11 @@ Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
 A pure distance-based approach is avaiable as `sentinels_nold.sh` but is superseded with its failure to handle long LD regions.
 
 There are scripts for heritability analysis and proportion of variance explained.
+
+## trans-pQTL hotspot
+
+This requires [glist-hg19](csd3/glist=hg19). Try
+```bash
+sh hotspot.sh TRAIL
+```
+for TRAIL.
