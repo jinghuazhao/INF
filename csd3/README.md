@@ -69,11 +69,11 @@ A pure distance-based approach is avaiable as `sentinels_nold.sh` but is superse
 
 There are scripts for heritability analysis and proportion of variance explained.
 
-## Pleiotropic site and trans-pQTL hotspot
+## Ppolygenic sites and trans-pQTL hotspots
 
 This requires [glist-hg19](glist-hg19). Try
 ```bash
-sh pleiotropy.sh TNFSF10
+sh polygene.sh TNFSF10
 ```
 for *TNFSF10* and 
 ```bash
