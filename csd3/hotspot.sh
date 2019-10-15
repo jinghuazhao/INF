@@ -2,13 +2,13 @@
 
 export HOTSPOT=$1
 (
-  grep ${HOTSPOT} INF1.merge.cis.vs.trans | \
+  grep ${HOTSPOT} work/INF1.merge.cis.vs.trans | \
   awk -v OFS="\t" '{print "chr" $14,$15,$16,$13,$17}' | \
   sed 's/\"//g'
 ) > a
 
 (
-  grep ${HOTSPOT} INF1.merge.cis.vs.trans | \
+  grep ${HOTSPOT} work/INF1.merge.cis.vs.trans | \
   cut -d' ' -f3,4 | \
   awk -v OFS="\t" '{print "chr" $1,$2-1, $2}'
 ) > b1
@@ -23,8 +23,6 @@ export HOTSPOT=$1
 
 bedtools intersect -a b1 -b b2 -wa -wb -loj | \
 cut  -f1-3,7 > b
-
-rm b1 b2
 
 R --no-save -q <<END
   library(circlize)
@@ -42,3 +40,5 @@ R --no-save -q <<END
   circos.clear()
   dev.off()
 END
+
+rm a b b1 b2
