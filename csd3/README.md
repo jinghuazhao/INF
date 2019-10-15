@@ -71,7 +71,7 @@ There are scripts for heritability analysis and proportion of variance explained
 
 ## trans-pQTL hotspot
 
-This requires [glist-hg19](csd3/glist=hg19). Try
+This requires [glist-hg19](glist-hg19). Try
 ```bash
 sh hotspot.sh TRAIL
 ```
