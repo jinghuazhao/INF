@@ -76,13 +76,13 @@ Because circos plots are gene-centric, in both cases, the protein-coding gene is
 
 Try
 ```bash
-sh hotspot.sh chr1:159175354_A_G
-sh hotspot.sh chr12:111884608_C_T
+./hotspot.sh chr1:159175354_A_G
+./hotspot.sh chr12:111884608_C_T
 ```
 giving results linking *ACKR1* and *SH2B3*, respectively, while
 ```bash
-sh polygene.sh IL12B
-sh polygene.sh TNFSF10
+./polygene.sh IL12B
+./polygene.sh TNFSF10
 ```
 linking IL.12B and TRAIL, respectively.
 
