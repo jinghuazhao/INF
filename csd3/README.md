@@ -81,9 +81,10 @@ sh hotspot.sh chr12:111884608_C_T
 ```
 giving results linking *ACKR1* and *SH2B3*, respectively, while
 ```bash
+sh polygene.sh IL12B
 sh polygene.sh TNFSF10
 ```
-linking TRAIL.
+linking IL.12B and TRAIL, respectively.
 
 ## PhenoScanner
 
