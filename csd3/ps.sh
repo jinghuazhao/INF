@@ -19,8 +19,10 @@ R --no-save -q <<END
   save(r,file="work/INF1.merge.ps")
 END
 
-# Only SH2B3 through chr12:111884608_C_T
+# SH2B3 and chr12:111884608_C_T sentinel
 R --no-save -q <<END
+  gene <- phenoscanner::phenoscanner(genequery="TNFSF10", catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  lapply(gene,dim)
   snpid <- "chr12:111884608"
   cat(rsid,"\n")
   GWAS <- phenoscanner::phenoscanner(snpquery=snpid, catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
@@ -29,4 +31,20 @@ R --no-save -q <<END
   pQTL <- phenoscanner::phenoscanner(snpquery=snpid, catalogue="pQTL", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
   lapply(pQTL,dim)
   with(pQTL, results)[c("rsid","study","trait")]
+END
+
+# IL.12B
+R --no-save -q <<END
+  gene <- phenoscanner::phenoscanner(genequery="IL12B", catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  lapply(gene,dim)
+  g <- with(gene,genes)
+  r <- with(gene,results)
+END
+
+# PD.L1
+R --no-save -q <<END
+  gene <- phenoscanner::phenoscanner(genequery="CD274", catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  lapply(gene,dim)
+  g <- with(gene,genes)
+  r <- with(gene,results)
 END
