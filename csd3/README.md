@@ -71,8 +71,8 @@ There are scripts for heritability analysis and proportion of variance explained
 
 ## Protein with polygenic effects and trans-pQTL hotspots
 
-By default this works on `work/INF1.merge.cis.vs.trans` and requires [glist-hg19](glist-hg19). Note in both cases, the protein-coding gene is 
-handled in mind.
+This is illustrated with circos plots and by default this works on `work/INF1.merge.cis.vs.trans` and requires [glist-hg19](glist-hg19).
+Because circos plots are gene-centric, in both cases, the protein-coding gene is handled in mind.
 
 Try
 ```bash
