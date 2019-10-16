@@ -69,7 +69,7 @@ This is available as `sentinels_nold.sh` but is superseded with its failure to h
 
 There are scripts for heritability analysis and proportion of variance explained.
 
-## trans-pQTL hotspots and proteins as polygenic targets
+## Trans-pQTL hotspots and proteins as polygenic targets
 
 This is illustrated with circos plots and by default this works on `work/INF1.merge.cis.vs.trans` and requires [glist-hg19](glist-hg19).
 Because circos plots are gene-centric, in both cases, the protein-coding gene is handled in mind.
