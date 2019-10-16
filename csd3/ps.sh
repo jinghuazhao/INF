@@ -1,5 +1,7 @@
 # 16-10-2019 JHZ
 
+# To set it up
+# explicit rsid
 (
   join <(sed '1d' work/INF1.merge | cut -f6 | sort -k1,1 | uniq) work/INTERVAL.rsid
 ) > work/INF1.merge.rsid
@@ -17,10 +19,14 @@ R --no-save -q <<END
   save(r,file="work/INF1.merge.ps")
 END
 
-# only SH2B3 through chr12:111884608_C_T
+# Only SH2B3 through chr12:111884608_C_T
 R --no-save -q <<END
-  rsid <- with(subset(read.table("work/INF1.merge.rsid",as.is=TRUE,col.names=c("snpid","rsid")),snpid=="chr12:111884608_C_T"), rsid)
+  snpid <- "chr12:111884608"
   cat(rsid,"\n")
-  SH2B3 <- phenoscanner::phenoscanner(snpquery=rsid, proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
-  lapply(SH2B3,dim)
+  GWAS <- phenoscanner::phenoscanner(snpquery=snpid, catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  lapply(GWAS)
+  with(GWAS, results)[c("rsid","study","trait")]
+  pQTL <- phenoscanner::phenoscanner(snpquery=snpid, catalogue="pQTL", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  lapply(pQTL,dim)
+  with(pQTL, results)[c("rsid","study","trait")]
 END
