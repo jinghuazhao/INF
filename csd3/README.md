@@ -63,9 +63,9 @@ After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `
 
 Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
 
-## Additional analyses
+## Clumping by fixed distance
 
-A pure distance-based approach is avaiable as `sentinels_nold.sh` but is superseded with its failure to handle long LD regions.
+This is available as `sentinels_nold.sh` but is superseded with its failure to handle long LD regions.
 
 There are scripts for heritability analysis and proportion of variance explained.
 
@@ -73,11 +73,15 @@ There are scripts for heritability analysis and proportion of variance explained
 
 This requires [glist-hg19](glist-hg19). Try
 ```bash
-sh polygene.sh TNFSF10
-```
-for *TNFSF10* and 
-```bash
 sh hotspot.sh chr1:159175354_A_G
 sh hotspot.sh chr12:111884608_C_T
 ```
-for ACKR1 and SH2B3, respectively.
+for ACKR1 and SH2B3, respectively, and
+```bash
+sh polygene.sh TNFSF10
+```
+for *TNFSF10*.
+
+## PhenoScanner
+
+This is furnished with `ps.sh`.
