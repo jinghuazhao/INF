@@ -69,7 +69,7 @@ This is available as `sentinels_nold.sh` but is superseded with its failure to h
 
 There are scripts for heritability analysis and proportion of variance explained.
 
-## Polygenic sites and trans-pQTL hotspots
+## Protein with polygenic effects and trans-pQTL hotspots
 
 By default this works on `work/INF1.merge.cis.vs.trans` and requires [glist-hg19](glist-hg19). Note in both cases, the protein-coding gene is 
 handled in mind.
