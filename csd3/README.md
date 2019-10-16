@@ -80,7 +80,7 @@ for ACKR1 and SH2B3, respectively, and
 ```bash
 sh polygene.sh TNFSF10
 ```
-for *TNFSF10*.
+for *TNFSF10* linking TRAIL.
 
 ## PhenoScanner
 
