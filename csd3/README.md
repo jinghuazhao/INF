@@ -79,11 +79,11 @@ Try
 sh hotspot.sh chr1:159175354_A_G
 sh hotspot.sh chr12:111884608_C_T
 ```
-for ACKR1 and SH2B3, respectively, and
+giving ACKR1 and SH2B3, respectively, and
 ```bash
 sh polygene.sh TNFSF10
 ```
-for *TNFSF10*, linking TRAIL.
+linking TRAIL.
 
 ## PhenoScanner
 
