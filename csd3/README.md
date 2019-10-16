@@ -71,7 +71,10 @@ There are scripts for heritability analysis and proportion of variance explained
 
 ## Polygenic sites and trans-pQTL hotspots
 
-This requires [glist-hg19](glist-hg19). Try
+By default this works on `work/INF1.merge.cis.vs.trans` and requires [glist-hg19](glist-hg19). Note in both cases, the protein-coding gene is 
+handled in mind.
+
+Try
 ```bash
 sh hotspot.sh chr1:159175354_A_G
 sh hotspot.sh chr12:111884608_C_T
@@ -80,7 +83,7 @@ for ACKR1 and SH2B3, respectively, and
 ```bash
 sh polygene.sh TNFSF10
 ```
-for *TNFSF10* linking TRAIL.
+for *TNFSF10*, linking TRAIL.
 
 ## PhenoScanner
 
