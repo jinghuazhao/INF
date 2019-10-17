@@ -43,8 +43,8 @@ R --no-save -q <<END
   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06)
   circos.genomicLabels(ab,labels.column = 4, side="inside")
-  cols <- rep(12,nrow(a))
-  cols[b["cistrans"]=="trans"] <- 10
+  cols <- rep(10,nrow(b))
+  cols[b["cistrans"]=="cis"] <- 12
   circos.genomicLink(a, b, col = cols, directional=1, border = 10, lwd = 2)
   circos.clear()
   dev.off()
