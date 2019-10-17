@@ -37,13 +37,12 @@ R --no-save -q <<END
   b <- read.table("b",as.is=TRUE,col.names=c("chr","start","end", "gene", "cistrans"))
   cols <- rep(10,nrow(b))
   a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="c")[-c(4:6)]
-  if (class(a[,4]) != "matrix")
-  {
-    a <- d
-    cols[with(b,cistrans)=="cis"] <- 12
+  if (class(a[,4]) != "list") {
+     a <- d
+     cols[with(b,cistrans)=="cis"] <- 12
   } else {
-     a[,4] <- apply(a[,4],1,"paste",collapse=",")
-     names(a) <- c("chr","start","end","gene")
+     a[,4] <- as.character(a[,4])
+     names(a) <- c("chr","start","end", "gene")
   }
   labels <- rbind(a,unique(b[,-5]))
   pdf(paste0(POLYGENE,".pdf"))
