@@ -34,17 +34,22 @@ R --no-save -q <<END
   write.table(cvt[c("p.chr","p.start","p.end","p.gene","cis.trans")],file="b",col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
   library(circlize)
   d <- read.table("a",as.is=TRUE,col.names=c("chr","start","end", "gene"))
-  a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="c")[-c(4:6)]
-  names(a) <- c("chr","start","end","gene")
   b <- read.table("b",as.is=TRUE,col.names=c("chr","start","end", "gene", "cistrans"))
-  ab <- rbind(data.frame(a,cistrans="."),data.frame(unique(b[,-5]),cistrans="."))
-  POLYGENE <- Sys.getenv("POLYGENE")
+  cols <- rep(10,nrow(b))
+  a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="c")[-c(4:6)]
+  if (class(a[,4]) != "matrix")
+  {
+    a <- d
+    cols[with(b,cistrans)=="cis"] <- 12
+  } else {
+     a[,4] <- apply(a[,4],1,"paste",collapse=",")
+     names(a) <- c("chr","start","end","gene")
+  }
+  labels <- rbind(a,unique(b[,-5]))
   pdf(paste0(POLYGENE,".pdf"))
   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06)
-  circos.genomicLabels(ab,labels.column = 4, side="inside")
-  cols <- rep(10,nrow(b))
-  cols[b["cistrans"]=="cis"] <- 12
+  circos.genomicLabels(labels,labels.column = 4, side="inside")
   circos.genomicLink(a, b, col = cols, directional=1, border = 10, lwd = 2)
   circos.clear()
   dev.off()
