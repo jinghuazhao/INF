@@ -1,10 +1,10 @@
-# 15-10-2019 JHZ
+# 17-10-2019 JHZ
 
 export HOTSPOT=$1
 export cvt=work/INF1.merge.cis.vs.trans
 
 (
-  grep ${HOTSPOT} ${cvt} | \
+  grep -w ${HOTSPOT} ${cvt} | \
   awk -v OFS="\t" '{print "chr" $3,$4-1, $4}'
 ) > a1
 
