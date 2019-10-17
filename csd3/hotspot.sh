@@ -26,7 +26,10 @@ R --no-save -q <<END
   cvt <- within(cvt,p.chr <- paste0("chr",p.chr))
   write.table(cvt[c("p.chr","p.start","p.end","p.gene","cis.trans")],file="b",col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
   library(circlize)
-  a <- read.table("a",as.is=TRUE,col.names=c("chr","start","end", "gene"))
+  d <- read.table("a",as.is=TRUE,col.names=c("chr","start","end", "gene"))
+  a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="paste")[-c(4:6)]
+  a[,4] <- apply(a[,4],1,"paste",collapse=",")
+  names(a) <- c("chr","start","end","gene")
   b <- read.table("b",as.is=TRUE,col.names=c("chr","start","end", "gene", "cistrans"))
   ab <- rbind(b,data.frame(unique(a),cistrans="."))
   pdf(paste0(HOTSPOT,".pdf"))

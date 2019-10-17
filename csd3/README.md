@@ -88,6 +88,7 @@ linking IL.12B and TRAIL, respectively.
 
 To generate all possible plots, wo do
 ```bash
+for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; csd3/hotspot.sh $h; done
 for g in $(cat work/INF1.merge.gene); do echo $g; csd3/polygene.sh $g; done
 ```
 
