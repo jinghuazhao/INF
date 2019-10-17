@@ -29,16 +29,14 @@ R --no-save -q <<END
   b <- read.table("b",as.is=TRUE,col.names=c("chr","start","end", "gene", "cistrans"))
   cols <- rep(10,nrow(b))
   d <- read.table("a",as.is=TRUE,col.names=c("chr","start","end", "gene"))
-# a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="paste")[-c(4:6)]
-# if (class(a[,4]) != "matrix") {
-#    a <- d
-#    cols[b["cistrans"]=="cis"] <- 12
-# } else {
-#    a[,4] <- apply(a[,4],1,"paste",collapse=",")
-#    names(a) <- c("chr","start","end","gene")
-# }
-  a <- d
-  cols[b["cistrans"]=="cis"] <- 12
+  a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="paste")[-c(4:6)]
+  if (class(a[,4]) != "matrix") {
+    a <- d
+    cols[b["cistrans"]=="cis"] <- 12
+  } else {
+    a[,4] <- apply(a[,4],1,"paste",collapse=",")
+    names(a) <- c("chr","start","end","gene")
+  }
   labels <- rbind(b,data.frame(unique(a),cistrans="."))
   pdf(paste0(HOTSPOT,".pdf"))
   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
