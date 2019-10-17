@@ -31,10 +31,10 @@ R --no-save -q <<END
   cvt <- Sys.getenv("cvt")
   cvt <- subset(read.table(cvt,as.is=TRUE,header=TRUE), p.gene==POLYGENE)
   cvt <- within(cvt,p.chr <- paste0("chr",p.chr))
-  write.table(cvt[c("p.chr","p.start","p.end","p.gene","cis.trans")],file="b",col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+  b <- cvt[c("p.chr","p.start","p.end","p.gene","cis.trans")]
+  names(b) <- c("chr","start","end", "gene", "cistrans")
   library(circlize)
   d <- read.table("a",as.is=TRUE,col.names=c("chr","start","end", "gene"))
-  b <- read.table("b",as.is=TRUE,col.names=c("chr","start","end", "gene", "cistrans"))
   cols <- rep(10,nrow(b))
   a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="c")[-c(4:6)]
   if (class(a[,4]) != "list") {

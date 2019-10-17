@@ -24,25 +24,25 @@ R --no-save -q <<END
   cvt <- Sys.getenv("cvt")
   cvt <- subset(read.table(cvt,as.is=TRUE,header=TRUE), SNP==HOTSPOT)
   cvt <- within(cvt,p.chr <- paste0("chr",p.chr))
-  write.table(cvt[c("p.chr","p.start","p.end","p.gene","cis.trans")],file="b",col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+  b <- cvt[c("p.chr","p.start","p.end","p.gene","cis.trans")]
+  names(b)=c("chr","start","end", "gene", "cistrans")
   library(circlize)
-  b <- read.table("b",as.is=TRUE,col.names=c("chr","start","end", "gene", "cistrans"))
   cols <- rep(10,nrow(b))
   d <- read.table("a",as.is=TRUE,col.names=c("chr","start","end", "gene"))
   a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="paste")[-c(4:6)]
-  if (class(a[,4]) != "matrix") {
-    a <- d
-    cols[b["cistrans"]=="cis"] <- 12
-  } else {
-    a[,4] <- apply(a[,4],1,"paste",collapse=",")
-    names(a) <- c("chr","start","end","gene")
-  }
+# if (class(a[,4]) != "matrix") {
+#   a <- d
+#   cols[b["cistrans"]=="cis"] <- 12
+# } else {
+#   a[,4] <- apply(a[,4],1,"paste",collapse=",")
+#   names(a) <- c("chr","start","end","gene")
+# }
   labels <- rbind(b,data.frame(unique(a),cistrans="."))
   pdf(paste0(HOTSPOT,".pdf"))
   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06)
   circos.genomicLabels(labels,labels.column = 4, side="inside")
-  circos.genomicLink(a, b, col = cols, directional=1, border = 10, lwd = 2)
+  circos.genomicLink(d, b, col = cols, directional=1, border = 10, lwd = 2)
   circos.clear()
   dev.off()
 END
