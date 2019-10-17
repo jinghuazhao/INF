@@ -37,12 +37,13 @@ R --no-save -q <<END
 #   a[,4] <- apply(a[,4],1,"paste",collapse=",")
 #   names(a) <- c("chr","start","end","gene")
 # }
+  a <- d
   labels <- rbind(b,data.frame(unique(a),cistrans="."))
   pdf(paste0(HOTSPOT,".pdf"))
   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06)
   circos.genomicLabels(labels,labels.column = 4, side="inside")
-  circos.genomicLink(d, b, col = cols, directional=1, border = 10, lwd = 2)
+  circos.genomicLink(a, b, col = cols, directional=1, border = 10, lwd = 2)
   circos.clear()
   dev.off()
 END
