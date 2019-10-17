@@ -1,4 +1,4 @@
-# 10-10-2019 JHZ
+# 17-10-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -95,6 +95,15 @@ mv INF1.merge-000001.png INF1.merge.png
   sed 's/chr//g' | \
   awk '{print 0 $1 ":" $2 "-" $3}'
 ) > ukb/ukb.range
+
+sed '1d' work/INF1.merge | cut -f5 | sort -k1,1 | uniq | join - work/inf1.tmp | sort -k2,2 > work/INF1.merge.prot
+sed '1d' doc/olink.inf.panel.annot.tsv | \
+sed 's/\"//g' | \
+cut -f2,3,7 | \
+sort -k2,2 | \
+join -j2 work/INF1.merge.prot - | \
+cut -d' ' -f4 | \
+awk '!/NA/' > work/INF1.merge.gene
 
 R --no-save -q <<END
   library(gap)

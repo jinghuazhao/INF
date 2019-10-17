@@ -86,6 +86,11 @@ giving results linking *ACKR1* and *SH2B3*, respectively, while
 ```
 linking IL.12B and TRAIL, respectively.
 
+To generate all possible plots, wo do
+```bash
+for g in $(cat work/INF1.merge.gene); do echo $g; csd3/polygene.sh $g; done
+```
+
 ## PhenoScanner
 
 This is furnished with `ps.sh`.
