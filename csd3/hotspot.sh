@@ -51,4 +51,4 @@ END
 pdftopng -r 300 ${HOTSPOT}.pdf ${HOTSPOT}
 mv ${HOTSPOT}-000001.png ${HOTSPOT}.png
 
-rm a1 a2 a b
+rm a1 a2 a

@@ -57,4 +57,4 @@ END
 pdftopng -r 300 ${POLYGENE}.pdf ${POLYGENE}
 mv ${POLYGENE}-000001.png ${POLYGENE}.png
 
-rm a1 a2 a b
+rm a1 a2 a
