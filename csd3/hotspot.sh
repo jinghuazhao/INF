@@ -30,6 +30,8 @@ R --no-save -q <<END
   cols <- rep(10,nrow(b))
   d <- read.table("a",as.is=TRUE,col.names=c("chr","start","end", "gene"))
   a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="paste")[-c(4:6)]
+# chr12:11058117_C_T
+# chr17:34326215_A_C
 # if (class(a[,4]) != "matrix") {
 #   a <- d
 #   cols[b["cistrans"]=="cis"] <- 12
@@ -37,6 +39,7 @@ R --no-save -q <<END
 #   a[,4] <- apply(a[,4],1,"paste",collapse=",")
 #   names(a) <- c("chr","start","end","gene")
 # }
+# chr19:49206145_C_G
   a <- d
   labels <- rbind(b,data.frame(unique(a),cistrans="."))
   pdf(paste0(HOTSPOT,".pdf"))
