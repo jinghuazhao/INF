@@ -98,15 +98,15 @@ mv INF1.merge-000001.png INF1.merge.png
 
 sed '1d' work/INF1.merge | cut -f5 | sort -k1,1 | uniq | join -t$'\t' - work/inf1.tmp | sort -k2,2 > work/INF1.merge.prot
 (
-  echo -e "uniprot\ttarget\tprot\tgene"
+  echo -e "uniprot\tprot\ttarget\tgene"
   sed '1d' doc/olink.inf.panel.annot.tsv | \
   sed 's/\"//g' | \
   cut -f2,3,7 | \
   sort -t$'\t' -k2,2 | \
-  join -j2 -t$'\t' work/INF1.merge.prot - | \
-  awk '!/NA/'
+  join -j2 -t$'\t' work/INF1.merge.prot -
 ) > work/INF1.merge.id
 sed '1d' work/INF1.merge.id | \
+awk '!/NA/' | \
 cut -f4 > work/INF1.merge.gene
 
 R --no-save -q <<END
