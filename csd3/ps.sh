@@ -72,7 +72,7 @@ R --no-save -q <<END
   }
   r <- list(genes=genes,results=results)
   lapply(r,dim)
-  save(r,"work/INF1.merge.genes")
+  save(r,file="work/INF1.merge.genes")
 END
 
 # PD.L1
