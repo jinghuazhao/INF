@@ -15,6 +15,8 @@ END
 
 R --no-save -q <<END
   options(width=500)
+  m <- read.delim("work/INF1.merge",as.is=TRUE)[c("prot","MarkerName")]
+  names(m) <- c("prot","ref_snpid")
   load("work/INF1.merge.pQTL")
   attach(r)
   results <- within(results,{
@@ -28,8 +30,10 @@ R --no-save -q <<END
   for(d in unique(with(results,dataset)))
   {
     cat(d,"\n")
-    s <- subset(results[c("ref_rsid","ref_snpid","rsid","r2","trait","dataset")],dataset==d)
+    sink(paste0("ps.",d))
+    s <- subset(results[c("ref_rsid","ref_snpid","rsid","r2","trait","dataset","pmid")],dataset==d)
     print(s)
+    sink()
   }
   detach(r)
 END
