@@ -1,4 +1,4 @@
-# 17-10-2019 JHZ
+# 18-10-2019 JHZ
 
 export HOTSPOT=$1
 export cvt=work/INF1.merge.cis.vs.trans
@@ -26,7 +26,6 @@ R --no-save -q <<END
   cvt <- within(cvt,p.chr <- paste0("chr",p.chr))
   b <- cvt[c("p.chr","p.start","p.end","p.gene","cis.trans")]
   names(b)=c("chr","start","end", "gene", "cistrans")
-  library(circlize)
   cols <- rep(10,nrow(b))
   d <- read.table("a",as.is=TRUE,col.names=c("chr","start","end", "gene"))
   a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="paste")[-c(4:6)]
@@ -42,6 +41,7 @@ R --no-save -q <<END
 # chr19:49206145_C_G
   a <- d
   labels <- rbind(b,data.frame(unique(a),cistrans="."))
+  library(circlize)
   pdf(paste0(HOTSPOT,".pdf"))
   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06)

@@ -1,4 +1,4 @@
-# 17-10-2019 JHZ
+# 18-10-2019 JHZ
 
 export POLYGENE=$1
 export cvt=work/INF1.merge.cis.vs.trans
@@ -33,7 +33,6 @@ R --no-save -q <<END
   cvt <- within(cvt,p.chr <- paste0("chr",p.chr))
   b <- cvt[c("p.chr","p.start","p.end","p.gene","cis.trans")]
   names(b) <- c("chr","start","end", "gene", "cistrans")
-  library(circlize)
   d <- read.table("a",as.is=TRUE,col.names=c("chr","start","end", "gene"))
   cols <- rep(10,nrow(b))
   a <- aggregate(d,by=list(with(d,chr),with(d,start),with(d,end)),FUN="c")[-c(4:6)]
@@ -45,6 +44,7 @@ R --no-save -q <<END
      names(a) <- c("chr","start","end", "gene")
   }
   labels <- rbind(a,unique(b[,-5]))
+  library(circlize)
   pdf(paste0(POLYGENE,".pdf"))
   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06)
