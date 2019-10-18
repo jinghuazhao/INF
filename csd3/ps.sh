@@ -10,13 +10,13 @@
 R --no-save -q <<END
   require(phenoscanner)
   rsid <- with(read.table("work/INF1.merge.rsid",as.is=TRUE,col.names=c("snpid","rsid")), rsid)
-  r1 <- phenoscanner(snpquery=rsid[1:100], catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.8, build=37)
+  r1 <- phenoscanner(snpquery=rsid[1:100], catalogue="pQTL", proxies = "EUR", pvalue = 1e-07, r2= 0.8, build=37)
   lapply(r1,dim)
-  r2 <- phenoscanner(snpquery=rsid[101:162], catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.8, build=37)
+  r2 <- phenoscanner(snpquery=rsid[101:162], catalogue="pQTL", proxies = "EUR", pvalue = 1e-07, r2= 0.8, build=37)
   lapply(r2,dim)
-  r <- list(rbind(with(r1,snps),with(r2,snps)),rbind(with(r1,results),with(r2,results)))
+  r <- list(snps=rbind(with(r1,snps),with(r2,snps)),results=rbind(with(r1,results),with(r2,results)))
   lapply(r,dim)
-  save(r,file="work/INF1.merge.ps")
+  save(r,file="work/INF1.merge.pQTL")
 END
 
 # SH2B3 and chr12:111884608_C_T sentinel
