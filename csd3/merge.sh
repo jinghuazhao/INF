@@ -88,6 +88,11 @@ END
 pdftopng -r 300 INF1.merge.pdf INF1.merge
 mv INF1.merge-000001.png INF1.merge.png
 
+# rsid
+(
+  join <(sed '1d' work/INF1.merge | cut -f6 | sort -k1,1 | uniq) work/INTERVAL.rsid
+) > work/INF1.merge.rsid
+
 (
   bedtools intersect -a work/INF1.merge -b tryggve/high-LD-regions-hg19.bed | \
   sortBed | \

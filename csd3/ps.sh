@@ -1,11 +1,5 @@
 # 18-10-2019 JHZ
 
-# To set it up
-# explicit rsid
-(
-  join <(sed '1d' work/INF1.merge | cut -f6 | sort -k1,1 | uniq) work/INTERVAL.rsid
-) > work/INF1.merge.rsid
-
 # Novel loci
 R --no-save -q <<END
   require(phenoscanner)
