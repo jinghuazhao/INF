@@ -1,41 +1,47 @@
 # 18-10-2019 JHZ
 
-# Novel loci
+# lookup
 R --no-save -q <<END
   require(phenoscanner)
   rsid <- with(read.table("work/INF1.merge.rsid",as.is=TRUE,col.names=c("snpid","rsid")), rsid)
-  r1 <- phenoscanner(snpquery=rsid[1:100], catalogue="pQTL", proxies = "EUR", pvalue = 1e-07, r2= 0.8, build=37)
-  lapply(r1,dim)
-  r2 <- phenoscanner(snpquery=rsid[101:162], catalogue="pQTL", proxies = "EUR", pvalue = 1e-07, r2= 0.8, build=37)
-  lapply(r2,dim)
-  r <- list(snps=rbind(with(r1,snps),with(r2,snps)),results=rbind(with(r1,results),with(r2,results)))
-  lapply(r,dim)
-  save(r,file="work/INF1.merge.pQTL")
+  for (catalogue in c("eQTL","pQTL","mQTL","methQTL","GWAS"))
+  {
+    r1 <- phenoscanner(snpquery=rsid[1:100], catalogue=catalogue, proxies = "EUR", pvalue = 1e-07, r2= 0.8, build=37)
+    lapply(r1,dim)
+    r2 <- phenoscanner(snpquery=rsid[101:162], catalogue=catalogue, proxies = "EUR", pvalue = 1e-07, r2= 0.8, build=37)
+    lapply(r2,dim)
+    r <- list(snps=rbind(with(r1,snps),with(r2,snps)),results=rbind(with(r1,results),with(r2,results)))
+    lapply(r,dim)
+    save(r,file=paste0("work/INF1.merge.",catalogue))
+  }
+  m <- read.delim("work/INF1.merge",as.is=TRUE)[c("prot","MarkerName")]
+  names(m) <- c("prot","ref_snpid")
 END
 
 R --no-save -q <<END
   options(width=500)
-  m <- read.delim("work/INF1.merge",as.is=TRUE)[c("prot","MarkerName")]
-  names(m) <- c("prot","ref_snpid")
-  load("work/INF1.merge.pQTL")
-  attach(r)
-  results <- within(results,{
-    a1 <- ref_a1
-    a2 <- ref_a2
-    swap <- ref_a1 > ref_a2
-    a1[swap] <- ref_a2[swap]
-    a2[swap] <- ref_a1[swap]
-    ref_snpid <- paste0(ref_hg19_coordinates,":",a1,"_",a2)
-  })
-  for(d in unique(with(results,dataset)))
+  for (catalogue in c("eQTL","pQTL","mQTL","methQTL","GWAS"))
   {
-    cat(d,"\n")
-    sink(paste0("ps.",d))
-    s <- subset(results[c("ref_rsid","ref_snpid","rsid","r2","trait","dataset","pmid")],dataset==d)
-    print(s)
-    sink()
+    load(paste0("work/INF1.merge.",catalogue))
+    attach(r)
+    results <- within(results,{
+      a1 <- ref_a1
+      a2 <- ref_a2
+      swap <- ref_a1 > ref_a2
+      a1[swap] <- ref_a2[swap]
+      a2[swap] <- ref_a1[swap]
+      ref_snpid <- paste0(ref_hg19_coordinates,":",a1,"_",a2)
+    })
+    for(d in unique(with(results,dataset)))
+    {
+      cat(d,"\n")
+      sink(paste(catalogue,d,sep="."))
+      s <- subset(results[c("ref_rsid","ref_snpid","rsid","r2","trait","dataset","pmid")],dataset==d)
+      print(s)
+      sink()
+    }
+    detach(r)
   }
-  detach(r)
 END
 
 # SH2B3 and chr12:111884608_C_T sentinel
@@ -52,12 +58,21 @@ R --no-save -q <<END
   with(pQTL, results)[c("rsid","study","trait")]
 END
 
-# IL.12B
+# gene
 R --no-save -q <<END
-  gene <- phenoscanner::phenoscanner(genequery="IL12B", catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
-  lapply(gene,dim)
-  g <- with(gene,genes)
-  r <- with(gene,results)
+  glist <- scan("work/INF1.merge.gene",what="")
+  genes <- data.frame()
+  results <- data.frame()
+  for(s in 1:6)
+  {
+    gset <- ifelse(s==6, 61:68, (s-1)*10+1:10)
+    g <- phenoscanner::phenoscanner(genequery=glist[gset], catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+    genes <- rbind(genes,with(g,genes))
+    results <- rbind(results,with(g,results))
+  }
+  r <- list(genes=genes,results=results)
+  lapply(r,dim)
+  save(r,"work/INF1.merge.genes")
 END
 
 # PD.L1
