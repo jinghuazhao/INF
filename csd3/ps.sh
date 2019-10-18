@@ -19,6 +19,27 @@ R --no-save -q <<END
   save(r,file="work/INF1.merge.pQTL")
 END
 
+R --no-save -q <<END
+  options(width=500)
+  load("work/INF1.merge.pQTL")
+  attach(r)
+  results <- within(results,{
+    a1 <- ref_a1
+    a2 <- ref_a2
+    swap <- ref_a1 > ref_a2
+    a1[swap] <- ref_a2[swap]
+    a2[swap] <- ref_a1[swap]
+    ref_snpid <- paste0(ref_hg19_coordinates,":",a1,"_",a2)
+  })
+  for(d in unique(with(results,dataset)))
+  {
+    cat(d,"\n")
+    s <- subset(results[c("ref_rsid","ref_snpid","rsid","r2","trait","dataset")],dataset==d)
+    print(s)
+  }
+  detach(r)
+END
+
 # SH2B3 and chr12:111884608_C_T sentinel
 R --no-save -q <<END
   gene <- phenoscanner::phenoscanner(genequery="TNFSF10", catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
