@@ -1,4 +1,4 @@
-# 18-10-2019 JHZ
+# 19-10-2019 JHZ
 
 # m <- read.delim("work/INF1.merge",as.is=TRUE)[c("prot","MarkerName")]
 # names(m) <- c("prot","ref_snpid")
@@ -6,9 +6,9 @@
 require(phenoscanner)
 catalogue <- Sys.getenv("catalogue")
 rsid <- with(read.table("work/INF1.merge.rsid",as.is=TRUE,col.names=c("snpid","rsid")), rsid)
-r1 <- phenoscanner(snpquery=rsid[1:100], catalogue=catalogue, proxies = "EUR", pvalue = 1e-07, r2= 0.8, build=37)
+r1 <- phenoscanner(snpquery=rsid[1:100], catalogue=catalogue, proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
 lapply(r1,dim)
-r2 <- phenoscanner(snpquery=rsid[101:162], catalogue=catalogue, proxies = "EUR", pvalue = 1e-07, r2= 0.8, build=37)
+r2 <- phenoscanner(snpquery=rsid[101:162], catalogue=catalogue, proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
 lapply(r2,dim)
 r <- list(snps=rbind(with(r1,snps),with(r2,snps)),results=rbind(with(r1,results),with(r2,results)))
 lapply(r,dim)
@@ -28,7 +28,7 @@ for(d in unique(with(results,dataset)))
 {
   cat(d,"\n")
   sink(paste(catalogue,d,sep="."))
-  s <- subset(results[c("ref_rsid","ref_snpid","rsid","r2","trait","dataset","pmid")],dataset==d)
+  s <- subset(results[c("ref_rsid","ref_snpid","rsid","r2","p","trait","dataset","pmid")],dataset==d)
   print(s)
   sink()
 }
