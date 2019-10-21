@@ -1,13 +1,13 @@
-# 19-10-2019 JHZ
+# 21-10-2019 JHZ
 
 options(width=500)
 glist <- scan("work/INF1.merge.gene",what="")
 genes <- data.frame()
 results <- data.frame()
 require(phenoscanner)
-for(s in 1:6)
+for(s in 1:7)
 {
-  gset <- ifelse(s==6, 61:68, (s-1)*10+1:10)
+  if(s==7) gset <- 61:68 else gset <- ((s-1)*10+1:10)
   g <- phenoscanner(genequery=glist[gset], catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
   genes <- rbind(genes,with(g,genes))
   results <- rbind(results,with(g,results))
