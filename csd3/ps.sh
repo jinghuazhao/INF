@@ -1,4 +1,4 @@
-# 19-10-2019 JHZ
+# 21-10-2019 JHZ
 
 for catalogue in eQTL pQTL mQTL methQTL GWAS
 do
@@ -7,4 +7,4 @@ do
 done
 
 # gene
-R --no-save -q < csd3/ps.gene.R > ps.gene.log
+ R --no-save -q < csd3/ps.gene.R > ps.gene.log
