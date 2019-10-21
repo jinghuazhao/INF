@@ -7,4 +7,4 @@ do
 done
 
 # gene
- R --no-save -q < csd3/ps.gene.R > ps.gene.log
+R --no-save -q < csd3/ps.gene.R > ps.gene.log
