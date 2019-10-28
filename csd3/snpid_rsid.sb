@@ -33,12 +33,12 @@ function snpid_rsid_INTERVAL()
 {
   bgenix -g INTERVAL/nodup/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | cut -f1,2 | sort -k2,2 > work/${pr}.rsid
 }
+snpid_rsid_INTERVAL
 
 function snpid_rsid_ukb()
 {
   bgenix -g ukb/nodup/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | cut -f1,2 | sort -k2,2 > work/${pr}.rsid
 }
-snpid_rsid_ukb
 
 cd work
 R --no-save -q <<END
