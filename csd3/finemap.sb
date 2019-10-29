@@ -28,6 +28,7 @@ export pr=${p}-${r}
 export sumstats=${INF}/METAL/${p}-1.tbl.gz
 export n=10000
 export N=4994
+export LDREF=INTERVAL
 
 cd work
 # z0
@@ -49,7 +50,7 @@ cd work
 
 # bgen and bgi
 awk 'NR > 1{print $1} ' ${pr}.z0 > ${pr}.incl
-qctool -g ${INF}/INTERVAL/nodup/${pr}.bgen -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
+qctool -g ${INF}/${LDREF}/nodup/${pr}.bgen -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
 bgenix -g ${pr}.bgen -index -clobber
 
 # z
@@ -81,8 +82,8 @@ rm ${pr}-1_*
 mv ${pr}-1 ${pr}.bcor
 
 export n_causal_snps=10
-if [ -f slct-ukb.list ]; then
-   export greped=$(grep ${pr} slct-ukb.list | cut -d' ' -f2)
+if [ -f slct-${LDREF}.list ]; then
+   export greped=$(grep ${pr} slct-${LDREF}.list | cut -d' ' -f2)
    if [ ${greped} -gt 0 ] && [ ${greped} -lt 10 ]; then
       export n_causal_snps=${greped}
    fi

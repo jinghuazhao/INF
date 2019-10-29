@@ -27,18 +27,20 @@ export flanking=1e6
 export start=$(awk -vpos=${Start} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${End} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
 export snpid_rsid=${INF}/work/INTERVAL.rsid
+export LDREF=INTERVAL
 
 # unpruned
 function snpid_rsid_INTERVAL()
 {
   bgenix -g INTERVAL/nodup/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | cut -f1,2 | sort -k2,2 > work/${pr}.rsid
 }
-snpid_rsid_INTERVAL
 
 function snpid_rsid_ukb()
 {
   bgenix -g ukb/nodup/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | cut -f1,2 | sort -k2,2 > work/${pr}.rsid
 }
+
+snpid_rsid_${LDREF}
 
 cd work
 cut -f2 ${pr}.rsid > ${pr}
