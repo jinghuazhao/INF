@@ -41,6 +41,7 @@ function snpid_rsid_ukb()
 }
 
 cd work
+cut -f2 ${pr}.rsid > ${pr}
 R --no-save -q <<END
     f <- Sys.getenv("pr")
     snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("name","rsid"), fill=TRUE)
