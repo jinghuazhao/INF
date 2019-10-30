@@ -1,6 +1,6 @@
-# 26-9-2019 JHZ
+# 30-10-2019 JHZ
 
-outfile <- "INTERVAL/o5000-inf1-outlier_out-r2.sample"
+outfile <- "INTERVAL/o5000-inf1-outlier_in-r2.sample"
 colnames <- read.table(outfile, as.is=TRUE, nrows=1)
 out <- read.table(outfile,skip=2,as.is=TRUE,col.names=colnames)
 dim(out)
