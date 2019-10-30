@@ -4,7 +4,7 @@ outfile <- "INTERVAL/o5000-inf1-outlier_in-r2.sample"
 colnames <- read.table(outfile, as.is=TRUE, nrows=1)
 out <- read.table(outfile,skip=2,as.is=TRUE,col.names=colnames)
 dim(out)
-pdf("INTERVAL-pca.pdf")
+pdf("INTERVAL/INTERVAL-pca.pdf")
 ppc <- with(out, princomp(na.omit(out), cor=TRUE))
 screeplot(ppc, npcs=20, type="lines", main="INTERVAL proteins PCA(invnorm(protein)) screeplot")
 with(ppc, plot(scores[,1:2], main="INTERVAL PCA(invnorm(protein)) PC1 -- PC2"))
