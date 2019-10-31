@@ -1,4 +1,4 @@
-# 15-10-2019 JHZ
+# 31-10-2019 JHZ
 (
   cat work/*jma.cojo | \
   head -1 | \
@@ -94,3 +94,9 @@ mv INF1.jma.2.m2d-000001.png INF1.jma.2.m2d.png
        awk "{a[\$1]=\$2} END {for (i in a) print i, a[i]}"
     fi'
 ) > work/slct.list
+
+# when slct-INTERVAL.list and slct-ukb.list available
+(
+  echo id INTERVAL ukb
+  join <(sort -k1,1 slct-INTERVAL.list) <(sort -k1,1 slct-ukb.list) 
+) > slct.list
