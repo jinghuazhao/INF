@@ -97,6 +97,6 @@ mv INF1.jma.2.m2d-000001.png INF1.jma.2.m2d.png
 
 # when slct-INTERVAL.list and slct-ukb.list available
 (
-  echo id INTERVAL ukb
+  echo locus INTERVAL ukb
   join <(sort -k1,1 slct-INTERVAL.list) <(sort -k1,1 slct-ukb.list) 
 ) > slct.list
