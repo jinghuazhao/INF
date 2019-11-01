@@ -1,6 +1,6 @@
 ## Notes on UniProt IDs
 
-The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](cardio/OLINK.R), which also attempts to compromise earlier version and annotations.
+The list of proteins on inflammation is within one of the [OLINK](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [OLINK.R](../cardio/OLINK.R), which also attempts to compromise earlier version and annotations.
 
 The use of [UniProt](https://www.uniprot.org/) IDs is rationalised in two aspects,
 
