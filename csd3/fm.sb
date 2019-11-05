@@ -84,7 +84,7 @@ function gcta()
   (
     echo SNP A1 A2 freq b se p N
     gunzip -c ${sumstats} | \
-    awk "(NR>1 && $18>50) {print $3, $4, $5, $6, $10, $11, 10^$12, $18}"
+    awk '(NR>1 && $18>50) {print $3, $4, $5, $6, $10, $11, 10^$12, $18}'
   ) > ${dir}/${p}.ma
   fi
   if [ -f ${dir}/${pr}.jma.cojo ]; then rm ${dir}/${pr}.jma.cojo ${dir}/${pr}.ldr.cojo; fi

@@ -1,4 +1,4 @@
-# 2-9-2019 JHZ
+# 5-11-2019 JHZ
 
 export tag=_nold
 
@@ -35,11 +35,11 @@ function _HLA()
       awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' | \
       sort -k13,13g | \
       awk 'NR==1'
-    ) > work/${p}${tag}.p
-    export lines=$(wc -l work/${p}${tag}.p | cut -d' ' -f1)
+    ) > sentinels/${p}${tag}.p
+    export lines=$(wc -l sentinels/${p}${tag}.p | cut -d' ' -f1)
     if [ $lines -eq 1 ]; then
       echo removing ${p}${tag} with $lines lines
-      rm work/${p}${tag}.p
+      rm sentinels/${p}${tag}.p
     fi
   done
 }
@@ -47,11 +47,11 @@ function _HLA()
 function sentinels()
 # 3. find sentinels
 {
-  for prot in $(ls work/*${tag}.p | sed 's|work/||g;s|'"$tag"'.p||g')
+  for prot in $(ls sentinels/*${tag}.p | sed 's|sentinels/||g;s|'"$tag"'.p||g')
   do 
     export prot=${prot}
     echo ${prot}${tag}
-    R --no-save -q < tryggve/sentinels.R > work/${prot}${tag}.o
+    R --no-save -q < tryggve/sentinels.R > sentinels/${prot}${tag}.o
   done
   cd work
   (
