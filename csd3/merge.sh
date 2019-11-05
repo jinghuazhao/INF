@@ -22,7 +22,7 @@ export p=${p}
   awk '$4==$10' | \
   cut -f1-5,9,10 | \
   awk -v OFS="\t" '
-  !/chr19:49206145_C_G/{
+  !/chr19:49206145_C_G/&&/CCL25/{
     if(NR==1) print "Chrom", "Start", "End", "log10p", "prot", "MarkerName", "log10p_check", "CHR", "POS", "SNP", "BP"
     CHR=substr($1,4)
     split($6,noalleles,"_")
