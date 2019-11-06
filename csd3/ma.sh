@@ -7,7 +7,8 @@ export tag=_nold
 export inf1=$(ls METAL/*-1.tbl.gz | sed 's|METAL/||g;s/-1.tbl.gz//g;s/\*//g')
 
 for p in ${inf1[@]}
-do echo ${p}
+do export p=${p}
+   echo ${p}
    (
      zcat METAL/${p}-1.tbl.gz | head -1 | awk -vOFS="\t" '{$1="Chrom";$2="Start" "\t" "End";print}'
      zcat sentinels/${p}.p.gz | \
@@ -21,11 +22,6 @@ do echo ${p}
      echo SNP A1 A2 freq b se p N
      awk -f csd3/ma.awk ${p}.txt
    ) > sentinels/${p}.ma
-   rm ${p}.a ${p}.b ${p}.ab ${p}.txt ${p}.dta ${p}0.dta
-   export lines=$(wc -l sentinels/${p}.ma | cut -d' ' -f1)
-   if [ $lines -eq 1 ]; then
-      echo removing ${p}.ma with $lines lines
-      rm sentinels/${p}.ma
-   fi
+#  rm ${p}.a ${p}.b ${p}.ab ${p}.txt ${p}.dta ${p}0.dta
 done
 rm ma.log
