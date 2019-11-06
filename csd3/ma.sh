@@ -22,6 +22,6 @@ do export p=${p}
      echo SNP A1 A2 freq b se p N
      awk -f csd3/ma.awk ${p}.txt
    ) > sentinels/${p}.ma
-#  rm ${p}.a ${p}.b ${p}.ab ${p}.txt ${p}.dta ${p}0.dta
+   rm ${p}.a ${p}.b ${p}.ab ${p}.txt ${p}.dta ${p}0.dta
 done
 rm ma.log
