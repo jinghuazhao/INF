@@ -21,7 +21,7 @@ do echo ${p}
      echo SNP A1 A2 freq b se p N
      awk -f csd3/ma.awk ${p}.txt
    ) > sentinels/${p}.ma
-   rm ${p}.a ${p}.b ${p}.ab ${p}.txt ${p}.dta ${p}0.dta
+   rm ${p}.a ${p}.b ${p}.ab ${p}.txt ${p}.dta ${p}0.dta ${p}.log
    export lines=$(wc -l sentinels/${p}.ma | cut -d' ' -f1)
    if [ $lines -eq 1 ]; then
       echo removing ${p}.ma with $lines lines
