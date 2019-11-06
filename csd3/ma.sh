@@ -29,5 +29,10 @@ do export p=${p}
          rm ${p}.a ${p}.b ${p}.ab ${p}.txt ${p}.dta ${p}0.dta
       fi
    ) > sentinels/${p}.ma
+    export lines=$(wc -l sentinels/${p}.ma | cut -d' ' -f1)
+    if [ $lines -eq 1 ]; then
+      echo removing ${p}.ma with $lines lines
+      rm sentinels/${p}.ma
+    fi
 done
 rm ma.log
