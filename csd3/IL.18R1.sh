@@ -2,7 +2,7 @@
 # 11-11-2019 JHZ
 
 function jma_cojo()
-# IL.10R1 data: geno, phenocovar
+# IL.10R1 data: snpid, rsid, geno, phenocovar
 {
   cut -f2 ${1}/${2} | awk 'NR>1' | sort -k1,1 > snpid
   awk /chr2:/ work/INTERVAL.rsid | sort -k1,1 | join - snpid > snpid-rsid
@@ -56,8 +56,8 @@ INF1
 
 # rm snpid snpid-rsid rsid phenocovar geno IL18R1.gen.gz
 
-function assoc_test()
-## SNPTEST v2.5.2 for CKDGen-type finemap analysis
+function cond_assoc_test()
+## SNPTEST v2.5.2 conditioning on independent variants from GCTA
 {
   qctool  -filetype bgen -g INTERVAL/per_chr/interval.imputed.olink.chr_2.bgen \
           -ofiletype gen -og IL18R1.gen.gz -incl-range 101992675-103992675 -assume-chromosome 2 -s ${s}
