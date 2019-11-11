@@ -6,7 +6,7 @@ function jma_cojo()
 {
   cut -f2 ${1}/${2} | awk 'NR>1' | sort -k1,1 > snpid
   awk /chr2:/ work/INTERVAL.rsid | sort -k1,1 | join - snpid > snpid-rsid
-  cut -d' ' -f2 snpidrsid > rsid
+  cut -d' ' -f2 snpid-rsid > rsid
   export s=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/o5000-inf1-outlier_in-r2.sample
   qctool  -filetype bgen -g INTERVAL/per_chr/interval.imputed.olink.chr_2.bgen \
           -ofiletype dosage -og IL18R1.gen.gz -s ${s} \
@@ -52,7 +52,7 @@ function assoc_test()
 function INF1()
 # INF1: previously 102810080
 {
-  jma_cojo work chr2:102992675_C_T.jma.cojo
+  jma_cojo work IL.18R1-chr2:102992675_C_T.jma.cojo
 }
 
 function INTERVAL()
