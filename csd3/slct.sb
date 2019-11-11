@@ -27,6 +27,7 @@ function slct_INTERVAL()
 gcta-1.9 --bfile ${INF}/INTERVAL/nodup/${pr}_snpid \
          --cojo-file ${p}.ma \
          --extract ${pr} \
+#        --exclude-region-bp 6 53898 602 \
          --cojo-slct \
          --cojo-p 5e-10 \
          --cojo-collinear 0.9 \
