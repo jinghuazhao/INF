@@ -1,4 +1,4 @@
-# 22-12-2018 JHZ
+# 12-11-2019 JHZ
 
 source tryggve/analysis.ini
 
@@ -97,7 +97,7 @@ parallel -j3 --env rt -C' ' '
 ( \
   echo SNP A1 A2 freq b se p N; \
   gunzip -c $rt/INTERVAL.{}.gz | \
-  awk -vOFS="\t" "(NR>1) { \
+  awk "(NR>1) { \
      snpid=\$1; \
      gsub(/chr/,\"\",snpid); \
      split(snpid,chrpos_a1_a2,\":\"); \
