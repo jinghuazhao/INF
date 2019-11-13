@@ -20,6 +20,7 @@ export list=${INF}/work/INF1.merge
 export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
 export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
 export pr=${p}-${r}
+export N=4994
 
 function INTERVAL_qctool()
 {
@@ -35,8 +36,34 @@ function INTERVAL_qctool()
   qctool -g bgen/${pr}_2.bgen -excl-rsids bgen/${pr}_2.rmdup.list -og nodup/${pr}.bgen
   bgenix -g nodup/${pr}.bgen -index -clobber
   qctool -g nodup/${pr}.bgen -s ${sample} -ofiletype binary_ped -og nodup/${pr}
-  qctool -g nodup/${pr}.bgen -s ${sample} -og nodup/${pr}.vcf.gz
 }
+
+function INTERVAL_dose()
+{
+  if [ ! -f ${pr}.gen.gz ]; then qctool -g ${pr}.bgen -og ${pr}.gen.gz; fi
+
+  gunzip -c ${}.gen.gz | \
+  awk -v N=${N} '{
+    printf $3, "ML_DOSE"
+    for(i=0;i<N;i++) {g1=i*3+8;g2=i*3+9;dose=$g1+2*$g2;printf " " dose}
+    printf "\n"
+  }' | \
+  gzip -f > ${pr}.dose.gz
+  (
+    echo SNP Al1 Al2 Freq1 MAF Quality Rsq
+    qctool -g ${pr}.bgen -snp-stats -osnp - | \
+    sed '1,9d' | \
+    cut -f2,5,6,12,14,17,17 | \
+    sed 's/\t/ /g;s/NA/0/g'
+  ) | \
+  grep -v Completed | \
+  gzip -f > ${pr}.info.gz
+}
+
+# qctool -g nodup/${pr}.bgen -s ${sample} -og nodup/${pr}.vcf.gz
+# qctool -g ${pr}.bgen -ofiletype gen -og - 2>&1 | tee
+# gcta-1.9 --dosage-mach-gz $pr.dose.gz $pr.info.gz --make-grm --out $pr
+# DosageConvertor --vcfDose ${pr}.vcf.gz --prefix ${pr} --type mach
 
 function INTERVAL_plink()
 {
