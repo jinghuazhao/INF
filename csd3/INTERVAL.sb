@@ -35,6 +35,7 @@ function INTERVAL_qctool()
   qctool -g bgen/${pr}_2.bgen -excl-rsids bgen/${pr}_2.rmdup.list -og nodup/${pr}.bgen
   bgenix -g nodup/${pr}.bgen -index -clobber
   qctool -g nodup/${pr}.bgen -s ${sample} -ofiletype binary_ped -og nodup/${pr}
+  qctool -g nodup/${pr}.bgen -og nodup/${pr}.vcf.gz
 }
 
 function INTERVAL_plink()
