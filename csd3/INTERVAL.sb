@@ -41,8 +41,7 @@ function INTERVAL_qctool()
 function INTERVAL_dose()
 {
   if [ ! -f ${pr}.gen.gz ]; then qctool -g ${pr}.bgen -og ${pr}.gen.gz; fi
-
-  gunzip -c ${}.gen.gz | \
+  gunzip -c ${pr}.gen.gz | \
   awk -v N=${N} '{
     printf $3, "ML_DOSE"
     for(i=0;i<N;i++) {g1=i*3+8;g2=i*3+9;dose=$g1+2*$g2;printf " " dose}
@@ -53,7 +52,7 @@ function INTERVAL_dose()
     echo SNP Al1 Al2 Freq1 MAF Quality Rsq
     qctool -g ${pr}.bgen -snp-stats -osnp - | \
     sed '1,9d' | \
-    cut -f2,5,6,12,14,17,17 | \
+    cut -f2,5,6,12,14,17,18 | \
     sed 's/\t/ /g;s/NA/0/g'
   ) | \
   grep -v Completed | \
