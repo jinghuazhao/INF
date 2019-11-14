@@ -43,15 +43,16 @@ function INTERVAL_dosage()
   if [ ! -f ${pr}.gen.gz ]; then qctool -g ${pr}.bgen -og ${pr}.gen.gz; fi
 
 gunzip -c ${pr}.gen.gz | \
-awk '{
+awk -v sample=${sample} '{
     N=(NF-6)/3
     for(i=1;i<=N;i++) {g1=(i-1)*3+8;g2=(i-1)*3+9;dosage[NR,i]=$g1+2*$g2}
   } END {
-     wihle ((getline line < "INTERVAL/o5000-inf1-outlier_in-r2.sample") > 0)
+     wihle ((getline line < sample) > 0)
      {
        split(line,a)
        id[++i]=a[1]
      }
+     close(sample)
      for(i=1;i<=N;i++)
      {
        printf id[i+2], "ML_DOSE"
