@@ -57,7 +57,6 @@ awk -v sample=${sample} '{
      {
        printf id[i+2], "ML_DOSE"
        for(j=1;j<=NR;j++) printf " " dosage[j,i]; printf "\n"
-       printf "\n"
      }
   }' | \
   gzip -f > ${pr}.dosage.gz
