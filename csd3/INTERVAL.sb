@@ -72,10 +72,7 @@ function INTERVAL_dosage()
   gzip -f > nodup/${pr}.info.gz
 }
 
-# qctool -g nodup/${pr}.bgen -s ${sample} -og nodup/${pr}.vcf.gz
-# qctool -g ${pr}.bgen -ofiletype gen -og - 2>&1 | tee
-# gcta-1.9 --dosage-mach-gz $pr.dosage.gz $pr.info.gz --make-grm --out $pr
-# DosageConvertor --vcfDose ${pr}.vcf.gz --prefix ${pr} --type mach
+# gcta-1.9 --dosage-mach-gz nodup/$pr.dosage.gz nodup/$pr.info.gz --make-grm-bin --out nodup/${pr}
 
 function INTERVAL_plink()
 {
