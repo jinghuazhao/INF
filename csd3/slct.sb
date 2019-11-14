@@ -60,6 +60,18 @@ gcta-1.9 --bfile ${INF}/INTERVAL/nodup/${pr}_snpid \
 #        --exclude-region-bp 6 53898 602 \
 }
 
+function slct_INTERVAL_dosage()
+{
+gcta-1.9 --dosage-mach-gz ${INF}/INTERVAL/nodup/${pr}.dosage.gz ${INF}/INTERVAL/nodup/${pr}.info.gz \
+         --cojo-file ${INF}/sentinels/${p}.ma \
+         --extract ${pr} \
+         --cojo-slct \
+         --cojo-p 5e-10 \
+         --cojo-collinear 0.9 \
+         --maf 0.01 \
+         --out ${INF}/sentinels/${pr}
+}
+
 slct_INTERVAL_primary
 export snpid_rsid=${pr}
 if [ -f ${pr}.jma.cojo ]; then R --no-save -q < ${INF}/csd3/slct.R > ${pr}-slct.log; fi

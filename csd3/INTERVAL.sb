@@ -60,7 +60,7 @@ awk -v sample=${sample} '{
        for(j=1;j<=NR;j++) printf " " dosage[j,i]; printf "\n"
      }
   }' | \
-  gzip -f > ${pr}.dosage.gz
+  gzip -f > nodup/${pr}.dosage.gz
   (
     echo SNP Al1 Al2 Freq1 MAF Quality Rsq
     qctool -g ${pr}.bgen -snp-stats -osnp - | \
@@ -69,7 +69,7 @@ awk -v sample=${sample} '{
     sed 's/\t/ /g;s/NA/0/g'
   ) | \
   grep -v Completed | \
-  gzip -f > ${pr}.info.gz
+  gzip -f > nodup/${pr}.info.gz
 }
 
 # qctool -g nodup/${pr}.bgen -s ${sample} -og nodup/${pr}.vcf.gz
