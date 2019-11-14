@@ -51,14 +51,13 @@ awk -v sample=${sample} '{
      wihle (getline line < sample)
      {
        split(line,a)
-       id[i]=a[1]
-       i++
+       id[i++]=a[1]
      }
      close(sample)
-     for(j=1;j<=N;j++)
+     for(i=1;i<=N;i++)
      {
        printf id[i+2], "ML_DOSE"
-       for(i=1;i<=NR;i++) printf " " dosage[i,j]; printf "\n"
+       for(j=1;j<=NR;j++) printf " " dosage[j,i]; printf "\n"
      }
   }' | \
   gzip -f > nodup/${pr}.dosage.gz
