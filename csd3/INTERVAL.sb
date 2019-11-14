@@ -45,7 +45,7 @@ function INTERVAL_dosage()
 gunzip -c ${pr}.gen.gz | \
 awk -v sample=${sample} '{
      N=(NF-6)/3
-     for(j=1;j<=N;j++) {g1=(j-1)*3+8;g2=(j-1)*3+9;dosage[NR,j]=$g1+2*$g2}
+     for(j=1;j<=N;j++) dosage[NR,j]=$((j-1)*3+8)+2*$((j-1)*3+9)
   } END {
      i=1
      wihle (getline line < sample)
