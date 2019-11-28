@@ -107,7 +107,7 @@ echo GCTA
 gcta
 echo PLINK
 ldprint plink plink
-echo PLINK dosage
+echo dosage
 ldprint plink dosage
 echo LDSTORE
 ldprint ldstore ldstore
