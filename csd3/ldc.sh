@@ -33,7 +33,7 @@ function ldprint()
   END {
     infile=sprintf("%s.snps",pr)
     k=0;while (getline snpid < infile) {k++;snps[k]=snpid}; close(infile)
-    for(i=1;i<=k;i++) printf OFS snps[i]; printf "\n"
+    printf "SNP"; for(i=1;i<=k;i++) printf OFS snps[i]; printf "\n"
     for(i=1;i<=k;i++)
     {
       printf snps[i]; for(j=1;j<=i;j++) {v=ldtable[snps[i],snps[j]];if (v=="") v="NA"; printf OFS v;} printf "\n"
