@@ -28,6 +28,7 @@ function ldprint()
     if (option=="dosage") v=$11;
     else if (option=="ldstore") v=$15
     ldtable[$3,$6]=ldtable[$6,$3]=v
+    ldtable[$3,$3]=ldtable[$6,$6]=1
   }
   END {
     infile=sprintf("%s.snps",pr)
