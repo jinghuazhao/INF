@@ -103,8 +103,11 @@ END
   paste ${pr}.ld - >  ${pr}.ldstore
 }
 
+echo GCTA
 gcta
-
+echo PLINK
 ldprint plink plink
+echo PLINK dosage
 ldprint plink dosage
+echo LDSTORE
 ldprint ldstore ldstore
