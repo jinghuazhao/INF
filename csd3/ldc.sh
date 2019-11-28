@@ -36,7 +36,7 @@ function ldprint()
     for(i=1;i<=k;i++) printf OFS snps[i]; printf "\n"
     for(i=1;i<=k;i++)
     {
-      printf snps[i]; for(j=1;j<=i;j++) printf OFS ldtable[snps[i],snps[j]]; printf "\n"
+      printf snps[i]; for(j=1;j<=i;j++) {v=ldtable[snps[i],snps[j]];if (v=="") v="NA"; printf OFS v;} printf "\n"
     }
   }' ${pr}.${1}
 }
