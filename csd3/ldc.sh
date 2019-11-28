@@ -24,18 +24,18 @@ function ldprint()
 {
   awk -v pr=${pr} -v option=${2} '
   {
-    plink[$3,$6]=$7; if (option=="plinkdose") ldtable[$3,$6]=$11; else if (option=="ldstore") ldtable[$3,$6]=$15
+    if (option=="plink") v=$7;
+    if (option=="dosage") v=$11;
+    else if (option=="ldstore") v=$15
+    ldtable[$3,$6]=ldtable[$6,$3]=v
   }
   END {
-    k=0;while (getline snpid < sprintf("%s.snps",pr)) {k++;snps[k]=snpid}; close(sprintf("%s.snps",pr))
+    infile=sprintf("%s.snps",pr)
+    k=0;while (getline snpid < infile) {k++;snps[k]=snpid}; close(infile)
     for(i=1;i<=k;i++) printf OFS snps[i]; printf "\n"
     for(i=1;i<=k;i++)
     {
-      printf snps[i]
-      for(j=1;j<=i;j++) if (option=="plink") printf OFS plink[snps[i],snps[j]];
-                         else if (option=="plinkdose") printf OFS ldtable[snps[i],snps[j]];
-                         else if (option=="ldstore") printf OFS ldtable[snps[i],snps[j]]
-      printf "\n"
+      printf snps[i]; for(j=1;j<=i;j++) printf OFS ldtable[snps[i],snps[j]]; printf "\n"
     }
   }' ${pr}.${1}
 }
@@ -105,5 +105,5 @@ END
 gcta
 
 ldprint plink plink
-ldprint plink plinkdose
+ldprint plink dosage
 ldprint ldstore ldstore
