@@ -27,7 +27,7 @@ function ldprint()
     plink[$3,$6]=$7; if (option=="plinkdose") ldtable[$3,$6]=$11; else if (option=="ldstore") ldtable[$3,$6]=$15
   }
   END {
-    k=0;while (getline snpid < sprintf("%s.snps",pr)) {k++;snps[k]=snpid}; close(sprintf("%s.snps",pr)
+    k=0;while (getline snpid < sprintf("%s.snps",pr)) {k++;snps[k]=snpid}; close(sprintf("%s.snps",pr))
     for(i=1;i<=k;i++) printf OFS snps[i]; printf "\n"
     for(i=1;i<=k;i++)
     {
