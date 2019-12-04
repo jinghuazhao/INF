@@ -58,15 +58,15 @@ function prune()
 
 function unprune
 {
-bgenix -g ${LDREF}/nodup/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | cut -f1,2 | sort -k2,2 > work/${pr}.rsid
-cut -f2 ${pr}.rsid > ${pr}
-R --no-save -q <<END
-    f <- Sys.getenv("pr")
-    snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("name","rsid"), fill=TRUE)
-    nmiss <- with(snpid_rsid,is.na(name))
-    snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
-    save(snpid_rsid, file=paste0(f,".rda"))
-END
+  bgenix -g ${LDREF}/nodup/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | cut -f1,2 | sort -k2,2 > work/${pr}.rsid
+  cut -f2 ${pr}.rsid > ${pr}
+  R --no-save -q <<\ \ END
+      f <- Sys.getenv("pr")
+      snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("name","rsid"), fill=TRUE)
+      nmiss <- with(snpid_rsid,is.na(name))
+      snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
+      save(snpid_rsid, file=paste0(f,".rda"))
+  END
 }
 
 cd work
