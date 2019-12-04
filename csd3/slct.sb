@@ -22,11 +22,14 @@ export pr=${p}-${r}
 cd ${INF}/work
 if [ -f ${pr}.jma.cojo ]; then rm ${pr}.jma.cojo ${pr}.ldr.cojo; fi
 
+awk '{snpid=$1;gsub(/chr/,"",snpid);split(snpid,s,":");split(s[2],pos,"_");print $1,s[1],pos[1]}' ${pr} | \
+awk -vchr=6 -vpos=53898 -vbp=602 '($2==chr && $3>=pos-602 && $3<=pos+602){print $1}' > ${pr}-NLRP2
+
 function slct_INTERVAL()
 {
 gcta-1.9 --bfile ${INF}/INTERVAL/nodup/${pr}_snpid \
          --cojo-file ${p}.ma \
-         --extract ${pr} \
+         --extract ${pr}-NLRP2 \
          --cojo-slct \
          --cojo-p 5e-10 \
          --cojo-collinear 0.9 \
@@ -51,20 +54,19 @@ function slct_INTERVAL_primary()
 {
 gcta-1.9 --bfile ${INF}/INTERVAL/nodup/${pr}_snpid \
          --cojo-file ${INF}/sentinels/${p}.ma \
-         --extract ${pr} \
+         --extract ${pr}-NLRP2 \
          --cojo-slct \
          --cojo-p 5e-10 \
          --cojo-collinear 0.9 \
          --maf 0.01 \
          --out ${INF}/sentinels/${pr}
-#        --exclude-region-bp 6 53898 602 \
 }
 
 function slct_INTERVAL_dosage()
 {
 gcta-1.9 --dosage-mach-gz ${INF}/INTERVAL/nodup/${pr}.dosage.gz ${INF}/INTERVAL/nodup/${pr}.info.gz \
          --cojo-file ${INF}/sentinels/${p}.ma \
-         --extract ${pr} \
+         --extract ${pr}-NLRP2 \
          --cojo-slct \
          --cojo-p 5e-10 \
          --cojo-collinear 0.9 \
