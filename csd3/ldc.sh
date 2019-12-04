@@ -1,7 +1,8 @@
-# 28-11-2019 JHZ
+# 4-12-2019 JHZ
 
 export p=IL.18R1
-export pr=IL.18R1-chr2:102992675_C_T
+export r=chr2:102992675_C_T
+export pr=${p}-${r}
 
 function gcta()
 {
