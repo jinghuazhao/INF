@@ -35,7 +35,6 @@ gcta-1.9 --bfile ${INF}/INTERVAL/nodup/${pr}_snpid \
          --cojo-collinear 0.9 \
          --maf 0.01 \
          --out ${pr}
-#        --exclude-region-bp 6 53898 602 \
 }
 
 function slct_ukb()
