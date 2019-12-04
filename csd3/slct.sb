@@ -23,7 +23,7 @@ cd ${INF}/work
 if [ -f ${pr}.jma.cojo ]; then rm ${pr}.jma.cojo ${pr}.ldr.cojo; fi
 
 awk '{snpid=$1;gsub(/chr/,"",snpid);split(snpid,s,":");split(s[2],pos,"_");print $1,s[1],pos[1]}' ${pr} | \
-awk -vchr=6 -vpos=53898 -vbp=602000 '($2==chr && $3>=pos-bp && $3<=pos+bp){print $1}' > ${pr}-NLRP2
+awk -vchr=19 -vstart=5329685 -vend=54500000 '!($2==chr && $3>=start && $3<=end){print $1}' > ${pr}-NLRP2
 
 function slct_INTERVAL()
 {
