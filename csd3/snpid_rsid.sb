@@ -29,30 +29,15 @@ export end=$(awk -vpos=${End} -vflanking=${flanking} 'BEGIN{print pos+flanking}'
 export snpid_rsid=${INF}/work/INTERVAL.rsid
 export LDREF=INTERVAL
 
-function unprune
-{
-bgenix -g ${LDREF}/nodup/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | cut -f1,2 | sort -k2,2 > work/${pr}.rsid
-cd work
-cut -f2 ${pr}.rsid > ${pr}
-R --no-save -q <<END
-    f <- Sys.getenv("pr")
-    snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("name","rsid"), fill=TRUE)
-    nmiss <- with(snpid_rsid,is.na(name))
-    snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
-    save(snpid_rsid, file=paste0(f,".rda"))
-END
-}
-
 function prune()
 {
   module load plink/2.00-alpha
-  plink2  --bfile ${INF}/${LDREF}/nodup/${pr} --maf 0.01 --indep-pairwise 1000kb 1 0.8 --out ${dir}/${pr}
+  plink2 --bfile ${INF}/${LDREF}/nodup/${pr} --maf 0.01 --indep-pairwise 1000kb 1 0.8 --out ${dir}/${pr}
   export pos=$(awk -v r=${r} 'BEGIN{split(r,snpid,":");split(snpid[2],pos,"_");print pos[1]}')
   if [ $(grep ${r} ${dir}/${pr}.prune.in | wc -l) -eq 0 ]; then
-     export i=$(awk -v r=${r} '
+     export i=$(awk -v pos=${pos} '
                 function abs(x) {if (x<0) return -x; else return x;}
-                BEGIN{split(r,snpid,":");
-                      split(snpid[2],p,"_");print abs(p[1]-pos)}' ${dir}/${pr}.prune.in | \
+                {split($1,snpid,":");split(snpid[2],p,"_");print $1,abs(p[1]-pos)}' ${dir}/${pr}.prune.in | \
                 sort -r -k2,2g | awk 'NR==1 {print $1}')
      sed -i 's/'"$i"'/'"$r"'/g' ${dir}/${pr}.prune.in
   fi
@@ -70,6 +55,22 @@ function prune()
       save(snpid_rsid, file=paste0(f,".prune.rda"))
   END
 }
+
+function unprune
+{
+bgenix -g ${LDREF}/nodup/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | cut -f1,2 | sort -k2,2 > work/${pr}.rsid
+cut -f2 ${pr}.rsid > ${pr}
+R --no-save -q <<END
+    f <- Sys.getenv("pr")
+    snpid_rsid <- read.table(paste0(f,".rsid"), as.is=TRUE, col.names=c("name","rsid"), fill=TRUE)
+    nmiss <- with(snpid_rsid,is.na(name))
+    snpid_rsid <- within(snpid_rsid, {name[nmiss] <- make.names(rsid[nmiss])})
+    save(snpid_rsid, file=paste0(f,".rda"))
+END
+}
+
+cd work
+prune
 cd -
 
 #  function snpid_rsid_INTERVAL()
