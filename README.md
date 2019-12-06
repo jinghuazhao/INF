@@ -53,6 +53,7 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 * [securecloud](https://secureremote.dtu.dk/vpn/index.html).
 * [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
 * [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
+* [Aging Plasma Proteome](https://twc-stanford.shinyapps.io/aging_plasma_proteome/)
 
 ### downloading
 
