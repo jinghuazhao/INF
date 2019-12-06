@@ -1,4 +1,4 @@
-# 5-11-2019 JHZ
+# 6-12-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -91,6 +91,7 @@ mv INF1.merge-000001.png INF1.merge.png
 # rsid
 awk 'NR>1' work/INF1.merge | cut -f6 | sort -k1,1 | uniq | \
 join - work/INTERVAL.rsid > work/INF1.merge.rsid
+cut -d' ' -f2 work/INF1.merge.rsid > work/INF1.merge.snp
 
 (
   bedtools intersect -a work/INF1.merge -b tryggve/high-LD-regions-hg19.bed | \
