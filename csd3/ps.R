@@ -1,20 +1,16 @@
-# 19-10-2019 JHZ
+# 6-12-2019 JHZ
 
-# m <- read.delim("work/INF1.merge",as.is=TRUE)[c("prot","MarkerName")]
-# names(m) <- c("prot","ref_snpid")
-
+options(width=500)
 require(phenoscanner)
 catalogue <- Sys.getenv("catalogue")
-rsid <- with(read.table("work/INF1.merge.rsid",as.is=TRUE,col.names=c("snpid","rsid")), rsid)
+rsid <- scan("work/INF1.merge.snp",what="")
 r1 <- phenoscanner(snpquery=rsid[1:100], catalogue=catalogue, proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
-lapply(r1,dim)
 r2 <- phenoscanner(snpquery=rsid[101:162], catalogue=catalogue, proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
-lapply(r2,dim)
 r <- list(snps=rbind(with(r1,snps),with(r2,snps)),results=rbind(with(r1,results),with(r2,results)))
+lapply(r1,dim)
+lapply(r2,dim)
 lapply(r,dim)
 save(r,file=paste0("work/INF1.merge.",catalogue))
-options(width=500)
-load(paste0("work/INF1.merge.",catalogue))
 attach(r)
 results <- within(results,{
    a1 <- ref_a1
