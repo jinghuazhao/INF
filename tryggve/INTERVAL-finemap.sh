@@ -70,8 +70,7 @@ do
   rm ${pr}-1_*
   mv ${pr}-1 ${pr}.bcor
   rm -rf ${pr}.cred* ${pr}.dose ${pr}.snp ${pr}.config
-  finemap_v1.3.1 --sss --in-files ${pr}.master --log --n-causal-snps 10 \
-                 --corr-config 0.95 --corr-group 0.99 --group-snps
+  finemap_v1.3.1 --sss --in-files ${pr}.master --log # --n-causal-snps 10 --corr-config 0.95 --corr-group 0.99 --group-snps
 
 # xlsx
   gzip -f ${pr}.ld
