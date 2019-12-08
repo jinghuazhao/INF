@@ -26,19 +26,19 @@ do
   export sumstats=${INF}/sumstats/INTERVAL/INTERVAL.${p}.gz
 
   # z0
+  # SNPID   CHR     POS     STRAND  N       EFFECT_ALLELE   REFERENCE_ALLELE        CODE_ALL_FQ     BETA    SE      PVAL    RSQ     RSQ_IMP IMP
   (
     echo rsid chromosome position allele1 allele2 maf beta se
-    zcat ${sumstats} | sed '1d' | \
-    awk -vchr=${chr} -vstart=${start} -vend=${end} '($2==chr && $3 >= start && $3 < end && $9 != "NA" && $10 != "NA")
+    zcat ${sumstats} | cut -f1-3,6-10 | sed '1d;s/\t/ /g' | \
+    awk -vchr=${chr} -vstart=${start} -vend=${end} '($2==chr && $3 >= start && $3 < end && $8 != "NA" && $9 != "NA")
     {
       if ($6 < 0.5) maf = $6; else maf = 1-$6
-      if (maf > 0 && maf <= 0.5) print $1, $2, $3, toupper($7), toupper($6), maf, $9, $10
+      if (maf > 0 && maf <= 0.5) print $1, $2, $3, toupper($5), toupper($4), maf, $8, $9
     } ' | \
     sort -k1,1 | \
     join ${INF}/bgen/${pr} -
   ) > ${pr}.z0
 
-  # SNPID   CHR     POS     STRAND  N       EFFECT_ALLELE   REFERENCE_ALLELE        CODE_ALL_FQ     BETA    SE      PVAL    RSQ     RSQ_IMP IMP
   awk 'NR > 1{print $1} ' ${pr}.z0 > ${pr}.incl
 
   # bgen
