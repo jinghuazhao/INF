@@ -33,7 +33,7 @@ do
     awk -vchr=${chr} -vstart=${start} -vend=${end} '
     {
       if ($6 < 0.5) maf = $6; else maf = 1-$6
-      if ($2==chr && $3 >= start && $3 < end && maf > 0 && maf <= 0.5 && $8 != "NA" && $9 != "NA") print $1, $2, $3, toupper($5), toupper($4), maf, $8, $9
+      if ($2==chr && $3 >= start && $3 < end && maf > 0 && maf <= 0.5 && $7 != "NA" && $8 != "NA") print $1, $2, $3, toupper($5), toupper($4), maf, $7, $8
     } ' | \
     sort -k1,1 | \
     join ${INF}/bgen/${pr} -
