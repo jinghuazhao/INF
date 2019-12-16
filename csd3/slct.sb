@@ -22,7 +22,7 @@ export pr=${p}-${r}
 cd ${INF}/work
 if [ -f ${pr}.jma.cojo ]; then rm ${pr}.jma.cojo ${pr}.ldr.cojo; fi
 
-awk '{snpid=$1;gsub(/chr/,"",snpid);split(snpid,s,":");split(s[2],pos,"_");print $1,s[1],pos[1]}' ${pr} | \
+awk '{snpid=$1;gsub(/chr/,"",snpid);split(snpid,s,":");split(s[2],pos,"_");print $1,s[1],pos[1]}' ${pr}.prune | \
 awk -vchr=19 -vstart=5329685 -vend=54500000 '!($2==chr && $3>=start && $3<=end){print $1}' > ${pr}-NLRP2
 
 function slct_INTERVAL()
