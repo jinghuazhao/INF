@@ -1,4 +1,4 @@
-# 6-12-2019 JHZ
+# 17-12-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -135,3 +135,9 @@ R --no-save -q <<END
   )
   dev.off()
 END
+
+cd work
+cut -f8,9,10 INF1.merge | \
+awk -vOFS="\t" 'NR>1{split($3,a,"_");print $1,$2,$2,a[2],a[3]}' | \
+sort -k1,1n -k2,2n > INF1.merge.avinput
+cd -
