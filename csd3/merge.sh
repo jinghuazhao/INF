@@ -136,8 +136,21 @@ R --no-save -q <<END
   dev.off()
 END
 
+# on tryggve
+export annovar_home=/services/tools/annovar/2018apr16
+export humandb=$annovar_home/humandb
 cd work
 cut -f8,9,10 INF1.merge | \
 awk -vOFS="\t" 'NR>1{split($3,a,"_");print $1,$2,$2,a[2],a[3]}' | \
 sort -k1,1n -k2,2n > INF1.merge.avinput
+$annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 \
+                                    work/INF1.merge.avinput $humandb/ --outfile INF1.merge
+R --no-save -q <<END
+  cvt <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
+  s <- with(cvt,as.data.frame(gap::inv_chr_pos_a1_a2(SNP)))
+  vars <- c("chr","pos","pos","a1","a2")
+  write.table(subset(out,cis.trans="trans"),file="INf1.merge.trans.avinput",col.names=FALSE,row.names=FALSE,quote=FALSE)
+END
+$annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 \
+                                    work/INF1.merge.trans.avinput $humandb/ --outfile INF1.merge.trans
 cd -
