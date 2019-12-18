@@ -1,4 +1,4 @@
-# 17-12-2019 JHZ
+# 18-12-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -142,14 +142,17 @@ export humandb=$annovar_home/humandb
 cd work
 cut -f8,9,10 INF1.merge | \
 awk -vOFS="\t" 'NR>1{split($3,a,"_");print $1,$2,$2,a[2],a[3]}' | \
-sort -k1,1n -k2,2n > INF1.merge.avinput
+sort -k1,1n -k2,2n | \
+uniq > INF1.merge.avinput
 $annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 \
                                     work/INF1.merge.avinput $humandb/ --outfile INF1.merge
 R --no-save -q <<END
   cvt <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
-  s <- with(cvt,as.data.frame(gap::inv_chr_pos_a1_a2(SNP)))
+  ord <- with(cvt,order(Chr,bp))
+  trans <- subset(cvt[ord,],cis.trans=="trans")
+  s <- with(trans,unique(gap::inv_chr_pos_a1_a2(SNP,prefix="")))
   vars <- c("chr","pos","pos","a1","a2")
-  write.table(subset(out,cis.trans="trans"),file="INf1.merge.trans.avinput",col.names=FALSE,row.names=FALSE,quote=FALSE)
+  write.table(s[vars],file="INF1.merge.trans.avinput",col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 END
 $annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 \
                                     work/INF1.merge.trans.avinput $humandb/ --outfile INF1.merge.trans
