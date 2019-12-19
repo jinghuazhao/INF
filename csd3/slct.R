@@ -1,4 +1,4 @@
-# 13-9-2019 JHZ
+# 19-12-2019 JHZ
 
 options(scipen=20, width=2000)
 pr <- Sys.getenv("pr")
@@ -6,7 +6,7 @@ snpid_rsid <- Sys.getenv("snpid_rsid")
 jma <- read.delim(paste0(pr,".jma.cojo"),as.is=TRUE)
 ldr <- read.delim(paste0(pr,".ldr.cojo"), as.is=TRUE)
 tbl <- jma[setdiff(names(jma),c("b","se","p"))]
-load(paste0(snpid_rsid,".rda"))
+load(paste0(snpid_rsid,".prune.rda"))
 library(gap)
 cred <- cs(tbl, b="bJ", se="bJ_se", cutoff=0.95)
 require(openxlsx)
