@@ -35,6 +35,9 @@ as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
 
 ## References
 
+Cho WM, Mak TSH, O’Reilly PE (2018). A guide to performing Polygenic Risk Score analyses.  [a tutorial](https://choishingwan.github.io/PRS-Tutorial/).
+https://www.biorxiv.org/content/10.1101/416545v1.
+
 Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. *PLoS Genetics* 13(4), doi.org/10.1371/journal.pgen.1006706.
 
 Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. *Hum Mol Genet* 23(24): 6684–6693.
@@ -54,7 +57,6 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 * [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
 * [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
 * [Aging Plasma Proteome](https://twc-stanford.shinyapps.io/aging_plasma_proteome/) ([DEswan](https://github.com/lehallib/DEswan)).
-* [A tutorial on PRS](https://choishingwan.github.io/PRS-Tutorial/).
 
 ### downloading
 
