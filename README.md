@@ -35,7 +35,7 @@ as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
 
 ## References
 
-Cho WM, Mak TSH, O’Reilly PE (2018). A guide to performing Polygenic Risk Score analyses.  [a tutorial](https://choishingwan.github.io/PRS-Tutorial/).
+Choi WM, Mak TSH, O’Reilly PF (2018). A guide to performing Polygenic Risk Score analyses.  [a tutorial](https://choishingwan.github.io/PRS-Tutorial/).
 https://www.biorxiv.org/content/10.1101/416545v1.
 
 Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. *PLoS Genetics* 13(4), doi.org/10.1371/journal.pgen.1006706.
