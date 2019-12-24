@@ -1,4 +1,4 @@
-# 18-12-2019 JHZ
+# 24-12-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -153,7 +153,14 @@ R --no-save -q <<END
   s <- with(trans,unique(gap::inv_chr_pos_a1_a2(SNP,prefix="")))
   vars <- c("chr","pos","pos","a1","a2")
   write.table(s[vars],file="INF1.merge.trans.avinput",col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+  vepinput <- "INF1.merge.trans.vepinput"
+  cat("##fileformat=VCFv4.0\n", file=vepinput)
+  cat("#CHROM","POS","ID","REF","ALT","QUAL","FILTER","INFO\n",file=vepinput,append=TRUE,sep="\t")
+  s <- within(s,{snp <- paste0(chr,":",pos,"_",a1,"_",a2); qual <- "."; filter <- "."; info <- "."})
+  vars <- c("chr","pos","snp","a1","a2","qual","filter","info")
+  write.table(s[vars],file=vepinput,append=TRUE,col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 END
 $annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 \
                                     work/INF1.merge.trans.avinput $humandb/ --outfile INF1.merge.trans
+vep -i INF1.merge.trans.vepinput INF1.merge.trans.vepoutput --offline
 cd -
