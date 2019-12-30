@@ -160,7 +160,7 @@ R --no-save -q <<END
   vars <- c("chr","pos","snp","a1","a2","qual","filter","info")
   write.table(s[vars],file=vepinput,append=TRUE,col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 END
-$annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 --force_overwrite \
+$annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 \
                                     INF1.merge.trans.avinput $humandb/ --outfile INF1.merge.trans
-vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --offline
+vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --force_overwrite --offline
 cd -
