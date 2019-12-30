@@ -1,4 +1,4 @@
-# 24-12-2019 JHZ
+# 30-12-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -144,8 +144,8 @@ cut -f8,9,10 INF1.merge | \
 awk -vOFS="\t" 'NR>1{split($3,a,"_");print $1,$2,$2,a[2],a[3]}' | \
 sort -k1,1n -k2,2n | \
 uniq > INF1.merge.avinput
-$annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 \
-                                    work/INF1.merge.avinput $humandb/ --outfile INF1.merge
+$annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 --force_overwrite \
+                                    INF1.merge.avinput $humandb/ --outfile INF1.merge
 R --no-save -q <<END
   cvt <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
   ord <- with(cvt,order(Chr,bp))
@@ -160,7 +160,7 @@ R --no-save -q <<END
   vars <- c("chr","pos","snp","a1","a2","qual","filter","info")
   write.table(s[vars],file=vepinput,append=TRUE,col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 END
-$annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 \
-                                    work/INF1.merge.trans.avinput $humandb/ --outfile INF1.merge.trans
-vep -i INF1.merge.trans.vepinput INF1.merge.trans.vepoutput --offline
+$annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 --force_overwrite \
+                                    INF1.merge.trans.avinput $humandb/ --outfile INF1.merge.trans
+vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --offline
 cd -
