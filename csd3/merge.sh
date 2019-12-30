@@ -166,8 +166,8 @@ vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --force_overwrite
 cd -
 
 (
-  cut -f8,9 ${INF}/work/INF1.merge | \
-  awk -v OFS="\t" 'NR>1{print "chr" $1, $2-1, $2}'
+  cut -f1,2 ${INF}/work/INF1.merge.trans.vepinput | \
+  awk -v OFS="\t" 'NR>1{print $1, $2-1, $2}'
 ) > a1
 
 (
