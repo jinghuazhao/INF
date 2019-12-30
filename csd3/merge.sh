@@ -164,3 +164,19 @@ $annovar_home/annotate_variation.pl --geneanno -otherinfo -buildver hg19 \
                                     INF1.merge.trans.avinput $humandb/ --outfile INF1.merge.trans
 vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --force_overwrite --offline
 cd -
+
+(
+  cut -f8,9 ${INF}/work/INF1.merge | \
+  awk -v OFS="\t" 'NR>1{print "chr" $1, $2-1, $2}'
+) > a1
+
+(
+  sort -k1,1n -k2,2n ${INF}/csd3/glist-hg19 | \
+  grep -v X | \
+  grep -v Y | \
+  awk '{$1="chr" $1;print}' | \
+  sed 's/ /\t/g'
+) > a2
+
+bedtools intersect -a a1 -b a2 -wa -wb -loj | \
+cut  -f1-3,7 > INF1.merge.glist-hg19
