@@ -1,4 +1,4 @@
-# 30-12-2019 JHZ
+# 31-12-2019 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -180,4 +180,14 @@ vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --force_overwrite
 bedtools intersect -a a1 -b a2 -wa -wb -loj | \
 cut  -f1-3,7 > INF1.merge.glist-hg19
 
+R --no-save -q <<END
+  vo <-  read.delim("INF1.merge.trans.vepoutput",skip=40)
+  library(biomaRt)
+  ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl", host="grch37.ensembl.org", path="/biomart/martservice")
+  attr <- listAttributes(ensembl)
+  filter <- listFilters(ensembl)
+  gene <- getBM(attributes = c('ensembl_gene_id', 'chromosome_name', 'start_position', 'end_position', 'description', 'hgnc_symbol'), mart = ensembl)
+  vepbiomart <- merge(vo,gene,by.x="Gene",by.y="ensembl_gene_id")
+  save(vepbiomart,file="INF1.merge.trans.vepbiomart")
+END
 cd -
