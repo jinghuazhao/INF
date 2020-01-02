@@ -198,8 +198,8 @@ R --no-save -q <<END
   wb <- createWorkbook(xlsx)
   snpid_rsid <- read.table("INF1.merge.rsid",col.names=c("snpid","rsid"))
   d <- merge(snpid_rsid,vepbiomart,by.x="snpid",by.y="X.Uploaded_variation",all.y=TRUE)
-  addWorksheet(wb, "snp")
-  writeDataTable(wb, "d")
+  addWorksheet(wb, "vepbiomart")
+  writeDataTable(wb, "vepbiomart",d)
   saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 END
 cd -
