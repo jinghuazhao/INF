@@ -1,4 +1,4 @@
-# 31-12-2019 JHZ
+# 2-1-2020 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -186,8 +186,20 @@ R --no-save -q <<END
   ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl", host="grch37.ensembl.org", path="/biomart/martservice")
   attr <- listAttributes(ensembl)
   filter <- listFilters(ensembl)
-  gene <- getBM(attributes = c('ensembl_gene_id', 'chromosome_name', 'start_position', 'end_position', 'description', 'hgnc_symbol'), mart = ensembl)
+  s1 <- c('ensembl_gene_id', 'chromosome_name', 'start_position', 'end_position', 'description', 'hgnc_symbol', 'entrezgene_id')
+  s2 <- c('ensembl_peptide_id', 'peptide', 'protein_id')
+  s3 <- c('clinical_significance')
+  gene <- getBM(attributes = s1, mart = ensembl)
   vepbiomart <- merge(vo,gene,by.x="Gene",by.y="ensembl_gene_id")
-  save(vepbiomart,file="INF1.merge.trans.vepbiomart")
+  write.table(vepbiomart,file="INF1.merge.trans.vepbiomart",row.name=FALSE,quote=FALSE,sep="\t")
+  library(openxlsx)
+  xlsx <- "INF1.merge.trans.vepbiomart.xlsx"
+  unlink(xlsx, recursive = FALSE, force = TRUE)
+  wb <- createWorkbook(xlsx)
+  snpid_rsid <- read.table("INF1.merge.rsid",col.names=c("snpid","rsid"))
+  d <- merge(snpid_rsid,vepbiomart,by.x="snpid",by.y="X.Uploaded_variation",all.y=TRUE)
+  addWorksheet(wb, "snp")
+  writeDataTable(wb, "d")
+  saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 END
 cd -
