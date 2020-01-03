@@ -137,6 +137,7 @@ R --no-save -q <<END
 END
 
 # on tryggve, --geneanno is on by default
+module load perl/5.24.0 annovar/2019oct24
 export annovar_home=/services/tools/annovar/2018apr16
 export humandb=$annovar_home/humandb
 cd work
