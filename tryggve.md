@@ -10,7 +10,7 @@ Instances are exemplified as follows,
 module load anaconda2/4.4.0
 module load bedtools/2.28.0
 module load bgen/20180807
-module load perl/5.24.0 annovar/2018apr16
+module load perl/5.24.0 annovar/2019oct24
 module load bcftools/1.9
 module load emacs/26.1
 module load gcta/1.91.0beta
