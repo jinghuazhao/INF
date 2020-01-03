@@ -159,7 +159,10 @@ vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --force_overwrite
 
 (
   cut -f1,2 ${INF}/work/INF1.merge.trans.vepinput | \
-  awk -v OFS="\t" 'NR>2{print $1, $2-1, $2}'
+  awk -v OFS="\t" -v flanking=500000 'NR>2 {
+    if ($2-flanking<0) print $1, 0, $2+flanking;
+    else print $1, $2-flanking, $2+flanking
+  }'
 ) > a1
 
 (
@@ -195,10 +198,15 @@ R --no-save -q <<END
   writeDataTable(wb, "vepbiomart",d)
   saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 END
+export humandb=$HPC_WORK/annovar/humandb
 # on tryggve
 module load perl/5.24.0 annovar/2019oct24
 export annovar_home=/services/tools/annovar/2019oct24
 export humandb=$annovar_home/humandb
 for s in INF1.merge INF1.merge.trans
-do annotate_variation.pl --genomebinsize 500k -buildver hg19 ${s}.avinput $humandb/ --outfile ${s};done
+do
+  annotate_variation.pl --genomebinsize 500k -buildver hg19 ${s}.avinput $humandb/ --outfile ${s}
+  convert2annovar.pl -format annovar2vcf ${s}.avinput > ${s}.vcf
+  vep -i ${s}.vcf -o ${s}.vcfoutput --offline
+done
 cd -
