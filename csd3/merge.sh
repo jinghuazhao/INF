@@ -136,16 +136,11 @@ R --no-save -q <<END
   dev.off()
 END
 
-# on tryggve, --geneanno is on by default
-module load perl/5.24.0 annovar/2019oct24
-export annovar_home=/services/tools/annovar/2018apr16
-export humandb=$annovar_home/humandb
 cd work
 cut -f8,9,10 INF1.merge | \
 awk -vOFS="\t" 'NR>1{split($3,a,"_");print $1,$2,$2,a[2],a[3]}' | \
 sort -k1,1n -k2,2n | \
 uniq > INF1.merge.avinput
-$annovar_home/annotate_variation.pl -buildver hg19 INF1.merge.avinput $humandb/ --outfile INF1.merge
 R --no-save -q <<END
   cvt <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
   ord <- with(cvt,order(Chr,bp))
@@ -160,7 +155,6 @@ R --no-save -q <<END
   vars <- c("chr","pos","snp","a1","a2","qual","filter","info")
   write.table(s[vars],file=vepinput,append=TRUE,col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 END
-$annovar_home/annotate_variation.pl -buildver hg19 INF1.merge.trans.avinput $humandb/ --outfile INF1.merge.trans
 vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --force_overwrite --offline
 
 (
@@ -201,4 +195,10 @@ R --no-save -q <<END
   writeDataTable(wb, "vepbiomart",d)
   saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 END
+# on tryggve
+module load perl/5.24.0 annovar/2019oct24
+export annovar_home=/services/tools/annovar/2019oct24
+export humandb=$annovar_home/humandb
+for s in INF1.merge INF1.merge.trans
+do annotate_variation.pl --genomebinsize 500k -buildver hg19 ${s}.avinput $humandb/ --outfile ${s};done
 cd -
