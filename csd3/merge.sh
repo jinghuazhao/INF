@@ -1,4 +1,4 @@
-# 3-1-2020 JHZ
+# 7-1-2020 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -135,78 +135,3 @@ R --no-save -q <<END
   )
   dev.off()
 END
-
-cd work
-cut -f8,9,10 INF1.merge | \
-awk -vOFS="\t" 'NR>1{split($3,a,"_");print $1,$2,$2,a[2],a[3]}' | \
-sort -k1,1n -k2,2n | \
-uniq > INF1.merge.avinput
-R --no-save -q <<END
-  cvt <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
-  ord <- with(cvt,order(Chr,bp))
-  trans <- subset(cvt[ord,],cis.trans=="trans")
-  s <- with(trans,unique(gap::inv_chr_pos_a1_a2(SNP,prefix="")))
-  vars <- c("chr","pos","pos","a1","a2")
-  write.table(s[vars],file="INF1.merge.trans.avinput",col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-  vepinput <- "INF1.merge.trans.vepinput"
-  cat("##fileformat=VCFv4.0\n", file=vepinput)
-  cat("#CHROM","POS","ID","REF","ALT","QUAL","FILTER","INFO\n",file=vepinput,append=TRUE,sep="\t")
-  s <- within(s,{snp <- paste0(chr,":",pos,"_",a1,"_",a2); qual <- "."; filter <- "."; info <- "."})
-  vars <- c("chr","pos","snp","a1","a2","qual","filter","info")
-  write.table(s[vars],file=vepinput,append=TRUE,col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-END
-vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --force_overwrite --offline
-
-(
-  cut -f1,2 ${INF}/work/INF1.merge.trans.vepinput | \
-  awk -v OFS="\t" -v flanking=500000 'NR>2 {
-    if ($2-flanking<0) print $1, 0, $2+flanking;
-    else print $1, $2-flanking, $2+flanking
-  }'
-) > a1
-
-(
-  sort -k1,1n -k2,2n ${INF}/csd3/glist-hg19 | \
-  grep -v X | \
-  grep -v Y | \
-  awk '{$1="chr" $1;print}' | \
-  sed 's/ /\t/g'
-) > a2
-
-bedtools intersect -a a1 -b a2 -wa -wb -loj | \
-cut  -f1-3,7 > INF1.merge.glist-hg19
-
-R --no-save -q <<END
-  vo <-  read.delim("INF1.merge.trans.vepoutput",skip=40)
-  library(biomaRt)
-  ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl", host="grch37.ensembl.org", path="/biomart/martservice")
-  attr <- listAttributes(ensembl)
-  filter <- listFilters(ensembl)
-  s1 <- c('ensembl_gene_id', 'chromosome_name', 'start_position', 'end_position', 'description', 'hgnc_symbol', 'entrezgene_id')
-  s2 <- c('ensembl_peptide_id', 'peptide', 'protein_id')
-  s3 <- c('clinical_significance')
-  gene <- getBM(attributes = s1, mart = ensembl)
-  vepbiomart <- merge(vo,gene,by.x="Gene",by.y="ensembl_gene_id")
-  write.table(vepbiomart,file="INF1.merge.trans.vepbiomart",row.name=FALSE,quote=FALSE,sep="\t")
-  library(openxlsx)
-  xlsx <- "INF1.merge.trans.vepbiomart.xlsx"
-  unlink(xlsx, recursive = FALSE, force = TRUE)
-  wb <- createWorkbook(xlsx)
-  snpid_rsid <- read.table("INF1.merge.rsid",col.names=c("snpid","rsid"))
-  d <- merge(snpid_rsid,vepbiomart,by.x="snpid",by.y="X.Uploaded_variation",all.y=TRUE)
-  addWorksheet(wb, "vepbiomart")
-  writeDataTable(wb, "vepbiomart",d)
-  saveWorkbook(wb, file=xlsx, overwrite=TRUE)
-END
-export humandb=$HPC_WORK/annovar/humandb
-# on tryggve
-module load perl/5.24.0 annovar/2019oct24
-export annovar_home=/services/tools/annovar/2019oct24
-export humandb=$annovar_home/humandb
-for s in INF1.merge INF1.merge.trans
-do
-  annotate_variation.pl --genomebinsize 500k -buildver hg19 ${s}.avinput $humandb/ --outfile ${s}
-  convert2annovar.pl -format annovar2vcf ${s}.avinput > ${s}.vcf
-  vep -i ${s}.vcf -o ${s}.vcfoutput --offline
-done
-cd -
