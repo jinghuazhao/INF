@@ -29,9 +29,9 @@ END
 for s in INF1.merge INF1.merge.trans
 do
   annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
-  vep -i ${s}.vepinput -o ${s}.vepoutput --symbol --force_overwrite --offline
+  vep -i ${s}.vepinput -o ${s}.vepoutput --pick --symbol --force_overwrite --offline
   convert2annovar.pl -format annovar2vcf ${s}.avinput > ${s}.vcf
-  vep -i ${s}.vcf -o ${s}.vcfoutput --symbol --offline --force_overwrite
+  vep -i ${s}.vcf -o ${s}.vcfoutput --pick --symbol --offline --force_overwrite
 done
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
 R --no-save -q <<END
