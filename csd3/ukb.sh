@@ -1,4 +1,4 @@
-# 10-10-2019 JHZ
+# 10-1-2019 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ukbdir=${INF}/ukb
@@ -97,3 +97,16 @@ function sentinels_combined ()
     print cmd
   }' > ${INF}/work/ukb.list
 }
+
+# /rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/reference_files/genetic/reference_files/full_release
+# /rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
+
+module load ceuadmin/stata
+stata <<END
+// use /rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/reference_files/genetic/reference_files/full_release/analysis.dta
+// gzsave ukb/analysis, replace
+  gzuse ukb/analysis
+  log using work/analysis.log, text replace
+  set more off
+  describe
+END
