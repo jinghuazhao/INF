@@ -1,21 +1,41 @@
-# 10-1-2020 JHZ
+# 13-1-2020 JHZ
 
 # mg/L
-gunzip -c ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz | \
-awk '{
-   OFS="\t"
-   if (NR>1)
-   {
-     split($1,a,":")
-     CHR=a[1]
-     POS=a[2]
-     a1=a[3]
-     a2=a[4]
-     if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
-     else snpid="chr" CHR ":" POS "_" a1 "_" a2
-     $1=snpid
-   }
-   print
-}' | \
-sort -k1,1 | \
-join - <(sed '1d' work/INF1.merge | cut -f6 | sort -k1,1) > work//30710_raw
+export SUMSTATS=ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz
+(
+  gunzip -c ${SUMSTATS} | \
+  head -1 | \
+  awk -vOFS="\t" '{$1="snpid\tchr\tpos\tA1\tA2"};1'
+  gunzip -c ${SUMSTATS} | \
+  awk '{
+     OFS="\t"
+     if (NR>1)
+     {
+       split($1,a,":")
+       CHR=a[1]
+       POS=a[2]
+       a1=a[3]
+       a2=a[4]
+       if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+       else snpid="chr" CHR ":" POS "_" a1 "_" a2
+       $1=snpid "\t" a[1] "\t" a[2] "\t" a[4] "\t" a[3]
+     }
+     print
+  }' | \
+  sort -k1,1 | \
+  join -t$'\t' - <(sed '1d' work/INF1.merge | cut -f6 | sort -k1,1 | uniq)
+) > work/crp.raw
+export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
+join <(awk 'NR>1 {print $1}' work/crp.raw | sort -k1,1) \
+     <(awk 'NR > 1 {print $1,$2}' work/INF1.merge.ukbsnp | sort -k1,1) | \
+cut -d' ' -f2 > work/INF1.merge.ukbsnpid
+(
+  awk -v OFS="\t" 'NR == 1 {$1=$1 "\t" "id"; print}' work/crp.raw
+  join -t$'\t' <(awk -v OFS="\t" 'NR > 1 {print $1,$2}' work/INF1.merge.ukbsnp | sort -k1,1) \
+               <(awk -v OFS="\t" 'NR > 1' work/crp.raw)
+) > work/crp.ukb
+sed 's/ID_1/FID/g;s/ID_2/IID/g;2d' ${UKB}/ukb_BP_imp_v3.sample | cut -d' ' -f1,2,4 > work/crp.sample
+PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
+       --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.sample \
+       --extract work/INF1.merge.ukbsnpid --model add --no-clump --score avg \
+       --out work/crp

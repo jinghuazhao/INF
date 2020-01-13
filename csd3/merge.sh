@@ -1,4 +1,4 @@
-# 7-1-2020 JHZ
+# 13-1-2020 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -113,6 +113,25 @@ sed '1d' work/INF1.merge | cut -f5 | sort -k1,1 | uniq | join -t$'\t' - work/inf
 sed '1d' work/INF1.merge.id | \
 awk '!/NA/' | \
 cut -f4 > work/INF1.merge.gene
+
+export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
+(
+  grep '#' -h -v $UKB/ukb_impv3_chr*_snpstats.txt | \
+  head -1 | \
+  awk '{$1=$1 "\t" "id"};1'
+  for ((i=1;i<23;i++))
+  do
+    grep '#' -v  $UKB/ukb_impv3_chr${i}_snpstats.txt | \
+    grep -w -f work/INF1.merge.snp 
+  done
+) | \
+sed 's/ /\t/g' | \
+awk -v OFS="\t" '{
+  chr=$3+0;pos=$4;a1=$5;a2=$6
+  if (a1>a2) snpid="chr" chr ":" pos "_" a2 "_" a1;
+  else snpid="chr" chr ":" pos "_" a1 "_" a2
+  if (NR>1) $1=snpid "\t" $1;
+};1' > work/INF1.merge.ukbsnp
 
 R --no-save -q <<END
   library(gap)
