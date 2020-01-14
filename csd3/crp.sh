@@ -55,6 +55,10 @@ stata <<END
   outsheet FID IID using work/crp.excl if cv==-999 | sex==-999 | ages==-999, nolabel noquote replace
 END
 PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
+       --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.sample \
+       --extract work/INF1.merge.ukbsnpid --model add --no-regress --score avg \
+       --out work/crp
+PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
        --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.cvd --cov work/crp.cov --remove work/crp.excl --binary-target T \
        --extract work/INF1.merge.ukbsnpid --model add --score avg \
-       --out work/crp
+       --out work/crp-cv
