@@ -1,4 +1,4 @@
-# 13-1-2020 JHZ
+# 14-1-2020 JHZ
 
 # mg/L
 export SUMSTATS=ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz
@@ -35,7 +35,26 @@ cut -d' ' -f2 > work/INF1.merge.ukbsnpid
                <(awk -v OFS="\t" 'NR > 1' work/crp.raw)
 ) > work/crp.ukb
 sed 's/ID_1/FID/g;s/ID_2/IID/g;2d' ${UKB}/ukb_BP_imp_v3.sample | cut -d' ' -f1,2,4 > work/crp.sample
+module load ceuadmin/stata
+stata <<END
+  insheet using work/crp.sample, case clear delim(" ")
+  sort FID
+  save work/crp, replace
+  gzuse ukb/analysis, clear
+  gen chd=ep1_chd
+  gen cv=ep1_cv
+  destring idno, gen(FID)
+  merge 1:1 FID using work/crp
+  drop if FID==. | FID <0 | IID==. | IID<0
+  replace chd=. if ep1_chd==6
+  replace cv=. if ep1_cv==6
+  keep FID IID chd cv sex ages
+  mvencode _all, mv(-999)
+  outsheet FID IID cv using work/crp.cvd, nolabel noquote replace
+  outsheet FID IID sex ages using work/crp.cov, nolabel noquote replace
+  outsheet FID IID using work/crp.excl if cv==-999 | sex==-999 | ages==-999, nolabel noquote replace
+END
 PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
-       --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.sample \
-       --extract work/INF1.merge.ukbsnpid --model add --no-clump --score avg \
+       --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.cvd --cov work/crp.cov --remove work/crp.excl --binary-target T \
+       --extract work/INF1.merge.ukbsnpid --model add --score avg \
        --out work/crp
