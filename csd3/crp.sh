@@ -49,6 +49,7 @@ stata <<END
   replace chd=. if ep1_chd==6
   replace cv=. if ep1_cv==6
   keep FID IID chd cv sex ages
+  save work/ukb, replace
   mvencode _all, mv(-999)
   outsheet FID IID chd cv using work/crp.cvd, nolabel noquote replace
   outsheet FID IID sex ages using work/crp.cov, nolabel noquote replace
@@ -59,6 +60,15 @@ PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta be
        --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.sample \
        --extract work/INF1.merge.ukbsnpid --model add --no-regress --score avg \
        --out work/crp
+stata <<END
+  insheet using work/crp.all.score, case clear delim(" ")
+  rename e08 v3
+  keep FID IID v3-v76  
+  sort FID
+  merge 1:1 FID using work/ukb
+  stset ages, failure(cv)
+  stcox sex v3
+END
 for pheno in chd cv
 do
   PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
