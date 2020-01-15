@@ -1,4 +1,4 @@
-# 8-1-2020 JHZ
+# 15-1-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -29,10 +29,10 @@ END
 for s in INF1.merge INF1.merge.trans
 do
   annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
-  vep -i ${s}.vepinput -o ${s}.vepoutput --pick --symbol --force_overwrite --offline
   convert2annovar.pl -format annovar2vcf ${s}.avinput > ${s}.vcf
   vep -i ${s}.vcf -o ${s}.vcfoutput --pick --symbol --offline --force_overwrite
 done
+vep -i ${s}.vepinput -o ${s}.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
 R --no-save -q <<END
   cvt <- subset(read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE),cis.trans=="trans")
