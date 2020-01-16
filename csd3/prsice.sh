@@ -62,7 +62,7 @@ END
 # PRSice analysis
 PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
        --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.sample \
-       --extract work/INF1.merge.ukbsnpid --model add --no-regress --score avg \
+       --extract work/INF1.merge.ukbsnpid --model add --score avg \
        --out work/crp
 stata <<END
   insheet using work/crp.all.score, case clear delim(" ")
@@ -72,6 +72,11 @@ stata <<END
   merge 1:1 FID using work/ukb
   stset ages, failure(cv)
   stcox sex v3
+  insheet using work/crp.best, case clear delim(" ")
+  sort FID
+  merge 1:1 FID using work/ukb
+  stset ages, failure(cv)
+  stcox sex PRS
 END
 for pheno in chd cv
 do

@@ -1,4 +1,4 @@
-# 15-1-2020 JHZ
+# 16-1-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -26,13 +26,25 @@ R --no-save -q <<END
     if(f=="INF1.merge") writetable(all[vars],vepinput,append=TRUE) else writetable(trans[vars],vepinput,append=TRUE)
   }
 END
+cut -f1-3,6 INF1.merge | \
+sed '1d' | \
+sort -k1,1 -k2,2n -k3,3n -t$'\t' | \
+bgzip -c > INF1.merge.region.gz
+tabix -p bed INF1.merge.region.gz
+grep -v -w -f INF1.merge.cis INF1.merge | \
+cut -f1-3,6 | \
+sed '1d' | \
+sort -k1,1 -k2,2n -k3,3n -t$'\t' | \
+bgzip -c > INF1.merge.trans.region.gz
+tabix -p bed INF1.merge.trans.region.gz
 for s in INF1.merge INF1.merge.trans
 do
   annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
   convert2annovar.pl -format annovar2vcf ${s}.avinput > ${s}.vcf
   vep -i ${s}.vcf -o ${s}.vcfoutput --pick --symbol --offline --force_overwrite
+  vep -i ${s}.vepinput -o ${s}.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
+  vep --custom ${s}.region.gz,region,bed,overlap,0 -o ${s}.region.vepoutput --format region
 done
-vep -i ${s}.vepinput -o ${s}.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
 R --no-save -q <<END
   cvt <- subset(read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE),cis.trans=="trans")
