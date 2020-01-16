@@ -34,6 +34,8 @@ vep -i INF1.merge.cistrans.vepinput -o INF1.merge.cistrans.vepoutput --pick --fo
 grep -f INF1.merge.trans.missense -v -w INF1.merge.avinput > INF1.merge.cistrans.avinput
 annotate_variation.pl -buildver hg19 INF1.merge.cistrans.avinput ${ANNOVAR}/humandb/ -dbtype ensGene \
                       --outfile INF1.merge.cistrans
+vep -i INF1.merge.cistrans.vepinput --species homo_sapiens -o IN1.merge.cistrans.clinvar --cache --offline --force_overwrite \
+    --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN
 
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
 R --no-save -q <<END
