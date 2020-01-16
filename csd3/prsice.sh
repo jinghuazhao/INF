@@ -1,6 +1,6 @@
-# 15-1-2020 JHZ
+# 16-1-2020 JHZ
 
-# mg/L
+# Base data, CRP in mg/L
 export SUMSTATS=ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz
 (
   gunzip -c ${SUMSTATS} | \
@@ -25,6 +25,8 @@ export SUMSTATS=ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz
   sort -k1,1 | \
   join -t$'\t' - <(sed '1d' work/INF1.merge | cut -f6 | sort -k1,1 | uniq)
 ) > work/crp.raw
+
+# Target data, UKB
 export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
 join <(awk 'NR>1 {print $1}' work/crp.raw | sort -k1,1) \
      <(awk 'NR > 1 {print $1,$2}' work/INF1.merge.ukbsnp | sort -k1,1) | \
@@ -56,6 +58,8 @@ stata <<END
   outsheet FID IID using work/crp-chd.excl if chd==-999 | sex==-999 | ages==-999, nolabel noquote replace
   outsheet FID IID using work/crp-cv.excl if cv==-999 | sex==-999 | ages==-999, nolabel noquote replace
 END
+
+# PRSice analysis
 PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
        --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.sample \
        --extract work/INF1.merge.ukbsnpid --model add --no-regress --score avg \
