@@ -43,7 +43,7 @@ do
   convert2annovar.pl -format annovar2vcf ${s}.avinput > ${s}.vcf
   vep -i ${s}.vcf -o ${s}.vcfoutput --pick --symbol --offline --force_overwrite
   vep -i ${s}.vepinput -o ${s}.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
-  vep --custom ${s}.region.gz,region,bed,overlap,0 -o ${s}.region.vepoutput --format region
+  vep --custom ${s}.region.gz,region,bed,overlap,0 -o ${s}.region.vepoutput --format region --force_overwrite
 done
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
 R --no-save -q <<END

@@ -64,20 +64,6 @@ PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta be
        --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.sample \
        --extract work/INF1.merge.ukbsnpid --model add --score avg \
        --out work/crp
-stata <<END
-  insheet using work/crp.all.score, case clear delim(" ")
-  rename e08 v3
-  keep FID IID v3-v76  
-  sort FID
-  merge 1:1 FID using work/ukb
-  stset ages, failure(cv)
-  stcox sex v3
-  insheet using work/crp.best, case clear delim(" ")
-  sort FID
-  merge 1:1 FID using work/ukb
-  stset ages, failure(cv)
-  stcox sex PRS
-END
 for pheno in chd cv
 do
   PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
@@ -86,3 +72,12 @@ do
          --extract work/INF1.merge.ukbsnpid --model add --score avg \
          --out work/crp-${pheno}
 done
+stata <<END
+  foreach v in "chd" "cv" {
+    insheet using work/crp-`v'.best, case clear delim(" ")
+    sort FID
+    merge 1:1 FID using work/ukb
+    stset ages, failure(`v')
+    stcox sex PRS if `v'!=.
+  }
+END
