@@ -62,7 +62,7 @@ END
 # PRSice analysis
 PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
        --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.sample \
-       --extract work/INF1.merge.ukbsnpid --model add --score avg \
+       --extract work/INF1.merge.ukbsnpid --model add --no-regress --score avg \
        --out work/crp
 for pheno in chd cv
 do

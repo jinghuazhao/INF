@@ -26,13 +26,13 @@ R --no-save -q <<END
     if(f=="INF1.merge") writetable(all[vars],vepinput,append=TRUE) else writetable(trans[vars],vepinput,append=TRUE)
   }
 END
-for s in INF1.merge INF1.merge.trans
-do
-  annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
-  convert2annovar.pl -format annovar2vcf ${s}.avinput > ${s}.vcf
-  vep -i ${s}.vcf -o ${s}.vcfoutput --pick --symbol --offline --force_overwrite
-  vep -i ${s}.vepinput -o ${s}.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
-done
+grep -f INF1.merge.cis -v -w INF1.merge.vepinput > INF1.merge.trans.vepinput
+vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --pick --force_overwrite --offline
+grep missense INF1.merge.trans.vepoutput | cut -f1 > INF1.merge.trans.missense
+grep -f INF1.merge.trans.missense -v -w INF1.merge.vepinput > INF1.merge.cistrans.vepinput
+vep -i INF1.merge.cistrans.vepinput -o INF1.merge.cistrans.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
+annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
+
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
 R --no-save -q <<END
   cvt <- subset(read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE),cis.trans=="trans")
