@@ -31,7 +31,9 @@ vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --pick --force_ov
 grep missense INF1.merge.trans.vepoutput | cut -f1 > INF1.merge.trans.missense
 grep -f INF1.merge.trans.missense -v -w INF1.merge.vepinput > INF1.merge.cistrans.vepinput
 vep -i INF1.merge.cistrans.vepinput -o INF1.merge.cistrans.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
-annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
+grep -f INF1.merge.trans.missense -v -w INF1.merge.avinput > INF1.merge.cistrans.avinput
+annotate_variation.pl -buildver hg19 INF1.merge.cistrans.avinput ${ANNOVAR}/humandb/ -dbtype ensGene \
+                      --outfile INF1.merge.cistrans
 
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
 R --no-save -q <<END
