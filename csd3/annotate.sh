@@ -102,3 +102,13 @@ cd -
 # http://www.genome.jp/kegg/
 # http://string-db.org/
 # BiocManager::install("garfield")
+
+# https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html
+R <<END
+  library(rentrez)
+  library(XML)
+  entrez_dbs()
+  r <- entrez_search(db="protein",term="pQTLs OR (protein quantitative locus)",use_history=TRUE)
+  f <- entrez_fetch(db="snp", id=r$ids, rettype="xml", parsed=TRUE)
+  l <- XML::xmlToList(f)
+END
