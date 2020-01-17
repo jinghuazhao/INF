@@ -1,4 +1,4 @@
-# 16-1-2020 JHZ
+# 17-1-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -14,7 +14,7 @@ R --no-save -q <<END
   trans <- with(subset(ct,cis.trans=="trans"),unique(gap::inv_chr_pos_a1_a2(SNP,prefix=""))) 
   trans <- within(trans,{snp <- paste0(chr,":",pos,"_",a1,"_",a2); qual <- "."; filter <- "."; info <- "."})
   writetable <- function(d,f,...) write.table(d,file=f,col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t",...)
-  for (f in c("INF1.merge", "INF1.merge.trans"))
+  for (f in c("INF1.merge","INF1.merge.trans"))
   {
     avinput <- paste0(f,".avinput")
     vars <- c("chr","pos","pos","a1","a2")
@@ -26,17 +26,15 @@ R --no-save -q <<END
     if(f=="INF1.merge") writetable(all[vars],vepinput,append=TRUE) else writetable(trans[vars],vepinput,append=TRUE)
   }
 END
-grep -f INF1.merge.cis -v -w INF1.merge.vepinput > INF1.merge.trans.vepinput
-vep -i INF1.merge.trans.vepinput -o INF1.merge.trans.vepoutput --pick --force_overwrite --offline
-grep missense INF1.merge.trans.vepoutput | cut -f1 > INF1.merge.trans.missense
-grep -f INF1.merge.trans.missense -v -w INF1.merge.vepinput > INF1.merge.cistrans.vepinput
-vep -i INF1.merge.cistrans.vepinput -o INF1.merge.cistrans.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
-grep -f INF1.merge.trans.missense -v -w INF1.merge.avinput > INF1.merge.cistrans.avinput
-annotate_variation.pl -buildver hg19 INF1.merge.cistrans.avinput ${ANNOVAR}/humandb/ -dbtype ensGene \
-                      --outfile INF1.merge.cistrans
-vep -i INF1.merge.cistrans.vepinput --species homo_sapiens -o INF1.merge.cistrans.clinvar \
-    --cache --offline --force_overwrite \
-    --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN
+
+for s in INF1.merge INF1.merge.trans
+do
+   annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
+   vep -i ${s}.vepinput -o ${s}.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
+   vep -i ${s}.vepinput --species homo_sapiens -o ${s}.clinvar \
+       --cache --offline --force_overwrite \
+       --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN
+done
 
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
 R --no-save -q <<END
@@ -76,7 +74,7 @@ END
 
 # sentinel positions +/- 500k
 (
-  cut -f1,2 ${INF}/work/INF1.merge.cistrans.vepinput | \
+  cut -f1,2 ${INF}/work/INF1.merge.trans.vepinput | \
   awk -v OFS="\t" -v flanking=500000 'NR>2 {
     if ($2-flanking<0) print $1, 0, $2+flanking;
     else print $1, $2-flanking, $2+flanking
@@ -90,7 +88,17 @@ END
   sed 's/ /\t/g'
 ) > a2
 bedtools intersect -a a1 -b a2 -wa -wb -loj | \
-cut  -f1-3,7 > INF1.merge.glist-hg19
+cut  -f1-3,7 > INF1.merge.trans.glist-hg19
 rm a1 a2
 
 cd -
+
+# Bottom-up
+# https://www.gtexportal.org/home/datasets
+# Top-down (GenomicRanges, KEGGREST, STRINGdb)
+# ftp://ftp.ensembl.org/pub/grch37/release-98/gtf/homo_sapiens/Homo_sapiens.GRCh37.87.gtf.gz
+# http://www.omim.org/
+# https://www.humanmine.org/
+# http://www.genome.jp/kegg/
+# http://string-db.org/
+# BiocManager::install("garfield")
