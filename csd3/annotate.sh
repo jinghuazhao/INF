@@ -82,8 +82,7 @@ END
 ) > a1
 (
   sort -k1,1n -k2,2n ${INF}/csd3/glist-hg19 | \
-  grep -v X | \
-  grep -v Y | \
+  grep -v -e X -e Y -w | \
   awk '{$1="chr" $1;print}' | \
   sed 's/ /\t/g'
 ) > a2
