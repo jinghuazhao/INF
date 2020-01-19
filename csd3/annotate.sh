@@ -103,7 +103,7 @@ cd -
 # BiocManager::install("garfield")
 
 # https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html
-R <<END
+R --no-save <<END
   library(rentrez)
   library(XML)
   entrez_dbs()
