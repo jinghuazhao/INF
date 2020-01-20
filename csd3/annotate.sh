@@ -1,4 +1,4 @@
-# 19-1-2020 JHZ
+# 20-1-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -106,34 +106,34 @@ cd -
 R --no-save <<END
   library(rentrez)
   library(XML)
+# set_entrez_key("")
+  Sys.getenv("ENTREZ_KEY")
   entrez_dbs()
+  entrez_db_links("pubmed")
   pubmed_fields <- entrez_db_searchable("pubmed")
-  r <- entrez_search(db="pubmed",term="(pQTLs OR (protein quantitative locus)) AND 2008:2020[PDAT]",use_history=TRUE)
+  r <- entrez_search(db="pubmed",term="(pQTLs OR (protein quantitative locus)) AND 2008:2020[DP] AND homo_sapiens[ORGN]",use_history=TRUE)
   class(r)
   names(r)
   with(r,web_history)
-  for(i in seq(1,200,50))
+  unlink(paste("pubmed",c("fetch","summary"),sep="."))
+  for(i in seq(1,with(r,count),50))
   {
-    recs <- entrez_fetch(db="pubmed", web_history=with(r,web_history), rettype="text", retmax=50, retstart=i)
-    cat(recs, file="pubmed.txt", append=TRUE)
     cat(i+49, "records downloaded\r")
+    f <- entrez_fetch(db="pubmed", web_history=with(r,web_history), rettype="text", retmax=50, retstart=i)
+    write.table(f, col.names=FALSE, row.names=FALSE, file="pubmed.fetch", append=TRUE)
+    s <- entrez_summary(db="pubmed", web_history=with(r,web_history), rettype="text", retmax=50, retstart=i)
+    fields <- c("uid", "pubdate", "sortfirstauthor", "title", "source", "volume", "pages")
+    e <- extract_from_esummary(s, fields)
+    write.table(t(e), col.names=FALSE, row.names=FALSE, file="pubmed.summary", append=TRUE, sep="\t")
   }
-  s <- entrez_summary(db="pubmed",id=with(r,ids))
-  date_and_cite <- extract_from_esummary(s, c("pubdate", "pmcrefcount",  "title", "fulljournalname"))
-  knitr::kable(t(date_and_cite), row.names=FALSE)
-  f <- entrez_fetch(db="pubmed", id=with(r,ids), rettype="xml", parsed=TRUE)
-  l <- XML::xmlToList(f)
-END
-
-R --no-save <<END
-# set_entrez_key("")
-  Sys.getenv("ENTREZ_KEY")
-  upload <- entrez_post(db="omim", id=600807)
-  asthma_variants <- entrez_link(dbfrom="omim", db="clinvar", cmd="neighbor_history", web_history=upload)
-  asthma_variants
-  snp_links <- entrez_link(dbfrom="clinvar", db="snp",
-                           web_history=asthma_variants$web_histories$omim_clinvar,
-                           cmd="neighbor_history")
-  snp_summ <- entrez_summary(db="snp", web_history=snp_links$web_histories$clinvar_snp)
-  knitr::kable(extract_from_esummary(snp_summ, c("chr", "fxn_class", "global_maf")))
+  link.example <- function()
+  {
+    upload <- entrez_post(db="omim", id=600807)
+    asthma_variants <- entrez_link(dbfrom="omim", db="clinvar", cmd="neighbor_history", web_history=upload)
+    asthma_variants
+    snp_links <- entrez_link(dbfrom="clinvar", db="snp",
+                             web_history=asthma_variants$web_histories$omim_clinvar,
+                             cmd="neighbor_history")
+    all_links <- entrez_link(dbfrom='pubmed', id=351, db='all')
+  }
 END
