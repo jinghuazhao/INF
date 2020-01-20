@@ -126,14 +126,14 @@ R --no-save <<END
     e <- extract_from_esummary(s, fields)
     write.table(t(e), col.names=FALSE, row.names=FALSE, file="pubmed.summary", append=TRUE, sep="\t")
   }
-  link.example <- function()
+  link.example <- function(id=600807)
   {
-    upload <- entrez_post(db="omim", id=600807)
+    upload <- entrez_post(db="omim", id=id)
     asthma_variants <- entrez_link(dbfrom="omim", db="clinvar", cmd="neighbor_history", web_history=upload)
     asthma_variants
     snp_links <- entrez_link(dbfrom="clinvar", db="snp",
                              web_history=asthma_variants$web_histories$omim_clinvar,
                              cmd="neighbor_history")
-    all_links <- entrez_link(dbfrom='pubmed', id=351, db='all')
+    all_links <- entrez_link(dbfrom='pubmed', id=id, db='all')
   }
 END
