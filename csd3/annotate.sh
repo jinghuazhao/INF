@@ -95,7 +95,17 @@ bedtools intersect -a a1 -b a2 -wa -wb -loj | \
 cut  -f1-3,7 > INF1.merge.trans.glist-hg19
 rm a1 a2
 
-cd -
+# Polyphen-2
+
+grep -v -w -f INF1.merge.cis INF1.merge | \
+cut -f6 | \
+sed '1d;s/_/ /;s/_/\//' | \
+sort -k1,1 | \
+uniq > INF1.merge.pph.list
+mapsnps.pl -g hg19 -m -U -y INF1.merge.pph.input INF1.merge.pph.list 1>INF1.merge.pph.features 2>INF1.merge.log
+run_pph.pl INF1.merge.pph.input 1>INF1.merge.pph.output 2>INF1.merge.pph.log
+run_weka.pl INF1.merge.pph.output >INF1.merge.humdiv.output
+run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model INF1.merge.pph.output >INF1.merge.humvar.output
 
 # ProGeM
 # Bottom-up
@@ -108,10 +118,4 @@ cd -
 # http://string-db.org/
 # BiocManager::install("garfield")
 
-# Polyphen-2
-
-grep -v -w -f INF1.merge.cis INF1.merge | cut -f6 | sed '1d;s/_/ /;s/_/\//' | sort -k1,1 | uniq > INF1.merge.pph.list
-mapsnps.pl -g hg19 -m -U -y INF1.merge.pph.input INF1.merge.pph.list 1>INF1.merge.pph.features 2>INF1.merge.log
-run_pph.pl INF1.merge.pph.input 1>INF1.merge.pph.output 2>INF1.merge.pph.log
-run_weka.pl INF1.merge.pph.output >INF1.merge.humdiv.output
-run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model INF1.merge.pph.output >INF1.merge.humvar.output
+cd -
