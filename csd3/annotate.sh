@@ -1,4 +1,4 @@
-# 20-1-2020 JHZ
+# 21-1-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -31,6 +31,10 @@ END
 for s in INF1.merge INF1.merge.trans
 do
    annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
+   table_annovar.pl ${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
+        -protocol ensGene,refGene,ccdsGene,wgEncodeGencodeBasicV19,cytoBand,exac03,avsnp147,dbnsfp30a \
+        -operation g,g,g,g,r,f,f,f \
+        -remove -nastring . -csvout -polish -xref $ANNOVA/example/gene_xref.txt
    vep -i ${s}.vepinput -o ${s}.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
    vep -i ${s}.vepinput --species homo_sapiens -o ${s}.clinvar \
        --cache --offline --force_overwrite \
@@ -106,7 +110,7 @@ cd -
 
 # Polyphen-2
 
-grep -v -w -f INF1.merge.cis INF1.merge | cut -f6 | sed '1d;s/_/ /;s/_/\//' > INF1.merge.pph.list
+grep -v -w -f INF1.merge.cis INF1.merge | cut -f6 | sed '1d;s/_/ /;s/_/\//' | sort -k1,1 | uniq > INF1.merge.pph.list
 mapsnps.pl -g hg19 -m -U -y INF1.merge.pph.input INF1.merge.pph.list 1>INF1.merge.pph.features 2>INF1.merge.log
 run_pph.pl INF1.merge.pph.input 1>INF1.merge.pph.output 2>INF1.merge.pph.log
 run_weka.pl INF1.merge.pph.output >INF1.merge.humdiv.output
