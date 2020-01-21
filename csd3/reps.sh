@@ -1,4 +1,4 @@
-# 20-1-2020 JHZ
+# 21-1-2020 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
@@ -38,5 +38,14 @@ R --no-save <<END
   }
 END
 
-join <(cut -f2,8,11-13,18,25,26,28,29 annotate/gwas_catalog_v1.0.2-associations_e99_r2020-01-16.tsv | sed '1d' | sort -k1,1) \
-     <(sort -k1,1 work/pubmed.summary)
+export traitmap=gwas_catalog_trait-mappings_r2020-01-16.tsv
+export assoc=gwas_catalog_v1.0.2-associations_e99_r2020-01-16.tsv
+
+cut -f2,8,11-13,18,22,25,26,28,29,35,36 annotate/$assoc > annotate/assoc.txt
+
+join -113 -25 -t$'\t' \
+    <(sed '1d' annotate/assoc.txt | sort -t$'\t' -k13,13) \
+    <(sed '1d' annotate/$traitmap | grep 'protein measure' | sort -t$'\t' -k5,5) > annotate/ll
+
+join <(sort -k1,1 work/pubmed.summary | awk '!/mice|Mice|plant|Plant|rice|soybean|Soybean|tomato/') \
+     <(sed '1d' annotate/assoc.txt | sort -k1,1) > work/pubmed.left
