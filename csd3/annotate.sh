@@ -1,8 +1,9 @@
-# 21-1-2020 JHZ
+# 22-1-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
 export POLYPHEN=$HPC_WORK/polyphen-2.2.2
+export VEP=${HPC_WORK}/ensembl-vep
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
 cd work
@@ -27,18 +28,35 @@ R --no-save -q <<END
     if(f=="INF1.merge") writetable(all[vars],vepinput,append=TRUE) else writetable(trans[vars],vepinput,append=TRUE)
   }
 END
-
+(
+  head -1 INF1.merge
+  cut -f6  INF1.merge | sed '1d' | sort -k1,1 | uniq | grep -f INF1.merge.cis -v > INF1.merge.notcis
+  grep -f INF1.merge.notcis INF1.merge
+) > INF1.merge.trans
 for s in INF1.merge INF1.merge.trans
 do
+   # ANNOVAR
    annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
    table_annovar.pl ${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
         -protocol ensGene,refGene,ccdsGene,wgEncodeGencodeBasicV19,cytoBand,exac03,avsnp147,dbnsfp30a \
         -operation g,g,g,g,r,f,f,f \
         -remove -nastring . -csvout -polish -xref $ANNOVA/example/gene_xref.txt
-   vep -i ${s}.vepinput -o ${s}.vepoutput --pick --force_overwrite --offline --everything --assembly GRCh37
+   # Polyphen-2
+   grep -v -w -f INF1.merge.cis ${s} | \
+   cut -f6 | \
+   sed '1d;s/_/ /;s/_/\//' | \
+   sort -k1,1 | \
+   uniq > ${s}.pph.list
+   mapsnps.pl -g hg19 -m -U -y ${s}.pph.input ${s}.pph.list 1>${s}.pph.features 2>${s}.log
+   run_pph.pl ${s}.pph.input 1>${s}.pph.output 2>${s}.pph.log
+   run_weka.pl ${s}.pph.output >${s}.pph.humdiv.output
+   run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model ${s}.pph.output >${s}.pph.humvar.output
+   # VEP
+   vep -i ${s}.vepinput -o ${s}.vepoutput --pick --distance 500000 --force_overwrite --offline --everything --assembly GRCh37
    vep -i ${s}.vepinput --species homo_sapiens -o ${s}.clinvar \
-       --cache --offline --force_overwrite \
+       --cache --distance 500000 --offline --force_overwrite \
        --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN
+   vep -i ${s}.vepinput -o ${s}.dbNSFP40a --cache --distance 500000 --force --offline --pick --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,ALL
 done
 
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
@@ -94,18 +112,6 @@ END
 bedtools intersect -a a1 -b a2 -wa -wb -loj | \
 cut  -f1-3,7 > INF1.merge.trans.glist-hg19
 rm a1 a2
-
-# Polyphen-2
-
-grep -v -w -f INF1.merge.cis INF1.merge | \
-cut -f6 | \
-sed '1d;s/_/ /;s/_/\//' | \
-sort -k1,1 | \
-uniq > INF1.merge.pph.list
-mapsnps.pl -g hg19 -m -U -y INF1.merge.pph.input INF1.merge.pph.list 1>INF1.merge.pph.features 2>INF1.merge.log
-run_pph.pl INF1.merge.pph.input 1>INF1.merge.pph.output 2>INF1.merge.pph.log
-run_weka.pl INF1.merge.pph.output >INF1.merge.humdiv.output
-run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model INF1.merge.pph.output >INF1.merge.humvar.output
 
 # ProGeM
 # Bottom-up
