@@ -52,10 +52,10 @@ do
    run_weka.pl ${s}.pph.output >${s}.pph.humdiv.output
    run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model ${s}.pph.output >${s}.pph.humvar.output
    # VEP
-   vep -i ${s}.vepinput -o ${s}.vepoutput --pick --distance 500000 --force_overwrite --offline --everything --assembly GRCh37
+   vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --everything --assembly GRCh37
    vep -i ${s}.vepinput --species homo_sapiens -o ${s}.clinvar \
        --cache --distance 500000 --offline --force_overwrite \
-       --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN
+       --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN,DBVARID,MC,RS
    vep -i ${s}.vepinput -o ${s}.dbNSFP40a --cache --distance 500000 --force --offline --pick --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,ALL
 done
 
