@@ -38,8 +38,8 @@ do
    # ANNOVAR
    annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
    table_annovar.pl ${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
-        -protocol ensGene,refGene,ccdsGene,wgEncodeGencodeBasicV19,cytoBand,exac03,avsnp147,dbnsfp30a \
-        -operation g,g,g,g,r,f,f,f \
+        -protocol ensGene,refGene,ccdsGene,wgEncodeGencodeBasicV19,cytoBand,exac03,avsnp147,dbnsfp30a,gwasCatalog \
+        -operation g,g,g,g,r,f,f,f,r \
         -remove -nastring . -csvout -polish -xref $ANNOVA/example/gene_xref.txt
    # Polyphen-2
    grep -v -w -f INF1.merge.cis ${s} | \
