@@ -1,6 +1,6 @@
-# 21-1-2020 JHZ
+# 22-1-2020 JHZ
 
-export TMPDIR=/rds/user/jhz22/hpc-work/work
+export TMPDIR=$INF/work
 
 # https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html
 R --no-save <<END
@@ -45,7 +45,7 @@ cut -f2,8,11-13,18,22,25,26,28,29,35,36 annotate/$assoc > annotate/assoc.txt
 
 join -113 -25 -t$'\t' \
     <(sed '1d' annotate/assoc.txt | sort -t$'\t' -k13,13) \
-    <(sed '1d' annotate/$traitmap | grep 'protein measure' | sort -t$'\t' -k5,5) > annotate/ll
+    <(sed '1d' annotate/$traitmap | awk '/protein measure|protein levels/' | sort -t$'\t' -k5,5) > annotate/ll
 
 join <(sort -k1,1 work/pubmed.summary | awk '!/mice|Mice|plant|Plant|rice|soybean|Soybean|tomato/') \
      <(sed '1d' annotate/assoc.txt | sort -k1,1) > work/pubmed.left

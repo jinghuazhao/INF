@@ -99,8 +99,8 @@ END
 (
   cut -f1,2 ${INF}/work/INF1.merge.trans.vepinput | \
   awk -v OFS="\t" -v flanking=500000 'NR>2 {
-    if ($2-flanking<0) print $1, 0, $2+flanking;
-    else print $1, $2-flanking, $2+flanking
+    if ($2-flanking<0) print "chr" $1, 0, $2+flanking;
+    else print "chr" $1, $2-flanking, $2+flanking
   }'
 ) > a1
 (
