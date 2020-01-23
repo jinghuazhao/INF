@@ -72,6 +72,11 @@ do
      csq <- parseCSQToGRanges(f, VCFRowID=rownames(vcf))
      write.table(mcols(csq),file=paste0(s,".txt"), quote=FALSE, sep="\t")
    END
+   vep --af_1kg --af_esp --af_gnomad --appris --biotype --buffer_size 500 \
+       --ccds --check_existing --distance 500000 --domains --hgvs --mane --pick \
+       --polyphen b --protein --pubmed --regulatory --sift b --species homo_sapiens \
+       --symbol --transcript_version --tsl --uniprot --cache --input_file ${s}.vepinput \
+       --output_file ${s}.vepweb --port 3337
 done
 
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
