@@ -1,4 +1,4 @@
-# 22-1-2020 JHZ
+# 23-1-2020 JHZ
 
 export TMPDIR=$INF/work
 
@@ -45,7 +45,8 @@ cut -f2,8,11-13,18,22,25,26,28,29,35,36 annotate/$assoc > annotate/assoc.txt
 
 join -113 -25 -t$'\t' \
     <(sed '1d' annotate/assoc.txt | sort -t$'\t' -k13,13) \
-    <(sed '1d' annotate/$traitmap | awk '/protein measure|protein levels/' | sort -t$'\t' -k5,5) > annotate/ll
+    <(sed '1d' annotate/$traitmap | awk '/protein measure|protein levels/' | sort -t$'\t' -k5,5) | \
+cut -f2 | uniq > annotate/pmid
 
 join <(sort -k1,1 work/pubmed.summary | awk '!/mice|Mice|plant|Plant|rice|soybean|Soybean|tomato/') \
      <(sed '1d' annotate/assoc.txt | sort -k1,1) > work/pubmed.left
