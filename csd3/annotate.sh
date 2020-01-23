@@ -1,4 +1,4 @@
-# 22-1-2020 JHZ
+# 23-1-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -35,6 +35,7 @@ END
 ) > INF1.merge.trans
 for s in INF1.merge INF1.merge.trans
 do
+   export s=${s}
    # ANNOVAR
    annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
    table_annovar.pl ${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
@@ -62,7 +63,15 @@ do
        --ccds --check_existing --distance 500000 --domains --hgvs --mane --pick \
        --polyphen b --protein --pubmed --regulatory --sift b --species homo_sapiens \
        --symbol --transcript_version --tsl --uniprot --cache --input_file ${s}.vepinput \
-       --output_file ${s}.vepweb --port 3337
+       --output_file ${s}.vepweb --port 3337 --vcf
+   R --no-save <<\ \ \ END
+     library(ensemblVEP)
+     s <- Sys.getenv("s")
+     f <- paste0(s,".vepweb")
+     vcf <- readVcf(f, "hg19")
+     csq <- parseCSQToGRanges(f, VCFRowID=rownames(vcf))
+     write.table(mcols(csq),file=paste0(s,".txt"), quote=FALSE, sep="\t")
+   END
 done
 
 export skips=$(grep '##' INF1.merge.trans.vepoutput | wc -l)
