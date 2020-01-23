@@ -59,6 +59,16 @@ do
        --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN,DBVARID,MC,RS
    vep -i ${s}.vepinput -o ${s}.dbNSFP --cache --distance 500000 --force --offline --pick \
        --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,clinvar_id,clinvar_clnsig,clinvar_review,clinvar_trait,1000Gp3_EUR_AF,CADD_phred,Eigen-PC-phred_coding,ExAC_NFE_AF,LRT_pred,FATHMM_pred,GERP++_RS,GTEx_V7_tissue,MutPred_protID,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred,SIFT_pred,SIFT4G_pred,fathmm-MKL_coding_pred,rs_dbSNP151,fathmm-MKL_coding_pred,gnomAD_exomes_NFE_AF,gnomAD_genomes_NFE_AF
+   R --no-save <<\ \ \ END
+     s <- Sys.getenv("s")
+     f <- paste0(s,".vepinput")
+     library(VariantAnnotation)
+     vcf <- readVcf(f,"hg19")
+     library(myvariant)
+     hgvs <- formatHgvs(vcf)
+     dbnsfp <- queryVariants(hgvs)
+     save(dbnsfp,file=paste0(s,".dbnsfp"))
+   END
    vep --af_1kg --af_esp --af_gnomad --appris --biotype --buffer_size 500 \
        --ccds --check_existing --distance 500000 --domains --hgvs --mane --pick \
        --polyphen b --protein --pubmed --regulatory --sift b --species homo_sapiens \
@@ -70,7 +80,7 @@ do
      f <- paste0(s,".vcf")
      vcf <- readVcf(f, "hg19")
      csq <- parseCSQToGRanges(f, VCFRowID=rownames(vcf))
-     write.table(mcols(csq),file=paste0(s,".txt"), quote=FALSE, sep="\t")
+     write.table(mcols(csq),file=paste0(s,".txt"),quote=FALSE,sep="\t")
    END
    vep --af_1kg --af_esp --af_gnomad --appris --biotype --buffer_size 500 \
        --ccds --check_existing --distance 500000 --domains --hgvs --mane --pick \
