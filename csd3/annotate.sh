@@ -63,11 +63,11 @@ do
        --ccds --check_existing --distance 500000 --domains --hgvs --mane --pick \
        --polyphen b --protein --pubmed --regulatory --sift b --species homo_sapiens \
        --symbol --transcript_version --tsl --uniprot --cache --input_file ${s}.vepinput \
-       --output_file ${s}.vepweb --port 3337 --vcf
+       --output_file ${s}.vcf --port 3337 --vcf
    R --no-save <<\ \ \ END
      library(ensemblVEP)
      s <- Sys.getenv("s")
-     f <- paste0(s,".vepweb")
+     f <- paste0(s,".vcf")
      vcf <- readVcf(f, "hg19")
      csq <- parseCSQToGRanges(f, VCFRowID=rownames(vcf))
      write.table(mcols(csq),file=paste0(s,".txt"), quote=FALSE, sep="\t")
