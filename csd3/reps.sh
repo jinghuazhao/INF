@@ -1,14 +1,24 @@
-# 24-1-2020 JHZ
+# 30-1-2020 JHZ
 
 export TMPDIR=$INF/work
 
 R --no-save <<END
-  source("csd3/reps.inc")
+  source("csd3/reps.ini")
+  # Yao 30111768[uid]
+  st1 <- openxlsx::read.xlsx("https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-018-05512-x/MediaObjects/41467_2018_5512_MOESM1_ESM.xlsx",
+         colNames=TRUE, startRow=3)
+  st6 <- openxlsx::read.xlsx("https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-018-05512-x/MediaObjects/41467_2018_5512_MOESM7_ESM.xlsx",
+         colNames=TRUE, startRow=3)
+  st61 <- merge(st6,st1[,1:4],by.x="Protein",by.y="Protein.Abbreviation")
+  yao <- merge(gap::inf1,st61,by.x="gene",by.y="Protein-coding.Gene.Abbreviation")
+  # Solomon 30562114[uid]
+
+  # Sun 29875488[uid]
   xlsx <- "https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-018-0175-2/MediaObjects/41586_2018_175_MOESM4_ESM.xlsx"
   st4 <- openxlsx::read.xlsx(xlsx, sheet=4, colNames=TRUE, startRow=5)
   st19 <- openxlsx::read.xlsx(xlsx, sheet=19, colNames=TRUE, startRow=2)
   st20 <- openxlsx::read.xlsx(xlsx, sheet=20, colNames=TRUE, startRow=2)
-  knownlist <- c(with(st19,PMID),"29875488")
+  knownlist <- c(with(st19,PMID), "30111768", "29875488", "30562114")
   revlist <- replace(knownlist,knownlist=="PMC4358658",25652787)
   fetch_knownlist(revlist)
   r1 <- merge(inf1,st20,by.x="uniprot",by.y="UniProt")

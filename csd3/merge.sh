@@ -1,4 +1,4 @@
-# 13-1-2020 JHZ
+# 30-1-2020 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -154,3 +154,16 @@ R --no-save -q <<END
   )
   dev.off()
 END
+
+R --no-save <<END
+  library(gap)
+  d <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
+  r <- mhtplot2d(d)
+  head(r)
+  r <- within(r,{x=x/1e9;y=y/1e9;z=-z/1e2})
+  write.csv(subset(r,col=="red"),"red.dat",quote=FALSE,row.names=FALSE)
+  write.csv(subset(r,col=="blue"),"blue.dat",quote=FALSE,row.names=FALSE)
+END
+paste -d',' <(cut -d',' -f1-3 blue.dat) <(cut -d',' -f1-3 red.dat) | \
+awk -v FS="," -v OFS="," '{if(NF==4) print $1,$2,$3,",,"; else print}' |
+awk '{if(NR==1) print "x1,y1,z1,x2,y2,z2"; else print}' > INF1.merge.d3
