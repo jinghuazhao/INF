@@ -1,4 +1,4 @@
-# 30-1-2020 JHZ
+# 31-1-2020 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -159,8 +159,10 @@ R --no-save <<END
   library(gap)
   d <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
   r <- mhtplot2d(d)
+  r <- within(r,{z=-z})
   head(r)
-  r <- within(r,{x=x/1e9;y=y/1e9;z=-z/1e2})
+  write.table(r,"INF1.merge.plotly",quote=FALSE,row.names=FALSE,sep=",")
+  r <- within(r,{x=x/1e9;y=y/1e9;z=z/1e2})
   write.csv(subset(r,col=="red"),"red.dat",quote=FALSE,row.names=FALSE)
   write.csv(subset(r,col=="blue"),"blue.dat",quote=FALSE,row.names=FALSE)
 END

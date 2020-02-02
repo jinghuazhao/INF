@@ -1,4 +1,4 @@
-# 23-1-2020 JHZ
+# 2-2-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -52,6 +52,18 @@ do
    run_pph.pl ${s}.pph.input 1>${s}.pph.output 2>${s}.pph.log
    run_weka.pl ${s}.pph.output >${s}.pph.humdiv.output
    run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model ${s}.pph.output >${s}.pph.humvar.output
+   R --no-save <<\ \ \ END
+     for(x in c("div","var"))
+     {
+       f <- paste0(Sys.getenv("s"),".pph.hum",x,".output")
+       o <- paste0(Sys.getenv("s"),".pph.hum",x,".csv")
+       h <- readLines(f,n=1)
+       n <- c(gsub("#","",strsplit(h,"\t")[[1]]),"comment")
+       d <- read.delim(f,header=FALSE,skip=1)
+       names(d) <- n
+       write.table(d,o,row.names=FALSE,quote=FALSE,sep=",")
+     }
+   END
    # VEP
    vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --everything --assembly GRCh37
    vep -i ${s}.vepinput --species homo_sapiens -o ${s}.clinvar \
