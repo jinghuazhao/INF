@@ -1,4 +1,4 @@
-# 3-2-2020 JHZ
+# 7-2-2020 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
