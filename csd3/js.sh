@@ -10,7 +10,7 @@ END
 sed -i 's/red/1/g;s/blue/2/g' INF1.merge.2d
 R --no-save <<END
   library(jsonlite)
-  SomaLogic <- read_json("js.json")
+  SomaLogic <- read_json("js.SomaLogic")
   x <- SomaLogic$x
   data <- x$data
   data1 <- data[[1]]
