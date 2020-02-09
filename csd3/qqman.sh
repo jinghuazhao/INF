@@ -12,8 +12,8 @@ END
 function turboqq()
 {
 R --slave --vanilla --args \
-  input_data_path=${PWD}/test.txt \
-  output_data_rootname=${PWD}/test_qq \
+  input_data_path=test.txt \
+  output_data_rootname=test_qq \
   plot_title="gap.datasets example" < turboqq.r
 }
 
@@ -25,7 +25,7 @@ function turboman()
   input_data_path=test.txt \
   output_data_rootname=test_man \
   custom_peak_annotation_file_path=annotate.txt \
-  reference_file_path=${PWD}/turboman_hg19_reference_data.rda \
+  reference_file_path=turboman_hg19_reference_data.rda \
   pvalue_sign=5e-8 \
   plot_title="gap.datasets example" < turboman.r
 }
