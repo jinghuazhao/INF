@@ -1,5 +1,9 @@
 # Scripts on CSD3
 
+## QQ and Manhattan plots
+
+This is exemplified with qqman.sh calling turboqq and turboman by Bram Prins.
+
 ## Sentinel identification
 
 This is furnished with `merge.sh`.
