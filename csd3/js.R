@@ -1,12 +1,12 @@
 # 9-2-2020 JHZ
 
-library(gap)
-d <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
-r <-  mhtplot2d(d)
-r <- within(r,{log10p <- abs(log10p)})
 library(jsonlite)
 SomaLogic <- read_json("js.SomaLogic")
 xdata <- SomaLogic$x$data
+library(gap)
+d <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
+r <-  mhtplot2d(d)
+r <- within(r,{pos1=pos1/1e7; pos2=pos2/1e7; log10p <- abs(log10p)})
 cols <- c("id","chr1","pos1","gene","target","log10p","chr2","pos2","col")
 d3c <- subset(r[cols],col=="blue")
 d3t <- subset(r[cols],col=="red")
