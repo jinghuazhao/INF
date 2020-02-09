@@ -27,3 +27,6 @@ Olink$x <- x
 sink("js.json")
 toJSON(Olink,auto_unbox=TRUE,pretty=TRUE)
 sink()
+
+# sed -i 's|<\\/br>|\\u003c/br>|g' js.json
+
