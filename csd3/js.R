@@ -15,10 +15,10 @@ cols <- c("id","chr1","x","gene","target","log10p","chr2","y","col")
 d3c <- subset(r[cols],col=="blue")
 d3t <- subset(r[cols],col=="red")
 x$data[[1]] <- list(x=d3c$x, y=d3c$y, z=d3c$log10p, text=as.list(apply(sapply(1:6,fixes,d3c),1,paste,collapse=" ")),
-           type="scatter3d", mode="markers", name="cis")
+           type="scatter3d", mode="markers", name="trans")
 x$data[[1]]$marker$symbol <- head(xdata[[1]]$marker$symbol,nrow(d3c))
 x$data[[2]] <- list(x=d3t$x, y=d3t$y, z=d3t$log10p, text=as.list(apply(sapply(1:6,fixes,d3t),1,paste,collapse=" ")),
-           type="scatter3d", mode="markers", name="trans")
+           type="scatter3d", mode="markers", name="cis")
 x$data[[2]]$marker$symbol <- head(xdata[[2]]$marker$symbol,nrow(d3t))
 Olink <- SomaLogic
 Olink$x <- x
