@@ -2,11 +2,15 @@
 
 ## QQ and Manhattan plots
 
-This is exemplified with qqman.sh calling turboqq and turboman by Bram Prins.
+This is exemplified with [qqman.sh](qqman.sh) calling turboqq and turboman by Bram Prins.
 
 ## Sentinel identification
 
 This is furnished with `merge.sh`.
+
+## 3d scatter plot
+
+Furnished with [js.R](js.R), the JSON output could be the counterpart in Supplementary Figure 1 of Sun et al. (2018).
 
 ## LD reference panels
 
