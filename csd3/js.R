@@ -1,4 +1,4 @@
-# 10-2-2020 JHZ
+# 11-2-2020 JHZ
 
 library(jsonlite)
 SomaLogic <- read_json("js.SomaLogic")
@@ -11,6 +11,7 @@ postfix <- c("</br>")
 fixes <- function(col,d) paste(paste(prefix[col],d[,col],sep=":"),postfix)
 cols <- c("id","chr1","x","gene","target","log10p","chr2","y","col")
 Olink <- SomaLogic
+Olink$x$layout$title <- "Scatterplot of sentinels"
 a <- subset(r[cols],col=="red")
 Olink$x$data[[2]] <- list(x=a$x, y=a$y, z=a$log10p, text=as.list(apply(sapply(1:6,fixes,a),1,paste,collapse=" ")),
                      type="scatter3d", mode="markers", name="cis")
