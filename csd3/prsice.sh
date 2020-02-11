@@ -1,4 +1,4 @@
-# 16-1-2020 JHZ
+# 11-2-2020 JHZ
 
 # Base data, CRP in mg/L
 export SUMSTATS=ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz
@@ -71,7 +71,7 @@ do
   PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
          --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.cvd --pheno-col ${pheno} \
                                                      --cov work/crp.cov --remove work/crp-${pheno}.excl --binary-target T \
-         --extract work/INF1.merge.ukbsnpid --model add --score avg \
+         --extract work/INF1.merge.snp --model add --score avg \
          --out work/crp-${pheno}
 done
 stata <<END

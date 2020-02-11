@@ -104,3 +104,7 @@ for g in $(cat work/INF1.merge.gene); do echo $g; csd3/polygene.sh $g; done
 ## PhenoScanner
 
 This is furnished with `ps.sh`.
+
+## PRSice and PLINK
+
+These are prsice.sh and plink.sh.
