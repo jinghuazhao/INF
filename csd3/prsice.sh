@@ -1,4 +1,4 @@
-# 11-2-2020 JHZ
+# 12-2-2020 JHZ
 
 # Base data, CRP in mg/L
 export SUMSTATS=ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz
@@ -14,8 +14,8 @@ export SUMSTATS=ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz
        split($1,a,":")
        CHR=a[1]
        POS=a[2]
-       a1=a[3]
-       a2=a[4]
+       a1=a[4]
+       a2=a[3]
        if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
        else snpid="chr" CHR ":" POS "_" a1 "_" a2
        $1=snpid "\t" a[1] "\t" a[2] "\t" a[4] "\t" a[3]
