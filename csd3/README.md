@@ -105,6 +105,6 @@ for g in $(cat work/INF1.merge.gene); do echo $g; csd3/polygene.sh $g; done
 
 This is furnished with `ps.sh`.
 
-## PRSice and PLINK
+## PGS
 
-These are prsice.sh and plink.sh.
+These are prsice.sh and pgs.sh.

@@ -74,13 +74,4 @@ do
          --extract work/INF1.merge.snp --model add --score avg \
          --out work/crp-${pheno}
 done
-stata <<END
-  foreach v in "chd" "cv" {
-    insheet using work/crp-`v'.best, case clear delim(" ")
-    sort FID
-    merge 1:1 FID using work/ukb
-    logit `v' sex ages PRS
-    stset ages, failure(`v')
-    stcox sex PRS if `v'!=.
-  }
-END
+stata -b -q csd3/prsice.do
