@@ -22,17 +22,21 @@ plink --bgen work/crp.score.bgen --sample $UKB/ukb_BP_imp_v3.sample \
       --score work/crp.SNP.EA.beta.pvalue 2 4 5
 
 R --no-save <<END
-  p <- Sys.getenv("p")
-  sink('work/crp-cv.out')
-  for(pval in as.numeric(unlist(strsplit(p," "))))
-  {
-    profile <- paste0("work/crp.score.",pval,".profile")
-    d <- read.table(profile,as.is=TRUE,header=TRUE)
-    s <- subset(d,PHENO!=-999 & PHENO!=-9)
-    g <-glm(PHENO~SCORE,family="binomial",data=s)
-    r <- summary(g)
-    print(profile)
-    print(r)
-  }
-  sink()
+   p <- Sys.getenv("p")
+   sink('work/crp-cv.out')
+   for(pval in as.numeric(unlist(strsplit(p," "))))
+   {
+     profile <- paste0("work/crp.score.",pval,".profile")
+     d <- read.table(profile,as.is=TRUE,header=TRUE)
+     s <- subset(d,PHENO!=-999 & PHENO!=-9)
+     cov <- read.delim("work/crp.cov",as.is=TRUE)
+     scov <- merge(s,cov,by="FID")
+     f <- paste0("PHENO~SCORE+sex+ages+",paste0("PC",1:50,collapse="+"))
+     g <-glm(as.formula(f),family="binomial",data=scov)
+     print(f)
+     r <- summary(g)
+     print(profile)
+     print(r)
+   }
+   sink()
 END

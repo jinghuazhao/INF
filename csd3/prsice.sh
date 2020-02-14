@@ -1,4 +1,4 @@
-# 12-2-2020 JHZ
+# 13-2-2020 JHZ
 
 # Base data, CRP in mg/L
 export SUMSTATS=ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz
@@ -46,15 +46,16 @@ stata <<END
   gen chd=ep1_chd
   gen cv=ep1_cv
   destring idno, gen(FID)
-  merge 1:1 FID using work/crp
+  merge 1:1 FID using work/crp, gen(m1)
   drop if FID==. | FID <0 | IID==. | IID<0
   replace chd=. if ep1_chd==6
   replace cv=. if ep1_cv==6
-  keep FID IID chd cv sex ages
+  merge 1:1 FID using work/ukb.pca.dta, gen(m2)
+  keep FID IID chd cv sex ages PC1-PC50
   save work/ukb, replace
   mvencode _all, mv(-999)
   outsheet FID IID chd cv using work/crp.cvd, nolabel noquote replace
-  outsheet FID IID sex ages using work/crp.cov, nolabel noquote replace
+  outsheet FID IID sex ages PC1-PC50 using work/crp.cov, nolabel noquote replace
   outsheet FID IID using work/crp-chd.excl if chd==-999 | sex==-999 | ages==-999, nolabel noquote replace
   outsheet FID IID using work/crp-cv.excl if cv==-999 | sex==-999 | ages==-999, nolabel noquote replace
 END

@@ -1,4 +1,4 @@
-# 10-1-2019 JHZ
+# 13-2-2019 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ukbdir=${INF}/ukb
@@ -101,8 +101,17 @@ function sentinels_combined ()
 # /rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/reference_files/genetic/reference_files/full_release
 # /rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
 
+export PCA=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/reference_files/genetic/reference_files/full_release/principal_components/Eur_QCp_PCs.txt
+export sample=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/reference_files/genetic/reference_files/full_release/sampleID_map.txt
+join <(sed '1d' $sample | sort -k1,1) <(sed '1d' $PCA | cut -f2-52 | sort -k1,1) > work/ukb.pca
+
 module load ceuadmin/stata
 stata <<END
+  insheet UKB_sample_ID Adiposity_sample_ID BP_sample_ID PC1-PC50 using work/ukb.pca, case delim(" ")
+  sort Adiposity_sample_ID
+  rename BP_sample_ID FID
+  drop Adiposity_sample_ID
+  save work/ukb.pca.dta, replace
 // use /rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/reference_files/genetic/reference_files/full_release/analysis.dta
 // gzsave ukb/analysis, replace
   gzuse ukb/analysis
