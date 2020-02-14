@@ -70,7 +70,7 @@ do
        --cache --distance 500000 --offline --force_overwrite \
        --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN,DBVARID,MC,RS
    vep -i ${s}.vepinput -o ${s}.dbNSFP --cache --distance 500000 --force --offline --pick \
-       --plugin LoF,${HPC_WORK}/loftee \
+       --plugin LoF,loftee_path:${HPC_WORK}/loftee \
        --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,clinvar_id,clinvar_clnsig,clinvar_review,clinvar_trait,1000Gp3_EUR_AF,CADD_phred,Eigen-PC-phred_coding,ExAC_NFE_AF,LRT_pred,FATHMM_pred,GERP++_RS,GTEx_V7_tissue,MutPred_protID,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred,SIFT_pred,SIFT4G_pred,fathmm-MKL_coding_pred,rs_dbSNP151,fathmm-MKL_coding_pred,gnomAD_exomes_NFE_AF,gnomAD_genomes_NFE_AF
    R --no-save <<\ \ \ END
      s <- Sys.getenv("s")
