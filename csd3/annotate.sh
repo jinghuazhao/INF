@@ -1,4 +1,4 @@
-# 14-2-2020 JHZ
+# 26-2-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -168,3 +168,5 @@ rm a1 a2
 # BiocManager::install("garfield")
 
 cd -
+
+cut -f5 INF1.merge | sed '1d' | sort | uniq | join -t$'\t' - inf1.tmp | cut -f2 > INF1.merge.uniprot
