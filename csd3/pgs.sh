@@ -1,4 +1,4 @@
-# 12-2-2020 JHZ
+# 12-3-2020 JHZ
 
 export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
 qctool -g ${UKB}/ukb_imp_chr#_v3.bgen -s $UKB/ukb_BP_imp_v3.sample \
@@ -39,4 +39,30 @@ R --no-save <<END
      print(r)
    }
    sink()
+END
+
+(
+  gunzip -c ${INF}/METAL/*gz | \
+  head -1 | \
+  awk -v OFS="\t" '{$1="prot" OFS $1};1'
+  cut -f5,6 --output-delimiter=' ' work/INF1.merge | \
+  sed '1d' | \
+  parallel -C' ' 'zgrep -H -w {2} ${INF}/METAL/{1}-1.tbl.gz | sed "s|${INF}/METAL/||g;s/-1.tbl.gz:/\t/g"'
+) > work/INF1.merge.tbl
+
+awk 'a[$4]++==0' work/INF1.merge.tbl > work/INF1.merge.1st
+
+R --no-save -q <<END
+  inf <- read.delim("work/INF1.merge.1st",as.is=TRUE)
+  inf <- within(inf, {Allele1=toupper(Allele1);Allele2=toupper(Allele2)})
+  ukb <- read.table("work/crp.SNP.EA.beta.pvalue",as.is=TRUE,col.names=c("MarkerName","rsid","ukbid","EA","beta","p"))
+  vars <- c("prot","MarkerName", "Allele1", "Allele2", "Freq1", "Effect", "StdErr", "log.P.", "Direction","N")
+  inf_ukb <- merge(inf[vars],ukb,by="MarkerName")
+  swap <- with(inf_ukb,Allele1!=EA)
+  inf_ukb[swap,"beta"] <- -inf_ukb[swap,"beta"]
+  with(inf_ukb,{
+    plot(beta,Effect,cex=0.4)
+    r <- lm(beta~Effect)
+    summary(r)
+  })
 END
