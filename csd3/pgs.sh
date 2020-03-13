@@ -15,7 +15,7 @@ awk '
 export p="0.001 0.05 0.1 0.2 0.3 0.4 0.5"
 awk 'BEGIN{split(ENVIRON["p"],a);for(i=1;i<=length(a);i++) print a[i],0,a[i]}' > work/crp.range_list
 
-plink --bgen work/crp.score.bgen --sample $UKB/ukb_BP_imp_v3.sample \
+plink --bgen work/crp.score.bgen --sample ${UKB}/ukb_BP_imp_v3.sample \
       --out work/crp.score \
       --pheno work/crp.cvd --pheno-name cv \
       --q-score-range work/crp.range_list work/crp.SNP.EA.beta.pvalue 2 6 \
@@ -61,6 +61,7 @@ R --no-save -q <<END
   swap <- with(inf_ukb,Allele1!=EA)
   inf_ukb[swap,"beta"] <- -inf_ukb[swap,"beta"]
   inf_ukb[c("Effect","beta")]
+  summary(inf_ukb)
   with(inf_ukb,{
     pdf("work/INF1.UKB.pdf")
     plot(beta,Effect,cex=0.4)
@@ -70,3 +71,13 @@ R --no-save -q <<END
     dev.off()
   })
 END
+
+join <(cut -d' ' -f1-3 work/crp.SNP.EA.beta.pvalue) \
+     <(cut -f4,5,11,13 work/INF1.merge.1st | sed '1d' | sort -k1,1 | awk '{$2=toupper($2);$4=10^$4};1') \
+     > work/crp.INF.EA.beta.pvalue
+
+plink --bgen work/crp.score.bgen --sample ${UKB}/ukb_BP_imp_v3.sample \
+      --out work/crp.score \
+      --pheno work/crp.cvd --pheno-name cv \
+      --q-score-range work/crp.range_list work/crp.INF.EA.beta.pvalue 2 6 \
+      --score work/crp.INF.EA.beta.pvalue 2 4 5
