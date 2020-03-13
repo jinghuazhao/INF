@@ -1,15 +1,15 @@
-# 12-3-2020 JHZ
+# 13-3-2020 JHZ
 
 export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
-qctool -g ${UKB}/ukb_imp_chr#_v3.bgen -s $UKB/ukb_BP_imp_v3.sample \
+qctool -g ${UKB}/ukb_imp_chr#_v3.bgen -s ${UKB}/ukb_BP_imp_v3.sample \
        -ofiletype bgen_v1.1 -og work/crp.score.bgen -incl-snpids work/INF1.merge.ukbsnpid
 
 grep -f work/INF1.merge.ukbsnpid -w work/crp.ukb | \
 awk '
 {
- # SNP=$2, A1=$5, A2=$6, minor_allele=$7, minor_AF=$8, P=$16
-   if($5==$7) {EA=$5; score=$13} else {EA=$6; score=-$13}
-   print $1,$2,EA,score,$16
+ # SNPID=$1, id=$2, A1=$5, A2=$6, minor_allele=$7, minor_AF=$8, P=$16
+   if($5==$7) {EA=$5; beta=$13} else {EA=$6; beta=-$13}
+   print $1,$2,EA,beta,$16
 }' | join work/INTERVAL.rsid - > work/crp.SNP.EA.beta.pvalue
 
 export p="0.001 0.05 0.1 0.2 0.3 0.4 0.5"
@@ -55,14 +55,18 @@ awk 'a[$4]++==0' work/INF1.merge.tbl > work/INF1.merge.1st
 R --no-save -q <<END
   inf <- read.delim("work/INF1.merge.1st",as.is=TRUE)
   inf <- within(inf, {Allele1=toupper(Allele1);Allele2=toupper(Allele2)})
-  ukb <- read.table("work/crp.SNP.EA.beta.pvalue",as.is=TRUE,col.names=c("MarkerName","rsid","ukbid","EA","beta","p"))
   vars <- c("prot","MarkerName", "Allele1", "Allele2", "Freq1", "Effect", "StdErr", "log.P.", "Direction","N")
+  ukb <- read.table("work/crp.SNP.EA.beta.pvalue",as.is=TRUE,col.names=c("MarkerName","rsid","id","EA","beta","p"))
   inf_ukb <- merge(inf[vars],ukb,by="MarkerName")
   swap <- with(inf_ukb,Allele1!=EA)
   inf_ukb[swap,"beta"] <- -inf_ukb[swap,"beta"]
+  inf_ukb[c("Effect","beta")]
   with(inf_ukb,{
+    pdf("work/INF1.UKB.pdf")
     plot(beta,Effect,cex=0.4)
+    print(cor(beta,Effect))
     r <- lm(beta~Effect)
     summary(r)
+    dev.off()
   })
 END

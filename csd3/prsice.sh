@@ -1,7 +1,10 @@
-# 13-2-2020 JHZ
+# 13-3-2020 JHZ
 
 # Base data, CRP in mg/L
-export SUMSTATS=ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz
+export suffix=raw
+# irnt for CRP
+export suffix=irnt
+export SUMSTATS=ukb/30710_${suffix}.gwas.imputed_v3.both_sexes.tsv.bgz
 (
   gunzip -c ${SUMSTATS} | \
   head -1 | \
@@ -24,17 +27,17 @@ export SUMSTATS=ukb/30710_raw.gwas.imputed_v3.both_sexes.tsv.bgz
   }' | \
   sort -k1,1 | \
   join -t$'\t' - <(sed '1d' work/INF1.merge | cut -f6 | sort -k1,1 | uniq)
-) > work/crp.raw
+) > work/crp.${suffix}
 
 # Target data, UKB
 export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
-join <(awk 'NR>1 {print $1}' work/crp.raw | sort -k1,1) \
+join <(awk 'NR>1 {print $1}' work/crp.${suffix} | sort -k1,1) \
      <(awk 'NR > 1 {print $1,$2}' work/INF1.merge.ukbsnp | sort -k1,1) | \
 cut -d' ' -f2 > work/INF1.merge.ukbsnpid
 (
-  awk -v OFS="\t" 'NR == 1 {$1=$1 "\t" "id"; print}' work/crp.raw
+  awk -v OFS="\t" 'NR == 1 {$1=$1 "\t" "id"; print}' work/crp.${suffix}
   join -t$'\t' <(awk -v OFS="\t" 'NR > 1 {print $1,$2}' work/INF1.merge.ukbsnp | sort -k1,1) \
-               <(awk -v OFS="\t" 'NR > 1' work/crp.raw)
+               <(awk -v OFS="\t" 'NR > 1' work/crp.${suffix})
 ) > work/crp.ukb
 sed 's/ID_1/FID/g;s/ID_2/IID/g;2d' ${UKB}/ukb_BP_imp_v3.sample | cut -d' ' -f1,2,4 > work/crp.sample
 module load ceuadmin/stata
