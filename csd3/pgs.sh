@@ -30,7 +30,7 @@ qq <- paste0("crp-",suffix,"_qq.png");
 png(qq,width=12,height=10,units="in",pointsize=4,res=300)
 qq(with(tbl,P))
 dev.off()
-manhattan <- paste0("crp-",suffix,"_manhattan.png)";
+manhattan <- paste0("crp-",suffix,"_manhattan.png");
 png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
 manhattan(tbl,main="CRP",genomewideline=-log10(5e-8),suggestiveline=FALSE,ylim=c(0,50));
 dev.off();
