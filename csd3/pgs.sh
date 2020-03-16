@@ -13,6 +13,29 @@ qctool -g ${UKB}/ukb_imp_chr#_v3.bgen -s ${UKB}/ukb_BP_imp_v3.sample \
 
 ## UKB
 
+R --no-save -q <<END
+suffix <- Sys.getenv("suffix")
+require(qqman)
+gz <- paste0("ukb/30710_",suffix,".gwas.imputed_v3.both_sexes.tsv.bgz")
+tbl <- read.delim(gz,as.is=TRUE)
+tbl <- within(tbl,{
+   SNP <- variant
+   SNP_split <- sapply(tbl[["variant"]],strsplit,":",simplify=TRUE)
+   CHR <- as.integer(unlist(lapply(SNP_split,"[",1)))
+   BP <- as.integer(unlist(lapply(SNP_split,"[",2)))
+   P <- pval
+})
+tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
+qq <- paste0("crp-",suffix,"_qq.png";
+png(qq,width=12,height=10,units="in",pointsize=4,res=300)
+qq(with(tbl,P))
+dev.off()
+manhattan <- paste0("crp-",suffix,"_manhattan.png";
+png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
+manhattan(tbl,main="CRP",genomewideline=-log10(5e-8),suggestiveline=FALSE,ylim=c(0,25));
+dev.off();
+END
+
 function UKB()
 {
 grep -f work/INF1.merge.ukbsnpid -w work/crp-${suffix}.ukb | \
