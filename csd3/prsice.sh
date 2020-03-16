@@ -1,9 +1,9 @@
-# 13-3-2020 JHZ
+# 16-3-2020 JHZ
 
-# Base data, CRP in mg/L
-export suffix=raw
 # irnt for CRP
 export suffix=irnt
+# Base data, CRP in mg/L
+export suffix=raw
 export SUMSTATS=ukb/30710_${suffix}.gwas.imputed_v3.both_sexes.tsv.bgz
 (
   gunzip -c ${SUMSTATS} | \
@@ -38,8 +38,9 @@ cut -d' ' -f2 > work/INF1.merge.ukbsnpid
   awk -v OFS="\t" 'NR == 1 {$1=$1 "\t" "id"; print}' work/crp.${suffix}
   join -t$'\t' <(awk -v OFS="\t" 'NR > 1 {print $1,$2}' work/INF1.merge.ukbsnp | sort -k1,1) \
                <(awk -v OFS="\t" 'NR > 1' work/crp.${suffix})
-) > work/crp.ukb
+) > work/crp-${suffix}.ukb
 sed 's/ID_1/FID/g;s/ID_2/IID/g;2d' ${UKB}/ukb_BP_imp_v3.sample | cut -d' ' -f1,2,4 > work/crp.sample
+
 module load ceuadmin/stata
 stata <<END
   insheet using work/crp.sample, case clear delim(" ")
@@ -65,14 +66,14 @@ END
 
 # PRSice analysis
 ## .all.score
-PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
+PRSice --base work/crp-${suffix}.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
        --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.sample \
        --extract work/INF1.merge.ukbsnpid --model add --no-regress --score avg \
        --out work/crp
 ## .best
 for pheno in chd cv
 do
-  PRSice --base work/crp.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
+  PRSice --base work/crp-${suffix}.ukb --snp id --chr chr --bp pos --A1 A1 --A2 A2 --beta beta --pvalue pval \
          --target ${UKB}/ukb_imp_chr#_v3 --type bgen --pheno work/crp.cvd --pheno-col ${pheno} \
                                                      --cov work/crp.cov --remove work/crp-${pheno}.excl --binary-target T \
          --extract work/INF1.merge.snp --model add --score avg \
