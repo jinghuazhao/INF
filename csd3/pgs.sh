@@ -2,7 +2,6 @@
 
 export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
 export p="0.001 0.05 0.1 0.2 0.3 0.4 0.5"
-awk 'BEGIN{split(ENVIRON["p"],a);for(i=1;i<=length(a);i++) print a[i],0,a[i]}' > work/crp.range_list
 export suffix=raw
 
 function ukb_bgen()
@@ -10,6 +9,7 @@ function ukb_bgen()
 qctool -g ${UKB}/ukb_imp_chr#_v3.bgen -s ${UKB}/ukb_BP_imp_v3.sample \
        -ofiletype bgen_v1.1 -og work/crp.score.bgen -incl-snpids work/INF1.merge.ukbsnpid
 }
+awk 'BEGIN{split(ENVIRON["p"],a);for(i=1;i<=length(a);i++) print a[i],0,a[i]}' > work/crp.range_list
 
 ## UKB
 
@@ -26,11 +26,11 @@ tbl <- within(tbl,{
    P <- pval
 })
 tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
-qq <- paste0("crp-",suffix,"_qq.png";
+qq <- paste0("crp-",suffix,"_qq.png");
 png(qq,width=12,height=10,units="in",pointsize=4,res=300)
 qq(with(tbl,P))
 dev.off()
-manhattan <- paste0("crp-",suffix,"_manhattan.png";
+manhattan <- paste0("crp-",suffix,"_manhattan.png)";
 png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
 manhattan(tbl,main="CRP",genomewideline=-log10(5e-8),suggestiveline=FALSE,ylim=c(0,50));
 dev.off();
