@@ -1,4 +1,4 @@
-# 26-2-2020 JHZ
+# 18-3-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -140,7 +140,7 @@ END
 
 # sentinel positions +/- 500k
 (
-  cut -f1,2 ${INF}/work/INF1.merge.trans.vepinput | \
+  cut -f1,2 INF1.merge.vepinput | \
   awk -v OFS="\t" -v flanking=500000 'NR>2 {
     if ($2-flanking<0) print "chr" $1, 0, $2+flanking;
     else print "chr" $1, $2-flanking, $2+flanking
@@ -152,8 +152,24 @@ END
   awk '{$1="chr" $1;print}' | \
   sed 's/ /\t/g'
 ) > a2
-bedtools intersect -a a1 -b a2 -wa -wb -loj | \
-cut  -f1-3,7 > INF1.merge.trans.glist-hg19
+bedtools intersect -a a1 -b a2 -wa -wb -loj > a1a2
+cut -f1-3,7 a1a2 > INF1.merge.glist-hg19
+
+module load ceuadmin/stata
+stata <<END
+  insheet chrom start end gchrom gstart gend gene using a1a2.
+  gen long pos=end-500000
+  gen long d=abs(pos-gstart)
+  sort chrom start d
+  by chrom start: gen i=_n
+  keep if i==1
+  gen chr=real(subinstr(chrom,"chr","",1))
+  sort chr pos
+  tostring pos, replace
+  gen chrpos=chrom + ":" + pos
+  outsheet /*chrom start end*/ gene chrpos using a1a2, noname noquote replace
+END
+paste a1 a1a2.out > INF1.merge.gene
 rm a1 a2
 
 # ProGeM
