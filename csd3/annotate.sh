@@ -148,6 +148,9 @@ R --no-save -q <<END
   saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 END
 
+function flanking()
+# obsolete -- replaced by --plugin NearestGene
+{
 # sentinel positions +/- 500k
 (
   cut -f1,2 INF1.merge.vepinput | \
@@ -181,6 +184,7 @@ stata <<END
 END
 paste a1 a1a2.out > INF1.merge.gene
 rm a1 a2
+}
 
 # ProGeM
 # Bottom-up
@@ -193,6 +197,6 @@ rm a1 a2
 # http://string-db.org/
 # BiocManager::install("garfield")
 
-cd -
-
 cut -f5 INF1.merge | sed '1d' | sort | uniq | join -t$'\t' - inf1.tmp | cut -f2 > INF1.merge.uniprot
+
+cd -
