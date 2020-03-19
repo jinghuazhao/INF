@@ -1,4 +1,4 @@
-# 18-3-2020 JHZ
+# 19-3-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -11,6 +11,14 @@ R --no-save -q <<END
   cvt <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
   ord <- with(cvt,order(Chr,bp))
   ct <- cvt[ord,]
+  all <- with(ct,gap::inv_chr_pos_a1_a2(SNP,prefix=""))
+  variant_list <- cbind(all,ct[,c(1,5)])
+  names(variant_list) <- c("chr","pos","alt","ref","uniprot","snpid")
+  library(rfPred)
+  rfs <- rfPred_scores(variant_list=unique(variant_list[,1:4]),
+                       data="http://www.sbim.fr/rfPred/all_chr_rfPred.txtz",
+                       index="http://www.sbim.fr/rfPred/all_chr_rfPred.txtz.tbi",
+                       file.export="rfPred.csv")
   all <- with(ct,unique(gap::inv_chr_pos_a1_a2(SNP,prefix="")))
   all <- within(all,{snp <- paste0(chr,":",pos,"_",a1,"_",a2); qual <- "."; filter <- "."; info <- "."})
   trans <- with(subset(ct,cis.trans=="trans"),unique(gap::inv_chr_pos_a1_a2(SNP,prefix=""))) 
@@ -28,6 +36,7 @@ R --no-save -q <<END
     if(f=="INF1.merge") writetable(all[vars],vepinput,append=TRUE) else writetable(trans[vars],vepinput,append=TRUE)
   }
 END
+grep -v matching rfPred.csv > rfPred_matching.csv
 (
   head -1 INF1.merge
   cut -f6  INF1.merge | sed '1d' | sort -k1,1 | uniq | grep -f INF1.merge.cis -v > INF1.merge.notcis
@@ -65,7 +74,8 @@ do
      }
    END
    # VEP
-   vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --everything --assembly GRCh37
+   vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --everything --assembly GRCh37 \
+       --plugin NearestGene,limit=3,max_range=500000 --symbol --pubmed --uniprot --protein --sift b --polyphen b
    vep -i ${s}.vepinput --species homo_sapiens -o ${s}.clinvar \
        --cache --distance 500000 --offline --force_overwrite \
        --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN,DBVARID,MC,RS

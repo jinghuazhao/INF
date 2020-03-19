@@ -1,4 +1,4 @@
-# 6-12-2019 JHZ
+# 18-3-2020 JHZ
 
 options(width=500)
 require(phenoscanner)
@@ -24,7 +24,7 @@ for(d in unique(with(results,dataset)))
 {
   cat(d,"\n")
   sink(paste(catalogue,d,sep="."))
-  s <- subset(results[c("ref_rsid","ref_snpid","rsid","r2","p","trait","dataset","pmid")],dataset==d)
+  s <- subset(results[c("ref_rsid","ref_snpid","rsid","r2","p","efo","trait","dataset","pmid")],dataset==d)
   print(s)
   sink()
 }
