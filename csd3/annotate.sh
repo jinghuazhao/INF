@@ -1,4 +1,4 @@
-# 19-3-2020 JHZ
+# 20-3-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
@@ -75,7 +75,7 @@ do
    END
    # VEP
    vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --everything --assembly GRCh37 \
-       --plugin NearestGene,limit=3,max_range=500000 --symbol --pubmed --uniprot --protein --sift b --polyphen b
+       --plugin NearestGene,limit=3,max_range=500000 --symbol --pubmed --uniprot --protein --sift b --polyphen b --tab
    vep -i ${s}.vepinput --species homo_sapiens -o ${s}.clinvar \
        --cache --distance 500000 --offline --force_overwrite \
        --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN,DBVARID,MC,RS

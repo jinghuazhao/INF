@@ -1,6 +1,6 @@
-# 15-3-2020 JHZ
+# 19-3-2020 JHZ
 
-export turbo=/home/jhz22/cambridge-ceu/turbo
+export turbo=$HOME/cambridge-ceu/turbo
 
 R --no-save <<END
   require(gap.datasets)

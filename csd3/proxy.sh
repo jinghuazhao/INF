@@ -1,4 +1,4 @@
-# 12-3-2020 JHZ
+# 20-3-2020 JHZ
 
 export bfile=${INF}/INTERVAL/cardio/INTERVAL
 
@@ -40,6 +40,6 @@ END
 
 export ANNOVAR=${HPC_WORK}/annovar
 annotate_variation.pl -buildver hg19 INF1.proxy.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile INF1.proxy
-vep -i INF1.proxy.vepinput -o INF1.proxy.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --everything --assembly GRCh37
+vep -i INF1.proxy.vepinput -o INF1.proxy.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --assembly GRCh37 --tab
 
 cd -

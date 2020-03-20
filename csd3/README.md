@@ -1,16 +1,20 @@
 # Scripts on CSD3
 
+## Annotation
+
+[annotate.sh](annotate.sh) involves ANNOVAR, PolyPhen 2, VEP and some R packages.
+
 ## QQ and Manhattan plots
 
 This is exemplified with [qqman.sh](qqman.sh) calling turboqq and turboman by Bram Prins.
 
 ## Sentinel identification
 
-This is furnished with `merge.sh`.
+This is now furnished with [merge.sh](merge.sh).
 
 ## 3d scatter plot
 
-Furnished with [js.R](js.R), the JSON output could be the counterpart in Supplementary Figure 1 of Sun et al. (2018).
+Furnished with [js.R](js.R), the JSON output could be used as data in the Supplementary Figure 1 of Sun et al. (2018).
 
 ## LD reference panels
 
@@ -103,8 +107,8 @@ for g in $(cat work/INF1.merge.gene); do echo $g; csd3/polygene.sh $g; done
 
 ## PhenoScanner
 
-This is furnished with `ps.sh`.
+This is furnished with [ps.sh](ps.sh). Information on previously unidentified pQTLs is with [pqtl.sh](pqtl.sh)
 
 ## PGS
 
-These are prsice.sh and pgs.sh.
+These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).

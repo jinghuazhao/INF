@@ -3,7 +3,7 @@
 for catalogue in eQTL pQTL mQTL methQTL GWAS
 do
   export catalogue=${catalogue}
-  R --no-save -q <csd3/ps.R > work/INF1.merge.${catalogue}.log
+  R --no-save -q < csd3/ps.R > work/INF1.merge.${catalogue}.log
 done
 
 # gene
