@@ -1,4 +1,4 @@
-# 2-1-2020 JHZ
+#!/usr/bin/bash
 
 for catalogue in eQTL pQTL mQTL methQTL GWAS
 do

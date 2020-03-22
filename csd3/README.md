@@ -18,7 +18,7 @@ Furnished with [js.R](js.R), the JSON output could be used as data in the Supple
 
 ## Lookup
 
-[lookup.sh](lookup.sh), which uses PhenoScanner output from [pqtl.R](csd3/pqtl.R), can be used to check if pQTLs were known.
+[lookup.sh](lookup.sh), which uses PhenoScanner output from [pqtl.R](pqtl.R), can be used to check if pQTLs were known.
 
 ## LD reference panels
 

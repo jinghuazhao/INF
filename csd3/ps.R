@@ -1,4 +1,4 @@
-# 18-3-2020 JHZ
+# 22-3-2020 JHZ
 
 options(width=500)
 require(phenoscanner)
@@ -18,7 +18,7 @@ results <- within(results,{
    swap <- ref_a1 > ref_a2
    a1[swap] <- ref_a2[swap]
    a2[swap] <- ref_a1[swap]
-   ref_snpid <- paste0(ref_hg19_coordinates,":",a1,"_",a2)
+   ref_snpid <- paste0(ref_hg19_coordinates,"_",a1,"_",a2)
 })
 for(d in unique(with(results,dataset)))
 {
