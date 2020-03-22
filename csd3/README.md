@@ -16,6 +16,10 @@ This is now furnished with [merge.sh](merge.sh).
 
 Furnished with [js.R](js.R), the JSON output could be used as data in the Supplementary Figure 1 of Sun et al. (2018).
 
+## Lookup
+
+[lookup.sh](lookup.sh), which uses PhenoScanner output from [pqtl.R](csd3/pqtl.R), can be used to check if pQTLs were known.
+
 ## LD reference panels
 
 The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to generate `binary_ped` with SNPIDs (bgen/*map)
