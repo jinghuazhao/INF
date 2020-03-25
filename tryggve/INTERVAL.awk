@@ -1,10 +1,9 @@
-# 27-8-2019 JHZ
+# 25-3-2020 JHZ
 
 {
   OFS="\t"
   if (NR==1) print "SNPID", "CHR", "POS", "STRAND", "N", "EFFECT_ALLELE", "REFERENCE_ALLELE", "CODE_ALL_FQ", "BETA", "SE","PVAL", "RSQ", "RSQ_IMP", "IMP"
   else {
-     OFS="\t"
      CHR=$3
      sub(/^0/,"",CHR)
      POS=$4
