@@ -1,4 +1,4 @@
-# 25-3-2020 JHZ
+# 27-3-2020 JHZ
 
 {
   OFS="\t"
@@ -8,7 +8,7 @@
      sub(/^0/,"",CHR)
      POS=$4
      if (substr($2,1,2)=="rs") SNPID=$2; else SNPID="chr" CHR ":" POS
-     STRAND="NA"
+     STRAND="+"
      N_AA=$14
      N_AB=$15
      N_BB=$16
