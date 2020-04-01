@@ -18,7 +18,7 @@ function ARISTOTLE()
        gunzip -c ${rt}/ARISTOTLE.infl.{}.20200120.chr${i}.txt.gz | \
        awk -f tryggve/ARISTOTLE.awk | \
        awk "a[\$1]++==0" | \
-       sort -k2,2n -k3,3n -t$''\t''
+       sort -k2,2n -k3,3n -t$""\t""
      done
   ) | \
   gzip -f > ARISTOTLE.{}.txt.gz
