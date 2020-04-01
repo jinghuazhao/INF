@@ -1,6 +1,29 @@
-# 20-8-2019 JHZ
+# 1-4-2020 JHZ
 
 export threads=6
+
+function ARISTOTLE()
+{
+  export rt=/data/niceri/ARISTOTLE_INFL/infl_rnorm_lod_for_meta
+  ls ${rt} | \
+  sed 's/ARISTOTLE.infl.//g;s/.20200120.chr/ /g;s/.txt.gz//g' | \
+  cut -d' ' -f1 | \
+  uniq | \
+  parallel -j${threads} -C' ' --env rt '
+  (
+     gunzip -c ${rt}/ARISTOTLE.infl.{}.20200120.chr1.txt.gz | \
+     head -1;
+     for i in $(seq 22)
+     do
+       gunzip -c ${rt}/ARISTOTLE.infl.{}.20200120.chr${i}.txt.gz | \
+       awk -f tryggve/ARISTOTLE.awk | \
+       awk "{a[\$1]++==0}" | \
+       sort -k2,2n -k3,3n
+     done
+  ) | \
+  gzip -f > ARISTOTLE.{}.txt.gz
+ '
+}
 
 function BioFinder()
 {
