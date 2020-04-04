@@ -1,4 +1,4 @@
-# 1-4-2020 JHZ
+# 4-4-2020 JHZ
 
 export threads=6
 
@@ -24,6 +24,9 @@ function ARISTOTLE()
   gzip -f > ARISTOTLE.{}.txt.gz
  '
 }
+ln -sf ARISTOTLE.hGDNF.txt.gz ARISTOTLE.GDNF.txt.gz
+ln -sf ARISTOTLE.TGFA.txt.gz ARISTOTLE.TGF.alpha.txt.gz
+ln -sf ARISTOTLE.CCL3.txt.gz ARISTOTLE.MIP.1.alpha.txt.gz
 
 function BioFinder()
 {
