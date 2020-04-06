@@ -1,4 +1,4 @@
-# 5-11-2019 JHZ
+# 6-4-2020 JHZ
 
 export tag=_nold
 
@@ -29,7 +29,7 @@ function _HLA()
       zcat METAL/${p}-1.tbl.gz | head -1 | awk -vOFS="\t" '{$1="Chrom";$2="Start" "\t" "End";print}'
       zcat sentinels/${p}.p.gz | \
       awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}' | \
-      awk '!($1 == "chr6" && $3 >= 25392021 && $3 < 33392022)'
+      awk 'NR>1 && !($1 == "chr6" && $3 >= 25392021 && $3 < 33392022)'
       zcat sentinels/${p}.p.gz | \
       awk -vOFS="\t" '{$1="chr" $1; start=$2-1;$2=start "\t" $2;print}' | \
       awk '$1 == "chr6" && $3 >= 25392021 && $3 < 33392022' | \
