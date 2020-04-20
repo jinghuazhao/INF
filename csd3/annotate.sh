@@ -1,4 +1,4 @@
-# 19-4-2020 JHZ
+# 20-4-2020 JHZ
 
 export HPC_WORK=/rds/user/${USER}/hpc-work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -9,6 +9,16 @@ export VEP=${HPC_WORK}/ensembl-vep
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
 cd work
+(
+  sed '1d' work/INF1.merge | \
+  cut -f5,6 | \
+  tr '\t' ' ' | \
+  parallel -j5 -C' ' '
+    zgrep -w {2} sumstats/INTERVAL/INTERVAL.{1}.gz | \
+    cut -f1-3,6,7 | \
+    awk -vOFS="\t" -vprot={1} "{print prot,\$0}"
+  '
+) > INF1.merge.alleles
 R --no-save -q <<END
   cvt <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
   ord <- with(cvt,order(Chr,bp))
