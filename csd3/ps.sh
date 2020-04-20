@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 
+export rt="work/INF1"
+awk 'NR>1{print $8,$9}' ${rt}.merge | sort -k1,1n -k2,2n | uniq | awk '{print "chr" $1 ":" $2}' > ${rt}.snp
+
 for catalogue in eQTL pQTL mQTL methQTL GWAS
 do
   export catalogue=${catalogue}

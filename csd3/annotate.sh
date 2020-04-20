@@ -1,7 +1,9 @@
-# 20-3-2020 JHZ
+# 19-4-2020 JHZ
 
+export HPC_WORK=/rds/user/${USER}/hpc-work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar
+export LEFTEE=${HPC_WORK}/loftee
 export POLYPHEN=$HPC_WORK/polyphen-2.2.2
 export VEP=${HPC_WORK}/ensembl-vep
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -85,7 +87,7 @@ do
    export dbNSFP_3=rs_dbSNP151,fathmm-MKL_coding_pred,gnomAD_exomes_NFE_AF,gnomAD_genomes_NFE_AF
    export dbNSFP_fields=${dbNSFP_1}${dbNSFP_2}${dbNSFP_3}
    vep -i ${s}.vepinput -o ${s}.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
-       --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz \
+       --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz \
        --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
    R --no-save <<\ \ \ END
      s <- Sys.getenv("s")
