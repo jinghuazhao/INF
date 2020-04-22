@@ -25,7 +25,7 @@ module load plink/2.00-alpha
   sort -k1,1 | \
   join <(sort -k1,1 work/INF1.merge.rsid | awk -vOFS="\t" '{split($1,a,":");sub(/chr/,"",a[1]);print $1,$2,a[1]}') - | \
   parallel -C' ' '
-    echo {1} {2} {3} {4} {5} {6} {7} {8} {9}
-    plink2 --bfile INTERVAL/per_chr/interval.imputed.olink.chr_{3} --ld {2} {8}
+    echo {1}-{7} {3} {4} {5} {6} {7} {8} {9}
+    plink2 --bfile INTERVAL/cardio/INTERVAL --ld {1} {7}
   '
 ) > cvd1.log
