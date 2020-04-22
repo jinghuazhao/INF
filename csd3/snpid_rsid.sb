@@ -81,3 +81,6 @@ cd -
 #  snpid_rsid_INTERVAL | \
 #  sort -k1,1 > ${pr}
 #  join -a2 -e "NA" ${snpid_rsid} ${pr} -o2.1,1.2 > ${pr}.rsid
+#  mkdir snpid_rsid
+#  sed '1d' INF1.merge | cut -f5,6 | tr '\t' ' ' | parallel -C' ' 'cp {1}-{2}.prune* {1}-{2}.log snpid_rsid'
+

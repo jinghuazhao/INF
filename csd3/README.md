@@ -116,3 +116,8 @@ This is furnished with [ps.sh](ps.sh). Information on previously unidentified pQ
 ## PGS
 
 These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).
+
+## CVD I
+
+This is [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD information corresponding to
+each protein.
