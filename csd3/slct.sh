@@ -1,12 +1,12 @@
-# 1-11-2019 JHZ
+# 24-4-2020 JHZ
 (
-  cat work/*jma.cojo | \
+  cat sentinels/*jma.cojo | \
   head -1 | \
   awk -v OFS="\t" '{print "prot", "SNPID", $0}'
   awk 'NR>1{print $5,$6}' work/INF1.merge | \
   parallel -j1 -C' ' '
-    if [ -f work/{1}-{2}.jma.cojo ]; then
-       awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot, snpid, \$0}" work/{1}-{2}.jma.cojo
+    if [ -f sentinels/{1}-{2}.jma.cojo ]; then
+       awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot, snpid, \$0}" sentinels/{1}-{2}.jma.cojo
     fi'
 ) > INF1.jma
 sed 's/Chr/CHR/g;s/bp/BP/g' INF1.jma > jma
@@ -18,8 +18,8 @@ R --no-save -q <<END
   primary <- subset(jma,p <= 5e-10)
   secondary <- subset(jma,p > 5e-10 & pJ <= 5e-10)
   print(cbind(nrow(jma),nrow(primary),nrow(secondary)))
-  hits <- merge(jma[c("prot","CHR","BP","SNP","p","pJ")],inf1[c("prot","uniprot")],by="prot")
-  names(hits) <- c("prot","Chr","bp","SNP","p","pJ","uniprot")
+  hits <- merge(jma[c("prot","CHR","BP","SNP","b","se","p","bJ","bJ_se","pJ")],inf1[c("prot","uniprot")],by="prot")
+  names(hits) <- c("prot","Chr","bp","SNP","b","se","p","bJ","bJ_se","pJ","uniprot")
 # total
   cistrans <- cis.vs.trans.classification(hits,inf1,"uniprot")
   cis.vs.trans <- with(cistrans,data)
@@ -66,14 +66,17 @@ done
 R --no-save -q <<END
   library(gap)
   d <- read.table("INF1.jma.cis.vs.trans",as.is=TRUE,header=TRUE)
+  d <- within(d,{log10p=-log10p(b/se)})
   pdf("INF1.jma.m2d.pdf")
   mhtplot2d(d)
   dev.off()
   d <- read.table("INF1.jma.1.cis.vs.trans",as.is=TRUE,header=TRUE)
+  d <- within(d,{log10p=-log10p(b/se)})
   pdf("INF1.jma.1.m2d.pdf")
   mhtplot2d(d)
   dev.off()
   d <- read.table("INF1.jma.2.cis.vs.trans",as.is=TRUE,header=TRUE)
+  d <- within(d,{log10p=-log10p(b/se)})
   pdf("INF1.jma.2.m2d.pdf")
   mhtplot2d(d)
   dev.off()
@@ -87,13 +90,13 @@ pdftopng -r 300 INF1.jma.2.m2d.pdf INF1.jma.2.m2d
 mv INF1.jma.2.m2d-000001.png INF1.jma.2.m2d.png
 
 (
-  awk 'NR>1{print $5,$6}' work/INF1.merge | \
+  awk 'NR>1{print $5,$6}' sentinels/INF1.merge | \
   parallel -j1 -C' ' '
-    if [ -f work/{1}-{2}.jma.cojo ]; then
-       awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot \"-\" snpid, NR-1}" work/{1}-{2}.jma.cojo | \
+    if [ -f sentinels/{1}-{2}.jma.cojo ]; then
+       awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot \"-\" snpid, NR-1}" sentinels/{1}-{2}.jma.cojo | \
        awk "{a[\$1]=\$2} END {for (i in a) print i, a[i]}"
     fi'
-) > work/slct.list
+) > sentinels/slct.list
 
 # when slct-INTERVAL.list and slct-ukb.list available
 (

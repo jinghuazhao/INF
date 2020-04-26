@@ -1,4 +1,4 @@
-# 20-4-2020 JHZ
+# 23-4-2020 JHZ
 
 export HPC_WORK=/rds/user/${USER}/hpc-work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -8,7 +8,6 @@ export POLYPHEN=$HPC_WORK/polyphen-2.2.2
 export VEP=${HPC_WORK}/ensembl-vep
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
-cd work
 (
   sed '1d' work/INF1.merge | \
   cut -f5,6 | \
@@ -18,14 +17,15 @@ cd work
     cut -f1-3,6,7 | \
     awk -vOFS="\t" -vprot={1} "{print prot,\$0}"
   '
-) > INF1.merge.alleles
+) > work/INF1.merge.alleles
+cd work
 R --no-save -q <<END
+  alleles <- read.table("INF1.merge.alleles",as.is=TRUE,col.names=c("prot","SNP","chr","pos","alt","ref"))
   cvt <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
-  ord <- with(cvt,order(Chr,bp))
-  ct <- cvt[ord,]
-  all <- with(ct,gap::inv_chr_pos_a1_a2(SNP,prefix=""))
-  variant_list <- cbind(all,ct[,c(1,5)])
-  names(variant_list) <- c("chr","pos","alt","ref","uniprot","snpid")
+  m <- merge(alleles,cvt,by=c("prot","SNP"))
+  ord <- with(m,order(Chr,bp))
+  all <- m[ord,]
+  variant_list <- m[ord,c("chr","pos","alt","ref","uniprot","SNP")]
   library(rfPred)
   rfs <- rfPred_scores(variant_list=unique(variant_list[,1:4]),
                        data="http://www.sbim.fr/rfPred/all_chr_rfPred.txtz",
@@ -156,8 +156,8 @@ R --no-save -q <<END
   xlsx <- "INF1.merge.trans.annovarvepbiomart.xlsx"
   unlink(xlsx, recursive = FALSE, force = TRUE)
   wb <- createWorkbook(xlsx)
-  snpid_rsid <- read.table("INF1.merge.rsid",col.names=c("snpid","rsid"))
-  d <- merge(snpid_rsid,vepbiomart,by.x="snpid",by.y="X.Uploaded_variation",all.y=TRUE)
+  snpid_rsid <- read.table("INF1.merge.rsid",col.names=c("SNP","rsid"))
+  d <- merge(snpid_rsid,vepbiomart,by.x="SNP",by.y="X.Uploaded_variation",all.y=TRUE)
   addWorksheet(wb, "annovar")
   writeDataTable(wb, "annovar", cvtvfevf)
   addWorksheet(wb, "vepbiomart")

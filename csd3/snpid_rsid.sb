@@ -32,7 +32,7 @@ export LDREF=INTERVAL
 function prune()
 {
   module load plink/2.00-alpha
-  plink2 --bfile ${INF}/${LDREF}/nodup/${pr} --geno 0.1 --maf 0.01 --indep-pairwise 1000kb 1 0.1 --out ${dir}/${pr}
+  plink2 --bfile ${INF}/${LDREF}/nodup/${pr} --geno 0.1 --mind 0.1 --maf 0.01 --indep-pairwise 1000kb 1 0.1 --out ${dir}/${pr}
   export pos=$(awk -v r=${r} 'BEGIN{split(r,snpid,":");split(snpid[2],pos,"_");print pos[1]}')
   if [ $(grep ${r} ${dir}/${pr}.prune.in | wc -l) -eq 0 ]; then
      export i=$(awk -v pos=${pos} '

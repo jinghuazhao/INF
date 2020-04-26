@@ -1,4 +1,4 @@
-# 22-4-2020 JHZ22
+# 23-4-2020 JHZ22
 
 function sentinels()
 # f10 is from S10
@@ -29,3 +29,14 @@ module load plink/2.00-alpha
     plink2 --bfile INTERVAL/cardio/INTERVAL --ld {1} {7}
   '
 ) > cvd1.log
+# grep -e "ld" -e "r^2" cvd1.log | grep -v "  --ld" | sed "s/--ld//g;s/=//g;s/r^2//g;s/D'//g" | awk '{$1=$1};1' | editing best solutions | \
+# awk '!(NR%2){print$0p}{p=$0}' > work/cvd1.txt
+
+sentinels | \
+awk -vFS="\t" -vOFS="\t" '$4!=$8{print $8,$1,$2,$3,$4,$5,$6,$7}' > work/cvd1.sentinels
+awk '$3>=0.7' work/cvd1.txt | \
+parallel -C' ' '
+  grep -e {1} -e {2} work/cvd1.sentinels | \
+  join work/INF1.merge.rsid - | \
+  awk -v r2={3} "{print r2,\$0}"
+'
