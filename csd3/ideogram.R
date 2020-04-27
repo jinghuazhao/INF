@@ -11,7 +11,7 @@ colors <- c("red","blue")
 png("INF1.merge.png",width=12,height=10,units="in",pointsize=4,res=300)
 kp <- plotKaryotype(genome="hg19",chromosomes="autosomal")
 kpPlotMarkers(kp, data=genes, labels=p.gene, text.orientation = "vertical",
-              r1=0.5, cex=0.8, srt=45, adjust.label.position = TRUE, label.color=colors[cis+1])
+              r1=0.5, cex=0.9, srt=45, adjust.label.position = TRUE, label.color=colors[cis+1])
 legend("bottomright", legend=c("cis", "trans"), box.lty=0, text.col=c("red", "blue"), cex=0.8)
 dev.off()
 detach(cvt)
