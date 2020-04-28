@@ -1,18 +1,18 @@
-# 27-4-2020 JHZ
+# 28-4-2020 JHZ
 
 library(biomaRt)
 library(regioneR)
 library(karyoploteR)
 cvt <- read.table("work/INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
 attach(cvt)
-genes <- toGRanges(Chr,bp-1,bp,p.gene)
+genes <- toGRanges(Chr,bp-1,bp,labels=p.gene)
 seqlevelsStyle(genes) <- "UCSC"
 colors <- c("red","blue")
-png("INF1.merge.png",width=12,height=10,units="in",pointsize=4,res=300)
+png("INF1.merge.png",width=12,height=12,units="in",pointsize=4,res=300)
 kp <- plotKaryotype(genome="hg19",chromosomes="autosomal")
-kpPlotMarkers(kp, data=genes, labels=p.gene, text.orientation = "vertical",
-              r1=0.5, cex=0.9, srt=45, adjust.label.position = TRUE, label.color=colors[cis+1])
-legend("bottomright", legend=c("cis", "trans"), box.lty=0, text.col=c("red", "blue"), cex=0.8)
+kpPlotMarkers(kp, data=genes, y=0.1, labels=p.gene, text.orientation="vertical",
+              r1=0.5, cex=1.2, adjust.label.position=TRUE, label.color=colors[2-cis])
+legend("bottom", legend=c("cis", "trans"), text.col=c("red", "blue"), cex=2, horiz=TRUE)
 dev.off()
 detach(cvt)
 
