@@ -32,6 +32,8 @@ export LDREF=INTERVAL
 
 cd work
 # z0
+function sumstats_z0()
+{
 (
   zcat ${sumstats} | head -1 | awk '{print $3,$1,$2,$5,$4,"MAF",$10,$11}'
   zcat ${sumstats} | \
@@ -46,6 +48,22 @@ cd work
   }
   } ' | \
   join ${pr} -
+) > ${pr}.z0
+}
+
+(
+  echo MarkerName Chromosome Position Allele2 Allele1 MAF Effect StdErr
+# SNP A1 A2 freq b se p N
+  awk -vn=${n} 'NR > 1 {
+    if ($4 < 0.5) maf = $4; else maf = 1-$4
+    snpid=$1;
+    gsub(/chr/,"",snpid);gsub(/:|_/," ",snpid)
+    split(snpid,chrpos," ");
+    if (maf > 0 && maf <= 0.5 && $5 != "NA" && $6 != "NA" && $NF >= n)
+       print $1, chrpos[1], chrpos[2], toupper($3), toupper($2), maf, $5, $6
+  }' ${INF}/sentinels/${p}.ma | \
+  sort -k1,1 | \
+  join ${pr}-NLRP2 -
 ) > ${pr}.z0
 
 # bgen and bgi

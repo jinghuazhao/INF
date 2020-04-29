@@ -1,4 +1,4 @@
-# 18-9-2019 JHZ
+# 29-4-2020 JHZ
 
 zld <- function(z)
 {
@@ -38,7 +38,7 @@ xlsx <- paste0(pr, "-finemap.xlsx")
 unlink(xlsx, recursive = FALSE, force = TRUE)
 wb <- createWorkbook(xlsx)
 # snp
-  load(paste0(pr,".rda"))
+  load(paste0(pr,".prune.rda"))
   d <- merge(snpid_rsid,snp,by="rsid",all.y=TRUE)
   ord <-order(with(d,rank))
   name_snp <- d[ord,setdiff(names(d),c("chromosome","position","allele1","allele2","maf","beta","se","rank"))]
