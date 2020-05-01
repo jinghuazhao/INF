@@ -16,6 +16,29 @@ Furnished with [js.R](js.R), the JSON output could be used as data in the Supple
 
 These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).
 
+## Trans-pQTL hotspots and proteins as polygenic targets
+
+This is illustrated with circos plots and by default this works on `work/INF1.merge.cis.vs.trans` and requires [glist-hg19](glist-hg19).
+Because circos plots are gene-centric, in both cases, the protein-coding gene is handled in mind.
+
+Try
+```bash
+./hotspot.sh chr1:159175354_A_G
+./hotspot.sh chr12:111884608_C_T
+```
+giving results linking *ACKR1* and *SH2B3*, respectively, while
+```bash
+./polygene.sh IL12B
+./polygene.sh TNFSF10
+```
+linking IL.12B and TRAIL, respectively.
+
+To generate all possible plots, wo do
+```bash
+for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; csd3/hotspot.sh $h; done
+for g in $(cat work/INF1.merge.gene); do echo $g; csd3/polygene.sh $g; done
+```
+
 ## Annotation
 
 [annotate.sh](annotate.sh) involves ANNOVAR, PolyPhen 2, VEP and some R packages.
@@ -79,29 +102,6 @@ After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `
 This is available as `sentinels_nold.sh` but is superseded with its failure to handle long LD regions.
 
 There are scripts for heritability analysis and proportion of variance explained.
-
-## Trans-pQTL hotspots and proteins as polygenic targets
-
-This is illustrated with circos plots and by default this works on `work/INF1.merge.cis.vs.trans` and requires [glist-hg19](glist-hg19).
-Because circos plots are gene-centric, in both cases, the protein-coding gene is handled in mind.
-
-Try
-```bash
-./hotspot.sh chr1:159175354_A_G
-./hotspot.sh chr12:111884608_C_T
-```
-giving results linking *ACKR1* and *SH2B3*, respectively, while
-```bash
-./polygene.sh IL12B
-./polygene.sh TNFSF10
-```
-linking IL.12B and TRAIL, respectively.
-
-To generate all possible plots, wo do
-```bash
-for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; csd3/hotspot.sh $h; done
-for g in $(cat work/INF1.merge.gene); do echo $g; csd3/polygene.sh $g; done
-```
 
 ## PhenoScanner
 
