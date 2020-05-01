@@ -38,10 +38,8 @@ xlsx <- paste0(pr, "-finemap.xlsx")
 unlink(xlsx, recursive = FALSE, force = TRUE)
 wb <- createWorkbook(xlsx)
 # snp
-  load(paste0(pr,".prune.rda"))
-  d <- merge(snpid_rsid,snp,by="rsid",all.y=TRUE)
-  ord <-order(with(d,rank))
-  name_snp <- d[ord,setdiff(names(d),c("chromosome","position","allele1","allele2","maf","beta","se","rank"))]
+  d <- within(snp,{z_incl <- mean_incl/sd_incl; p_incl <- 2*pnorm(-abs(z_incl))})
+  name_snp <- d[,setdiff(names(d),c("chromosome","position","allele1","allele2","maf","beta","se","rank"))]
   addWorksheet(wb, "snp")
   writeDataTable(wb, "snp", name_snp)
 # pip.plot
