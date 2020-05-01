@@ -96,7 +96,7 @@ function finemap()
   if [ ! -f ${dir}/${pr}.jma.cojo ]; then
      export k=1
   else
-     export k=$(awk "{print NR-1 }" ${dir}/${pr}.jma.cojo)
+     export k=$(awk "END{print NR-1}" ${dir}/${pr}.jma.cojo)
   fi
   finemap_v1.3.1 --log --sss --in-files ${pr}.master --n-causal-snps $k --corr-group 0.7 --group-snps
   R -q --no-save < ${INF}/csd3/finemap.R > /dev/null

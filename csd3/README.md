@@ -8,6 +8,10 @@ This is exemplified with [qqman.sh](qqman.sh) calling turboqq and turboman by Br
 
 This is now furnished with [merge.sh](merge.sh).
 
+Clumping by fixed distance by `sentinels_nold.sh` is superseded with its failure to handle long LD regions.
+
+There are scripts for heritability analysis and proportion of variance explained.
+
 ## 3d scatter plot
 
 Furnished with [js.R](js.R), the JSON output could be used as data in the Supplementary Figure 1 of Sun et al. (2018).
@@ -96,12 +100,6 @@ The environmental variable `LDREF` provides an option to use either INTERVAL or 
 ## Conditional analysis and finemapping
 
 After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `slct.sh`. Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
-
-## Clumping by fixed distance
-
-This is available as `sentinels_nold.sh` but is superseded with its failure to handle long LD regions.
-
-There are scripts for heritability analysis and proportion of variance explained.
 
 ## PhenoScanner
 
