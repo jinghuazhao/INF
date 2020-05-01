@@ -37,7 +37,7 @@ xlsx <- paste0(pr, "-finemap.xlsx")
 unlink(xlsx, recursive = FALSE, force = TRUE)
 wb <- createWorkbook(xlsx)
 # snp
-  d <- within(snp,{z_incl <- mean_incl/sd_incl; log10p_incl <- gap::log10p(z_incl)})
+  d <- within(snp,{log10p_incl <- gap::log10p(z_incl)})
   name_snp <- d[,setdiff(names(d),c("chromosome","position","allele1","allele2","maf","beta","se","rank"))]
   addWorksheet(wb, "snp")
   writeDataTable(wb, "snp", name_snp)
