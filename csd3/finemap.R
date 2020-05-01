@@ -37,7 +37,7 @@ xlsx <- paste0(pr, "-finemap.xlsx")
 unlink(xlsx, recursive = FALSE, force = TRUE)
 wb <- createWorkbook(xlsx)
 # snp
-  d <- within(snp,{log10p_incl <- gap::log10p(z_incl)})
+  d <- within(snp,{log10p_incl <- gap::log10p(mean_incl/sd_incl)})
   name_snp <- d[,setdiff(names(d),c("chromosome","position","allele1","allele2","maf","beta","se","rank"))]
   addWorksheet(wb, "snp")
   writeDataTable(wb, "snp", name_snp)
@@ -46,7 +46,7 @@ wb <- createWorkbook(xlsx)
   addWorksheet(wb, "pip.plot")
   insertImage(wb, "pip.plot", paste0(pr,".png"),height=12,width=8)
 # config
-  d <- within(config,{log10p <- gap::log10p(mean/sd)})
+  addWorksheet(wb, "config")
   writeDataTable(wb, "config", config)
 # cred
   if (exists("cred")) {

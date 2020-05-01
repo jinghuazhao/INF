@@ -1,9 +1,5 @@
 # Scripts on CSD3
 
-## Annotation
-
-[annotate.sh](annotate.sh) involves ANNOVAR, PolyPhen 2, VEP and some R packages.
-
 ## QQ and Manhattan plots
 
 This is exemplified with [qqman.sh](qqman.sh) calling turboqq and turboman by Bram Prins.
@@ -16,26 +12,30 @@ This is now furnished with [merge.sh](merge.sh).
 
 Furnished with [js.R](js.R), the JSON output could be used as data in the Supplementary Figure 1 of Sun et al. (2018).
 
+## PGS
+
+These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).
+
+## Annotation
+
+[annotate.sh](annotate.sh) involves ANNOVAR, PolyPhen 2, VEP and some R packages.
+
 ## LD reference panels
 
 The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to generate `binary_ped` with SNPIDs (bgen/*map)
 * by qctool -- it also creates `bgen` with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
 * by PLINK -- it has a `_snpid` tag.
 
-In both cases the duplicates (bgen/*rmdup.list) are excluded.
+In both cases duplicates (bgen/*rmdup.list) are excluded.
 
-### INTERVAL.sh (INTERVAL.sb)
-
-The utility `INTERVAL.sh` extracts data from  
+1. INTERVAL.sh (INTERVAL.sb). The utility `INTERVAL.sh` extracts data from  
 ```
 /DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 /DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_imputed_info_0.4_phwe_1e-4_filtered/per_chr
 ```
 on Cardio into region-specific data in `bgen` format according to work/INF1.merge.
 
-### ukb (ukb.sh)
-
-The utility `ukb.sh` extracts data from ukb_imp_chr[x-xx]_v3.bgen as in
+2. ukb (ukb.sh). The utility `ukb.sh` extracts data from ukb_imp_chr[x-xx]_v3.bgen as in
 ```
 /DO-NOT-MODIFY-SCRATCH/uk_biobank/500k/imputed_v3
 /DO-NOT-MODIFY-SCRATCH/curated_genetic_data/uk_biobank/reference_files/full_release
@@ -45,10 +45,9 @@ on Cardio into region-specific data in `bgen` format (ukb/bgen) according to wor
 ## SNPID-rsid mappings
 
 This is furnished with `snpid_rsid.sb`, whose results will be attached to GCTA/finemap results via `finemap.R`, `slct.R` and `jam.R`.
-
-* `finemap.sb` and `slct.sb` use the unpruned version.
-* `fm.sb` and `INTERVAL-fm.sb` use a version which only contains pruned variants to comproise `JAM`. The `.z` file is also appropriate for both `finemap` and `JAM`.
-* Lately, `finemap.sb` also has function to use .ma file, and `finemap.sh` and `finemap.ini` are introduced which work similarly to `INTERVAL-fm.sb`.
+* `finemap.sb` uses the unpruned version.
+* `fm.sb` and `INTERVAL-fm.sb` use pruned variants to compromise `JAM`. The `.z` file is also appropriate for both `finemap` and `JAM`.
+* `INTERVAL-fm.sh` and `INTERVAL-fm.ini` works on INTERVAL data.
 ```bash
 # ldstore v1.1
 
@@ -73,9 +72,7 @@ The environmental variable `LDREF` provides an option to use either INTERVAL or 
 
 ## Conditional analysis and finemapping
 
-After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `slct.sh`.
-
-Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
+After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `slct.sh`. Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
 
 ## Clumping by fixed distance
 
@@ -110,17 +107,10 @@ for g in $(cat work/INF1.merge.gene); do echo $g; csd3/polygene.sh $g; done
 
 This is furnished with [ps.sh](ps.sh). Information on previously unidentified pQTLs is with [pqtl.sh](pqtl.sh)
 
-## PGS
-
-These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).
-
-## Lookup
+## Known variants
 
 [lookup.sh](lookup.sh), which uses PhenoScanner output from [pqtl.R](pqtl.R), can be used to check if pQTLs were known.
 
-## CVD I
-
-This is [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD information corresponding to
-each protein.
+File [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.
 
 *1/5/2020*

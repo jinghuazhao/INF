@@ -13,13 +13,13 @@
 
 export job=${SLURM_ARRAY_TASK_ID}
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
-export TMPDIR=/rds/user/jhz22/hpc-work/work
+export TMPDIR=/tmp
 export dir=${INF}/INTERVAL
-export list=${INF}/work/INF1_nold.sentinels
-export p=$(awk -v job=${job} 'NR==job+1{print $1}' ${list})
-export chr=$(awk -v job=${job} 'NR==job+1{print $2}' ${list})
-export pos=$(awk -v job=${job} 'NR==job+1{print $3}' ${list})
-export r=$(awk -v job=${job} 'NR==job+1{print $4}' ${list})
+export list=${INF}/work/INF1.merge
+export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
+export chr=$(awk -v job=${job} 'NR==job+1{print $8}' ${list})
+export pos=$(awk -v job=${job} 'NR==job+1{print $9}' ${list})
+export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
 export pr=${p}-${r}
 export sumstats=${INF}/sumstats/INTERVAL/INTERVAL.${p}.gz
 export flanking=1e6
@@ -64,19 +64,6 @@ function init()
   ) > ${pr}.z
 }
 
-function finemap()
-{
-# master
-  (
-    echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
-    echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
-  ) > ${pr}.master
-# finemap
-  rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
-  finemap_v1.3.1 --log --sss --in-files ${pr}.master --n-causal-snps $k --corr-group 0.7
-  R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
-}
-
 function gcta()
 {
   if [ ! -f ${dir}/${p}.ma ]; then
@@ -88,15 +75,32 @@ function gcta()
   if [ -f ${dir}/${pr}.jma.cojo ]; then rm ${dir}/${pr}.jma.cojo ${dir}/${pr}.ldr.cojo; fi
   gcta-1.9 --bfile ${bfile} \
            --cojo-file ${dir}/${p}.ma \
-           --extract ${dir}/${pr}.prune.in \
+           --extract ${dir}/${pr}-NLRP2 \
            --geno 0.1 \
            --cojo-slct \
            --cojo-p 1e-3 \
            --cojo-collinear 0.9 \
            --maf 0.01 \
            --out ${dir}/${pr}
+  R -q --no-save < ${INF}/csd3/slct.R > /dev/null
+}
 
-  R -q --no-save < ${INF}/csd3/slct.R > ${pr}-slct.log
+function finemap()
+{
+# master
+  (
+    echo "z;bgen;bgi;dose;snp;config;cred;log;n_samples"
+    echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.dose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
+  ) > ${pr}.master
+# finemap
+  rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
+  if [ ! -f ${dir}/${pr}.jma.cojo ]; then
+     export k=1
+  else
+     export k=$(awk "{print NR-1}" ${dir}/${pr}.jma.cojo)
+  fi
+  finemap_v1.3.1 --log --sss --in-files ${pr}.master --n-causal-snps $k --corr-group 0.7 --group-snps
+  R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
 }
 
 function jam()
@@ -104,10 +108,10 @@ function jam()
   export data_type=bgen
   if [ $data_type == "bgen" ]; then cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id; fi
   if [ $data_type == "binary_ped" ]; then qctool -g ${pr}.bgen -filetype bgen -s ${sample} -ofiletype binary_ped -og ${pr}; fi
-  R -q --no-save < ${INF}/csd3/jam.R > ${pr}-jam.log
+  R -q --no-save < ${INF}/csd3/jam.R > /dev/null
 }
 
-cd INTERVAL
+cd work
 init
 finemap
 gcta
