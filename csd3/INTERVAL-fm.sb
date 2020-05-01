@@ -25,7 +25,7 @@ export sumstats=${INF}/sumstats/INTERVAL/INTERVAL.${p}.gz
 export flanking=1e6
 export start=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{start=pos-flanking;if(start<0) start=0;print start}')
 export end=$(awk -vpos=${pos} -vflanking=${flanking} 'BEGIN{print pos+flanking}')
-export bfile=${INF}/work/INTERVAL
+export bfile=${INF}/INTERVAL/INTERVAL
 export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export study=INTERVAL
 export N=4994
@@ -40,16 +40,15 @@ function init()
     sort -k1,1 | \
     awk -vchr=${chr} -vstart=${start} -vend=${end} '
     {
-      if ($2==chr && $3 >= start && $3 < end) {
+      if (($2==chr && $3 >= start && $3 < end && $11 < 1e-4) && !(chr==19 && $3 >= 5329685 && $3 <= 54500000)) {
       if ($8 < 0.5) maf = $8; else maf = 1-$8
       if (maf > 0 && maf <= 0.5 && $9 != "NA" && $10 != "NA") print $1, $2, $3, $7, $6, maf, $9, $10
     }
-    } ' | \
-    join $INF/work/${pr} -
+    } '
   ) > ${pr}.z0
   awk 'NR > 1{print $1} ' ${pr}.z0 > ${pr}.incl
 # bgen
-  qctool -g ${bfile}.bgen -s ${sample} -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
+  qctool -g ${bfile}-${chr}.bgen -s ${sample} -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
 # bgi
   bgenix -g ${pr}.bgen -index -clobber
   ln -sf ${pr}.bgen.bgi ${pr}.bgi
@@ -84,12 +83,13 @@ function gcta()
   (
     echo SNP A1 A2 freq b se p N
     gunzip -c ${sumstats} | \
-    awk "(NR>1 && $18>50) {print $3, $4, $5, $6, $10, $11, 10^$12, $18}"
+    awk "{print $1, $4, $5, $6, $10, $11, 10^$12, $18}"
   ) > ${dir}/${p}.ma
   if [ -f ${dir}/${pr}.jma.cojo ]; then rm ${dir}/${pr}.jma.cojo ${dir}/${pr}.ldr.cojo; fi
   gcta-1.9 --bfile ${bfile} \
            --cojo-file ${dir}/${p}.ma \
            --extract ${dir}/${pr}.prune.in \
+           --geno 0.1 \
            --cojo-slct \
            --cojo-p 5e-10 \
            --cojo-collinear 0.9 \
