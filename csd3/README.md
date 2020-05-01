@@ -2,7 +2,7 @@
 
 ## QQ and Manhattan plots
 
-This is exemplified with [qqman.sh](qqman.sh) calling turboqq and turboman by Bram Prins.
+The version for meta-analysis was part of `analysis.sh` at tryggve/. [qqman.sh](qqman.sh) calls turboqq and turboman by Bram Prins.
 
 ## Sentinel identification
 
