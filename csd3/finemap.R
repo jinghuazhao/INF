@@ -58,7 +58,7 @@ wb <- createWorkbook(xlsx)
   }
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 
-topz <- subset(snp, abs(z)>=6.47)
+topz <- subset(snp, abs(z)>=3.890592)
 if (nrow(topz) > 0)
 {
 # topz
