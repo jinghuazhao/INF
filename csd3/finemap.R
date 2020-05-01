@@ -29,8 +29,7 @@ pr <- Sys.getenv("pr")
 z <- read.table(paste0(pr, ".z"), as.is=TRUE, header=TRUE)
 ld <- read.table(paste0(pr, ".ld.gz"),col.names=with(z,rsid))
 snp <- read.table(paste0(pr, ".snp"), as.is=TRUE, header=TRUE)
-snp <- within(snp, {rank <- 1:nrow(snp)})
-config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE,nrows=31)
+config <- read.table(paste0(pr,".config"),as.is=TRUE,header=TRUE,nrow=50)
 if (file.exists(paste0(pr,".cred"))) cred <- read.table(paste0(pr,".cred"),as.is=TRUE,header=TRUE)
 
 library(openxlsx)
@@ -38,7 +37,7 @@ xlsx <- paste0(pr, "-finemap.xlsx")
 unlink(xlsx, recursive = FALSE, force = TRUE)
 wb <- createWorkbook(xlsx)
 # snp
-  d <- within(snp,{z_incl <- mean_incl/sd_incl; p_incl <- 2*pnorm(-abs(z_incl))})
+  d <- within(snp,{z_incl <- mean_incl/sd_incl; log10p_incl <- gap::log10p(z_incl)})
   name_snp <- d[,setdiff(names(d),c("chromosome","position","allele1","allele2","maf","beta","se","rank"))]
   addWorksheet(wb, "snp")
   writeDataTable(wb, "snp", name_snp)
@@ -47,7 +46,7 @@ wb <- createWorkbook(xlsx)
   addWorksheet(wb, "pip.plot")
   insertImage(wb, "pip.plot", paste0(pr,".png"),height=12,width=8)
 # config
-  addWorksheet(wb, "config")
+  d <- within(config,{log10p <- gap::log10p(mean/sd)})
   writeDataTable(wb, "config", config)
 # cred
   if (exists("cred")) {
