@@ -48,10 +48,11 @@ on Cardio into region-specific data in `bgen` format (ukb/bgen) according to wor
 
 ## SNPID-rsid mappings
 
-This is furnished with `snpid_rsid.sb`, whose results will be attached to GCTA/finemap results via `finemap.R`, `gcta.R` and `jam.R`.
+This is furnished with `snpid_rsid.sb`, whose results will be attached to GCTA/finemap results via `finemap.R`, `slct.R` and `jam.R`.
 
 * `finemap.sb` and `slct.sb` use the unpruned version.
 * `fm.sb` and `INTERVAL-fm.sb` use a version which only contains pruned variants to comproise `JAM`. The `.z` file is also appropriate for both `finemap` and `JAM`.
+* Lately, `finemap.sh` and `finemap.ini` are introduced which work similarly to `INTERVAL-fm.sb`.
 ```bash
 # ldstore v1.1
 
@@ -61,11 +62,11 @@ ldstore --bcor ${pr} --bgen ${pr}.bgen
 ldstore --bcor ${pr} --merge 1
 ldstore --bcor ${pr} --matrix ${pr}.ld
 
-# ldstore 2.0b (and finemap-1.4)
+# ldstore 2 (and finemap-1.4)
 
-ldstore-2 --in-files ${pr}.master2 --write-bcor --write-bdose
+ldstore --in-files ${pr}.master2 --write-bcor --write-bdose
 
-finemap-1.4 --sss --in-files ${pr}.master2 --n-causal-snps 10
+finemap --sss --in-files ${pr}.master2 --n-causal-snps 10
 ```
 where ${pr}.master2 contains two lines,
 ```
@@ -121,3 +122,5 @@ These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).
 
 This is [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD information corresponding to
 each protein.
+
+*1/5/2020*
