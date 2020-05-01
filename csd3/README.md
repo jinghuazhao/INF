@@ -16,10 +16,6 @@ This is now furnished with [merge.sh](merge.sh).
 
 Furnished with [js.R](js.R), the JSON output could be used as data in the Supplementary Figure 1 of Sun et al. (2018).
 
-## Lookup
-
-[lookup.sh](lookup.sh), which uses PhenoScanner output from [pqtl.R](pqtl.R), can be used to check if pQTLs were known.
-
 ## LD reference panels
 
 The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to generate `binary_ped` with SNPIDs (bgen/*map)
@@ -52,7 +48,7 @@ This is furnished with `snpid_rsid.sb`, whose results will be attached to GCTA/f
 
 * `finemap.sb` and `slct.sb` use the unpruned version.
 * `fm.sb` and `INTERVAL-fm.sb` use a version which only contains pruned variants to comproise `JAM`. The `.z` file is also appropriate for both `finemap` and `JAM`.
-* Lately, `finemap.sh` and `finemap.ini` are introduced which work similarly to `INTERVAL-fm.sb`.
+* Lately, `finemap.sb` also has function to use .ma file, and `finemap.sh` and `finemap.ini` are introduced which work similarly to `INTERVAL-fm.sb`.
 ```bash
 # ldstore v1.1
 
@@ -117,6 +113,10 @@ This is furnished with [ps.sh](ps.sh). Information on previously unidentified pQ
 ## PGS
 
 These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).
+
+## Lookup
+
+[lookup.sh](lookup.sh), which uses PhenoScanner output from [pqtl.R](pqtl.R), can be used to check if pQTLs were known.
 
 ## CVD I
 

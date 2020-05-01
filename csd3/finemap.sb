@@ -51,6 +51,8 @@ function sumstats_z0()
 ) > ${pr}.z0
 }
 
+function ma_z0()
+{
 (
   echo MarkerName Chromosome Position Allele2 Allele1 MAF Effect StdErr
 # SNP A1 A2 freq b se p N
@@ -65,7 +67,9 @@ function sumstats_z0()
   sort -k1,1 | \
   join ${pr}-NLRP2 -
 ) > ${pr}.z0
+}
 
+sumstats_z0
 # bgen and bgi
 awk 'NR > 1{print $1} ' ${pr}.z0 > ${pr}.incl
 qctool -g ${INF}/${LDREF}/nodup/${pr}.bgen -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
