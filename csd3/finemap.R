@@ -1,4 +1,4 @@
-# 29-4-2020 JHZ
+# 1-5-2020 JHZ
 
 zld <- function(z)
 {
@@ -58,14 +58,14 @@ wb <- createWorkbook(xlsx)
   }
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 
-topz <- subset(snp, abs(z)>=3.890592)
+topz <- subset(snp, abs(z)>=3.290527)
 if (nrow(topz) > 0)
 {
 # topz
   zldz <- zld(topz)
   topsnp <- head(snp, nrow(topz))
   zldsnp <- zld(topsnp)
-  xlsx <- paste0(pr, ".zld.xlsx")
+  xlsx <- paste0(pr, "-zld.xlsx")
   unlink(xlsx, recursive = FALSE, force = TRUE)
   wb <- createWorkbook(xlsx)
   addWorksheet(wb, "topz")

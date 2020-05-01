@@ -97,7 +97,7 @@ function gcta()
            --maf 0.01 \
            --out ${dir}/${pr}
 
-  R -q --no-save < ${INF}/csd3/GCTA.R > ${pr}-gcta.log
+  R -q --no-save < ${INF}/csd3/slct.R > ${pr}-slct.log
 }
 
 function jam()

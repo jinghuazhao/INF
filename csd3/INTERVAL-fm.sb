@@ -73,7 +73,7 @@ function finemap()
   ) > ${pr}.master
 # finemap
   rm -rf ${pr}.cred ${pr}.dose ${pr}.snp ${pr}.config
-  finemap_v1.3.1 --log --sss --in-files ${pr}.master --n-causal-snps $k --corr-group 0.99 --group-snps
+  finemap_v1.3.1 --log --sss --in-files ${pr}.master --n-causal-snps $k --corr-group 0.7
   R -q --no-save < ${INF}/csd3/finemap.R > ${pr}-finemap.log
 }
 
@@ -91,12 +91,12 @@ function gcta()
            --extract ${dir}/${pr}.prune.in \
            --geno 0.1 \
            --cojo-slct \
-           --cojo-p 5e-10 \
+           --cojo-p 1e-3 \
            --cojo-collinear 0.9 \
            --maf 0.01 \
            --out ${dir}/${pr}
 
-  R -q --no-save < ${INF}/csd3/gcta.R > ${pr}-gcta.log
+  R -q --no-save < ${INF}/csd3/slct.R > ${pr}-slct.log
 }
 
 function jam()
