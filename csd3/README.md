@@ -69,9 +69,11 @@ on Cardio into region-specific data in `bgen` format according to work/INF1.merg
 ```
 on Cardio into region-specific data in `bgen` format (ukb/bgen) according to work/INF1.merge.
 
-## SNPID-rsid mappings
+## SNPID-rsid mappings, conditional analysis and finemapping
 
 This is furnished with `snpid_rsid.sb`, whose results will be attached to GCTA/finemap results via `finemap.R`, `slct.R` and `jam.R`.
+After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `slct.sh`. Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
+
 * `finemap.sb` uses the unpruned version.
 * `fm.sb` and `INTERVAL-fm.sb` use pruned variants to compromise `JAM`. The `.z` file is also appropriate for both `finemap` and `JAM`.
 * `INTERVAL-fm.sh` and `INTERVAL-fm.ini` works on INTERVAL data.
@@ -96,10 +98,6 @@ z;bgen;bgi;bcor;bdose;snp;config;cred;log;n_samples
 IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.bgi;IL.6-chr1:154426970_A_C.bcor;IL.6-chr1:154426970_A_C.bdose;IL.6-chr1:154426970_A_C.snp;IL.6-chr1:154426970_A_C.config;IL.6-chr1:154426970_A_C.cred;IL.6-chr1:154426970_A_C.log;4994
 ```
 The environmental variable `LDREF` provides an option to use either INTERVAL or UKB data.
-
-## Conditional analysis and finemapping
-
-After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `slct.sh`. Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
 
 ## PhenoScanner
 
