@@ -1,5 +1,7 @@
 # Scripts on CSD3
 
+**NOTE**: now merge.sh and INTERVAL-rsid.ini works directly to the original INTERVAL bgen files.
+
 ## QQ and Manhattan plots
 
 The version for meta-analysis was part of `analysis.sh` at tryggve/. [qqman.sh](qqman.sh) calls turboqq and turboman by Bram Prins.
@@ -109,4 +111,4 @@ This is furnished with [ps.sh](ps.sh). Information on previously unidentified pQ
 
 File [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.
 
-***Date laste changed:*** 1/5/2020
+*Date laste changed:* **2/5/2020**
