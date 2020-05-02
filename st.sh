@@ -1,4 +1,4 @@
-# 11-7-2019 JHZ
+# 2-5-2019 JHZ
 
 git add .gitignore
 git commit -m ".gitignore"
@@ -12,6 +12,8 @@ git add cardio
 git commit -m "Work on CEU's cardio"
 git add csd3
 git commit -m "Work on CSD3"
+git add rsid
+git commit -m "Final work on CSD3 with rsids in the downstream analysis"
 git add tryggve tryggve.*
 git commit -m "Notes and programs on TRYGGVE"
 git add st.sh
