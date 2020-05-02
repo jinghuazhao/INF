@@ -6,14 +6,14 @@ chr:pos_A1_A2, (A1<=A2) is necessary.
 
 After rather a long and laborious process involving many software, it turned out a simple wayout is to obtain sentinels using SNPID but return to rsid at
 this stage and forward. The implementation here reflects this. The file INTERVAL.rsid contains SNPID-rsid mapping and could be generated from programs
-such as qctool/bgenix/plink.
+such as `qctool/bgenix/plink`.
 
 A note on regions is ready. It is attractive to use the last genomic region from iterative merging for analysis and perhaps a flanking version. This is
 more appropriate than a hard and fast 10MB or approximately independent LD blocks. For the latter, we found that the boundaries from the distributed
 1000Genomes project were often inappropriate and one may not attempt to compute them for specific reference panel. Nevertheless, the iterative procedure
 actually just does empirically.
 
-The last point regards software finemap, which uses summary statistics associated with the reference panel rather than that from meta-analysis.
+The last point regards software `finemap`, which uses summary statistics associated with the reference panel rather than that from meta-analysis.
 
 ### A summary
 
