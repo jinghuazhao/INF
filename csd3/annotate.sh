@@ -1,4 +1,4 @@
-# 23-4-2020 JHZ
+# 3-5-2020 JHZ
 
 export HPC_WORK=/rds/user/${USER}/hpc-work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -202,6 +202,25 @@ END
 paste a1 a1a2.out > INF1.merge.gene
 rm a1 a2
 }
+
+# snpid --> rsid
+for f in INF1.proxy INF1.proxy.trans
+do 
+   awk -vFS="," '{if (NR==1) $1="SNP location"; else $1="chr" $1 ":" $2 "_" $4 "_" $5 " " $1 ":" $2;$2="";$3="";$4="";$5="";};1' ${f}.hg19_multianno.csv | \
+   awk -vOFS="\t" '{$1=$1;print}' > ${f}.avoutput
+done
+for f in INF1.proxy.vepoutput INF1.proxy.trans.vepoutput INF1.proxy.avoutput INF1.proxy.trans.avoutput
+do
+  cp ${f} ${f}-rsid
+  (
+  sed '1d' ${f} | cut -f1 | sort | join - INTERVAL.rsid | \
+  parallel --dry-run -C' ' "
+    export s={1};
+    export r={2};
+    sed -i 's/'\"\${s}\"'/'\"\${r}\"'/g' ${f}-rsid
+  "
+  ) | bash
+done
 
 # ProGeM
 # Bottom-up
