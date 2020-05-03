@@ -11,7 +11,7 @@ such as `qctool/bgenix/plink`.
 A note on regions is ready. It is attractive to use the last genomic region from iterative merging for analysis and perhaps a flanking version. This is
 more appropriate than a hard and fast 10MB or approximately independent LD blocks. For the latter, we found that the boundaries from the distributed
 1000Genomes project were often inappropriate and one may not attempt to compute them for specific reference panel. Nevertheless, the iterative procedure
-actually just does empirically. Again the HLA region is compressed.
+actually just does empirically. Again the HLA region is condensed.
 
 The last point regards software `finemap`, which uses summary statistics associated with the reference panel rather than that from meta-analysis.
 
@@ -23,8 +23,9 @@ NLRP2.sh | the exclusion list
 ma.sh | INF1 sumstats
 INTERVAL-ma.sh | INTERVAL sumstats
 prune.sh | pruning
-slct.sh  | GCTA --cojo-slct
-finemap.sh | finemapping
+slct.sh  | GCTA --cojo-slct analysis
+finemap.sh | `finemap` analysis
+jam.sh | `JAM` analysis
 st.sh | batch command file
 
 ### Steps
@@ -36,5 +37,8 @@ st.sh executes the following elements,
 2. ma.sh
 3. slct.sh
 4. finemap.sh
+5. jam.sh
 
-*Date last changed:* **2/5/2020**
+Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
+
+*Date last changed:* **3/5/2020**

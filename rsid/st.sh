@@ -6,3 +6,4 @@ ${dir}/prune.sh
 ${dir}/ma.sh
 ${dir}/slct.sh
 ${dir}/finemap.sh
+${dir}/jam.sh
