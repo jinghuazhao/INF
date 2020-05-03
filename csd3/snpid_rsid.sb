@@ -47,6 +47,7 @@ function prune()
   join -j1 - $TMPDIR/${pr}.prune.in | \
   awk '{print $1}' > ${dir}/${pr}.prune
   join -a2 -e "NA" <(sort -k1,1 ${snpid_rsid}) ${pr}.prune -o2.1,1.2 > ${pr}.prune.rsid
+  cut -f2 ${pr}.rsid > ${pr}
   R --no-save -q <<\ \ END
       f <- Sys.getenv("pr")
       snpid_rsid <- read.table(paste0(f,".prune.rsid"), as.is=TRUE, col.names=c("rsid","name"), fill=TRUE)
@@ -83,4 +84,3 @@ cd -
 #  join -a2 -e "NA" ${snpid_rsid} ${pr} -o2.1,1.2 > ${pr}.rsid
 #  mkdir snpid_rsid
 #  sed '1d' INF1.merge | cut -f5,6 | tr '\t' ' ' | parallel -C' ' 'cp {1}-{2}.prune* {1}-{2}.log snpid_rsid'
-

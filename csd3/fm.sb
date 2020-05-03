@@ -43,7 +43,8 @@ function init()
       if ($6 < 0.5) maf = $6; else maf = 1-$6
       if (maf > 0 && maf <= 0.5 && $10 != "NA" && $11 != "NA") print $3, $1, $2, toupper($5), toupper($4), maf, $10, $11
     }
-    } '
+    } ' | \
+    join ${pr} -
   ) > ${pr}.z0
   awk 'NR > 1{print $1} ' ${pr}.z0 > ${pr}.incl
 # bgen
@@ -107,7 +108,7 @@ function jam()
   export data_type=bgen
   if [ $data_type == "bgen" ]; then cut -d' ' -f1,2 ${sample} | awk 'NR>2' > ${study}.id; fi
   if [ $data_type == "binary_ped" ]; then qctool -g ${pr}.bgen -filetype bgen -s ${sample} -ofiletype binary_ped -og ${pr}; fi
-  R -q --no-save < ${INF}/csd3/JAM.R > /dev/null
+  R -q --no-save < ${INF}/csd3/jam.R > /dev/null
 }
 
 cd work
