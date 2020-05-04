@@ -8,7 +8,7 @@ do
 done
 
 (
-  cat ${INF}/sentinels/*-rsidjma.cojo | \
+  cat ${INF}/sentinels/*-rsid.jma.cojo | \
   head -1 | \
   awk -v OFS="\t" '{print "prot", "SNPID", $0}'
   awk 'NR>1{print $5,$6}' work/INF1.merge-rsid | \
@@ -16,7 +16,7 @@ done
     if [ -f ${INF}/sentinels/{1}-{2}-rsid.jma.cojo ]; then
        awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot, snpid, \$0}" ${INF}/sentinels/{1}-{2}-rsid.jma.cojo
     fi'
-) > INF1-rsid.jma
+) > INF1.jma-rsid
 sed 's/Chr/CHR/g;s/bp/BP/g' INF1-rsid.jma > jma
 awk 'NR==1 || $10 <= 5e-10' jma > jma.1
 awk 'NR==1 || $10 > 5e-10 && $15 <= 5e-10' jma > jma.2
@@ -106,9 +106,6 @@ mv INF1.jma-rsid.2.m2d-000001.png INF1.jma-rsid.2.m2d.png
     fi'
 ) > ${INF}/sentinels/slct-rsid.list
 
-# when slct-INTERVAL.list and slct-ukb.list available
-(
-  echo locus INTERVAL ukb
-  join -a1 <(sort -k1,1 slct-INTERVAL.list) <(sort -k1,1 slct-ukb.list) 
-) | \
-sed 's/ /\t/g' > slct.tsv
+# dropped from --cojo-slct
+join -v2 <(sed '1d' sentinels/INF1.jma-rsid | cut -f1,2 | tr '\t' '-' | sort) \
+         <(sed '1d' work/INF1.merge-rsid | cut -f5,6 | tr '\t' '-' | sort)
