@@ -17,7 +17,7 @@ done
        awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot, snpid, \$0}" ${INF}/sentinels/{1}-{2}-rsid.jma.cojo
     fi'
 ) > INF1.jma-rsid
-sed 's/Chr/CHR/g;s/bp/BP/g' INF1-rsid.jma > jma
+sed 's/Chr/CHR/g;s/bp/BP/g' INF1.jma-rsid > jma
 awk 'NR==1 || $10 <= 5e-10' jma > jma.1
 awk 'NR==1 || $10 > 5e-10 && $15 <= 5e-10' jma > jma.2
 R --no-save -q <<END
