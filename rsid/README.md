@@ -17,7 +17,7 @@ The last point regards software `finemap`, which uses summary statistics associa
 
 ### A summary
 
-File | Function
+File specification | Function
 -----|------------------------------
 NLRP2.sh | the exclusion list
 ma.sh | INF1 sumstats
@@ -27,6 +27,7 @@ slct.sh  | GCTA --cojo-slct analysis
 finemap.sh | `finemap` analysis
 jam.sh | `JAM` analysis
 st.sh | batch command file
+work/ | working directory
 
 ### Steps
 
