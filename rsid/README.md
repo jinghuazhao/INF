@@ -1,4 +1,4 @@
-## Joint/Condtional analysis and finemapping
+## Joint/condtional analysis and finemapping
 
 The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the delimma that the reference data, possibly
 like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsid is undesirable so SNPID, i.e.,
@@ -26,6 +26,7 @@ prune.sh | pruning
 slct.sh  | GCTA --cojo-slct analysis
 finemap.sh | `finemap` analysis
 jam.sh | `JAM` analysis
+cojo.sh | coloc analysis
 st.sh | batch command file
 work/ | working directory
 
