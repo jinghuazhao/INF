@@ -1,4 +1,4 @@
-# 3-5-2020 JHZ
+# 6-5-2020 JHZ
 
 zld <- function(z)
 {
@@ -39,18 +39,18 @@ wb <- createWorkbook(xlsx)
 # snp
   d <- within(snp,{log10p_incl <- gap::log10p(mean_incl/sd_incl)})
   name_snp <- d[,setdiff(names(d),c("chromosome","position","allele1","allele2","maf","beta","se","rank"))]
-  addWorksheet(wb, "snp")
+  addWorksheet(wb, "snp", zoom=150)
   writeDataTable(wb, "snp", name_snp)
 # pip.plot
   pip.log10bf.plot()
-  addWorksheet(wb, "pip.plot")
+  addWorksheet(wb, "pip.plot", zoom=150)
   insertImage(wb, "pip.plot", paste0(pr,".png"),height=12,width=8)
 # config
-  addWorksheet(wb, "config")
+  addWorksheet(wb, "config", zoom=150)
   writeDataTable(wb, "config", config)
 # cred
   if (exists("cred")) {
-    addWorksheet(wb, "cred")
+    addWorksheet(wb, "cred", zoom=150)
     writeDataTable(wb, "cred", cred)
   }
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
@@ -65,10 +65,10 @@ if (nrow(topz) > 0)
   xlsx <- paste0(pr, "-zld.xlsx")
   unlink(xlsx, recursive = FALSE, force = TRUE)
   wb <- createWorkbook(xlsx)
-  addWorksheet(wb, "topz")
+  addWorksheet(wb, "topz", zoom=150)
   writeDataTable(wb, "topz", zldz)
 # topsnp
-  addWorksheet(wb, "topsnp")
+  addWorksheet(wb, "topsnp", zoom=150)
   writeDataTable(wb, "topsnp", zldsnp)
   saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 }
