@@ -1,9 +1,9 @@
-# 2-5-2020 JHZ
+# 6-5-2020 JHZ
 
 options(scipen=20, width=2000)
 pr <- Sys.getenv("pr")
-jma <- read.delim(paste0(pr,"-rsid.jma.cojo"),as.is=TRUE)
-ldr <- read.delim(paste0(pr,"-rsid.ldr.cojo"), as.is=TRUE)
+jma <- read.delim(paste0(pr,".jma.cojo"),as.is=TRUE)
+ldr <- read.delim(paste0(pr,".ldr.cojo"), as.is=TRUE)
 tbl <- jma[setdiff(names(jma),c("b","se","p"))]
 cred <- gap::cs(tbl, b="bJ", se="bJ_se", cutoff=0.95)
 require(openxlsx)
