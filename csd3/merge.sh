@@ -185,3 +185,7 @@ END
 paste -d',' <(cut -d',' -f1-3 blue.dat) <(cut -d',' -f1-3 red.dat) | \
 awk -v FS="," -v OFS="," '{if(NF==4) print $1,$2,$3,",,"; else print}' |
 awk '{if(NR==1) print "x1,y1,z1,x2,y2,z2"; else print}' > INF1.merge.d3
+
+awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3==0' | wc -l
+awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2==0 && $3>0' | wc -l
+awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3>0' | wc -l
