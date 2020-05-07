@@ -15,13 +15,14 @@ if (data_type == "bgen")
   b <- bgen.load(paste0(f,"-jam.bgen"), rsids=scan(paste0(f,"-jam.incl"), what=""))
   dimnames(b$data)[[2]] <- samples[,1]
   vid <- as.character(with(with(b, variants), rsid))
-  X.ref <- t(apply(b$data,1:2,"%*%",2:0))
+  X.ref <- t(apply(b$data,1:2,"%*%",0:2))
 } else if (data_type == "binary_ped" ) {
   require(plink2R)
   p <- read_plink(paste0(f,"-jam"))
   vid <- with(with(p, bim), V2)
   X.ref <- with(p, as.matrix(2-bed))
 }
+X.ref <- X.ref[,with(sumstats,rsid)]
 for (i in 1:ncol(X.ref)) X.ref[is.na(X.ref[,i]), i] <- median(X.ref[,i], na.rm = TRUE)
 sumstats <- subset(z, rsid %in% vid)
 # JAM
