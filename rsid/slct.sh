@@ -8,13 +8,13 @@ do
 done
 
 (
-  cat ${INF}/sentinels/*-rsid.jma.cojo | \
+  cat ${INF}/sentinels/*.jma.cojo | \
   head -1 | \
   awk -v OFS="\t" '{print "prot", "SNPID", $0}'
   awk 'NR>1{print $5,$6}' work/INF1.merge-rsid | \
   parallel -j1 -C' ' '
-    if [ -f ${INF}/sentinels/{1}-{2}-rsid.jma.cojo ]; then
-       awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot, snpid, \$0}" ${INF}/sentinels/{1}-{2}-rsid.jma.cojo
+    if [ -f ${INF}/sentinels/{1}-{2}.jma.cojo ]; then
+       awk -vprot={1} -v snpid={2} -vOFS="\t" "NR > 1 {print prot, snpid, \$0}" ${INF}/sentinels/{1}-{2}.jma.cojo
     fi'
 ) > INF1.jma-rsid
 sed 's/Chr/CHR/g;s/bp/BP/g' INF1.jma-rsid > jma
