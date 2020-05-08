@@ -24,8 +24,6 @@ if (data_type == "bgen")
 }
 for (i in 1:ncol(X.ref)) X.ref[is.na(X.ref[,i]), i] <- median(X.ref[,i], na.rm = TRUE)
 sumstats <- subset(z, rsid %in% vid)
-print(sumstats)
-print(X.ref)
 # JAM
 require(R2BGLiMS)
 snp <- make.names(with(sumstats,rsid))
