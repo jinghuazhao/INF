@@ -11,10 +11,12 @@ require(rbgen)
 samples <- matrix(scan(paste0(s,".id"), what=c("","")), ncol=2, byrow=TRUE)
 b <- bgen.load(paste0(f,"-jam.bgen"), rsids=scan(paste0(f,"-jam.incl"), what=""))
 dimnames(b$data)[[2]] <- samples[,1]
-vid <- as.character(with(with(b, variants), rsid))
-X.ref <- t(apply(b$data,1:2,"%*%",0:2))
+variants <- with(b,variants)
+map <- data.frame(variants,order=1:nrow(variants))
+m <- merge(z,map,by="rsid")
+X.ref <- t(apply(b$data,1:2,"%*%",c(0.0,1.0,2.0)))
 for (i in 1:ncol(X.ref)) X.ref[is.na(X.ref[,i]), i] <- median(X.ref[,i], na.rm = TRUE)
-sumstats <- subset(z, rsid %in% vid)
+sumstats <- m[with(m,order),]
 # JAM
 require(R2BGLiMS)
 snp <- make.names(with(sumstats,rsid))
