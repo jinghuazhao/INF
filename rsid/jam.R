@@ -14,7 +14,7 @@ dimnames(b$data)[[2]] <- samples[,1]
 variants <- with(b,variants)
 map <- data.frame(variants,order=1:nrow(variants))
 m <- merge(z,map,by="rsid")
-X.ref <- t(apply(b$data,1:2,"%*%",c(0.0,1.0,2.0)))
+X.ref <- t(apply(b$data,1:2,"%*%",0:2))
 for (i in 1:ncol(X.ref)) X.ref[is.na(X.ref[,i]), i] <- median(X.ref[,i], na.rm = TRUE)
 sumstats <- m[with(m,order),]
 # JAM
@@ -23,13 +23,16 @@ snp <- make.names(with(sumstats,rsid))
 priors <- list("a"=1, "b"=nrow(sumstats), "Variables"=snp)
 X <- with(sumstats,beta)
 names(X) <- colnames(X.ref) <- snp
-jam <- JAM(marginal.betas=X, n=n, X.ref=X.ref, n.mil=5, tau=n, full.mcmc.sampling = FALSE, model.space.priors=priors)
+jam <- JAM(marginal.betas=X, n=n, X.ref=X.ref, n.mil=5, tau=n, model.space.priors=priors, trait.variance=1)
 ref <- within(b, {variants <- subset(variants,rsid%in%snp);data <- subset(data,rownames(data)%in%snp)})
 save(X,X.ref,ref,n,priors,jam,file=paste0(f,"-jam.rda"))
 pst <- slot(jam, "posterior.summary.table")
 tm <- TopModels(jam)
 cs <- CredibleSet(jam, credible.percentile.threshold=0.75)
 msbf <- ModelSizeBayesFactors(jam)[[1]]
+png(paste0(f,"-jam.png"),height=12,width=8,units="in",res=300)
+ManhattanPlot(jam)
+dev.off()
 # xlsx
 require(openxlsx)
 xlsx <- paste0(f,"-jam.xlsx")
@@ -42,4 +45,6 @@ addWorksheet(wb, "ModelSizeBayesFactors", zoom=150)
 writeDataTable(wb, "ModelSizeBayesFactors", as.data.frame(msbf), rowNames=TRUE)
 addWorksheet(wb, "posterior.summary.table", zoom=150)
 writeDataTable(wb, "posterior.summary.table", as.data.frame(pst), rowNames=TRUE)
+addWorksheet(wb, "Manhattan plot", zoom=150)
+insertImage(wb, "Manhattan plot", paste0(f,"-jam.png"),height=12,width=8)
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
