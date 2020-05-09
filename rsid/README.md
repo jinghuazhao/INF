@@ -9,7 +9,7 @@ this stage and forward. The implementation here reflects this. The file INTERVAL
 such as `qctool/bgenix/plink`.
 
 A note on regions is ready. It is attractive to use the last genomic region from iterative merging for analysis and perhaps a flanking version. This is
-more appropriate than a hard and fast 10MB or approximately independent LD blocks. For the latter, we found that the boundaries from the distributed
+more appropriate than genomewide hard and fast 10MB windows or approximately independent LD blocks. For the latter, we found that the boundaries from the distributed
 1000Genomes project were often inappropriate and one may not attempt to compute them for specific reference panel. Nevertheless, the iterative procedure
 actually just does empirically. Again the HLA region is condensed.
 
