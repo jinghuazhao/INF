@@ -1,9 +1,11 @@
-# 6-5-2020 JHZ
+# 9-5-2020 JHZ
 
 options(scipen=20, width=2000)
+inf <- Sys.getenv("INF")
 pr <- Sys.getenv("pr")
-jma <- read.delim(paste0(pr,".jma.cojo"),as.is=TRUE)
-ldr <- read.delim(paste0(pr,".ldr.cojo"), as.is=TRUE)
+jma <- read.delim(paste0(inf,"/sentinels/",pr,".jma.cojo"),as.is=TRUE)
+ldr <- read.delim(paste0(inf,"/sentinels/",pr,".ldr.cojo"),as.is=TRUE)
+cma <- read.delim(paste0(inf,"/sentinels/",pr,".cma.cojo"),as.is=TRUE)
 tbl <- jma[setdiff(names(jma),c("b","se","p"))]
 cred <- gap::cs(tbl, b="bJ", se="bJ_se", cutoff=0.95)
 require(openxlsx)
@@ -14,6 +16,8 @@ addWorksheet(wb, "jma")
 writeDataTable(wb, "jma", jma)
 addWorksheet(wb, "ldr")
 writeDataTable(wb, "ldr", ldr)
+addWorksheet(wb, "cma")
+writeDataTable(wb, "cma", cma)
 addWorksheet(wb, "cs")
 writeDataTable(wb, "cs",  cred)
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
