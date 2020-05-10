@@ -1,4 +1,4 @@
-# 16-3-2020 JHZ
+# 10-5-2020 JHZ
 
 # irnt for CRP
 export suffix=irnt
@@ -79,4 +79,13 @@ do
          --extract work/INF1.merge.snp --model add --score avg \
          --out work/crp-${pheno}
 done
-stata -b -q csd3/prsice.do
+stata -b -q <<END
+foreach v in "chd" "cv" {
+  insheet using work/crp-`v'.best, case clear delim(" ")
+  sort FID
+  merge 1:1 FID using work/ukb
+  logit `v' sex ages PRS
+  stset ages, failure(`v')
+  stcox sex PRS if `v'!=.
+}
+END

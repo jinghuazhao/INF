@@ -1,4 +1,4 @@
-# 16-3-2020 JHZ
+# 10-5-2020 JHZ
 
 export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
 export p="0.001 0.05 0.1 0.2 0.3 0.4 0.5"
@@ -13,28 +13,31 @@ awk 'BEGIN{split(ENVIRON["p"],a);for(i=1;i<=length(a);i++) print a[i],0,a[i]}' >
 
 ## UKB
 
-R --no-save -q <<END
-suffix <- Sys.getenv("suffix")
-require(qqman)
-gz <- paste0("ukb/30710_",suffix,".gwas.imputed_v3.both_sexes.tsv.bgz")
-tbl <- read.delim(gz,as.is=TRUE)
-tbl <- within(tbl,{
-   SNP <- variant
-   SNP_split <- sapply(tbl[["variant"]],strsplit,":",simplify=TRUE)
-   CHR <- as.integer(unlist(lapply(SNP_split,"[",1)))
-   BP <- as.integer(unlist(lapply(SNP_split,"[",2)))
-   P <- pval
-})
-tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
-qq <- paste0("crp-",suffix,"_qq.png");
-png(qq,width=12,height=10,units="in",pointsize=4,res=300)
-qq(with(tbl,P))
-dev.off()
-manhattan <- paste0("crp-",suffix,"_manhattan.png");
-png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
-manhattan(tbl,main="CRP",genomewideline=-log10(5e-8),suggestiveline=FALSE,ylim=c(0,50));
-dev.off();
-END
+function qqman()
+{
+  R --no-save -q <<\ \ END
+  suffix <- Sys.getenv("suffix")
+  require(qqman)
+  gz <- paste0("ukb/30710_",suffix,".gwas.imputed_v3.both_sexes.tsv.bgz")
+  tbl <- read.delim(gz,as.is=TRUE)
+  tbl <- within(tbl,{
+     SNP <- variant
+     SNP_split <- sapply(tbl[["variant"]],strsplit,":",simplify=TRUE)
+     CHR <- as.integer(unlist(lapply(SNP_split,"[",1)))
+     BP <- as.integer(unlist(lapply(SNP_split,"[",2)))
+     P <- pval
+  })
+  tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
+  qq <- paste0("crp-",suffix,"_qq.png");
+  png(qq,width=12,height=10,units="in",pointsize=4,res=300)
+  qq(with(tbl,P))
+  dev.off()
+  manhattan <- paste0("crp-",suffix,"_manhattan.png");
+  png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
+  manhattan(tbl,main="CRP",genomewideline=-log10(5e-8),suggestiveline=FALSE,ylim=c(0,50));
+  dev.off();
+  END
+}
 
 function UKB()
 {
