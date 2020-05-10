@@ -1,9 +1,10 @@
-# 8-5-2019 JHZ
+# 10-5-2019 JHZ
 
 options(scipen=20, width=2000)
 f <- Sys.getenv("pr")
 s <- Sys.getenv('study')
 n <- as.numeric(Sys.getenv("N"))
+k <- as.integer(Sys.getenv("k"))
 # summary statistics
 z <- read.table(paste0(f,".z"), as.is=TRUE, header=TRUE)
 # reference data
@@ -20,7 +21,7 @@ sumstats <- m[with(m,order),]
 # JAM
 require(R2BGLiMS)
 snp <- make.names(with(sumstats,rsid))
-priors <- list("a"=1, "b"=nrow(sumstats), "Variables"=snp)
+priors <- list("a"=k, "b"=nrow(sumstats), "Variables"=snp)
 X <- with(sumstats,beta)
 names(X) <- colnames(X.ref) <- snp
 jam <- JAM(marginal.betas=X, n=n, X.ref=X.ref, n.mil=5, tau=n, model.space.priors=priors, trait.variance=1)
