@@ -17,7 +17,7 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export rt=${INF}/INTERVAL/INTERVAL
 export s=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
-export p=$(awk -v job=$job 'NR==job' ${INF}/csd3/h2.list)
+export p=$(awk -v job=$job 'NR==job' ${INF}/csd3/prot.list)
 
 gcta64 --reml \
        --grm ${rt} \
