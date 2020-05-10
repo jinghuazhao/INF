@@ -15,3 +15,8 @@ parallel --env INF --env study --env sample --env N --env TMPDIR --env dir -C' '
   echo {1}-{2} {3}
   ${INF}/rsid/jam.ini {3}
 '
+rm ${INF}/work/${study}.id
+cd work
+echo Missing results
+ls *jam.xlsx | awk '{gsub(/-/," ");print $1 "-" $2}' | sort | join -v2 - <(awk 'NR>1{print $5 "-" $6, NR-1}' INF1.merge-rsid | sort) | tr '-' ' '
+cd -

@@ -24,7 +24,7 @@ snp <- make.names(with(sumstats,rsid))
 priors <- list("a"=k, "b"=nrow(sumstats), "Variables"=snp)
 X <- with(sumstats,beta)
 names(X) <- colnames(X.ref) <- snp
-jam <- JAM(marginal.betas=X, n=n, X.ref=X.ref, n.mil=5, tau=n, model.space.priors=priors,trait.variance=1)
+jam <- JAM(marginal.betas=X, n=n, X.ref=X.ref, n.mil=5, tau=n, model.space.priors=priors)
 ref <- within(b, {variants <- subset(variants,rsid%in%snp);data <- subset(data,rownames(data)%in%snp)})
 save(X,X.ref,ref,n,priors,jam,file=paste0(f,"-jam.rda"))
 pst <- slot(jam, "posterior.summary.table")
