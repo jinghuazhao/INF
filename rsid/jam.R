@@ -13,18 +13,18 @@ samples <- matrix(scan(paste0(s,".id"), what=c("","")), ncol=2, byrow=TRUE)
 b <- bgen.load(paste0(f,"-jam.bgen"), rsids=scan(paste0(f,"-jam.incl"), what=""))
 dimnames(b$data)[[2]] <- samples[,1]
 variants <- with(b,variants)
-map <- data.frame(variants,order=1:nrow(variants))
+map <- data.frame(variants,ord=1:nrow(variants))
 m <- merge(z,map,by="rsid")
 X.ref <- t(apply(b$data,1:2,"%*%",0:2))
 for (i in 1:ncol(X.ref)) X.ref[is.na(X.ref[,i]), i] <- median(X.ref[,i], na.rm = TRUE)
-sumstats <- m[with(m,order),]
+sumstats <- m[with(m,ord),]
 # JAM
 require(R2BGLiMS)
 snp <- make.names(with(sumstats,rsid))
 priors <- list("a"=k, "b"=nrow(sumstats), "Variables"=snp)
 X <- with(sumstats,beta)
 names(X) <- colnames(X.ref) <- snp
-jam <- JAM(marginal.betas=X, n=n, X.ref=X.ref, n.mil=5, tau=n, model.space.priors=priors)
+jam <- JAM(marginal.betas=X, n=n, X.ref=X.ref, n.mil=5, tau=n, model.space.priors=priors,trait.variance=1)
 ref <- within(b, {variants <- subset(variants,rsid%in%snp);data <- subset(data,rownames(data)%in%snp)})
 save(X,X.ref,ref,n,priors,jam,file=paste0(f,"-jam.rda"))
 pst <- slot(jam, "posterior.summary.table")
