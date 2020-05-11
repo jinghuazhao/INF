@@ -10,7 +10,7 @@ export pos=$(sed '1d' ${list} | awk -v job=${job} 'NR==job{print $9}')
 export flanking=1e6
 export start=$(sed '1d' ${list} | awk -v job=${job} -v d=${flanking} 'NR==job{start=$2-d;if(start<0) start=0; print start}')
 export end=$(sed '1d' ${list} | awk -v job=${job} -v d=${flanking} 'NR==job{print $3+d}')
-export sumstats=$SCALLOP/jp549/olink-merged-output/$(ls $SCALLOP/jp549/olink-merged-output | grep ${p}___)
+export sumstats=$SCALLOP/jp549/olink-merged-output/$(ls $SCALLOP/jp549/olink-merged-output | grep -v cvd | grep ${p}___)
 export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export study=INTERVAL
 export N=4994
