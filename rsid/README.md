@@ -44,3 +44,9 @@ st.sh executes the following elements,
 Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
 
 *Date last changed:* **9/5/2020**
+
+### Utilities
+
+FIle | Description
+-----|--------------------------
+wgcna.sh | experiment on modules
