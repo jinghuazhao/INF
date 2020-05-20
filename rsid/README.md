@@ -49,4 +49,5 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 
 FIle | Description
 -----|--------------------------
+vep.sh | VEP annotation
 wgcna.sh | experiment on modules
