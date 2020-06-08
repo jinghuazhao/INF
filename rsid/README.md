@@ -49,6 +49,7 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 
 FIle | Description
 -----|--------------------------
+magma.sh | MAGMA for IL.12B
 utils.sh | utilties
 vep.sh | VEP annotation
 wgcna.sh | experiment on modules
