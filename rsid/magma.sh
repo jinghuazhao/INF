@@ -25,4 +25,34 @@ magma --bfile ${MAGMA}/g1000_eur --pval ${trait}.pval ncol=NOBS --gene-annot ${t
 # Pathway analysis
 # http://software.broadinstitute.org/gsea/downloads.jsp
 magma --gene-results ${trait}.genes.raw --set-annot ${MSigDB}/msigdb.v6.2.entrez.gmt self-contained --model fwer --out ${trait}
+
+R --no-save -q <<END
+  options(width=250)
+  sets <- function(db)
+  {
+    sets.out <- read.table(paste0(db,".sets.out"), as.is=TRUE, skip=3, header=TRUE)
+    ordered <- with(sets.out, order(P))
+    require(gap)
+    with(sets.out,{
+      summary(P)
+      pdf(paste0(db,".sets.pdf"))
+      qqunif(P)
+      dev.off()
+    })
+    keep_var <- !(names(sets.out)%in%"SET")
+    sets.out[ordered, keep_var]
+  }
+
+  db <- Sys.getenv("trait")
+  magma <- sets(db)
+  ord <- with(magma,order(P))
+  set <- magma[ord,]
+  save(set,file=paste0(db,".rda"))
+
+  n <- nrow(set)
+  set <- within(set,{fdr <- p.adjust(P,"fdr",n)})
+  write.table(set[c("FULL_NAME","P","fdr")],file=paste0(db,".dat"),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+
+END
+
 cd -
