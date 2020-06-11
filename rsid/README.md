@@ -26,7 +26,8 @@ prune.sh | pruning
 slct.sh  | GCTA --cojo-slct analysis
 finemap.sh | `finemap` analysis
 jam.sh | `JAM` analysis
-cojo.sh | coloc analysis
+coloc.sh | coloc analysis
+hyprcoloc.sh | hyprcoloc analysis
 st.sh | batch command file
 work/ | working directory
 
