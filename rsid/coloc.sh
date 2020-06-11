@@ -38,7 +38,7 @@ do
   join -12 <(awk 'NR>1' ${trait}.enloc.${o}.out | awk '{split($1,a,":");print a[1]}' | zgrep -w -f - ensGtp.txt.gz | cut -f1,2 | sort -k2,2) \
            <(gunzip -c ensemblToGeneName.txt.gz | sort -k1,1) | \
   cut -d' ' -f2,3 | \
-  parallel --env o -C' ' 'sed -i "s/{1}/{1}-{2}/g" ${trait}-${o}.out'
+  parallel --env o -C' ' 'sed -i "s/{1}/{1}-{2}/g;s/:[1-9]//g" ${trait}-${o}.out'
 done
 
 gunzip -c ${INF}/METAL/${trait}-1.tbl.gz | \
