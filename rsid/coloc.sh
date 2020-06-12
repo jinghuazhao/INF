@@ -42,10 +42,14 @@ do
   parallel --env o -C' ' 'sed -i "s/{1}/{1}-{2}/g;s/:[1-9]//g" ${trait}-${o}.out'
 done
 
-gunzip -c ${INF}/METAL/${trait}-1.tbl.gz | \
 (
   awk -v OFS='\t' 'BEGIN{print "SNP","A1","A2","N","CHISQ","Z"}'
-  awk -v OFS='\t' 'NR>1{print $3,toupper($4),toupper($5),$18,($10/$11)^2,$10/$11}'
+  gunzip -c ${INF}/METAL/${trait}-1.tbl.gz | \
+  awk -v OFS='\t' 'NR>1{print $3,toupper($4),toupper($5),$18,($10/$11)^2,$10/$11,$1,$2}' | \
+  sort -k1,1 | \
+  join <(cat INTERVAL.rsid | tr ' ' '\t') - -t$'\t' | \
+  sort -k8,8n -k9,9n | \
+  cut -d' ' -f2-7 | \
 ) > ${trait}.sumstats
 ln -sf ${FUSION}/WEIGHTS WEIGHTS
 (
@@ -73,5 +77,6 @@ ln -sf ${FUSION}/WEIGHTS WEIGHTS
   grep -v -e WARNING -e skipped -e complete -e consider -e MHC -e TWAS | \
   sed "s|WEIGHTS/${P01}/${P01}.||g;s/.wgt.RDat//g" | \
   sort -k4,4n -k5,5n
-) > ${trait}-${tissue}.dat
+) | \
+awk '$NF!="NA"' > ${trait}-${P01}-coloc.dat
 cd -
