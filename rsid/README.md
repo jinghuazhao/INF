@@ -27,6 +27,7 @@ slct.sh  | GCTA --cojo-slct analysis
 finemap.sh | `finemap` analysis
 jam.sh | `JAM` analysis
 coloc.sh | coloc analysis
+fastenloc.sh | fastenloc analysis
 hyprcoloc.sh | hyprcoloc analysis
 st.sh | batch command file
 work/ | working directory
