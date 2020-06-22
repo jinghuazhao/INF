@@ -1,6 +1,18 @@
 #!/usr/bin/bash
 
-export trait=$1
+#SBATCH --job-name=_fastenloc
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1-92
+#SBATCH --mem=28800
+#SBATCH --time=5-00:00:00
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_fastenloc_%A_%a.err
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_fastenloc_%A_%a.out
+#SBATCH --export ALL
+
+export job=${SLURM_ARRAY_TASK_ID}
+export trait=$(awk -v job=${job} 'NR==job {print $1}' ${INF}/work/inf1.tmp)
 export eQTL=${HOME}/genetics/VCF-liftover
 
 cd work
@@ -22,14 +34,17 @@ gzip -f > ${trait}.torus.zval.gz
 torus -d ${trait}.torus.zval.gz --load_zval -dump_pip ${trait}.gwas.pip
 gzip -f ${trait}.gwas.pip
 
-for tissue in $(cat ${eQTL}/Tissue)
+for tissue in $(cat ${eQTL}/Tissues)
 do
   fastenloc -eqtl ${eQTL}/gtex_v8.eqtl_annot_rsid.hg19.vcf.gz -gwas ${trait}.gwas.pip.gz -thread 4 -tissue ${tissue} -prefix ${trait}-${tissue}
   for o in sig snp
   do
     export o=${o}
     cp ${trait}-${tissue}.enloc.${o}.out ${trait}-${tissue}-${o}.out
-    join -12 <(awk 'NR>1' ${trait}.enloc.${o}.out | awk '{split($1,a,":");print a[1]}' | zgrep -w -f - ensGtp.txt.gz | cut -f1,2 | sort -k2,2) \
+    join -12 <(awk 'NR>1' ${trait}.enloc.${o}.out | \
+               awk '{split($1,a,":");print a[1]}' | \
+               zgrep -w -f - ensGtp.txt.gz | cut -f1,2 | \
+               sort -k2,2) \
              <(gunzip -c ensemblToGeneName.txt.gz | sort -k1,1) | \
     cut -d' ' -f2,3 | \
     parallel --env o -C' ' 'sed -i "s/{1}/{1}-{2}/g;s/:[1-9]//g" ${trait}-${tissue}-${o}.out'
