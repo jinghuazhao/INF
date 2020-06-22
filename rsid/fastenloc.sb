@@ -4,7 +4,7 @@
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
-#SBATCH --array=1-92
+#SBATCH --array=1-92%5
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_fastenloc_%A_%a.err
@@ -24,7 +24,7 @@ cd work
 bedtools intersect -a ${HOME}/FM-pipeline/1KG/EUR.bed -b - -wa -wb | \
 awk -v OFS='\t' 'NR>1{print $8,$4,$9}' | \
 sort -k1,1 | \
-join <(cat INTERVAL.rsid | tr ' ' '\t') ${trait}.torus.zval -t$'\t'| \
+join <(cat INTERVAL.rsid | tr ' ' '\t') - -t$'\t'| \
 cut -f2,3,4 | \
 awk '{gsub(/region/,"",$2)};1' | \
 sort -k2,2n | \
@@ -36,7 +36,8 @@ gzip -f ${trait}.gwas.pip
 
 for tissue in $(cat ${eQTL}/Tissues)
 do
-  fastenloc -eqtl ${eQTL}/gtex_v8.eqtl_annot_rsid.hg19.vcf.gz -gwas ${trait}.gwas.pip.gz -thread 4 -tissue ${tissue} -prefix ${trait}-${tissue}
+  fastenloc -eqtl ${eQTL}/gtex_v8.eqtl_annot_rsid.hg19.vcf.gz \
+            -gwas ${trait}.gwas.pip.gz -tissue ${tissue} -prefix ${trait}-${tissue}
   for o in sig snp
   do
     export o=${o}
