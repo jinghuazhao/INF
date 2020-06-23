@@ -28,6 +28,7 @@ cd work
 ln -sf ${FUSION}/WEIGHTS WEIGHTS
 for tissue in $(cat ${FUSION}/Tissues)
 do
+  export tissue=${tissue}
   (
     awk -v OFS='\t' 'BEGIN{print "PANEL","FILE","ID","CHR","P0","P1","HSQ","BEST.GWAS.ID","BEST.GWAS.Z",
                     "EQTL.ID","EQTL.R2","EQTL.Z","EQTL.GWAS.Z","NSNP","NWGT",
@@ -35,7 +36,7 @@ do
                     "COLOC.PP0","COLOC.PP1","COLOC.PP2","COLOC.PP3","COLOC.PP4"}'
     (
       seq 22 | \
-      parallel --env FUSION --env trait --env tissue -C' ' '
+      parallel -j1 --env FUSION --env trait --env tissue -C' ' '
       Rscript ${FUSION}/FUSION.assoc_test.R \
               --sumstats ${trait}.sumstats \
               --weights ${FUSION}/WEIGHTS/${tissue}.P01.pos \

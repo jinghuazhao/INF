@@ -36,6 +36,7 @@ gzip -f ${trait}.gwas.pip
 
 for tissue in $(cat ${eQTL}/Tissues)
 do
+  export tissue=${tissue}
   fastenloc -eqtl ${eQTL}/gtex_v8.eqtl_annot_rsid.hg19.vcf.gz \
             -gwas ${trait}.gwas.pip.gz -tissue ${tissue} -prefix ${trait}-${tissue}
   for o in sig snp
@@ -48,7 +49,7 @@ do
                sort -k2,2) \
              <(gunzip -c ensemblToGeneName.txt.gz | sort -k1,1) | \
     cut -d' ' -f2,3 | \
-    parallel --env o -C' ' 'sed -i "s/{1}/{1}-{2}/g;s/:[1-9]//g" ${trait}-${tissue}-${o}.out'
+    parallel -j1 --env tissue --env o -C' ' 'sed -i "s/{1}/{1}-{2}/g;s/:[1-9]//g" ${trait}-${tissue}-${o}.out'
   done
 done
 
