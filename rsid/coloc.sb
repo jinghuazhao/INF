@@ -23,7 +23,7 @@ cd work
   sort -k1,1 | \
   join <(cat INTERVAL.rsid | tr ' ' '\t') - -t$'\t' | \
   sort -k8,8n -k9,9n | \
-  cut -d' ' -f2-7
+  cut -f2-7
 ) > ${trait}.sumstats
 ln -sf ${FUSION}/WEIGHTS WEIGHTS
 for tissue in $(cat ${FUSION}/Tissues)
