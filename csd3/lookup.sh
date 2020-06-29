@@ -42,7 +42,7 @@ done
 
 function Sun()
 {
-  join <(awk 'NR>1{print $5,"chr" $8 ":" $9}' work/INF1.merge | sort -k1,1 -k2,2) work/inf1.tmp | \
+  join <(awk 'NR>1{print $5,"chr" $8 ":" $9}' work/INF1.merge | sort -k1,1 -k2,2) <(sort -k1,1 work/inf1.tmp) | \
   parallel -C' ' '
     echo {1} {2} {3}
     grep -w {3} pQTL.Sun-B_pQTL_EUR_2017 | grep {2}
