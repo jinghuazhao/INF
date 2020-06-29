@@ -23,6 +23,33 @@ R --no-save -q <<END
   write.table(m[s],file="work/INF1.METAL",quote=FALSE,row.names=FALSE,sep="\t")
 END
 
+# CNVplot
+R --no-save -q <<END
+  png("work/regions.png",width=10,height=8,units="in",pointsize=8,res=300)
+  xy <- function(x) if (x<23) x else if (x==23) "X" else if (x==24) "Y";
+  metal <- read.delim("work/INF1.METAL",as.is=TRUE)[c("Chromosome","Start","End", "prot", "cis.trans")]
+  names(metal) <- c("chr","start","end","prot","cis.trans")
+  d <- within(metal,{chr<-replace(chr,chr=="X",23); chr<-replace(chr,chr=="Y",24)})
+  t <- table(with(metal,chr))
+  n <- length(t)
+  pos <- vector("numeric")
+  for (x in 1:n) pos[x] <- with(subset(d,chr==paste(x)),max(end))
+  CM <- cumsum(pos)
+  par(xaxt = "n", yaxt = "n")
+  xycoords <- xy.coords(c(0,CM), seq(1,5,by=4/n))
+  with(xycoords,plot(x, y, type = "n", ann = FALSE, axes = FALSE))
+  par(xaxt = "s", yaxt = "s", xpd = TRUE)
+  for (x in 1:n) with(subset(d,chr==paste(x)), {
+      l <- ifelse(x==1,0,CM[x-1])
+      pos[x] <<- ifelse(x == 1, CM[x]/2, (CM[x-1] + CM[x])/2)
+      h <- 1+1:5/t[x]
+      segments(l+start,h,l+end,h,lwd="3",col=ifelse(cis.trans=="cis","red","blue"))
+  })
+  axis(1,labels=names(t),at=pos)
+  title(main="Flanking regions of sentinels (red=cis, blue=trans)",xlab="Chromosome",ylab="",line=2.5)
+  dev.off()
+END
+
 R --no-save -q <<END
   tbl <- read.delim("work/INF1.tbl",as.is=TRUE)
   attach(tbl)
