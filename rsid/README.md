@@ -51,6 +51,7 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 
 FIle | Description
 -----|--------------------------
+LTBR.sh | LocusZoom plot
 magma.sh | MAGMA for IL.12B
 utils.sh | utilties
 vep.sh | VEP annotation
