@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+p#!/usr/bin/bash
 
 function check()
 {
@@ -44,11 +44,10 @@ function Sun()
 {
   join <(awk 'NR>1{print $5,"chr" $8 ":" $9}' work/INF1.merge | sort -k1,1 -k2,2) <(sort -k1,1 work/inf1.tmp) | \
   parallel -C' ' '
-    echo {1}+{2}+{3}
-    grep {2} pQTL.Sun-B_pQTL_EUR_2017 | \
-    grep {3}
-#   grep -H -w {3} INTERVAL_box.tsv
-  ' > pQTL.Sun.log
+    echo {1} {2} {3}
+    grep {2} pQTL.Sun-B_pQTL_EUR_2017
+    grep -H -w {3} INTERVAL_box.tsv
+  '
 }
 
 Sun
@@ -59,7 +58,7 @@ function Olink()
   ls $OLINK > olink.list
   join -11 -22 \
        <(awk 'NR>1{print $5,$8 ":" $9}' work/INF1.merge | sort -k1,1) \
-       <(ls $OLINK/*gz | sed 's/___/ /g;s/_chr_merged.gz\*//g;s///g;s///g;s///g' | sort -k2,2) | \
+       <(ls $OLINK/*gz  | sed 's/___/ /g;s/_chr_merged.gz\*//g;s///g;s///g;s///g' | sort -k2,2) | \
   awk '{
      gsub(/chr/,"",$2);
      split($2,a,":");
@@ -74,12 +73,10 @@ function Olink()
   '
 }
 
-function do_Olink()
-{
-  (
-    gunzip -c /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
-    awk 'NR==1{print "UniProt","pos",$2,$22,$24,$25}'
-    Olink | \
-    awk '{if(NF==2) printf $1,$2," "; else print $2,$22,$24,$25}'
-  ) > olink.overlap
-}
+(
+  gunzip -c /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
+  awk 'NR==1{print "UniProt","pos",$2,$22,$24,$25}'
+  Olink | \
+  awk '{if(NF==2) printf $1,$2," "; else print $2,$22,$24,$25}'
+) > olink.overlap
+

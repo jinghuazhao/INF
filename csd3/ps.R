@@ -1,14 +1,17 @@
-# 13-4-2020 JHZ
+# 30-6-2020 JHZ
 
 require(phenoscanner)
-catalogue <- "pQTL"
-rsid <- scan("work/INF1.snp",what="")
+catalogue <- Sys.getenv("catalogue")
+pvalue <- Sys.getenv("pvalue")
+r2 <- Sys.getenv("r2")
+rsid <- Sys.getenv("rsid")
+rsid <- scan(rsid,what="")
 batches <- split(rsid, ceiling(seq_along(rsid)/100))
 s <- t <- list()
 for(i in 1:length(batches))
 {
   cat("Block ",i,"\n")
-  q <- phenoscanner(snpquery=batches[[i]], catalogue=catalogue, proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  q <- phenoscanner(snpquery=batches[[i]], catalogue=catalogue, proxies="EUR", pvalue=as.numeric(pvalue), r2=as.numeric(r2), build=37)
   s[[i]] <- with(q,snps)
   t[[i]] <- with(q,results)
 }

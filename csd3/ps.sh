@@ -6,6 +6,9 @@ sort -k1,1n -k2,2n | \
 uniq | \
 awk '{print "chr" $1 ":" $2}' > ${rt}.snp
 
+export rsid=${rt}.snp
+export pvalue=1.5e-11
+export r2=0.7
 for catalogue in eQTL pQTL mQTL methQTL GWAS
 do
   export catalogue=${catalogue}
