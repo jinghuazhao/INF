@@ -25,7 +25,7 @@ parallel --env rsid --env flank_kb -j1 -C' ' '
      awk -vFS="," -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
          "(\$5 == chr && \$6 >= start && \$6 <= end)" ${rnaseq} | \
      sort -k6,6n | \
-     awk "{print \$1,\$3,1}" ${rnaseq} | \
+     awk "{print \$1,\$3,1}"
    )  > {}.lz
    rm -f ld_cache.db
    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal {}.lz \
