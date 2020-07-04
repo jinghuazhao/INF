@@ -15,8 +15,8 @@ function INTERVAL()
   read chr start end < st.tmp
   awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end && index($0,gene)>0)' ${rnaseq} | \
   tr "," "\t" > LTBR.lz
-# export start=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'NR==1')
-# export end=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
+# export b1=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'NR==1')
+# export b2=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
   rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal LTBR.lz \
             --markercol variant_id --pvalcol pval --chr ${chr} --start ${b1} --end ${b2} \
@@ -40,8 +40,8 @@ function eQTLGen()
     gunzip -c ${trans} | \
     awk -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($3==chr && $4>=start && $4<=end && index($0,gene)>0)'
   ) > eQTLGen.lz
-# export start=$(cut -f4 eQTLGen.lz| sed '1d' | sort -k1,1n | awk 'NR==1')
-# export end=$(cut -f4 eQTLGen.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
+# export b1=$(cut -f4 eQTLGen.lz| sed '1d' | sort -k1,1n | awk 'NR==1')
+# export b2=$(cut -f4 eQTLGen.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
   rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal eQTLGen.lz \
             --markercol SNP --pvalcol Pvalue --chr ${chr} --start ${b1} --end ${b2} \
