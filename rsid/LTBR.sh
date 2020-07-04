@@ -31,8 +31,9 @@ parallel --env rsid --env flank_kb -j1 -C' ' '
    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal {}.lz \
              --markercol MarkerName --pvalcol P-value --refsnp ${rsid} --flank ${flank_kb}kb \
              --no-date --plotonly --prefix={} --rundir .
-   pdftopng -r 300 {}_${refsnp}..pdf {}_${refsnp}
-   mv {}_${refsnp}-000001.png {}_${refsnp}-1.png
-   mv {}_${refsnp}-000002.png {}_${refsnp}-2.png
+   export f={}_${rsid}
+   pdftopng -r 300 ${f}.pdf ${f}
+   mv ${f}-000001.png ${f}-1.png
+   mv ${f}-000002.png ${f}-2.png
 '
 cd -
