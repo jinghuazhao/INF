@@ -1,12 +1,10 @@
 #!/usr/bin/bash
 
-export rnaseq=tensorqtl_trans_MAF0.005_age_sex_rin_batch_readDepth_PC10_PEER20_merged_annotated.csv
-export rsid=rs2364485
-export flank_kb=15000
-
-function interval()
+function INTERVAL()
 {
 # init
+  export rnaseq=tensorqtl_allSNPs_MAF0.005_merged_annotated.csv
+  export rnaseq=tensorqtl_trans_MAF0.005_age_sex_rin_batch_readDepth_PC10_PEER20_merged_annotated.csv
   grep -w ${rsid} ${rnaseq}
   zgrep ENSG00000256433 ${INF}/work/ensGtp.txt.gz | \
   cut -f2 | \
@@ -17,12 +15,12 @@ function interval()
   awk -vFS="," -vd=$((${flank_kb}*1000)) '{print $5,$6-d,$6+d}' > st.tmp
 # LocusZoom plot
   echo LTBR | \
-  parallel --env rsid --env flank_kb -j1 -C' ' '
+  parallel --env rnaseq --env rsid --env flank_kb -j1 -C' ' '
      read chrom start end < st.tmp
      (
        awk -vOFS="\t" "BEGIN{print \"MarkerName\",\"P-value\", \"Weight\"}"
        awk -vFS="," -vchr=$chrom -vstart=$start -vend=$end \
-           "(\$5 == chr && \$6 >= start && \$6 <= end)" ${rnaseq} | \
+           "(\$5 == chr && \$6 >= start && \$6 <= end && \$NF==\"LTBR\")" ${rnaseq} | \
        tr "," " " | \
        sort -k6,6n | \
        awk -vOFS="\t" "{print \$1,\$3,1}"
@@ -38,10 +36,9 @@ function interval()
   '
 }
 
+function eQTLGen()
 # https://www.eqtlgen.org/trans-eqtls.html
 # https://www.eqtlgen.org/cis-eqtls.html
-
-function eQTLGen()
 {
   export cis=2019-12-11-cis-eQTLsFDR-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz  
   export trans=2018-09-04-trans-eQTLsFDR-CohortInfoRemoved-BonferroniAdded.txt.gz
@@ -52,9 +49,9 @@ function eQTLGen()
   awk -vOFS="\t" "BEGIN{print \"MarkerName\",\"P-value\", \"Weight\"}" > eQTLGen.lz
   (
     gunzip -c ${cis} | \
-    awk -vchr=$chrom -vstart=$start -vend=$end '$3==chrom && $4>=start && $4<=end'
+    awk -vchr=$chrom -vstart=$start -vend=$end '$3==chr && $4>=start && $4<=end && $9=="LTBR"'
     gunzip -c ${trans} | \
-    awk -vchr=$chrom -vstart=$start -vend=$end '$3==chrom && $4>=start && $4<=end'
+    awk -vchr=$chrom -vstart=$start -vend=$end '$3==chr && $4>=start && $4<=end && $9=="LTBR"'
   ) | \
   sort -k4,4n | \
   awk -v OFS="\t" '{print $2,$1,$13}' >> eQTLGen.lz
@@ -69,5 +66,8 @@ function eQTLGen()
 }
 
 cd work
+export rsid=rs2364485
+export flank_kb=1200
+INTERVAL
 eQTLGen
 cd -
