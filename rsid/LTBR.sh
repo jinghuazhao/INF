@@ -22,10 +22,11 @@ parallel --env rsid --env flank_kb -j1 -C' ' '
    read chrom start end < st.tmp
    (
      awk -vOFS="\t" "BEGIN{print \"MarkerName\",\"P-value\", \"Weight\"}"
-     awk -vFS="," -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
+     awk -vFS="," -vchr=$chrom -vstart=$start -vend=$end \
          "(\$5 == chr && \$6 >= start && \$6 <= end)" ${rnaseq} | \
+     tr "," " " | \
      sort -k6,6n | \
-     awk "{print \$1,\$3,1}"
+     awk -vOFS="\t" "{print \$1,\$3,1}"
    )  > {}.lz
    rm -f ld_cache.db
    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal {}.lz \
