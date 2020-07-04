@@ -10,7 +10,7 @@ function INTERVAL()
   cut -f2 | \
   zgrep -f - ${INF}/work/ensemblToGeneName.txt.gz
 # region
-  awk -vchr=${chr} -vpos=${pos} -vd=$((${flank_kb}*1000)) 'BEGIN{print $5,$6-d,$6+d}' > st.tmp
+  awk -vchr=${chr} -vpos=${pos} -vd=$((${flank_kb}*1000)) 'BEGIN{print chr,pos-d,pos+d}' > st.tmp
 # LocusZoom plot
   read chr start end < st.tmp
   awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end && index($0,gene)>0)' ${rnaseq} | \
