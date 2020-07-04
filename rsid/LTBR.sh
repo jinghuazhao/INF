@@ -23,15 +23,16 @@ parallel --env rsid --env flank_kb -j1 -C' ' '
    (
      awk -vOFS="\t" "BEGIN{print \"MarkerName\",\"P-value\", \"Weight\"}"
      awk -vFS="," -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
-         "(\$5 == chr && \$6 >= start && \$6 <= end) {print \$1,\$3,5000}" ${rnaseq}
+         "(\$5 == chr && \$6 >= start && \$6 <= end)" ${rnaseq} | \
+     sort -k6,6n | \
+     awk "{print \$1,\$3,1}" ${rnaseq} | \
    )  > {}.lz
    rm -f ld_cache.db
    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal {}.lz \
              --markercol MarkerName --pvalcol P-value --refsnp ${rsid} --flank ${flank_kb}kb \
              --no-date --plotonly --prefix={} --rundir .
-   mv {}-chr${chrom}_${start}-${end}.pdf {}.lz.pdf
-   pdftopng -r 300 {}.lz.pdf {}
-   mv {}-000001.png {}.lz-1.png
-   mv {}-000002.png {}.lz-2.png
+   pdftopng -r 300 {}_${refsnp}..pdf {}_${refsnp}
+   mv {}_${refsnp}-000001.png {}_${refsnp}-1.png
+   mv {}_${refsnp}-000002.png {}_${refsnp}-2.png
 '
 cd -
