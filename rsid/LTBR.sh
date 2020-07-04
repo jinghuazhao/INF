@@ -18,8 +18,8 @@ function INTERVAL()
 # export b1=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'NR==1')
 # export b2=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
   rm -f ld_cache.db
-  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal LTBR.lz --delim tab title="INTERAL-LTBR" \
-            --markercol variant_id --pvalcol pval --chr ${chr} --start ${b1} --end ${b2} --gwas-cat whole-cat_significant-only \
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal LTBR.lz --delim tab title="INTERVAL-LTBR" \
+            --markercol variant_id --pvalcol pval --chr ${chr} --start ${b1} --end ${b2} \
             --no-date --plotonly --prefix=INTERVAL --rundir .
   mv INTERVAL_chr${chr}_${bracket}.pdf INTERVAL-LTBR-cis.pdf
 }
@@ -44,7 +44,7 @@ function eQTLGen()
 # export b2=$(cut -f4 eQTLGen.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
   rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal eQTLGen.lz --delim tab title="eQTLGen-LTBR" \
-            --markercol SNP --pvalcol Pvalue --chr ${chr} --start ${b1} --end ${b2} --gwas-cat whole-cat_significant-only \
+            --markercol SNP --pvalcol Pvalue --chr ${chr} --start ${b1} --end ${b2} \
             --no-date --plotonly --prefix=eQTLGen --rundir .
   mv eQTLGen_chr${chr}_${bracket}.pdf eQTLGen-LTBR-cis.pdf
 }
