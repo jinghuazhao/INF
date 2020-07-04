@@ -10,30 +10,20 @@ function INTERVAL()
   cut -f2 | \
   zgrep -f - ${INF}/work/ensemblToGeneName.txt.gz
 # region
-  grep -w ${rsid} ${rnaseq} | \
-  grep LTBR | \
-  awk -vFS="," -vd=$((${flank_kb}*1000)) '{print $5,$6-d,$6+d}' > st.tmp
+  awk -vchr=${chr} -vpos=${pos} -vd=$((${flank_kb}*1000)) '{print $5,$6-d,$6+d}' > st.tmp
 # LocusZoom plot
-  echo LTBR | \
-  parallel --env rnaseq --env rsid --env flank_kb -j1 -C' ' '
-     read chrom start end < st.tmp
-     (
-       awk -vOFS="\t" "BEGIN{print \"MarkerName\",\"P-value\", \"Weight\"}"
-       awk -vFS="," -vchr=$chrom -vstart=$start -vend=$end \
-           "(\$5 == chr && \$6 >= start && \$6 <= end && \$NF==\"LTBR\")" ${rnaseq} | \
-       tr "," " " | \
-       sort -k6,6n | \
-       awk -vOFS="\t" "{print \$1,\$3,1}"
-     )  > {}.lz
-     rm -f ld_cache.db
-     locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal {}.lz \
-               --markercol MarkerName --pvalcol P-value --refsnp ${rsid} --flank ${flank_kb}kb \
-               --no-date --plotonly --prefix={} --rundir .
-     export f={}_${rsid}
-     pdftopng -r 300 ${f}.pdf ${f}
-     mv ${f}-000001.png ${f}-1.png
-     mv ${f}-000002.png ${f}-2.png
-  '
+  read chr start end < st.tmp
+  (
+    awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end && index($0,gene)>0)' ${rnaseq} | \
+    tr "," "\t"
+  )  > LTBR.lz
+# export start=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'NR==1')
+# export end=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
+  rm -f ld_cache.db
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal LTBR.lz \
+            --markercol variant_id --pvalcol pval --chr ${chr} --start 6300000 --end 6700000 \
+            --no-date --plotonly --prefix=INTERVAL --rundir .
+  mv INTERVAL_ch4${chr}_${bracket}.pdf INTERVAL-LTBR-cis.pdf
 }
 
 function eQTLGen()
@@ -44,30 +34,50 @@ function eQTLGen()
   export trans=2018-09-04-trans-eQTLsFDR-CohortInfoRemoved-BonferroniAdded.txt.gz
   zgrep -w ${rsid} ${cis} | \
   grep LTBR | \
-  awk -vd=$((${flank_kb}*1000)) '{print $3,$4-d,$4+d}' > st.tmp
-  read chrom start end < st.tmp
-  awk -vOFS="\t" "BEGIN{print \"MarkerName\",\"P-value\", \"Weight\"}" > eQTLGen.lz
+  awk -vchr=${chr} -vpos=${pos} -vd=$((${flank_kb}*1000)) '{print chr,pos-d,pos+d}' > st.tmp
+  read chr start end < st.tmp
   (
     gunzip -c ${cis} | \
-    awk -vchr=$chrom -vstart=$start -vend=$end '$3==chr && $4>=start && $4<=end && $9=="LTBR"'
+    awk -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($3==chr && $4>=start && $4<=end && index($0,gene)>0)'
     gunzip -c ${trans} | \
-    awk -vchr=$chrom -vstart=$start -vend=$end '$3==chr && $4>=start && $4<=end && $9=="LTBR"'
-  ) | \
-  sort -k4,4n | \
-  awk -v OFS="\t" '{print $2,$1,$13}' >> eQTLGen.lz
+    awk -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($3==chr && $4>=start && $4<=end && index($0,gene)>0)'
+  ) > eQTLGen.lz
+# export start=$(cut -f4 eQTLGen.lz| sed '1d' | sort -k1,1n | awk 'NR==1')
+# export end=$(cut -f4 eQTLGen.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
   rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal eQTLGen.lz \
-            --markercol MarkerName --pvalcol P-value --refsnp ${rsid} --flank ${flank_kb}kb \
+            --markercol SNP --pvalcol Pvalue --chr ${chr} --start 6300000 --end 6700000 \
             --no-date --plotonly --prefix=eQTLGen --rundir .
-  export f=eQTLGen_${rsid}
-  pdftopng -r 300 ${f}.pdf ${f}
-  mv ${f}-000001.png ${f}-1.png
-  mv ${f}-000002.png ${f}-2.png
+  mv eQTLGen_chr${chr}_${bracket}.pdf eQTLGen-LTBR-cis.pdf
+}
+
+function SCALLOP()
+{
+  awk -vchr=${chr} -vpos=${pos} -vd=$((${flank_kb}*1000)) 'BEGIN{print chr, pos-d, pos+d}' > st.tmp
+  read chr start end < st.tmp
+  (
+    awk -vOFS="\t" 'BEGIN{print "MarkerName","P-value","Weight"}'
+    gunzip -c ${INF}/METAL/TNFB-1.tbl.gz | \
+    awk -vOFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} '$1 == chr && $2 >= start && $2 <= end {print $3,10^$12,$18}' | \
+    sort -k1,1 | \
+    join <(awk -vchrom=chr${chr} 'index($0,chrom)>0' INTERVAL.rsid) - | \
+    awk -vOFS="\t" '{print $2, $3, $4}'
+  ) > TNFB.lz
+  rm -f ld_cache.db
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal TNFB.lz \
+            --chr ${chr} --start 6300000 --end 6700000 \
+            --no-date --plotonly --prefix=TNFB --rundir .
+  mv TNFB_chr${chr}_${bracket}.pdf SCALLOP-TNFB-cis.pdf
 }
 
 cd work
+export chr=12
+export pos=6514963
+export gene=LTBR
 export rsid=rs2364485
-export flank_kb=1200
+export flank_kb=1000
+export bracket=6300000-6700000
 INTERVAL
 eQTLGen
+SCALLOP
 cd -
