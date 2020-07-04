@@ -19,7 +19,7 @@ function INTERVAL()
 # export end=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
   rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal LTBR.lz \
-            --markercol variant_id --pvalcol pval --chr ${chr} --start 6300000 --end 6700000 \
+            --markercol variant_id --pvalcol pval --chr ${chr} --start ${b1} --end ${b2} \
             --no-date --plotonly --prefix=INTERVAL --rundir .
   mv INTERVAL_ch4${chr}_${bracket}.pdf INTERVAL-LTBR-cis.pdf
 }
@@ -44,7 +44,7 @@ function eQTLGen()
 # export end=$(cut -f4 eQTLGen.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
   rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal eQTLGen.lz \
-            --markercol SNP --pvalcol Pvalue --chr ${chr} --start 6300000 --end 6700000 \
+            --markercol SNP --pvalcol Pvalue --chr ${chr} --start ${b1} --end ${b2} \
             --no-date --plotonly --prefix=eQTLGen --rundir .
   mv eQTLGen_chr${chr}_${bracket}.pdf eQTLGen-LTBR-cis.pdf
 }
@@ -63,7 +63,7 @@ function SCALLOP()
   ) > TNFB.lz
   rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal TNFB.lz \
-            --chr ${chr} --start 6300000 --end 6700000 \
+            --chr ${chr} --start ${b1} --end ${b2} \
             --no-date --plotonly --prefix=TNFB --rundir .
   mv TNFB_chr${chr}_${bracket}.pdf SCALLOP-TNFB-cis.pdf
 }
@@ -74,7 +74,9 @@ export pos=6514963
 export gene=LTBR
 export rsid=rs2364485
 export flank_kb=1000
-export bracket=6300000-6700000
+export b1=630000
+export b2=670000
+export bracket=${b1}-${b2}
 INTERVAL
 eQTLGen
 SCALLOP
