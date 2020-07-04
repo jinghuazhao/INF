@@ -13,10 +13,8 @@ function INTERVAL()
   awk -vchr=${chr} -vpos=${pos} -vd=$((${flank_kb}*1000)) '{print $5,$6-d,$6+d}' > st.tmp
 # LocusZoom plot
   read chr start end < st.tmp
-  (
-    awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end && index($0,gene)>0)' ${rnaseq} | \
-    tr "," "\t"
-  )  > LTBR.lz
+  awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end && index($0,gene)>0)' ${rnaseq} | \
+  tr "," "\t" > LTBR.lz
 # export start=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'NR==1')
 # export end=$(cut -f6 LTBR.lz| sed '1d' | sort -k1,1n | awk 'END{print}')
   rm -f ld_cache.db
