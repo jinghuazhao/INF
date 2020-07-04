@@ -21,7 +21,7 @@ function INTERVAL()
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal LTBR.lz \
             --markercol variant_id --pvalcol pval --chr ${chr} --start ${b1} --end ${b2} \
             --no-date --plotonly --prefix=INTERVAL --rundir .
-  mv INTERVAL_ch4${chr}_${bracket}.pdf INTERVAL-LTBR-cis.pdf
+  mv INTERVAL_chr${chr}_${bracket}.pdf INTERVAL-LTBR-cis.pdf
 }
 
 function eQTLGen()
