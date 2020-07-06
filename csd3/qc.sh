@@ -18,7 +18,7 @@ R --no-save <<END
 # Box-Whisker plot
   {
     np <- ncol(df)
-    cols <- rep("black",np)
+    cols <- rep("gray",np)
     cols[colnames(df)%in%nosig$prot] <- "red"
     boxplot(df,cex=0.2,horizontal=TRUE,line=1,las=1,cex.axis=0.25,col=cols,tck=-0.2)
   }
