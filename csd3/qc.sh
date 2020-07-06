@@ -26,9 +26,10 @@ R --no-save <<END
   qc_inf <- read.csv("olink_proteomics/qc/olink_qc_inf.csv",as.is=TRUE)
   names(qc_inf) <- toupper(names(qc_inf))
   qc <- qc_inf[setdiff(names(qc_inf),"P23560")]
+  for(i in 1:91) qc[,i+2] <- invnormal(qc[,i+2])
   tqc <- t(qc[,-(1:2)])
-  nosig <-read.table("INF1.merge.nosig",as.is=TRUE,col.names=c("prot","uniprot"))
-  pdf("qc.pdf")
+  nosig <- subset(read.table("INF1.merge.nosig",as.is=TRUE,col.names=c("prot","uniprot")),uniprot!="P23560")
+  pdf("qc-invnormal.pdf")
   df <- qc[,-(1:2)]
   ndf <- names(df)
   odf <- order(ndf)
