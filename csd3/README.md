@@ -101,6 +101,10 @@ IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.b
 ```
 The environmental variable `LDREF` provides an option to use either INTERVAL or UKB data.
 
+## Low abundance check
+
+This is down with [qc.sh](qc.sh).
+
 ## PhenoScanner
 
 This is furnished with [ps.sh](ps.sh). Information on previously unidentified pQTLs is with [pqtl.sh](pqtl.sh)
@@ -111,4 +115,4 @@ This is furnished with [ps.sh](ps.sh). Information on previously unidentified pQ
 
 File [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.
 
-*Date laste changed:* **2/5/2020**
+*Date laste changed:* **6/7/2020**
