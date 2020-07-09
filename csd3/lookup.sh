@@ -49,6 +49,14 @@ function Sun()
     grep {3}
 #   grep -H -w {3} INTERVAL_box.tsv
   ' > pQTL.Sun.log
+  join -12 -25 -t$'\t' <(sort -k2,2 work/inf1.tmp) <(sed '1d' INTERVAL_box.tsv | sort -k5,5) > Olink+SomaLogic.list
+  cut -f1 Olink+SomaLogic.list | \
+  grep -v P23560 | \
+  uniq | \
+  wc -l
+  join -17 -25 -t$'\t' <(sed '1d' INTERVAL_box.tsv | sort -k7,7) <(gunzip -c work/pQTL_2018.txt.gz | sed '1d' | sort -k5,5) | \
+  sort -k6,6 | \
+  join -16 -t$'\t' - <(cut -f1 Olink+SomaLogic.list) > Olink+SomaLogic.ps
 }
 
 Sun

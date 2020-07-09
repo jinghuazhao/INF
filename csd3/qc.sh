@@ -1,10 +1,15 @@
 #!/usr/bin/bash
 
 cd work
-cut -f5 INF1.merge | \
-sed '1d' | \
+grep -v BDNF inf1.tmp | \
+cut -f2 | \
+grep -f - INF1.METAL | \
+cut -f20 | \
+sort | \
 uniq | \
-grep -f - -v inf1.tmp > INF1.merge.nosig
+grep -f - -v inf1.tmp | \
+grep -v BDNF > INF1.merge.nosig
+
 R --no-save <<END
   rle.plot <- function()
 # RLE plot
