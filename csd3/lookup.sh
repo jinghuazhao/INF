@@ -65,10 +65,10 @@ function Olink()
 # SCALLOP/INF -- INTERVAL overlap
 {
   export OLINK=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output
-  ls $OLINK/*gz | xargs -l basename -s _chr_merged.gz | grep -v -e cvd -e P23560 | sed 's/INTERVAL_inf1_//;s/___/ /'> inf1.list
+  ls $OLINK/*gz | xargs -l basename -s _chr_merged.gz | grep -v -e cvd -e P23560 | sed 's/INTERVAL_inf1_//;s/___/ /'> INTERVAL.list
   (
     gunzip -c ${OLINK}/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
-    awk 'NR==1{print "UniProt","pos",$2,$22,$24,$25}'
+    awk 'NR==1{print "UniProt","chr","pos",$2,$22,$24,$25}'
     join <(awk 'NR>1{print $5,$8 ":" $9}' work/INF1.merge | sort -k1,1) <(sort -k1,1 inf1.list) | \
     awk '{
        gsub(/chr/,"",$2);
@@ -78,10 +78,9 @@ function Olink()
        print $0,chr,pos
     }' | \
     parallel --env OLINK -C' ' '
-      echo {1} {2} {3}
       zgrep -H -w {5} ${OLINK}/INTERVAL_inf1_{1}___{3}_chr_merged.gz | \
-      awk -vchr={6} "(\$3==chr)"
-    ' | \
-    awk '{if(NF==3) printf $3,$5," "; else print $2,$22,$24,$25}'
-  ) > inf1.overlap
+      awk -vchr={4} "(\$3==chr)" | \
+      awk -vuniprot={3} -v prot={1} -v chr={4} -v pos={5} "{print uniprot, chr, pos, \$2,\$22,\$24,\$25}"
+    '
+  ) > INTERVAL.overlap
 }
