@@ -68,8 +68,8 @@ function Olink()
   ls $OLINK/*gz | xargs -l basename -s _chr_merged.gz | grep -v -e cvd -e P23560 | sed 's/INTERVAL_inf1_//;s/___/ /'> INTERVAL.list
   (
     gunzip -c ${OLINK}/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
-    awk 'NR==1{print "UniProt","chr","pos",$2,$22,$24,$25}'
-    join <(awk 'NR>1{print $5,$8 ":" $9}' work/INF1.merge | sort -k1,1) <(sort -k1,1 inf1.list) | \
+    awk 'NR==1{print "UniProt","prot","chr","pos",$2,$22,$24,$25}'
+    join <(awk 'NR>1{print $5,$8 ":" $9}' work/INF1.merge | sort -k1,1) <(sort -k1,1 INTERVAL.list) | \
     awk '{
        gsub(/chr/,"",$2);
        split($2,a,":");
@@ -80,7 +80,7 @@ function Olink()
     parallel --env OLINK -C' ' '
       zgrep -H -w {5} ${OLINK}/INTERVAL_inf1_{1}___{3}_chr_merged.gz | \
       awk -vchr={4} "(\$3==chr)" | \
-      awk -vuniprot={3} -v prot={1} -v chr={4} -v pos={5} "{print uniprot, chr, pos, \$2,\$22,\$24,\$25}"
+      awk -vuniprot={3} -v prot={1} -v chr={4} -v pos={5} "{print uniprot, prot, chr, pos, \$2,\$22,\$24,\$25}"
     '
   ) > INTERVAL.overlap
 }
