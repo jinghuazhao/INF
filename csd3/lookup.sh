@@ -47,16 +47,11 @@ function Sun()
     echo {1}+{2}+{3}
     grep {2} pQTL.Sun-B_pQTL_EUR_2017 | \
     grep {3}
-#   grep -H -w {3} INTERVAL_box.tsv
   ' > pQTL.Sun.log
-  join -12 -25 -t$'\t' <(sort -k2,2 work/inf1.tmp) <(sed '1d' INTERVAL_box.tsv | sort -k5,5) > Olink+SomaLogic.list
-  cut -f1 Olink+SomaLogic.list | \
-  grep -v P23560 | \
-  uniq | \
-  wc -l
-  join -17 -25 -t$'\t' <(sed '1d' INTERVAL_box.tsv | sort -k7,7) <(gunzip -c work/pQTL_2018.txt.gz | sed '1d' | sort -k5,5) | \
-  sort -k6,6 | \
-  join -16 -t$'\t' - <(cut -f1 Olink+SomaLogic.list) > Olink+SomaLogic.ps
+  join -12 -25 -t$'\t' <(sort -k2,2 work/inf1.tmp) <(sed '1d' INTERVAL_box.tsv | sort -t$'\t' -k5,5) | \
+  cut -f1,2,8 | \
+  sort -t$'\t' -k3,3 | \
+  join -t$'\t' -13 -25 - <(gunzip -c work/pQTL_2018.txt.gz | sed '1d' | awk '$12 <= 1.5e-11' | sort -t $'\t' -k5,5) > Olink+SomaLogic.ps
 }
 
 Sun
