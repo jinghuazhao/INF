@@ -34,4 +34,5 @@ A version by Jimmy is [olink.inf.panel.annot.tsv](olink.inf.panel.annot.tsv) fro
 
 BDNF has recently been removed from the assay and replaced with CD8A, https://www.olink.com/bdnf-info/, and there are also changes on TNF and IFN.gamma, https://www.olink.com/inflammation-upgrade/.
 
-The overlap with SomaLogic panel is characterised with [Olink.R](Olink.R) which also gives [Olink-SomaLogic-Venn-diagram.png](Olink-SomaLogic-Venn-diagram.png).
+The overlap with SomaLogic panel is characterised with [Olink.R](Olink.R) which also gives <img src="Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
+
