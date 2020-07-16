@@ -1,4 +1,4 @@
-# 2-5-2020 JHZ
+# 16-7-2020 JHZ
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -189,3 +189,29 @@ awk '{if(NR==1) print "x1,y1,z1,x2,y2,z2"; else print}' > INF1.merge.d3
 awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3==0' | wc -l
 awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2==0 && $3>0' | wc -l
 awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3>0' | wc -l
+
+function INTERVAL()
+# SCALLOP/INF -- INTERVAL overlap
+{
+  export OLINK=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output
+  ls $OLINK/*gz | xargs -l basename -s _chr_merged.gz | grep -v -e cvd -e P23560 | sed 's/INTERVAL_inf1_//;s/___/ /'> INTERVAL.list
+  (
+    gunzip -c ${OLINK}/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
+    awk 'NR==1{print "UniProt","prot","chr","pos",$2,$22,$24,$25}'
+    join <(awk 'NR>1{print $5,$8 ":" $9}' work/INF1.merge | sort -k1,1) <(sort -k1,1 INTERVAL.list) | \
+    awk '{
+       gsub(/chr/,"",$2);
+       split($2,a,":");
+       chr=a[1];
+       pos=a[2];
+       print $0,chr,pos
+    }' | \
+    parallel --env OLINK -C' ' '
+      zgrep -H -w {5} ${OLINK}/INTERVAL_inf1_{1}___{3}_chr_merged.gz | \
+      awk -vchr={4} "(\$3==chr)" | \
+      awk -vuniprot={3} -v prot={1} -v chr={4} -v pos={5} "{print uniprot, prot, chr, pos, \$2,\$22,\$24,\$25}"
+    '
+  ) > INTERVAL.overlap
+}
+
+INTERVAL

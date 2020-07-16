@@ -115,8 +115,4 @@ This is furnished with [ps.sh](ps.sh). Information on previously unidentified pQ
 
 File [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.
 
-*Date laste changed:* **6/7/2020**
-
-## Venn diagram
-
-[vd.R](vd.R) is a variant for Olink/INF-SomaLogic Venn diagram.
+*Date laste changed:* **16/7/2020**
