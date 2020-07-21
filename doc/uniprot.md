@@ -4,7 +4,7 @@ The list of proteins on inflammation is within one of the [OLINK](https://www.ol
 
 The use of [UniProt](https://www.uniprot.org/) IDs is rationalised in two aspects,
 
-1. The protein list in [inf1.csv](doc/inf1.csv) notes both O43508 and Q4ACW9.
+1. The protein list in [inf1.csv](inf1.csv) notes both O43508 and Q4ACW9.
 
 2. Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
 point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.tsv](hgTables.tsv) is based on UCSC, checked over
