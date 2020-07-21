@@ -25,7 +25,7 @@ A version by Jimmy is [olink.inf.panel.annot.tsv](olink.inf.panel.annot.tsv) fro
 "Fibroblast growth factor 5 (FGF-5)"	"FGF-5"	"Q8NF90"	"inf"	FALSE	NA	NA	"4"	81187753	81257834	"141_FGF-5"	"P12034"
 "T-cell surface glycoprotein CD6 isoform (CD6)"	"CD6"	"Q8WWJ7"	"inf"	FALSE	NA	NA	"11"	60739115	60787849	"131_CD6"	"P30203"
 ```
-also have hgnc_symbol=FGF5 and CD6, respectively.
+should also have hgnc_symbol=FGF5 and CD6, respectively.
 
 A UniProt ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While [inf1.csv](inf1.csv) 
 edits Q4ACW9, [inf2.csv](inf2.csv) is inline with UCSC with respect to P12034 and P30203.
