@@ -62,17 +62,38 @@ function Sun()
   }' doc/olink.inf.panel.annot.tsv > inf.genes
   R --no-save -q <<\ \ END
     options(width=160)
-    genes <- scan("inf.genes","")
-    library(phenoscanner)
-    ps <- phenoscanner(genequery=genes[1:10],catalogue="pQTL",pvalue=1.5e-11)
-    vars <- c("gene", "rsid", "hg19_coordinates", "a1", "a2", "ensembl", "hgnc", "pmid", "beta", "se", "p")
-    bys <- c("gene","rsid","p")
-    r <- subset(with(ps,results[vars]),pmid==29875488&gene==hgnc)
-    attach(r)
-    m <- aggregate(r[bys],by=list(gene,rsid),FUN=min,na.rm=TRUE)
-    detach(r)
-    merge(r,m[bys],by=c("gene","rsid","p"))
+    library(gap)
+    g <- with(subset(inf1,gene!="BDNF"),gene)
+    batches <- split(g, ceiling(seq_along(g)/10))
+    s <- t <- list()
+    for(i in 1:length(batches))
+    {
+      cat("Block ",i,batches[[i]],"\n")
+      q <- phenoscanner(genequery=batches[[i]], catalogue="pQTL", proxies="EUR", pvalue=1.5e-11, r2=0.7, build=37)
+      s[[i]] <- with(q,genes)
+      t[[i]] <- with(q,results)
+    }
+    r <- list(genes=do.call(rbind,s),results=within(do.call(rbind,t),{
+       ref_a1 <- a1
+       ref_a2 <- a2
+       swap <- a1 > a2
+       a1[swap] <- ref_a2[swap]
+       a2[swap] <- ref_a1[swap]
+       snpid <- paste0(hg19_coordinates,"_",a1,"_",a2)
+       p <- as.numeric(p)
+    }))
+    setdiff(g,with(r,genes)[["gene"]])
     # Sun, et al. (2018)
+    vars <- c("gene", "rsid", "snpid", "hg19_coordinates", "a1", "a2", "ensembl", "hgnc", "pmid", "beta", "se", "p")
+    sun <- subset(with(r,results[vars]),pmid==29875488&gene==hgnc)
+    length(table(sun$gene))
+    length(table(sun$snpid))
+    library(dplyr)
+    m <- sun %>% group_by(gene,rsid) %>% slice(which.min(p))
+    for(g in unique(with(m,gene))) print(subset(m,gene==g))
+    nosig <- read.table("work/INF1.merge.nosig",as.is=TRUE,col.names=c("prot","uniprot"))
+    nosig <- subset(inf1,uniprot%in%nosig[["uniprot"]])
+    SomaLogic_yes_olink_no <- subset(sun,gene%in%nosig[["gene"]])
     xlsx <- "https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-018-0175-2/MediaObjects/41586_2018_175_MOESM4_ESM.xlsx"
     t4 <- openxlsx::read.xlsx(xlsx, sheet=4, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:31), rows=c(5:1986))
     t5 <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:19), rows=c(3:2746))
