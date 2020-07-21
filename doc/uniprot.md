@@ -25,11 +25,11 @@ join -v2 -22 12 <(sort -k2,2 inf1.list)
 rm 12
 ```
 Likewise, [olink.inf.panel.annot.tsv](olink.inf.panel.annot.tsv) from [olink.annotation.R](olink.annotation.R) also has the following two entries
-```
+
 "target" | "target.short" | "uniprot" | "panel" | "prot.on.multiple.panel" | "panels.with.prot" | "hgnc_symbol" | "chromosome_name" | "start_position" | "end_position" | "olink.id" | "alternate.uniprot"
 "Fibroblast growth factor 5 (FGF-5)" | "FGF-5" | "Q8NF90" | "inf" | FALSE | NA | NA | "4" | 81187753 | 81257834 | "141_FGF-5" | "P12034"
 "T-cell surface glycoprotein CD6 isoform (CD6)" | "CD6" | "Q8WWJ7" | "inf" | FALSE | NA | NA | "11" | 60739115 | 60787849 | "131_CD6" | "P30203"
-```
+
 whose hgnc_symbol can be amended as follows
 ```bash
 awk '!/BDNF/ && NR > 1 {gsub(/"/,"",$7);if ($3=="Q8NF90") $7="FGF5"; else if ($3=="Q8WWJ7") $7="CD6"};1' FS='\t' OFS='\t' doc/olink.inf.panel.annot.tsv
