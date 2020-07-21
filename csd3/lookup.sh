@@ -52,7 +52,7 @@ function Sun()
   cut -f2 work/INF1.merge.nosig | \
   grep -f - -v work/inf1.tmp | \
   sort -k2,2 | \
-  join -12 -25 -t$'\t' - <(sed '1d' INTERVAL_box.tsv | sort -t$'\t' -k5,5) | \
+  join -12 -25 -t$'\t' - <(sed '1d' INTERVAL_box.tsv | grep -v BDNF | sort -t$'\t' -k5,5) | \
   cut -f1,2,8 | \
   sort -t$'\t' -k3,3 | \
   join -t$'\t' -13 -25 - <(zcat work/pQTL_2018.txt.gz | sed '1d' | awk -v FS='\t' '/29875488/ && $12 <= 1.5e-11' | sort -t $'\t' -k5,5) > Olink+SomaLogic.ps
@@ -62,6 +62,13 @@ function Sun()
   }' doc/olink.inf.panel.annot.tsv > inf.genes
   R --no-save -q <<\ \ END
     options(width=160)
+    library(dplyr)
+    # by SNP
+    os <- read.delim("Olink+SomaLogic.ps", header=FALSE, col.names=c("trait","uniprot","prot","rsid","hg19_coordinates",
+                     "a1","a2","efo","study","pmid","ancestry","beta","se","p","direction","n","n_studies","unit","dataset"))
+    v <- c("trait","uniprot","prot","rsid","hg19_coordinates","a1","a2","beta","se","p")
+    m <- os[v] %>% group_by(prot,rsid) %>% slice(which.min(p))
+    # by gene
     library(gap)
     g <- with(subset(inf1,gene!="BDNF"),gene)
     batches <- split(g, ceiling(seq_along(g)/10))
@@ -88,12 +95,12 @@ function Sun()
     sun <- subset(with(r,results[vars]),pmid==29875488&gene==hgnc)
     length(table(sun$gene))
     length(table(sun$snpid))
-    library(dplyr)
     m <- sun %>% group_by(gene,rsid) %>% slice(which.min(p))
     for(g in unique(with(m,gene))) print(subset(m,gene==g))
     nosig <- read.table("work/INF1.merge.nosig",as.is=TRUE,col.names=c("prot","uniprot"))
     nosig <- subset(inf1,uniprot%in%nosig[["uniprot"]])
     SomaLogic_yes_olink_no <- subset(sun,gene%in%nosig[["gene"]])
+    # Supplementary tables
     xlsx <- "https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-018-0175-2/MediaObjects/41586_2018_175_MOESM4_ESM.xlsx"
     t4 <- openxlsx::read.xlsx(xlsx, sheet=4, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:31), rows=c(5:1986))
     t5 <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:19), rows=c(3:2746))
