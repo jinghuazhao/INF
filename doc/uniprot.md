@@ -19,7 +19,7 @@ wc -l 12
 join -v2 -22 12 <(sort -k2,2 inf1.list)
 rm 12
 ```
-A version by Jimmy is [olink.inf.panel.annot.tsv](olink.inf.panel.annot.tsv) from [olink.annotation.R](olink.annotation.R) but the following two entries
+Another version, [olink.inf.panel.annot.tsv](olink.inf.panel.annot.tsv), is from [olink.annotation.R](olink.annotation.R) and the following two entries
 ```
 "target"	"target.short"	"uniprot"	"panel"	"prot.on.multiple.panel"	"panels.with.prot"	"hgnc_symbol"	"chromosome_name"	"start_position"	"end_position"	"olink.id"	"alternate.uniprot"
 "Fibroblast growth factor 5 (FGF-5)"	"FGF-5"	"Q8NF90"	"inf"	FALSE	NA	NA	"4"	81187753	81257834	"141_FGF-5"	"P12034"
