@@ -26,7 +26,7 @@ rm 12
 ```
 Likewise, [olink.inf.panel.annot.tsv](olink.inf.panel.annot.tsv) from [olink.annotation.R](olink.annotation.R) also has the following two entries
 
-                      "target" | "target.short" | "uniprot" | "panel" | "prot.on.multiple.panel" | "panels.with.prot" | "hgnc_symbol" | "chromosome_name" | "start_position" | "end_position" | "olink.id" | "alternate.uniprot"
+"target" | "target.short" | "uniprot" | "panel" | "prot.on.multiple.panel" | "panels.with.prot" | "hgnc_symbol" | "chromosome_name" | "start_position" | "end_position" | "olink.id" | "alternate.uniprot"
 -------------------------------------|----------------|-----------|---------|--------------------------|--------------------|---------------|-------------------|------------------|----------------|------------|--------------------
 "Fibroblast growth factor 5 (FGF-5)" | "FGF-5" | "Q8NF90" | "inf" | FALSE | NA | NA | "4" | 81187753 | 81257834 | "141_FGF-5" | "P12034"
 "T-cell surface glycoprotein CD6 isoform (CD6)" | "CD6" | "Q8WWJ7" | "inf" | FALSE | NA | NA | "11" | 60739115 | 60787849 | "131_CD6" | "P30203"
