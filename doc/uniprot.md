@@ -10,27 +10,25 @@ The use of [UniProt](https://www.uniprot.org/) IDs is rationalised in two aspect
 point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.tsv](hgTables.tsv) is based on UCSC, checked over
 UniProt IDs as follows,
 ```bash
-grep doc/inf1 olink.prot.list.txt | \
+grep inf1 doc/olink.prot.list.txt | \
 sed 's/inf1_//g;s/___/\t/g' > inf1.list
-sort -k2,2 inf1.list > 1
-awk '{
-   FS=OFS="\t"; 
-   split($4,f,"-");
-   $4=f[1];
-   if(!index($1,"_")) print
-}' doc/hgTables.tsv | \
-sort -k4,4 > 2
-join -t$'\t' -12 -24 1 2 > 12
+join -t$'\t' -12 -24 <(sort -k2,2 inf1.list) <(awk '{split($4,f,"-"); $4=f[1]; if(!index($1,"_")) print}' OFS='\t' doc/hgTables.tsv | sort -k4,4) > 12
 # 90 lines
 wc -l 12
 # Q8NF90 (FGF.5), Q8WWJ7 (CD6) are missing
-join -v2 -22 12 1
-rm 1 2 12
+join -v2 -22 12 <(sort -k2,2 inf1.list)
+rm 12
 ```
+A version by Jimmy is [olink.inf.panel.annot.tsv](olink.inf.panel.annot.tsv) from [olink.annotation.R](olink.annotation.R) but the following two entries
+```
+"target"	"target.short"	"uniprot"	"panel"	"prot.on.multiple.panel"	"panels.with.prot"	"hgnc_symbol"	"chromosome_name"	"start_position"	"end_position"	"olink.id"	"alternate.uniprot"
+"Fibroblast growth factor 5 (FGF-5)"	"FGF-5"	"Q8NF90"	"inf"	FALSE	NA	NA	"4"	81187753	81257834	"141_FGF-5"	"P12034"
+"T-cell surface glycoprotein CD6 isoform (CD6)"	"CD6"	"Q8WWJ7"	"inf"	FALSE	NA	NA	"11"	60739115	60787849	"131_CD6"	"P30203"
+```
+also have hgnc_symbol=FGF5 and CD6, respectively.
+
 A UniProt ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While [inf1.csv](inf1.csv) 
 edits Q4ACW9, [inf2.csv](inf2.csv) is inline with UCSC with respect to P12034 and P30203.
-
-A version by Jimmy is [olink.inf.panel.annot.tsv](olink.inf.panel.annot.tsv) from [olink.annotation.R](olink.annotation.R).
 
 BDNF has recently been removed from the assay and replaced with CD8A, https://www.olink.com/bdnf-info/, and there are also changes on TNF and IFN.gamma, https://www.olink.com/inflammation-upgrade/.
 
