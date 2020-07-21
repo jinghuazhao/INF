@@ -49,24 +49,20 @@ function Sun()
     grep {3}
   ' > pQTL.Sun.log
 # Olink + SomaLogic
-  cut -f2 work/INF1.merge.nosig | \
-  grep -f - -v work/inf1.tmp | \
-  sort -k2,2 | \
-  join -12 -25 -t$'\t' - <(sed '1d' INTERVAL_box.tsv | grep -v BDNF | sort -t$'\t' -k5,5) | \
-  cut -f1,2,8 | \
-  sort -t$'\t' -k3,3 | \
-  join -t$'\t' -13 -25 - <(zcat work/pQTL_2018.txt.gz | sed '1d' | awk -v FS='\t' '/29875488/ && $12 <= 1.5e-11' | sort -t $'\t' -k5,5) > Olink+SomaLogic.ps
-# 
-  awk -v FS='\t' '!/BDNF/ && NR > 1 {
-    gsub(/"/,"",$7);if ($3=="Q8NF90") $7="FGF5"; else if ($3=="Q8WWJ7") $7="CD6"; print $7
-  }' doc/olink.inf.panel.annot.tsv > inf.genes
+  export s=work/pQTL_2018.txt.gz
+  awk -v OFS='\t' '{gsub(/"/,"");print $1,$2,$3":"$4,$5}' work/INF1.merge.cis.vs.trans | \
+  sort -k1,1 | \
+  join -25 -t$'\t' - <(sed '1d' INTERVAL_box.tsv | grep -v BDNF | sort -t$'\t' -k5,5) | \
+  cut -f1,2,3,4,10 | \
+  sort -t$'\t' -k5,5 | \
+  join -t$'\t' -j5 - <(zcat ${s} | sed '1d' | awk -v FS='\t' '/29875488/ && $12 <= 1.5e-11' | sort -t $'\t' -k5,5) > Olink+SomaLogic.ps
   R --no-save -q <<\ \ END
     options(width=160)
     library(dplyr)
     # by SNP
-    os <- read.delim("Olink+SomaLogic.ps", header=FALSE, col.names=c("trait","uniprot","prot","rsid","hg19_coordinates",
+    os <- read.delim("Olink+SomaLogic.ps", header=FALSE, col.names=c("trait","uniprot","prot","chrpos","SNP","rsid","hg19_coordinates",
                      "a1","a2","efo","study","pmid","ancestry","beta","se","p","direction","n","n_studies","unit","dataset"))
-    v <- c("trait","uniprot","prot","rsid","hg19_coordinates","a1","a2","beta","se","p")
+    v <- c("trait","uniprot","prot","chrpos","SNP","rsid","hg19_coordinates","a1","a2","beta","se","p")
     m <- os[v] %>% group_by(prot,rsid) %>% slice(which.min(p))
     # by gene
     library(gap)
