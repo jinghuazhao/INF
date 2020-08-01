@@ -16,7 +16,7 @@
   * [Competitive logp/log10p functions](doc/logplog10p.md)
   * [Notes on UniProt IDs](doc/uniprot.md)
   * [TRYGGVE-specific issues](tryggve/tryggve.md)
-  * [URLs and downloading](https://github.com/jinghuazhao/INF#urls-and-downloading)
+  * [URLs and downloading](doc/URLs.md)
 
 <img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
 
@@ -44,22 +44,3 @@ Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identi
 Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. *Nat Med*. https://doi.org/10.1038/s41591-019-0415-5
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
-
-## URLs and downloading
-
-### URLs
-
-* [SCALLOP consortium](http://www.scallop-consortium.com/).
-* [Olink location](https://www.olink.com/scallop/), [What is NPX](https://www.olink.com/question/what-is-npx/), [F2F London meeting](https://www.olink.com/scallop-f2f-2019/), [Data Science Workshop 2019](https://www.olink.com/data-science-workshop-2019/).
-* [GitHub repository](https://github.com/lassefolkersen/scallop) for the 2017 *PLoS Genetics* paper above.
-* [Tryggve](https://neic.no/tryggve/) and [securecloud](https://secureremote.dtu.dk/vpn/index.html).
-* [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
-* [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
-* [Aging Plasma Proteome](https://twc-stanford.shinyapps.io/aging_plasma_proteome/) ([DEswan](https://github.com/lehallib/DEswan)).
-* [ImmunoBase](https://genetics.opentargets.org/immunobase).
-
-### downloading
-
-``` {.bash}
-git clone https://github.com/jinghua/INF
-```
