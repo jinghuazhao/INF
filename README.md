@@ -6,17 +6,17 @@
 
 ---
 
-## TABLE OF CONTENTS
+## TABLE OF CONTENTS ([Web site](https://jinghuazhao.github.io/INF/))
 
 * [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx](doc/SCALLOP_INF1_analysis_plan.docx))
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
 * [References](https://github.com/jinghuazhao/INF#references)
-* [Approximately independent LD blocks](doc/aild.md)
-* [Competitive logp/log10p functions](doc/logplog10p.md)
-* [Notes on UniProt IDs](doc/uniprot.md)
-* [TRYGGVE-specific issues](tryggve/tryggve.md)
-* [URLs and downloading](https://github.com/jinghuazhao/INF#urls-and-downloading)
-* [Web site](https://jinghuazhao.github.io/INF/)
+* Additional information
+  * [Approximately independent LD blocks](doc/aild.md)
+  * [Competitive logp/log10p functions](doc/logplog10p.md)
+  * [Notes on UniProt IDs](doc/uniprot.md)
+  * [TRYGGVE-specific issues](tryggve/tryggve.md)
+  * [URLs and downloading](https://github.com/jinghuazhao/INF#urls-and-downloading)
 
 <img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
 
@@ -28,11 +28,9 @@
 
 3. The main analysis follows [analysis.sh](tryggve/analysis.sh), initially from [tryggve](tryggve), which contains codes for Q-Q/Manhattan/LocusZoom/Forest plots (see the figure on the right for the OPG example, which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with [cardio](cardio) and [CSD3](csd3). cis/trans classificaiton has been done via [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) as validated by [cistrans.sh](cardio/cistrans.sh).
 
-4. Further downstream analysis will be considered. The CAD summary statistics used for MR and MAGMA is described [here](https://jinghuazhao.github.io/Omics-analysis/CAD/).
-A colocalisation analysis on simulated data can be found in the association analysis section of [software-notes](https://jinghuazhao.github.io/software-notes/)
-as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
+4. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (as in this page) as with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and updates are made at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
 
-5. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page) as with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and more updates shall be made at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
+5. Downstream analysis links examples such as CAD summary statistics for MR and MAGMA [here](https://jinghuazhao.github.io/Omics-analysis/CAD/), colocalisation analysis of simulated data in [software notes on association analysis](https://jinghuazhao.github.io/software-notes/AA.html) as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
 
 ## References
 
@@ -46,6 +44,7 @@ Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identi
 Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. *Nat Med*. https://doi.org/10.1038/s41591-019-0415-5
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
+
 
 ## URLs and downloading
 
@@ -62,6 +61,7 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 
 ### downloading
 
-``` {.bash}
+```{bash}
 git clone https://github.com/jinghua/INF
 ```
+
