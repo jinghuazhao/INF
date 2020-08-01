@@ -30,7 +30,7 @@
 
 4. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (as in this page) as with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and updates are made at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
 
-5. Downstream analysis links examples such as CAD summary statistics for MR and MAGMA [here](https://jinghuazhao.github.io/Omics-analysis/CAD/), colocalisation analysis on simulated data found [software-notes](https://jinghuazhao.github.io/software-notes/) on association analysis as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
+5. Downstream analysis links examples such as CAD summary statistics for MR and MAGMA [here](https://jinghuazhao.github.io/Omics-analysis/CAD/), colocalisation analysis on simulated data found [software notes on association analysis](https://jinghuazhao.github.io/software-notes/AA.html as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
 
 ## References
 
