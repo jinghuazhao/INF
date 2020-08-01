@@ -7,7 +7,7 @@
 <p align="center">
 <b><font align="top" size="16">Timeline for completing cohort-specific analyses and uploading the results for this project: </font></b><br><br>
 
-<img src="doc/deadline.png" align="botom">
+<img src="doc/deadline.png" align="middle">
 </p>
 
 ---
