@@ -57,7 +57,7 @@ R --no-save -q <<END
   repl <- MAF > 1-MAF
   MAF[repl] <- 1-MAF[repl]
   png("work/b-maf.png",width=10,height=8,units="in",pointsize=4,res=300)
-  plot(MAF,abs(Effect),cex=0.85,xlab="MAF",ylab="Effect size")
+  plot(MAF,abs(Effect),cex.axis=2,cex.lab=2,pch=19,xlab="MAF",ylab="Effect size")
   dev.off()
 END
 
