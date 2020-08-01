@@ -6,7 +6,7 @@
 
 ---
 
-## TABLE OF CONTENTS
+## TABLE OF CONTENTS ([Web site](https://jinghuazhao.github.io/INF/))
 
 * [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx](doc/SCALLOP_INF1_analysis_plan.docx))
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
@@ -16,7 +16,6 @@
 * [Notes on UniProt IDs](doc/uniprot.md)
 * [TRYGGVE-specific issues](tryggve/tryggve.md)
 * [URLs and downloading](https://github.com/jinghuazhao/INF#urls-and-downloading)
-* [Web site](https://jinghuazhao.github.io/INF/)
 
 <img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
 
