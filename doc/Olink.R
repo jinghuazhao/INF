@@ -6,7 +6,7 @@ olink_panel <- function(xlsx, tabs, order, nlines, verbose)
   {
     if (verbose) cat("\n\n", x, ":\n", rep("-", nchar(x)+1), "\n\n", sep="")
     t <- openxlsx::read.xlsx(xlsx, sheet=x, colNames=TRUE, skipEmptyRows=FALSE, cols=1:16, rows=3:95)
-    s <- sub(" ", "_", x)
+    s <- gsub(" |-", "_", x)
     if (!order) assign(s, t, envir=.GlobalEnv) else
     {
       o <- order(t[,2])
@@ -26,8 +26,14 @@ olink_panel <- function(xlsx, tabs, order, nlines, verbose)
 options(width=160)
 HOME <- Sys.getenv("HOME")
 INF <- Sys.getenv("INF")
-setwd(INF)
-xlsx <- "doc/Olink validation data all panels.xlsx"
+# UCSC hgTables
+hgTables <- read.delim(paste(INF,"doc","hgTables.tsv",sep="/"),as.is=TRUE)
+hgTables <- within(hgTables, UniProt <- unlist(lapply(strsplit(hgTables$name,"-"),"[",1)))
+xlsx <- paste(INF,"doc/Olink validation data all panels.xlsx",sep="/")
+# The tables are ordered below
+tabs <-c("Cardiometabolic","Cell Regulation","CVD II","CVD III","Development","Immune Response","Immuno-Oncology",
+         "Inflammation","Metabolism","Neurology","Oncology II","Organ Damage")
+olink_panel(xlsx,tabs,TRUE,92,FALSE)
 tabs <- "Inflammation"
 olink_panel(xlsx,tabs,FALSE,92,TRUE)
 # TWEAK O43508 <- Q4ACW9. See https://www.uniprot.org/uniprot/ for additional information
@@ -37,21 +43,14 @@ Inflammation["alias"] <- with(Inflammation, {replace(alias, UniProt.No.=="O43508
 Inflammation["alias"] <- with(Inflammation, {replace(alias, UniProt.No.=="Q8NF90", "P12034")})
 Inflammation["alias"] <- with(Inflammation, {replace(alias, UniProt.No.=="Q8WWJ7", "P30203")})
 inf.orig <- Inflammation
-inf <- read.table("doc/inf1.list",header=FALSE,col.names=c("prot","UniProt"),sep="\t",as.is=TRUE)
+inf <- read.table(paste(INF,"doc/inf1.list",sep="/"),header=FALSE,col.names=c("prot","UniProt"),sep="\t",as.is=TRUE)
 inf1 <- merge(inf,inf.orig,by.x="UniProt",by.y="UniProt.No.")
 write.csv(inf1[c("UniProt","prot","Target","alias")], file="inf1.csv", quote=FALSE, row.names=FALSE)
-# UCSC hgTables
-hgTables <- read.delim("doc/hgTables.tsv",as.is=TRUE)
-hgTables <- within(hgTables, UniProt <- unlist(lapply(strsplit(hgTables$name,"-"),"[",1)))
 inf <- within(inf,UniProt <- replace(UniProt,UniProt=="Q8NF90","P12034"))
 inf <- within(inf,UniProt <- replace(UniProt,UniProt=="Q8WWJ7","P30203"))
 inf <- merge(inf,hgTables,by="UniProt",all=TRUE)
 inf2 <- subset(inf,UniProt%in%inf1$UniProt|UniProt%in%c("P12034","P30203"))
 write.csv(subset(inf2,!grepl("hap",X.chrom)), file="inf2.csv", quote=FALSE, row.names=FALSE)
-# The tables are ordered below
-tabs <-c("Cardiometabolic","Cell Regulation","CVD II","CVD III","Development","Immune Response","Immuno-Oncology",
-         "Inflammation","Metabolism","Neurology","Oncology II","Organ Damage")
-olink_panel(xlsx,tabs,TRUE,92,FALSE)
 
 # Venn diagram with the SomaLogic panel
 
@@ -78,7 +77,7 @@ venn.diagram(x = plist, category.names=cnames, filename='venn_diagram.png', imag
 
 ## additional validation
 
-Olink <- "doc/olink.inf.panel.annot.tsv"
+Olink <- paste(INF,"doc/olink.inf.panel.annot.tsv",sep="/")
 o <- read.delim(Olink, as.is=TRUE)
 SomaLogic <- paste0(HOME,"/SomaLogic/doc/SOMALOGIC_Master_Table_160410_1129info.tsv")
 s <- read.delim(SomaLogic, as.is=TRUE)
