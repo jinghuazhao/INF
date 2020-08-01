@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
 function check()
+# perform check over an individual variant
 {
   grep -w $1 work/INF1.merge.rsid
   grep -w $1 work/INF1.merge.cis.vs.trans
@@ -40,15 +41,17 @@ do
   echo
 done
 
-function Sun()
+function lookup()
+# extended lookup for Olink-SomaLogic signals
 {
+# Olink sentinel thread over SomaLogic
   join <(awk 'NR>1{print $5,"chr" $8 ":" $9}' work/INF1.merge | sort -k1,1 -k2,2) <(sort -k1,1 work/inf1.tmp) | \
   parallel -C' ' '
     echo {1}+{2}+{3}
     grep {2} pQTL.Sun-B_pQTL_EUR_2017 | \
     grep {3}
   ' > pQTL.Sun.log
-# Olink + SomaLogic
+# Olink + SomaLogic signal overlap
   export s=work/pQTL_2018.txt.gz
   awk -v OFS='\t' '{gsub(/"/,"");print $1,$2,$3":"$4,$5}' work/INF1.merge.cis.vs.trans | \
   sort -k1,1 | \
@@ -96,11 +99,6 @@ function Sun()
     nosig <- read.table("work/INF1.merge.nosig",as.is=TRUE,col.names=c("prot","uniprot"))
     nosig <- subset(inf1,uniprot%in%nosig[["uniprot"]])
     SomaLogic_yes_olink_no <- subset(sun,gene%in%nosig[["gene"]])
-    # Supplementary tables
-    xlsx <- "https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-018-0175-2/MediaObjects/41586_2018_175_MOESM4_ESM.xlsx"
-    t4 <- openxlsx::read.xlsx(xlsx, sheet=4, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:31), rows=c(5:1986))
-    t5 <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:19), rows=c(3:2746))
-    t6 <- openxlsx::read.xlsx(xlsx, sheet=6, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:20), rows=c(3:167))
   END
 }
 

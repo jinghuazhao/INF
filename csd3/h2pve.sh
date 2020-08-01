@@ -7,7 +7,7 @@ R --no-save -q <<END
   png("h2pve.png",width=6,height=5,units="in",pointsize=4,res=300)
   attach(h2pve)
   cor(h2,pve)
-  plot(h2,pve,pch=19)
+  plot(h2,pve,pch=19,cex.axis=2,cex.lab=2,xlab="h2",ylab="pve")
   abline(lm(pve~h2), col="red")
   lines(lowess(h2,pve), col="blue")
   detach(h2pve)
