@@ -13,6 +13,7 @@
 * [References](https://github.com/jinghuazhao/INF#references)
 * [Competitive logp/log10p functions](doc/logplog10p.md)
 * [Use of approximately independent LD blocks](doc/aild.md)
+* [TRYGGVE-specific issues](tryggve/tryggve.md)
 * [Notes on UniProt IDs](doc/uniprot.md)
 * [URLs and downloading](https://github.com/jinghuazhao/INF#urls-and-downloading)
 * [Web site](https://jinghuazhao.github.io/INF/)
@@ -31,7 +32,7 @@
 A colocalisation analysis on simulated data can be found in the association analysis section of [software-notes](https://jinghuazhao.github.io/software-notes/)
 as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
 
-5. TRYGGVE-specific issues were noted in [tryggve.md](tryggve/tryggve.md). The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page) as with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and more updates shall be made at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
+5. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page) as with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and more updates shall be made at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
 
 ## References
 
