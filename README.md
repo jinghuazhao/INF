@@ -8,7 +8,7 @@
 
 ## TABLE OF CONTENTS
 
-* [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx]doc/SCALLOP_INF1_analysis_plan.docx)
+* [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx](doc/SCALLOP_INF1_analysis_plan.docx))
 * [Analysis](https://github.com/jinghuazhao/INF#analysis)
 * [References](https://github.com/jinghuazhao/INF#references)
 * [Competitive logp/log10p functions](doc/logplog10p.md)
