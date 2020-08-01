@@ -32,7 +32,7 @@
 A colocalisation analysis on simulated data can be found in the association analysis section of [software-notes](https://jinghuazhao.github.io/software-notes/)
 as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
 
-5. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page) as with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and more updates shall be made at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
+5. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page) as with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and more updates are made at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
 
 ## References
 
