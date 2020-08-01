@@ -28,11 +28,9 @@
 
 3. The main analysis follows [analysis.sh](tryggve/analysis.sh), initially from [tryggve](tryggve), which contains codes for Q-Q/Manhattan/LocusZoom/Forest plots (see the figure on the right for the OPG example, which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with [cardio](cardio) and [CSD3](csd3). cis/trans classificaiton has been done via [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) as validated by [cistrans.sh](cardio/cistrans.sh).
 
-4. Further downstream analysis will be considered. The CAD summary statistics used for MR and MAGMA is described [here](https://jinghuazhao.github.io/Omics-analysis/CAD/).
-A colocalisation analysis on simulated data can be found in the association analysis section of [software-notes](https://jinghuazhao.github.io/software-notes/)
-as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
+4. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (as in this page) as with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and updates are made at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
 
-5. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (for the circular plot at the top of the page) as with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and updates are made at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
+5. Downstream analysis links examples such as CAD summary statistics for MR and MAGMA [here](https://jinghuazhao.github.io/Omics-analysis/CAD/). A colocalisation analysis on simulated data can be found in the association analysis section of [software-notes](https://jinghuazhao.github.io/software-notes/) as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
 
 ## References
 
