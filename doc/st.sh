@@ -14,6 +14,4 @@ git add rsid
 git commit -m "Final work on CSD3 with rsids in the downstream analysis"
 git add tryggve
 git commit -m "Notes and programs on TRYGGVE"
-git add st.sh
-git commit -m "st.sh"
 git push
