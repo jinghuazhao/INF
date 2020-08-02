@@ -60,7 +60,7 @@ A Google sheet has been set up for filling up the information online:
 
 [https://tinyurl.com/y9sw8b5u](https://tinyurl.com/y9sw8b5u)
 
-Alternatively, you can use the [Excel spreadsheet](doc/SCALLOP-INF1.xlsx) from this repository. 
+Alternatively, you can use the [Excel spreadsheet](SCALLOP-INF1.xlsx) from this repository. 
 
 ## 4. File formats for GWAS results
 
