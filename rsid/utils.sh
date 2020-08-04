@@ -56,7 +56,7 @@ R --no-save -q <<END
   MAF <- Freq1
   repl <- MAF > 1-MAF
   MAF[repl] <- 1-MAF[repl]
-  png("work/b-maf.png",width=10,height=8,units="in",pointsize=4,res=300)
+  png("work/b-maf.png",width=10,height=8,units="cm",pointsize=4,res=300)
   plot(MAF,abs(Effect),cex.axis=2,cex.lab=2,pch=19,xlab="MAF",ylab="Effect size")
   dev.off()
 END
@@ -65,8 +65,7 @@ R --no-save -q <<END
   cvt <- read.table("work/INF1.merge.out",as.is=TRUE,header=TRUE,nrows=70)
   H <- with(cvt,table(total))
   M <- names(H)
-  png(file = "work/signals_by_protein.png",width=6,height=5,units="in",pointsize=4,res=300)
-  barplot(H,names.arg=M,xlab="Protein",ylab="Signals",col="blue",
-  main="Number of signals by protein",border="red")
+  png(file = "work/signals_by_protein.png",width=6,height=5,units="cm",pointsize=4,res=300)
+  barplot(H,names.arg=M,xlab="No. of pQTL regions",ylab="No. of proteins",ylim=c(0,25),col="darkgrey",border="black")
   dev.off()
 END
