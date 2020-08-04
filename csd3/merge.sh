@@ -1,4 +1,4 @@
-# 16-7-2020 JHZ
+#!/usr/bin/bash
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -80,13 +80,10 @@ mv INF1.merge.circlize-000001.png INF1.merge.circlize.png
 R --no-save -q <<END
   library(gap)
   d <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
-  pdf("INF1.merge.pdf")
+  png("INF1.merge.png",height=20,width=20,units="cm",res=300)
   mhtplot2d(d)
   dev.off()
 END
-
-pdftopng -r 300 INF1.merge.pdf INF1.merge
-mv INF1.merge-000001.png INF1.merge.png
 
 # rsid
 awk 'NR>1' work/INF1.merge | cut -f6 | sort -k1,1 | uniq | \
@@ -190,11 +187,12 @@ awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3==0' | wc -l
 awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2==0 && $3>0' | wc -l
 awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3>0' | wc -l
 
+export OLINK=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output
+ls $OLINK/*gz | xargs -l basename -s _chr_merged.gz | grep -v -e cvd -e P23560 | sed 's/INTERVAL_inf1_//;s/___/ /'> INTERVAL.list
+
 function INTERVAL()
 # SCALLOP/INF -- INTERVAL overlap
 {
-  export OLINK=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output
-  ls $OLINK/*gz | xargs -l basename -s _chr_merged.gz | grep -v -e cvd -e P23560 | sed 's/INTERVAL_inf1_//;s/___/ /'> INTERVAL.list
   (
     gunzip -c ${OLINK}/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
     awk 'NR==1{print "UniProt","prot","chr","pos",$2,$22,$24,$25}'
@@ -215,3 +213,24 @@ function INTERVAL()
 }
 
 INTERVAL
+
+# join -11 -25 <(sort -k1,1 work/inf1.tmp) <(sort -k5,5 work/INF1.merge) | \
+join -23 <(sort -k1,1 INTERVAL.list) <(awk 'NR>1{print $2,$3,$5,$6,$8 ":" $9}' work/INF1.merge | sort -k3,3) | \
+awk '{
+       if($3==$4) {$3=$3-1e6;$4=$4+1e6}
+       if($3<0) $3=0
+       gsub(/chr/,"",$6);
+       split($6,a,":");
+       chr=a[1];
+       print $0,chr
+}' | \
+parallel -j5 --env OLINK -C' ' '
+  (
+    gunzip -c ${OLINK}/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
+    awk "NR==1{print \"UniProt\",\"prot\",\"rsid\",\"chr\",\"pos\",\$22,\$24,\$25}"
+    zcat ${OLINK}/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
+    awk -v chr={7} -v start={3} -v end={4} -v NA="NA" "chr==\$3+0 && \$4>=start && \$4<=end && index(\$0,NA)==0" | \
+    awk -v prot={1} -v uniprot={2} "{print uniprot, prot, \$2, \$3+0, \$4,\$22,\$24,\$25}"
+  ) | \
+  gzip -f > INF1.merge.{2}-{1}-{5}.gz
+'
