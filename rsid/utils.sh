@@ -51,14 +51,15 @@ R --no-save -q <<END
 END
 
 R --no-save -q <<END
-  tbl <- read.delim("work/INF1.tbl",as.is=TRUE)
-  attach(tbl)
-  MAF <- Freq1
-  repl <- MAF > 1-MAF
-  MAF[repl] <- 1-MAF[repl]
-  png("work/b-maf.png",width=10,height=8,units="cm",pointsize=4,res=300)
-  plot(MAF,abs(Effect),cex.axis=2,cex.lab=2,pch=19,xlab="MAF",ylab="Effect size")
-  dev.off()
+  with(read.delim("work/INF1.METAL",as.is=TRUE),
+  {
+    MAF <- Freq1
+    repl <- MAF > 1-MAF
+    MAF[repl] <- 1-MAF[repl]
+    png("work/b-maf.png",width=10,height=8,units="cm",pointsize=4,res=300)
+    plot(MAF,abs(Effect),cex.axis=2,cex.lab=2,pch=19,xlab="MAF",ylab="Effect size",col=c("red","blue")[2-(cis.trans=="cis")])
+    dev.off()
+  })
 END
 
 R --no-save -q <<END
