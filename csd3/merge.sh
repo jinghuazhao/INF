@@ -187,12 +187,11 @@ awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3==0' | wc -l
 awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2==0 && $3>0' | wc -l
 awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3>0' | wc -l
 
-export OLINK=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output
-ls $OLINK/*gz | xargs -l basename -s _chr_merged.gz | grep -v -e cvd -e P23560 | sed 's/INTERVAL_inf1_//;s/___/ /'> INTERVAL.list
-
 function INTERVAL()
 # SCALLOP/INF -- INTERVAL overlap
 {
+  export OLINK=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output
+  ls $OLINK/*gz | xargs -l basename -s _chr_merged.gz | grep -v -e cvd -e P23560 | sed 's/INTERVAL_inf1_//;s/___/ /'> INTERVAL.list
   (
     gunzip -c ${OLINK}/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
     awk 'NR==1{print "UniProt","prot","chr","pos",$2,$22,$24,$25}'
@@ -210,27 +209,58 @@ function INTERVAL()
       awk -vuniprot={3} -v prot={1} -v chr={4} -v pos={5} "{print uniprot, prot, chr, pos, \$2,\$22,\$24,\$25}"
     '
   ) > INTERVAL.overlap
+
+  join -23 <(sort -k1,1 INTERVAL.list) <(awk 'NR>1{print $2,$3,$5,$6,$8 ":" $9}' work/INF1.merge | sort -k3,3) | \
+  awk '{
+         if($3==$4) {$3=$3-1e6;$4=$4+1e6}
+         if($3<0) $3=0
+         gsub(/chr/,"",$6);
+         split($6,a,":");
+         chr=a[1];
+         print $0,chr
+  }' | \
+  parallel -j5 --env OLINK -C' ' '
+  (
+     gunzip -c ${OLINK}/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
+     awk "NR==1{print \"UniProt\",\"prot\",\"rsid\",\"chr\",\"pos\",\$22,\$24,\$25}"
+     zcat ${OLINK}/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
+     awk -v chr={7} -v start={3} -v end={4} -v NA="NA" "chr==\$3+0 && \$4>=start && \$4<=end && index(\$0,NA)==0" | \
+     awk -v prot={1} -v uniprot={2} "{print uniprot, prot, \$2, \$3+0, \$4,\$22,\$24,\$25}"
+  ) | \
+   gzip -f > INTERVAL.merge.{2}-{1}-{5}.gz
+  '
 }
 
 INTERVAL
 
-# join -11 -25 <(sort -k1,1 work/inf1.tmp) <(sort -k5,5 work/INF1.merge) | \
-join -23 <(sort -k1,1 INTERVAL.list) <(awk 'NR>1{print $2,$3,$5,$6,$8 ":" $9}' work/INF1.merge | sort -k3,3) | \
-awk '{
-       if($3==$4) {$3=$3-1e6;$4=$4+1e6}
-       if($3<0) $3=0
-       gsub(/chr/,"",$6);
-       split($6,a,":");
-       chr=a[1];
-       print $0,chr
-}' | \
-parallel -j5 --env OLINK -C' ' '
-  (
-    gunzip -c ${OLINK}/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
-    awk "NR==1{print \"UniProt\",\"prot\",\"rsid\",\"chr\",\"pos\",\$22,\$24,\$25}"
-    zcat ${OLINK}/INTERVAL_inf1_{1}___{2}_chr_merged.gz | \
-    awk -v chr={7} -v start={3} -v end={4} -v NA="NA" "chr==\$3+0 && \$4>=start && \$4<=end && index(\$0,NA)==0" | \
-    awk -v prot={1} -v uniprot={2} "{print uniprot, prot, \$2, \$3+0, \$4,\$22,\$24,\$25}"
-  ) | \
-  gzip -f > INF1.merge.{2}-{1}-{5}.gz
+# region according to INF1
+join -11 -25 <(sort -k1,1 work/inf1.tmp) <(sort -k5,5 work/INF1.merge) | \
+cut -d' ' -f1-5,7,9,10 | \
+parallel -j5 -C' ' '
+  gunzip -c METAL/{1}-1.tbl.gz | \
+  awk -vchr={7} -vstart={4} -vend={5} -vpos={8} "NR==1||(\$1==chr&&\$2>=start&&\$2<=end)" | \
+  cut -f1-5,10-12 | \
+gzip -f > INF1.merge.{2}-{1}-{6}.gz
+
+# regions according to SomaLogic
+R --no-save -q <<END
+  library(pQTLtools)
+  sentinels <- st4[,5:12]
+  snpid <- gap::chr_pos_a1_a2(st4[,7],st4[,8],st4[,11],st4[,12])
+  write.table(cbind(snpid,sentinels),file="SomaLogic.sentinels",quote=FALSE,row.names=FALSE)
+END
+
+(
+join -j2 <(sort -k2,2 work/inf1.tmp) <(sed '1d' SomaLogic.sentinels | grep -v P23560 | sort -k2,2) | \
+cut -d' ' -f1-3,5,7,8 | \
+parallel -C' ' '
+  zgrep {3} METAL/{2}-1.tbl.gz
+  gunzip -c METAL/{2}-1.tbl.gz | \
+  awk -vchr={4} -vstart={5} -vend={6} "NR==1||(\$1==chr&&\$2>=start&&\$2<=end&&\$12<-9.30103)" | \
+  cut -f1-5,10-12 | \
+  gzip -f > INF1.SomaLogic.{1}-{2}-{3}.gz
+  export lines=$(gunzip -c INF1.SomaLogic.{1}-{2}-{3}.gz | wc -l | cut -d" " -f1)
+  if [ ${lines} -eq 1 ]; then rm INF1.SomaLogic.{1}-{2}-{3}.gz; fi
 '
+) > INF1.SomaLogic.all
+awk '$12<-9.30103' INF1.SomaLogic.all
