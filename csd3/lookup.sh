@@ -103,3 +103,11 @@ function lookup()
 }
 
 Sun
+
+# ST4
+# awk '!(NR==4||NR==8||NR==13||NR==14||NR==23||NR==24||NR==25||NR==31||NR==32||NR==33||NR==34)' ST4 | grep Sun | cut -f2 | sort | uniq | wc -l
+
+join <(awk '{print $2"-"$21}'  SomaLogic.INF1-rsid | sort) \
+     <(awk '!(NR==4||NR==8||NR==13||NR==14||NR==23||NR==24||NR==25||NR==31||NR==32||NR==33||NR==34)' ST4 | grep Sun | awk '{print $3"-"$1}'|sort)
+
+

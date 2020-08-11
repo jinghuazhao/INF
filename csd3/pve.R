@@ -1,4 +1,4 @@
-# 29-8-2019 JHZ
+# 11-8-2020 JHZ
 
 require(gap)
 t <- read.delim("INF1.tbl",as.is=TRUE)
@@ -23,16 +23,4 @@ ord <- with(pve, order(pve))
 sink("pve.dat")
 print(pve[ord, c("prot","pve","v","m")], row.names=FALSE)
 sink()
-png("pve.png", res=300, units="in", width=12, height=8)
-np <- nrow(pve)
-with(pve[ord,], {
-    plot(pve, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(pve))
-    xy <- xy.coords(pve)
-    se <- sqrt(v)
-    segments(xy$x, pve-1.96*se, xy$x, pve+1.96*se)
-    xtick <- seq(1, np, by=1)
-    axis(side=1, at=xtick, labels = FALSE)
-    text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.5)
-})
-dev.off()
 write.csv(tbl,file="INF1.csv",quote=FALSE,row.names=FALSE)

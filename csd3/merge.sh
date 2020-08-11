@@ -251,10 +251,10 @@ R --no-save -q <<END
 END
 
 (
-join -j2 <(sort -k2,2 work/inf1.tmp) <(sed '1d' SomaLogic.sentinels | grep -v P23560 | sort -k2,2) | \
-cut -d' ' -f1-3,5,7,8 | \
+join -j2 <(sort -k2,2 work/inf1.tmp) <(sed '1d' SomaLogic.sentinels | grep -v P23560 | sort -k2,2) > SomaLogic.INF1.all
+cut -d' ' -f1-3,5,7,8 SomaLogic.INF1.all | \
 parallel -C' ' '
-  zgrep {3} METAL/{2}-1.tbl.gz
+  zgrep -w {3} METAL/{2}-1.tbl.gz | \
   gunzip -c METAL/{2}-1.tbl.gz | \
   awk -vchr={4} -vstart={5} -vend={6} "NR==1||(\$1==chr&&\$2>=start&&\$2<=end&&\$12<-9.30103)" | \
   cut -f1-5,10-12 | \
@@ -263,4 +263,36 @@ parallel -C' ' '
   if [ ${lines} -eq 1 ]; then rm INF1.SomaLogic.{1}-{2}-{3}.gz; fi
 '
 ) > INF1.SomaLogic.all
-awk '$12<-9.30103' INF1.SomaLogic.all
+awk '$12<-9.30103' INF1.SomaLogic.all | wc -l
+
+join -j2 <(sed '1d' work/INF1.merge | cut -f5 | sort | uniq | grep -f - -w work/inf1.tmp) \
+         <(sed '1d' SomaLogic.sentinels | grep -v P23560 | sort -k2,2) > INF1.SomaLogic.merge
+
+cut -d' ' -f2 SomaLogic.INF1.all  | sort | uniq | grep -f - -w work/INF1.merge
+cat SomaLogic.INF1.all | \
+parallel -C' ' '
+  grep {2} work/INF1.merge | \
+  grep {3} work/INF1.merge
+'
+join <(awk '{print $2"-"$3,$0}' SomaLogic.INF1.all | sort -k1,1) <(awk '{print $5"-"$6,$0}' work/INF1.merge | sort -k1,1) \
+
+(
+cat SomaLogic.id3 | \
+parallel -C' ' '
+  zgrep -w {1} METAL/{2}-1.tbl.gz
+'
+) > SomaLogic.INF1
+
+wc -l SomaLogic.INF1
+awk '$12<-9.30103' SomaLogic.INF1 | wc -l
+
+(
+cat SomaLogic.id3 | \
+parallel -C' ' '
+  zgrep -w {1} METAL/{2}-1.tbl.gz | \
+  awk -v prot={2} -v uniprot={3} "{print prot,uniprot,\$0}"
+'
+) | \
+sort -k5,5 | \
+join -a1 -15 - work/INTERVAL.rsid > SomaLogic.INF1-rsid
+awk '$14<-9.30103 {print $2, $21}'  SomaLogic.INF1-rsid
