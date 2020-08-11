@@ -1,4 +1,4 @@
-# 24-9-2019 JHZ
+#!/usr/bin/bash
 
 source tryggve/analysis.ini
 
@@ -466,10 +466,11 @@ function lambda()
   grep -v gc.lambda | \
   sed 's/GC.lambda=//g' > work/INF1.lambda.dat
   R --no-save -q <<\ \ END
-    t <- subset(read.table("INF1.lambda.dat",as.is=TRUE, col.names=c("prot","lambda")),!is.na(lambda))
+    t <- subset(read.table("INF1.lambda.dat",as.is=TRUE, col.names=c("prot","lambda")),!is.na(lambda)&prot!="BDNF")
+    summary(t)
     ord <- with(t, order(lambda))
     print(t[ord, c("prot","lambda")], row.names=FALSE)
-    png("INF1.lambda.png", res=300, units="in", width=12, height=8)
+    png("INF1.lambda.png", res=300, units="cm", width=12, height=8)
     np <- nrow(t)
     with(t[ord,], {
         plot(lambda, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(lambda))
