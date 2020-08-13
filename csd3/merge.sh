@@ -294,5 +294,16 @@ parallel -C' ' '
 '
 ) | \
 sort -k5,5 | \
-join -a1 -15 - work/INTERVAL.rsid > SomaLogic.INF1-rsid
+join -a1 -15 -e "NA" - work/INTERVAL.rsid > SomaLogic.INF1-rsid
 awk '$14<-9.30103 {print $2, $21}'  SomaLogic.INF1-rsid
+
+# only worked after adding NA to those missing rsids in SomaLogic.INF1-rsid
+l <- read.table("SomaLogic.INF1-rsid",as.is=TRUE)
+p <- list(with(subset(l,V14<=-9.30103),V1),with(subset(l,V14>-9.30103),V1))
+ys1 <- c(paste0("Yes-",1:49),paste0("No2-",1:83))
+ys2 <- c(paste0("Yes-",1:49),paste0("No1-",1:length(p[[2]])))
+ys <- list(ys1,ys2)
+names(ys) <- c("Olink","SomaLogic")
+VennDiagram::venn.diagram(x = ys, filename='os.png', imagetype="png", output=TRUE,
+                          height=12, width=12, units="cm", resolution=500,
+                          fill=c("yellow","purple"), cat.pos=c(-30,30), rotation.degree = 0)
