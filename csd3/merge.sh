@@ -50,7 +50,7 @@ R --no-save -q <<END
   names(hits) <- c("prot","Chr","bp","SNP","log10p","uniprot")
   cistrans <- cis.vs.trans.classification(hits,inf1,"uniprot")
   cis.vs.trans <- with(cistrans,data)
-  write.table(cis.vs.trans,file=paste0(rt,".merge.cis.vs.trans"),row.names=FALSE,quote=TRUE)
+  write.table(cis.vs.trans,file=paste0(rt,".merge.cis.vs.trans"),quote=FALSE,row.names=FALSE,sep=",")
   cis <- subset(cis.vs.trans,cis.trans=="cis")["SNP"]
   write.table(cis,file=paste0(rt,".merge.cis"),col.names=FALSE,row.names=FALSE,quote=FALSE)
   sink(paste0(rt,".merge.out"))
@@ -297,6 +297,7 @@ sort -k5,5 | \
 join -a1 -15 -e "NA" - work/INTERVAL.rsid > SomaLogic.INF1-rsid
 awk '$14<-9.30103 {print $2, $21}'  SomaLogic.INF1-rsid
 
+R --no-sae <<END
 # only worked after adding NA to those missing rsids in SomaLogic.INF1-rsid
 l <- read.table("SomaLogic.INF1-rsid",as.is=TRUE)
 p <- list(with(subset(l,V14<=-9.30103),V1),with(subset(l,V14>-9.30103),V1))
@@ -307,3 +308,4 @@ names(ys) <- c("Olink","SomaLogic")
 VennDiagram::venn.diagram(x = ys, filename='os.png', imagetype="png", output=TRUE,
                           height=12, width=12, units="cm", resolution=500,
                           fill=c("yellow","purple"), cat.pos=c(-30,30), rotation.degree = 0)
+END
