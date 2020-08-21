@@ -1,4 +1,12 @@
-# 30-1-2020 JHZ
+#!/usr/bin/bash
+
+R --no-save <<END
+  library(rentrez)
+  r1 <- entrez_search(db="pubmed", term="pQTL & 2008 [DP]")
+  r2 <- entrez_search(db="pubmed", term="pQTLs & 2008 [DP]", retmode="json")
+  r3 <- entrez_search(db="pubmed", term="protein & quantitative & trait & locus & 2008 [DP]", retmode="json", retmax=500)
+  write.table(c(with(r2,ids),with(r3,ids)),file="rentrez.ids",col.names=FALSE,row.names=FALSE,quote=FALSE)
+END
 
 export TMPDIR=$INF/work
 
