@@ -31,6 +31,6 @@ cd ${dir}
 sed 's/chr//'  work/INF1.merge.cis | \
 grep -f - work/INF1.merge-rsid.vepinput > INF1.merge.cis.vcf
 export s=INF1.merge.cis
-vep -i ${s}.vcf -o ${s}.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline \
+vep -i ${s}.vcf -o ${s}.vepoutput --per_gene --check_existing --distance 500000 --force_overwrite --offline \
     --species homo_sapiens --everything --assembly GRCh37 \
     --symbol --pubmed --uniprot --protein --sift b --polyphen b --tab
