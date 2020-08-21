@@ -53,6 +53,7 @@ FIle | Description
 -----|--------------------------
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
+stringdb.sh | STRINGdb
 utils.sh | utilties
 vep.sh | VEP annotation
 wgcna.sh | experiment on modules
