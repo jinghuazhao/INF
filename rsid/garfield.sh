@@ -56,5 +56,5 @@ R --no-save <<END
                thresh = 10^-c(1:10,100), pt_thresh = 10^-c(5:10,100), maf.bins = 5, tags.bins = 5, tss.bins = 5,
                prep.file = "INF1.prep", optim_mode = TRUE, minit = 100, thresh_perm = 0.0001)
   garfield.plot("INF1.perm", num_perm = n.perm,
-                output_prefix = "INF1", plot_title = "SCALLOP/INF1", filter = 10, tr = Inf))
+                output_prefix = "INF1", plot_title = "SCALLOP/INF1", filter = 10, tr = Inf)
 END
