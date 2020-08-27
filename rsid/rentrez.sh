@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
 R --no-save <<END
+# https://pubmed.ncbi.nlm.nih.gov/
   library(rentrez)
   r <- entrez_search(db="pubmed",term="pQTLs OR (protein AND quantitative AND trait AND locus) AND human [MH] AND plasma",
        retmax=3000)
