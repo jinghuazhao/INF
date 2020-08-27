@@ -2,16 +2,12 @@
 
 R --no-save <<END
   library(rentrez)
-  r <- entrez_search(db="pubmed",term="(pQTL OR pQTLs OR (protein AND quantitative AND trait AND locus)) AND 2008:2020[DP] AND homo_sapiens[ORGN]",
+  r <- entrez_search(db="pubmed",term="pQTLs OR (protein AND quantitative AND trait AND locus) AND human [MH] AND plasma",
        retmax=3000)
   write.table(with(r,ids),file="rentrez.ids",col.names=FALSE,row.names=FALSE,quote=FALSE)
 END
 split --lines=250 --numeric-suffixes --suffix-length=1 rentrez.ids
 cat x0 | tr '\n' ' ' | xsel -i
-cat x1 | tr '\n' ' ' | xsel -i
-cat x2 | tr '\n' ' ' | xsel -i
-cat x3 | tr '\n' ' ' | xsel -i
-cat x4 | tr '\n' ' ' | xsel -i
 
 export TMPDIR=$INF/work
 

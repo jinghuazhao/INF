@@ -1,11 +1,10 @@
 #!/usr/bin/bash
 
-# 1. extract all significant SNPs
-ls METAL/*-1.tbl.gz | \
-xargs -l basename -s -1.tbl.gz* | \
+# all significant SNPs
 (
+  ls METAL/*-1.tbl.gz | \
+  xargs -l basename -s -1.tbl.gz* | \
   parallel -j3 -C' ' '
-  # zcat METAL/{}-1.tbl.gz | head -1
     zcat METAL/{}-1.tbl.gz | awk "
     function abs(x)
     {
@@ -15,6 +14,12 @@ xargs -l basename -s -1.tbl.gz* | \
     NR>1 && length(\$4)==1 && length(\$5)==1 && abs(\$10/\$11)>=6.219105"
   '
 ) | sort -k1,1n -k2,2n > work/garfield.dat
+
+# HLA-treated SNPs
+ls sentinels/*.p | \
+xargs -l sed '1d;s/chr//' | \
+sort -k1,1n -k3,3n | \
+cut -f2 --complement > work/garfield.dat
 
 # garfield-create-input-gwas.sh
 # the column in GWAS file containing chormosome information
@@ -45,11 +50,11 @@ done
 
 R --no-save <<END
   library(garfield)
-  garfield.run("INF1", data.dir="garfield-data", trait="inf1", run.option = "prep", chrs = 1:21)
+  garfield.run("INF1", data.dir="garfield-data", trait="INF1", run.option = "prep", chrs = 1:21)
   n.perm <- 100000
   garfield.run("INF1", data.dir="garfield-data", run.option = "perm", nperm = n.perm,
                thresh = 10^-c(1:10,100), pt_thresh = 10^-c(5:10,100), maf.bins = 5, tags.bins = 5, tss.bins = 5,
                prep.file = "INF1.prep", optim_mode = TRUE, minit = 100, thresh_perm = 0.0001)
-  garfield.plot("inf1.perm", num_perm = n.perm,
+  garfield.plot("INF1.perm", num_perm = n.perm,
                 output_prefix = "INF1", plot_title = "SCALLOP/INF1", filter = 10, tr = -log10(0.05/180))
 END
