@@ -58,7 +58,7 @@ R --no-save <<END
                prep.file = "INF1.prep", optim_mode = TRUE, minit = 100, thresh_perm = 0.0001)
   garfield.plot("INF1.perm", num_perm = n.perm,
                 output_prefix = "INF1", plot_title = "SCALLOP/INF1", filter = 10, tr = Inf)
-  p <- read.table("INF1.perm",header=T,as.is=T)
+  p <- read.table("INF1.perm",header=TRUE,as.is=TRUE)
   dim(p)
   attach(p)
   table(Tissue)
