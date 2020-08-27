@@ -52,8 +52,9 @@ R --no-save <<END
   library(garfield)
   garfield.run("INF1", data.dir="garfield-data", trait="INF1", run.option = "prep", chrs = 1:21)
   n.perm <- 100000
+  e <- c(5:10,100)
   garfield.run("INF1", data.dir="garfield-data", run.option = "perm", nperm = n.perm,
-               thresh = 10^-c(1:10,100), pt_thresh = 10^-c(5:10,100), maf.bins = 5, tags.bins = 5, tss.bins = 5,
+               thresh = 10^-e, pt_thresh = 10^-e, maf.bins = 5, tags.bins = 5, tss.bins = 5,
                prep.file = "INF1.prep", optim_mode = TRUE, minit = 100, thresh_perm = 0.0001)
   garfield.plot("INF1.perm", num_perm = n.perm,
                 output_prefix = "INF1", plot_title = "SCALLOP/INF1", filter = 10, tr = Inf)
