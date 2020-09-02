@@ -1,4 +1,4 @@
-gz <- gzfile("BMI-COJO.gz")
+gz <- gzfile("~/hpc-work/results/BMI/Meta-analysis_Locke_et_al+UKBiobank_2018_top_941_from_COJO_analysis_UPDATED.txt.gz")
 d <- read.delim(gz,as.is=TRUE)
 library(TwoSampleMR)
 exposure_dat <- format_data(d, type="exposure", snp_col = "SNP", effect_allele_col = "Tested_Allele", other_allele_col = "Other_Allele",
