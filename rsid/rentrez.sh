@@ -5,7 +5,7 @@ R --no-save <<END
   library(XML)
   library(gap)
   library(rentrez)
-  term <- "pQTLs OR (protein AND quantitative AND trait AND loci) AND human[MH] AND plasma"
+  term <- "pQTLs OR (protein AND quantitative AND trait AND loci) AND human[MH] AND (plasma OR serum)"
   r <- entrez_search(db="pubmed",term=term,retmax=3000)
   write.table(with(r,ids),file="entrez.ids",col.names=FALSE,row.names=FALSE,quote=FALSE)
 # Yao 30111768[uid]
@@ -47,8 +47,5 @@ join -113 -25 -t$'\t' \
     <(sed '1d' $traitmap | awk '/protein measure|protein levels/' | sort -t$'\t' -k5,5) | cut -f2 | uniq > pmid
 cd -
 
-# https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html
-# https://pubmed.ncbi.nlm.nih.gov/
-# https://www.ncbi.nlm.nih.gov/pmc/pmctopmid/
 # https://www.ebi.ac.uk/gwas/api/search/downloads/alternative
 # https://www.ebi.ac.uk/gwas/api/search/downloads/trait_mappings
