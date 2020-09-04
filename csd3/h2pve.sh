@@ -27,13 +27,15 @@ END
 R --no-save -q <<END
   png("h2-pve.png", res=300, units="cm", width=40, height=40)
   par(mfrow=c(3,1))
-  ldak <- read.table("INF1.ldak.h2",as.is=TRUE,skip=1)
-  names(ldak) <- c("prot","h2","se","inf","inf_se")
-  summary(ldak)
-  ord <- with(ldak,order(h2))
-  np <- nrow(ldak)
-  with(ldak[ord,],{
-    plot(h2, cex=0.8, pch=16, axes=FALSE, main="a")
+  h2 <- read.table("h2.tsv",as.is=TRUE,col.names=c("prot","h2","se"))
+  summary(h2)
+  ord <- with(h2, order(h2))
+  sink("h2.dat")
+  print(h2[ord, c("prot","h2","se")], row.names=FALSE)
+  sink()
+  np <- nrow(h2)
+  with(h2[ord,], {
+    plot(h2, cex=0.8, pch=16, axes=FALSE, main="a", xlab="")
     xy <- xy.coords(h2)
     l <- h2-1.96*se
     l[l<0] <- 0
@@ -44,14 +46,15 @@ R --no-save -q <<END
     axis(side=2)
     text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.85)
   })
-  h2 <- read.table("h2.tsv",as.is=TRUE,col.names=c("prot","h2","se"))
-  summary(h2)
-  ord <- with(h2, order(h2))
-  sink("h2.dat")
-  print(h2[ord, c("prot","h2","se")], row.names=FALSE)
+  ldak <- read.table("INF1.ldak.h2",as.is=TRUE,skip=1)
+  names(ldak) <- c("prot","h2","se","inf","inf_se")
+  summary(ldak)
+  ord <- with(ldak,order(h2))
+  sink("ldak.dat")
+  print(ldak[ord, c("prot","h2","se")], row.names=FALSE)
   sink()
-  with(h2[ord,], {
-    plot(h2, cex=0.8, pch=16, axes=FALSE, main="a")
+  with(ldak[ord,],{
+    plot(h2, cex=0.8, pch=16, axes=FALSE, main="b", xlab="")
     xy <- xy.coords(h2)
     l <- h2-1.96*se
     l[l<0] <- 0
@@ -66,7 +69,7 @@ R --no-save -q <<END
   summary(pve)
   np <- nrow(pve)
   with(pve, {
-      plot(pve, cex=0.8, pch=16, axes=FALSE, main="b")
+      plot(pve, cex=0.8, pch=16, axes=FALSE, main="c", xlab="Protein", cex.lab=2)
       xy <- xy.coords(pve)
       se <- sqrt(v)
       segments(xy$x, pve-1.96*se, xy$x, pve+1.96*se)
