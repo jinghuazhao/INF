@@ -50,3 +50,38 @@ sbatch --wait csd3/h2.sb
 cd work
 grep V\(G\) *hsq | grep Vp | sed 's|.hsq:V(G)/Vp||g' > h2.tsv
 cd -
+
+## LDSC model
+
+export LDAK=ldak5.1.linux
+export ref=${INF}/INTERVAL/cardio/INTERVAL
+
+# http://dougspeed.com/reference-panel/
+# wget https://www.dropbox.com/s/slchsd0uyd4hii8/genetic_map_b37.zip
+# unzip genetic_map_b37.zip
+
+for chr in {1..22}
+do
+  plink --bfile ${ref}.prune --chr ${chr} --cm-map ${INF}/data/genetic_map_b37/genetic_map_chr@_combined_b37.txt --make-bed --out prune${chr}
+done
+
+cat prune{1..22}.bim | \
+awk '{print $2, $3}' > prune.all
+awk '(NR==FNR){arr[$1]=$2;next}{print $1, $2, arr[$2], $4, $5, $6}' prune.all ${ref}.prune.bim > ref.bim
+ln -sf ${ref}.prune.bed ref.bed
+ln -sf ${ref}.prune.fam ref.fam
+
+${LDAK} --calc-tagging INTERVAL --bfile ref --ignore-weights YES --power -1 --window-cm 1
+
+# http://dougspeed.com/calculate-taggings/
+# LDAK model
+# --weights sumsect/weights.short --power -0.25
+
+sbatch --wait ${INF}/csd3/h2.sb
+
+cd work
+(
+  echo Component Heritability Her_SD Influence Inf_SD
+  grep -n Base *hers | sed 's/.ldak.hers:2:Her_Base//'
+) > INF1.ldak.h2
+cd -

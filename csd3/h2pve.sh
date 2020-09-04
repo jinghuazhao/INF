@@ -25,14 +25,31 @@ R --no-save -q <<END
 END
 
 R --no-save -q <<END
+  png("h2-pve.png", res=300, units="cm", width=40, height=40)
+  par(mfrow=c(3,1))
+  ldak <- read.table("INF1.ldak.h2",as.is=TRUE,skip=1)
+  names(ldak) <- c("prot","h2","se","inf","inf_se")
+  summary(ldak)
+  ord <- with(ldak,order(h2))
+  np <- nrow(ldak)
+  with(ldak[ord,],{
+    plot(h2, cex=0.8, pch=16, axes=FALSE, main="a")
+    xy <- xy.coords(h2)
+    l <- h2-1.96*se
+    l[l<0] <- 0
+    u <- h2+1.96*se
+    segments(xy$x,l, xy$x,u)
+    xtick <- seq(1, np, by=1)
+    axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.2)
+    axis(side=2)
+    text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.85)
+  })
   h2 <- read.table("h2.tsv",as.is=TRUE,col.names=c("prot","h2","se"))
+  summary(h2)
   ord <- with(h2, order(h2))
   sink("h2.dat")
   print(h2[ord, c("prot","h2","se")], row.names=FALSE)
   sink()
-  png("h2-pve.png", res=300, units="cm", width=40, height=40)
-  par(mfrow=c(2,1))
-  np <- nrow(h2)
   with(h2[ord,], {
     plot(h2, cex=0.8, pch=16, axes=FALSE, main="a")
     xy <- xy.coords(h2)
@@ -46,6 +63,7 @@ R --no-save -q <<END
     text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.85)
   })
   pve <- read.table("pve.dat",as.is=TRUE,header=TRUE)
+  summary(pve)
   np <- nrow(pve)
   with(pve, {
       plot(pve, cex=0.8, pch=16, axes=FALSE, main="b")
