@@ -1,25 +1,20 @@
 #!/usr/bin/bash
 
-# all significant SNPs
-(
-  ls METAL/*-1.tbl.gz | \
-  xargs -l basename -s -1.tbl.gz* | \
-  parallel -j3 -C' ' '
-    zcat METAL/{}-1.tbl.gz | awk "
-    function abs(x)
-    {
-      if (x<0) return -x;
-      else return x;
-    }
-    NR>1 && length(\$4)==1 && length(\$5)==1 && abs(\$10/\$11)>=6.219105"
-  '
-) | sort -k1,1n -k2,2n > work/garfield.dat
+wget -qO- https://www.ebi.ac.uk/birney-srv/GARFIELD/package/garfield-data.tar.gz | \
+tar xfz -
 
 # HLA-treated SNPs
 ls sentinels/*.p | \
 xargs -l sed '1d;s/chr//' | \
 sort -k1,1n -k3,3n | \
 cut -f2 --complement > work/garfield.dat
+
+# all significant SNPs
+(
+  ls METAL/*-1.tbl.gz | \
+  xargs -l basename -s -1.tbl.gz* | \
+  parallel -j3 -C' ' 'zcat METAL/{}-1.tbl.gz | awk " NR>1 && \$12<-7.30103"'
+) | sort -k1,1n -k2,2n > work/garfield.dat
 
 # garfield-create-input-gwas.sh
 # the column in GWAS file containing chormosome information
@@ -33,20 +28,19 @@ pvalcol=12
 TRAITNAME=INF1
 GWASFILENAME=$INF/work/garfield.dat
 
-wget -qO- https://www.ebi.ac.uk/birney-srv/GARFIELD/package/garfield-data.tar.gz | \
-tar xfz -
-
 # output directory to be used as input for GARFIELD analysis
 OUTDIR=garfield-data/pval/$TRAITNAME
 mkdir -p $OUTDIR
 
-for CHR in {1..21}
+for CHR in {1..22}
 do
+  echo $CHR
   awk -v chr=$CHR -v chrcol=$chrcol -v poscol=$poscol -v pvalcol=$pvalcol '
       $chrcol==chr {print $poscol,10^$pvalcol}' $GWASFILENAME | \
   sort -k1n > $OUTDIR/chr$CHR
-  echo $CHR
 done
+
+module load gcc/6
 
 R --no-save <<END
   library(garfield)
