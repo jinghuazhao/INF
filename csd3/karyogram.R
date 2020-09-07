@@ -1,4 +1,4 @@
-# 4-8-2020 JHZ
+# 7-9-2020 JHZ
 
 library(regioneR)
 INF1_merge <- read.delim("work/INF1.merge")[c("Chrom","Start","End","prot","MarkerName")]
@@ -7,7 +7,7 @@ INF1_merge[singletons,"Start"] <- INF1_merge[singletons,"Start"] - 1e6
 INF1_merge[singletons,"End"] <- INF1_merge[singletons,"End"] + 1e6
 small <- with(INF1_merge, Start<0)
 INF1_merge[small,"Start"] <- 0
-cvt <- read.table("work/INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
+cvt <- read.csv("work/INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
 INF1_merge_cvt <- merge(INF1_merge,cvt,by.x=c("prot","MarkerName"),by.y=c("prot","SNP"))
 ord <- with(INF1_merge_cvt,order(Chr,bp))
 INF1_merge_cvt <- INF1_merge_cvt[ord,]
@@ -20,7 +20,7 @@ genes <- with(bm,toGRanges(chromosome_name,start_position,end_position,labels=hg
 
 library(karyoploteR)
 
-png("INF1.merge.png",width=16,height=14,units="cm",res=300)
+png("ST-karyoplote.png",width=16,height=14,units="cm",res=300)
 attach(INF1_merge_cvt)
 sentinels <- toGRanges(Chr,bp-1,bp,labels=p.gene)
 cis.regions <- toGRanges(Chr,cis.start,cis.end)
