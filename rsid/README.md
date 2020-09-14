@@ -53,6 +53,7 @@ FIle | Description
 -----|--------------------------
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
+pqtlMR.sh | pQTL MR analysis
 rentrez.sh | reuse of rentrez
 rGREAT.R | GREAT analysis
 stringdb.sh | STRINGdb
