@@ -13,7 +13,7 @@ export prefix=INF1
 R --no-save <<END
   prefix <- Sys.getenv("prefix")
   ivs <- within(read.table(paste0(prefix,".ins"),as.is=TRUE,header=TRUE),{pval=10^pval})
-  ids <- scan("ieu-id.txt",what="")
+  ids <- scan("mrbase-id.txt",what="")
   pQTLtools::pqtlMR(ivs,ids)
 END
 
