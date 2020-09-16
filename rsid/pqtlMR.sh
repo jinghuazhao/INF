@@ -1,5 +1,6 @@
 #/usr/bin/bash
 
+function ins()
 (
 # rsid prot Allele1 Allele2 Freq1 Effect StdErr log.P. cis.trans
   echo SNP Phenotype effect_allele other_allele eaf beta se pval
@@ -17,5 +18,6 @@ R --no-save <<END
   pQTLtools::pqtlMR(ivs,ids)
 END
 
-awk 'NR==1||$9<0.05' ${exposure}.mr.txt | \
+cut -f1,2,5,6 --complement ${prefix}.mr.txt | \
+awk -vFS="\t" 'NR==1||$5<0.05'| \
 xsel -i

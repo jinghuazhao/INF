@@ -50,13 +50,14 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 ### Utilities
 
 FIle | Description
------|--------------------------
+-----|---------------------------
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 pqtlMR.sh | pQTL MR analysis
 rentrez.sh | reuse of rentrez
 rGREAT.R | GREAT analysis
 stringdb.sh | STRINGdb
+uniprot.R | UniProt IDs to others
 utils.sh | utilties
 vep.sh | VEP annotation
 wgcna.sh | experiment on modules
