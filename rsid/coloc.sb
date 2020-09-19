@@ -26,9 +26,10 @@ cd work
   cut -f2-7
 ) > ${trait}.sumstats
 ln -sf ${FUSION}/WEIGHTS WEIGHTS
-for tissue in $(cat ${FUSION}/Tissues)
+for tissue in Whole_Blood
 do
   export tissue=${tissue}
+  module load gcc/6
   (
     awk -v OFS='\t' 'BEGIN{print "PANEL","FILE","ID","CHR","P0","P1","HSQ","BEST.GWAS.ID","BEST.GWAS.Z",
                     "EQTL.ID","EQTL.R2","EQTL.Z","EQTL.GWAS.Z","NSNP","NWGT",

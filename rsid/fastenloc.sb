@@ -34,7 +34,7 @@ gzip -f > ${trait}.torus.zval.gz
 torus -d ${trait}.torus.zval.gz --load_zval -dump_pip ${trait}.gwas.pip
 gzip -f ${trait}.gwas.pip
 
-for tissue in $(cat ${eQTL}/Tissues)
+for tissue in Whole_Blood
 do
   export tissue=${tissue}
   fastenloc -eqtl ${eQTL}/gtex_v8.eqtl_annot_rsid.hg19.vcf.gz \
