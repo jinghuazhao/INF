@@ -26,10 +26,10 @@ cd work
   cut -f2-7
 ) > ${trait}.sumstats
 ln -sf ${FUSION}/WEIGHTS WEIGHTS
+module load gcc/6
 for tissue in Whole_Blood
 do
   export tissue=${tissue}
-  module load gcc/6
   (
     awk -v OFS='\t' 'BEGIN{print "PANEL","FILE","ID","CHR","P0","P1","HSQ","BEST.GWAS.ID","BEST.GWAS.Z",
                     "EQTL.ID","EQTL.R2","EQTL.Z","EQTL.GWAS.Z","NSNP","NWGT",
@@ -45,7 +45,7 @@ do
               --ref_ld_chr ${FUSION}/LDREF/1000G.EUR. \
               --chr {} \
               --coloc_P 1e-4 \
-              --GWASN 15335 \
+              --GWASN 15150 \
               --out ${trait}-${tissue}-{}.dat
       cat ${trait}-${tissue}-{}.dat | \
       if [ {} -eq 1 ]; then cat; else awk "NR>1"; fi
