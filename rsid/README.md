@@ -51,6 +51,7 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 
 FIle | Description
 -----|---------------------------
+CRP.sh | an inflammation score
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 pqtlMR.sh | pQTL MR analysis

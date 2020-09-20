@@ -13,7 +13,7 @@ cut -f2 --complement > work/garfield.dat
 (
   ls METAL/*-1.tbl.gz | \
   xargs -l basename -s -1.tbl.gz* | \
-  parallel -j3 -C' ' 'zcat METAL/{}-1.tbl.gz | awk " NR>1 && \$12<-7.30103"'
+  parallel -j3 -C' ' 'zcat METAL/{}-1.tbl.gz | awk " NR>1 && \$12<-5"'
 ) | sort -k1,1n -k2,2n > work/garfield.dat
 
 # garfield-create-input-gwas.sh
@@ -48,7 +48,7 @@ R --no-save <<END
   n.perm <- 100000
   e <- c(5:10,100)
   garfield.run("INF1", data.dir="garfield-data", run.option = "perm", nperm = n.perm,
-               thresh = 10^-e, pt_thresh = 10^-e, maf.bins = 5, tags.bins = 5, tss.bins = 5,
+               thresh = 1e-5, pt_thresh = 5e-8, maf.bins = 5, tags.bins = 5, tss.bins = 5,
                prep.file = "INF1.prep", optim_mode = TRUE, minit = 100, thresh_perm = 0.0001)
   garfield.plot("INF1.perm", num_perm = n.perm,
                 output_prefix = "INF1", plot_title = "SCALLOP/INF1", filter = 10, tr = Inf)
