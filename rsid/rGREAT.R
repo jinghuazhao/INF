@@ -1,10 +1,9 @@
-go <- function(i,lines=15)
+go <- function(i)
 {
-  ord <- order(with(tb[[i]],Hyper_Adjp_BH))
-  print(head(tb[[i]][ord1,],lines))
-  id <- with(subset(tb[[i]],Hyper_Adjp_BH<1e-8),ID)
+  ord <- order(with(tb[[i]],HyperFdrQ))
+  id <- data.frame(label=names(tb)[i],subset(tb[[i]],HyperFdrQ<1e-5))
+# Hyper_Adjp_BH without download_by option
 # Augmented Exploration of the GO with Interactive Simulations
-  write.table(id,file=paste0("id",i,".tsv"),col.names=FALSE,quote=FALSE,row.names=FALSE)
 }
 
 INF1_merge <- read.table("work/INF1.merge",as.is=TRUE,header=TRUE)
@@ -17,12 +16,13 @@ reset <- with(regions,Start < 0)
 regions[reset,"Start"] <- 0
 library(rGREAT)
 job = submitGreatJob(regions, species="hg19", version="3.0.0")
-tb = getEnrichmentTables(job)
+tb = getEnrichmentTables(job,download_by = 'tsv')
 class(tb)
 names(tb)
-go(1)
-go(2)
-go(3)
+go1 <- go(1)
+go2 <- go(2)
+go3 <- go(3)
+write.table(rbind(go1,go2,go3),file="great.tsv",quote=FALSE,row.names=FALSE,sep="\t")
 png("work/rGREAT.png", res=300, units="cm", width=30, height=20)
 plotRegionGeneAssociationGraphs(job,type=c(1,3))
 dev.off()
