@@ -26,11 +26,14 @@ do
       --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz,conservation_file:phylocsf_gerp.sql.gz \
       --tab
 done
-cd ${dir}
-
-sed 's/chr//'  work/INF1.merge.cis | \
-grep -f - work/INF1.merge-rsid.vepinput > INF1.merge.cis.vcf
+# per_gene
+sed 's/chr//'  INF1.merge.cis | \
+grep -f - INF1.merge-rsid.vepinput > INF1.merge.cis.vcf
 export s=INF1.merge.cis
 vep -i ${s}.vcf -o ${s}.vepoutput --per_gene --check_existing --distance 500000 --force_overwrite --offline \
     --species homo_sapiens --everything --assembly GRCh37 \
     --symbol --pubmed --uniprot --protein --sift b --polyphen b --tab
+## cross-check
+grep -v '#' ${s}.vepoutput | \
+grep -e missense_variant -e stop_lost -e splice_acceptor_variant | cut -f1 | grep -f - INF1.merge.cis
+cd ${dir}
