@@ -309,3 +309,12 @@ VennDiagram::venn.diagram(x = ys, filename='os.png', imagetype="png", output=TRU
                           height=12, width=12, units="cm", resolution=500,
                           fill=c("yellow","purple"), cat.pos=c(-30,30), rotation.degree = 0)
 END
+
+# REACTOME
+cut -d, -f10,14 work/INF1.merge.cis.vs.trans | \
+sed '1d' | \
+grep cis | \
+cut -d, -f1 | \
+sort | \
+uniq | \
+xsel -i
