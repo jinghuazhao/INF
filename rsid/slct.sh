@@ -31,7 +31,7 @@ R --no-save -q <<END
 # total
   cistrans <- cis.vs.trans.classification(hits,inf1,"uniprot")
   cis.vs.trans <- with(cistrans,data)
-  write.table(cis.vs.trans,file="INF1.jma-rsid.cis.vs.trans",row.names=FALSE,quote=TRUE)
+  write.csv(cis.vs.trans,file="INF1.jma-rsid.cis.vs.trans",row.names=FALSE,quote=TRUE)
   cis <- subset(cis.vs.trans,cis.trans=="cis")["SNP"]
   write.table(cis,file="INF1.jma-rsid.cis",col.names=FALSE,row.names=FALSE,quote=FALSE)
   sink("INF1.jma-rsid.out")
@@ -44,7 +44,7 @@ R --no-save -q <<END
 # primary
   cistrans1 <- cis.vs.trans.classification(subset(hits,p <= 5e-10),inf1,"uniprot")
   cis.vs.trans1 <- with(cistrans1,data)
-  write.table(cis.vs.trans1,file="INF1.jma-rsid.1.cis.vs.trans",row.names=FALSE,quote=TRUE)
+  write.csv(cis.vs.trans1,file="INF1.jma-rsid.1.cis.vs.trans",row.names=FALSE,quote=TRUE)
   sink("INF1.jma-rsid.1.out")
   with(cistrans1,table)
   sink()
@@ -55,7 +55,7 @@ R --no-save -q <<END
 # secondary
   cistrans2 <- cis.vs.trans.classification(subset(hits,p > 5e-10 & pJ <= 5e-10),inf1,"uniprot")
   cis.vs.trans2 <- with(cistrans2,data)
-  write.table(cis.vs.trans2,file="INF1.jma-rsid.2.cis.vs.trans",row.names=FALSE,quote=TRUE)
+  write.csv(cis.vs.trans2,file="INF1.jma-rsid.2.cis.vs.trans",row.names=FALSE,quote=TRUE)
   sink("INF1.jma-rsid.2.out")
   with(cistrans2,table)
   sink()
@@ -73,17 +73,17 @@ done
 
 R --no-save -q <<END
   library(gap)
-  d <- read.table("INF1.jma-rsid.cis.vs.trans",as.is=TRUE,header=TRUE)
+  d <- read.csv("INF1.jma-rsid.cis.vs.trans",as.is=TRUE)
   d <- within(d,{log10p=-log10p(b/se)})
   pdf("INF1.jma-rsid.m2d.pdf")
   mhtplot2d(d)
   dev.off()
-  d <- read.table("INF1.jma-rsid.1.cis.vs.trans",as.is=TRUE,header=TRUE)
+  d <- read.csv("INF1.jma-rsid.1.cis.vs.trans",as.is=TRUE)
   d <- within(d,{log10p=-log10p(b/se)})
   pdf("INF1.jma-rsid.1.m2d.pdf")
   mhtplot2d(d)
   dev.off()
-  d <- read.table("INF1.jma-rsid.2.cis.vs.trans",as.is=TRUE,header=TRUE)
+  d <- read.csv("INF1.jma-rsid.2.cis.vs.trans",as.is=TRUE)
   d <- within(d,{log10p=-log10p(b/se)})
   pdf("INF1.jma-rsid.2.m2d.pdf")
   mhtplot2d(d)

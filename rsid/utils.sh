@@ -3,9 +3,20 @@
 # count genomic regions for all sentinels
 (
   awk -v OFS='\t' '(NR==1){print $1,$2,$3,$5,$6,$8,$9}' work/INF1.merge 
-  awk -v OFS='\t' '(NR>1){print $1,$2,$3,$5,$6,$8,$9}' work/INF1.merge | \
+  awk -vd=1e6 -v OFS='\t' '
+    (NR>1){
+    if($3-$2<=2) {$2=$2-d;$3=$3+d}
+    if ($2<0) $2=0
+    print $1,$2,$3,$5,$6,$8,$9
+  }' work/INF1.merge | \
   sort -k6,6n -k2,2n
 ) | \
+bedtools merge | \
+wc -l
+
+awk -vFS="," -vOFS="\t" 'NR>1{print $3,$22,$21}' INF1.jma-rsid.cis.vs.trans | \
+sort -k1n -k2n | \
+awk '{print "chr" $0}' | \
 bedtools merge | \
 wc -l
 
