@@ -45,12 +45,12 @@ R --no-save -q <<END
   require(gap)
   tag <- Sys.getenv("tag")
   rt <- paste0("INF1")
-  clumped <- read.table(paste0(rt,".merge"),as.is=TRUE,header=TRUE)
+  clumped <- read.delim(paste0(rt,".merge"),as.is=TRUE)
   hits <- merge(clumped[c("CHR","POS","MarkerName","prot","log10p")],inf1[c("prot","uniprot")],by="prot")
   names(hits) <- c("prot","Chr","bp","SNP","log10p","uniprot")
   cistrans <- cis.vs.trans.classification(hits,inf1,"uniprot")
   cis.vs.trans <- with(cistrans,data)
-  write.table(cis.vs.trans,file=paste0(rt,".merge.cis.vs.trans"),quote=FALSE,row.names=FALSE,sep=",")
+  write.csv(cis.vs.trans,file=paste0(rt,".merge.cis.vs.trans"),quote=FALSE,row.names=FALSE)
   cis <- subset(cis.vs.trans,cis.trans=="cis")["SNP"]
   write.table(cis,file=paste0(rt,".merge.cis"),col.names=FALSE,row.names=FALSE,quote=FALSE)
   sink(paste0(rt,".merge.out"))
@@ -74,12 +74,16 @@ R --no-save -q <<END
   nrow(merged[both.cis.and.trans,])
 END
 
+awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3==0' | wc -l
+awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2==0 && $3>0' | wc -l
+awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3>0' | wc -l
+
 pdftopng -r 300 INF1.merge.circlize.pdf INF1.merge.circlize
 mv INF1.merge.circlize-000001.png INF1.merge.circlize.png
 
 R --no-save -q <<END
   library(gap)
-  d <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
+  d <- read.csv("INF1.merge.cis.vs.trans",as.is=TRUE)
   png("INF1.merge.png",height=20,width=20,units="cm",res=300)
   mhtplot2d(d)
   dev.off()
@@ -170,11 +174,11 @@ END
 
 R --no-save <<END
   library(gap)
-  d <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
+  d <- read.csv("INF1.merge.cis.vs.trans",as.is=TRUE)
   r <- mhtplot2d(d)
   r <- within(r,{z=-z})
   head(r)
-  write.table(r,"INF1.merge.plotly",quote=FALSE,row.names=FALSE,sep=",")
+  write.csv(r,"INF1.merge.plotly",quote=FALSE,row.names=FALSE)
   r <- within(r,{x=x/1e9;y=y/1e9;z=z/1e2})
   write.csv(subset(r,col=="red"),"red.dat",quote=FALSE,row.names=FALSE)
   write.csv(subset(r,col=="blue"),"blue.dat",quote=FALSE,row.names=FALSE)
@@ -182,10 +186,6 @@ END
 paste -d',' <(cut -d',' -f1-3 blue.dat) <(cut -d',' -f1-3 red.dat) | \
 awk -v FS="," -v OFS="," '{if(NF==4) print $1,$2,$3,",,"; else print}' |
 awk '{if(NR==1) print "x1,y1,z1,x2,y2,z2"; else print}' > INF1.merge.d3
-
-awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3==0' | wc -l
-awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2==0 && $3>0' | wc -l
-awk 'NR==2,NR==71' work/INF1.merge.out | awk '$2>0 && $3>0' | wc -l
 
 function INTERVAL()
 # SCALLOP/INF -- INTERVAL overlap
@@ -234,13 +234,14 @@ function INTERVAL()
 INTERVAL
 
 # region according to INF1
-join -11 -25 <(sort -k1,1 work/inf1.tmp) <(sort -k5,5 work/INF1.merge) | \
+join -11 -25 <(sort -k1,1 work/inf1.tmp) <(sed '1d' work/INF1.merge | sort -k5,5 | awk '{if($3-$2<=2) {$2=$2-1e6;$3=$3+1e6};if($2<0) $2=0;print}') | \
 cut -d' ' -f1-5,7,9,10 | \
 parallel -j5 -C' ' '
   gunzip -c METAL/{1}-1.tbl.gz | \
   awk -vchr={7} -vstart={4} -vend={5} -vpos={8} "NR==1||(\$1==chr&&\$2>=start&&\$2<=end)" | \
   cut -f1-5,10-12 | \
-gzip -f > INF1.merge.{2}-{1}-{6}.gz
+  gzip -f > INF1.merge.{2}-{1}-{6}.gz
+'
 
 # regions according to SomaLogic
 R --no-save -q <<END
