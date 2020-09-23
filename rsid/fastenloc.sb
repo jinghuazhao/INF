@@ -4,7 +4,7 @@
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
-#SBATCH --array=1-92%5
+#SBATCH --array=1-41,43-92
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_fastenloc_%A_%a.err
@@ -29,27 +29,27 @@ cut -f2,3,4 | \
 awk '{gsub(/region/,"",$2)};1' | \
 sort -k2,2n | \
 awk -vOFS='\t' '{print $1,"loc" $2,$3}' | \
-gzip -f > ${trait}.torus.zval.gz
+gzip -f > fastenloc/${trait}.torus.zval.gz
 
-torus -d ${trait}.torus.zval.gz --load_zval -dump_pip ${trait}.gwas.pip
-gzip -f ${trait}.gwas.pip
+torus -d fastenloc/${trait}.torus.zval.gz --load_zval -dump_pip fastenloc/${trait}.gwas.pip
+gzip -f fastenloc/${trait}.gwas.pip
 
 for tissue in Whole_Blood
 do
   export tissue=${tissue}
   fastenloc -eqtl ${eQTL}/gtex_v8.eqtl_annot_rsid.hg19.vcf.gz \
-            -gwas ${trait}.gwas.pip.gz -tissue ${tissue} -prefix ${trait}-${tissue}
+            -gwas fastenloc/${trait}.gwas.pip.gz -tissue ${tissue} -prefix ${trait}-${tissue}
   for o in sig snp
   do
     export o=${o}
-    cp ${trait}-${tissue}.enloc.${o}.out ${trait}-${tissue}-${o}.out
-    join -12 <(awk 'NR>1' ${trait}.enloc.${o}.out | \
+    cp ${trait}-${tissue}.enloc.${o}.out fastenloc/${trait}-${tissue}-${o}.out
+    join -12 <(awk 'NR>1' ${trait}-${tissue}.enloc.${o}.out | \
                awk '{split($1,a,":");print a[1]}' | \
                zgrep -w -f - ensGtp.txt.gz | cut -f1,2 | \
                sort -k2,2) \
              <(gunzip -c ensemblToGeneName.txt.gz | sort -k1,1) | \
     cut -d' ' -f2,3 | \
-    parallel -j1 --env tissue --env o -C' ' 'sed -i "s/{1}/{1}-{2}/g;s/:[1-9]//g" ${trait}-${tissue}-${o}.out'
+    parallel -j1 --env tissue --env o -C' ' 'sed -i "s/{1}/{1}-{2}/g;s/:[1-9]//g" fastenloc/${trait}-${tissue}-${o}.out'
   done
 done
 
