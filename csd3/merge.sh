@@ -251,11 +251,25 @@ R --no-save -q <<END
   write.table(cbind(snpid,sentinels),file="SomaLogic.sentinels",quote=FALSE,row.names=FALSE)
 END
 
+# --- protein overlap ---
+# Somalogic proteins with sentinels (1468)
+sed '1d' SomaLogic.sentinels | grep -v P23560 | sort -k2,2 | cut -d' ' -f2 | uniq | wc -l
+
+# number of proteins with sentinels in both Olink and SomaLogic (28) - NOTE P29460,Q9NPF7 in SomaLogic
+cut -f2 work/INF1.merge.prot | grep -f - SomaLogic.sentinels | cut -d' ' -f2 | sort | uniq | wc -l
+cut -d' ' -f2 SomaLogic.sentinels | grep -f - work/INF1.merge.prot | wc -l
+
+# all SomaLogic signals also in Olink (45)
+sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | grep -v P23560 | sort -k2,2 | grep -f work/INF1.merge.uniprot - | wc -
+cut -f2 work/inf1.tmp > work/INF1.uniprot
+sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | grep -v P23560 | sort -k2,2 | grep -f work/INF1.uniprot - | wc -
+
+# all SomaLogic signals in Olink (51)
+join -j2 <(sort -k2,2 work/inf1.tmp) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | grep -v P23560 | sort -k2,2) > SomaLogic.INF1.all
 (
-join -j2 <(sort -k2,2 work/inf1.tmp) <(sed '1d' SomaLogic.sentinels | grep -v P23560 | sort -k2,2) > SomaLogic.INF1.all
 cut -d' ' -f1-3,5,7,8 SomaLogic.INF1.all | \
 parallel -C' ' '
-  zgrep -w {3} METAL/{2}-1.tbl.gz | \
+  zgrep -w {3} METAL/{2}-1.tbl.gz
   gunzip -c METAL/{2}-1.tbl.gz | \
   awk -vchr={4} -vstart={5} -vend={6} "NR==1||(\$1==chr&&\$2>=start&&\$2<=end&&\$12<-9.30103)" | \
   cut -f1-5,10-12 | \
@@ -264,26 +278,28 @@ parallel -C' ' '
   if [ ${lines} -eq 1 ]; then rm INF1.SomaLogic.{1}-{2}-{3}.gz; fi
 '
 ) > INF1.SomaLogic.all
+
+# which are also genomewide significant (32)
 awk '$12<-9.30103' INF1.SomaLogic.all | wc -l
 
-join -j2 <(sed '1d' work/INF1.merge | cut -f5 | sort | uniq | grep -f - -w work/inf1.tmp) \
-         <(sed '1d' SomaLogic.sentinels | grep -v P23560 | sort -k2,2) > INF1.SomaLogic.merge
-
-cut -d' ' -f2 SomaLogic.INF1.all  | sort | uniq | grep -f - -w work/INF1.merge
+# exactly how many signals are identical (23) and (10)
 cat SomaLogic.INF1.all | \
 parallel -C' ' '
   grep {2} work/INF1.merge | \
   grep {3} work/INF1.merge
 '
-join <(awk '{print $2"-"$3,$0}' SomaLogic.INF1.all | sort -k1,1) <(awk '{print $5"-"$6,$0}' work/INF1.merge | sort -k1,1) \
+join <(awk '{print $2"-"$3,$0}' SomaLogic.INF1.all | sort -k1,1) <(awk '{print $5"-"$6,$0}' work/INF1.merge | sort -k1,1)
 
+# --- SomaLogic --> Olink
+# ST6 of the SomaLogic paper, from pQTLtools/inst/scripts/STs.R
+# from the replicates how many were from INF1 (40)
 (
 cat SomaLogic.id3 | \
 parallel -C' ' '
   zgrep -w {1} METAL/{2}-1.tbl.gz
 '
 ) > SomaLogic.INF1
-
+# how many among INF1 variants were genomewide significant
 wc -l SomaLogic.INF1
 awk '$12<-9.30103' SomaLogic.INF1 | wc -l
 
@@ -296,14 +312,14 @@ parallel -C' ' '
 ) | \
 sort -k5,5 | \
 join -a1 -15 -e "NA" - work/INTERVAL.rsid > SomaLogic.INF1-rsid
-awk '$14<-9.30103 {print $2, $21}'  SomaLogic.INF1-rsid
+awk '$14<-9.30103 {print $2, $21}' SomaLogic.INF1-rsid
 
-R --no-sae <<END
+R --no-save -q <<END
 # only worked after adding NA to those missing rsids in SomaLogic.INF1-rsid
 l <- read.table("SomaLogic.INF1-rsid",as.is=TRUE)
 p <- list(with(subset(l,V14<=-9.30103),V1),with(subset(l,V14>-9.30103),V1))
-ys1 <- c(paste0("Yes-",1:49),paste0("No2-",1:83))
-ys2 <- c(paste0("Yes-",1:49),paste0("No1-",1:length(p[[2]])))
+ys1 <- c(paste0("Yes-",1:51),paste0("No2-",1:83))
+ys2 <- c(paste0("Yes-",1:51),paste0("No1-",1:length(p[[2]])))
 ys <- list(ys1,ys2)
 names(ys) <- c("Olink","SomaLogic")
 VennDiagram::venn.diagram(x = ys, filename='os.png', imagetype="png", output=TRUE,
