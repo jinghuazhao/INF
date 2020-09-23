@@ -101,4 +101,5 @@ unlist(lapply(nj$s,"[[",7))
 library(VennDiagram)
 plist <- list(setdiff(o[["uniprot"]],"P23560"),setdiff(s[["uniprot"]],c(NA,"P23560")))
 cnames=c("Olink", "SomaLogic")
-venn.diagram(x = plist, category.names=cnames, filename='Olink-SomaLogic-Venn-diagram.png', imagetype="png", output=TRUE)
+venn.diagram(x = plist, category.names=cnames, filename='Olink-SomaLogic-Venn-diagram.png',
+             imagetype="png", height=30,width=30, units="cm", resolution=300, output=TRUE)
