@@ -4,6 +4,8 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export tag=_nold
 
+module load gcc/6
+
 for p in $(ls sentinels/*${tag}.p | sed 's|sentinels/||g;s|'"$tag"'.p||g'); do
 
 echo $p
@@ -252,8 +254,8 @@ R --no-save -q <<END
 END
 
 # --- protein overlap
-# Somalogic proteins with sentinels (1468) - NOTE P29460,Q9NPF7 in SomaLogic
-sed '1d' SomaLogic.sentinels | grep -v P23560 | sort -k2,2 | cut -d' ' -f2 | uniq | wc -l
+# Somalogic proteins with sentinels (1469) - NOTE P29460,Q9NPF7 in SomaLogic
+sed '1d' SomaLogic.sentinels | sort -k2,2 | cut -d' ' -f2 | uniq | wc -l
 cut -f2 work/inf1.tmp | grep -v P23560 > work/INF1.uniprot
 
 # number of proteins with sentinels in both Olink and SomaLogic (28)
@@ -262,12 +264,12 @@ cut -d' ' -f2 SomaLogic.sentinels | sed 's/P29460,Q9NPF7/P29460/' | grep -f - wo
 
 # --- signal overlap
 # all SomaLogic signals in Olink (51)
-join -j2 <(sort -k2,2 work/inf1.tmp) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | grep -v P23560 | sort -k2,2) | wc -l
-sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | grep -v P23560 | sort -k2,2 | grep -f work/INF1.uniprot - | wc -l
+join -j2 <(sort -k2,2 work/inf1.tmp | grep -v P23560) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2) | wc -l
+sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2 | grep -f work/INF1.uniprot - | wc -l
 
 # all SomaLogic signals from overlapping proteins (45)
-sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | grep -v P23560 | sort -k2,2 | grep -f work/INF1.merge.uniprot - | wc -l
-join -j2 <(sort -k2,2 work/INF1.merge.prot) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | grep -v P23560 | sort -k2,2) > SomaLogic.INF1.all
+sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2 | grep -f work/INF1.merge.uniprot - | wc -l
+join -j2 <(sort -k2,2 work/INF1.merge.prot) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2) > SomaLogic.INF1.all
 (
 cut -d' ' -f1-3,5,7,8 SomaLogic.INF1.all | \
 parallel -C' ' '
@@ -298,11 +300,11 @@ R --no-save -q <<END
   library(VennDiagram)
   INF1_prot <- read.table("work/INF1.merge.prot",col.names=c("prot","uniprot"))
   library(pQTLtools)
-  SomaLogic_prot <- replace(st4$UniProt,st4$UniProt=="P29460,Q9NPF7","P29460")
-  plist <- list(INF1_prot$uniprot,setdiff(SomaLogic_prot,"P23560"))
+  SomaLogic_prot <- unique(replace(st4$UniProt,st4$UniProt=="P29460,Q9NPF7","P29460"))
+  plist <- list(INF1_prot$uniprot,SomaLogic_prot)
   ov <- VennDiagram::calculate.overlap(plist)
   ov$a3
-  venn.plot <- draw.pairwise.venn(1468, 70, 28, 
+  venn.plot <- draw.pairwise.venn(1469, 70, 28,
                category = c("SomaLogic", "Olink"),
                fill = c("blue", "red"),
                lty = "blank",
@@ -321,6 +323,7 @@ R --no-save -q <<END
   png('SomaLogic-Olink-proteins.png', height=20, width=20, units="cm", res=300)
   grid.draw(venn.plot);
   dev.off();
+  grid.newpage()
   venn.plot <- draw.pairwise.venn(45, 83, 10,
                category = c("SomaLogic", "Olink"),
                fill = c("blue", "red"),
@@ -340,6 +343,7 @@ R --no-save -q <<END
   png('SomaLogic-Olink-sentinels.png', height=20, width=20, units="cm", res=300)
   grid.draw(venn.plot);
   dev.off();
+  grid.newpage()
   st6[c(39,53),"UniProt"] <- "P29460"
   st6ov <- subset(st6,UniProt%in%ov$a3)
 # significant on INTERVAL (27)
@@ -379,7 +383,7 @@ sort -k5,5 | \
 join -a1 -15 -e "NA" - work/INTERVAL.rsid > SomaLogic.INF1-rsid
 awk '$14<-9.30103 {print $2, $21}' SomaLogic.INF1-rsid
 
-rm SomaLogic.id3 SomaLogic.INF1  SomaLogic.INF1.all  SomaLogic.INF1-rsid  SomaLogic.sentinels
+rm SomaLogic.id3 SomaLogic.INF1 INF1.SomaLogic*gz SomaLogic.INF1.all  SomaLogic.INF1-rsid  SomaLogic.sentinels
 
 # REACTOME
 cut -d, -f10,14 work/INF1.merge.cis.vs.trans | \
