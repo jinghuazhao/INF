@@ -88,7 +88,6 @@ setdiff(intersect(o[["uniprot"]],s[["uniprot"]]),"P23560")
 
 os <- merge(o,s,by="uniprot")
 u <- setdiff(unique(os[["uniprot"]]),"P23560")
-write(u,file="u")
 length(u)
 p <- unique(subset(os[c("uniprot","target.short")],uniprot%in%u))
 dim(p)
@@ -102,4 +101,4 @@ library(VennDiagram)
 plist <- list(setdiff(o[["uniprot"]],"P23560"),setdiff(s[["uniprot"]],c(NA,"P23560")))
 cnames=c("Olink", "SomaLogic")
 venn.diagram(x = plist, category.names=cnames, filename='Olink-SomaLogic-Venn-diagram.png',
-             imagetype="png", height=30,width=30, units="cm", resolution=300, output=TRUE)
+             imagetype="png", height=30,width=30, units="cm", resolution=300, output=TRUE, scaled=FALSE)
