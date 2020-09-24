@@ -34,22 +34,25 @@ gzip -f > fastenloc/${trait}.torus.zval.gz
 torus -d fastenloc/${trait}.torus.zval.gz --load_zval -dump_pip fastenloc/${trait}.gwas.pip
 gzip -f fastenloc/${trait}.gwas.pip
 
+cd work
 for tissue in Whole_Blood
 do
   export tissue=${tissue}
   fastenloc -eqtl ${eQTL}/gtex_v8.eqtl_annot_rsid.hg19.vcf.gz \
-            -gwas fastenloc/${trait}.gwas.pip.gz -tissue ${tissue} -prefix ${trait}-${tissue}
+            -gwas fastenloc/${trait}.gwas.pip.gz -tissue ${tissue} -prefix fastenloc/${trait}-${tissue}
   for o in sig snp
   do
     export o=${o}
-    cp ${trait}-${tissue}.enloc.${o}.out fastenloc/${trait}-${tissue}-${o}.out
-    join -12 <(awk 'NR>1' ${trait}-${tissue}.enloc.${o}.out | \
+    cp fastenloc/${trait}-${tissue}.enloc.${o}.out fastenloc/${trait}-${tissue}.${o}.out
+    join -12 <(awk 'NR>1' fastenloc/${trait}-${tissue}.enloc.${o}.out | \
                awk '{split($1,a,":");print a[1]}' | \
                zgrep -w -f - ensGtp.txt.gz | cut -f1,2 | \
                sort -k2,2) \
              <(gunzip -c ensemblToGeneName.txt.gz | sort -k1,1) | \
     cut -d' ' -f2,3 | \
-    parallel -j1 --env tissue --env o -C' ' 'sed -i "s/{1}/{1}-{2}/g;s/:[1-9]//g" fastenloc/${trait}-${tissue}-${o}.out'
+    sort -k1 -k2 | \
+    uniq | \
+    parallel -j1 --env tissue --env o -C' ' 'sed -i "s/{1}/{1}-{2}/;s/:[1-9]//" fastenloc/${trait}-${tissue}.${o}.out'
   done
 done
 
