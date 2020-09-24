@@ -236,13 +236,17 @@ function INTERVAL()
 INTERVAL
 
 # region according to INF1
-join -11 -25 <(sort -k1,1 work/inf1.tmp) <(sed '1d' work/INF1.merge | sort -k5,5 | awk '{if($3-$2<=2) {$2=$2-1e6;$3=$3+1e6};if($2<0) $2=0;print}') | \
+join -11 -25 <(sort -k1,1 work/inf1.tmp) \
+             <(sed '1d' work/INF1.merge | sort -k5,5 | \
+               awk '{if($3-$2==1) {$2=$2-1e6;$3=$3+1e6};
+                     if($2<0) $2=0;
+                     print}') | \
 cut -d' ' -f1-5,7,9,10 | \
 parallel -j5 -C' ' '
   gunzip -c METAL/{1}-1.tbl.gz | \
   awk -vchr={7} -vstart={4} -vend={5} -vpos={8} "NR==1||(\$1==chr&&\$2>=start&&\$2<=end)" | \
   cut -f1-5,10-12 | \
-  gzip -f > INF1.merge.{2}-{1}-{6}.gz
+  gzip -f > work/INF1.merge.{2}-{1}-{6}.gz
 '
 
 # regions according to SomaLogic
