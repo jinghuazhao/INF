@@ -383,7 +383,7 @@ sort -k5,5 | \
 join -a1 -15 -e "NA" - work/INTERVAL.rsid > SomaLogic.INF1-rsid
 awk '$14<-9.30103 {print $2, $21}' SomaLogic.INF1-rsid
 
-rm SomaLogic.id3 SomaLogic.INF1 INF1.SomaLogic*gz SomaLogic.INF1.all  SomaLogic.INF1-rsid  SomaLogic.sentinels
+rm SomaLogic.id3 SomaLogic.INF1 INF1.SomaLogic*gz SomaLogic.INF1.all  SomaLogic.INF1-rsid  SomaLogic.sentinels INF1.SomaLogic.all
 
 # REACTOME
 cut -d, -f10,14 work/INF1.merge.cis.vs.trans | \
