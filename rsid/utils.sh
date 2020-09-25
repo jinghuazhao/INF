@@ -69,3 +69,31 @@ R --no-save -q <<END
   barplot(H,names.arg=M,xlab="No. of pQTL regions",ylab="No. of proteins",ylim=c(0,25),col="darkgrey",border="black")
   dev.off()
 END
+
+# twas_fusion coloc results
+function get_fusion()
+{
+  cd ${INF}/work/coloc
+  (
+    cat *dat | head -1 | awk -vOFS="\t" '{print "prot", $0}'
+    ls *dat | sed 's/-Whole_Blood-coloc.dat//' | \
+    parallel -C' ' 'grep -v PP4 {}-*dat | awk -vf={} -vOFS="\t" "NR>1&&\$NF>0.5{print f,\$0}"'
+  ) > INF1.merge.fusion
+}
+
+# fastenloc coloc results
+function get_fastenloc()
+{
+  export tissue=Whole_Blood
+  cd ${INF}/work/fastenloc
+  (
+    cat *${tissue}.sig.out | head -1 | awk -vOFS="\t" '{print "prot", $0}'
+    ls *${tissue}.sig.out | awk -vtag=-Whole_Blood.sig.out '{sub(tag,"")};1' | \
+    parallel -C' ' 'grep -v RCP {}-${tissue}.sig.out | awk -vf={} -vOFS="\t" "NR>1&&\$NF>0.5{print f,\$0}"'
+  ) > INF1.merge.fastenloc-sig
+  (
+    cat *${tissue}.snp.out | head -1 | awk -vOFS="\t" '{print "prot", $0}'
+    ls *${tissue}.snp.out | awk -vtag=-${tissue}.snp.out '{sub(tag,"")};1' | \
+    parallel -C' ' 'grep -v SCP {}-${tissue}.snp.out | awk -vf={} -vOFS="\t" "NR>1&&\$NF>0.5{print f,\$0}"'
+  ) > INF1.merge.fastenloc-snp
+}
