@@ -113,3 +113,34 @@ join <(awk '!(NR==4||NR==8||NR==13||NR==14||NR==23||NR==24||NR==25||NR==31||NR==
 
 join <(awk '{print $2"-"$21}'  SomaLogic.INF1-rsid | sort) \
      <(awk '!(NR==4||NR==8||NR==13||NR==14||NR==23||NR==24||NR==25||NR==31||NR==32||NR==33||NR==34)' ST4 | grep Sun | awk '{print $3"-"$1}'|sort)
+
+# ST6
+
+R --no-save -q <<END
+# 85 known pQTLs from the SomaLogic paper
+dir <- 'https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-018-0175-2/MediaObjects/'
+file <- '41586_2018_175_MOESM4_ESM.xlsx'
+xlsx <- paste0(dir,file)
+
+st20 <- openxlsx::read.xlsx(xlsx, sheet=20, colNames=TRUE, skipEmptyRows=TRUE,
+                            cols=c(1:10), rows=c(3:786))
+ov <- intersect(unique(st20$UniProt),inf1$uniprot)
+ovv <- within(subset(st20,UniProt%in%ov),{p <- paste0(UniProt,"-",Variant)})
+dim(ovv)
+
+# 12 known pQTLs also in INF1
+metal <- within(read.delim("work/INF1.METAL"),{p <- paste0(uniprot,"-",rsid)})
+options(width=200)
+knownpqtl <- merge(ovv,metal,by="p")
+
+# any pQTLs in LD?, query INTERVAL data
+
+variant_list <- setdiff(c(unique(ovv$Variant),unique(metal$rsid)),knownpqtl$rsid)
+write.table(variant_list,file="knownlist.dat",row.names=FALSE,col.names=FALSE,quote=FALSE)
+END
+
+zgrep -f knownlist.dat -w work/INTERVAL.rsid > knownlist.rsid
+cut -d' ' -f1 knownlist.rsid > knownlist.snpid
+plink --bfile INTERVAL/cardio/INTERVAL --extract knownlist.snpid --r2 square --out knownlist
+
+rm knownlist.*
