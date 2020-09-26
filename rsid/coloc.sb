@@ -44,7 +44,7 @@ do
               --weights_dir WEIGHTS \
               --ref_ld_chr ${FUSION}/LDREF/1000G.EUR. \
               --chr {} \
-              --coloc_P 1e-4 \
+              --coloc_P 5e-8 \
               --GWASN 15150 \
               --out ${trait}-${tissue}-{}.dat
       cat ${trait}-${tissue}-{}.dat | \
