@@ -46,5 +46,5 @@ parallel -j1 -C' ' '
 # BLD format
   smr --bfile {5}-{6} --make-bld --r --ld-wind 4000 --out {5}-{6}
 # SMR and HEIDI test
-  smr --bld {5}-{6} --gwas-summary ${INF}/work/{5}.ma --beqtl-summary CAGE_snpid --out {5} --thread-num 10 
+  smr --bld {5}-{6} --gwas-summary ${INF}/work/{5}.ma --beqtl-summary CAGE_snpid --out {5}-{6} --thread-num 10 
 '
