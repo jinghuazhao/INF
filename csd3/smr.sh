@@ -69,8 +69,7 @@ parallel -j1 -C' ' '
   awk '{$1=$1};1'
   join -22 ${INF}/work/INTERVAL.rsid <(sed '1d' INF1.merge.smr | sort -k2) | \
   sort -k10 | \
-  join -210 ${INF}/work/INTERVAL.rsid - | \
-  awk '$6==$10'
+  join -210 ${INF}/work/INTERVAL.rsid -
 ) > INF1.merge.coloc
 
 function plotSMR()
