@@ -65,12 +65,20 @@ parallel -j1 -C' ' '
 ) > INF1.merge.smr
 
 (
+  export nexp=$(sed '1d' INF1.merge.smr | wc -l)
   awk 'NR==1 {$1="topSNPid toprsid MarkerName rsid";$2="prot";$9="";print}' INF1.merge.smr | \
   awk '{$1=$1};1'
   join -22 ${INF}/work/INTERVAL.rsid <(sed '1d' INF1.merge.smr | sort -k2) | \
   sort -k10 | \
-  join -210 ${INF}/work/INTERVAL.rsid -
+  join -210 ${INF}/work/INTERVAL.rsid - | \
+  awk -vnexp=${nexp} '$25<=0.05/nexp && $26>0.01 && $26!="NA" {print}'
 ) > INF1.merge.coloc
+
+export nassoc=$(sed '1d' INF1.merge.coloc | wc -l)
+export nprot=$(cut -d' ' -f5 INF1.merge.coloc | sort | uniq | wc -l)
+export ngene=$(cut -d' ' -f10 INF1.merge.coloc | sort | uniq | wc -l)
+
+echo $nassoc $nexp $nprot $ngene
 
 function plotSMR()
 {
