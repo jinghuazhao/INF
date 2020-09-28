@@ -73,11 +73,13 @@ END
 # twas_fusion coloc results
 function get_fusion()
 {
+  export tissue=Whole_Blood
+  export tag=${tissue}-coloc.dat
   cd ${INF}/work/coloc
   (
-    cat *dat | head -1 | awk -vOFS="\t" '{print "prot", $0}'
-    ls *dat | sed 's/-Whole_Blood-coloc.dat//' | \
-    parallel -C' ' 'grep -v PP4 {}-*dat | awk -vf={} -vOFS="\t" "NR>1&&\$NF>0.5{print f,\$0}"'
+    cat *${tag} | head -1 | awk -vOFS="\t" '{print "prot", $0}'
+    ls *${tag} | awk -vtag=-${tag} '{sub(tag,"")};1' | \
+    parallel --env tag -C' ' 'grep -v PP4 {}-${tag} | awk -vf={} -vOFS="\t" "NR>1&&\$NF>0.5{print f,\$0}"'
   ) > INF1.merge.fusion
 }
 
