@@ -65,11 +65,12 @@ parallel -j1 -C' ' '
 ) > INF1.merge.smr
 
 (
-  awk 'NR==1 {$1="topSNPid toprsid MarkerName rsid";$2="prot";$9="";print}' | \
-  awk '{$1=$1};1' INF1.merge.smr
-  join -22 ${INF}/work/INTERVAL.rsid <(sed '1d' INF1.merge.smr | awk '$3==$7' | sort -k2) | \
+  awk 'NR==1 {$1="topSNPid toprsid MarkerName rsid";$2="prot";$9="";print}' INF1.merge.smr | \
+  awk '{$1=$1};1'
+  join -22 ${INF}/work/INTERVAL.rsid <(sed '1d' INF1.merge.smr | sort -k2) | \
   sort -k10 | \
-  join -210 ${INF}/work/INTERVAL.rsid -
+  join -210 ${INF}/work/INTERVAL.rsid - | \
+  awk '$6==$10'
 ) > INF1.merge.coloc
 
 function plotSMR()
