@@ -48,3 +48,36 @@ parallel -j1 -C' ' '
 # SMR and HEIDI test
   smr --bld {5}-{6} --gwas-summary ${INF}/work/{5}.ma --beqtl-summary CAGE_snpid --out {5}-{6} --thread-num 10 
 '
+
+(
+  cat *.smr | \
+  head -1 | \
+  awk -vOFS="\t" "{print \"prot\",\"MarkerName\",\"gene\",\"cistrans\",\$0}"
+  sed '1d' ${INF}/work/INF1.merge.cis.vs.trans | \
+  cut -d, -f2,5,10,14 | \
+  tr ',' ' ' | \
+  parallel -j1 -C' ' '
+    if [ -f {1}-{2}.smr ]; then
+       sed "1d" {1}-{2}.smr | \
+       awk -vprot={1} -vsnpid={2} -vgene={3} -vcistrans={4} -vOFS="\t" "{print prot,snpid,gene,cistrans,\$0}"
+    fi
+  '
+) > INF1.merge.smr
+
+(
+  awk 'NR==1 {$1="topSNPid toprsid MarkerName rsid";$2="prot";$9="";print}' INF1.merge.smr
+  join -22 ${INF}/work/INTERVAL.rsid <(sed '1d' INF1.merge.smr | awk '$3==$7' | sort -k2) | \
+  sort -k10 | \
+  join -210 ${INF}/work/INTERVAL.rsid -
+) > INF1.merge.coloc
+
+function plotSMR()
+{
+  export bfile=$1
+  export ma=$2
+  export probe=$3
+  export out=$4
+  smr --bfile ${bfile} --gwas-summary ${ma} --beqtl-summary CAGE_snpid --gene-list plot/glist_hg19_refseq.txt \
+      --probe ${probe} --probe-wind 500 \
+      --plot --out ${out}
+}

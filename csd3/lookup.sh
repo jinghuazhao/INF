@@ -116,12 +116,13 @@ join <(awk '{print $2"-"$21}'  SomaLogic.INF1-rsid | sort) \
 
 # ST6
 
+module load gcc/6
 R --no-save -q <<END
 # 85 known pQTLs from the SomaLogic paper
 dir <- 'https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-018-0175-2/MediaObjects/'
 file <- '41586_2018_175_MOESM4_ESM.xlsx'
 xlsx <- paste0(dir,file)
-
+library(pQTLtools)
 st20 <- openxlsx::read.xlsx(xlsx, sheet=20, colNames=TRUE, skipEmptyRows=TRUE,
                             cols=c(1:10), rows=c(3:786))
 ov <- intersect(unique(st20$UniProt),inf1$uniprot)
