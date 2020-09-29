@@ -71,14 +71,14 @@ parallel -j1 -C' ' '
   join -22 ${INF}/work/INTERVAL.rsid <(sed '1d' INF1.merge.smr | sort -k2) | \
   sort -k10 | \
   join -210 ${INF}/work/INTERVAL.rsid - | \
-  awk -vnexp=${nexp} '$25<=0.05/nexp && $26>0.01 && $26!="NA" {print}'
+  awk -vnexp=${nexp} '$10!="NA" && $25<=0.05/nexp && $26>0.01 && $26!="NA" {print}'
 ) > INF1.merge.coloc
 
 export nassoc=$(sed '1d' INF1.merge.coloc | wc -l)
 export nprot=$(cut -d' ' -f5 INF1.merge.coloc | sort | uniq | wc -l)
-export ngene=$(cut -d' ' -f10 INF1.merge.coloc | sort | uniq | wc -l)
-
+export ngene=$(cut -d' ' -f10 INF1.merge.coloc | grep -v -w NA | sort | uniq | wc -l)
 echo $nassoc $nexp $nprot $ngene
+Rscript -e "with(read.table('INF1.merge.coloc',header=TRUE),table(cistrans))"
 
 function plotSMR()
 {
