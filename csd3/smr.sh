@@ -76,7 +76,7 @@ parallel -j1 -C' ' '
 
 export nassoc=$(sed '1d' INF1.merge.coloc | wc -l)
 export nprot=$(cut -d' ' -f5 INF1.merge.coloc | sort | uniq | wc -l)
-export ngene=$(cut -d' ' -f10 INF1.merge.coloc | grep -v -w NA | sort | uniq | wc -l)
+export ngene=$(cut -d' ' -f10 INF1.merge.coloc | sort | uniq | wc -l)
 echo $nassoc $nexp $nprot $ngene
 Rscript -e "with(read.table('INF1.merge.coloc',header=TRUE),table(cistrans))"
 
