@@ -52,7 +52,7 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 FIle | Description
 -----|---------------------------
 CRP.sh | an inflammation score
-efo.R | experiment factor ontology
+efo.R | experimental factor ontology
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
