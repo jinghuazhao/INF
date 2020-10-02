@@ -78,12 +78,10 @@ R --no-save -q <<END
   library(dplyr)
   t <- m %>% group_by(trait,Chrom,Start,End) %>% slice(which.min(P))
   t
-  write.table(t,file=paste(pval,"p.merge",sep="/"),quote=FALSE,row.names=FALSE,sep='\t')
   P <- with(m,P)
   p <- table(P)[table(P)>1]
   print(p)
-  merge <- read.delim(file.path(pval,"p.merge"),as.is=TRUE)
-  m <- subset(merge,MarkerName!=".")
+  m <- subset(t,MarkerName!=".")
   cols <- c(1:5,9)
   write.table(m[,cols],file=file.path(pval,"p.signals"),row.names=FALSE,quote=FALSE,sep="\t")
 END
