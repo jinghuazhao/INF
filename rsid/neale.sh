@@ -31,7 +31,7 @@ function _HLA()
       zcat ${pval}/p.gz | \
       awk -vOFS="\t" '{start=$2-1;$2=start "\t" $2};1' | \
       awk '$1 == "6" && $3 >= 25392021 && $3 < 33392022' | \
-      sort -k13,13g | \
+      sort -k14,14g | \
       awk 'NR==1'
     ) | \
     sort -k1,1n -k2,2n -k3,3n | \
