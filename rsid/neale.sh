@@ -48,7 +48,7 @@ for cmd in pgz _HLA; do $cmd; done
 
 (
   mergeBed -i ${pval}/${tag}.p -d 1000000 -c 14 -o min | \
-  awk -v OFS="\t" -v trait=HBA1c '
+  awk -v OFS="\t" -v trait=HbA1c '
   {
     if(NR==1) print "Chrom", "Start", "End", "P", "trait"
     print $0, trait

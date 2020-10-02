@@ -55,7 +55,7 @@ CRP.sh | an inflammation score
 efo.R | experiment factor ontology
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
-neale.sh | signal selection for Neale UKB data (HBA1c)
+neale.sh | signal selection for Neale UKB data (HbA1c)
 pqtlGWAS.sh | pQTL-GWAS lookup
 pqtlMR.sh | pQTL MR analysis
 rentrez.sh | reuse of rentrez
