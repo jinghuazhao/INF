@@ -56,7 +56,8 @@ efo.R | experimental factor ontology
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
-pqtlGWAS.sh | pQTL-GWAS lookup
+pqtlGWAS.R | pQTL-GWAS lookup
+pqtlxQTL.R | pQTL-[e|m|p]QTL lookup
 pqtlMR.sh | pQTL MR analysis
 rentrez.sh | reuse of rentrez
 rGREAT.R | GREAT analysis
