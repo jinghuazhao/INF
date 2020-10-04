@@ -22,7 +22,7 @@ efo_0000540 <- get_descendants(efo,"EFO:0000540")
 efo_0000540name <- efo$name[efo_0000540]
 isd <- data.frame(efo_0000540,efo_0000540name)
 save(efo,diseases,isd,efoidname,goidname, file="work/efo.rda")
-write.csv(isd,file="work/efo_0000540.csv",col.names=FALSE,row.names=FALSE)
+write.table(isd,file="work/efo_0000540.csv",col.names=FALSE,row.names=FALSE,sep=",")
 pdf("work/efo_0000540.pdf",height=15,width=15)
 library(ontologyPlot)
 onto_plot(efo,efo_0000540)
