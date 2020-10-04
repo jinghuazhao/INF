@@ -26,31 +26,22 @@ INF1_aggr <- INF1_metal %>%
 rsid <- INF1_aggr[["rsID"]]
 catalogue <- "GWAS"
 proxies <- "EUR"
-p <- 5e-8
+p <- 5e-8 / nrow(INF1_metal)
 r2 <- 0.8
 build <- 37
 
 r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
 lapply(r,dim)
-save(INF1_aggr,r,file=file.path(INF,"work","INF1.merge.GWAS"))
+ps <- with(r,right_join(snps,results))
+save(INF1_aggr,r,ps,file=file.path(INF,"work","INF1.merge.GWAS"))
 
-efo_list_immune <- read.csv("work/efo_list_annotated.csv",as.is=TRUE)
-EFO <- efo_list_immune %>% select(EFO) %>% summarise(EFO=paste(gsub(","," ",EFO),collapse=" "))
-with(r,
-{
-  snps <<- subset(snps,select=-c(ref_hg38_coordinates,ref_pos_hg38,pos_hg38,hg38_coordinates))
-  results <<- subset(results,select=-c(ref_hg38_coordinates,hg38_coordinates))
-})
-ir <- merge(INF1_aggr,subset(with(r,results),efo%in%with(efo_list_immune,EFO)),by="hg19_coordinates")
-write.table(ir,file="ir.tsv",row.names=FALSE,quote=FALSE,sep="\t")
+efo_list_immune <- subset(read.csv("work/efo_list_annotated.csv",as.is=TRUE),immune_mediated==1)
+isd1 <- subset(merge(INF1_aggr,subset(ps,efo%in%with(efo_list_immune,EFO)),by="hg19_coordinates"),select=-c(Chromosome,Position))
+write.table(isd1,file="isd1.tsv",row.names=FALSE,quote=FALSE,sep="\t")
 
-names(snps) <- paste0("s.",names(snps))
-names(results) <- paste0("r.",names(results))
-sr <- merge(snps,results,by.x="s.hg19_coordinates",by.y="r.hg19_coordinates",all.y=TRUE)
-isr <- merge(INF1_aggr,subset(sr,r.efo%in%with(efo_list_immune,EFO)),by.x="hg19_coordinates",by.y="s.hg19_coordinates")
-write.table(isr,file="isr.tsv",row.names=FALSE,quote=FALSE,sep="\t")
-MarkerName_notfound <- setdiff(INF1_aggr[["MarkerName"]],names(table(isr$MarkerName)))
-hg19_coordinates_notfound <- setdiff(INF1_aggr[["hg19_coordinates"]],isr$s.ref_hg19_coordinates)
-r_notfound <- snpqueries(hg19_coordinates_notfound, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
-lapply(r_notfound,dim)
-r_notfound_efo <- with(r_notfound$results,efo)
+load("work/efo.rda")
+efo_0000540 <- gsub(":","_",as.data.frame(isd)[["efo_0000540"]])
+isd2 <- subset(merge(INF1_aggr,subset(ps,efo%in%efo_0000540),by="hg19_coordinates"),select=-c(Chromosome,Position))
+write.table(isd2,file="isd2.tsv",row.names=FALSE,quote=FALSE,sep="\t")
+
+isd2[c("MarkerName","rsID","prots","trait","efo","study","pmid","ancestry","year","beta","se")]
