@@ -79,7 +79,7 @@ writeDataTable(wb, "short",
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 
 view <- function(id,efoid,
-                 v=c("MarkerName","Allele1","Allele2","a1","a2","efo","ref_a1","ref_a1","proxy","r2","beta","se","p","trait","ancestry","pmid","study"))
+                 v=c("MarkerName","Allele1","Allele2","a1","a2","efo","ref_a1","ref_a2","proxy","r2","beta","se","p","trait","ancestry","pmid","study"))
 {
   options(width=200)
   cat(id,efoid,"\n")
