@@ -1,4 +1,4 @@
-# 3-5-2020 JHZ
+#!/usr/bin/bash
 
 export HPC_WORK=/rds/user/${USER}/hpc-work
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
@@ -87,6 +87,7 @@ do
    END
    # VEP
    vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --everything --assembly GRCh37 \
+       --nearest gene \
        --plugin NearestGene,limit=3,max_range=500000 --symbol --pubmed --uniprot --protein --sift b --polyphen b --tab
    vep -i ${s}.vepinput -o ${s}.clinvar --species homo_sapiens \
        --cache --distance 500000 --offline --force_overwrite \
