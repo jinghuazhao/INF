@@ -92,3 +92,28 @@ view("chr12:111884608_C_T", "EFO_0001060")
 view("chr12:111884608_C_T", "EFO_0001359")
 # Hypothyroidism
 view("chr12:111884608_C_T", "EFO_0004705")
+# Allergic disease asthma hay fever or eczema
+view("chr12:111932800_C_T", "EFO_0003785")
+# Celiac
+view("chr12:112007756_C_T","EFO_0001060")
+# Crohn's
+view("chr19:49206172_C_T","EFO_0000384")
+# IBD
+view("chr19:49206172_C_T","EFO_0003767")
+# Systemic lupus erythematosus SLE
+view("chr6:32424882_C_T","EFO_0002690")
+# Rheumatoid arthritis
+view("chr6:32424882_C_T","EFO_0000685")
+# IgA nephropathy
+view("chr6:32424882_C_T","EFO_0004194")
+# Self-reported multiple sclerosis
+view("chr6:32424882_C_T","EFO_0003885")
+# Self-reported malabsorption or coeliac disease
+view("chr6:32424882_C_T","EFO_0001060")
+# Multiple sclerosis
+view("chr6:32424882_C_T","EFO_0003885")
+# Self-reported ankylosing spondylitis
+view("chr6:32424882_C_T","EFO_0003898")
+# Self-reported psoriasis
+view("chr6:32424882_C_T","EFO_0000676")
+
