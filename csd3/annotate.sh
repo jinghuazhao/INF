@@ -87,8 +87,8 @@ do
    END
    # VEP
    vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --everything --assembly GRCh37 \
-       --nearest gene \
-       --plugin NearestGene,limit=3,max_range=500000 --symbol --pubmed --uniprot --protein --sift b --polyphen b --tab
+       --nearest symbol --symbol --pubmed --uniprot --protein --sift b --polyphen b --tab
+   #   --plugin NearestGene,limit=3,max_range=500000
    vep -i ${s}.vepinput -o ${s}.clinvar --species homo_sapiens \
        --cache --distance 500000 --offline --force_overwrite \
        --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN,DBVARID,MC,RS \
