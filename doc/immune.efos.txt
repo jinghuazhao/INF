@@ -1,1 +1,78 @@
-id	traitEFO:0003840	chronic progressive multiple sclerosisEFO:0003885	multiple sclerosisEFO:0003929	relapsing-remitting multiple sclerosisEFO:0000270	asthmaEFO:0004591	childhood onset asthmaEFO:0000685	rheumatoid arthritisEFO:0003114	pauciarticular juvenile rheumatoid arthritisEFO:0005767	rheumatoid factor measurementEFO:0000676	psoriasisEFO:0003778	psoriatic arthritisEFO:0003785	allergyEFO:0003956	seasonal allergic rhinitisEFO:0005751	eye allergyEFO:0005854	allergic rhinitisEFO:0001359	type I diabetes mellitusEFO:0000384	Crohn's diseaseEFO:0005622	Crohn's colitisEFO:0005625	oral Crohn's diseaseEFO:0005627	perianal Crohn's diseaseEFO:0005629	small bowel Crohn's diseaseEFO:0000729	ulcerative colitisEFO:0002690	systemic lupus erythematosusEFO:0003898	ankylosing spondylitisEFO:0004274	goutEFO:0000690	obsolete_sarcoidosisEFO:0000717	systemic sclerodermaEFO:0004192	alopecia areataEFO:0004991	Myasthenia gravisEFO:0000614	narcolepsy with cataplexyEFO:0005855	narcolepsy without cataplexyEFO:0003780	Behcet's syndromeEFO:0003779	autoimmune thyroid diseaseEFO:0004237	Graves diseaseEFO:0004705	hypothyroidismEFO:0000699	Sjogren syndromeEFO:0000398	dermatomyositisEFO:0000557	juvenile dermatomyositisEFO:0000783	myositisEFO:0003063	polymyositisEFO:0004826	anti-neutrophil antibody associated vasculitisEFO:0006803	vasculitisEFO:0004246	mucocutaneous lymph node syndromeEFO:0004208	VitiligoEFO:0001060	celiac diseaseEFO:0000274	atopic eczemaEFO:0002686	atopyEFO:0004194	IGA glomerulonephritisEFO:0003767	inflammatory bowel diseaseEFO:0001054	leprosyEFO:0001055	borderline leprosyEFO:0001056	tuberculoid leprosyEFO:0001057	lepromatous leprosyEFO:0000774	obsolete_tuberculosisEFO:0001068	malariaEFO:0001420	sepsisEFO:0003106	pneumoniaEFO:0000584	meningitis infectionEFO:0003103	urinary tract infectionEFO:0000180	HIV-1 infectionEFO:0000764	HIV infectionEFO_1001486	primary biliary cirrhosisEFO_0002609	juvenile idiopathic arthritisMONDO_0100096	COVID-19
+id	trait	infection
+EFO:0003840	chronic progressive multiple sclerosis	0
+EFO:0003885	multiple sclerosis	0
+EFO:0003929	relapsing-remitting multiple sclerosis	0
+EFO:0000270	asthma	0
+EFO:0004591	childhood onset asthma	0
+EFO:0000685	rheumatoid arthritis	0
+EFO:0003114	pauciarticular juvenile rheumatoid arthritis	0
+EFO:0000676	psoriasis	0
+Orphanet:247353	Generalized pustular psoriasis	0
+EFO:0003778	psoriatic arthritis	0
+EFO:0003785	allergy	0
+EFO:0003956	seasonal allergic rhinitis	0
+EFO:0005298	allergic sensitization measurement	0
+EFO:0005751	eye allergy	0
+EFO:0005854	allergic rhinitis	0
+EFO:0001359	type I diabetes mellitus	0
+EFO:0000384	Crohn's disease	0
+EFO:0005622	Crohn's colitis	0
+EFO:0005625	oral Crohn's disease	0
+EFO:0005627	perianal Crohn's disease	0
+EFO:0005629	small bowel Crohn's disease	0
+EFO:0000729	ulcerative colitis	0
+EFO:0002690	systemic lupus erythematosus	0
+EFO:0003898	ankylosing spondylitis	0
+EFO:0004274	gout	0
+DOID:13406	pulmonary sarcoidosis	0
+EFO:0000690	obsolete_sarcoidosis	0
+Orphanet:797	Sarcoidosis	0
+EFO:0000717	systemic scleroderma	0
+EFO:0004192	alopecia areata	0
+EFO:0004991	Myasthenia gravis	0
+EFO:0000614	narcolepsy with cataplexy	0
+EFO:0005855	narcolepsy without cataplexy	0
+EFO:0003780	Behcet's syndrome	0
+EFO:0003779	autoimmune thyroid disease	0
+EFO:0004237	Graves disease	0
+EFO:0004705	hypothyroidism	0
+EFO:0000699	Sjogren syndrome	0
+EFO:0000398	dermatomyositis	0
+EFO:0000557	juvenile dermatomyositis	0
+EFO:0000783	myositis	0
+EFO:0003063	polymyositis	0
+EFO:0004826	anti-neutrophil antibody associated vasculitis	0
+EFO:0006803	vasculitis	0
+Orphanet:140989	Primary central nervous system vasculitis	0
+EFO:0004246	mucocutaneous lymph node syndrome	0
+EFO:0004208	Vitiligo	0
+EFO:0001060	celiac disease	0
+EFO:0000274	atopic eczema	0
+EFO:0002686	atopy	0
+EFO:0004194	IGA glomerulonephritis	0
+EFO:0003767	inflammatory bowel disease	0
+EFO:0001054	leprosy	1
+EFO:0001055	borderline leprosy	1
+EFO:0001056	tuberculoid leprosy	1
+EFO:0001057	lepromatous leprosy	1
+EFO:0000774	obsolete_tuberculosis	1
+NCBITaxon:1773	Mycobacterium tuberculosis	1
+NCBITaxon:83331	Mycobacterium tuberculosis CDC1551	1
+NCBITaxon:83332	Mycobacterium tuberculosis H37Rv	1
+Orphanet:3389	Tuberculosis	1
+EFO:0001068	malaria	1
+EFO:0001420	sepsis	1
+EFO:0003106	pneumonia	1
+EFO:0000584	meningitis infection	1
+EFO:0003103	urinary tract infection	1
+EFO:0000180	HIV-1 infection	1
+EFO:0000764	HIV infection	1
+EFO_1001486	primary biliary cirrhosis	0
+EFO_0002609	juvenile idiopathic arthritis	0
+MONDO_0100096	COVID-19	1
+EFO_1001209	temporal arteritis	0
+EFO_1001857	Takayasu arteritis	0
+EFO_0004268	sclerosing cholangitis	0
+EFO_1001231	uveitis	0
+EFO_1001231	anterior uveitis	0
+EFO_0010723	ocular sarcoidosis	0
