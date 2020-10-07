@@ -33,7 +33,10 @@ build <- 37
 
 r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
 lapply(r,dim)
-ps <- subset(with(r,right_join(snps,results)),select=-c(hg38_coordinates,ref_hg38_coordinates,pos_hg38,ref_pos_hg38,dprime))
+snps_results <- with(r,right_join(snps,results))
+ps <- subset(snps_results,select=-c(hg38_coordinates,ref_hg38_coordinates,pos_hg38,ref_pos_hg38,dprime))
+sarcoidosis <- with(ps,grep("sarcoidosis",trait))
+ps[sarcoidosis,"efo"] <- "Orphanet_797"
 save(INF1_aggr,r,ps,file=file.path(INF,"work","INF1.merge.GWAS"))
 
 isd123 <- function()
@@ -56,42 +59,50 @@ metal <- subset(within(INF1_metal,{HLA <- as.numeric(Chromosome==6 & Position >=
                 select=-c(Chromosome,Position,INF1_rsid,Direction))
 aggr <- subset(within(INF1_aggr,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)}),
                select=-c(Chromosome,Position,INF1_rsid))
-jimmy <- read.delim("doc/immune.efos.txt",as.is=TRUE)
-jimmy_efo <- gsub(":","_",with(jimmy,id))
-long <- merge(metal,subset(ps,efo%in%jimmy_efo),by="hg19_coordinates")
-short <- merge(aggr,subset(ps,efo%in%jimmy_efo),by="hg19_coordinates")
+immune_infection <- read.delim("doc/immune.efos.txt",as.is=TRUE)
+immune_infection_efo <- with(immune_infection,gsub(":","_",id))
+long <- cbind(merge(metal,subset(ps,efo%in%immune_infection_efo),by="hg19_coordinates"),infection=0)
+short <- cbind(merge(aggr,subset(ps,efo%in%immune_infection_efo),by="hg19_coordinates"),infection=0)
+infection_efo <- with(subset(immune_infection,infection==1),gsub(":","_",id))
+long[with(long,efo)%in%infection_efo,"infection"] <- 1
+short[with(short,efo)%in%infection_efo,"infection"] <- 1
 
 require(openxlsx)
-xlsx <- "work/pqtlgwas.xlsx"
+xlsx <- "work/pqtl-immune_infection.xlsx"
 wb <- createWorkbook(xlsx)
 addWorksheet(wb, "METAL")
 writeDataTable(wb, "METAL", subset(INF1_metal,select=-c(INF1_rsid,hg19_coordinates)))
 addWorksheet(wb, "ps")
 writeDataTable(wb, "ps", ps)
 addWorksheet(wb, "EFO")
-writeDataTable(wb, "EFO", jimmy)
+writeDataTable(wb, "EFO", immune_infection)
 addWorksheet(wb, "long")
 writeDataTable(wb, "long", 
-               subset(long,select=-c(hg19_coordinates,ref_hg19_coordinates,ref_protein_position,ref_amino_acids,snp,snpid,protein_position,amino_acids)))
+               subset(long,select=-c(hg19_coordinates,ref_hg19_coordinates,ref_protein_position,ref_amino_acids,
+                      snp,snpid,protein_position,amino_acids)))
 addWorksheet(wb, "short")
 writeDataTable(wb, "short", 
-               subset(short,select=-c(hg19_coordinates,ref_hg19_coordinates,ref_protein_position,ref_amino_acids,snp,snpid,protein_position,amino_acids)))
+               subset(short,select=-c(hg19_coordinates,ref_hg19_coordinates,ref_protein_position,ref_amino_acids,
+                      snp,snpid,protein_position,amino_acids)))
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 
 view <- function(id,efoid,
-                 v=c("MarkerName","Allele1","Allele2","a1","a2","efo","ref_a1","ref_a2","proxy","r2","beta","se","p","trait","ancestry","pmid","study"))
+                 v=c("MarkerName","Allele1","Allele2","a1","a2","efo","ref_a1","ref_a2","proxy","r2",
+                     "beta","se","p","trait","ancestry","pmid","study"))
 {
   options(width=200)
   cat(id,efoid,"\n")
   d <- subset(short[v],MarkerName==id & efo==efoid)
   subset(d,select=-c(MarkerName,efo))
 }
-# celiac
-view("chr12:111884608_C_T", "EFO_0001060")
-# T1D
-view("chr12:111884608_C_T", "EFO_0001359")
 # Hypothyroidism
 view("chr12:111884608_C_T", "EFO_0004705")
+# T1D
+view("chr12:111884608_C_T", "EFO_0001359")
+# Primary sclerosing cholangitis
+view("chr12:111884608_C_T", "EFO_0004268")
+# celiac
+view("chr12:111884608_C_T", "EFO_0001060")
 # Allergic disease asthma hay fever or eczema
 view("chr12:111932800_C_T", "EFO_0003785")
 # Celiac
@@ -100,20 +111,90 @@ view("chr12:112007756_C_T","EFO_0001060")
 view("chr19:49206172_C_T","EFO_0000384")
 # IBD
 view("chr19:49206172_C_T","EFO_0003767")
+# Self-reported malabsorption or coeliac disease
+view("chr6:32424882_C_T","EFO_0001060")
+# Doctor diagnosed sarcoidosis
+view("chr6:32424882_C_T","Orphanet_797")
+# Primary sclerosing cholangitis
+view("chr6:32424882_C_T","EFO_0004268")
+# IgA nephropathy
+view("chr6:32424882_C_T","EFO_0004194")
+# Multiple sclerosis
+view("chr6:32424882_C_T","EFO_0003885")
+# Self-reported sarcoidosis
+view("chr6:32424882_C_T","Orphanet_797")
 # Systemic lupus erythematosus SLE
 view("chr6:32424882_C_T","EFO_0002690")
 # Rheumatoid arthritis
 view("chr6:32424882_C_T","EFO_0000685")
-# IgA nephropathy
-view("chr6:32424882_C_T","EFO_0004194")
-# Self-reported multiple sclerosis
-view("chr6:32424882_C_T","EFO_0003885")
-# Self-reported malabsorption or coeliac disease
-view("chr6:32424882_C_T","EFO_0001060")
-# Multiple sclerosis
-view("chr6:32424882_C_T","EFO_0003885")
 # Self-reported ankylosing spondylitis
 view("chr6:32424882_C_T","EFO_0003898")
 # Self-reported psoriasis
 view("chr6:32424882_C_T","EFO_0000676")
 
+xlsx <- "https://jhz22.user.srcf.net/INF/latest/pqtl-immune_infection.xlsx"
+pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:50), rows=c(1:153))
+v=c("prots","MarkerName","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2","HLA","infection",
+    "beta","se","p","trait","ancestry","pmid","study","Switch")
+mat <- within(subset(pqtl_immune_infection,Keep==1)[v],
+{
+  rsidProts <- paste0(rsid," (",prots,")")
+  efoTraits <- paste0(gsub("_",":",efo)," (",trait,")")
+})
+betamat <- subset(mat,!is.na(beta))
+
+library(pheatmap)
+pheatmap(mat = with(mat,table(efoTraits,rsidProts)),
+         color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
+         legend = T,
+         main = "Olink pQTLs overlapping with QTLs for immune outcomes",
+         angle_col = "45",
+         filename = "INF1_pQTL_immune_qtl_unclustered.png",
+         width = 16,
+         height = 10,
+         cluster_rows = F,
+         cluster_cols = F,
+         cellheight = 20,
+         cellwidth = 20)
+
+pheatmap(mat = with(betamat,table(efoTraits,rsidProts)),
+         color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
+         legend = T,
+         main = "Olink pQTLs overlapping with QTLs for immune outcomes",
+         angle_col = "45",
+         filename = "INF1_pQTL_immune_qtl.png",
+         width = 16,
+         height = 10,
+         treeheight_row = 100,
+         treeheigh_col = 100,
+         cellheight = 20,
+         cellwidth = 20)
+
+dummy <- function()
+{
+pheatmap(mat = with(mat,table(efoTraits,rsidProts)),
+         color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
+         legend = T,
+         main = "Olink pQTLs overlapping with QTLs for ibfection outcomes",
+         angle_col = "45",
+         filename = "INF1_pQTL_infection_qtl_heatmap_unclustered.png",
+         width = 16,
+         height = 10,
+         cluster_rows = F,
+         cluster_cols = F,
+         cellheight = 20,
+         cellwidth = 20)
+
+pheatmap(mat = with(betamat,table(efoTraits,rsidProts)),
+         color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
+         legend = T,
+         main = "Olink pQTLs overlapping with QTLs for infection outcomes",
+         angle_col = "45",
+         filename = "INF1_pQTL_infection_qtl_heatmap.png",
+         width = 16,
+         height = 10,
+         treeheight_row = 100,
+         treeheigh_col = 100,
+         cellheight = 20,
+         cellwidth = 20)
+}
