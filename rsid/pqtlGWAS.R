@@ -136,15 +136,34 @@ xlsx <- "https://jhz22.user.srcf.net/INF/latest/pqtl-immune_infection.xlsx"
 pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:50), rows=c(1:153))
 v=c("prots","MarkerName","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2","HLA","infection",
     "beta","se","p","trait","ancestry","pmid","study","Switch")
-mat <- within(subset(pqtl_immune_infection,Keep==1)[v],
+mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
 {
-  rsidProts <- paste0(rsid," (",prots,")")
-  efoTraits <- paste0(gsub("_",":",efo)," (",trait,")")
+  flag <- (HLA==1)
+  prefix <- rsid
+  prefix[flag] <- paste0(rsid,"*")
+  rsidProts <- paste0(prefix," (",prots,")")
+  trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
+  trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
+  trait_shown <- sub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
+  trait_shown <- sub("malabsorption or coeliac disease","malasorption or celiac disease",trait_shown)
+  trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
+  qtl_direction <- sign(as.numeric(beta))
+  qtl_direction[is.na(qtl_direction)] <- 0
+  efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
 })
-betamat <- subset(mat,!is.na(beta))
+
+rxc <- with(mat,table(efoTraits,rsidProts))
+indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
+# rxc_indices <- rxc[indices[,1],indices[,2]]
+# ord <- order(indices[,1],indices[,2])
+# rxc_indices[rxc_indices==1] <- indices[ord,3]
+for(cn in cnames) for(rn in rnames) {
+   s <- subset(indices,efoTraits==rn & rsidProts==cn);
+   if(nrow(s)>0) rxc[rn,cn] <- s[["qtl_direction"]][1]
+}
 
 library(pheatmap)
-pheatmap(mat = with(mat,table(efoTraits,rsidProts)),
+pheatmap(rxc,
          color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
          legend = T,
          main = "Olink pQTLs overlapping with QTLs for immune outcomes",
@@ -157,7 +176,7 @@ pheatmap(mat = with(mat,table(efoTraits,rsidProts)),
          cellheight = 20,
          cellwidth = 20)
 
-pheatmap(mat = with(betamat,table(efoTraits,rsidProts)),
+pheatmap(rxc,
          color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
          legend = T,
          main = "Olink pQTLs overlapping with QTLs for immune outcomes",
@@ -169,32 +188,3 @@ pheatmap(mat = with(betamat,table(efoTraits,rsidProts)),
          treeheigh_col = 100,
          cellheight = 20,
          cellwidth = 20)
-
-dummy <- function()
-{
-pheatmap(mat = with(mat,table(efoTraits,rsidProts)),
-         color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
-         legend = T,
-         main = "Olink pQTLs overlapping with QTLs for ibfection outcomes",
-         angle_col = "45",
-         filename = "INF1_pQTL_infection_qtl_heatmap_unclustered.png",
-         width = 16,
-         height = 10,
-         cluster_rows = F,
-         cluster_cols = F,
-         cellheight = 20,
-         cellwidth = 20)
-
-pheatmap(mat = with(betamat,table(efoTraits,rsidProts)),
-         color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
-         legend = T,
-         main = "Olink pQTLs overlapping with QTLs for infection outcomes",
-         angle_col = "45",
-         filename = "INF1_pQTL_infection_qtl_heatmap.png",
-         width = 16,
-         height = 10,
-         treeheight_row = 100,
-         treeheigh_col = 100,
-         cellheight = 20,
-         cellwidth = 20)
-}
