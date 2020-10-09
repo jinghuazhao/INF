@@ -27,7 +27,7 @@ INF1_aggr <- INF1_metal %>%
 rsid <- INF1_aggr[["INF1_rsid"]]
 catalogue <- "GWAS"
 proxies <- "EUR"
-p <- 5e-8 / nrow(INF1_metal)
+p <- 5e-8
 r2 <- 0.8
 build <- 37
 
@@ -95,14 +95,20 @@ view <- function(id,efoid,
   d <- subset(short[v],MarkerName==id & efo==efoid)
   subset(d,select=-c(MarkerName,efo))
 }
-# Hypothyroidism
-view("chr12:111884608_C_T", "EFO_0004705")
+# Rheumatoid arthritis
+view("chr1:154426970_A_C","EFO_0000685")
 # T1D
 view("chr12:111884608_C_T", "EFO_0001359")
 # Primary sclerosing cholangitis
 view("chr12:111884608_C_T", "EFO_0004268")
 # celiac
 view("chr12:111884608_C_T", "EFO_0001060")
+# Hypothyroidism
+view("chr12:111884608_C_T", "EFO_0004705")
+# Inflammatory bowel disease
+view("chr12:111884608_C_T", "EFO_0003767")
+# Primary biliary cirrhosis
+view("chr12:111884608_C_T", "EFO_1001486")
 # Allergic disease asthma hay fever or eczema
 view("chr12:111932800_C_T", "EFO_0003785")
 # Celiac
@@ -111,44 +117,42 @@ view("chr12:112007756_C_T","EFO_0001060")
 view("chr19:49206172_C_T","EFO_0000384")
 # IBD
 view("chr19:49206172_C_T","EFO_0003767")
-# Self-reported malabsorption or coeliac disease
-view("chr6:32424882_C_T","EFO_0001060")
-# Doctor diagnosed sarcoidosis
-view("chr6:32424882_C_T","Orphanet_797")
-# Primary sclerosing cholangitis
-view("chr6:32424882_C_T","EFO_0004268")
-# IgA nephropathy
-view("chr6:32424882_C_T","EFO_0004194")
-# Multiple sclerosis
-view("chr6:32424882_C_T","EFO_0003885")
-# Self-reported sarcoidosis
-view("chr6:32424882_C_T","Orphanet_797")
-# Systemic lupus erythematosus SLE
-view("chr6:32424882_C_T","EFO_0002690")
 # Rheumatoid arthritis
 view("chr6:32424882_C_T","EFO_0000685")
 # Self-reported ankylosing spondylitis
 view("chr6:32424882_C_T","EFO_0003898")
+# Multiple sclerosis
+view("chr6:32424882_C_T","EFO_0003885")
 # Self-reported psoriasis
 view("chr6:32424882_C_T","EFO_0000676")
+# Systemic lupus erythematosus SLE
+view("chr6:32424882_C_T","EFO_0002690")
+# Self-reported malabsorption or coeliac disease
+view("chr6:32424882_C_T","EFO_0001060")
+# IgA nephropathy
+view("chr6:32424882_C_T","EFO_0004194")
+# Self-reported sarcoidosis
+view("chr6:32424882_C_T","Orphanet_797")
+# Primary sclerosing cholangitis
+view("chr6:32424882_C_T","EFO_0004268")
 
 xlsx <- "https://jhz22.user.srcf.net/INF/latest/pqtl-immune_infection.xlsx"
-pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:50), rows=c(1:153))
+pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220))
 v=c("prots","MarkerName","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2","HLA","infection",
     "beta","se","p","trait","ancestry","pmid","study","Switch")
 mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
 {
   flag <- (HLA==1)
   prefix <- rsid
-  prefix[flag] <- paste0(rsid,"*")
+  prefix[flag] <- paste0(rsid[HLA],"*")
   rsidProts <- paste0(prefix," (",prots,")")
   trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
   trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
-  trait_shown <- sub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
-  trait_shown <- sub("malabsorption or coeliac disease","malasorption or celiac disease",trait_shown)
+  trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
+  trait_shown <- gsub("malabsorption or coeliac disease","malasorption or celiac disease",trait_shown)
+  trait_shown <- gsub("systemic lupus erythematosis or sle|Systemic lupus erythematosus SLE","systemic lupus erythematosus",trait_shown)
   trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
   qtl_direction <- sign(as.numeric(beta))
-  qtl_direction[is.na(qtl_direction)] <- 0
   efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
 })
 
@@ -157,9 +161,12 @@ indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
 # rxc_indices <- rxc[indices[,1],indices[,2]]
 # ord <- order(indices[,1],indices[,2])
 # rxc_indices[rxc_indices==1] <- indices[ord,3]
-for(cn in cnames) for(rn in rnames) {
-   s <- subset(indices,efoTraits==rn & rsidProts==cn);
-   if(nrow(s)>0) rxc[rn,cn] <- s[["qtl_direction"]][1]
+for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
+   s <- subset(indices,efoTraits==rn & rsidProts==cn)
+   qd <- s[["qtl_direction"]]
+   if(length(qd)>1) stop("duplicates")
+   class(qd) <- "numeric"
+   if(nrow(s)>0 & !is.na(qd[1])) rxc[rn,cn] <- qd[1]
 }
 
 library(pheatmap)
