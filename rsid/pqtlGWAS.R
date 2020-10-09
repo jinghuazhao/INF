@@ -138,8 +138,8 @@ view("chr6:32424882_C_T","EFO_0004268")
 
 xlsx <- "https://jhz22.user.srcf.net/INF/latest/pqtl-immune_infection.xlsx"
 pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220))
-v=c("prots","MarkerName","Effects","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2","HLA","infection",
-    "beta","se","p","trait","unit","ancestry","pmid","study","Switch")
+v=c("prots","MarkerName","Effects","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2",
+    "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
 mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
 {
   flag <- (HLA==1)
@@ -159,6 +159,10 @@ mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
   qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
   efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
 })
+# all beta's are NAs when unit=="-"
+subset(mat[c("pmid","unit","beta","Keep")],unit=="-")
+# all studies with risk difference were UKBB
+subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","Keep")],unit=="risk diff")
 
 rxc <- with(mat,table(efoTraits,rsidProts))
 indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
