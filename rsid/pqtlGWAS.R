@@ -144,7 +144,7 @@ mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
 {
   flag <- (HLA==1)
   prefix <- rsid
-  prefix[flag] <- paste0(rsid[HLA],"*")
+  prefix[flag] <- paste0(rsid[flag],"*")
   rsidProts <- paste0(prefix," (",prots,")")
   trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
   trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
