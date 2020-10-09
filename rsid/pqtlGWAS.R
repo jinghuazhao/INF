@@ -138,8 +138,8 @@ view("chr6:32424882_C_T","EFO_0004268")
 
 xlsx <- "https://jhz22.user.srcf.net/INF/latest/pqtl-immune_infection.xlsx"
 pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220))
-v=c("prots","MarkerName","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2","HLA","infection",
-    "beta","se","p","trait","ancestry","pmid","study","Switch")
+v=c("prots","MarkerName","Effects","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2","HLA","infection",
+    "beta","se","p","trait","unit","ancestry","pmid","study","Switch")
 mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
 {
   flag <- (HLA==1)
@@ -152,7 +152,11 @@ mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
   trait_shown <- gsub("malabsorption or coeliac disease","malasorption or celiac disease",trait_shown)
   trait_shown <- gsub("systemic lupus erythematosis or sle|Systemic lupus erythematosus SLE","systemic lupus erythematosus",trait_shown)
   trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
+  positiveEffects <- sign(as.numeric(Effects))
+  positiveEffects[is.na(as.numeric(Effects))] <- 1
   qtl_direction <- sign(as.numeric(beta))
+  qtl_direction[positiveEffects==-1] <- -qtl_direction[positiveEffects==-1]
+  qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
   efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
 })
 
@@ -172,7 +176,7 @@ for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
 library(pheatmap)
 pheatmap(rxc,
          color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
-         legend = T,
+         legend = TRUE,
          main = "Olink pQTLs overlapping with QTLs for immune outcomes",
          angle_col = "45",
          filename = "INF1_pQTL_immune_qtl_unclustered.png",
@@ -185,7 +189,7 @@ pheatmap(rxc,
 
 pheatmap(rxc,
          color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
-         legend = T,
+         legend = TRUE,
          main = "Olink pQTLs overlapping with QTLs for immune outcomes",
          angle_col = "45",
          filename = "INF1_pQTL_immune_qtl.png",
