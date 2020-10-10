@@ -39,22 +39,6 @@ sarcoidosis <- with(ps,grep("sarcoidosis",trait))
 ps[sarcoidosis,"efo"] <- "Orphanet_797"
 save(INF1_aggr,r,ps,file=file.path(INF,"work","INF1.merge.GWAS"))
 
-isd123 <- function()
-{
-  efo_list_immune <- subset(read.csv("work/efo_list_annotated.csv",as.is=TRUE),immune_mediated==1)
-  isd1 <- merge(aggr,subset(ps,efo%in%with(efo_list_immune,EFO)),by="hg19_coordinates")
-  write.table(isd1,file="isd1.tsv",row.names=FALSE,quote=FALSE,sep="\t")
-
-  load("work/efo.rda")
-  efo_0000540 <- gsub(":","_",as.data.frame(isd)[["efo_0000540"]])
-  isd2 <- merge(aggr,subset(ps,efo%in%efo_0000540),by="hg19_coordinates")
-  write.table(isd2,file="isd2.tsv",row.names=FALSE,quote=FALSE,sep="\t")
-
-  fang_efo <- gsub(":","_",with(read.delim("doc/fang.efos.txt",as.is=TRUE),id))
-  isd3 <- merge(aggr,subset(ps,efo%in%fang_efo),by="hg19_coordinates")
-  write.table(isd3,file="isd3.tsv",row.names=FALSE,quote=FALSE,sep="\t")
-}
-
 metal <- subset(within(INF1_metal,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)}),
                 select=-c(Chromosome,Position,INF1_rsid,Direction))
 aggr <- subset(within(INF1_aggr,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)}),
@@ -155,6 +139,7 @@ mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
   positiveEffects <- sign(as.numeric(Effects))
   positiveEffects[is.na(as.numeric(Effects))] <- 1
   qtl_direction <- sign(as.numeric(beta))
+  qtl_direction[unit=="-"] <- 0.5*(runif(1)>0)
   qtl_direction[positiveEffects==-1] <- -qtl_direction[positiveEffects==-1]
   qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
   efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
@@ -178,8 +163,9 @@ for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
 }
 
 library(pheatmap)
+col <- colorRampPalette(c("#4287f5","grey","#ffffff","grey","#e32222"))(5)
 pheatmap(rxc,
-         color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
+         color = col,
          legend = TRUE,
          main = "Olink pQTLs overlapping with QTLs for immune outcomes",
          angle_col = "45",
@@ -192,7 +178,7 @@ pheatmap(rxc,
          cellwidth = 20)
 
 pheatmap(rxc,
-         color = colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3),
+         color = col,
          legend = TRUE,
          main = "Olink pQTLs overlapping with QTLs for immune outcomes",
          angle_col = "45",
@@ -203,3 +189,38 @@ pheatmap(rxc,
          treeheigh_col = 100,
          cellheight = 20,
          cellwidth = 20)
+
+
+obsolete <- function()
+{
+  efo_list_immune <- subset(read.csv("work/efo_list_annotated.csv",as.is=TRUE),immune_mediated==1)
+  isd1 <- merge(aggr,subset(ps,efo%in%with(efo_list_immune,EFO)),by="hg19_coordinates")
+  write.table(isd1,file="isd1.tsv",row.names=FALSE,quote=FALSE,sep="\t")
+
+  load("work/efo.rda")
+  efo_0000540 <- gsub(":","_",as.data.frame(isd)[["efo_0000540"]])
+  isd2 <- merge(aggr,subset(ps,efo%in%efo_0000540),by="hg19_coordinates")
+  write.table(isd2,file="isd2.tsv",row.names=FALSE,quote=FALSE,sep="\t")
+
+  fang_efo <- gsub(":","_",with(read.delim("doc/fang.efos.txt",as.is=TRUE),id))
+  isd3 <- merge(aggr,subset(ps,efo%in%fang_efo),by="hg19_coordinates")
+  write.table(isd3,file="isd3.tsv",row.names=FALSE,quote=FALSE,sep="\t")
+
+# A test of colorRampPalette
+  YlOrBr <- c("#4287f5","grey","#ffffff","grey","#e32222")
+  filled.contour(volcano,color.palette = colorRampPalette(YlOrBr, space = "Lab"), asp = 1)
+# colouring for the dendrogram
+  library(dendextend)
+  Rowv  <- rxc %>% scale %>% dist %>% hclust %>% as.dendrogram %>%
+     set("branches_k_color", k = 3) %>% set("branches_lwd", 1.2) %>%
+     ladderize
+  Colv  <- rxc %>% scale %>% t %>% dist %>% hclust %>% as.dendrogram %>%
+     set("branches_k_color", k = 2, value = c("orange", "blue")) %>%
+     set("branches_lwd", 1.2) %>%
+     ladderize
+  heatmap(scale(rxc), scale = "none")
+  heatmap(scale(rxc), Rowv = Rowv, Colv = Colv, scale = "none")
+  library("gplots")
+  heatmap.2(rxc, scale = "none", col = colorpanel(3, "blue", "white", "red"), trace = "none", density.info = "none")
+  heatmap.2(scale(rxc), scale = "none", col = bluered(100), Rowv = Rowv, Colv = Colv, trace = "none", density.info = "none")
+}
