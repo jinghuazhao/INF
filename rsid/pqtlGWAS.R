@@ -186,8 +186,8 @@ pheatmap(rxc,
          filename = "INF1_pQTL_immune_qtl_unclustered.png",
          width = 16,
          height = 10,
-         cluster_rows = F,
-         cluster_cols = F,
+         cluster_rows = FALSE,
+         cluster_cols = FALSE,
          cellheight = 20,
          cellwidth = 20)
 
