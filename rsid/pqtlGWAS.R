@@ -190,7 +190,6 @@ pheatmap(rxc,
          cellheight = 20,
          cellwidth = 20)
 
-
 obsolete <- function()
 {
   efo_list_immune <- subset(read.csv("work/efo_list_annotated.csv",as.is=TRUE),immune_mediated==1)
@@ -209,15 +208,16 @@ obsolete <- function()
 # A test of colorRampPalette
   YlOrBr <- c("#4287f5","grey","#ffffff","grey","#e32222")
   filled.contour(volcano,color.palette = colorRampPalette(YlOrBr, space = "Lab"), asp = 1)
-# colouring for the dendrogram
+# Colouring for the dendrogram
   library(dendextend)
-  Rowv  <- rxc %>% scale %>% dist %>% hclust %>% as.dendrogram %>%
+  Rowv <- rxc %>% scale %>% dist %>% hclust %>% as.dendrogram %>%
      set("branches_k_color", k = 3) %>% set("branches_lwd", 1.2) %>%
      ladderize
-  Colv  <- rxc %>% scale %>% t %>% dist %>% hclust %>% as.dendrogram %>%
+  Colv <- rxc %>% scale %>% t %>% dist %>% hclust %>% as.dendrogram %>%
      set("branches_k_color", k = 2, value = c("orange", "blue")) %>%
      set("branches_lwd", 1.2) %>%
      ladderize
+# stats
   heatmap(scale(rxc), scale = "none")
   heatmap(scale(rxc), Rowv = Rowv, Colv = Colv, scale = "none")
   library("gplots")
