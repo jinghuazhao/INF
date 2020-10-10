@@ -175,7 +175,8 @@ pheatmap(rxc,
          cluster_rows = FALSE,
          cluster_cols = FALSE,
          cellheight = 20,
-         cellwidth = 20)
+         cellwidth = 20,
+         fontsize = 11)
 
 pheatmap(rxc,
          color = col,
@@ -188,7 +189,8 @@ pheatmap(rxc,
          treeheight_row = 100,
          treeheigh_col = 100,
          cellheight = 20,
-         cellwidth = 20)
+         cellwidth = 20,
+         fontsize = 11)
 
 obsolete <- function()
 {
