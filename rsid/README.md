@@ -53,6 +53,7 @@ FIle | Description
 -----|---------------------------
 CRP.sh | an inflammation score
 efo.R | experimental factor ontology
+IL.18-rs385076.sh | stacked associaiton plots
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
