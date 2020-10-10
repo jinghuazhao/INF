@@ -31,7 +31,7 @@ awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
 }' > work/${prot}-eQTL.lz
 
 # Lymphocyte count
-gunzip -c ~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/gzipped_interval/lymph_p.tsv.gz | \
+gunzip -c ~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/gzipped_interval/lymph.tsv.gz | \
 awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
 {
   if ($5<$6) snpid="chr" $3 ":" $4 "_" $5 "_" $6;
