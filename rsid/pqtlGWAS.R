@@ -137,8 +137,10 @@ mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
   trait_shown <- gsub("systemic lupus erythematosis or sle|Systemic lupus erythematosus SLE","systemic lupus erythematosus",trait_shown)
   trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
   positiveEffects <- sign(as.numeric(Effects))
+# it happened that all NA's have beta>0 from multiple proteins
   positiveEffects[is.na(as.numeric(Effects))] <- 1
   qtl_direction <- sign(as.numeric(beta))
+# we have >1 with beta=NA, so settle on either side of zero
   qtl_direction[unit=="-"] <- 0.5*(runif(1)>0)
   qtl_direction[positiveEffects==-1] <- -qtl_direction[positiveEffects==-1]
   qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
@@ -146,16 +148,15 @@ mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
 })
 # all beta's are NAs when unit=="-"
 subset(mat[c("study","pmid","unit","beta","Keep")],unit=="-")
-# all studies with risk difference were UKBB
+# all studies with risk difference were UKBB, so take the pragmatic decision to award increase in cases
 subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","Keep")],unit=="risk diff")
 
 rxc <- with(mat,table(efoTraits,rsidProts))
 indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
-# rxc_indices <- rxc[indices[,1],indices[,2]]
-# ord <- order(indices[,1],indices[,2])
-# rxc_indices[rxc_indices==1] <- indices[ord,3]
+# pedantic implementation but take advantage of indexed by character names
 for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
    s <- subset(indices,efoTraits==rn & rsidProts==cn)
+# there should be a unique cn and rn combination so only one direction
    qd <- s[["qtl_direction"]]
    if(length(qd)>1) stop("duplicates")
    class(qd) <- "numeric"
