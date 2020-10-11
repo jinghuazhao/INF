@@ -61,7 +61,7 @@ R --no-save -q <<END
   rownames(z) <- with(d,marker)
   corr <- read.table("work/IL.18.ld",col.names=with(d,marker),row.names=with(d,marker))
   sap <- stack_assoc_plot(markers, z, corr, traits = c("pQTL","eQTL","QTL"), ylab = "-log10(P)", legend=TRUE)
-  stack_assoc_plot_save(sap, "work/IL.18.png", 3, width=8, height=15)
+  stack_assoc_plot_save(sap, "work/IL.18-rs385076.png", 3, width=8, height=15)
 END
 
 # pQTL
