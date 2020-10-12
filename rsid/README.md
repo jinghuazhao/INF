@@ -62,6 +62,7 @@ pqtlxQTL.R | pQTL-[e|m|p]QTL lookup
 pqtlMR.sh | pQTL MR analysis
 rentrez.sh | reuse of rentrez
 rGREAT.R | GREAT analysis
+rs12075.sh | the rs12075 hotspot
 stringdb.sh | STRINGdb
 uniprot.R | UniProt IDs to others
 utils.sh | utilties

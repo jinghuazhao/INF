@@ -57,11 +57,11 @@ R --no-save -q <<END
   library(gassocplot)
   d <- read.table("work/IL.18.gassoc",col.names=c("snpid","marker","chr","pos","pQTL","eQTL","QTL"))
   markers <- d[c("marker","chr","pos")]
-  z <- d[c("pQTL","eQTL","QTL")]
+  z <- d[c("pQTL","eQTL")]
   rownames(z) <- with(d,marker)
   corr <- read.table("work/IL.18.ld",col.names=with(d,marker),row.names=with(d,marker))
-  sap <- stack_assoc_plot(markers, z, corr, traits = c("pQTL","eQTL","QTL"), ylab = "-log10(P)", legend=TRUE)
-  stack_assoc_plot_save(sap, "work/IL.18-rs385076.png", 3, width=8, height=15)
+  sap <- stack_assoc_plot(markers, z, corr, traits = c("pQTL","eQTL"), ylab = "-log10(P)", legend=TRUE)
+  stack_assoc_plot_save(sap, "work/IL.18-rs385076.png", 2, width=8, height=13)
 END
 
 # pQTL
