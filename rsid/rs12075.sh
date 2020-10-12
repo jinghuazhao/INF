@@ -60,15 +60,3 @@ R --no-save -q <<END
   sap <- stack_assoc_plot(markers, z, ld, traits = c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"), ylab = "-log10(P)", legend=TRUE)
   stack_assoc_plot_save(sap, "work/rs12075.png", 5, width=8, height=13)
 END
-
-# pQTL
-# Chromosome	Position	MarkerName	Allele1	Allele2	Freq1	FreqSE	MinFreq	MaxFreq	Effect	StdErr	log(P)	Direction	HetISq	HetChiSq	HetDf	logHetP	N
-# 4	165506706	chr4:165506706_C_T	t	c	0.0099	0.0029	0.0029	0.0123	0.0257	0.0763	-0.13	-+?+pn?-??-	65.6	17.419	6	-2.105	13165
-
-# eQTLGen
-# Pvalue	SNP	SNPChr	SNPPos	AssessedAllele	OtherAllele	Zscore	Gene	GeneSymbol	GeneChr	GenePos	NrCohorts	NrSamples	FDR	BonferroniP
-# 3.2717E-310	rs12230244	12	10117369	T	A	200.7534	ENSG00000172322	CLEC12A	12	10126104	34	30596	0.0	4.1662E-302
-
-# Lymphocyte count
-VARIANT	ID_dbSNP49	CHR	BP	REF	ALT	EFFECT_INT	SE_INT	MLOG10P_INT	ALT_FREQ_INT	INFO_INT
-1:10177_A_AC	rs367896724	1	10177	A	AC	4.71909e-03	8.50031e-03	2.374861e-01	3.759800e-01	7.35090e-01
