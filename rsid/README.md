@@ -53,7 +53,6 @@ FIle | Description
 -----|---------------------------
 CRP.sh | an inflammation score
 efo.R | experimental factor ontology
-IL.18-rs385076.sh | stacked associaiton plots
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
@@ -62,9 +61,15 @@ pqtlxQTL.R | pQTL-[e|m|p]QTL lookup
 pqtlMR.sh | pQTL MR analysis
 rentrez.sh | reuse of rentrez
 rGREAT.R | GREAT analysis
-rs12075.sh | the rs12075 hotspot
 stringdb.sh | STRINGdb
 uniprot.R | UniProt IDs to others
 utils.sh | utilties
 vep.sh | VEP annotation
 wgcna.sh | experiment on modules
+
+Stacked associaiton plots
+
+1. IL.18-rs385076.sh
+2. rs12075.sh
+3. TNFB-rs2364485.sh
+

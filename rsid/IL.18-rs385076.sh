@@ -4,7 +4,7 @@ export chr=2
 export start=3e7
 export end=3.45e7
 export M=1e6
-export gene=IL18
+export gene=NLRC4
 export prot=IL.18
 
 # SCALLOP/INF
@@ -22,7 +22,7 @@ join -12 -21 work/snp_pos - | \
 awk -vOFS="\t" '{print $2, $3, $4, $5, $6, $7, $8}' > work/${prot}-pQTL.lz
 
 # eQTLGen
-zgrep NLRC4 eQTLGen/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
+zgrep -w ${gene} eQTLGen/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
 awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
 {
   if ($5<$6) snpid="chr" $3 ":" $4 "_" $5 "_" $6;
@@ -48,20 +48,21 @@ awk -vOFS="\t" '
   print $1,$2,$3,$4,$5,$11,$17
 }' | \
 awk 'a[$1]++==0' | \
-sort -k3,3n -k4,4n > work/IL.18.gassoc
+sort -k3,3n -k4,4n > work/${prot}.gassoc
 
-cut -f1 work/IL.18.gassoc > work/IL.18.snpid
-plink --bfile INTERVAL/cardio/INTERVAL --extract work/IL.18.snpid --r square --out work/IL.18
+cut -f1 work/${prot}.gassoc > work/${prot}.snpid
+plink --bfile INTERVAL/cardio/INTERVAL --extract work/${prot}.snpid --r square --out work/${prot}
 
 R --no-save -q <<END
-  library(gassocplot)
-  d <- read.table("work/IL.18.gassoc",col.names=c("snpid","marker","chr","pos","pQTL","eQTL","QTL"))
+  prot <- Sys.getenv("prot")
+  d <- read.table(paste0(file.path("work",prot),".gassoc"),col.names=c("snpid","marker","chr","pos","pQTL","eQTL","QTL"))
   markers <- d[c("marker","chr","pos")]
   z <- d[c("pQTL","eQTL")]
   rownames(z) <- with(d,marker)
-  corr <- read.table("work/IL.18.ld",col.names=with(d,marker),row.names=with(d,marker))
-  sap <- stack_assoc_plot(markers, z, corr, traits = c("pQTL","eQTL"), ylab = "-log10(P)", legend=TRUE)
-  stack_assoc_plot_save(sap, "work/IL.18-rs385076.png", 2, width=8, height=13)
+  ld <- read.table(paste0(file.path("work",prot),".ld"),col.names=with(d,marker),row.names=with(d,marker))
+  library(gassocplot)
+  sap <- stack_assoc_plot(markers, z, ld, traits = c("pQTL","eQTL"), ylab = "-log10(P)", legend=TRUE)
+  stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-rs385076.png"), 2, width=8, height=13)
 END
 
 # pQTL
