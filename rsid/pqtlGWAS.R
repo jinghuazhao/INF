@@ -193,6 +193,42 @@ pheatmap(rxc,
          cellwidth = 20,
          fontsize = 11)
 
+library(highcharter)
+fntltp <- JS("function(){
+  return this.series.xAxis.categories[this.point.x] + ' ' +
+  this.series.yAxis.categories[this.point.y] + ':<br>' +
+  Highcharts.numberFormat(this.point.value, 2);
+}")
+hc <- data.frame()
+i <- 1
+for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
+   s <- subset(indices,efoTraits==rn & rsidProts==cn)
+   hc[i,c("f1","f2","v")] <- c(cn,rn,rxc[rn,cn])
+   i <- i + 1
+}
+n <- 4
+stops <- data.frame(
+  q = 0:n/n,
+  c = c("#4287f5","grey","#ffffff","grey","#e32222"),
+  stringsAsFactors = FALSE
+  )
+
+hc$f1 <- as.factor(hc$f1)
+hc$f2 <- as.factor(hc$f2)
+f1 <- levels(hc$f1)
+highchart() %>%
+  hc_title(text = "pQTLs and Immune-related Diseases",align="center")%>%
+  hc_xAxis(categories = f1) %>%
+  hc_yAxis(categories = hc$f2, reversed = TRUE)%>%
+  hc_colorAxis(min = -1, max=1, stops=list_parse2(stops)) %>%
+  hc_legend(align = "right",layout = "vertical",
+            margin = 0,verticalAlign = "top",
+            y = 30,symbolHeight = 200) %>%
+  hc_tooltip(formatter = fntltp) %>%
+  hc_add_series(data = hc, type = "heatmap",
+                hcaes(x = f1,y = f2,value = v),
+                dataLabels = list(enabled = FALSE))
+
 obsolete <- function()
 {
   efo_list_immune <- subset(read.csv("work/efo_list_annotated.csv",as.is=TRUE),immune_mediated==1)
