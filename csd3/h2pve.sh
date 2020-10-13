@@ -35,7 +35,7 @@ R --no-save -q <<END
   sink()
   np <- nrow(h2)
   with(h2[ord,], {
-    plot(h2, cex=0.8, pch=16, axes=FALSE, main="a", xlab="")
+    plot(h2, cex=0.8, pch=16, axes=FALSE, main="a", xlab="", cex.lab=2)
     xy <- xy.coords(h2)
     l <- h2-1.96*se
     l[l<0] <- 0
@@ -43,10 +43,10 @@ R --no-save -q <<END
     segments(xy$x,l, xy$x,u)
     xtick <- seq(1, np, by=1)
     axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.2)
-    axis(side=2)
-    text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.85)
+    axis(side=2, cex.axis=2)
+    text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=1.2)
   })
-  ldak <- read.table("INF1.ldak.h2",as.is=TRUE,skip=1)
+  ldak <- read.table("ldak/INF1.ldak.h2",as.is=TRUE,skip=1)
   names(ldak) <- c("prot","h2","se","inf","inf_se")
   summary(ldak)
   ord <- with(ldak,order(h2))
@@ -54,7 +54,7 @@ R --no-save -q <<END
   print(ldak[ord, c("prot","h2","se")], row.names=FALSE)
   sink()
   with(ldak[ord,],{
-    plot(h2, cex=0.8, pch=16, axes=FALSE, main="b", xlab="")
+    plot(h2, cex=0.8, pch=16, axes=FALSE, main="b", xlab="", cex.lab=2)
     xy <- xy.coords(h2)
     l <- h2-1.96*se
     l[l<0] <- 0
@@ -62,8 +62,8 @@ R --no-save -q <<END
     segments(xy$x,l, xy$x,u)
     xtick <- seq(1, np, by=1)
     axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.2)
-    axis(side=2)
-    text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.85)
+    axis(side=2, cex.axis=2)
+    text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=1.2)
   })
   pve <- read.table("pve.dat",as.is=TRUE,header=TRUE)
   summary(pve)
@@ -75,8 +75,8 @@ R --no-save -q <<END
       segments(xy$x, pve-1.96*se, xy$x, pve+1.96*se)
       xtick <- seq(1, np, by=1)
       axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.2)
-      axis(side=2)
-      text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.85)
+      axis(side=2, cex.axis=2)
+      text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=1.2)
   })
   dev.off()
 END
