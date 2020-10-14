@@ -11,7 +11,7 @@ export prot=IL.18
 gunzip -c METAL/${prot}-1.tbl.gz | \
 awk -vOFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} '
 {
-  if ($1 == chr && $2 >= start - M && $2 <= end + M) 
+  if ($1 == chr && $2 >= start-M && $2 <= end+M) 
   {
     split($3,a,"_")
     print a[1],$1,$2,$10/$11,$3,toupper($4),toupper($5)
@@ -22,7 +22,7 @@ join -12 -21 work/snp_pos - | \
 awk -vOFS="\t" '{print $2, $3, $4, $5, $6, $7, $8}' > work/${prot}-pQTL.lz
 
 # eQTLGen
-zgrep -w ${gene} eQTLGen/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
+zgrep -w ${gene} data/eQTLGen/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
 awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
 {
   if ($5<$6) snpid="chr" $3 ":" $4 "_" $5 "_" $6;
@@ -74,5 +74,5 @@ END
 # 3.2717E-310	rs12230244	12	10117369	T	A	200.7534	ENSG00000172322	CLEC12A	12	10126104	34	30596	0.0	4.1662E-302
 
 # Lymphocyte count
-VARIANT	ID_dbSNP49	CHR	BP	REF	ALT	EFFECT_INT	SE_INT	MLOG10P_INT	ALT_FREQ_INT	INFO_INT
-1:10177_A_AC	rs367896724	1	10177	A	AC	4.71909e-03	8.50031e-03	2.374861e-01	3.759800e-01	7.35090e-01
+# VARIANT	ID_dbSNP49	CHR	BP	REF	ALT	EFFECT_INT	SE_INT	MLOG10P_INT	ALT_FREQ_INT	INFO_INT
+# 1:10177_A_AC	rs367896724	1	10177	A	AC	4.71909e-03	8.50031e-03	2.374861e-01	3.759800e-01	7.35090e-01
