@@ -2,7 +2,7 @@
 
 export chr=12
 export start=6400000
-export end=6519837
+export end=6520000
 export M=0
 export gene=LTBR
 export prot=TNFB
@@ -59,7 +59,16 @@ awk -vFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} '
 }' | \
 sort -k1,1 | \
 join -12 -21 work/snp_pos - | \
+awk 'a[$6]++==0' | \
 awk -vOFS="\t" '{print $2, $3, $4, $5, $6, $7, $8}' > work/${prot}-pQTL.lz
+
+cut -f5 work/${prot}-pQTL.lz > work/${prot}-pQTL.snpid
+plink --bfile INTERVAL/cardio/INTERVAL --extract work/${prot}-pQTL.snpid \
+      --r2 inter-chr yes-really --ld-snps chr12:6514963_A_C --ld-window-r2 0 --out work/${prot}-pQTL
+(
+  awk -vOFS="\t" 'BEGIN{print "snpid","rsid","chr","pos","z","A1","A2","r2"}'
+  join -15 -t$'\t' work/${prot}-pQTL.lz <(awk -vOFS="\t" 'NR>1 {print $6,$7}' work/${prot}-pQTL.ld | sort -k1,1)
+) > work/${prot}-pQTL.txt
 
 echo eQTLGen
 zgrep -w ${gene} data/eQTLGen/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
@@ -85,7 +94,7 @@ awk 'a[$1]++==0' | \
 awk 'a[$2]++==0' | \
 sort -k3,3n -k4,4n > work/${prot}.z
 
-cut -f1 work/${prot}.gassoc > work/${prot}.snpid
+cut -f1 work/${prot}.z > work/${prot}.snpid
 plink --bfile INTERVAL/cardio/INTERVAL --extract work/${prot}.snpid --make-bed --out work/${prot}
 cut -f2 work/${prot}.bim > work/${prot}.snpid
 plink --bfile work/${prot} --extract work/${prot}.snpid --r square --out work/${prot}
@@ -121,8 +130,8 @@ END
 # Multiple_sclerosis
 
 # 2018
-CHR BP SNP A1 A2 N P OR
-1 11154 chr1:11154 C A 4 0.7911 0.9818
+# CHR BP SNP A1 A2 N P OR
+# 1 11154 chr1:11154 C A 4 0.7911 0.9818
 
 # 2013
 # chrom	pos	rsid	other_allele	effect_allele	p	beta	se	OR	OR_lower	OR_upper

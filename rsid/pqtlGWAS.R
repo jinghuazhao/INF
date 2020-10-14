@@ -122,7 +122,7 @@ view("chr6:32424882_C_T","EFO_0004268")
 
 xlsx <- "work/pqtl-immune_infection_edited.xlsx"
 pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220))
-v=c("prots","MarkerName","Effects","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2",
+v=c("prots","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2",
     "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
 mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
 {
@@ -229,6 +229,39 @@ highchart() %>%
                 hcaes(x = f1,y = f2,value = v),
                 dataLabels = list(enabled = FALSE))
 
+library(gap)
+aux <- with(with(mat, cbind(inv_chr_pos_a1_a2(MarkerName)[c("chr","pos")],rsid,Allele1,Allele2,prots,HLA,cistrans,efoTraits,qtl_direction)), {
+            flag <- (HLA==1)
+            Allele1[8:13] <- "T"
+            Allele2[8:13] <- "C"
+            Allele1[25] <- "C"
+            Allele2[25] <- "G"
+            colId <- paste0(substr(chr,4,5),":",pos,"(",Allele1,"/",Allele2,")")
+            colId[flag] <- paste0(colId[flag],"*")
+            colLabel <- paste0(colId," (",prots,")")
+            col <- rep("blue",nrow(aux))
+            col[cistrans=="cis"] <- "red"
+            data.frame(colLabel,col,efoTraits,qtl_direction)
+          })
+Col <- unique(aux[c("colLabel","col")])
+rownames(Col) <- with(Col,colLabel)
+
+RXC <- with(aux,table(efoTraits,colLabel))
+indices <- aux[c("efoTraits","colLabel","qtl_direction")]
+for(cn in colnames(RXC)) for(rn in rownames(RXC)) {
+   s <- subset(indices,efoTraits==rn & colLabel==cn)
+   qd <- s[["qtl_direction"]]
+   if(length(qd)>1) stop("duplicates")
+   class(qd) <- "numeric"
+   if(nrow(s)>0 & !is.na(qd[1])) RXC[rn,cn] <- qd[1]
+}
+
+library(gplots)
+png("INF1_pQTL_immune_gplots.png",height=35,width=40,units="cm",res=300)
+heatmap.2(RXC, scale = "none", keysize=0.8, col = colorpanel(5, "blue", "white", "red"), margin=c(20,20), trace = "none", 
+          colCol=Col[colnames(RXC),"col"], dendrogram="none", density.info = "none", srtCol=45)
+dev.off()
+
 obsolete <- function()
 {
   efo_list_immune <- subset(read.csv("work/efo_list_annotated.csv",as.is=TRUE),immune_mediated==1)
@@ -259,7 +292,6 @@ obsolete <- function()
 # stats
   heatmap(scale(rxc), scale = "none")
   heatmap(scale(rxc), Rowv = Rowv, Colv = Colv, scale = "none")
-  library("gplots")
-  heatmap.2(rxc, scale = "none", col = colorpanel(3, "blue", "white", "red"), trace = "none", density.info = "none")
+# gplots
   heatmap.2(scale(rxc), scale = "none", col = bluered(100), Rowv = Rowv, Colv = Colv, trace = "none", density.info = "none")
 }
