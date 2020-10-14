@@ -232,6 +232,7 @@ highchart() %>%
 library(gap)
 aux <- with(with(mat, cbind(inv_chr_pos_a1_a2(MarkerName)[c("chr","pos")],rsid,Allele1,Allele2,prots,HLA,cistrans,efoTraits,qtl_direction)), {
             flag <- (HLA==1)
+# a bit too specific here as they involve too many proteins nevertheless each combination with the same effect allele
             Allele1[8:13] <- "T"
             Allele2[8:13] <- "C"
             Allele1[25] <- "C"

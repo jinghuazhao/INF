@@ -72,4 +72,3 @@ Stacked associaiton plots
 1. IL.18-rs385076.sh
 2. rs12075.sh
 3. TNFB-rs2364485.sh
-
