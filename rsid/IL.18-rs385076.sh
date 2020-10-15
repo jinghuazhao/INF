@@ -62,7 +62,7 @@ R --no-save -q <<END
   ld <- read.table(paste0(file.path("work",prot),".ld"),col.names=with(d,marker),row.names=with(d,marker))
   library(gassocplot)
   sap <- stack_assoc_plot(markers, z, ld, traits = c("pQTL","eQTL"), ylab = "-log10(P)", legend=TRUE)
-  stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-rs385076.png"), 2, width=8, height=13)
+  stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-rs385076.png"), 2, width=8, height=13, dpi=300)
 END
 
 # pQTL

@@ -58,5 +58,5 @@ R --no-save -q <<END
   rownames(z) <- with(d,marker)
   ld <- read.table("work/rs12075.ld",col.names=with(d,marker),row.names=with(d,marker))
   sap <- stack_assoc_plot(markers, z, ld, traits = c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"), ylab = "-log10(P)", legend=TRUE)
-  stack_assoc_plot_save(sap, "work/rs12075.png", 5, width=8, height=13)
+  stack_assoc_plot_save(sap, "work/rs12075.png", 5, width=8, height=13, dpi=300)
 END

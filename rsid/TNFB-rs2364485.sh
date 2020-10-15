@@ -113,7 +113,7 @@ R --no-save -q <<END
   for (rsid in c("rs1800693","rs2364485"))
   {
     sap <- stack_assoc_plot(markers, z, ld, top.marker=rsid, traits = c("Multiple_sclerosis","pQTL","eQTL"), ylab = "-log10(P)", legend=TRUE)
-    stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-",rsid,".png"), 3, width=8, height=13)
+    stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-",rsid,".png"), 3, width=8, height=13, dpi=300)
   }
   z <- within(z,{Multiple_sclerosis <- NA})
 # rs1800693: P 2e-47 Z -14.46555
@@ -124,7 +124,7 @@ R --no-save -q <<END
   z[pos2,"Multiple_sclerosis"] <- -9.26234
   rsid <- "rs2364485"
   sap <- stack_assoc_plot(markers, z, ld, top.marker=rsid, traits = c("Multiple_sclerosis","pQTL","eQTL"), ylab = "-log10(P)", legend=TRUE)
-  stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-",rsid,"-fixed.png"), 3, width=8, height=13)
+  stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-",rsid,"-fixed.png"), 3, width=8, height=13, dpi=300)
 END
 
 # Multiple_sclerosis
