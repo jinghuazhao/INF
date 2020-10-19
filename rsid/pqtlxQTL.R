@@ -48,6 +48,6 @@ for (catalogue in c("eQTL","mQTL","pQTL"))
   f <- paste0(file.path(INF,"work","INF1.merge."),catalogue)
   load(f)
   ips <- subset(merge(INF1_aggr,ps,by="hg19_coordinates"),select=-c(hg19_coordinates,Chromosome,Position))
-  write.table(ips,file=paste0(f,catalogue,".tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+  write.table(ips,file=paste0(f,".tsv"),row.names=FALSE,quote=FALSE,sep="\t")
 }
 
