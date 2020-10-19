@@ -10,7 +10,7 @@ export prot=TNFB
 echo Multiple sclerosis
 # rs1800693 chr12:6440009
 # rs2364485 chr12:6514963
-# 2018, the rsid is incompleete
+# 2018, the rsid is incomplete
 zgrep -w -e 6440009 -e 6514963 data/discovery_metav3.0.meta.gz
 # 12 6440009 rs1800693 T C 14 1.017e-13 0.8808
 # 12 6514963 rs2364485 C A 15 5.778e-06 0.9041
