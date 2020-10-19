@@ -35,8 +35,19 @@ for (catalogue in c("eQTL","mQTL","pQTL"))
   r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
   lapply(r,dim)
   ps <- with(r,right_join(snps,results))
-  f <- file.path(INF,"work","INF1.merge.")
-  save(INF1_aggr,r,ps,file=paste0(f,catalogue))
-  ips <- subset(merge(INF1_aggr,ps,by="hg19_coordinates"),select=-c(Chromosome,Position))
+  f <- paste0(file.path(INF,"work","INF1.merge."),catalogue)
+  save(INF1_aggr,r,ps,file=f)
+  ips <- subset(merge(INF1_aggr,ps,by="hg19_coordinates"),select=-c(hg19_coordinates,Chromosome,Position))
   write.table(ips,file=paste0(f,catalogue,".tsv"),row.names=FALSE,quote=FALSE,sep="\t")
 }
+
+# rework
+INF <- Sys.getenv("INF")
+for (catalogue in c("eQTL","mQTL","pQTL"))
+{
+  f <- paste0(file.path(INF,"work","INF1.merge."),catalogue)
+  load(f)
+  ips <- subset(merge(INF1_aggr,ps,by="hg19_coordinates"),select=-c(hg19_coordinates,Chromosome,Position))
+  write.table(ips,file=paste0(f,catalogue,".tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+}
+

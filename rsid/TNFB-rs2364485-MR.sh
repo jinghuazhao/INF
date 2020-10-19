@@ -27,9 +27,33 @@ echo SCALLOP/INF
   awk -vOFS="\t" '{print "TNFB", $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}'
 ) > work/${prot}-pQTL.2s
 
+gunzip -c data/discovery_metav3.0.meta.gz | \
+awk 'NR>1 && $1==ENVIRON["chr"] && $2>=ENVIRON["start"] && $2<=ENVIRON["end"] {$3="chr" $1 ":" $2;print}' | \
+sort -k3,3 | \
+join -12 -23 work/snp_pos - | \
+awk 'a[$1]++==0' > work/${prot}-QTL.2s
+
 R --no-save -q <<END
-library(TwoSampleMR)
 prot <- Sys.getenv("prot")
+ms <- within(read.table(paste0("work/",prot,"-QTL.2s"),as.is=TRUE,
+             col.names=c("chrpos","rsid","chr","pos","A1","A2","N","P","OR")),
+{
+  beta <- log(P)
+  se <- abs(beta/qnorm(P/2))
+})
+library(TwoSampleMR)
+y <- extract_outcome_data(
+       with(ms,rsid),
+       "ieu-b-18",
+       proxies = TRUE,
+       rsq = 1,
+       align_alleles = 1,
+       palindromes = 1,
+       maf_threshold = 0.3,
+       access_token = ieugwasr::check_access_token(),
+       splitsize = 10000,
+       proxy_splitsize = 500
+     )
 x <- read_exposure_data(paste0("work/",prot,"-pQTL.2s"),
        clump = FALSE,
        sep = "\t",
@@ -46,7 +70,7 @@ x <- read_exposure_data(paste0("work/",prot,"-pQTL.2s"),
        id_col = "rsid",
        log_pval = FALSE
      )
-y <- extract_outcome_data(
+yr <- extract_outcome_data(
        with(x,SNP),
        "ieu-b-18",
        proxies = TRUE,
@@ -58,7 +82,10 @@ y <- extract_outcome_data(
        splitsize = 10000,
        proxy_splitsize = 500
      )
+# both y and yr miss rs1800693
 h <- harmonise_data(x, y, action = 2)
+subset(y,SNP%in%c("rs1800693","rs2364485"))
+subset(yr,SNP%in%c("rs1800693","rs2364485"))
 subset(h,SNP%in%c("rs1800693","rs2364485"))
 xy <- mr(h)
 END
