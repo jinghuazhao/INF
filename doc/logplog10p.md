@@ -60,10 +60,9 @@ The magic function for doing this is defined as follows,
 ```r
 pvalue <- function(z,decimals=2)
 {
-  lp <- gap::log10p(z)
+  lp <- log10p(z)
   exponent <- ceiling(lp)
   base <- 10^(lp - exponent)
   paste0(round(base*10,decimals),"e",-1+exponent)
 }
 ```
-now in R/gap.
