@@ -53,3 +53,17 @@ as.numeric(-log10(2*pnorm(mpfr(-abs(z),100),lower.tail=TRUE)))
 which actually yields exactly the same 86858901.
 
 If we go very far to have z=50000. then -log10(p)=542868107 but we have less luck with Rmpfr.
+
+One may wonder the P value in this case, which is 6.6666145952e-542868108 or simply 6.67e-542868108.
+
+The magic function for doing this is defined as follows,
+```r
+pvalue <- function(z,decimals=2)
+{
+  lp <- gap::log10p(z)
+  exponent <- ceiling(lp)
+  base <- 10^(lp - exponent)
+  paste0(round(base*10,decimals),"e",-1+exponent)
+}
+```
+now in R/gap.
