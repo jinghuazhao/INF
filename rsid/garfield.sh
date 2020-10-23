@@ -65,3 +65,6 @@ R --no-save <<END
   length(table(Category))
   detach(p)
 END
+
+cd /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/R/garfield-v2
+garfield-INF1

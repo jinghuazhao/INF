@@ -42,8 +42,15 @@ for (catalogue in c("eQTL","mQTL","pQTL"))
   write.table(ips,file=paste0(f,catalogue,".tsv"),row.names=FALSE,quote=FALSE,sep="\t")
 }
 
-# loading
-INF <- Sys.getenv("INF")
+# single queries, all fine with defaults given above
+snpquery <- function(rsid,catalogue="pQTL")
+{
+  r <- pQTLtools::snpqueries(rsid,catalogue=catalogue)
+  write.table(with(r,results),file=rsid,quote=FALSE,row.names=FALSE,sep="\t")
+  r
+}
+
+# use of quried results by loading
 for (catalogue in c("eQTL","mQTL","pQTL"))
 {
   f <- paste0(file.path(INF,"work","INF1.merge."),catalogue)
@@ -57,12 +64,19 @@ for (catalogue in c("eQTL","mQTL","pQTL"))
   write.table(ips,file=paste0(f,".tsv"),row.names=FALSE,quote=FALSE,sep="\t")
 }
 
-SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,entGene,ensGene,extGene) %>% rename(trait=TargetFullName)
+SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,entGene) %>% rename(trait=TargetFullName)
 pQTL <- dplyr::left_join(ips,SL)
 write.table(pQTL,file=paste0(f,"-SomaLogic.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+write.table(subset(pQTL,UniProt%in%UniProts),file=paste0(f,"-ps.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
 
-# a few checks
-gap::pvalue(-1.102/0.016)
+# some checks
+# shorter list
+pQTL <- dplyr::left_join(subset(ips,pmid!=29875488),SL)
+subset(pQTL[c("rsID","UniProts","UniProt","trait","ref_rsid","proxy","ref_a1","ref_a2","A1","A2","snp")],UniProt%in%UniProts)
+# long and comprehensive list with less variables to fit screen
+pQTL <- dplyr::left_join(subset(ips,pmid==29875488),SL)
+subset(pQTL[c("rsID","UniProts","UniProt","trait","ref_rsid","proxy","ref_a1","ref_a2")],UniProt%in%UniProts)
+ggap::pvalue(-1.102/0.016)
 gap::pvalue(-1.114/0.0157)
 rs12075 <-c("P51671","P80162","P13500","P80075","P80098","Q99616")
 subset(SomaLogic160410,UniProt%in%rs12075)

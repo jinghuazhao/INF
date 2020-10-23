@@ -28,6 +28,7 @@ finemap.sh | `finemap` analysis
 jam.sh | `JAM` analysis
 coloc.sb | coloc analysis
 fastenloc.sb | fastenloc analysis
+garfield.sh | GARFIELD analysis
 hyprcoloc.sh | hyprcoloc analysis
 st.sh | batch command file
 work/ | working directory
