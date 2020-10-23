@@ -249,7 +249,7 @@ parallel -j5 -C' ' '
   gzip -f > work/INF1.merge.{2}-{1}-{3}.gz
 '
 
-# regions according to SomaLogic
+# regions according to SNPID which should have been bedtools merge.
 R --no-save -q <<END
   library(pQTLtools)
   sentinels <- st4[,5:12]
@@ -259,7 +259,7 @@ END
 
 # --- protein overlap
 # Somalogic proteins with sentinels (1469) - NOTE P29460,Q9NPF7 in SomaLogic
-sed '1d' SomaLogic.sentinels | sort -k2,2 | cut -d' ' -f2 | uniq | wc -l
+sed '1d' SomaLogic.sentinels | awk 'a[$2]++==0'| wc -l
 cut -f2 work/inf1.tmp | grep -v P23560 > work/INF1.uniprot
 
 # number of proteins with sentinels in both Olink and SomaLogic (28)
