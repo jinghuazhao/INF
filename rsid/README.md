@@ -52,6 +52,7 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 
 FIle | Description
 -----|---------------------------
+chembl.sh | toy CHEMBL queries
 CRP.sh | an inflammation score
 efo.R | experimental factor ontology
 LTBR.sh | LTBR LocusZoom plots
