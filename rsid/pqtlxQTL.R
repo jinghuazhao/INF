@@ -10,8 +10,8 @@ INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
               rename(Total=N)
 
 INF1_aggr <- INF1_metal %>%
-  select(Chromosome,Position,prot,uniprot,hg19_coordinates,MarkerName,rsID,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans) %>%
-  group_by(Chromosome,Position,MarkerName,rsID,hg19_coordinates) %>%
+  select(Chromosome,Position,prot,uniprot,hg19_coordinates,MarkerName,INF1_rsid,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans) %>%
+  group_by(Chromosome,Position,MarkerName,INF1_rsid,hg19_coordinates) %>%
   summarise(nprots=n(),
             UniProts=paste(uniprot,collapse=";"),
             prots=paste(prot,collapse=";"),
@@ -85,3 +85,13 @@ subset(SomaLogic160410,TargetFullName=="SLAM family member 7")
 subset(SomaLogic160410,UniProt=="P50591")
 subset(SomaLogic160410,UniProt=="O14625")
 subset(SomaLogic160410,UniProt=="P15692")
+
+# eQTL --> pQTL overlap
+
+genes <- scan("work/INF1.gene",what="")
+r <- genequeries(genes,catalogue="eQTL",build=37,p=5e-8,proxies="EUR",r2=0.8)
+eQTL <- with(r,right_join(genes,results)) %>%
+        select(gene,ensembl_id,start,end,rsid,hg19_coordinates,a1,a2,eur,consequence,
+               ensembl,hgnc,study,pmid,ancestry,year,tissue,exp_gene,exp_ensembl,beta,se,p,dataset,snpid)
+eQTL_overlap <- merge(INF1_aggr,eQTL,by.x="MarkerName",by.y="snpid")
+save(eQTL,file="INF1.eQTL.rda")

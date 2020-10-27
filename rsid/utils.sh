@@ -106,16 +106,11 @@ awk '!/BDNF/ && NR > 1 {
 ' FS='\t' OFS='\t' doc/olink.inf.panel.annot.tsv | \
 cut -f2,3,7 | \
 cut -f3 | \
-sed 's/"//2' > inf1.gene
+sed 's/"//g' > work/inf1.gene
 
 sed '1d' work/INF1.merge.cis.vs.trans | \
 cut -d, -f10 | \
 uniq > work/INF1.gene
 
 # phenoscanner -t T -c eQTL -x EUR -p 5e-8 -r 0.8 -i work/INF1.gene -o INF1
-R --no-save <<END
-  genes <- scan("work/INF1.gene",what="")
-  library(pQTLtools)
-  r <- genequeries(genes,catalogue="eQTL",build=37,p=5e-8,proxies="EUR",r2=0.8)
-  save(r,file="INF1.eQTL.rda")
-END
+# additionally from pqtlxQTL.R
