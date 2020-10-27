@@ -99,3 +99,23 @@ function get_fastenloc()
     parallel -C' ' 'grep -v SCP {}-${tissue}.snp.out | awk -vf={} -vOFS="\t" "NR>1&&\$NF>0.5{print f,\$0}"'
   ) > INF1.merge.fastenloc-snp
 }
+
+# eQTL overlap
+awk '!/BDNF/ && NR > 1 {
+  if ($3=="\"Q8NF90\"") $7="\"FGF5\""; else if ($3=="\"Q8WWJ7\"") $7="\"CD6\"";print}
+' FS='\t' OFS='\t' doc/olink.inf.panel.annot.tsv | \
+cut -f2,3,7 | \
+cut -f3 | \
+sed 's/"//2' > inf1.gene
+
+sed '1d' work/INF1.merge.cis.vs.trans | \
+cut -d, -f10 | \
+uniq > work/INF1.gene
+
+# phenoscanner -t T -c eQTL -x EUR -p 5e-8 -r 0.8 -i work/INF1.gene -o INF1
+R --no-save <<END
+  genes <- scan("work/INF1.gene",what="")
+  library(pQTLtools)
+  r <- genequeries(genes,catalogue="eQTL",build=37,p=5e-8,proxies="EUR",r2=0.8)
+  save(r,file="INF1.eQTL.rda")
+END

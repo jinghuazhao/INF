@@ -14,3 +14,4 @@ END
 export url=https://zenodo.org/record/2615265/files/
 if [ ! -d ~/rds/results/public/proteomics/scallop-cvd1 ]; then mkdir ~/rds/results/public/proteomics/scallop-cvd1; fi
 cat cvd1.txt | xargs -I {} bash -c "wget ${url}/{}.txt.gz -O ~/rds/results/public/proteomics/scallop-cvd1/{}.txt.gz"
+#  ln -s ~/rds/results/public/proteomics/scallop-cvd1
