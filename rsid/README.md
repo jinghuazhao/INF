@@ -54,6 +54,7 @@ FIle | Description
 -----|---------------------------
 chembl.sh | toy CHEMBL queries
 CRP.sh | an inflammation score
+cvd1.sh | SCALLOP-CVDI supplementary tables
 efo.R | experimental factor ontology
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
