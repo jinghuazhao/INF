@@ -87,11 +87,48 @@ subset(SomaLogic160410,UniProt=="O14625")
 subset(SomaLogic160410,UniProt=="P15692")
 
 # eQTL --> pQTL overlap
-
 genes <- scan("work/INF1.gene",what="")
 r <- genequeries(genes,catalogue="eQTL",build=37,p=5e-8,proxies="EUR",r2=0.8)
 eQTL <- with(r,right_join(genes,results)) %>%
         select(gene,ensembl_id,start,end,rsid,hg19_coordinates,a1,a2,eur,consequence,
                ensembl,hgnc,study,pmid,ancestry,year,tissue,exp_gene,exp_ensembl,beta,se,p,dataset,snpid)
-eQTL_overlap <- merge(INF1_aggr,eQTL,by.x="MarkerName",by.y="snpid")
 save(eQTL,file="INF1.eQTL.rda")
+INF1_aggr <- within(INF1_aggr,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)})
+eQTL_overlap <- subset(merge(INF1_aggr,eQTL,by="hg19_coordinates"),select=-c(hg19_coordinates,Chromosome,Position))
+tbl <- with(within(eQTL_overlap,{rsidProts <- paste0(INF1_rsid," (",prots,")")}),table(tissue,rsidProts))
+write.table(eQTL_overlap,file="INF1_pQTLeQTL.tsv",quote=FALSE,row.names=FALSE,sep="\t")
+
+library(pheatmap)
+col <- colorRampPalette(c("#4287f5","grey","#ffffff","grey","#e32222"))(5)
+pheatmap(tbl,
+         color = col,
+         legend = TRUE,
+         main = "Olink pQTLs overlapping with eQTLs across tissues",
+         angle_col = "45",
+         filename = "INF1_pQTLeQTL.png",
+         width = 16,
+         height = 10,
+         cluster_rows = FALSE,
+         cluster_cols = FALSE,
+         cellheight = 20,
+         cellwidth = 20,
+         fontsize = 11)
+
+library(gap)
+aux <- with(with(eQTL_overlap, cbind(inv_chr_pos_a1_a2(MarkerName)[c("chr","pos")],rsid,A1,A2,prots,HLA,cistrans,tissue)), {
+            flag <- (HLA==1)
+            colId <- paste0(substr(chr,4,5),":",pos,"(",A1,"/",A2,")")
+            colId[flag] <- paste0(colId[flag],"*")
+            colLabel <- paste0(colId," (",prots,")")
+            col <- rep("blue",nrow(eQTL_overlap))
+            col[cistrans=="cis"] <- "red"
+            data.frame(colLabel,col,tissue)
+          })
+Col <- unique(aux[c("colLabel","col")])
+rownames(Col) <- with(Col,colLabel)
+
+library(gplots)
+png("INF1_pQTLeQTL_gplots.png",height=35,width=40,units="cm",res=300)
+heatmap.2(tbl, scale = "none", keysize=0.8, col = colorpanel(5, "blue", "white", "red"), margin=c(20,20), trace = "none",
+          colCol=Col[colnames(tbl),"col"], dendrogram="none", density.info = "none", srtCol=45)
+dev.off()

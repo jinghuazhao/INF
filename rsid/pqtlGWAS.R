@@ -240,7 +240,7 @@ aux <- with(with(mat, cbind(inv_chr_pos_a1_a2(MarkerName)[c("chr","pos")],rsid,A
             colId <- paste0(substr(chr,4,5),":",pos,"(",Allele1,"/",Allele2,")")
             colId[flag] <- paste0(colId[flag],"*")
             colLabel <- paste0(colId," (",prots,")")
-            col <- rep("blue",nrow(aux))
+            col <- rep("blue",nrow(mat))
             col[cistrans=="cis"] <- "red"
             data.frame(colLabel,col,efoTraits,qtl_direction)
           })
