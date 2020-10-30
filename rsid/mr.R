@@ -1,28 +1,32 @@
-prot <- Sys.getenv("prot")
-suffix <- Sys.getenv("suffix")
-outcomes <- Sys.getenv("outcomes")
-
 library(TwoSampleMR)
-gz <- gzfile(paste0("work/",prot,".mrx",suffix))
+gz <- gzfile(paste0("work/mr/",prot,".mrx",suffix))
 d <- within(read.delim(gz,as.is=TRUE),{P <- 10^-logP})
 exposure_dat <- format_data(d, type="exposure", snp_col = "rsid", effect_allele_col = "Allele1", other_allele_col = "Allele2",
                             eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
                             samplesize_col = "N")
-outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1,
-                                    maf_threshold = 0.3)
-dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
-res_mr <- mr(dat)
-mr_heterogeneity(dat)
-mr_pleiotropy_test(dat)
-res_single <- mr_singlesnp(dat)
-res_loo <- mr_leaveoneout(dat)
-save(res_mr,res_single,res_loo,file=paste0("work/",prot,".mro",suffix),quote=FALSE,row.names=FALSE)
-pdf(paste0("work/",prot,suffix,".pdf"))
-mr_scatter_plot(res_mr, dat)
-mr_forest_plot(res_single)
-mr_leaveoneout_plot(res_loo)
-mr_funnel_plot(res_single)
-dev.off()
+library(openxlsx)
+url <- "https://jhz22.user.srcf.net/INF/latest/INF1.latest.xlsx"
+efo <- subset(openxlsx::read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:4), rows=c(1:78)),!is.na(MRBASEID))
+INF1_merge <- read.delim("work/INF1.merge",as.is=TRUE)
+for (suffix in c("cis","pan")) for(prot in with(INF1_merge,unique(prot))) for(outcomes in with(efo,MRBASEID))
+{
+  cat(suffix,"-",prot,"-",outcomes,"\n")
+  outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1,
+                                      maf_threshold = 0.3)
+  dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+  res_mr <- mr(dat)
+  mr_heterogeneity(dat)
+  mr_pleiotropy_test(dat)
+  res_single <- mr_singlesnp(dat)
+  res_loo <- mr_leaveoneout(dat)
+  save(res_mr,res_single,res_loo,file=paste0("work/mr/",prot,"-",outcomes,".mro",suffix),quote=FALSE,row.names=FALSE)
+  pdf(paste0("work/mr/",prot,"-",outcomes,suffix,".pdf"))
+  mr_scatter_plot(res_mr, dat)
+  mr_forest_plot(res_single)
+  mr_leaveoneout_plot(res_loo)
+  mr_funnel_plot(res_single)
+  dev.off()
+}
 
 heightMR <- function()
 {
