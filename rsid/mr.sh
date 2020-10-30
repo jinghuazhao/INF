@@ -12,9 +12,8 @@ parallel -j1 -C' ' '
         if(ENVIRON["suffix"]=="cis") {if(\$1==chr && \$2>=start-M && \$2 <= end+M && \$9<=logp) print} else if(\$9<=logp) print
       }" > work/{2}.mri-${suffix}
   cut -f3 work/{2}.mri-${suffix} > work/{2}.mrs-${suffix}
-  plink --bfile INTERVAL/cardio/INTERVAL --extract work/{2}.mrs-${suffix} --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.1 \
-        --out work/{2}-${suffix}
-  if [ -f work/{2}-${suffix} ]; then
+  plink --bfile INTERVAL/cardio/INTERVAL --extract work/{2}.mrs-${suffix} \
+        --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.1 --out work/{2}-${suffix}
   (
     echo -e "rsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
     grep -w -f work/{2}-${suffix}.prune.in work/{2}.mri-${suffix} | \
@@ -24,7 +23,6 @@ parallel -j1 -C' ' '
     cut -d" " -f1 --complement | \
     tr " " "\t"
   ) | gzip -f > work/{2}.mrx-${suffix}
-  fi
 '
 }
 
