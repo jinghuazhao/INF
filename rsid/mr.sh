@@ -10,19 +10,19 @@ parallel -j1 -C' ' '
   awk -vchr={3} -vstart={4} -vend={5} -vM=1e6 -vlogp=-5.45131 "
       {
         if(ENVIRON["suffix"]=="cis") {if(\$1==chr && \$2>=start-M && \$2 <= end+M && \$9<=logp) print} else if(\$9<=logp) print
-      }" > work/mr/{2}.mri-${suffix}
-  cut -f3 work/mr/{2}.mri-${suffix} > work/mr/{2}.mrs-${suffix}
-  plink --bfile INTERVAL/cardio/INTERVAL --extract work/mr/{2}.mrs-${suffix} \
+      }" > work/mr/{2}-${suffix}.mri
+  cut -f3 work/mr/{2}-${suffix}.mri > work/mr/{2}-${suffix}.mrs
+  plink --bfile INTERVAL/cardio/INTERVAL --extract work/mr/{2}-${suffix}.mrs \
         --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.1 --out work/mr/{2}-${suffix}
   (
     echo -e "rsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
-    grep -w -f work/mr/{2}-${suffix}.prune.in work/mr/{2}.mri-${suffix} | \
+    grep -w -f work/mr/{2}-${suffix}.prune.in work/mr/{2}-${suffix}.mri | \
     awk "{\$3=\"chr\"\$1\":\"\$2;\$8=-\$8;print}" | \
     sort -k3,3 | \
     join -23 -12 work/snp_pos - | \
     cut -d" " -f1 --complement | \
     tr " " "\t"
-  ) | gzip -f > work/mr/{2}.mrx-${suffix}
+  ) | gzip -f > work/mr/{2}-${suffix}.mrx
 '
 }
 
