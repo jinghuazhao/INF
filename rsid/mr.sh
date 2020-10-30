@@ -7,6 +7,7 @@ parallel -j1 -C' ' '
   echo --- {2} ---
   gunzip -c METAL/{2}-1.tbl.gz | \
   cut -f1-6,10-12,18 | \
+  tr '\t' ' ' | \
   awk -vchr={3} -vstart={4} -vend={5} -vM=1e6 -vlogp=-5.45131 "
       {
         if(ENVIRON["suffix"]=="cis") {if(\$1==chr && \$2>=start-M && \$2 <= end+M && \$9<=logp) print} else if(\$9<=logp) print
