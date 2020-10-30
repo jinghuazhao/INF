@@ -1,8 +1,9 @@
-
 prot <- Sys.getenv("prot")
+suffix <- Sys.getenv("suffix")
 outcomes <- Sys.getenv("outcomes")
+
 library(TwoSampleMR)
-gz <- gzfile(paste0("work/",prot,".mrx"))
+gz <- gzfile(paste0("work/",prot,".mrx",suffix))
 d <- within(read.delim(gz,as.is=TRUE),{P <- 10^-logP})
 exposure_dat <- format_data(d, type="exposure", snp_col = "rsid", effect_allele_col = "Allele1", other_allele_col = "Allele2",
                             eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
@@ -15,8 +16,8 @@ mr_heterogeneity(dat)
 mr_pleiotropy_test(dat)
 res_single <- mr_singlesnp(dat)
 res_loo <- mr_leaveoneout(dat)
-save(res_mr,res_single,res_loo,file=paste0(prot,".mrout"),quote=FALSE,row.names=FALSE)
-pdf(paste0("work/",prot,".pdf"))
+save(res_mr,res_single,res_loo,file=paste0("work/",prot,".mro",suffix),quote=FALSE,row.names=FALSE)
+pdf(paste0("work/",prot,suffix,".pdf"))
 mr_scatter_plot(res_mr, dat)
 mr_forest_plot(res_single)
 mr_leaveoneout_plot(res_loo)
