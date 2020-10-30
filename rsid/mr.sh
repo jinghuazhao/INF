@@ -26,8 +26,8 @@ parallel -j1 -C' ' '
 '
 }
 
-export outcomes="ukb-b-20208"
-for type in cis all; do export suffix=${type}; MR_dat; done
+for type in cis pan; do export suffix=${type}; MR_dat; done
 
+export outcomes="ukb-b-20208"
 cut -f3,8,9,10 doc/olink.inf.panel.annot.tsv | grep -v BDNF | sed 's/"//g' | sort -k1,1 | join -12 work/inf1.tmp - | \
 parallel -j1 -C' ' 'export prot={2}; R --no-save <rsid/mr.R'
