@@ -11,7 +11,7 @@ for (suffix in c("cis","pan")) for(prot in with(INF1_merge,unique(prot)))
                               samplesize_col = "N")
   for(outcomes in with(efo,MRBASEID))
   {
-    cat(prot,"-",suffix,"-",outcomes,"\n")
+    cat(prot,"-",outcomes,"-",suffix,"\n")
     outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1,
                                         maf_threshold = 0.3)
     dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
