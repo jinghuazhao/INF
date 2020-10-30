@@ -16,7 +16,7 @@ parallel -j1 -C' ' '
         --out work/{2}-${suffix}
   if [ -f work/{2}-${suffix} ]; then
   (
-    echo -e "rsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\nN"
+    echo -e "rsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
     grep -w -f work/{2}-${suffix}.prune.in work/{2}.mri-${suffix} | \
     awk "{\$3=\"chr\"\$1\":\"\$2;\$8=-\$8;print}" | \
     sort -k3,3 | \
