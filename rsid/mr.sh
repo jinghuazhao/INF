@@ -9,7 +9,7 @@ parallel -j1 -C' ' '
   cut -f1-6,10-12,18 | \
   awk -vchr={3} -vstart={4} -vend={5} -vM=1e6 -vlogp=-5.45131 "
       {
-        if(ENVIRON["suffix"]=="cis") if(\$1==chr && \$2>=start-M && \$2 <= end+M && \$9<=logp) print; else if(\$9<=logp) print
+        if(ENVIRON["suffix"]=="cis") {if(\$1==chr && \$2>=start-M && \$2 <= end+M && \$9<=logp) print} else if(\$9<=logp) print
       }" > work/{2}.mri-${suffix}
   cut -f3 work/{2}.mri-${suffix} > work/{2}.mrs-${suffix}
   plink --bfile INTERVAL/cardio/INTERVAL --extract work/{2}.mrs-${suffix} --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.1 \
