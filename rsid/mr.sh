@@ -1,9 +1,10 @@
 #!/usr/bin/bash
 
-function MR()
+function MR_dat()
 {
 cut -f3,8,9,10 doc/olink.inf.panel.annot.tsv | grep -v BDNF | sed 's/"//g' | sort -k1,1 | join -12 work/inf1.tmp - | \
 parallel -j1 -C' ' '
+  echo --- {2} ---
   gunzip -c METAL/{2}-1.tbl.gz | \
   cut -f1-6,10-12,18 | \
   awk -vchr={3} -vstart={4} -vend={5} -vM=1e6 -vlogp=-5.45131 "
@@ -22,11 +23,11 @@ parallel -j1 -C' ' '
     cut -d" " -f1 --complement | \
     tr " " "\t"
   ) | gzip -f > work/{2}.mrx-${suffix}
-
-  export prot={2}
-  R --no-save <rsid/mr.R
 '
 }
 
 export outcomes="ukb-b-20208"
-for type in cis all; do export suffix=${type}; done
+for type in cis all; do export suffix=${type}; MR_dat; done
+
+cut -f3,8,9,10 doc/olink.inf.panel.annot.tsv | grep -v BDNF | sed 's/"//g' | sort -k1,1 | join -12 work/inf1.tmp - | \
+parallel -j1 -C' ' 'export prot={2}; R --no-save <rsid/mr.R'
