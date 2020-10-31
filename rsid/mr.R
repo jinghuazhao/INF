@@ -5,7 +5,7 @@ library(TwoSampleMR)
 for (suffix in c("cis","pan")) for(prot in with(INF1_merge,unique(prot)))
 {
   gz <- gzfile(paste0("work/mr/",prot,"-",suffix,".mrx"))
-  d <- within(read.delim(gz,as.is=TRUE),{P <- 10^-logP})
+  d <- within(read.delim(gz,as.is=TRUE),{Allele1 <- toupper(Allele1); Allele2 <- toupper(Allele2); P <- 10^logP})
   exposure_dat <- format_data(d, type="exposure", snp_col = "rsid", effect_allele_col = "Allele1", other_allele_col = "Allele2",
                               eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
                               samplesize_col = "N")
@@ -13,14 +13,14 @@ for (suffix in c("cis","pan")) for(prot in with(INF1_merge,unique(prot)))
   {
     cat(prot,"-",outcomes,"-",suffix,"\n")
     outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1,
-                                        maf_threshold = 0.3)
+                                        maf_threshold = 0.5)
     dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
     res_mr <- mr(dat)
     mr_heterogeneity(dat)
     mr_pleiotropy_test(dat)
     res_single <- mr_singlesnp(dat)
     res_loo <- mr_leaveoneout(dat)
-    save(res_mr,res_single,res_loo,file=paste0("work/mr/",prot,"-",outcomes,"-",suffix,".mro"),quote=FALSE,row.names=FALSE)
+    save(res_mr,res_single,res_loo,file=paste0("work/mr/",prot,"-",outcomes,"-",suffix,".mro"))
     pdf(paste0("work/mr/",prot,"-",outcomes,"-",suffix,".pdf"))
     mr_scatter_plot(res_mr, dat)
     mr_forest_plot(res_single)
