@@ -16,7 +16,7 @@ parallel -j1 -C' ' '
   (
     echo -e "rsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
     grep -w -f work/mr/{2}-${suffix}.prune.in work/mr/{2}-${suffix}.mri | \
-    awk "{\$3=\"chr\"\$1\":\"\$2;\$9=-\$9;print}" | \
+    awk "{\$3=\"chr\"\$1\":\"\$2;print}" | \
     sort -k3,3 | \
     join -23 -12 work/snp_pos - | \
     cut -d" " -f1 --complement | \
