@@ -23,7 +23,7 @@ if [ ! -f gsmr_$p ]; then echo $p $INF/work/$p.ma > gsmr_$p; fi
 
 gcta-1.9 --mbfile gsmr_ref_data --gsmr-file gsmr_$p gsmr_B2 \
          --gsmr-direction 0 \
-         --clump-r2 0.05 --gwas-thresh 5e-8 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
+         --clump-r2 0.05 --gwas-thresh 5e-8 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
          --out gsmr_B2_$p
 
 R --no-save -q <<END
