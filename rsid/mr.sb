@@ -4,8 +4,8 @@
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
-#SBATCH --array=1-70
-#SBATCH --mem=28800
+#SBATCH --array=1-70%8
+#SBATCH --mem=40800
 #SBATCH --time=5-00:00:00
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_mr_%A_%a.out
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_mr_%A_%a.err
