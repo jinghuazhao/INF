@@ -2,31 +2,37 @@ url <- "https://jhz22.user.srcf.net/INF/latest/INF1.latest.xlsx"
 efo <- subset(openxlsx::read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:4), rows=c(1:78)),!is.na(MRBASEID))
 INF1_merge <- read.delim("work/INF1.merge",as.is=TRUE)
 library(TwoSampleMR)
-for (suffix in c("cis","pan")) for(prot in with(INF1_merge,unique(prot)))
+for (suffix in c("cis","pan"))
 {
-  gz <- gzfile(paste0("work/mr/",prot,"-",suffix,".mrx"))
-  d <- within(read.delim(gz,as.is=TRUE),{Allele1 <- toupper(Allele1); Allele2 <- toupper(Allele2); P <- 10^logP})
-  exposure_dat <- format_data(d, type="exposure", snp_col = "rsid", effect_allele_col = "Allele1", other_allele_col = "Allele2",
-                              eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
-                              samplesize_col = "N")
-  for(outcomes in with(efo,MRBASEID))
+  prots <- with(INF1_merge,unique(prot))
+  prots <- setdiff(prots,"CCL23")
+  if(suffix=="cis") prots <- setdiff(prots,c("4E.BP1", "FGF.19", "IL.1.alpha", "IL.6", "OSM", "Beta.NGF", "CASP.8"))
+  for(prot in prots)
   {
-    cat(prot,"-",outcomes,"-",suffix,"\n")
-    outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1,
-                                        maf_threshold = 0.5)
-    dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
-    res_mr <- mr(dat)
-    mr_heterogeneity(dat)
-    mr_pleiotropy_test(dat)
-    res_single <- mr_singlesnp(dat)
-    res_loo <- mr_leaveoneout(dat)
-    save(res_mr,res_single,res_loo,file=paste0("work/mr/",prot,"-",outcomes,"-",suffix,".mro"))
-    pdf(paste0("work/mr/",prot,"-",outcomes,"-",suffix,".pdf"))
-    mr_scatter_plot(res_mr, dat)
-    mr_forest_plot(res_single)
-    mr_leaveoneout_plot(res_loo)
-    mr_funnel_plot(res_single)
-    dev.off()
+    gz <- gzfile(paste0("work/mr/",prot,"-",suffix,".mrx"))
+    d <- within(read.delim(gz,as.is=TRUE),{Allele1 <- toupper(Allele1); Allele2 <- toupper(Allele2); P <- 10^logP})
+    exposure_dat <- format_data(d, type="exposure", snp_col = "rsid", effect_allele_col = "Allele1", other_allele_col = "Allele2",
+                                eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
+                                samplesize_col = "N")
+    for(outcomes in with(efo,MRBASEID))
+    {
+      cat(prot,"-",outcomes,"-",suffix,"\n")
+      outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1,
+                                          maf_threshold = 0.5)
+      dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+      res_mr <- mr(dat)
+      mr_heterogeneity(dat)
+      mr_pleiotropy_test(dat)
+      mr_single <- mr_singlesnp(dat)
+      mr_loo <- mr_leaveoneout(dat)
+      save(res_mr,mr_single,mr_loo,file=paste0("work/mr/",prot,"-",outcomes,"-",suffix,".mro"))
+      pdf(paste0("work/mr/",prot,"-",outcomes,"-",suffix,".pdf"))
+      mr_scatter_plot(res_mr, dat)
+      mr_forest_plot(mr_single)
+      mr_leaveoneout_plot(mr_loo)
+      mr_funnel_plot(mr_single)
+      dev.off()
+    }
   }
 }
 
@@ -44,13 +50,13 @@ heightMR <- function()
   res_mr <- mr(dat)
   mr_heterogeneity(dat)
   mr_pleiotropy_test(dat)
-  res_single <- mr_singlesnp(dat)
-  res_loo <- mr_leaveoneout(dat)
+  mr_single <- mr_singlesnp(dat)
+  mr_loo <- mr_leaveoneout(dat)
   pdf("heightMR.pdf")
   mr_scatter_plot(res_mr, dat)
-  mr_forest_plot(res_single)
-  mr_leaveoneout_plot(res_loo)
-  mr_funnel_plot(res_single)
+  mr_forest_plot(mr_single)
+  mr_leaveoneout_plot(mr_loo)
+  mr_funnel_plot(mr_single)
 
   library(MendelianRandomization)
   MRInputObject <- with(dat, mr_input(bx = beta.exposure, bxse = se.exposure, by = beta.outcome, byse = se.outcome,

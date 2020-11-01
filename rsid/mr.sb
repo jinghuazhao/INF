@@ -26,11 +26,11 @@ parallel -j1 -C' ' '
       " > work/mr/{2}-${suffix}.mri
   cut -f3 work/mr/{2}-${suffix}.mri > work/mr/{2}-${suffix}.mrs
   plink --bfile INTERVAL/cardio/INTERVAL --extract work/mr/{2}-${suffix}.mrs \
-        --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.1 --out work/mr/{2}-${suffix}
+        --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.01 --out work/mr/{2}-${suffix}
   (
     echo -e "rsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
     grep -w -f work/mr/{2}-${suffix}.prune.in work/mr/{2}-${suffix}.mri | \
-    awk "{\$3=\"chr\"\$1\":\"\$2;\$8=-\$8;print}" | \
+    awk "{\$3=\"chr\"\$1\":\"\$2;print}" | \
     sort -k3,3 | \
     join -23 -12 work/snp_pos - | \
     cut -d" " -f1 --complement | \
