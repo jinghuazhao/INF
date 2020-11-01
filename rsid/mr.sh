@@ -31,4 +31,4 @@ fi
 if [ ! -d work/mr ]; then mkdir work/mr; fi
 for type in cis pan; do export suffix=${type}; MR_dat; done
 
-R --no-save <rsid/mr.R
+R --no-save < ~/INF/rsid/mr.R > ~/INF/work/mr.log
