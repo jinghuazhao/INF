@@ -2,15 +2,16 @@
 
 export bfile=${INF}/INTERVAL/cardio/INTERVAL
 
+# NB all files are moved into relevant directories at the end of this script.
+# replace INF1.merge.trans with INF1.merge for all sentinels, add grep -f INF1.merge.cis | \ for cis sentinels.
+# all variants in the reference panel can be obtained with
+# awk -v chr={1} -v from={2} -v to={3} "chr==\$1 && \$4 >= from && \$4 <= to" ${bfile}.bim
 cd work
 cut -f1-3,5,6,9 INF1.merge.trans | \
 awk -v d=500000 'NR>1 {gsub(/chr/,"",$1);if($6>d) from=$6-d; else from=0; to=$6+d;print $1,from,to,$4,$5}' | \
 parallel --env bfile=$bfile -j5 -C' ' '
   plink --bfile ${bfile} --ld-snp {5} --chr {1} --from-bp {2} --to-bp {3} --r2 --ld-window-r2 0.8 --out {4}-{5}
-# all variants
-# awk -v chr={1} -v from={2} -v to={3} "chr==\$1 && \$4 >= from && \$4 <= to" ${bfile}.bim
 '
-
 (
   echo prot SNPID CHR_A BP_A SNP_A CHR_B BP_B SNP_B R2
   cut -f1-3,5,6,9 --output-delimiter=' ' INF1.merge.trans | \
@@ -82,3 +83,29 @@ export dbNSFP_fields=${dbNSFP_1}${dbNSFP_2}${dbNSFP_3}
 vep -i ${INF}/work/${s}.vepinput -o ${INF}/work/${s}.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
     --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz \
     --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
+
+mv \
+INF1.proxy.ld \
+INF1.proxy.vepinput \
+INF1.proxy.avinput \
+INF1.proxy.variant_function \
+INF1.proxy.exonic_variant_function \
+INF1.proxy.pph.list \
+INF1.proxy.hg19_multianno.csv \
+INF1.proxy.pph.input \
+INF1.proxy.pph.features \
+INF1.proxy.log \
+INF1.proxy.pph.log \
+INF1.proxy.pph.output \
+INF1.proxy.pph.humvar.output \
+INF1.proxy.pph.humdiv.output \
+INF1.proxy.vepoutput_summary.html \
+INF1.proxy.vepoutput \
+INF1.proxy.clinvar_summary.html \
+INF1.proxy.clinvar \
+INF1.proxy.vepweb_summary.html \
+INF1.proxy.vepweb \
+INF1.proxy.dbNSFP_summary.html \
+INF1.proxy.dbNSFP annotate/trans
+
+cd -
