@@ -64,14 +64,14 @@ run_pph.pl ${s}.pph.input 1>${s}.pph.output 2>${s}.pph.log
 run_weka.pl ${s}.pph.output >${s}.pph.humdiv.output
 run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model ${s}.pph.output >${s}.pph.humvar.output
 # VEP
-vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --everything --assembly GRCh37 \
+vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --force_overwrite --offline --everything --assembly GRCh37 \
     --nearest symbol --symbol --pubmed --uniprot --protein --sift b --polyphen b --tab
 vep -i ${s}.vepinput -o ${s}.clinvar --species homo_sapiens \
-    --cache --distance 500000 --offline --force_overwrite \
+    --cache --offline --force_overwrite \
     --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN,DBVARID,MC,RS \
     --fields Uploaded_variation,Gene,Consequence,ClinVar_CLNSIG,ClinVar_CLNREVSTAT,ClinVar_CLNDN,ClinVar_DBVARID,ClinVar_MC,ClinVar_RS --tab
 vep --af_1kg --af_esp --af_gnomad --appris --biotype --buffer_size 500 \
-    --ccds --check_existing --distance 500000 --domains --hgvs --mane --pick \
+    --ccds --check_existing --domains --hgvs --mane --pick \
     --polyphen b --protein --pubmed --regulatory --sift b --species homo_sapiens \
     --symbol --transcript_version --tsl --uniprot --cache --input_file ${s}.vepinput \
     --output_file ${s}.vepweb --port 3337 --tab --force_overwrite
@@ -80,7 +80,7 @@ export dbNSFP_1=clinvar_id,clinvar_clnsig,clinvar_review,clinvar_trait,1000Gp3_E
 export dbNSFP_2=FATHMM_pred,GERP++_RS,GTEx_V7_tissue,MutPred_protID,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred,SIFT_pred,SIFT4G_pred,fathmm-MKL_coding_pred,
 export dbNSFP_3=rs_dbSNP151,fathmm-MKL_coding_pred,gnomAD_exomes_NFE_AF,gnomAD_genomes_NFE_AF
 export dbNSFP_fields=${dbNSFP_1}${dbNSFP_2}${dbNSFP_3}
-vep -i ${INF}/work/${s}.vepinput -o ${INF}/work/${s}.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
+vep -i ${INF}/work/${s}.vepinput -o ${INF}/work/${s}.dbNSFP --cache --force --offline --pick --tab \
     --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz \
     --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
 
