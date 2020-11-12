@@ -43,6 +43,9 @@ done
   for p in $(ls sentinels/*${tag}.p | sed 's|sentinels/||g;s|'"$tag"'.p||g'); do awk 'NR>1' ${INF}/work/${p}.sentinels; done
 ) > INF1.merge
 
+cut -f1-3,5,6,9 work/INF1.merge | awk -vOFS="\t" 'NR>1{print ($3-$2)/1000,($6-$2)/1000,($3-$6)/1000}'
+cut -f1-3,5,6,9 work/INF1.merge | awk 'NR>1{s=sprintf("%d\t%d\t%d",($3-$2)/1000,($6-$2)/1000,($3-$6)/1000);print s}'
+
 R --no-save -q <<END
   require(gap)
   tag <- Sys.getenv("tag")
