@@ -10,9 +10,10 @@ tbl <- within(t, {
 tbl <- within(tbl,
 {
   x2 <- (Effect/StdErr)^2
-  chi2n <- x2 /(N - 2 + x2)
-  v <- (1-chi2n)^2/N
-  v2 <- 2 * chi2n * (1+1/(N+1)^2)
+  chi2n <- x2 / (N - 2 + x2)
+  v <- 1 / (N - 1)
+# vr <- (1 - chi2n)^2/ N
+# v2 <- 2 * chi2n^2 * (1+1/(N+2)^2)
 })
 s <- with(tbl, aggregate(chi2n,list(prot),sum))
 names(s) <- c("prot", "pve")

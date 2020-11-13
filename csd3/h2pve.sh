@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+cd work
+R --no-save < ${INF}/csd3/pve.R
 join <(sort -k1,1 h2.tsv) <(sed '1d' pve.dat | sort -k1,1) > h2pve.dat
 R --no-save -q <<END
   png("h2pve.png", res=300, units="cm", width=40, height=20)
@@ -81,3 +83,5 @@ R --no-save -q <<END
   })
   dev.off()
 END
+
+cd -
