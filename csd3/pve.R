@@ -1,4 +1,4 @@
-# 11-8-2020 JHZ
+# 13-11-2020 JHZ
 
 require(gap)
 t <- read.delim("INF1.tbl",as.is=TRUE)
@@ -9,8 +9,10 @@ tbl <- within(t, {
 ## to obtain variance explained
 tbl <- within(tbl,
 {
-  chi2n <- (Effect/StdErr)^2/N
+  x2 <- (Effect/StdErr)^2
+  chi2n <- x2 /(N - 2 + x2)
   v <- (1-chi2n)^2/N
+  v2 <- 2 * chi2n * (1+1/(N+1)^2)
 })
 s <- with(tbl, aggregate(chi2n,list(prot),sum))
 names(s) <- c("prot", "pve")

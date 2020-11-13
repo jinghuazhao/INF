@@ -25,6 +25,7 @@ R --no-save -q <<END
 END
 
 R --no-save -q <<END
+# This part needs to be run inside R
   png("h2-pve.png", res=300, units="cm", width=40, height=40)
   par(mfrow=c(3,1))
   h2 <- read.table("h2.tsv",as.is=TRUE,col.names=c("prot","h2","se"))
