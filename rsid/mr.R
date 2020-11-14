@@ -20,22 +20,21 @@ if (nrow(d)!=0)
     dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
     if (nrow(dat)!=0)
     {
-      mr_result <- mr(dat)
-      mr_heterogeneity(dat)
-      mr_pleiotropy_test(dat)
-      mr_single <- mr_singlesnp(dat)
-      mr_loo <- mr_leaveoneout(dat)
+      result <- mr(dat)
+      heterogeneity <- mr_heterogeneity(dat)
+      pleiotropy <- mr_pleiotropy_test(dat)
+      single <- mr_singlesnp(dat)
+      loo <- mr_leaveoneout(dat)
       prefix <- paste0(outdir,prot,"-",outcomes,"-",type)
-      invisible(lapply(paste0("mr_",c("result","heterogeneity","pleiotropy_test","single","loo")), function(x) {
+      invisible(lapply(c("result","heterogeneity","pleiotropy","single","loo"), function(x) {
                       v <- lapply(x, function(x) tryCatch(get(x), error=function(e) NULL))[[1]]
                       if (!is.null(v)) write.table(v,file=paste0(prefix,"-",x,".txt"),quote=FALSE,row.names=FALSE,sep="\t")
                     }))
-      save(dat,mr_result,mr_single,mr_loo,file=paste0(prefix,".mro"))
       pdf(paste0(prefix,".pdf"))
-      mr_scatter_plot(mr_result, dat)
-      mr_forest_plot(mr_single)
-      mr_leaveoneout_plot(mr_loo)
-      mr_funnel_plot(mr_single)
+      mr_scatter_plot(result, dat)
+      mr_forest_plot(single)
+      mr_leaveoneout_plot(loo)
+      mr_funnel_plot(single)
       dev.off()
     }
   }
