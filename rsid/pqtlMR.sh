@@ -17,7 +17,7 @@ do
     type <- Sys.getenv("type")
     prefix <- paste0("INF1_",type)
     ivs <- within(read.table(paste0(prefix,".ins"),as.is=TRUE,header=TRUE),{pval=10^pval})
-    ids <- scan(paste0(INF,"/rsid/mrbase-id.txt",what="")
+    ids <- scan(paste0(INF,"/rsid/mrbase-id.txt"),what="")
     pQTLtools::pqtlMR(ivs,ids,prefix=prefix)
     efo <- read.delim("efo.txt",as.is=TRUE)
     ids <- with(efo,MRBASEID)
