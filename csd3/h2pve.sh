@@ -1,8 +1,41 @@
 #!/usr/bin/bash
 
 cd work
-R --no-save < ${INF}/csd3/pve.R
+R --no-save < END
+  require(gap)
+  t <- read.delim("INF1.tbl",as.is=TRUE)
+  tbl <- within(t, {
+      prot <- sapply(strsplit(Chromosome,":"),"[",1)
+      Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
+  })
+## to obtain variance explained
+  tbl <- within(tbl,
+  {
+    x2 <- (Effect/StdErr)^2
+    r2 <- x2 / (N - 2 + x2)
+    v <- 1 / (N - 1)
+# r
+# r <- sqrt(r2)
+# vr <- (1 - r2)^2/ N
+# Taylor expansion
+# v2 <- 2 * r2^2 * (1 + 1/ (N + 1)^2)
+  })
+  s <- with(tbl, aggregate(r2,list(prot),sum))
+  names(s) <- c("prot", "pve")
+  se2 <- with(tbl, aggregate(v,list(prot),sum))
+  names(se2) <- c("p1","v")
+  m <- with(tbl, aggregate(r2,list(prot),length))
+  names(m) <- c("p2","m")
+  pve <- cbind(s,se2,m)
+  ord <- with(pve, order(pve))
+  sink("pve.dat")
+  print(pve[ord, c("prot","pve","v","m")], row.names=FALSE)
+  sink()
+  write.csv(tbl,file="INF1.csv",quote=FALSE,row.names=FALSE)
+END
+
 join <(sort -k1,1 h2.tsv) <(sed '1d' pve.dat | sort -k1,1) > h2pve.dat
+
 R --no-save -q <<END
   png("h2pve.png", res=300, units="cm", width=40, height=20)
   par(mfrow=c(1,2))
@@ -28,6 +61,7 @@ END
 
 R --no-save -q <<END
 # This part needs to be run inside R
+  options(width=200)
   png("h2-pve.png", res=300, units="cm", width=40, height=40)
   par(mfrow=c(3,1))
   h2 <- read.table("h2.tsv",as.is=TRUE,col.names=c("prot","h2","se"))
@@ -82,6 +116,10 @@ R --no-save -q <<END
       text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=1.2)
   })
   dev.off()
+  names(h2) <- c("prot","h2_interval","SE_h2_interval")
+  names(ldak) <- c("prot","h2_scallop","SE_h2_scallop", "inf", "se_inf")
+  names(pve) <- c("prot","pve","SE_pve","m")
+  h2_ldak_pve <- merge(merge(h2,ldak,by="prot"),pve,by="prot",all=TRUE)
+  write.csv(h2_ldak_pve,file="h2-ldak-pve.csv",quote=FALSE,row.names=FALSE)
 END
-
 cd -

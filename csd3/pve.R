@@ -1,4 +1,4 @@
-# 13-11-2020 JHZ
+# 14-11-2020 JHZ
 
 require(gap)
 t <- read.delim("INF1.tbl",as.is=TRUE)
@@ -10,16 +10,19 @@ tbl <- within(t, {
 tbl <- within(tbl,
 {
   x2 <- (Effect/StdErr)^2
-  chi2n <- x2 / (N - 2 + x2)
+  r2 <- x2 / (N - 2 + x2)
   v <- 1 / (N - 1)
-# vr <- (1 - chi2n)^2/ N
-# v2 <- 2 * chi2n^2 * (1+1/(N+2)^2)
+# r
+# r <- sqrt(r2)
+# vr <- (1 - r2)^2/ N
+# Taylor expansion
+# v2 <- 2 * r2^2 * (1 + 1/ (N + 1)^2)
 })
-s <- with(tbl, aggregate(chi2n,list(prot),sum))
+s <- with(tbl, aggregate(r2,list(prot),sum))
 names(s) <- c("prot", "pve")
 se2 <- with(tbl, aggregate(v,list(prot),sum))
 names(se2) <- c("p1","v")
-m <- with(tbl, aggregate(chi2n,list(prot),length))
+m <- with(tbl, aggregate(r2,list(prot),length))
 names(m) <- c("p2","m")
 pve <- cbind(s,se2,m)
 ord <- with(pve, order(pve))
