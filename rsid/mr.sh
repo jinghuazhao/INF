@@ -34,7 +34,8 @@ R --no-save <<END
 END
 parallel --env INF -C' ' '
 echo {1}-{2}-{3}; export type={3}; export prot={2}; export MRBASEID={1}; R --no-save <${INF}/rsid/mr.R>/dev/null
-' ::: $(awk "NR>1 {print $4}" efo.txt) ::: $(sed '1d' INF1.merge | cut -f5 | sort -k1,1 | uniq) ::: cis pan
+' ::: $(awk -vFS="\t" 'NR>1 {print $4}' efo.txt) ::: $(sed '1d' INF1.merge | cut -f5 | sort -k1,1 | uniq) ::: cis pan
+cd -
 
 # uncomment if clumping outside TwoSampleMR:
 # cut -f3 mr/{2}-${suffix}.mri > mr/{2}-${suffix}.mrs
