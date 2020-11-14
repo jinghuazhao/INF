@@ -1,26 +1,32 @@
-options(echo=FALSE,width=200)
-source("~/INF/rsid/efo_inf.R")
-INF1_merge <- read.delim("~/INF/work/INF1.merge",as.is=TRUE)
-outdir <- "~/INF/work/mr/"
+options(echo=TRUE,width=200)
+INF <- Sys.getenv("INF")
+source(paste0(INF,"/rsid/efo_inf.R"))
+INF1_merge <- read.delim(paste0(INF,"/work/INF1.merge"),as.is=TRUE)
+outdir <- paste0(INF,"/work/mr/")
 library(TwoSampleMR)
 for (type in c("cis","pan"))
 {
-  prots <- with(INF1_merge,unique(prot))
-  prots <- setdiff(prots,"CCL23")
-  if(type=="cis") prots <- setdiff(prots,c("4E.BP1", "FGF.19", "IL.1.alpha", "IL.6", "OSM", "Beta.NGF", "CASP.8"))
-  for(prot in prots)
+  for(prot in with(INF1_merge,unique(prot)))
   {
+    cat(type,prot,"\n")
     gz <- gzfile(paste0(outdir,prot,"-",type,".mrx"))
-    d <- within(read.delim(gz,as.is=TRUE),{Allele1 <- toupper(Allele1); Allele2 <- toupper(Allele2); P <- 10^logP})
-    exposure_dat <- format_data(d, type="exposure", snp_col = "rsid", effect_allele_col = "Allele1", other_allele_col = "Allele2",
-                                eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
-                                samplesize_col = "N")
+    d <- lapply(gz, function(x) tryCatch(read.delim(gz,as.is=TRUE), error=function(e) NULL))[[1]]
+    if(nrow(d)==0) next
+    d <- within(d,{P <- 10^logP})
+    e <- format_data(d, type="exposure", phenotype_col="prot", header = TRUE, snp_col = "rsid",
+                     effect_allele_col = "Allele1", other_allele_col = "Allele2",
+                     eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
+                     samplesize_col = "N")
+    exposure_dat <- clump_data(e)
+    print(exposure_dat)
     for(outcomes in with(efo,MRBASEID))
     {
       cat(prot,"-",outcomes,"-",type,"\n")
       outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1,
                                           maf_threshold = 0.5)
+      if(is.null(outcome_dat)) next
       dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+      if(nrow(dat)==0) next
       mr_result <- mr(dat)
       print(mr_result)
       mr_heterogeneity(dat)
@@ -36,38 +42,4 @@ for (type in c("cis","pan"))
       dev.off()
     }
   }
-}
-
-heightMR <- function()
-{
-  gz <- gzfile("~/hpc-work/results/BMI/Meta-analysis_Locke_et_al+UKBiobank_2018_top_941_from_COJO_analysis_UPDATED.txt.gz")
-  d <- read.delim(gz,as.is=TRUE)
-  exposure_dat <- format_data(d, type="exposure", snp_col = "SNP", effect_allele_col = "Tested_Allele", other_allele_col = "Other_Allele",
-                              eaf_col = "Freq_Tested_Allele_in_HRS", beta_col = "BETA_COJO", se_col = "SE_COJO", pval_col = "P_COJO", 
-                              samplesize_col = "N")
-  ao <- available_outcomes()
-  subset(ao,consortium=="DIAGRAM")
-  outcome_dat <- extract_outcome_data(exposure_dat$SNP, 23, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3)
-  dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
-  mr_result <- mr(dat)
-  mr_heterogeneity(dat)
-  mr_pleiotropy_test(dat)
-  mr_single <- mr_singlesnp(dat)
-  mr_loo <- mr_leaveoneout(dat)
-  pdf("heightMR.pdf")
-  mr_scatter_plot(mr_result, dat)
-  mr_forest_plot(mr_single)
-  mr_leaveoneout_plot(mr_loo)
-  mr_funnel_plot(mr_single)
-
-  library(MendelianRandomization)
-  MRInputObject <- with(dat, mr_input(bx = beta.exposure, bxse = se.exposure, by = beta.outcome, byse = se.outcome,
-                                      exposure = "Body mass index", outcome = "T2D", snps = SNP))
-  mr_ivw(MRInputObject, model = "default", robust = FALSE, penalized = FALSE, weights = "simple", distribution = "normal", alpha = 0.05)
-  mr_egger(MRInputObject, robust = FALSE, penalized = FALSE, distribution = "normal", alpha = 0.05)
-  mr_maxlik(MRInputObject, model = "default", distribution = "normal", alpha = 0.05)
-  mr_median(MRInputObject, weighting = "weighted", distribution = "normal", alpha = 0.05, iterations = 10000, seed = 314159265)
-  mr_allmethods(MRInputObject, method = "all")
-  mr_plot(MRInputObject, error = TRUE, orientate = FALSE, interactive = TRUE, labels = TRUE, line = "ivw")
-  dev.off()
 }
