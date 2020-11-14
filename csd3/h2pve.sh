@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 cd work
-R --no-save < END
+R --no-save <<END
   require(gap)
   t <- read.delim("INF1.tbl",as.is=TRUE)
   tbl <- within(t, {
