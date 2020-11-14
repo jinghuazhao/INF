@@ -25,7 +25,7 @@ if (nrow(d)!=0)
       pleiotropy <- mr_pleiotropy_test(dat)
       single <- mr_singlesnp(dat)
       loo <- mr_leaveoneout(dat)
-      prefix <- paste0(outdir,prot,"-",outcomes,"-",type)
+      prefix <- paste0(outdir,outcomes,"-",prot,"-",type)
       invisible(lapply(c("result","heterogeneity","pleiotropy","single","loo"), function(x) {
                       v <- lapply(x, function(x) tryCatch(get(x), error=function(e) NULL))[[1]]
                       if (!is.null(v)) write.table(format(v,digits=3),file=paste0(prefix,"-",x,".txt"),quote=FALSE,row.names=FALSE,sep="\t")
