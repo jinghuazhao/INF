@@ -33,7 +33,13 @@ R --no-save <<END
   write.table(efo, file="efo.txt",quote=FALSE,row.names=FALSE,sep="\t")
 END
 parallel --env INF -C' ' '
-echo {1}-{2}-{3}; export type={3}; export prot={2}; export MRBASEID={1}; R --no-save <${INF}/rsid/mr.R>/dev/null
+  export type={3}; 
+  export prot={2}; 
+  export MRBASEID={1}; 
+  export prefix={2}-{1}-{3};
+  echo ${[prefix}
+  R --no-save <${INF}/rsid/mr.R>/dev/null
+  for f in result loo single; do cut -f1,2,5,6 --complement ${prefix}-${f}.txt | awk -vFS="\t" "NR==1||\$5<0.05" > ${prefix}-${f}.sig; done
 ' ::: $(awk -vFS="\t" 'NR>1 {print $4}' efo.txt) ::: $(sed '1d' INF1.merge | cut -f5 | sort -k1,1 | uniq) ::: cis pan
 cd -
 

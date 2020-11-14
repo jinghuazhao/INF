@@ -26,4 +26,4 @@ do
 done
 cd -
 
-# cut -f1,2,5,6 --complement INF1_${type}.mr.txt | awk -vFS="\t" 'NR==1||$5<0.05'| xsel -i
+# cut -f1,2,5,6 --complement INF1_${type}-result.txt | awk -vFS="\t" 'NR==1||$5<0.05'| xsel -i

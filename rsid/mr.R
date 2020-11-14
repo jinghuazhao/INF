@@ -28,7 +28,7 @@ if (nrow(d)!=0)
       prefix <- paste0(outdir,prot,"-",outcomes,"-",type)
       invisible(lapply(c("result","heterogeneity","pleiotropy","single","loo"), function(x) {
                       v <- lapply(x, function(x) tryCatch(get(x), error=function(e) NULL))[[1]]
-                      if (!is.null(v)) write.table(v,file=paste0(prefix,"-",x,".txt"),quote=FALSE,row.names=FALSE,sep="\t")
+                      if (!is.null(v)) write.table(format(v,digits=3),file=paste0(prefix,"-",x,".txt"),quote=FALSE,row.names=FALSE,sep="\t")
                     }))
       pdf(paste0(prefix,".pdf"))
       mr_scatter_plot(result, dat)
