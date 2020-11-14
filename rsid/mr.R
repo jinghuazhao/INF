@@ -1,32 +1,30 @@
 options(echo=TRUE,width=200)
 INF <- Sys.getenv("INF")
-source(paste0(INF,"/rsid/efo_inf.R"))
-INF1_merge <- read.delim(paste0(INF,"/work/INF1.merge"),as.is=TRUE)
-outdir <- paste0(INF,"/work/mr/")
+outdir <- "mr/"
 library(TwoSampleMR)
-for (type in c("cis","pan"))
+type <- Sys.getenv("type")
+prot <- Sys.getenv("prot")
+outcomes <- Sys.getenv("MRBASEID")
+cat(type,prot,"\n")
+gz <- gzfile(paste0(outdir,prot,"-",type,".mrx"))
+d <- lapply(gz, function(x) tryCatch(read.delim(gz,as.is=TRUE), error=function(e) NULL))[[1]]
+if (nrow(d)!=0)
 {
-  for(prot in with(INF1_merge,unique(prot)))
+  d <- within(d,{P <- 10^logP})
+  e <- format_data(d, type="exposure", phenotype_col="prot", header = TRUE, snp_col = "rsid",
+                   effect_allele_col = "Allele1", other_allele_col = "Allele2",
+                   eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
+                   samplesize_col = "N")
+  exposure_dat <- clump_data(e)
+  print(exposure_dat)
+  cat(prot,"-",outcomes,"-",type,"\n")
+  outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1,
+                                      maf_threshold = 0.5)
+  if(!is.null(outcome_dat))
   {
-    cat(type,prot,"\n")
-    gz <- gzfile(paste0(outdir,prot,"-",type,".mrx"))
-    d <- lapply(gz, function(x) tryCatch(read.delim(gz,as.is=TRUE), error=function(e) NULL))[[1]]
-    if(nrow(d)==0) next
-    d <- within(d,{P <- 10^logP})
-    e <- format_data(d, type="exposure", phenotype_col="prot", header = TRUE, snp_col = "rsid",
-                     effect_allele_col = "Allele1", other_allele_col = "Allele2",
-                     eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
-                     samplesize_col = "N")
-    exposure_dat <- clump_data(e)
-    print(exposure_dat)
-    for(outcomes in with(efo,MRBASEID))
+    dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+    if (nrow(dat)!=0)
     {
-      cat(prot,"-",outcomes,"-",type,"\n")
-      outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1,
-                                          maf_threshold = 0.5)
-      if(is.null(outcome_dat)) next
-      dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
-      if(nrow(dat)==0) next
       mr_result <- mr(dat)
       print(mr_result)
       mr_heterogeneity(dat)
