@@ -17,27 +17,29 @@ do
   export outcomes={1}
   export row={2}
   R --no-save -q <<\ \ END
-    INF <- Sys.getenv("INF")
     outcomes <- Sys.getenv("outcomes")
     row <- Sys.getenv("row")
     type <- Sys.getenv("type")
     ivs <- read.table(paste0("INF1_",type,".ins"),as.is=TRUE,header=TRUE)
     prefix <- paste0("INF1_",outcomes,"-",ivs[row,"Phenotype"],"-",type)
     pQTLtools::pqtlMR(ivs[row,],outcomes,prefix=prefix)
+    unlink(paste0(prefix,"-heterogeneity.txt"))
+    unlink(paste0(prefix,"-pleiotropy.txt"))
   END
   ' ::: $(cat ${INF}/rsid/mrbase-id.txt) ::: $(seq ${nrows})
   parallel -C' ' '
   export outcomes={1}
   export row={2}
   R --no-save -q <<\ \ END
-    INF <- Sys.getenv("INF")
     outcomes <- Sys.getenv("outcomes")
     row <- Sys.getenv("row")
     type <- Sys.getenv("type")
     ivs <- read.table(paste0("INF1_",type,".ins"),as.is=TRUE,header=TRUE)
     prefix <- paste0("efo_",outcomes,"-",ivs[row,"Phenotype"],"-",type)
     pQTLtools::pqtlMR(ivs[row,],outcomes,prefix=prefix)
+    unlink(paste0(prefix,"-heterogeneity.txt"))
+    unlink(paste0(prefix,"-pleiotropy.txt"))
   END
-  ' ::: $(cut -f4 ${INF}/work/efo.txt) ::: $(seq ${nrows})
+  ' ::: $(sed '1d' ${INF}/work/efo.txt | cut -f4) ::: $(seq ${nrows})
 done
 cd -
