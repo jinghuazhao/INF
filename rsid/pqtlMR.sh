@@ -16,7 +16,7 @@ do
   parallel -C' ' '
   export outcomes={1}
   export row={2}
-  R --no-save <<\ \ END
+  R --no-save -q <<\ \ END
     INF <- Sys.getenv("INF")
     outcomes <- Sys.getenv("outcomes")
     row <- Sys.getenv("row")
@@ -29,7 +29,7 @@ do
   parallel -C' ' '
   export outcomes={1}
   export row={2}
-  R --no-save <<\ \ END
+  R --no-save -q <<\ \ END
     INF <- Sys.getenv("INF")
     outcomes <- Sys.getenv("outcomes")
     row <- Sys.getenv("row")
