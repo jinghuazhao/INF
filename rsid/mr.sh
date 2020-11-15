@@ -43,12 +43,20 @@ parallel --env INF -C' ' '
   do
     export z=mr/${prefix}-${f};
     if [ -f ${z}.txt ]; then
-      awk -vFS="\t" "NR==1||(\$9<0.05 && \$9!=\"NA\")" ${z}.txt > ${z}.sig;
+      awk -vFS="\t" "NR==1||(\$9<=0.05 && \$9!=\"NA\")" ${z}.txt > ${z}.sig;
       export l=$(wc -l ${z}.sig | cut -d" " -f1);
       if [ ${l} -le 1 ]; then rm ${z}.sig; fi;
     fi
   done
 ' ::: $(awk -vFS="\t" 'NR>1 {print $4}' efo.txt) ::: $(sed '1d' INF1.merge | cut -f5 | sort -k1,1 | uniq) ::: cis pan
+export nrows=$(sed '1d' efo.txt | wc -l | cut -d' ' -f1)
+for i in $(seq ${nrows})
+do
+  export trait=$(sed '1d' efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $2}')
+  export id=$(sed '1d' efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $4}')
+  echo ${trait}
+  grep "${trait}" mr/*result.txt | grep Egger > mr/${id}.result
+done
 cd -
 
 # uncomment if clumping outside TwoSampleMR:
