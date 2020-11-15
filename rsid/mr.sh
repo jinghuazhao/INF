@@ -37,9 +37,9 @@ parallel --env INF -C' ' '
   export prot={2}; 
   export type={3}; 
   export prefix={1}-{2}-{3};
-  echo ${[prefix}
+  echo ${prefix}
   R --no-save <${INF}/rsid/mr.R>/dev/null
-  for f in result loo single; do cut -f1,2,5,6 --complement ${prefix}-${f}.txt | awk -vFS="\t" "NR==1||\$5<0.05" > ${prefix}-${f}.sig; done
+  for f in result loo single; do cut -f1,2,5,6 --complement mr/${prefix}-${f}.txt | awk -vFS="\t" "NR==1||\$5<0.05" > mr/${prefix}-${f}.sig; done
 ' ::: $(awk -vFS="\t" 'NR>1 {print $4}' efo.txt) ::: $(sed '1d' INF1.merge | cut -f5 | sort -k1,1 | uniq) ::: cis pan
 cd -
 
