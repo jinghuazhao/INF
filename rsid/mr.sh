@@ -54,15 +54,29 @@ for i in $(seq ${nrows})
 do
   export trait=$(sed '1d' efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $2}')
   export id=$(sed '1d' efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $4}')
-  echo ${trait}
-  grep "${trait}" mr/*result.txt | grep Egger > mr/${id}.result
+  echo ${id} -- ${trait}
+  (
+    cat mr/*result.txt | head -1
+    grep ${id} mr/*result.txt | grep "Inverse variance weighted"
+  ) > mr/${id}.result
+  (
+    cat mr/*single.txt | head -1
+    grep ${id} mr/*single.txt | grep -v -e Egger -e Inverse
+  ) > mr/${id}.single
 done
+
+export all=$(ls mr/*result.txt | wc -l)
+export p=$(bc -l <<< 0.05/${all})
+awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' mr/*result
+
 cd -
 
 # uncomment if clumping outside TwoSampleMR:
 # cut -f3 mr/{2}-${suffix}.mri > mr/{2}-${suffix}.mrs
 # plink --bfile INTERVAL/cardio/INTERVAL --extract mr/{2}-${suffix}.mrs \
 #       --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.01 --out mr/{2}-${suffix}
+# plink-1.9 --bfile $f --clump $rt.tab --chr ${1} --from-bp ${2} --to-bp ${3} --clump-field P --clump-kb 500 --clump-p1 5e-8 --clump-r2 0 \
+#           --clump-snp-field snpid --out $f
 #   grep -w -f mr/{2}-${suffix}.prune.in mr/{2}-${suffix}.mri | \
 #   join -23 <(zgrep "chr{3}" ${SUMSTATS}/snp150.snpid_rsid.gz) - | \
 #   awk "{\$3=\"chr\"\$1\":\"\$2;print}" | \

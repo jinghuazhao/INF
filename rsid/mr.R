@@ -18,6 +18,7 @@ if (nrow(d)!=0)
   if(!is.null(outcome_dat))
   {
     dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+    directionality_test(dat)
     if (nrow(dat)!=0)
     {
       result <- mr(dat)
