@@ -41,6 +41,13 @@ do
     unlink(paste0(prefix,"-pleiotropy.txt"))
   END
   ' ::: $(cat ${INF}/rsid/mrbase-id.txt) ::: $(seq ${nrows})
+  export prefix=INF1
+  export nrows=$(cat ${INF}/rsid/mrbase-id.txt | wc -l)
+  for i in $(seq ${nrows})
+  do
+    export id=$(awk -vnr=${i} 'NR==nr{print $1}' ${INF}/rsid/mrbase-id.txt)
+    collect
+  done
   parallel -C' ' '
   export outcomes={1}
   export row={2}
@@ -55,14 +62,6 @@ do
     unlink(paste0(prefix,"-pleiotropy.txt"))
   END
   ' ::: $(sed '1d' ${INF}/work/efo.txt | cut -f4) ::: $(seq ${nrows})
-  export type=${type}
-  export prefix=INF1
-  export nrows=$(cat ${INF}/rsid/mrbase-id.txt | wc -l)
-  for i in $(seq ${nrows})
-  do
-    export id=$(awk -vnr=${i} 'NR==nr{print $1}' ${INF}/rsid/mrbase-id.txt)
-    collect
-  done
   export prefix=efo
   export nrows=$(sed '1d' ${INF}/work/efo.txt | wc -l | cut -d' ' -f1)
   for i in $(seq ${nrows})
