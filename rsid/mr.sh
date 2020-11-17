@@ -57,11 +57,11 @@ do
   echo ${id} -- ${trait}
   (
     cat mr/*result.txt | head -1
-    grep ${id} mr/*result.txt | grep "Inverse variance weighted"
+    grep -w ${id} mr/*result.txt | grep "Inverse variance weighted"
   ) > mr/${id}.result
   (
     cat mr/*single.txt | head -1
-    grep ${id} mr/*single.txt | grep -v -e Egger -e Inverse
+    grep -w ${id} mr/*single.txt | grep -v -e Egger -e Inverse
   ) > mr/${id}.single
 done
 

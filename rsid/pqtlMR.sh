@@ -1,7 +1,20 @@
 #/usr/bin/bash
 
 module load gcc/6
+function collect()
+{ 
+  echo ${prefix} -- ${id} -- ${trait}
+  (
+    cat ${prefix}*result.txt | head -1
+    grep -w ${id} ${prefix}*result.txt | grep "Wald ratio"
+  ) > ${prefix}-${id}.result
+  (
+    cat ${prefix}*single.txt | head -1
+    grep -w ${id} ${prefix}*single.txt | grep -v -e Egger -e Inverse
+  ) > ${prefix}-${id}.single
+}
 if [ ! -d work/mr/pQTLs ]; then mkdir -p work/mr/pQTLs; fi
+
 cd work/mr/pQTLs
 for type in cis trans
 do
@@ -18,6 +31,7 @@ do
   export row={2}
   R --no-save -q <<\ \ END
     outcomes <- Sys.getenv("outcomes")
+    ieugwasr::gwasinfo(id = outcomes)
     row <- Sys.getenv("row")
     type <- Sys.getenv("type")
     ivs <- read.table(paste0("INF1_",type,".ins"),as.is=TRUE,header=TRUE)
@@ -41,33 +55,30 @@ do
     unlink(paste0(prefix,"-pleiotropy.txt"))
   END
   ' ::: $(sed '1d' ${INF}/work/efo.txt | cut -f4) ::: $(seq ${nrows})
-done
-cd -
-
-cd work/mr/pQTLs
-export prefix=efo
-for type in cis trans
-do
   export type=${type}
+  export prefix=INF1
+  export nrows=$(cat ${INF}/rsid/mrbase-id.txt | wc -l)
+  for i in $(seq ${nrows})
+  do
+    export id=$(awk -vnr=${i} 'NR==nr{print $1}' ${INF}/rsid/mrbase-id.txt)
+    collect
+  done
+  export prefix=efo
   export nrows=$(sed '1d' ${INF}/work/efo.txt | wc -l | cut -d' ' -f1)
   for i in $(seq ${nrows})
   do
     export trait=$(sed '1d' ${INF}/work/efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $2}')
     export id=$(sed '1d' ${INF}/work/efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $4}')
-    echo ${prefix} -- ${id} -- ${trait}
-    (
-      cat ${prefix}*result.txt | head -1
-      grep ${id} ${prefix}*result.txt | grep "Wald ratio"
-    ) > ${prefix}-${id}.result
-    (
-      cat ${prefix}*single.txt | head -1
-      grep ${id} ${prefix}*single.txt | grep -v -e Egger -e Inverse
-    ) > ${prefix}-${id}.single
+    collect
   done
 done
 
-export all=$(ls ${prefix}*result.txt | wc -l)
-export p=$(bc -l <<< 0.05/${all})
-awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}*result
+for prefix in INF1 efo
+do
+  echo ${prefix}
+  export all=$(ls ${prefix}*result.txt | wc -l)
+  export p=$(bc -l <<< 0.05/${all})
+  awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}*result
+done
 
 cd -
