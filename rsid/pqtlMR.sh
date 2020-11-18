@@ -99,7 +99,7 @@ R --no-save -q <END
   outcome <- with(info,sample_size)
   r.exposure <- get_r_from_pn(pval.exposure,samplesize.exposure)
   r.outcome <- get_r_from_lor(lor, af, ncase, ncontrol, prevalence, model = "logit", correction = FALSE)
-  h <- data.frame(h,samplesize.exposure=11787,samplesize.outcome=with(info,sample_size),r.exposure=r.exposure,r.outcome=r.outcome)
+  h <- data.frame(h,samplesize.exposure=11787,r.exposure=r.exposure,r.outcome=r.outcome)
   directionality_test(h)
 END
 
