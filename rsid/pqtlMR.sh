@@ -80,4 +80,27 @@ do
   awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}*result
 done
 
+# bidirectionality test for FGF.5
+R --no-save -q <END
+  options(width=200)
+  INF1_cis <- read.delim("INF1_cis.ins",sep=" ")
+  pQTLtools::pqtlMR(subset(INF1_cis,Phenotype=="FGF.5"),"ieu-a-7",prefix="test")
+  h <- read.delim("test-harmonise.txt")
+  require(TwoSampleMR)
+  info <- ieugwasr::gwasinfo("ieu-a-7")
+# binary outcomes
+  lor <- with(h,beta.outcome)
+  af <- with(h,eaf.outcome)
+  ncase <- with(info,ncase)
+  ncontrol <- with(info,ncontrol)
+  prevalence <- 0.1
+  pval.exposure <- with(h,pval.exposure)
+  samplesize.exposure <- 11787
+  outcome <- with(info,sample_size)
+  r.exposure <- get_r_from_pn(pval.exposure,samplesize.exposure)
+  r.outcome <- get_r_from_lor(lor, af, ncase, ncontrol, prevalence, model = "logit", correction = FALSE)
+  h <- data.frame(h,samplesize.exposure=11787,samplesize.outcome=with(info,sample_size),r.exposure=r.exposure,r.outcome=r.outcome)
+  directionality_test(h)
+END
+
 cd -
