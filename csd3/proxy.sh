@@ -1,26 +1,30 @@
 #!/usr/bin/bash
 
 export bfile=${INF}/INTERVAL/cardio/INTERVAL
+export TMPDIR=${HPC_WORK}/work
 
-# NB all files are moved into relevant directories at the end of this script.
 # replace INF1.merge.trans with INF1.merge for all sentinels, add grep -f INF1.merge.cis | \ for cis sentinels.
-# all variants in the reference panel can be obtained with
-# awk -v chr={1} -v from={2} -v to={3} "chr==\$1 && \$4 >= from && \$4 <= to" ${bfile}.bim
+
 cd work
-cut -f1-3,5,6,9 INF1.merge.trans | \
-awk -v d=500000 'NR>1 {gsub(/chr/,"",$1);if($6>d) from=$6-d; else from=0; to=$6+d;print $1,from,to,$4,$5}' | \
-parallel --env bfile=$bfile -j5 -C' ' '
-  plink --bfile ${bfile} --ld-snp {5} --chr {1} --from-bp {2} --to-bp {3} --r2 --ld-window-r2 0.8 --out {4}-{5}
+awk 'NR>1{print $1,$5,$6,$9}' INF1.merge.trans | \
+parallel --env bfile --env TMPDIR -j1 -C' ' '
+  awk -vchr={1} -vpos={4} -vd=500000 "chr==\"chr\"\$1 && \$4>=pos-d && \$4<=pos+d {print \$2}" ${bfile}.bim > {2}-{3}.snplist
+  plink --bfile ${bfile} --extract {2}-{3}.snplist --r2 inter-chr --ld-window-r2 0.8 --out {2}-{3}
 '
 (
   echo prot SNPID CHR_A BP_A SNP_A CHR_B BP_B SNP_B R2
-  cut -f1-3,5,6,9 --output-delimiter=' ' INF1.merge.trans | \
+  cut -f5,6 --output-delimiter=' ' INF1.merge.trans | \
   sed "1d" | \
-  parallel -C' ' 'awk -v prot={4} -v snpid={5} "NR>1 {print prot,snpid,\$1,\$2,\$3,\$4,\$5,\$6,\$7}" {4}-{5}.ld'
+  parallel -C' ' 'awk -v prot={1} -v snpid={2} "NR>1 {print prot,snpid,\$1,\$2,\$3,\$4,\$5,\$6,\$7}" {1}-{2}.ld'
 ) > INF1.proxy.ld
 
+cut -f5,6 --output-delimiter=' ' INF1.merge.trans | \
+sed "1d" | \
+parallel -C' ' '
+export ldfile={1}-{2}
 R --no-save -q <<END
-  ld <- read.table("INF1.proxy.ld",as.is=TRUE,header=TRUE)
+  ldfile <- Sys.getenv("ldfile")
+  ld <- read.table(paste0(ldfile,".ld"),as.is=TRUE,header=TRUE)
   sentinels <- as.matrix(ld[c("CHR_A","BP_A","SNP_A")])
   proxies <- as.matrix(ld[c("CHR_B","BP_B","SNP_B")])
   all <- as.data.frame(rbind(sentinels,proxies))
@@ -29,7 +33,7 @@ R --no-save -q <<END
   all <- with(all,unique(gap::inv_chr_pos_a1_a2(SNP_A,prefix="")))
   all <- within(all,{snp <- paste0("chr",chr,":",pos,"_",a1,"_",a2); qual <- "."; filter <- "."; info <- "."})
   writetable <- function(d,f,...) write.table(d,file=f,col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t",...)
-  for (f in c("INF1.proxy"))
+  for (f in ldfile)
   {
     avinput <- paste0(f,".avinput")
     vars <- c("chr","pos","pos","a1","a2")
@@ -41,13 +45,17 @@ R --no-save -q <<END
     writetable(all[vars],vepinput,append=TRUE)
   }
 END
+'
 
 export ANNOVAR=${HPC_WORK}/annovar
 export LOFTEE=${HPC_WORK}/loftee
 export POLYPHEN=$HPC_WORK/polyphen-2.2.2
 export VEP=${HPC_WORK}/ensembl-vep
 
-export s=INF1.proxy
+cut -f5,6 --output-delimiter=' ' INF1.merge.trans | \
+sed "1d" | \
+parallel -C' ' '
+export s={1}-{2}
 # ANNOVAR
 annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
 table_annovar.pl ${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
@@ -55,8 +63,8 @@ table_annovar.pl ${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
      -operation g,g,g,g,r,f,f,f,r \
      -remove -nastring . -csvout -polish -xref $ANNOVA/example/gene_xref.txt
 # Polyphen-2
-cut -d' ' -f8 ${s}.ld | \
-sed '1d;s/_/ /;s/_/\//' | \
+cut -d" " -f8 ${s}.ld | \
+sed "1d;s/_/ /;s/_/\//" | \
 sort -k1,1 | \
 uniq > ${s}.pph.list
 mapsnps.pl -g hg19 -m -U -y ${s}.pph.input ${s}.pph.list 1>${s}.pph.features 2>${s}.log
@@ -83,7 +91,9 @@ export dbNSFP_fields=${dbNSFP_1}${dbNSFP_2}${dbNSFP_3}
 vep -i ${INF}/work/${s}.vepinput -o ${INF}/work/${s}.dbNSFP --cache --force --offline --pick --tab \
     --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz \
     --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
+'
 
+# NB all files are moved into relevant directories
 mv \
 INF1.proxy.ld \
 INF1.proxy.vepinput \
