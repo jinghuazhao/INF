@@ -5,11 +5,11 @@ function collect()
 { 
   echo ${prefix} -- ${id} -- ${trait}
   (
-    cat ${prefix}*result.txt | head -1
+    cat ${prefix}_*result.txt | head -1
     grep -w ${id} ${prefix}*result.txt | grep "Wald ratio"
   ) > ${prefix}-${id}.result
   (
-    cat ${prefix}*single.txt | head -1
+    cat ${prefix}_*single.txt | head -1
     grep -w ${id} ${prefix}*single.txt | grep -v -e Egger -e Inverse
   ) > ${prefix}-${id}.single
 }
@@ -40,16 +40,18 @@ do
     unlink(paste0(prefix,"-heterogeneity.txt"))
     unlink(paste0(prefix,"-pleiotropy.txt"))
     prefix <- paste0("INF1_rev_",outcomes,"-",ivs[row,"Phenotype"],"-",type)
-    pQTLtools::pqtlMR(outcomes,ivs[row,],prefix=prefix,mode="revMR")
+    pQTLtools::pqtlMR(ivs[row,],outcomes,prefix=prefix,reverse=TRUE)
     unlink(paste0(prefix,"-heterogeneity.txt"))
     unlink(paste0(prefix,"-pleiotropy.txt"))
   END
   ' ::: $(cat ${INF}/rsid/mrbase-id.txt) ::: $(seq ${nrows})
-  export prefix=INF1
   export nrows=$(cat ${INF}/rsid/mrbase-id.txt | wc -l)
   for i in $(seq ${nrows})
   do
     export id=$(awk -vnr=${i} 'NR==nr{print $1}' ${INF}/rsid/mrbase-id.txt)
+    export prefix=INF1
+    collect
+    export prefix=INF1_rev
     collect
   done
   parallel -C' ' '
@@ -65,27 +67,29 @@ do
     unlink(paste0(prefix,"-heterogeneity.txt"))
     unlink(paste0(prefix,"-pleiotropy.txt"))
     prefix <- paste0("efo_rev_",outcomes,"-",ivs[row,"Phenotype"],"-",type)
-    pQTLtools::pqtlMR(outcomes,ivs[row,],prefix=prefix,mode="revMR")
+    pQTLtools::pqtlMR(ivs[row,],outcomes,prefix=prefix,reverse=TRUE)
     unlink(paste0(prefix,"-heterogeneity.txt"))
     unlink(paste0(prefix,"-pleiotropy.txt"))
   END
   ' ::: $(sed '1d' ${INF}/work/efo.txt | cut -f4) ::: $(seq ${nrows})
-  export prefix=efo
   export nrows=$(sed '1d' ${INF}/work/efo.txt | wc -l | cut -d' ' -f1)
   for i in $(seq ${nrows})
   do
     export trait=$(sed '1d' ${INF}/work/efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $2}')
     export id=$(sed '1d' ${INF}/work/efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $4}')
+    export prefix=efo
+    collect
+    export prefix=efo_rev
     collect
   done
 done
 
-for prefix in INF1 efo
+for prefix in INF1 efo INF1_rev efo_rev
 do
   echo ${prefix}
-  export all=$(ls ${prefix}*result.txt | wc -l)
+  export all=$(ls ${prefix}-*result.txt | wc -l)
   export p=$(bc -l <<< 0.05/${all})
-  awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}*result
+  awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}-*result
 done
 
 # bidirectionality test for FGF.5
