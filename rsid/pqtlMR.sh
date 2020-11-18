@@ -39,6 +39,10 @@ do
     pQTLtools::pqtlMR(ivs[row,],outcomes,prefix=prefix)
     unlink(paste0(prefix,"-heterogeneity.txt"))
     unlink(paste0(prefix,"-pleiotropy.txt"))
+    prefix <- paste0("INF1_rev_",outcomes,"-",ivs[row,"Phenotype"],"-",type)
+    pQTLtools::pqtlMR(outcomes,ivs[row,],prefix=prefix,mode="revMR")
+    unlink(paste0(prefix,"-heterogeneity.txt"))
+    unlink(paste0(prefix,"-pleiotropy.txt"))
   END
   ' ::: $(cat ${INF}/rsid/mrbase-id.txt) ::: $(seq ${nrows})
   export prefix=INF1
@@ -58,6 +62,10 @@ do
     ivs <- read.table(paste0("INF1_",type,".ins"),as.is=TRUE,header=TRUE)
     prefix <- paste0("efo_",outcomes,"-",ivs[row,"Phenotype"],"-",type)
     pQTLtools::pqtlMR(ivs[row,],outcomes,prefix=prefix)
+    unlink(paste0(prefix,"-heterogeneity.txt"))
+    unlink(paste0(prefix,"-pleiotropy.txt"))
+    prefix <- paste0("efo_rev_",outcomes,"-",ivs[row,"Phenotype"],"-",type)
+    pQTLtools::pqtlMR(outcomes,ivs[row,],prefix=prefix,mode="revMR")
     unlink(paste0(prefix,"-heterogeneity.txt"))
     unlink(paste0(prefix,"-pleiotropy.txt"))
   END
