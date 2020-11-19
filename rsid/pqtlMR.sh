@@ -2,16 +2,28 @@
 
 module load gcc/6
 function collect()
-{ 
+{
   echo ${prefix} -- ${id} -- ${trait}
   (
     cat ${prefix}_*result.txt | head -1
     grep -w ${id} ${prefix}_*result.txt | grep "Wald ratio"
-  ) > ${prefix}-${id}.result
+  ) | grep -v _rev_ > ${prefix}-${id}.result
   (
     cat ${prefix}_*single.txt | head -1
     grep -w ${id} ${prefix}_*single.txt | grep -v -e Egger -e Inverse
-  ) > ${prefix}-${id}.single
+  ) | grep -v _rev_ > ${prefix}-${id}.single
+}
+function collect_rev()
+{
+  echo ${prefix} -- ${id} -- ${trait}
+  (
+    cat ${prefix}_*result.txt | head -1
+    grep -w ${id} ${prefix}_*result.txt | grep "Wald ratio"
+  ) | grep _rev_ > ${prefix}-${id}.result
+  (
+    cat ${prefix}_*single.txt | head -1
+    grep -w ${id} ${prefix}_*single.txt | grep -v -e Egger -e Inverse
+  ) | grep -e _rev_ > ${prefix}-${id}.single
 }
 if [ ! -d work/mr/pQTLs ]; then mkdir -p work/mr/pQTLs; fi
 
@@ -52,7 +64,7 @@ do
     export prefix=INF1
     collect
     export prefix=INF1_rev
-    collect
+    collect_rev
   done
   parallel -C' ' '
   export outcomes={1}
@@ -80,7 +92,7 @@ do
     export prefix=efo
     collect
     export prefix=efo_rev
-    collect
+    collect_rev
   done
 done
 
@@ -93,7 +105,7 @@ do
 done
 
 # bidirectionality test for FGF.5
-R --no-save -q <END
+R --no-save -q <<END
   options(width=200)
   INF1_cis <- read.delim("INF1_cis.ins",sep=" ")
   pQTLtools::pqtlMR(subset(INF1_cis,Phenotype=="FGF.5"),"ieu-a-7",prefix="test")
