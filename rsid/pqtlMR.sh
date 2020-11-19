@@ -6,11 +6,11 @@ function collect()
   echo ${prefix} -- ${id} -- ${trait}
   (
     cat ${prefix}_*result.txt | head -1
-    grep -w ${id} ${prefix}*result.txt | grep "Wald ratio"
+    grep -w ${id} ${prefix}_*result.txt | grep "Wald ratio"
   ) > ${prefix}-${id}.result
   (
     cat ${prefix}_*single.txt | head -1
-    grep -w ${id} ${prefix}*single.txt | grep -v -e Egger -e Inverse
+    grep -w ${id} ${prefix}_*single.txt | grep -v -e Egger -e Inverse
   ) > ${prefix}-${id}.single
 }
 if [ ! -d work/mr/pQTLs ]; then mkdir -p work/mr/pQTLs; fi
@@ -87,9 +87,9 @@ done
 for prefix in INF1 efo INF1_rev efo_rev
 do
   echo ${prefix}
-  export all=$(ls ${prefix}-*result.txt | wc -l)
+  export all=$(ls ${prefix}_*result.txt | wc -l)
   export p=$(bc -l <<< 0.05/${all})
-  awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}-*result
+  awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}*result
 done
 
 # bidirectionality test for FGF.5
