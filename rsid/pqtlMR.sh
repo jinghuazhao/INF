@@ -19,11 +19,11 @@ function collect_rev()
   (
     cat ${prefix}_*result.txt | head -1
     grep -w ${id} ${prefix}_*result.txt | grep "Wald ratio"
-  ) | grep _rev_ > ${prefix}-${id}.result
+  ) | awk 'NR==1||$1~/rev/' > ${prefix}-${id}.result
   (
     cat ${prefix}_*single.txt | head -1
     grep -w ${id} ${prefix}_*single.txt | grep -v -e Egger -e Inverse
-  ) | grep -e _rev_ > ${prefix}-${id}.single
+  ) | awk 'NR==1||$1~/rev/' > ${prefix}-${id}.single
 }
 if [ ! -d work/mr/pQTLs ]; then mkdir -p work/mr/pQTLs; fi
 
