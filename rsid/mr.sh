@@ -31,6 +31,7 @@ R --no-save <<END
   url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
   efo <- subset(openxlsx::read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:4), rows=c(1:78)),!is.na(MRBASEID))
   write.table(efo, file="efo.txt",quote=FALSE,row.names=FALSE,sep="\t")
+  epigraphdb::mr(outcome_trait=with(efo,trait)[6])
 END
 parallel --env INF -C' ' '
   export MRBASEID={1}; 
