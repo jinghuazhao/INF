@@ -60,6 +60,8 @@ gdigt.R | GDI and gene-trials
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
+pleiotropy.R | horizontal and vertical pleiotropy
+ppi.R | PPI using EpiGraphDB
 pqtlGWAS.R | pQTL-GWAS lookup
 pqtlxQTL.R | pQTL-[e|m|p]QTL lookup
 pqtlMR.sh | pQTL MR analysis
