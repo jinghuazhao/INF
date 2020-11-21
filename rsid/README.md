@@ -68,6 +68,7 @@ pqtlMR.sh | pQTL MR analysis
 rentrez.sh | reuse of rentrez
 rGREAT.R | GREAT analysis
 stringdb.sh | STRINGdb
+tables.R | code to create Excel Tables
 uniprot.R | UniProt IDs to others
 utils.sh | utilties
 vep.sh | VEP annotation
