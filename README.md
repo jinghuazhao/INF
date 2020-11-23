@@ -15,7 +15,7 @@
   * [Approximately independent LD blocks](doc/aild.md)
   * [Competitive logp/log10p functions](doc/logplog10p.md)
   * [Notes on UniProt IDs](doc/uniprot.md)
-  * [TRYGGVE-specific issues](tryggve/tryggve.md)
+  * [TRYGGVE](https://neic.no/tryggve/)-[specific issues](tryggve/tryggve.md)
   * URLs and downloading
 
 <img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
