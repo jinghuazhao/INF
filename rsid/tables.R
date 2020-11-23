@@ -25,7 +25,7 @@ pqtldisease <- data.frame(Studies="Studies",pmid="pmid")
 somalogic <- data.frame(Studies="Studies",pmid="pmid")
 efo <- subset(read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:4), rows=c(1:78)),!is.na(MRBASEID))
 
-xlsx <- paste0("work/scallop.xlsx")
+xlsx <- paste0("work/SCALLOP-INF.xlsx")
 wb <- createWorkbook(xlsx)
 for (i in 1:length(sheets))
 {
