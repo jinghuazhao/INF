@@ -198,9 +198,9 @@ The version contains fix to the use of HapMap reference as in software-notes abo
 File specification | Descrription
 -------------------|---------------------------------------------------------------
 doc/               | Oringal documents
- -- [KORA.prot.preproc.R*](doc/KORA.prot.preproc.R) | R code for data preprocessing
+ -- [KORA.prot.preproc.v2.R*](KORA.prot.preproc.v2.R) | R code for data preprocessing
  -- kora.normalised.prot.txt* | sex, age, normalised proteins
- -- [KORA.pc.below.llod.pdf*](doc/KORA.pc.below.llod.pdf) | llod check
+ -- [KORA.pc.below.llod.pdf*](KORA.pc.below.llod.pdf) | llod check
 METAL/             | METAL/output scripts by protein
 sumstats/          | File lists and study directories
 tryggve/           | Auxiliary files
