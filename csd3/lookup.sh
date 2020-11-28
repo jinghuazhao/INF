@@ -145,3 +145,9 @@ cut -d' ' -f1 knownlist.rsid > knownlist.snpid
 plink --bfile INTERVAL/cardio/INTERVAL --extract knownlist.snpid --r2 square --out knownlist
 
 rm knownlist.*
+
+R --no-save <<END
+  load("work/INF1.merge.pQTL")
+  data.frame(table(ps$pmid))
+  write.table(names(table(ps$pmid)),file="pmid",quote=FALSE,row.names=FALSE,col.names=FALSE)
+END
