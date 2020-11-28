@@ -41,24 +41,24 @@ for (catalogue in c("eQTL","mQTL","pQTL"))
 f <- paste0(file.path(INF,"work","INF1.merge."),"eQTL")
 load(f)
 eQTL <- ps %>% select(hgnc,ensembl,rsid,hg19_coordinates,a1,a2,eur,consequence,
-                      study,pmid,ancestry,year,tissue,exp_gene,exp_ensembl,beta,se,p,dataset,snpid)
+                      study,pmid,ancestry,year,tissue,exp_gene,exp_ensembl,proxy,r2,beta,se,p,dataset,snpid)
 eQTL <- within(eQTL, {
   tissue <- gsub("ba9","BA9",tissue)
   tissue <- gsub("ba24","BA24",tissue)
   tissue <- gsub("^Blood|Monocytes|Peripheral blood|Neutrophils|Peripheral blood monocytes|T cells|Whole Blood","Whole blood",tissue)
 })
-save(eQTL,file="INF1.eQTL.rda")
+save(eQTL,file="pQTL.eQTL.rda")
 INF1_aggr <- within(INF1_aggr,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)})
-eQTL_overlap <- subset(merge(INF1_aggr,eQTL,by="hg19_coordinates"),select=-c(hg19_coordinates,Chromosome,Position))
-write.table(eQTL_overlap,file="INF1_eQTL.tsv",quote=FALSE,row.names=FALSE,sep="\t")
+eQTL_overlap <- subset(merge(INF1_aggr,eQTL,by="hg19_coordinates"),select=-c(Chromosome,Position))
+write.table(eQTL_overlap,file="pQTL_eQTL.tsv",quote=FALSE,row.names=FALSE,sep="\t")
 tbl <- with(within(eQTL_overlap,{rsidProts <- paste0(rsID," (",prots,")")}),table(rsidProts,tissue))
 tbl[tbl>1] <- 1
-write.table(as.data.frame.matrix(tbl),file="INF1_eQTL_matrix.tsv",quote=FALSE,sep="\t")
+write.table(as.data.frame.matrix(tbl),file="pQTL_eQTL_matrix.tsv",quote=FALSE,sep="\t")
 library(pheatmap)
 pal <- colorRampPalette(c("white","red"))
 col <- pal(3)
 library(grid)
-png("INF1_eQTL.png",res=300,width=16,height=12,units="in")
+png("pQTL_eQTL.png",res=300,width=16,height=12,units="in")
 setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
 pheatmap(tbl, legend=FALSE, angle_col="45", color=col, width=8, height=40, cluster_rows=FALSE, cluster_cols=FALSE, fontsize_row=6)
 setHook("grid.newpage", NULL, "replace")
@@ -78,8 +78,8 @@ aux <- with(with(eQTL_overlap, cbind(inv_chr_pos_a1_a2(MarkerName)[c("chr","pos"
 Col <- unique(aux[c("colLabel","col")])
 rownames(Col) <- with(Col,colLabel)
 library(gplots)
-png("INF1_eQTL_gplots.png",height=35,width=40,units="cm",res=300)
-heatmap.2(tbl, scale = "none", keysize=0.8, col = col, margin=c(20,20), trace = "none",
+png("pQTL_eQTL_gplots.png",height=35,width=40,units="cm",res=300)
+heatmap.2(tbl, scale = "none", keysize=0.8, col = col, margin=c(20,20), trace = "none", key=FALSE,
           colCol=Col[colnames(tbl),"col"], dendrogram="none", density.info = "none", srtCol=45)
 dev.off()
 
@@ -117,9 +117,7 @@ highchart() %>%
                 hcaes(x = f1,y = f2,value = v),
                 dataLabels = list(enabled = FALSE))
 
-#genes <- scan("work/INF1.gene",what="")
-#r <- genequeries(genes,catalogue="eQTL",build=37,p=5e-8,proxies="EUR",r2=0.8)
-ips <- subset(merge(INF1_aggr,ps,by="hg19_coordinates"),
+ips <- subset(merge(INF1_aggr,ps,by="hg19_coordinates",all.y=TRUE),
               select=-c(Chromosome, Position, EAF, Effects, SEs, nprots, snpid,
                         hg19_coordinates,hg38_coordinates,ref_hg19_coordinates,ref_hg38_coordinates,
                         ref_pos_hg19, ref_pos_hg38, ref_protein_position, ref_amino_acids, ref_ensembl,
@@ -144,3 +142,6 @@ subset(SomaLogic160410,TargetFullName=="SLAM family member 7")
 subset(SomaLogic160410,UniProt=="P50591")
 subset(SomaLogic160410,UniProt=="O14625")
 subset(SomaLogic160410,UniProt=="P15692")
+
+#genes <- scan("work/INF1.gene",what="")
+#r <- genequeries(genes,catalogue="eQTL",build=37,p=5e-8,proxies="EUR",r2=0.8)

@@ -4,11 +4,11 @@ library(dplyr)
 library(pQTLtools)
 
 INF <- Sys.getenv("INF")
-INF1_aggr <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
-                    hg19_coordinates=paste0("chr",Chromosome,":",Position)}) %>% rename(INF1_rsid=rsid) %>% rename(Total=N) %>%
+INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
+                    hg19_coordinates=paste0("chr",Chromosome,":",Position)}) %>% rename(INF1_rsid=rsid) %>% rename(Total=N)
+INF1_aggr <- INF1_metal %>%
   select(Chromosome,Position,prot,hg19_coordinates,MarkerName,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans,INF1_rsid) %>%
-  group_by(Chromosome,Position,MarkerName,INF1_rsid,hg19_coordinates) %>%
-  summarise(nprots=n(),
+  group_by(Chromosome,Position,MarkerName,INF1_rsid,hg19_coordinates) %>% summarise(nprots=n(),
             prots=paste(prot,collapse=";"),
             Allele1=paste(toupper(Allele1),collapse=";"),
             Allele2=paste(toupper(Allele2),collapse=";"),
