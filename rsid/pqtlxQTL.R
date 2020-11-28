@@ -30,8 +30,9 @@ r2 <- 0.8
 build <- 37
 # query()
 
-eQTL <- within(ps,{gene_snpid <- paste0(hgnc,"-",snpid)}) %>% select(hgnc,ensembl,rsid,hg19_coordinates,a1,a2,eur,consequence,
-                   study,pmid,ancestry,year,tissue,exp_gene,exp_ensembl,proxy,r2,beta,se,p,dataset,gene_snpid)
+eQTL <- within(subset(ps,hgnc%in%INF1_aggr$gene), {gene_snpid <- paste0(hgnc,"-",snpid)}) %>%
+              select(hgnc,ensembl,rsid,hg19_coordinates,a1,a2,eur,consequence,
+              study,pmid,ancestry,year,tissue,exp_gene,exp_ensembl,proxy,r2,beta,se,p,dataset,gene_snpid)
 eQTL <- within(eQTL, {
   tissue <- gsub("ba9","BA9",tissue)
   tissue <- gsub("ba24","BA24",tissue)
