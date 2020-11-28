@@ -91,7 +91,11 @@ export dbNSFP_fields=${dbNSFP_1}${dbNSFP_2}${dbNSFP_3}
 vep -i ${INF}/work/${s}.vepinput -o ${INF}/work/${s}.dbNSFP --cache --force --offline --pick --tab \
     --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz \
     --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
-'
+
+# cd ~/rds/public_databases/dbNSFP4.1a
+# awk -vOFS="\t" '{if(NR>1) $3="."; print}'  ~/INF/work/INF1.proxy.trans.vepinput > ~/INF1.proxy.trans.vcf
+# java -jar search_dbNSFP41a.jar -i ~/INF1.vcf -o ~/INF/work/INF1.proxy.trans.dbNSFP41 -v hg19
+# cd -
 
 # NB all files are moved into relevant directories
 mv \
