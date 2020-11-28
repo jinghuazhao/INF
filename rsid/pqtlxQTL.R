@@ -53,10 +53,10 @@ eQTL_overlap <- subset(merge(INF1_aggr,eQTL,by="hg19_coordinates"),select=-c(hg1
 write.table(eQTL_overlap,file="INF1_eQTL.tsv",quote=FALSE,row.names=FALSE,sep="\t")
 tbl <- with(within(eQTL_overlap,{rsidProts <- paste0(rsID," (",prots,")")}),table(rsidProts,tissue))
 tbl[tbl>1] <- 1
+write.table(as.data.frame.matrix(tbl),file="INF1_eQTL_matrix.tsv",quote=FALSE,sep="\t")
 library(pheatmap)
 pal <- colorRampPalette(c("white","red"))
 col <- pal(3)
-## Create the heatmap:
 library(grid)
 png("INF1_eQTL.png",res=300,width=16,height=12,units="in")
 setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
