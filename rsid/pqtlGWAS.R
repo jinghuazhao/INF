@@ -4,12 +4,8 @@ library(dplyr)
 library(pQTLtools)
 
 INF <- Sys.getenv("INF")
-INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
-                     hg19_coordinates=paste0("chr",Chromosome,":",Position)}) %>%
-              rename(INF1_rsid=rsid) %>%
-              rename(Total=N)
-
-INF1_aggr <- INF1_metal %>%
+INF1_aggr <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
+                    hg19_coordinates=paste0("chr",Chromosome,":",Position)}) %>% rename(INF1_rsid=rsid) %>% rename(Total=N) %>%
   select(Chromosome,Position,prot,hg19_coordinates,MarkerName,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans,INF1_rsid) %>%
   group_by(Chromosome,Position,MarkerName,INF1_rsid,hg19_coordinates) %>%
   summarise(nprots=n(),
@@ -20,9 +16,7 @@ INF1_aggr <- INF1_metal %>%
             Effects=paste(Effect,collapse=";"),
             SEs=paste(StdErr,collapse=";"),
             log10P=paste(log.P.,collapse=";"),
-            cistrans=paste(cis.trans,collapse=";")
-  ) %>%
-  data.frame()
+            cistrans=paste(cis.trans,collapse=";")) %>% data.frame()
 
 rsid <- INF1_aggr[["INF1_rsid"]]
 catalogue <- "GWAS"
@@ -201,9 +195,8 @@ fntltp <- JS("function(){
 }")
 hc <- data.frame()
 i <- 1
-for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
-   s <- subset(indices,efoTraits==rn & rsidProts==cn)
-   hc[i,c("f1","f2","v")] <- c(cn,rn,rxc[rn,cn])
+for(cn in colnames(tbl)) for(rn in rownames(tbl)) {
+   hc[i,c("f1","f2","v")] <- c(cn,rn,tbl[rn,cn])
    i <- i + 1
 }
 n <- 4
