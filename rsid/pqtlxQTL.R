@@ -122,7 +122,7 @@ write.table(ips,file=file.path(INF,"work","pQTL.tsv"),row.names=FALSE,quote=FALS
 SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,entGene) %>% rename(trait=TargetFullName)
 pQTL <- dplyr::left_join(ips,SL)
 INTERVAL <- subset(pQTL,pmid==29875488)
-write.table(ips,file=file.path(INF,"work","pQTL-SomaLogic.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+write.table(INTERVAL,file=file.path(INF,"work","pQTL-SomaLogic.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
 # various checks
 rs12075 <-c("P51671","P80162","P13500","P80075","P80098","Q99616")
 subset(SomaLogic160410,UniProt%in%rs12075)
