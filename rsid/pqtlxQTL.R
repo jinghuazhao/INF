@@ -3,7 +3,12 @@ options(width=200)
 library(dplyr)
 library(pQTLtools)
 
-query <- function()
+proxies <- "EUR"
+p <- 5e-8
+r2 <- 0.8
+build <- 37
+
+query <- function(rsid=INF1_aggr[["INF1_rsid"]])
 for (catalogue in c("eQTL","mQTL","pQTL"))
 {
   r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
@@ -16,18 +21,18 @@ for (catalogue in c("eQTL","mQTL","pQTL"))
 }
  
 INF <- Sys.getenv("INF")
-INF1_aggr <- within(left_join(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),inf1),{
-                      hg19_coordinates <- paste0("chr",Chromosome,":",Position)
-                      gene_snpid <- paste0(gene,"-",MarkerName)
-                    }) %>% rename(INF1_rsid=rsid) %>% rename(Total=N)
-
-rsid <- INF1_aggr[["INF1_rsid"]]
-proxies <- "EUR"
-p <- 5e-8
-r2 <- 0.8
-build <- 37
+metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE)
+INF1 <- within(left_join(metal,inf1),{hg19_coordinates <- paste0("chr",Chromosome,":",Position)}) %>% rename(INF1_rsid=rsid) %>% rename(Total=N)
+trans <- subset(INF1,cis.trans=="trans")
+load("pp.rda")
+INF1_aggr <- within(rbind(subset(INF1,cis.trans=="cis"),
+                          subset(within(merge(trans,pp,by.x="MarkerName",by.y="X.Uploaded_variation"),{gene <- NEAREST}),select=-NEAREST)), {
+              gene_snpid <- paste0(gene,"-",MarkerName)
+              prot_snpid <- paste(target.short,"-",MarkerName)
+              HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)})
+# r <- snpqueries(snplist=with(trans,rsid),catalogue="None")
+# m <- merge(trans,with(r,snps),by.x="MarkerName",by.y="snpid")
 # query()
-
 f <- paste0(file.path(INF,"work","INF1.merge."),"eQTL")
 load(f)
 eQTL <- within(subset(ps,hgnc%in%INF1_aggr$gene), {gene_snpid <- paste0(hgnc,"-",snpid)}) %>%
@@ -38,18 +43,23 @@ eQTL <- within(eQTL, {
   tissue <- gsub("ba24","BA24",tissue)
   tissue <- gsub("^Blood|Monocytes|Peripheral blood|Neutrophils|Peripheral blood monocytes|T cells|Whole Blood","Whole blood",tissue)
 })
-save(eQTL,file="pQTL.eQTL.rda")
-INF1_aggr <- within(INF1_aggr,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)})
+save(eQTL,file=file.path(INF,"work","pQTL.eQTL.rda"))
 eQTL_overlap <- subset(merge(INF1_aggr,eQTL,by="gene_snpid"),select=-c(Chromosome,Position))
-write.table(eQTL_overlap,file="pQTL_eQTL.tsv",quote=FALSE,row.names=FALSE,sep="\t")
-tbl <- with(within(eQTL_overlap,{rsidProts <- paste0(INF1_rsid," (",prot,")")}),table(rsidProts,tissue))
+write.table(eQTL_overlap,file=file.path(INF,"work","pQTL_eQTL.tsv"),quote=FALSE,row.names=FALSE,sep="\t")
+tbl.cis <- with(within(subset(eQTL_overlap,cis.trans=="cis"),{rsidProts <- paste0(INF1_rsid," (",gene,")")}),table(rsidProts,tissue))
+tbl.cis[tbl.cis>1] <- 1
+sum(tbl.cis)
+tbl.trans <- with(within(subset(eQTL_overlap,cis.trans=="trans"),{rsidProts <- paste0(INF1_rsid," (",gene,")")}),table(rsidProts,tissue))
+tbl.trans[tbl.trans>1] <- 1
+sum(tbl.trans)
+tbl <- with(within(eQTL_overlap,{rsidProts <- paste0(INF1_rsid," (",gene,")")}),table(rsidProts,tissue))
 tbl[tbl>1] <- 1
-write.table(as.data.frame.matrix(tbl),file="pQTL_eQTL_matrix.tsv",quote=FALSE,sep="\t")
+write.table(as.data.frame.matrix(tbl),file=file.path(INF,"work","pQTL_eQTL_matrix.tsv"),quote=FALSE,sep="\t")
 library(pheatmap)
 pal <- colorRampPalette(c("white","red"))
 col <- pal(3)
 library(grid)
-png("pQTL_eQTL.png",res=300,width=16,height=12,units="in")
+png(file.path(INF,"work","pQTL_eQTL.png"),res=300,width=18,height=18,units="in")
 setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
 pheatmap(tbl, legend=FALSE, angle_col="45", color=col, width=8, height=40, cluster_rows=FALSE, cluster_cols=FALSE, fontsize=12)
 setHook("grid.newpage", NULL, "replace")
@@ -69,7 +79,7 @@ aux <- with(with(eQTL_overlap, cbind(inv_chr_pos_a1_a2(MarkerName)[c("chr","pos"
 Col <- unique(aux[c("colLabel","col")])
 rownames(Col) <- with(Col,colLabel)
 library(gplots)
-png("pQTL_eQTL_gplots.png",height=35,width=40,units="cm",res=300)
+png(file.path(INF,"work","pQTL_eQTL_gplots.png"),height=35,width=40,units="cm",res=300)
 heatmap.2(tbl, scale = "none", keysize=0.8, col = col, margin=c(20,20), trace = "none", key=FALSE,
           colCol=Col[colnames(tbl),"col"], dendrogram="none", density.info = "none", srtCol=45)
 dev.off()
@@ -111,19 +121,15 @@ highchart() %>%
 f <- paste0(file.path(INF,"work","INF1.merge."),"pQTL")
 load(f)
 ips <- subset(merge(INF1_aggr,within(subset(ps,hgnc%in%INF1_aggr$gene),{gene_snpid <- paste0(hgnc,"-",snpid)}),
-                    by="gene_snpid",all.y=TRUE),select=-c(snpid,
-                        hg38_coordinates,ref_hg19_coordinates,ref_hg38_coordinates,
+                    by="gene_snpid",all.y=TRUE),select=-c(hg38_coordinates,ref_hg19_coordinates,ref_hg38_coordinates,
                         ref_pos_hg19, ref_pos_hg38, ref_protein_position, ref_amino_acids, ref_ensembl,
                         rsid, pos_hg19, pos_hg38, protein_position, amino_acids, ensembl,
                         dprime, efo, n, n_studies, unit, direction))
+ips[c("gene_snpid","prot","MarkerName","INF1_rsid","Allele1","Allele2","a1","a2","ref_a1","ref_a2","proxy","r2","study","pmid")]
+ips[c("gene_snpid","prot","MarkerName","INF1_rsid","log.P.","p","proxy","r2","study","pmid")]
 write.table(ips,file=file.path(INF,"work","pQTL.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
 
 # INTERVAL data under SomaLogic
-SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,entGene) %>% rename(trait=TargetFullName)
-pQTL <- dplyr::left_join(ips,SL)
-INTERVAL <- subset(pQTL,pmid==29875488)
-write.table(INTERVAL,file=file.path(INF,"work","pQTL-SomaLogic.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
-# various checks
 rs12075 <-c("P51671","P80162","P13500","P80075","P80098","Q99616")
 subset(SomaLogic160410,UniProt%in%rs12075)
 subset(SomaLogic160410,TargetFullName%in%c("Eotaxin","Corneodesmosin","C-C motif chemokine 14","C-C motif chemokine 26"))
@@ -131,3 +137,9 @@ subset(SomaLogic160410,TargetFullName=="SLAM family member 7")
 subset(SomaLogic160410,UniProt=="P50591")
 subset(SomaLogic160410,UniProt=="O14625")
 subset(SomaLogic160410,UniProt=="P15692")
+# Joining, by = "trait"
+SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,entGene) %>% rename(trait=TargetFullName)
+pQTL <- subset(dplyr::left_join(ips,SL),ref_chr==chr)
+INTERVAL <- subset(pQTL,pmid==29875488)
+INTERVAL[c("uniprot","UniProt","MarkerName","ref_chr","chr","prot","Target","gene","hgnc","snpid")]
+write.table(INTERVAL,file=file.path(INF,"work","pQTL-SomaLogic.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
