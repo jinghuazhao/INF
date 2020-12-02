@@ -129,6 +129,7 @@ R --no-save -q <<END
   cvt <- subset(read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans"),as.is=TRUE),cis.trans=="trans")
   vo <- read.delim(file.path(INF,"work","annotate","trans","INF1.proxy.vepoutput"),skip=as.integer(Sys.getenv("skips")))
   cvt_vo <- merge(cvt,vo[c("X.Uploaded_variation","SWISSPROT","Gene","NEAREST")],by.x="SNP",by.y="X.Uploaded_variation")
+  library(pQTLtools)
   trans_anno <-merge(cvt_vo,biomaRt,by.x="NEAREST",by.y="hgnc_symbol",all.x=TRUE)[c("SNP","NEAREST","SWISSPROT","uniprotswissprot")]
   no_uniprot <- with(trans_anno,SWISSPROT=="-")
   trans_anno[no_uniprot,"SWISSPROT"] <- with(trans_anno,uniprotswissprot)[no_uniprot]
