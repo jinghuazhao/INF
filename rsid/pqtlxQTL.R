@@ -24,12 +24,13 @@ INF <- Sys.getenv("INF")
 metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE)
 INF1 <- within(left_join(metal,inf1),{hg19_coordinates <- paste0("chr",Chromosome,":",Position)}) %>% rename(INF1_rsid=rsid) %>% rename(Total=N)
 trans <- subset(INF1,cis.trans=="trans")
-load("pp.rda")
+load(file.path(INF,"work","INF1.merge.trans.anno.rda"))
 INF1_aggr <- within(rbind(subset(INF1,cis.trans=="cis"),
-                          subset(within(merge(trans,pp,by.x="MarkerName",by.y="X.Uploaded_variation"),{gene <- NEAREST}),select=-NEAREST)), {
-              gene_snpid <- paste0(gene,"-",MarkerName)
-              prot_snpid <- paste(target.short,"-",MarkerName)
-              HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)})
+                          subset(within(merge(trans,pp,by.x="MarkerName",by.y="SNP"),{gene <- NEAREST;uniprot <- SWISSPROT}),select=-c(NEAREST,SWISSPROT))),
+             {
+               gene_snpid <- paste0(gene,"-",MarkerName)
+               HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)
+             })
 # r <- snpqueries(snplist=with(trans,rsid),catalogue="None")
 # m <- merge(trans,with(r,snps),by.x="MarkerName",by.y="snpid")
 # query()
@@ -118,6 +119,7 @@ highchart() %>%
                 hcaes(x = f1,y = f2,value = v),
                 dataLabels = list(enabled = FALSE))
 
+rm(INF1_aggr,ps,r)
 f <- paste0(file.path(INF,"work","INF1.merge."),"pQTL")
 load(f)
 ips <- subset(merge(INF1_aggr,within(subset(ps,hgnc%in%INF1_aggr$gene),{gene_snpid <- paste0(hgnc,"-",snpid)}),
@@ -137,9 +139,8 @@ subset(SomaLogic160410,TargetFullName=="SLAM family member 7")
 subset(SomaLogic160410,UniProt=="P50591")
 subset(SomaLogic160410,UniProt=="O14625")
 subset(SomaLogic160410,UniProt=="P15692")
-# Joining, by = "trait"
-SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,entGene) %>% rename(trait=TargetFullName)
-pQTL <- subset(dplyr::left_join(ips,SL),ref_chr==chr)
+SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,entGene) %>% rename(uniprot=UniProt)
+pQTL <- dplyr::left_join(ips,SL)
 INTERVAL <- subset(pQTL,pmid==29875488)
-INTERVAL[c("uniprot","UniProt","MarkerName","ref_chr","chr","prot","Target","gene","hgnc","snpid")]
+INTERVAL[c("uniprot","MarkerName","ref_chr","chr","prot","trait","Target","gene","hgnc","snpid")]
 write.table(INTERVAL,file=file.path(INF,"work","pQTL-SomaLogic.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
