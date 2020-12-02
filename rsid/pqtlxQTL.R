@@ -1,4 +1,4 @@
-options(width=200)
+options(width=500)
 
 library(dplyr)
 library(pQTLtools)
@@ -34,7 +34,7 @@ INF1_aggr <- within(rbind(subset(INF1,cis.trans=="cis"),
 # r <- snpqueries(snplist=with(trans,rsid),catalogue="None")
 # m <- merge(trans,with(r,snps),by.x="MarkerName",by.y="snpid")
 # query()
-f <- paste0(file.path(INF,"work","INF1.merge."),"eQTL")
+f <- file.path(INF,"work","INF1.merge.eQTL")
 load(f)
 eQTL <- within(subset(ps,hgnc%in%INF1_aggr$gene), {gene_snpid <- paste0(hgnc,"-",snpid)}) %>%
               select(hgnc,ensembl,rsid,hg19_coordinates,a1,a2,eur,consequence,
@@ -120,27 +120,20 @@ highchart() %>%
                 dataLabels = list(enabled = FALSE))
 
 rm(INF1_aggr,ps,r)
-f <- paste0(file.path(INF,"work","INF1.merge."),"pQTL")
+f <- file.path(INF,"work","INF1.merge.pQTL")
 load(f)
 ips <- subset(merge(INF1_aggr,within(subset(ps,hgnc%in%INF1_aggr$gene),{gene_snpid <- paste0(hgnc,"-",snpid)}),
                     by="gene_snpid",all.y=TRUE),select=-c(hg38_coordinates,ref_hg19_coordinates,ref_hg38_coordinates,
                         ref_pos_hg19, ref_pos_hg38, ref_protein_position, ref_amino_acids, ref_ensembl,
                         rsid, pos_hg19, pos_hg38, protein_position, amino_acids, ensembl,
                         dprime, efo, n, n_studies, unit, direction))
-ips[c("gene_snpid","prot","MarkerName","INF1_rsid","Allele1","Allele2","a1","a2","ref_a1","ref_a2","proxy","r2","study","pmid")]
-ips[c("gene_snpid","prot","MarkerName","INF1_rsid","log.P.","p","proxy","r2","study","pmid")]
-write.table(ips,file=file.path(INF,"work","pQTL.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+print(ips[c("gene_snpid","prot","INF1_rsid","proxy","r2","study","pmid","trait")],row.names=FALSE,right=FALSE)
+simple <- ips%>%select(gene_snpid,chr.x,chr.y,INF1_rsid,prot,HLA,cis.trans,uniprot,proxy,r2,study,pmid,trait)
+write.table(simple,file=file.path(INF,"work","pQTL.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
 
-# INTERVAL data under SomaLogic
-rs12075 <-c("P51671","P80162","P13500","P80075","P80098","Q99616")
-subset(SomaLogic160410,UniProt%in%rs12075)
-subset(SomaLogic160410,TargetFullName%in%c("Eotaxin","Corneodesmosin","C-C motif chemokine 14","C-C motif chemokine 26"))
-subset(SomaLogic160410,TargetFullName=="SLAM family member 7")
-subset(SomaLogic160410,UniProt=="P50591")
-subset(SomaLogic160410,UniProt=="O14625")
-subset(SomaLogic160410,UniProt=="P15692")
+# + INTERVAL SomaLogic data
 SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,entGene) %>% rename(uniprot=UniProt)
-pQTL <- dplyr::left_join(ips,SL)
-INTERVAL <- subset(pQTL,pmid==29875488)
-INTERVAL[c("uniprot","MarkerName","ref_chr","chr","prot","trait","Target","gene","hgnc","snpid")]
-write.table(INTERVAL,file=file.path(INF,"work","pQTL-SomaLogic.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+pQTL <- dplyr::left_join(simple,SL)
+INTERVAL <- subset(pQTL,pmid==29875488) %>%
+            select(gene_snpid,chr.x,chr.y,chr,INF1_rsid,prot,HLA,cis.trans,uniprot,proxy,r2,study,pmid,chr,entGene,trait,Target,TargetFullName)
+write.table(INTERVAL,file=file.path(INF,"work","pQTL-SomaLogic.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
