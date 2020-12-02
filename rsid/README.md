@@ -57,6 +57,8 @@ CRP.sh | an inflammation score
 cvd1.sh | SCALLOP-CVDI supplementary tables
 efo.R | experimental factor ontology
 gdigt.R | GDI and gene-trials
+latex.tex | LaTeX formulas embedded in Markdown
+latex.docx | LaTeX formulas embedded in MicroSoft Word
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
