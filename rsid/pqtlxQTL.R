@@ -22,11 +22,15 @@ for (catalogue in c("eQTL","mQTL","pQTL"))
  
 INF <- Sys.getenv("INF")
 metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE)
-INF1 <- within(left_join(metal,inf1),{hg19_coordinates <- paste0("chr",Chromosome,":",Position)}) %>% rename(INF1_rsid=rsid) %>% rename(Total=N)
+INF1 <- within(left_join(metal,inf1),{
+                 hg19_coordinates <- paste0("chr",Chromosome,":",Position)
+                 uniprot_gwas <- uniprot
+               }) %>% rename(INF1_rsid=rsid) %>% rename(Total=N)
 trans <- subset(INF1,cis.trans=="trans")
 load(file.path(INF,"work","INF1.merge.trans.anno.rda"))
+trans_anno <- merge(trans,pp,by.x="MarkerName",by.y="SNP")
 INF1_aggr <- within(rbind(subset(INF1,cis.trans=="cis"),
-                          subset(within(merge(trans,pp,by.x="MarkerName",by.y="SNP"),{gene <- NEAREST;uniprot <- SWISSPROT}),select=-c(NEAREST,SWISSPROT))),
+                          subset(within(trans_anno,{gene <- NEAREST;uniprot <- SWISSPROT}),select=-c(NEAREST,SWISSPROT))),
              {
                gene_snpid <- paste0(gene,"-",MarkerName)
                HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)
@@ -39,10 +43,14 @@ load(f)
 eQTL <- within(subset(ps,hgnc%in%INF1_aggr$gene), {gene_snpid <- paste0(hgnc,"-",snpid)}) %>%
               select(hgnc,ensembl,rsid,hg19_coordinates,a1,a2,eur,consequence,
               study,pmid,ancestry,year,tissue,exp_gene,exp_ensembl,proxy,r2,beta,se,p,dataset,gene_snpid)
-eQTL <- within(eQTL, {
+eQTL <- within(subset(eQTL,tissue!="Normal prepouch ileum"), {
+  tissue <- gsub("Subcutaneous fat","Adipose subcutaneous",tissue)
+  tissue <- gsub("Visceral abdominal fat","Adipose visceral omentum",tissue)
   tissue <- gsub("ba9","BA9",tissue)
   tissue <- gsub("ba24","BA24",tissue)
-  tissue <- gsub("^Blood|Monocytes|Peripheral blood|Neutrophils|Peripheral blood monocytes|T cells|Whole Blood","Whole blood",tissue)
+  tissue <- gsub("^Blood|Monocytes|Peripheral blood|Neutrophils|Peripheral blood monocytes|T cells|Whole Blood|Lymphoblastoid cell lines","Whole blood",tissue)
+  tissue <- gsub("Breast tumors", "Breast mammary tissue", tissue)
+  tissue <- gsub("Skin not sun exposed suprapubic|Skin sun exposed lower leg","Skin",tissue)
 })
 save(eQTL,file=file.path(INF,"work","pQTL.eQTL.rda"))
 eQTL_overlap <- subset(merge(INF1_aggr,eQTL,by="gene_snpid"),select=-c(Chromosome,Position))
@@ -127,13 +135,68 @@ ips <- subset(merge(INF1_aggr,within(subset(ps,hgnc%in%INF1_aggr$gene),{gene_snp
                         ref_pos_hg19, ref_pos_hg38, ref_protein_position, ref_amino_acids, ref_ensembl,
                         rsid, pos_hg19, pos_hg38, protein_position, amino_acids, ensembl,
                         dprime, efo, n, n_studies, unit, direction))
-print(ips[c("gene_snpid","prot","INF1_rsid","proxy","r2","study","pmid","trait")],row.names=FALSE,right=FALSE)
-simple <- ips%>%select(gene_snpid,chr.x,chr.y,INF1_rsid,prot,HLA,cis.trans,uniprot,proxy,r2,study,pmid,trait)
+print(ips[c("gene_snpid","prot","uniprot_gwas","INF1_rsid","proxy","r2","study","pmid","target.short","trait")],row.names=FALSE,right=FALSE)
+simple <- ips%>%select(gene_snpid,chr.x,chr.y,INF1_rsid,prot,uniprot_gwas,target.short,HLA,cis.trans,gene,uniprot,proxy,r2,study,pmid,trait)
 write.table(simple,file=file.path(INF,"work","pQTL.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
 
 # + INTERVAL SomaLogic data
-SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,entGene) %>% rename(uniprot=UniProt)
+repl <- with(SomaLogic160410,is.na(extGene))
+SomaLogic160410[repl,"extGene"] <- SomaLogic160410[repl,"entGene"]
+SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,extGene) %>% rename(gene=extGene)
 pQTL <- dplyr::left_join(simple,SL)
 INTERVAL <- subset(pQTL,pmid==29875488) %>%
-            select(gene_snpid,chr.x,chr.y,chr,INF1_rsid,prot,HLA,cis.trans,uniprot,proxy,r2,study,pmid,chr,entGene,trait,Target,TargetFullName)
+            select(gene_snpid,chr.x,chr.y,chr,INF1_rsid,prot,uniprot_gwas,HLA,cis.trans,
+                   uniprot,proxy,r2,study,pmid,chr,gene,trait,target.short,Target,TargetFullName)
 write.table(INTERVAL,file=file.path(INF,"work","pQTL-SomaLogic.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
+
+# head -1 work/pQTL_eQTL_matrix.tsv | tr '\t' '\n' | grep -v signif
+# ls *egene* | awk '{gsub(".v7.egenes.txt.gz","");print "#",NR" "$1}' | xsel -i
+
+# 1 Adipose_Subcutaneous
+# 2 Adipose_Visceral_Omentum
+# 3 Adrenal_Gland
+# 4 Artery_Aorta
+# 5 Artery_Coronary
+# 6 Artery_Tibial
+# 7 Brain_Amygdala
+# 8 Brain_Anterior_cingulate_cortex_BA24
+# 9 Brain_Caudate_basal_ganglia
+# 10 Brain_Cerebellar_Hemisphere
+# 11 Brain_Cerebellum
+# 12 Brain_Cortex
+# 13 Brain_Frontal_Cortex_BA9
+# 14 Brain_Hippocampus
+# 15 Brain_Hypothalamus
+# 16 Brain_Nucleus_accumbens_basal_ganglia
+# 17 Brain_Putamen_basal_ganglia
+# 18 Brain_Spinal_cord_cervical_c-1
+# 19 Brain_Substantia_nigra
+# 20 Breast_Mammary_Tissue
+# 21 Cells_EBV-transformed_lymphocytes
+# 22 Cells_Transformed_fibroblasts
+# 23 Colon_Sigmoid
+# 24 Colon_Transverse
+# 25 Esophagus_Gastroesophageal_Junction
+# 26 Esophagus_Mucosa
+# 27 Esophagus_Muscularis
+# 28 Heart_Atrial_Appendage
+# 29 Heart_Left_Ventricle
+# 30 Liver
+# 31 Lung
+# 32 Minor_Salivary_Gland
+# 33 Muscle_Skeletal
+# 34 Nerve_Tibial
+# 35 Ovary
+# 36 Pancreas
+# 37 Pituitary
+# 38 Prostate
+# 39 Skin_Not_Sun_Exposed_Suprapubic
+# 40 Skin_Sun_Exposed_Lower_leg
+# 41 Small_Intestine_Terminal_Ileum
+# 42 Spleen
+# 43 Stomach
+# 44 Testis
+# 45 Thyroid
+# 46 Uterus
+# 47 Vagina
+# 48 Whole_Blood
