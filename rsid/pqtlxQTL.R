@@ -24,20 +24,16 @@ INF <- Sys.getenv("INF")
 metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE)
 INF1 <- within(left_join(metal,inf1),{
                  hg19_coordinates <- paste0("chr",Chromosome,":",Position)
-                 uniprot_gwas <- uniprot
-               }) %>% rename(INF1_rsid=rsid) %>% rename(Total=N)
-trans <- subset(INF1,cis.trans=="trans")
-load(file.path(INF,"work","INF1.merge.trans.anno.rda"))
-trans_anno <- merge(trans,pp,by.x="MarkerName",by.y="SNP")
-INF1_aggr <- within(rbind(subset(INF1,cis.trans=="cis"),
-                          subset(within(trans_anno,{gene <- NEAREST;uniprot <- SWISSPROT}),select=-c(NEAREST,SWISSPROT))),
-             {
-               gene_snpid <- paste0(gene,"-",MarkerName)
-               HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)
-             })
+                 HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)
+               }) %>% rename(INF1_rsid=rsid) %>% rename(Total=N) %>% rename(gene_gwas=gene) %>% rename(uniprot_gwas=uniprot)
+r <- snpqueries(INF1[["INF1_rsid"]], catalogue="None", proxies="None", p=p, r2=r2, build=build)
+snps <- with(r,snps)[c("snpid","hgnc")] %>% rename(gene=hgnc)
+# Somehow there is discrepancy with PhenoScanner so abandon it
+# load(file.path(INF,"work","INF1.merge.trans.anno.rda"))
+INF1_aggr <- within(merge(INF1,snps,by.x="MarkerName",by.y="snpid"), {gene_snpid <- paste0(gene,"-",MarkerName)})
 # r <- snpqueries(snplist=with(trans,rsid),catalogue="None")
 # m <- merge(trans,with(r,snps),by.x="MarkerName",by.y="snpid")
-# query()
+query()
 f <- file.path(INF,"work","INF1.merge.eQTL")
 load(f)
 eQTL <- within(subset(ps,hgnc%in%INF1_aggr$gene), {gene_snpid <- paste0(hgnc,"-",snpid)}) %>%
@@ -135,8 +131,8 @@ ips <- subset(merge(INF1_aggr,within(subset(ps,hgnc%in%INF1_aggr$gene),{gene_snp
                         ref_pos_hg19, ref_pos_hg38, ref_protein_position, ref_amino_acids, ref_ensembl,
                         rsid, pos_hg19, pos_hg38, protein_position, amino_acids, ensembl,
                         dprime, efo, n, n_studies, unit, direction))
-print(ips[c("gene_snpid","prot","uniprot_gwas","INF1_rsid","proxy","r2","study","pmid","target.short","trait")],row.names=FALSE,right=FALSE)
-simple <- ips%>%select(gene_snpid,chr.x,chr.y,INF1_rsid,prot,uniprot_gwas,target.short,HLA,cis.trans,gene,uniprot,proxy,r2,study,pmid,trait)
+print(ips[c("prot","uniprot_gwas","INF1_rsid","gene_snpid","cis.trans","proxy","r2","study","pmid","target.short","trait")],row.names=FALSE,right=FALSE)
+simple <- ips%>%select(INF1_rsid,prot,uniprot_gwas,target.short,gene_snpid,chr.x,chr.y,HLA,cis.trans,gene,proxy,r2,study,pmid,trait)
 write.table(simple,file=file.path(INF,"work","pQTL.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
 
 # + INTERVAL SomaLogic data
@@ -146,7 +142,7 @@ SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,ex
 pQTL <- dplyr::left_join(simple,SL)
 INTERVAL <- subset(pQTL,pmid==29875488) %>%
             select(gene_snpid,chr.x,chr.y,chr,INF1_rsid,prot,uniprot_gwas,HLA,cis.trans,
-                   uniprot,proxy,r2,study,pmid,chr,gene,trait,target.short,Target,TargetFullName)
+                   proxy,r2,study,pmid,chr,gene,trait,target.short,Target,TargetFullName)
 write.table(INTERVAL,file=file.path(INF,"work","pQTL-SomaLogic.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
 
 # head -1 work/pQTL_eQTL_matrix.tsv | tr '\t' '\n' | grep -v signif
