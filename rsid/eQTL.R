@@ -7,6 +7,7 @@ proxies <- "EUR"
 p <- 5e-8
 r2 <- 0.8
 build <- 37
+out <- "INF1.cis-GTEx.eQTL"
 
 query <- function(rsid=INF1_aggr[["INF1_rsid"]])
 for (catalogue in c("eQTL"))
@@ -14,7 +15,7 @@ for (catalogue in c("eQTL"))
   r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
   lapply(r,dim)
   ps <- with(r,right_join(snps,subset(results,study=="GTEx")))
-  f <- file.path(INF,"work",paste0("INF1.cis-GTEx.",catalogue))
+  f <- file.path(INF,"work",out)
   save(INF1_aggr,r,ps,file=f)
   ips <- subset(merge(INF1_aggr,ps,by="hg19_coordinates"),select=-c(hg19_coordinates,Chromosome,Position))
   write.table(ips,file=paste0(f,".tsv"),row.names=FALSE,quote=FALSE,sep="\t")
@@ -33,7 +34,7 @@ INF1_aggr <- within(merge(INF1,snps,by.x="MarkerName",by.y="snpid"), {gene_snpid
 # r <- snpqueries(snplist=with(trans,rsid),catalogue="None")
 # m <- merge(trans,with(r,snps),by.x="MarkerName",by.y="snpid")
 query()
-f <- file.path(INF,"work","INF1.cis-eQTLGen.eQTL")
+f <- file.path(INF,"work",out)
 load(f)
 eQTL <- within(subset(ps,hgnc%in%INF1_aggr$gene), {gene_snpid <- paste0(hgnc,"-",snpid)}) %>%
               select(hgnc,ensembl,rsid,hg19_coordinates,a1,a2,eur,consequence,
