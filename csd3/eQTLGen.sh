@@ -1,3 +1,5 @@
+export eQTLGen=~/rds/public_databases/eQTLgen
+
 function cis_pQTL_cis_eQTL()
 {
   grep -f work/INF1.merge.cis work/INTERVAL.rsid > work/INF1.merge.cis-rsid
@@ -15,7 +17,7 @@ END
 sort -k2,2 | \
 join -12 - <(sort -k1,1 work/INF1.merge.cis-rsid) | \
 sort -k4,4 | \
-join -14 -22 - <(cut -d' ' -f2 work/INF1.merge.cis-rsid | zgrep -f - -w eQTLGen/cis.txt.gz | cut -f1,2,5,6,9 | sort -k2,2) | \
+join -14 -22 - <(cut -d' ' -f2 work/INF1.merge.cis-rsid | zgrep -f - -w ${eQTLGen}/cis.txt.gz | cut -f1,2,5,6,9 | sort -k2,2) | \
 awk '$4==$8' > work/eQTLGen.cis
 }
 
@@ -36,7 +38,7 @@ END
 sort -k2,2 | \
 join -12 - <(sort -k1,1 work/INF1.merge.trans-rsid) | \
 sort -k4,4 | \
-join -14 -22 - <(cut -d' ' -f2 work/INF1.merge.trans-rsid | zgrep -f - -w eQTLGen/trans.txt.gz | cut -f1,2,5,6,9 | sort -k2,2) | \
+join -14 -22 - <(cut -d' ' -f2 work/INF1.merge.trans-rsid | zgrep -f - -w ${eQTLGen}/trans.txt.gz | cut -f1,2,5,6,9 | sort -k2,2) | \
 awk '$4==$8' > work/eQTLGen.trans
 }
 
@@ -50,11 +52,12 @@ import csv
 with open('work/INF1.merge.cis.vs.trans', 'r') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-        print(row['uniprot'], row['SNP'], row['p.gene'], row['cis'])
+        print(row['uniprot'], row['SNP'], row['p.gene'], row['cis.trans'])
 END
 ) | \
+grep cis | \
 sort -k3,3 | \
-join -13 -25 - <(gunzip -c eQTLGen/trans.txt.gz | cut -f1,2,5,6,9 | sort -k5,5) > work/eQTLGen.cis-all
+join -13 -25 - <(gunzip -c ${eQTLGen}/cis.txt.gz | cut -f1,2,5,6,9 | sort -k5,5) > work/eQTLGen.cis-all
 }
 
 function trans_eQTL()
@@ -70,9 +73,9 @@ with open('work/INF1.merge.cis.vs.trans', 'r') as csvfile:
         print(row['uniprot'], row['SNP'], row['p.gene'], row['cis.trans'])
 END
 ) | \
-grep cis | \
+grep trans | \
 sort -k3,3 | \
-join -13 -25 - <(gunzip -c eQTLGen/trans.txt.gz | cut -f1,2,5,6,9 | sort -k5,5) > work/eQTLGen.trans-all
+join -13 -25 - <(gunzip -c ${eQTLGen}/trans.txt.gz | cut -f1,2,5,6,9 | sort -k5,5) > work/eQTLGen.trans-all
 }
 
 R --no-save <<END
