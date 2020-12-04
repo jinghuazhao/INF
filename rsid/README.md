@@ -56,6 +56,7 @@ chembl.sh | toy CHEMBL queries
 CRP.sh | an inflammation score
 cvd1.sh | SCALLOP-CVDI supplementary tables
 efo.R | experimental factor ontology
+eQTL.R | cis-eQTL lookup
 gdigt.R | GDI and gene-trials
 latex.tex | LaTeX formulas embedded in Markdown
 latex.docx | LaTeX formulas embedded in MicroSoft Word

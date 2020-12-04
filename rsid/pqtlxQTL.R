@@ -17,17 +17,18 @@ for (catalogue in c("eQTL","mQTL","pQTL"))
   f <- paste0(file.path(INF,"work","INF1.merge."),catalogue)
   save(INF1_aggr,r,ps,file=f)
   ips <- subset(merge(INF1_aggr,ps,by="hg19_coordinates"),select=-c(hg19_coordinates,Chromosome,Position))
-  write.table(ips,file=paste0(f,".tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+  write.table(ips,file=file.path(INF,"work",paste0(f,".tsv")),row.names=FALSE,quote=FALSE,sep="\t")
 }
  
 INF <- Sys.getenv("INF")
 metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE)
-INF1 <- within(left_join(metal,inf1),{
+INF1 <- within(left_join(subset(metal,cis.trans=="trans"),inf1),{
                  hg19_coordinates <- paste0("chr",Chromosome,":",Position)
                  HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)
                }) %>% rename(INF1_rsid=rsid) %>% rename(Total=N) %>% rename(gene_gwas=gene) %>% rename(uniprot_gwas=uniprot)
-r <- snpqueries(INF1[["INF1_rsid"]], catalogue="None", proxies="None", p=p, r2=r2, build=build)
+r <- snpqueries(INF1[["INF1_rsid"]], catalogue="None", proxies="EUR", p=p, r2=r2, build=build)
 snps <- with(r,snps)[c("snpid","hgnc")] %>% rename(gene=hgnc)
+# write.table(with(r,snps),file="INF1.pQTL-trans.tsv",quote=FALSE,row.names=FALSE)
 # Somehow there is discrepancy with PhenoScanner so abandon it
 # load(file.path(INF,"work","INF1.merge.trans.anno.rda"))
 INF1_aggr <- within(merge(INF1,snps,by.x="MarkerName",by.y="snpid"), {gene_snpid <- paste0(gene,"-",MarkerName)})
