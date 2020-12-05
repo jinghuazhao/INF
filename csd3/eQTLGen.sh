@@ -29,11 +29,18 @@ do
 done
 
 R --no-save <<END
-  ys1 <- c(paste0("Yes-",1:22),paste0("No2-",1:437))
-  ys2 <- c(paste0("Yes-",1:22),paste0("No1-",1:155))
+  ys1 <- c(paste0("Yes-",1:22),paste0("No1-",1:62238))
+  ys2 <- c(paste0("Yes-",1:22),paste0("No2-",1:37))
   ys <- list(ys1,ys2)
   names(ys) <- c("eQTL","pQTL")
-  VennDiagram::venn.diagram(x = ys, filename='work/eQTLGen.png', imagetype="png", output=TRUE,
+  VennDiagram::venn.diagram(x = ys, filename='work/eQTLGen-cis.png', imagetype="png", output=TRUE,
+                            height=12, width=12, units="cm", resolution=500,
+                            fill=c("yellow","purple"), cat.pos=c(-30,30), rotation.degree = 0)
+  ys1 <- c(paste0("Yes-",1:3),paste0("No1-",1:1129))
+  ys2 <- c(paste0("Yes-",1:3),paste0("No2-",1:118))
+  ys <- list(ys1,ys2)
+  names(ys) <- c("eQTL","pQTL")
+  VennDiagram::venn.diagram(x = ys, filename='work/eQTLGen-trans.png', imagetype="png", output=TRUE,
                             height=12, width=12, units="cm", resolution=500,
                             fill=c("yellow","purple"), cat.pos=c(-30,30), rotation.degree = 0)
 END
