@@ -25,7 +25,7 @@ do
   awk '$4==$8' > work/eQTLGen.${cistrans}
   cistrans_python | \
   sort -k3,3 | \
-  join -13 -25 - <(gunzip -c ${eQTLGen}/cis.txt.gz | cut -f1,2,5,6,9 | sort -k5,5) > work/eQTLGen.${cistrans}-all
+  join -13 -25 - <(gunzip -c ${eQTLGen}/${cistrans}.txt.gz | cut -f1,2,5,6,9 | sort -k5,5) > work/eQTLGen.${cistrans}-all
 done
 
 R --no-save <<END
