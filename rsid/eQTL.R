@@ -42,7 +42,7 @@ eQTL <- within(subset(eQTL,tissue!="Normal prepouch ileum"), {
 })
 save(eQTL,file=file.path(INF,"work","cis-pQTL.eQTL.rda"))
 keep <- c("gene_snpid","INF1_rsid","prot", "gene", "uniprot_gwas", "gene_gwas", "cis.trans")
-eQTL_overlap <- merge(subset(INF1_aggr[keep],gene!="-"),eQTL,by="gene_snpid")
+eQTL_overlap <- merge(INF1_aggr[keep],eQTL,by="gene_snpid")
 write.table(eQTL_overlap,file=file.path(INF,"work","cis-pQTL_eQTL.tsv"),quote=FALSE,row.names=FALSE,sep="\t")
 tbl.cis <- with(within(subset(eQTL_overlap,cis.trans=="cis"),{rsidProts <- paste0(INF1_rsid," (",gene_gwas,")")}),
                 table(rsidProts,tissue))
