@@ -15,6 +15,9 @@ options(width=500)
 library(dplyr)
 library(pQTLtools)
 proxies <- "EUR"; p <- 5e-8; r2 <- 0.8; build <- 37; prefix <- "cis-pQTL"; out <- paste0(prefix,".eQTL");
+chkList <- c("rs6827617", "rs4241577", "rs149278")
+chkout <- query(chkList,keep=FALSE)
+subset(chkout,hgnc==exp_gene,select=-c(hg19_coordinates,a1,a2,consequence,pmid))
 INF <- Sys.getenv("INF")
 metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE)
 INF1 <- within(left_join(subset(metal,cis.trans=="cis"),subset(inf1,select=-c(start,end))),{
@@ -171,8 +174,3 @@ highchart() %>%
 # 46 Uterus
 # 47 Vagina
 # 48 Whole_Blood
-
-chkList <- c("rs6827617", "rs4241577", "rs149278")
-chkout <- query(chkList,keep=FALSE)
-subset(chkout,hgnc==exp_gene,select=-c(hg19_coordinates,a1,a2,consequence,pmid))
-
