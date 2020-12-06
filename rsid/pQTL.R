@@ -28,11 +28,8 @@ write.table(ips[c("uniprot_gwas","INF1_rsid","prot_snpid","cis.trans","proxy","r
       file="pQTL.log",quote=FALSE,row.names=FALSE,sep="\t")
 simple <- ips%>%select(INF1_rsid,uniprot_gwas,prot_snpid,chr.x,chr.y,HLA,cis.trans,hgnc,proxy,r2,p,study,pmid,trait)
 write.table(simple,file=file.path(INF,"work","pQTL","pQTL.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
-repl <- with(SomaLogic160410,is.na(extGene))
-SomaLogic160410[repl,"extGene"] <- SomaLogic160410[repl,"entGene"]
 SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,extGene) %>% rename(hgnc=extGene)
-pQTL <- dplyr::left_join(simple,SL)
-INTERVAL <- subset(pQTL,pmid==29875488) %>%
+INTERVAL <- subset(left_join(simple,SL),pmid==29875488) %>%
             select(prot_snpid,chr.x,chr.y,chr,INF1_rsid,uniprot_gwas,HLA,cis.trans,
                    proxy,r2,p,study,pmid,chr,hgnc,trait,Target,TargetFullName)
 write.table(INTERVAL,file=file.path(INF,"work","pQTL","pQTL-SomaLogic.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
