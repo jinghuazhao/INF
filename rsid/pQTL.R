@@ -24,7 +24,7 @@ ips <- subset(merge(INF1_aggr,ps,by="hg19_coordinates"),select=-c(hg19_coordinat
 write.table(ips,file=paste0(f,".tsv"),row.names=FALSE,quote=FALSE,sep="\t")
 ips <- merge(within(INF1_aggr,{prot_snpid <- paste0(prot,"-",MarkerName)}),
              within(subset(ps,hgnc%in%INF1_aggr$gene),{gene_snpid <- paste0(hgnc,"-",snpid)}), by="gene_snpid",all.y=TRUE)
-write.table(ips[c("uniprot_gwas","INF1_rsid","prot_snpid","cis.trans","proxy","r2","p","study","pmid","target.short","trait")],
+write.table(ips[c("uniprot_gwas","INF1_rsid","prot_snpid","cis.trans","proxy","r2","p","study","pmid","trait")],
       file="pQTL.log",quote=FALSE,row.names=FALSE,sep="\t")
 simple <- ips%>%select(INF1_rsid,uniprot_gwas,prot_snpid,chr.x,chr.y,HLA,cis.trans,hgnc,proxy,r2,p,study,pmid,trait)
 write.table(simple,file=file.path(INF,"work","pQTL","pQTL.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
