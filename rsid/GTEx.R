@@ -3,9 +3,9 @@ query <- function(rsid=INF1_aggr[["INF1_rsid"]],catalogue="eQTL",keep=TRUE)
   r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
   lapply(r,dim)
   ps <- with(r,right_join(snps[c("snp","rsid","hg19_coordinates","a1","a2","consequence","hgnc","proxy","r2","snpid")],
-                          subset(results,select=-c(ref_rsid, ref_hg19_coordinates, ref_hg38_coordinates, dprime,
-                                                   ref_a1, ref_a2, hg38_coordinates, efo, trait, probe, exp_ensembl,
-                                                   ancestry, year, direction,n,n_studies,unit,dataset))))
+                          subset(results,study=="GTEx",select=-c(ref_rsid, ref_hg19_coordinates, ref_hg38_coordinates, dprime,
+                                                                 ref_a1, ref_a2, hg38_coordinates, efo, trait, probe, exp_ensembl,
+                                                                 ancestry, year, direction,n,n_studies,unit,dataset))))
   f <- file.path(INF,"work",out)
   ips <- subset(merge(INF1_aggr,ps,by="hg19_coordinates"),select=-c(hg19_coordinates,Chromosome,Position))
   if (keep) save(INF1_aggr,r,ps,ips,file=f) else ps
@@ -14,7 +14,7 @@ query <- function(rsid=INF1_aggr[["INF1_rsid"]],catalogue="eQTL",keep=TRUE)
 options(width=500)
 library(dplyr)
 library(pQTLtools)
-proxies <- "EUR"; p <- 5e-8; r2 <- 0.8; build <- 37; prefix <- "cis-pQTL"; out <- paste0(prefix,".eQTL");
+proxies <- "EUR"; p <- 5e-8; r2 <- 0.8; build <- 37; prefix <- "cis-pQTL-GTEx"; out <- paste0(prefix,".eQTL");
 INF <- Sys.getenv("INF")
 metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE)
 INF1 <- within(left_join(subset(metal,cis.trans=="cis"),subset(inf1,select=-c(start,end))),{
@@ -41,7 +41,7 @@ eQTL <- within(subset(eQTL,tissue!="Normal prepouch ileum"), {
   tissue <- gsub("Skin not sun exposed suprapubic|Skin sun exposed lower leg","Skin",tissue)
 })
 save(eQTL,file=file.path(INF,"work",paste0(prefix,".eQTL.rda")))
-keep <- c("MarkerName","Allele1","Allele2","gene_snpid","INF1_rsid","prot", "gene", "uniprot_gwas", "gene_gwas", "cis.trans", "HLA")
+keep <- c("gene_snpid","INF1_rsid","prot", "gene", "uniprot_gwas", "gene_gwas", "cis.trans")
 eQTL_overlap <- merge(INF1_aggr[keep],eQTL,by="gene_snpid")
 write.table(eQTL_overlap,file=file.path(INF,"work",paste0(prefix,"_eQTL.tsv")),quote=FALSE,row.names=FALSE,sep="\t")
 tbl.cis <- with(within(subset(eQTL_overlap,cis.trans=="cis"),{rsidProts <- paste0(INF1_rsid," (",gene_gwas,")")}),
@@ -68,111 +68,7 @@ setHook("grid.newpage", NULL, "replace")
 grid.text("Tissue", y=-0.07, gp=gpar(fontsize=15))
 grid.text("pQTL", x=-0.07, rot=90, gp=gpar(fontsize=15))
 dev.off()
-library(gap)
-aux <- with(with(eQTL_overlap, cbind(inv_chr_pos_a1_a2(MarkerName)[c("chr","pos")],rsid,Allele1,Allele2,prot,HLA,cis.trans,tissue)), {
-            flag <- (HLA==1)
-            colId <- paste0(substr(chr,4,5),":",pos,"(",toupper(Allele1),"/",toupper(Allele2),")")
-            colId[flag] <- paste0(colId[flag],"*")
-            colLabel <- paste0(colId," (",prot,")")
-            col <- rep("blue",nrow(eQTL_overlap))
-            col[cis.trans=="cis"] <- "red"
-            data.frame(colLabel,col,tissue)
-          })
-Col <- unique(aux[c("colLabel","col")])
-rownames(Col) <- with(Col,colLabel)
-library(gplots)
-png(file.path(INF,"work",paste0(prefix,"_eQTL_gplots.png")),height=35,width=40,units="cm",res=300)
-heatmap.2(tbl, scale = "none", keysize=0.8, col = col, margin=c(20,20), trace = "none", key=FALSE,
-          colCol=Col[colnames(tbl),"col"], dendrogram="none", density.info = "none", srtCol=45)
-dev.off()
-
-library(highcharter)
-fntltp <- JS("function(){
- return this.series.xAxis.categories[this.point.x] + ' ' +
-  this.series.yAxis.categories[this.point.y] + ':<br>' +
-  Highcharts.numberFormat(this.point.value, 2);
-}")
-hc <- data.frame()
-i <- 1
-for(cn in colnames(tbl)) for(rn in rownames(tbl)) {
-   hc[i,c("f1","f2","v")] <- c(cn,rn,tbl[rn,cn])
-   i <- i + 1
-}
-n <- 4
-stops <- data.frame(
-  q = 0:n/n,
-  c = c("#4287f5","grey","#ffffff","grey","#e32222"),
-  stringsAsFactors = FALSE
-  )
-hc$f1 <- as.factor(hc$f1)
-hc$f2 <- as.factor(hc$f2)
-f1 <- levels(hc$f1)
-highchart() %>%
-  hc_title(text = "pQTLs and eQTL overlap",align="center")%>%
-  hc_xAxis(categories = f1) %>%
-  hc_yAxis(categories = hc$f2, reversed = TRUE)%>%
-  hc_colorAxis(min = -1, max=1, stops=list_parse2(stops)) %>%
-  hc_legend(align = "right",layout = "vertical",
-            margin = 0,verticalAlign = "top",
-            y = 30,symbolHeight = 200) %>%
-  hc_tooltip(formatter = fntltp) %>%
-  hc_add_series(data = hc, type = "heatmap",
-                hcaes(x = f1,y = f2,value = v),
-                dataLabels = list(enabled = FALSE))
-
-# head -1 work/pQTL_eQTL_matrix.tsv | tr '\t' '\n' | grep -v signif
-# ls *egene* | awk '{gsub(".v7.egenes.txt.gz","");print "#",NR" "$1}' | xsel -i
-
-# 1 Adipose_Subcutaneous
-# 2 Adipose_Visceral_Omentum
-# 3 Adrenal_Gland
-# 4 Artery_Aorta
-# 5 Artery_Coronary
-# 6 Artery_Tibial
-# 7 Brain_Amygdala
-# 8 Brain_Anterior_cingulate_cortex_BA24
-# 9 Brain_Caudate_basal_ganglia
-# 10 Brain_Cerebellar_Hemisphere
-# 11 Brain_Cerebellum
-# 12 Brain_Cortex
-# 13 Brain_Frontal_Cortex_BA9
-# 14 Brain_Hippocampus
-# 15 Brain_Hypothalamus
-# 16 Brain_Nucleus_accumbens_basal_ganglia
-# 17 Brain_Putamen_basal_ganglia
-# 18 Brain_Spinal_cord_cervical_c-1
-# 19 Brain_Substantia_nigra
-# 20 Breast_Mammary_Tissue
-# 21 Cells_EBV-transformed_lymphocytes
-# 22 Cells_Transformed_fibroblasts
-# 23 Colon_Sigmoid
-# 24 Colon_Transverse
-# 25 Esophagus_Gastroesophageal_Junction
-# 26 Esophagus_Mucosa
-# 27 Esophagus_Muscularis
-# 28 Heart_Atrial_Appendage
-# 29 Heart_Left_Ventricle
-# 30 Liver
-# 31 Lung
-# 32 Minor_Salivary_Gland
-# 33 Muscle_Skeletal
-# 34 Nerve_Tibial
-# 35 Ovary
-# 36 Pancreas
-# 37 Pituitary
-# 38 Prostate
-# 39 Skin_Not_Sun_Exposed_Suprapubic
-# 40 Skin_Sun_Exposed_Lower_leg
-# 41 Small_Intestine_Terminal_Ileum
-# 42 Spleen
-# 43 Stomach
-# 44 Testis
-# 45 Thyroid
-# 46 Uterus
-# 47 Vagina
-# 48 Whole_Blood
 
 chkList <- c("rs6827617", "rs4241577", "rs149278")
 chkout <- query(chkList,keep=FALSE)
 subset(chkout,hgnc==exp_gene,select=-c(hg19_coordinates,a1,a2,consequence,pmid))
-

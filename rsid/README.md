@@ -56,7 +56,8 @@ chembl.sh | toy CHEMBL queries
 CRP.sh | an inflammation score
 cvd1.sh | SCALLOP-CVDI supplementary tables
 efo.R | experimental factor ontology
-eQTL.R | cis-eQTL lookup
+eQTL.R | cis-pQTL eQTL lookup
+GTEx.R | cis-pQTL GTEx eQTL lookup
 gdigt.R | GDI and gene-trials
 latex.tex | LaTeX formulas embedded in Markdown
 latex.docx | LaTeX formulas embedded in MicroSoft Word
@@ -66,7 +67,7 @@ neale.sh | signal selection for Neale UKB data (HbA1c)
 pleiotropy.R | horizontal and vertical pleiotropy
 ppi.R | PPI using EpiGraphDB
 pqtlGWAS.R | pQTL-GWAS lookup
-pqtlxQTL.R | pQTL-[e|m|p]QTL lookup
+pQTL.R | pQTL lookup
 pqtlMR.sh | pQTL MR analysis
 rentrez.sh | reuse of rentrez
 rGREAT.R | GREAT analysis
