@@ -21,13 +21,13 @@ for (protein in with(metal,prot))
   cat(protein, nrow(ps),"\n")
   if (nrow(ps)>0) {
      ips <- merge(INF1_aggr, within(ps,{gene_snpid <- paste0(hgnc,"-",snpid)}),by="gene_snpid",all.y=TRUE)
-     simple <- ips%>%select(prot_snpid,INF1_rsid,uniprot_gwas,chr.x,chr.y,HLA,cis.trans,proxy,r2,p,hgnc,study,pmid,trait)
+     simple <- ips%>%select(prot_snpid,INF1_rsid,uniprot_gwas,chr.x,chr.y,HLA,cis.trans,rsid,proxy,r2,p,hgnc,study,pmid,trait)
      write.table(simple,file=file.path(INF,"work","pQTL",paste0(protein,"-pQTL.tsv")),
                  col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
      SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,extGene) %>% rename(trait=Target)
      INTERVAL <- subset(left_join(simple,SL),pmid==29875488) %>%
                  select(prot_snpid,chr.x,chr.y,chr,INF1_rsid,uniprot_gwas,HLA,cis.trans,
-                        proxy,r2,p,hgnc,trait,extGene,TargetFullName)
+                        rsid,proxy,r2,p,hgnc,trait,extGene,TargetFullName)
      write.table(INTERVAL,file=file.path(INF,"work","pQTL",paste0(protein,"-pQTL-SomaLogic.tsv")),
                  col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
   }
@@ -58,14 +58,14 @@ all_pQTLs <- function()
   write.table(ips,file=paste0(f,".tsv"),row.names=FALSE,quote=FALSE,sep="\t")
   ips <- merge(within(INF1_aggr,{prot_snpid <- paste0(prot,"-",MarkerName)}),
                within(subset(ps,hgnc%in%INF1_aggr$gene),{gene_snpid <- paste0(hgnc,"-",snpid)}), by="gene_snpid",all.y=TRUE)
-  write.table(ips[c("uniprot_gwas","INF1_rsid","prot_snpid","cis.trans","proxy","r2","p","study","pmid","trait")],
+  write.table(ips[c("uniprot_gwas","INF1_rsid","prot_snpid","cis.trans","rsid","proxy","r2","p","study","pmid","trait")],
         file="pQTL.log",quote=FALSE,row.names=FALSE,sep="\t")
-  simple <- ips%>%select(INF1_rsid,uniprot_gwas,prot_snpid,chr.x,chr.y,HLA,cis.trans,hgnc,proxy,r2,p,study,pmid,trait)
   write.table(simple,file=file.path(INF,"work","pQTL","pQTL.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
+  simple <- ips%>%select(INF1_rsid,uniprot_gwas,prot_snpid,chr.x,chr.y,HLA,cis.trans,hgnc,rsid,proxy,r2,p,study,pmid,trait)
   SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,extGene) %>% rename(trait=Target)
   INTERVAL <- subset(left_join(simple,SL),pmid==29875488) %>%
               select(prot_snpid,chr.x,chr.y,chr,INF1_rsid,uniprot_gwas,HLA,cis.trans,
-                     proxy,r2,p,chr,hgnc,trait,extGene,TargetFullName)
+                     rsid,proxy,r2,p,chr,hgnc,trait,extGene,TargetFullName)
   write.table(INTERVAL,file=file.path(INF,"work","pQTL","pQTL-SomaLogic.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
 }
 
