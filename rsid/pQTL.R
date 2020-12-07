@@ -24,14 +24,16 @@ for (protein in with(metal,prot))
      simple <- ips%>%select(prot_snpid,INF1_rsid,uniprot_gwas,chr.x,chr.y,HLA,cis.trans,proxy,r2,p,hgnc,study,pmid,trait)
      write.table(simple,file=file.path(INF,"work","pQTL",paste0(protein,"-pQTL.tsv")),
                  col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
-     SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,extGene) %>% rename(hgnc=extGene)
+     SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,extGene) %>% rename(trait=Target)
      INTERVAL <- subset(left_join(simple,SL),pmid==29875488) %>%
                  select(prot_snpid,chr.x,chr.y,chr,INF1_rsid,uniprot_gwas,HLA,cis.trans,
-                        proxy,r2,p,study,pmid,hgnc,trait,UniProt,Target,TargetFullName)
+                        proxy,r2,p,hgnc,trait,extGene,TargetFullName)
      write.table(INTERVAL,file=file.path(INF,"work","pQTL",paste0(protein,"-pQTL-SomaLogic.tsv")),
                  col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
   }
 }
+single_pQTL()
+
 # ips_print <- subset(ips,agrepl(protein,trait,max.distance=2,ignore.case=TRUE))
 
 all_pQTLs <- function()
@@ -60,9 +62,11 @@ all_pQTLs <- function()
         file="pQTL.log",quote=FALSE,row.names=FALSE,sep="\t")
   simple <- ips%>%select(INF1_rsid,uniprot_gwas,prot_snpid,chr.x,chr.y,HLA,cis.trans,hgnc,proxy,r2,p,study,pmid,trait)
   write.table(simple,file=file.path(INF,"work","pQTL","pQTL.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
-  SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,extGene) %>% rename(hgnc=extGene)
+  SL <- SomaLogic160410 %>% select(SOMAMER_ID,UniProt,Target,TargetFullName,chr,extGene) %>% rename(trait=Target)
   INTERVAL <- subset(left_join(simple,SL),pmid==29875488) %>%
               select(prot_snpid,chr.x,chr.y,chr,INF1_rsid,uniprot_gwas,HLA,cis.trans,
-                     proxy,r2,p,study,pmid,chr,hgnc,trait,Target,TargetFullName)
+                     proxy,r2,p,chr,hgnc,trait,extGene,TargetFullName)
   write.table(INTERVAL,file=file.path(INF,"work","pQTL","pQTL-SomaLogic.tsv"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
 }
+
+all_pQTLs()
