@@ -48,7 +48,7 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 
 *Date last changed:* **8/6/2020**
 
-### Utilities
+### Micellaneous analyses and utilities
 
 FIle | Description
 -----|---------------------------
@@ -59,6 +59,7 @@ efo.R | experimental factor ontology
 eQTL.R | cis-pQTL eQTL lookup
 GTEx.R | cis-pQTL GTEx eQTL lookup
 gdigt.R | GDI and gene-trials
+HGI.sh | HGI data analysis
 latex.tex | LaTeX formulas embedded in Markdown
 latex.docx | LaTeX formulas embedded in MicroSoft Word
 LTBR.sh | LTBR LocusZoom plots
