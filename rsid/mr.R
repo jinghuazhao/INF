@@ -1,8 +1,8 @@
 type <- Sys.getenv("type")
 prot <- Sys.getenv("prot")
 outcomes <- Sys.getenv("MRBASEID")
-outdir <- "mr/"
-gz <- gzfile(paste0(outdir,prot,"-",type,".mrx"))
+outdir <- file.path("mr",type)
+gz <- gzfile(file.path(outdir,paste0(prot,"-",type,".mrx")))
 d <- lapply(gz, function(x) tryCatch(read.delim(gz,as.is=TRUE), error=function(e) NULL))[[1]]
 if (nrow(d)!=0)
 {
@@ -26,7 +26,7 @@ if (nrow(d)!=0)
       pleiotropy <- mr_pleiotropy_test(dat)
       single <- mr_singlesnp(dat)
       loo <- mr_leaveoneout(dat)
-      prefix <- paste0(outdir,outcomes,"-",prot,"-",type)
+      prefix <- file.path(outdir,paste0(outcomes,"-",prot,"-",type))
       invisible(lapply(c("result","heterogeneity","pleiotropy","single","loo"), function(x) {
                       v <- lapply(x, function(x) tryCatch(get(x), error=function(e) NULL))[[1]]
                       if (!is.null(v)) write.table(format(v,digits=3),file=paste0(prefix,"-",x,".txt"),quote=FALSE,row.names=FALSE,sep="\t")

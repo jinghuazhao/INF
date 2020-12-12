@@ -15,15 +15,15 @@ parallel -j5 -C' ' '
   cut -f1-6,10-12,18 | \
   awk -vchr={3} -vstart={4} -vend={5} -vM=1e6 -vlogp=-5.45131 -vsuffix=${suffix} "
         (suffix==\"cis\" && \$1==chr && \$2>=start-M && \$2 <= end+M && \$9<=logp) || (suffix==\"pan\" && \$9<=logp)
-      " > mr/{2}-${suffix}.mri
+      " > mr/${suffix}/{2}-${suffix}.mri
   (
     echo -e "prot\trsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
-    awk "{\$4=toupper(\$4);\$5=toupper(\$5);print}" mr/{2}-${suffix}.mri | \
+    awk "{\$4=toupper(\$4);\$5=toupper(\$5);print}" mr/${suffix}/{2}-${suffix}.mri | \
     sort -k3,3 | \
     join -23 INTERVAL.rsid - | \
     awk -v prot={2} "{\$1=prot;print}" | \
     tr " " "\t"
-  ) | gzip -f > mr/{2}-${suffix}.mrx
+  ) | gzip -f > mr/${suffix}/{2}-${suffix}.mrx
 '
 }
 for type in cis pan; do export suffix=${type}; MR_dat; done
