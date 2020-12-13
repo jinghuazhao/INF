@@ -14,6 +14,22 @@ export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20200915/resu
 ) | \
 gzip -f > work/HGI/gsmr_C2.txt.gz
 
+(
+  echo "SNP A1 A2 freq b se p N"
+  gunzip -c $HGI/eur/COVID19_HGI_C2_ALL_eur_leave_23andme_20201020.b37.txt.gz
+  awk '
+  {
+    CHR=$1
+    POS=$2
+    a1=$3
+    a2=$4
+    if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+    else snpid="chr" CHR ":" POS "_" a1 "_" a2
+    if (NR>1) print snpid, a1, a2, $12, $7, $8, $9, $11
+  }'
+) | \
+gzip -f > work/HGI/gsmr_C2.txt.gz
+
 #  head -1 ${HGI}/COVID19_HGI_C2_ALL_20201020.b37_1.0E-5.txt | sed 's/\t/\n/g' | awk '{print "#" NR, $1}'
 #1 #CHR
 #2 POS
