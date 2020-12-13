@@ -20,7 +20,7 @@ if [ ! -f work/HGI/gsmr_$p ]; then echo $p $INF/work/$p.ma > work/HGI/gsmr_$p; f
 
 gcta-1.9 --mbfile work/HGI/gsmr_ref_data --gsmr-file work/HGI/gsmr_$p work/HGI/gsmr_C2 \
          --gsmr-direction 0 \
-         --clump-r2 0.05 --gwas-thresh 5e-8 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
+         --clump-r2 0.05 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
          --out work/HGI/gsmr_C2_$p
 
 R --no-save -q <<END

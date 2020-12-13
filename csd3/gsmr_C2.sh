@@ -5,8 +5,8 @@ export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20200915/resu
   {
     CHR=$1
     POS=$2
-    a1=$3
-    a2=$4
+    a1=$4
+    a2=$3
     if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
     else snpid="chr" CHR ":" POS "_" a1 "_" a2
     if (NR>1) print snpid, a1, a2, $12, $7, $8, $9, $11
@@ -21,8 +21,8 @@ gzip -f > work/HGI/gsmr_C2.txt.gz
   {
     CHR=$1
     POS=$2
-    a1=$3
-    a2=$4
+    a1=$4
+    a2=$3
     if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
     else snpid="chr" CHR ":" POS "_" a1 "_" a2
     if (NR>1) print snpid, a1, a2, $12, $7, $8, $9, $11
