@@ -1,6 +1,5 @@
 #/usr/bin/bash
 
-module load gcc/6
 function collect()
 {
   echo ${prefix} -- ${id} -- ${trait}
@@ -13,6 +12,7 @@ function collect()
     grep -w ${id} ${prefix}_*single.txt | grep -v -e Egger -e Inverse
   ) | grep -v _rev_ > ${prefix}-${id}.single
 }
+
 function collect_rev()
 {
   echo ${prefix} -- ${id} -- ${trait}
@@ -25,8 +25,9 @@ function collect_rev()
     grep -w ${id} ${prefix}_*single.txt | grep -v -e Egger -e Inverse
   ) | awk 'NR==1||$1~/rev/' > ${prefix}-${id}.single
 }
-if [ ! -d work/mr/pQTLs ]; then mkdir -p work/mr/pQTLs; fi
 
+module load gcc/6
+if [ ! -d work/mr/pQTLs ]; then mkdir -p work/mr/pQTLs; fi
 cd work/mr/pQTLs
 for type in cis trans
 do
@@ -96,12 +97,18 @@ do
   done
 done
 
-for prefix in INF1 efo INF1_rev efo_rev
+for prefix in INF1 INF1_rev efo efo_rev
 do
   echo ${prefix}
   export all=$(ls ${prefix}_*result.txt | wc -l)
   export p=$(bc -l <<< 0.05/${all})
-  awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}*result
+# all results
+  awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}-*result
+# how many proteins
+  awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}-*result | cut -f2 | sort | uniq | wc -l
+# proteins with >1 diseases
+  awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${prefix}-*result | awk 'a[$2]++>1' | \
+  cut -f2 | sort | uniq | wc -l
 done
 
 # bidirectionality test for FGF.5
