@@ -36,7 +36,20 @@ END
 
 export GTEx_v8=~/rds/public_databases/GTEx/GTEx_Analysis_v8_eQTL_cis_associations
 export ext=.v8.EUR.signif_pairs.txt.gz
-ls $GTEx_v8 | grep -v egenes | xargs -l basename -s ${ext} | \
-parallel -C' ' --env GTEx_v8 --env ext '
-  zcat ${GTEx_v8}/{}${ext} | head
-'
+export M=1e6
+export nlines=60
+(
+  parallel -C' ' --env GTEx_v8 --env ext --env M '
+    read SNP hgnc ensGene pos chrpos < <(awk -v row={1} "NR==row{print \$4,\$7,\$8,\$13,\$11\"_\"\$13}" cis.dat)
+    zgrep ${ensGene} ${GTEx_v8}/{2}${ext} | \
+    awk -v M=${M} -v bp=${pos} "{
+       split(\$2,a,\"_\");
+       chr=a[1];pos=a[2];a1=a[3];a2=a[4];
+       if(a[3]<a[4]) {a1=a[3];a2=a[4]} else {a1=a[4];a2=a[3]}
+       \$2=chr\":\"pos\"_\"a1\"_\"a2;
+       if(bp>=a[2]-M && bp<a[2]+M) print \$1,\$2,\$12
+     }" | \
+    sort -k3,3g | \
+    awk -vSNP=${SNP} -vensGene=${ensGene} -vtissue={2} -vOFS="\t" "NR==1 {print SNP,ensGene,tissue,\$0}"
+  ' ::: $(seq 2 ${nlines}) ::: $(ls ${GTEx_v8} | grep -v egenes | xargs -l basename -s ${ext})
+) > eQTL_GTEx.dat
