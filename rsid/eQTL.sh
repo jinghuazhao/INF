@@ -42,7 +42,7 @@ export nlines=60
   parallel -C' ' --env GTEx_v8 --env ext --env M '
     read SNP hgnc ensGene pos chrpos < <(awk -v row={1} "NR==row{print \$4,\$7,\$8,\$13,\$11\"_\"\$13}" cis.dat)
     zgrep ${ensGene} ${GTEx_v8}/{2}${ext} | \
-    awk -v M=${M} -v bp=${pos} "{
+    awk -v M=${M} -v bp=${pos} -v OFS="\t" "{
        split(\$2,a,\"_\");
        chr=a[1];pos=a[2];a1=a[3];a2=a[4];
        if(a[3]<a[4]) {a1=a[3];a2=a[4]} else {a1=a[4];a2=a[3]}
@@ -53,3 +53,12 @@ export nlines=60
     awk -vSNP=${SNP} -vensGene=${ensGene} -vtissue={2} -vOFS="\t" "NR==1 {print SNP,ensGene,tissue,\$0}"
   ' ::: $(seq 2 ${nlines}) ::: $(ls ${GTEx_v8} | grep -v egenes | xargs -l basename -s ${ext})
 ) > eQTL_GTEx.dat
+
+for SNP in $(cut -f1 eQTL_GTEx.dat | uniq)
+do
+(
+  echo ${SNP}
+  awk -vSNP=${SNP} '$1==SNP' eQTL_GTEx.dat | cut -f5 | uniq
+) > ${SNP}.snps
+plink --bfile INTERVAL/cardio/INTERVAL --extract ${SNP}.snps --r2 inter-chr --out ${SNP}
+done
