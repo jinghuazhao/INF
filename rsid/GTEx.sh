@@ -10,10 +10,10 @@ R --no-save <<END
   hpc_work <- Sys.getenv("HPC_WORK")
   path = file.path(hpc_work, "bin", "hg19ToHg38.over.chain")
   library(rtracklayer)
-  ch = import.chain(path)
-  ch
+  chain <- import.chain(path)
+  chain
   seqlevelsStyle(cis_gr) <- "UCSC"
-  cis38 <- liftOver(cis_gr, ch)
+  cis38 <- liftOver(cis_gr, chain)
   class(cis38)
   cis_dat38 <- data.frame(cis38)[c("seqnames","start","end")]
   names(cis_dat38) <- c("chr38","start38","end38")
@@ -36,23 +36,30 @@ END
 
 export GTEx_v8=~/rds/public_databases/GTEx/GTEx_Analysis_v8_eQTL_cis_associations
 export ext=.v8.EUR.signif_pairs.txt.gz
+export col_gene=1
+export col_variant=2
+export GTEx_v8=${HPC_WORK}/GTEx_Analysis_v8_eQTL
+export ext=.v8.signif_variant_gene_pairs.txt.gz
+export col_gene=2
+export col_variant=1
 export M=1e6
 export nlines=60
 (
-  parallel -C' ' --env GTEx_v8 --env ext --env M '
+  parallel -C' ' --env GTEx_v8 --env ext --env col --env M '
     read SNP hgnc ensGene pos chrpos < <(awk -v row={1} "NR==row{print \$4,\$7,\$8,\$13,\$11\"_\"\$13}" cis.dat)
     zgrep ${ensGene} ${GTEx_v8}/{2}${ext} | \
-    awk -v M=${M} -v bp=${pos} -v OFS="\t" "{
-       split(\$2,a,\"_\");
+    awk -v col_gene=${col_gene} -v col_variant=${col_variant} -v M=${M} -v bp=${pos} -v OFS="\t" "{
+       split(\$col_variant,a,\"_\");
        chr=a[1];pos=a[2];a1=a[3];a2=a[4];
        if(a[3]<a[4]) {a1=a[3];a2=a[4]} else {a1=a[4];a2=a[3]}
-       \$2=chr\":\"pos\"_\"a1\"_\"a2;
-       if(bp>=a[2]-M && bp<a[2]+M) print \$1,\$2,\$12
+       \$col_variant=chr\":\"pos\"_\"a1\"_\"a2;
+       if(bp>=a[2]-M && bp<a[2]+M && length(a1)==1 && length(a2)==1) print \$col_gene,\$col_variant,\$11
      }" | \
     sort -k3,3g | \
     awk -vSNP=${SNP} -vensGene=${ensGene} -vtissue={2} -vOFS="\t" "NR==1 {print SNP,ensGene,tissue,\$0}"
   ' ::: $(seq 2 ${nlines}) ::: $(ls ${GTEx_v8} | grep -v egenes | xargs -l basename -s ${ext})
-) > eQTL_GTEx.dat
+) | \
+sort -k1,1 -k2,2 > eQTL_GTEx.dat
 
 for SNP in $(cut -f1 eQTL_GTEx.dat | uniq)
 do
