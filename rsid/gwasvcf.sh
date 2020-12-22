@@ -9,7 +9,7 @@ do
     head -13 ${INF}/rsid/gwasvcf.hdr | \
     sed 's|NAME|'"$prot"'|g'
     gunzip -c ${INF}/METAL/${prot}-1.tbl | \
-    awk -vOFS="\t" 'NR>1{print $1,$2,$3,toupper($4),toupper($5),".","PASS",".","AF:ES:SE:LP:SS",$6 ":" $10 ":" $11 ":" -$12 ":" $18}' | \
+    awk -vOFS="\t" 'NR>1{print $1,$2,$3,toupper($4),toupper($5),".","PASS",".","AF:ES:SE:LP:SS",$6 ":" $10 ":" $11 ":" (-$12) ":" $18}' | \
     sort -k1,1n -k2,2n
   ) | \
   bgzip -f > ${INF}/METAL/vcf/${prot}.vcf.gz

@@ -26,7 +26,8 @@ prune.sh | pruning
 slct.sh  | GCTA --cojo-slct analysis
 finemap.sh | `finemap` analysis
 jam.sh | `JAM` analysis
-coloc.sb | coloc analysis
+coloc.sb | coloc analysis -- clumsy verion
+coloc.sh | coloc analysis via pQTLtools
 fastenloc.sb | fastenloc analysis
 garfield.sh | GARFIELD analysis
 hyprcoloc.sh | hyprcoloc analysis
@@ -59,6 +60,7 @@ efo.R | experimental factor ontology
 eQTL.R | cis-pQTL eQTL lookup
 GTEx.R | cis-pQTL GTEx eQTL lookup
 gdigt.R | GDI and gene-trials
+gwasvcf.sh | GWAS to VCF conversion
 HGI.sh | HGI data analysis
 latex.tex | LaTeX formulas embedded in Markdown
 latex.docx | LaTeX formulas embedded in MicroSoft Word
