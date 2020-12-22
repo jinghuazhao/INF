@@ -1,6 +1,7 @@
+INF <- Sys.getenv("INF")
 prot <- Sys.getenv("prot")
-pQTL <- Sys.getenv("pQTL")
-M <- Sys.getenv("M")
+pQTL <- Sys.getenv("MarkerName")
+M <- as.integer(Sys.getenv("M"))
 
 library(gap)
 isnpid <- within(inv_chr_pos_a1_a2(pQTL),
@@ -11,6 +12,7 @@ isnpid <- within(inv_chr_pos_a1_a2(pQTL),
   if (start<0) start <- 0
   end <- pos+M
 })
+chr <- with(isnpid,chr)
 region <- with(isnpid,paste0(chr,":",start,"-",end))
 
 library(pQTLtools)
@@ -30,13 +32,13 @@ summary_stats
 ggplot(summary_stats, aes(x = position, y = -log(pvalue, 10))) + geom_point()
 # GWAS sumstat from the same region
 gwasvcf::set_bcftools("/rds/user/jhz22/hpc-work/bin/bcftools")
-gwas_stats <- gwasvcf::query_gwas(file.path(INF,"METAL/vcf",paste0(prot,".vcf.gz"), chrompos = region)
-gwas_stats <- gwasvcf::vcf_to_granges(gwas_stats) %>% keepSeqlevels("3") %>% renameSeqlevels("chr3")
+gwas_stats <- gwasvcf::query_gwas(file.path(INF,"METAL/vcf",paste0(prot,".vcf.gz")), chrompos = region)
+gwas_stats <- gwasvcf::vcf_to_granges(gwas_stats) %>% keepSeqlevels(chr) %>% renameSeqlevels(paste0("chr",chr))
 f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
 chain <- rtracklayer::import.chain(f)
 gwas_stats_hg38 <- rtracklayer::liftOver(gwas_stats, chain) %>%
   unlist() %>%
-  renameSeqlevels("3") %>%
+  renameSeqlevels(chr) %>%
   dplyr::as_tibble() %>%
   dplyr::transmute(chromosome = seqnames, position = start, AF, ES, SE, LP, SS) %>%
   dplyr::mutate(id = paste(chromosome, position, sep = ":")) %>%
