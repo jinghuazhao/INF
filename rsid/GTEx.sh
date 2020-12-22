@@ -1,3 +1,7 @@
+#!/usr/bin/bash
+
+function cis()
+{
 R --no-save <<END
   options(width=200)
   library(pQTLtools)
@@ -33,7 +37,10 @@ R --no-save <<END
     class(cur19)
   }
 END
+}
 
+function eQTL()
+{
 export GTEx_v8=~/rds/public_databases/GTEx/GTEx_Analysis_v8_eQTL_cis_associations
 export ext=.v8.EUR.signif_pairs.txt.gz
 export col_gene=1
@@ -60,12 +67,23 @@ export nlines=60
   ' ::: $(seq 2 ${nlines}) ::: $(ls ${GTEx_v8} | grep -v egenes | xargs -l basename -s ${ext})
 ) | \
 sort -k1,1 -k2,2 > eQTL_GTEx.dat
+}
 
 for SNP in $(cut -f1 eQTL_GTEx.dat | uniq)
 do
-(
-  echo ${SNP}
-  awk -vSNP=${SNP} '$1==SNP' eQTL_GTEx.dat | cut -f5 | uniq
-) > ${SNP}.snps
-plink --bfile INTERVAL/cardio/INTERVAL --extract ${SNP}.snps --r2 inter-chr --out ${SNP}
+  export chr=$(awk -vSNP=${SNP} 'BEGIN{gsub(/chr/,"",SNP);split(SNP,a,":");print a[1]}')
+  echo ${SNP} - ${chr}
+  (
+    echo ${SNP}
+    awk -vSNP=${SNP} '$1==SNP' eQTL_GTEx.dat | cut -f5 | uniq
+  ) > ${SNP}.snps
+  plink --bfile INTERVAL/cardio/INTERVAL --chr ${chr} --extract ${SNP}.snps --make-bed --out ${SNP}
+  plink --bfile ${SNP} --no-sex --no-pheno --r2 inter-chr --out ${SNP}
+done
+
+for chr in {1..22}
+do
+  echo ${chr}
+  export chr1KG=~/rds/public_databases/1000G/ALL.chr${chr}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
+  qctool -g $chr1KG -og 1KG-${chr} -ofiletype binary_ped
 done
