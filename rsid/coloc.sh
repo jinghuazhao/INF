@@ -1,10 +1,10 @@
 #!/usr/bin/bash
 
-export M=1e6
-for row in {1..180}
+for row in {1..59}
 do
-   read prot MarkerName < <(awk -vrow=${row} 'NR==row+1{print $5,$6}' ${INF}/work/INF1.merge)
-   echo ${prot} - ${MarkerName}
+   export row=${row}
+   read prot MarkerName < <(awk -vFS="," '$14=="cis"' work/INF1.merge.cis.vs.trans | awk -vFS="," -vrow=${row} 'NR==row{print $2,$5}')
+   echo ${row} - ${prot} - ${MarkerName}
    export prot=${prot}
    export MarkerName=${MarkerName}
    cd coloc
