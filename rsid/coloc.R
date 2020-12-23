@@ -4,16 +4,19 @@ liftRegion <- function(x,chain)
   gr <- with(x,GenomicRanges::GRanges(seqnames=chr,IRanges::IRanges(start,end)))
   seqlevelsStyle(gr) <- "UCSC"
   gr38 <- rtracklayer::liftOver(gr, chain)
-  chr <- as.character(seqnames(gr38))
+  chr <- colnames(table(seqnames(gr38)))
   chr <- gsub("chr","",chr)
-  start <- as.character(start(gr38))
-  end <- as.character(end(gr38))
+  start <- min(unlist(start(gr38)))
+  end <- max(unlist(end(gr38)))
+# chr <- as.character(seqnames(gr38))
+# start <- as.character(start(gr38))
+# end <- as.character(end(gr38))
   invisible(list(chr=chr,start=start,end=end,region=paste0(chr,":",start,"-",end)))
 }
 
-mixed_region_coloc <- function(prot,chr,ensGene,chain,region37,region38,pdfout)
+mixed_region_coloc <- function(prot,chr,ensGene,chain,region37,region38,out)
 {
-  pdf(pdfout)
+  pdf(paste0(out,".pdf"))
 # GWAS sumstats
   gwasvcf::set_bcftools("/rds/user/jhz22/hpc-work/bin/bcftools")
   gwas_stats <- gwasvcf::query_gwas(file.path(INF,"METAL/vcf",paste0(prot,".vcf.gz")), chrompos = region37)
@@ -63,6 +66,7 @@ mixed_region_coloc <- function(prot,chr,ensGene,chain,region37,region38,pdfout)
   coloc_df_imported <- purrr::map_df(result_filtered, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
 
   coloc_df = dplyr::bind_rows(coloc_df_microarray, coloc_df_rnaseq, coloc_df_imported)
+  save(coloc_df, file=paste(out,".rda"))
   dplyr::arrange(coloc_df, -PP.H4.abf)
   ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
   dev.off()
@@ -71,21 +75,21 @@ mixed_region_coloc <- function(prot,chr,ensGene,chain,region37,region38,pdfout)
 library(pQTLtools)
 f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
 chain <- rtracklayer::import.chain(f)
-
+invisible(lapply(c("dplyr", "ggplot2", "readr", "coloc", "GenomicRanges","seqminer"), require, character.only = TRUE))
+f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths.tsv")
+tabix_paths <- read.delim(f, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
+f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths_imported.tsv")
+imported_tabix_paths <- read.delim(f, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
 INF <- Sys.getenv("INF")
 M <- 1e6
 sentinels <- read.delim(file.path(INF,"work","INF1.merge"))
-invisible(lapply(c("dplyr", "ggplot2", "readr", "coloc", "GenomicRanges","seqminer"), require, character.only = TRUE))
-tfp <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths.tsv")
-tabix_paths <- read.delim(tfp, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
-tfpi <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths_imported.tsv")
-imported_tabix_paths <- read.delim(tfpi, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
+sentinels <- subset(read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans")),cis)
 
 for (row in 1:nrow(sentinels))
 {
   sentinel <- sentinels[row,]
   prot <- sentinel[["prot"]]
-  isnpid <- within(gap::inv_chr_pos_a1_a2(sentinel[["MarkerName"]]),
+  isnpid <- within(gap::inv_chr_pos_a1_a2(sentinel[["SNP"]]),
   {
     chr <- gsub("chr","",chr)
     pos <- as.integer(pos)
@@ -99,7 +103,8 @@ for (row in 1:nrow(sentinels))
   region38 <- with(liftRegion(isnpid,chain),region)
   ensGene <- subset(inf1,prot==sentinel[["prot"]])[["ensembl_gene_id"]]
   ensRegion38 <- with(liftRegion(subset(inf1,prot==sentinel[["prot"]]),chain),region)
-  f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",MarkerName,".pdf")))
-# mixed_region_coloc(prot,chr,ensGene,chain,region37,region38,f)
-  mixed_region_coloc(prot,chr,ensGene,chain,ensRegion37,ensRegion38,f)
+  f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",SNP)))
+  cat(prot,chr,region37,region38,ensGene,ensRegion37,ensRegion38,"\n")
+  mixed_region_coloc(prot,chr,ensGene,chain,region37,region38,f)
+# mixed_region_coloc(prot,chr,ensGene,chain,ensRegion37,ensRegion38,f)
 }
