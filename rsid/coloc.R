@@ -1,3 +1,5 @@
+#!/rds/user/jhz22/hpc-work/bin/Rscript --vanilla
+
 dummy <- function()
 {
   require(plyr)
@@ -34,7 +36,7 @@ liftRegion <- function(x,chain)
   invisible(list(chr=chr,start=start,end=end,region=paste0(chr,":",start,"-",end)))
 }
 
-coloc_sumstats <- function()
+coloc_sumstats <- function(prot)
 {
   cat("GWAS sumstats\n")
   gwas_stats <- gwasvcf::query_gwas(file.path(INF,"METAL/vcf",paste0(prot,".vcf.gz")), chrompos = region37)
@@ -93,10 +95,10 @@ coloc_c <- function()
   coloc_df_imported <- purrr::map_df(result_filtered, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
 }
 
-mixed_region_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
+mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
 {
   pdf(paste0(out,".pdf"))
-  coloc_sumstats()
+  coloc_sumstats(prot)
   if (run_all)
   {
     coloc_a()
@@ -115,10 +117,10 @@ mixed_region_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_
   dev.off()
 }
 
-single_run <- function(row)
+single_run <- function(r)
 {
-  sentinel <- sentinels[row,]
-  isnpid <- within(gap::inv_chr_pos_a1_a2(sentinel[["MarkerName"]]),
+  sentinel <- sentinels[r,]
+  isnpid <- within(gap::inv_chr_pos_a1_a2(sentinel[["SNP"]]),
   {
     chr <- gsub("chr","",chr)
     pos <- as.integer(pos)
@@ -132,10 +134,10 @@ single_run <- function(row)
   region38 <- with(liftRegion(isnpid,chain),region)
   ensGene <- subset(inf1,prot==sentinel[["prot"]])[["ensembl_gene_id"]]
   ensRegion38 <- with(liftRegion(subset(inf1,prot==sentinel[["prot"]]),chain),region)
-  f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",MarkerName)))
-  cat(prot,chr,region37,region38,ensGene,ensRegion37,ensRegion38,"\n")
-  mixed_region_coloc(prot,chr,ensGene,chain,region37,region38,f)
-# mixed_region_coloc(prot,chr,ensGene,chain,ensRegion37,ensRegion38,f)
+  f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",SNP)))
+  cat(chr,region37,region38,ensGene,ensRegion37,ensRegion38,"\n")
+  mixed_coloc(sentinel[["prot"]],chr,ensGene,chain,region37,region38,f)
+# mixed_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
 }
 
 library(pQTLtools)
@@ -152,5 +154,8 @@ M <- 1e6
 sentinels <- subset(read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans")),cis)
 
 # uncomment for all runs inside R
-# for (row in 1:nrow(sentinels))
-single_run(row)
+# for (r in 1:nrow(sentinels))
+{
+  r <- as.integer(Sys.getenv("r"))
+  single_run(r)
+}
