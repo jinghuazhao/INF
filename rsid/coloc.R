@@ -1,25 +1,5 @@
 #!/rds/user/jhz22/hpc-work/bin/Rscript --vanilla
 
-dummy <- function()
-{
-  require(plyr)
-  require(doMC)
-  doMC::registerDoMC(cores = 14)
-  require(gdata)
-  require(data.table)
-  result <- rbindlist(alply(sentinels[1,], 1, function(obs) {
-          tryCatch({
-                  x <- as.numeric(obs)
-                  return(x)
-          }, error = function(e) {
-                  dummyresult <- dummy
-                  return(dummyresult)
-          })}, .progress = "none", .parallel = TRUE))
-
-  result <- as.data.frame(result)
-  withRestarts(invokeRestart("foo", 1, 2), foo = function(x, y) {x + y})
-}
-
 liftRegion <- function(x,chain)
 {
   require(GenomicRanges)
@@ -56,7 +36,7 @@ coloc_sumstats <- function(prot)
   gwas_stats_hg38
 }
 
-coloc_a <- function()
+coloc_a <- function(gwas_stats_hg38)
 {
   cat("a. eQTL datasets\n")
   microarray_df <- dplyr::filter(tabix_paths, quant_method == "microarray") %>% dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
@@ -67,7 +47,7 @@ coloc_a <- function()
   coloc_df_microarray <- purrr::map_df(summary_list, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
 }
 
-coloc_b <- function()
+coloc_b <- function(gwas_stats_hg38)
 {
   cat("b. Uniformly processed RNA-seq datasets\n")
   rnaseq_df <- dplyr::filter(tabix_paths, quant_method == "ge") %>% dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
@@ -81,7 +61,7 @@ coloc_b <- function()
   coloc_df_rnaseq <- purrr::map_df(result_list, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
 }
 
-coloc_c <- function()
+coloc_c <- function(gwas_stats_hg38)
 {
   cat("c. GTEx_v8 imported eQTL datasets\n")
   rnaseq_df <- dplyr::filter(imported_tabix_paths, quant_method == "ge") %>% dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
