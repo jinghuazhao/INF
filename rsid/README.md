@@ -27,7 +27,7 @@ slct.sh  | GCTA --cojo-slct analysis
 finemap.sh | `finemap` analysis
 jam.sh | `JAM` analysis
 coloc.sb | coloc analysis -- clumsy verion
-coloc.sh | coloc analysis via pQTLtools
+coloc.R | coloc analysis via pQTLtools
 fastenloc.sb | fastenloc analysis
 garfield.sh | GARFIELD analysis
 hyprcoloc.sh | hyprcoloc analysis

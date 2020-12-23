@@ -60,15 +60,16 @@ function python()
     echo ${prot}
     export prot=${prot}
     (
-    gunzip -c ${INF}/METAL/${prot}-1.tbl | \
-    awk -vOFS="\t" 'BEGIN{print "chr","pos","snpid","a1","a2","af","b","se","logp","n"}'
-    awk -vOFS="\t" 'NR>1{print $1,$2,$3,toupper($4),toupper($5),$6, $10, $11, (-$12), $18}' | \
-    grep -v "<" | \
-    sort -k1,1n -k2,2n
-  ) | \
-  gzip -f > ${INF}/METAL/gwasvcf/${prot}.txt.gz
-  python main.py --out ${INF}/METAL/gwasvcf/${prot}.vcf.gz --data ${INF}/METAL/gwasvcf/${prot}.txt.gz
-                 --ref human_g1k_v37.fasta --id "${prot}" --json ${INF}/rsid/gwasvcf.json
+      awk -vOFS="\t" 'BEGIN{print "chr","pos","snpid","a1","a2","af","b","se","logp","n"}'
+      gunzip -c ${INF}/METAL/${prot}-1.tbl | \
+      awk -vOFS="\t" 'NR>1{print $1,$2,$3,toupper($4),toupper($5),$6, $10, $11, (-$12), $18}' | \
+      grep -v "<" | \
+      sort -k1,1n -k2,2n
+    ) | \
+    gzip -f > ${INF}/METAL/gwasvcf/${prot}.txt.gz
+    python main.py --out ${INF}/METAL/gwasvcf/${prot}.vcf.gz --data ${INF}/METAL/gwasvcf/${prot}.txt.gz \
+                   --ref human_g1k_v37.fasta --id "${prot}" --json ${INF}/rsid/gwasvcf.json
+    tabix -f ${INF}/METAL/gwasvcf/${prot}.vcf.gz
   done
   cd -
 }
