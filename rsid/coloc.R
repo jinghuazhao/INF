@@ -1,4 +1,4 @@
-liftRegion <- function(x)
+liftRegion <- function(x,chain)
 {
   require(GenomicRanges)
   gr <- with(x,GenomicRanges::GRanges(seqnames=chr,IRanges::IRanges(start,end)))
@@ -11,17 +11,10 @@ liftRegion <- function(x)
   invisible(list(chr=chr,start=start,end=end,region=paste0(chr,":",start,"-",end)))
 }
 
-mixed_region_coloc <- function(prot,chr,ensGene,region37,region38,pdfout)
+mixed_region_coloc <- function(prot,chr,ensGene,chain,region37,region38,pdfout)
 {
   pdf(pdfout)
-# Association at a specific locus
-  platelet_df <- dplyr::filter(tabix_paths, study == "CEDAR", tissue_label == "platelet")
-  hdr <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","column_names.CEDAR")
-  column_names <- names(read.delim(hdr))
-  summary_stats <- import_eQTLCatalogue(platelet_df$ftp_path, region38, selected_gene_id = ensGene, column_names)
-  summary_stats
-  ggplot(summary_stats, aes(x = position, y = -log(pvalue, 10))) + geom_point()
-# GWAS sumstat from the same region
+# GWAS sumstats
   gwasvcf::set_bcftools("/rds/user/jhz22/hpc-work/bin/bcftools")
   gwas_stats <- gwasvcf::query_gwas(file.path(INF,"METAL/vcf",paste0(prot,".vcf.gz")), chrompos = region37)
   gwas_stats <- gwasvcf::vcf_to_granges(gwas_stats) %>% keepSeqlevels(chr) %>% renameSeqlevels(paste0("chr",chr))
@@ -37,10 +30,8 @@ mixed_region_coloc <- function(prot,chr,ensGene,region37,region38,pdfout)
     dplyr::ungroup() %>%
     dplyr::filter(row_count == 1)
   ggplot(gwas_stats_hg38, aes(x = position, y = LP)) + geom_point()
-# Colocalisation
-  res <- run_coloc(summary_stats, gwas_stats_hg38)
 
-# a. all other eQTL datasets
+# a. eQTL datasets
   microarray_df <- dplyr::filter(tabix_paths, quant_method == "microarray") %>% dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
   ftp_path_list <- setNames(as.list(microarray_df$ftp_path), microarray_df$qtl_id[1])
   hdr <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","column_names.CEDAR")
@@ -93,6 +84,7 @@ imported_tabix_paths <- read.delim(tfpi, sep = "\t", header = TRUE, stringsAsFac
 for (row in 1:nrow(sentinels))
 {
   sentinel <- sentinels[row,]
+  prot <- sentinel[["prot"]]
   isnpid <- within(gap::inv_chr_pos_a1_a2(sentinel[["MarkerName"]]),
   {
     chr <- gsub("chr","",chr)
@@ -104,10 +96,10 @@ for (row in 1:nrow(sentinels))
   chr <- with(isnpid,chr)
   region37 <- with(isnpid, paste0(chr,":",start,"-",end))
   ensRegion37 <- with(subset(inf1,prot==sentinel[["prot"]]),paste0(chr,":",start,"-",end))
-  region38 <- with(liftRegion(isnpid),region)
+  region38 <- with(liftRegion(isnpid,chain),region)
   ensGene <- subset(inf1,prot==sentinel[["prot"]])[["ensembl_gene_id"]]
-  ensRegion38 <- with(liftRegion(subset(inf1,prot==sentinel[["prot"]])),region)
+  ensRegion38 <- with(liftRegion(subset(inf1,prot==sentinel[["prot"]]),chain),region)
   f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",MarkerName,".pdf")))
-  mixed_region_coloc(sentinel[["prot"]],chr,ensGene,region37,region38,f)
-  mixed_region_coloc(sentinel[["prot"]],chr,ensGene,ensRegion37,ensRegion38,f)
+# mixed_region_coloc(prot,chr,ensGene,chain,region37,region38,f)
+  mixed_region_coloc(prot,chr,ensGene,chain,ensRegion37,ensRegion38,f)
 }
