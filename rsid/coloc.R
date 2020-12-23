@@ -53,6 +53,7 @@ coloc_sumstats <- function(prot)
     dplyr::ungroup() %>%
     dplyr::filter(row_count == 1)
   ggplot(gwas_stats_hg38, aes(x = position, y = LP)) + geom_point()
+  gwas_stats_hg38
 }
 
 coloc_a <- function()
@@ -98,12 +99,12 @@ coloc_c <- function()
 mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
 {
   pdf(paste0(out,".pdf"))
-  coloc_sumstats(prot)
+  gwas_stats_hg38 <- coloc_sumstats(prot)
   if (run_all)
   {
-    coloc_a()
-    coloc_b()
-    coloc_c()
+    coloc_df_microarray <- coloc_a(gwas_stats_hg38)
+    coloc_df_rnaseq <- coloc_b(gwas_stats_hg38)
+    coloc_df_imported <- coloc_c(gwas_stats_hg38)
     coloc_df = dplyr::bind_rows(coloc_df_microarray, coloc_df_rnaseq, coloc_df_imported)
     save(coloc_df, file=paste(out,".rda"))
     dplyr::arrange(coloc_df, -PP.H4.abf)
