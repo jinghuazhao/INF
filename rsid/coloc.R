@@ -115,19 +115,6 @@ mixed_region_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_
   dev.off()
 }
 
-library(pQTLtools)
-f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
-chain <- rtracklayer::import.chain(f)
-invisible(lapply(c("dplyr", "ggplot2", "readr", "coloc", "GenomicRanges","seqminer"), require, character.only = TRUE))
-gwasvcf::set_bcftools("/rds/user/jhz22/hpc-work/bin/bcftools")
-f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths.tsv")
-tabix_paths <- read.delim(f, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
-f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths_imported.tsv")
-imported_tabix_paths <- read.delim(f, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
-INF <- Sys.getenv("INF")
-M <- 1e6
-sentinels <- subset(read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans")),cis)
-
 single_run <- function(row)
 {
   sentinel <- sentinels[row,]
@@ -150,6 +137,19 @@ single_run <- function(row)
   mixed_region_coloc(prot,chr,ensGene,chain,region37,region38,f)
 # mixed_region_coloc(prot,chr,ensGene,chain,ensRegion37,ensRegion38,f)
 }
+
+library(pQTLtools)
+f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
+chain <- rtracklayer::import.chain(f)
+invisible(lapply(c("dplyr", "ggplot2", "readr", "coloc", "GenomicRanges","seqminer"), require, character.only = TRUE))
+gwasvcf::set_bcftools("/rds/user/jhz22/hpc-work/bin/bcftools")
+f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths.tsv")
+tabix_paths <- read.delim(f, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
+f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths_imported.tsv")
+imported_tabix_paths <- read.delim(f, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
+INF <- Sys.getenv("INF")
+M <- 1e6
+sentinels <- subset(read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans")),cis)
 
 # uncomment for all runs inside R
 # for (row in 1:nrow(sentinels))

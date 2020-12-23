@@ -7,7 +7,7 @@ do
    echo ${row} - ${prot} - ${MarkerName}
    export prot=${prot}
    export MarkerName=${MarkerName}
-   cd coloc
+   cd ${HPC_WORK}/work
    R --no-save < ${INF}/rsid/coloc.R > ${prot}-${MarkerName}.log
    ls *tbi | xargs -I {} bash -c "rm {}"
    cd -
