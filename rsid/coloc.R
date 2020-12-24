@@ -16,7 +16,7 @@ liftRegion <- function(x,chain)
   invisible(list(chr=chr,start=start,end=end,region=paste0(chr,":",start,"-",end)))
 }
 
-coloc_sumstats <- function(prot)
+coloc_sumstats <- function(prot,chr,region37)
 {
   cat("GWAS sumstats\n")
   gwas_stats <- gwasvcf::query_gwas(file.path(INF,"METAL/vcf",paste0(prot,".vcf.gz")), chrompos = region37)
@@ -36,7 +36,7 @@ coloc_sumstats <- function(prot)
   gwas_stats_hg38
 }
 
-coloc_a <- function(gwas_stats_hg38)
+coloc_a <- function(gwas_stats_hg38,ensGene,region38)
 {
   cat("a. eQTL datasets\n")
   microarray_df <- dplyr::filter(tabix_paths, quant_method == "microarray") %>% dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
@@ -47,7 +47,7 @@ coloc_a <- function(gwas_stats_hg38)
   coloc_df_microarray <- purrr::map_df(summary_list[lapply(summary_list,nrow)!=0], ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
 }
 
-coloc_b <- function(gwas_stats_hg38)
+coloc_b <- function(gwas_stats_hg38,ensGene,region38)
 {
   cat("b. Uniformly processed RNA-seq datasets\n")
   rnaseq_df <- dplyr::filter(tabix_paths, quant_method == "ge") %>% dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
@@ -61,7 +61,7 @@ coloc_b <- function(gwas_stats_hg38)
   coloc_df_rnaseq <- purrr::map_df(result_list, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
 }
 
-coloc_c <- function(gwas_stats_hg38)
+coloc_c <- function(gwas_stats_hg38,ensGene,region38)
 {
   cat("c. GTEx_v8 imported eQTL datasets\n")
   rnaseq_df <- dplyr::filter(imported_tabix_paths, quant_method == "ge") %>% dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
@@ -79,12 +79,12 @@ coloc_c <- function(gwas_stats_hg38)
 mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
 {
   pdf(paste0(out,".pdf"))
-  gwas_stats_hg38 <- coloc_sumstats(prot)
+  gwas_stats_hg38 <- coloc_sumstats(prot,chr,region37)
   if (run_all)
   {
-    coloc_df_microarray <- coloc_a(gwas_stats_hg38)
-    coloc_df_rnaseq <- coloc_b(gwas_stats_hg38)
-    coloc_df_imported <- coloc_c(gwas_stats_hg38)
+    coloc_df_microarray <- coloc_a(gwas_stats_hg38,ensGene,region38)
+    coloc_df_rnaseq <- coloc_b(gwas_stats_hg38,ensGene,region38)
+    coloc_df_imported <- coloc_c(gwas_stats_hg38,ensGene,region38)
     if (exists("coloc_df_microarray") & exits("coloc_df_rnaseq") & exists("coloc_df_imported"))
     {
       coloc_df = dplyr::bind_rows(coloc_df_microarray, coloc_df_rnaseq, coloc_df_imported)
@@ -93,7 +93,7 @@ mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FAL
       ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
     }
   } else {
-    coloc_df_imported <- coloc_c(gwas_stats_hg38)
+    coloc_df_imported <- coloc_c(gwas_stats_hg38,ensGene,region38)
     if (exists("coloc_df_imported"))
     {
       saveRDS(coloc_df_imported,file=paste(out,".RDS"))
