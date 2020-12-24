@@ -86,6 +86,6 @@ do
     echo ${SNP}
     awk -vSNP=${SNP} '$4==SNP' cis-eQTL.dat | cut -f15 | uniq
   ) > ${SNP}.snps
-  plink --bfile INTERVAL/cardio/INTERVAL --chr ${chr} --extract ${SNP}.snps --make-bed --out ${SNP}
+  plink --bfile INTERVAL/cardio/INTERVAL --extract ${SNP}.snps --make-bed --out ${SNP}
   plink --bfile ${SNP} --no-sex --no-pheno --r2 inter-chr --out ${SNP}
 done
