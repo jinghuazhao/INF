@@ -79,7 +79,7 @@ R --no-save <<END
   cisQTL <- within(cbind(cis_dat,cis_dat37),{snpid <- paste0("chr",chr37,":",end37,"_",a1,"_",a2)})
   write.table(cisQTL,file="cis-eQTL.dat",quote=FALSE,row.names=FALSE,sep="\t")
 END
-for SNP in $(cut -f4 cis-eQTL.dat | uniq)
+for SNP in $(cut -f4 cis-eQTL.dat | sed '1d' | uniq)
 do
   export chr=$(awk -vSNP=${SNP} 'BEGIN{gsub(/chr/,"",SNP);split(SNP,a,":");print a[1]}')
   echo ${SNP} - ${chr}
