@@ -1,0 +1,38 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=_gwasvcf
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --mem=28800
+#SBATCH --array=1-59
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_gwasvcf_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_gwasvcf_%A_%a.err
+#SBATCH --export ALL
+
+export job=$SLURM_ARRAY_TASK_ID
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+
+module load jdk-8u141-b15-gcc-5.4.0-p4aaopt
+module load gatk
+module load python/3.7
+cd ${HPC_WORK}/gwas2vcf
+source env/bin/activate
+export prot=$(sed '1d' ${INF}/work/INF1.merge | cut -f5 | grep -v BDNF | sort | uniq | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
+echo ${prot}
+if [ ! ${INF}/METAL/gwasvcf/${prot}.txt.gz ]; then
+   (
+     awk -vOFS="\t" 'BEGIN{print "chr","pos","snpid","a1","a2","af","b","se","logp","n"}'
+     gunzip -c ${INF}/METAL/${prot}-1.tbl | \
+     awk -vOFS="\t" 'NR>1{print $1,$2,$3,toupper($4),toupper($5),$6, $10, $11, (-$12), $18}' | \
+     grep -v "<" | \
+     sort -k1,1n -k2,2n
+   ) | \
+   gzip -f > ${INF}/METAL/gwasvcf/${prot}.txt.gz
+fi
+if [ ! ${INF}/METAL/gwasvcf/${prot}.vcf.gz ]; then
+   python main.py --out ${INF}/METAL/gwasvcf/${prot}.vcf.gz --data ${INF}/METAL/gwasvcf/${prot}.txt.gz \
+                  --ref human_g1k_v37.fasta --id "${prot}" --json ${INF}/rsid/gwasvcf.json
+   tabix -f ${INF}/METAL/gwasvcf/${prot}.vcf.gz
+fi
