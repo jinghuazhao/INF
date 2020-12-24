@@ -57,8 +57,9 @@ chembl.sh | toy CHEMBL queries
 CRP.sh | an inflammation score
 cvd1.sh | SCALLOP-CVDI supplementary tables
 efo.R | experimental factor ontology
-eQTL.R | cis-pQTL eQTL lookup
-GTEx.R | cis-pQTL GTEx eQTL lookup
+eQTL.R | cis-pQTL eQTL lookup (PhenoScanner)
+GTEx.R | cis-pQTL GTEx eQTL lookup (PhenoScanner)
+GTEx.sh | cis-pQTL GTEx eQTL lookup (GTEx v8)
 gdigt.R | GDI and gene-trials
 gwasvcf.sh | GWAS to VCF conversion
 HGI.sh | HGI data analysis
