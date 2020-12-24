@@ -88,7 +88,7 @@ mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FAL
     if (exists("coloc_df_microarray") & exits("coloc_df_rnaseq") & exists("coloc_df_imported"))
     {
       coloc_df = dplyr::bind_rows(coloc_df_microarray, coloc_df_rnaseq, coloc_df_imported)
-      saveRDS(coloc_df, file=paste(out,".RDS"))
+      saveRDS(coloc_df, file=paste0(out,".RDS"))
       dplyr::arrange(coloc_df, -PP.H4.abf)
       ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
     }
@@ -96,7 +96,7 @@ mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FAL
     coloc_df_imported <- coloc_c(gwas_stats_hg38,ensGene,region38)
     if (exists("coloc_df_imported"))
     {
-      saveRDS(coloc_df_imported,file=paste(out,".RDS"))
+      saveRDS(coloc_df_imported,file=paste0(out,".RDS"))
       dplyr::arrange(coloc_df_imported, -PP.H4.abf)
       ggplot(coloc_df_imported, aes(x = PP.H4.abf)) + geom_histogram()
     }
