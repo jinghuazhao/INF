@@ -76,7 +76,7 @@ R --no-save <<END
   class(cis37)
   cis_dat37 <- data.frame(cis37)[c("seqnames","start","end")]
   names(cis_dat37) <- c("chr37","start37","end37")
-  cisQTL <- within(cbind(cis_dat,cis_dat37),{snpid <- paste0("chr",chr37,":",end37,"_",a1,"_",a2)})
+  cisQTL <- within(cbind(cis_dat,cis_dat37),{snpid <- paste0(chr37,":",end37,"_",a1,"_",a2)})
   write.table(cisQTL,file="cis-eQTL.dat",quote=FALSE,row.names=FALSE,sep="\t")
 END
 for SNP in $(cut -f4 cis-eQTL.dat | sed '1d' | uniq)
