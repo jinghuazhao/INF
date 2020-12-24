@@ -44,7 +44,7 @@ coloc_a <- function(gwas_stats_hg38)
   hdr <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","column_names.CEDAR")
   column_names <- names(read.delim(hdr))
   summary_list <- purrr::map(ftp_path_list, ~import_eQTLCatalogue(., region38, selected_gene_id = ensGene, column_names))
-  coloc_df_microarray <- purrr::map_df(summary_list, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
+  coloc_df_microarray <- purrr::map_df(summary_list[lapply(summary_list,nrow)!=0], ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
 }
 
 coloc_b <- function(gwas_stats_hg38)
@@ -56,7 +56,7 @@ coloc_b <- function(gwas_stats_hg38)
   column_names <- names(read.delim(hdr))
   safe_import <- purrr::safely(import_eQTLCatalogue)
   summary_list <- purrr::map(ftp_path_list, ~safe_import(., region38, selected_gene_id = ensGene, column_names))
-  result_list <- purrr::map(summary_list, ~.$result)
+  result_list <- purrr::map(summary_list[lapply(result_list,nrow)!=0], ~.$result)
   result_list <- result_list[!unlist(purrr::map(result_list, is.null))]
   coloc_df_rnaseq <- purrr::map_df(result_list, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
 }
@@ -72,7 +72,7 @@ coloc_c <- function(gwas_stats_hg38)
   summary_list <- purrr::map(ftp_path_list, ~safe_import(., region38, selected_gene_id = ensGene, column_names))
   result_list <- purrr::map(summary_list, ~.$result)
   result_list <- result_list[!unlist(purrr::map(result_list, is.null))]
-  result_filtered <- purrr::map(result_list, ~dplyr::filter(., !is.na(se)))
+  result_filtered <- purrr::map(result_list[lapply(result_list,nrow)!=0], ~dplyr::filter(., !is.na(se)))
   coloc_df_imported <- purrr::map_df(result_filtered, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
 }
 
@@ -85,15 +85,21 @@ mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FAL
     coloc_df_microarray <- coloc_a(gwas_stats_hg38)
     coloc_df_rnaseq <- coloc_b(gwas_stats_hg38)
     coloc_df_imported <- coloc_c(gwas_stats_hg38)
-    coloc_df = dplyr::bind_rows(coloc_df_microarray, coloc_df_rnaseq, coloc_df_imported)
-    save(coloc_df, file=paste(out,".rda"))
-    dplyr::arrange(coloc_df, -PP.H4.abf)
-    ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
+    if (exists("coloc_df_microarray") & exits("coloc_df_rnaseq") & exists("coloc_df_imported"))
+    {
+      coloc_df = dplyr::bind_rows(coloc_df_microarray, coloc_df_rnaseq, coloc_df_imported)
+      saveRDS(coloc_df, file=paste(out,".RDS"))
+      dplyr::arrange(coloc_df, -PP.H4.abf)
+      ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
+    }
   } else {
-    coloc_c()
-    saveRDS(coloc_df_imported,file=paste(out,".RDS"))
-    dplyr::arrange(coloc_df_imported, -PP.H4.abf)
-    ggplot(coloc_df_imported, aes(x = PP.H4.abf)) + geom_histogram()
+    coloc_df_imported <- coloc_c(gwas_stats_hg38)
+    if (exists("coloc_df_imported")
+    {
+      saveRDS(coloc_df_imported,file=paste(out,".RDS"))
+      dplyr::arrange(coloc_df_imported, -PP.H4.abf)
+      ggplot(coloc_df_imported, aes(x = PP.H4.abf)) + geom_histogram()
+    }
   }
   dev.off()
 }
@@ -121,6 +127,7 @@ single_run <- function(r)
 # mixed_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
 }
 
+options(width=200)
 library(pQTLtools)
 f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
 chain <- rtracklayer::import.chain(f)
