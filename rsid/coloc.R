@@ -94,7 +94,7 @@ mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FAL
     }
   } else {
     coloc_df_imported <- coloc_c(gwas_stats_hg38)
-    if (exists("coloc_df_imported")
+    if (exists("coloc_df_imported"))
     {
       saveRDS(coloc_df_imported,file=paste(out,".RDS"))
       dplyr::arrange(coloc_df_imported, -PP.H4.abf)
