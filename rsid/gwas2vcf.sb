@@ -37,3 +37,32 @@ if [ ! -f ${INF}/METAL/gwasvcf/${prot}.vcf.gz ]; then
    tabix -f ${INF}/METAL/gwasvcf/${prot}.vcf.gz
 fi
 cd -
+
+function vcfops()
+# perform liftover
+{
+  module load jdk-8u141-b15-gcc-5.4.0-p4aaopt
+  module load gatk
+  module load python/3.7
+  module load picard/2.9.2
+  export reference=${HPC_WORK}/gwas2vcf/human_g1k_v37
+  export input=${INF}/METAL/vcf/${prot}
+  export output=${INF}/work/${prot}-b38
+# extract a region
+  bcftools filter -r 1:1000000-2000000 -o ${input}-r.vcf.gz ${input}.vcf.gz
+# filter on p values
+  bcftools filter -i 'FORMAT/LP > 7.3' -o ${input}-7.3.vcf ${input}.vcf.gz
+# GWAS Catalogue
+  bcftools query -e 'ID == "."' -f '%ID\t[%LP]\t%CHROM\t%POS\t%ALT\t%REF\t%AF\t[%ES\t%SE]\n' ${input}.vcf.gz | \
+  awk 'BEGIN {
+  print "variant_id\tp_value\tchromosome\tbase_pair_location\teffect_allele\tother_allele\teffect_allele_frequency\tbeta\tstandard_error"
+  }; {OFS="\t"; if ($2==0) $2=1; else if ($2==999) $2=0; else $2=10^-$2; print}' | \
+  gzip -f > ${input}.tsv.gz
+# liftOver
+  java -jar /usr/local/Cluster-Apps/picard/2.9.2/picard.jar CreateSequenceDictionary R=${reference}.fasta O=${reference}.dict
+  gatk LiftoverVcf --INPUT ${input}.vcf.gz --OUTPUT ${output}.vcf.gz \
+                   --REJECT ${input}-rejected.vcf.gz --CHAIN ${HPC_WORK}/bin/hg19ToHg38.over.chain \
+                   --REFERENCE_SEQUENCE ${reference}.fasta --RECOVER_SWAPPED_REF_ALT false 
+# Validation
+  gatk ValidateVariants -V ${output}.vcf.gz -R ${reference}.fasta --validation-type-to-exclude ALLELES
+}

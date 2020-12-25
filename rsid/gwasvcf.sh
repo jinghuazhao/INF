@@ -50,5 +50,5 @@ function python()
     INF <- Sys.getenv("INF")
     write(toJSON(j, auto_unbox=T), file = file.path(INF,"rsid","gwasvcf.json"))
   END
-  sbatch ${INF}/rsid/gwasvcf.sb
+  sbatch ${INF}/rsid/gwas2vcf.sb
 }
