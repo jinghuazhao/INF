@@ -36,3 +36,4 @@ if [ ! -f ${INF}/METAL/gwasvcf/${prot}.vcf.gz ]; then
                   --ref human_g1k_v37.fasta --id "${prot}" --json ${INF}/rsid/gwasvcf.json
    tabix -f ${INF}/METAL/gwasvcf/${prot}.vcf.gz
 fi
+cd -
