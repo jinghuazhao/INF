@@ -62,6 +62,7 @@ GTEx.R | cis-pQTL GTEx eQTL lookup (PhenoScanner)
 GTEx.sh | cis-pQTL GTEx eQTL lookup (GTEx v8)
 gdigt.R | GDI and gene-trials
 gwasvcf.sh | GWAS to VCF conversion
+gwas2vcf.sb | gwas2vcf + VCF operations
 HGI.sh | HGI data analysis
 latex.tex | LaTeX formulas embedded in Markdown
 latex.docx | LaTeX formulas embedded in MicroSoft Word
