@@ -1,18 +1,29 @@
 #!/usr/bin/bash
 
-#SBATCH --job-name=_gwasvcf
+#SBATCH --job-name=_gwas2vcf
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
 #SBATCH --mem=28800
 #SBATCH --array=1-91
 #SBATCH --time=5-00:00:00
-#SBATCH --output=/rds/user/jhz22/hpc-work/work/_gwasvcf_%A_%a.out
-#SBATCH --error=/rds/user/jhz22/hpc-work/work/_gwasvcf_%A_%a.err
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_gwas2vcf_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_gwas2vcf_%A_%a.err
 #SBATCH --export ALL
 
 export job=$SLURM_ARRAY_TASK_ID
 export TMPDIR=/rds/user/jhz22/hpc-work/work
+
+if [ ! -f ${INF}/rsid/gwas2vcf.json ]; then
+  R --no-save <<\ \ END
+    library(jsonlite)
+    j <- list(chr_col = 0, pos_col = 1, snp_col = 2, ea_col = 3, oa_col = 4, eaf_col = 5,
+              beta_col = 6, se_col = 7, pval_col = 8, ncontrol_col = 9, delimiter = "\t",
+              header = TRUE, build = "GRCh37")
+    INF <- Sys.getenv("INF")
+    write(toJSON(j, auto_unbox=TRUE, pretty=TRUE), file = file.path(INF,"rsid","gwas2vcf.json"))
+  END
+fi
 
 module load jdk-8u141-b15-gcc-5.4.0-p4aaopt
 module load gatk
@@ -21,20 +32,23 @@ cd ${HPC_WORK}/gwas2vcf
 source env/bin/activate
 export prot=$(cut -f1 ${INF}/work/inf1.tmp | grep -v BDNF | sort | uniq | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
 echo ${prot}
-if [ ! -f ${INF}/METAL/gwasvcf/${prot}.txt.gz ]; then
+if [ ! -f ${INF}/METAL/vcf/${prot}.txt.gz ]; then
    (
      awk -vOFS="\t" 'BEGIN{print "chr","pos","snpid","a1","a2","af","b","se","logp","n"}'
      gunzip -c ${INF}/METAL/${prot}-1.tbl | \
      awk -vOFS="\t" 'NR>1{print $1,$2,$3,toupper($4),toupper($5),$6, $10, $11, (-$12), $18}' | \
      grep -v "<" | \
-     sort -k1,1n -k2,2n
+     sort -k1,1n -k2,2n | \
+     awk -vOFS="\t" '{$1="chr"$1};1'
    ) | \
-   gzip -f > ${INF}/METAL/gwasvcf/${prot}.txt.gz
+   gzip -f > ${INF}/METAL/gwas2vcf/${prot}.txt.gz
 fi
 if [ ! -f ${INF}/METAL/gwasvcf/${prot}.vcf.gz ]; then
-   python main.py --out ${INF}/METAL/gwasvcf/${prot}.vcf.gz --data ${INF}/METAL/gwasvcf/${prot}.txt.gz \
-                  --ref human_g1k_v37.fasta --id "${prot}" --json ${INF}/rsid/gwasvcf.json
-   tabix -f ${INF}/METAL/gwasvcf/${prot}.vcf.gz
+   python main.py --out ${INF}/METAL/gwas2vcf/${prot}.vcf.gz --data ${INF}/METAL/gwas2vcf/${prot}.txt.gz \
+                  --id ${prot} --ref human_g1k_v37.fasta \
+                  --dbsnp ~/rds/public_databases/dbsnp/snp154_hg19.vcf.gz \
+                  --json ${INF}/rsid/gwas2vcf.json
+   tabix -f ${INF}/METAL/gwas2vcf/${prot}.vcf.gz
 fi
 cd -
 
