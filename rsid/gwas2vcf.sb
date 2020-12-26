@@ -32,7 +32,7 @@ cd ${HPC_WORK}/gwas2vcf
 source env/bin/activate
 export prot=$(cut -f1 ${INF}/work/inf1.tmp | grep -v BDNF | sort | uniq | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
 echo ${prot}
-if [ ! -f ${INF}/METAL/vcf/${prot}.txt.gz ]; then
+if [ ! -f ${INF}/METAL/gwas2vcf/${prot}.txt.gz ]; then
    (
      awk -vOFS="\t" 'BEGIN{print "chr","pos","snpid","a1","a2","af","b","se","logp","n"}'
      gunzip -c ${INF}/METAL/${prot}-1.tbl | \

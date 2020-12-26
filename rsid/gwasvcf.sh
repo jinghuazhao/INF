@@ -41,3 +41,5 @@ do
 done
 
 # sbatch ${INF}/rsid/gwas2vcf.sb
+# ls METAL/vcf/*tbi|xargs -I {} sh -c "basename {} .vcf.gz.tbi" | parallel -C' ' '
+#    gunzip -c METAL/vcf/{}.txt.gz | awk -vOFS="\t" "{if(NR>1)\$1=\"chr\"\$1};1" | gzip -f > METAL/gwas2vcf/{}.txt.gz'
