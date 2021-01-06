@@ -6,13 +6,12 @@
 
 ```mermaid
 graph TB;
-tryggve ==> cardio;
-cardio ==> csd3;
+tryggve ==> cardio ==> csd3;
 MetaAnalysis[Meta analysis: list.sh, format.sh,metal.sh, QCGWAS.sh, analysis.sh] --> GWAS[pQTL selection and Characterisation];
 GWAS --> Protyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
 Protyping --> Multi-omics-analysis;
 cardio --> cardioAnalysis[Prototyping and KORA data analysis];
-csd3 --> Analysis2[Conditional analysis,finemapping, etc];
+csd3 --> FurtherAnalysis[Conditional analysis,finemapping, etc];
 csd3 --> code[R Packages at CRAN/GitHub]; 
 ```
 
