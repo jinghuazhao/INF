@@ -20,7 +20,7 @@ csd3 --> code[R Packages at CRAN/GitHub];
 
 ![](https://tinyurl.com/y6g4t8fm)
 
-###Comments
+### Comments
 
 1. We prototyped our analysis on cardio with INTERVAL such as [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](cardio/cardio.sh) as well as individual level data analysis for the KORA study.
 2. Data pre-processing was done on initially from [tryggve](tryggve) with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh), followed by meta-analysis according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with additional investigation.
