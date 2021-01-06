@@ -2,8 +2,6 @@
 
 # SCALLOP-INF meta-analysis
 
-## [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx](doc/SCALLOP_INF1_analysis_plan.docx))
-
 ## Flow of analysis
 
 ```mermaid
@@ -49,6 +47,7 @@ git clone https://github.com/jinghua/INF
 
 ##Additional Information
 
+* [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx](doc/SCALLOP_INF1_analysis_plan.docx))
 * [Approximately independent LD blocks](doc/aild.md)
 * [Competitive logp/log10p functions](doc/logplog10p.md)
 * [Notes on UniProt IDs](doc/uniprot.md)
