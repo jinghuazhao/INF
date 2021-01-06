@@ -114,3 +114,10 @@ uniq > work/INF1.gene
 
 # phenoscanner -t T -c eQTL -x EUR -p 5e-8 -r 0.8 -i work/INF1.gene -o INF1
 # additionally from pqtlxQTL.R
+
+function ieu()
+{
+  md5sum * > INF1.md5sum
+  md5sum --check INF1.md5sum
+  ls  *gz | parallel -C' ' 'echo {}; gunzip -c {} | wc -l' | paste - - | sort -k1,1 > INF1.size
+}

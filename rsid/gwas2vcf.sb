@@ -28,7 +28,21 @@ fi
 export prot=$(cut -f1 ${INF}/work/inf1.tmp | grep -v BDNF | sort | uniq | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
 echo ${prot}
 
-function metal2tab()
+function metalLP()
+{
+  if [ ! -f ${INF}/METAL/gwas2vcf/LP/${prot}.txt.gz ]; then
+     (
+       awk -vOFS="\t" 'BEGIN{print "chr","pos","snpid","a1","a2","af","b","se","log10p","n"}'
+       gunzip -c ${INF}/METAL/${prot}-1.tbl | \
+       awk -vOFS="\t" 'NR>1{print $1,$2,$3,toupper($4),toupper($5),$6, $10, $11, $12, $18}' | \
+       grep -v "<" | \
+       sort -k1,1n -k2,2n
+     ) | \
+     gzip -f > ${INF}/METAL/gwas2vcf/LP/${prot}.txt.gz
+  fi
+}
+
+function metalP()
 {
   if [ ! -f ${INF}/METAL/gwas2vcf/${prot}.txt.gz ]; then
      (
@@ -41,8 +55,6 @@ function metal2tab()
      gzip -f > ${INF}/METAL/gwas2vcf/${prot}.txt.gz
   fi
 }
-
-metal2tab
 
 function gwas2vcf()
 {
@@ -66,6 +78,8 @@ function gwas2vcf()
 # notes only
 # --dbsnp ~/rds/public_databases/dbsnp/snp154_GCF_000001405.25.gz \
 # --alias hg19.chromAlias.tsv
+
+gwas2vcf
 
 function vcfops()
 # perform liftover
