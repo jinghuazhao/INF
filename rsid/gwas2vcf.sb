@@ -32,27 +32,28 @@ cd ${HPC_WORK}/gwas2vcf
 source env/bin/activate
 export prot=$(cut -f1 ${INF}/work/inf1.tmp | grep -v BDNF | sort | uniq | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
 echo ${prot}
-if [ ! -f ${INF}/METAL/vcf/${prot}.txt.gz ]; then
+if [ ! -f ${INF}/METAL/gwas2vcf/${prot}.txt.gz ]; then
    (
-     awk -vOFS="\t" 'BEGIN{print "chr","pos","snpid","a1","a2","af","b","se","logp","n"}'
+     awk -vOFS="\t" 'BEGIN{print "chr","pos","snpid","a1","a2","af","b","se","p","n"}'
      gunzip -c ${INF}/METAL/${prot}-1.tbl | \
-     awk -vOFS="\t" 'NR>1{print $1,$2,$3,toupper($4),toupper($5),$6, $10, $11, (-$12), $18}' | \
+     awk -vOFS="\t" 'NR>1{print $1,$2,$3,toupper($4),toupper($5),$6, $10, $11, 10^($12), $18}' | \
      grep -v "<" | \
-     sort -k1,1n -k2,2n | \
-     awk -vOFS="\t" '{$1="chr"$1};1'
+     sort -k1,1n -k2,2n
    ) | \
-   gzip -f > ${INF}/METAL/vcf/${prot}.txt.gz
+   gzip -f > ${INF}/METAL/gwas2vcf/${prot}.txt.gz
 fi
 if [ ! -f hg19.chromAlias.tsv ]; then
    chromToUcsc --get hg19
 fi
 if [ ! -f ${INF}/METAL/gwas2vcf/${prot}.vcf.gz ]; then
-   python main.py --out ${INF}/METAL/gwas2vcf/${prot}.vcf.gz --data ${INF}/METAL/vcf/${prot}.txt.gz \
+   python main.py --out ${INF}/METAL/gwas2vcf/${prot}.vcf.gz --data ${INF}/METAL/gwas2vcf/${prot}.txt.gz \
                   --id ${prot} --ref human_g1k_v37.fasta --json ${INF}/rsid/gwas2vcf.json \
-                  --dbsnp ~/rds/public_databases/dbsnp/snp154_GCF_000001405.25.gz \
-                  --alias hg19.chromAlias.tsv
+                  --dbsnp dbsnp.v153.b37.vcf.gz \
+                  --alias alias.txt
    tabix -f ${INF}/METAL/gwas2vcf/${prot}.vcf.gz
 fi
+#                  --dbsnp ~/rds/public_databases/dbsnp/snp154_GCF_000001405.25.gz \
+#                  --alias hg19.chromAlias.tsv
 cd -
 
 function vcfops()
