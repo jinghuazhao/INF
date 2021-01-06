@@ -89,3 +89,29 @@ function vcfops()
 # Validation
   gatk ValidateVariants -V ${output}.vcf.gz -R ${reference}.fasta --validation-type-to-exclude ALLELES
 }
+
+function gwasvcf()
+{
+module load gcc/6
+
+R --no-save <<END
+  options(width=200)
+  library(gwasvcf)
+  library(VariantAnnotation)
+  library(gap)
+  HPC_WORK <- Sys.getenv("HPC_WORK")
+  set_bcftools(path=file.path(HPC_WORK,"bin","bcftools"))
+  INF <- Sys.getenv("INF")
+  prot <- Sys.getenv("prot")
+  cat(prot,"\n")
+  metal <- read.table(file.path(INF,"METAL",paste0(prot,"-1.tbl.gz")),as.is=TRUE,header=TRUE)
+  out <- with(subset(metal,!grepl("<",Allele1)&grepl("<",Allele2)),
+              create_vcf(chrom=Chromosome, pos=Position, nea=toupper(Allele2), ea=toupper(Allele1), snp=MarkerName,
+                         ea_af=Freq1, effect=Effect, se=StdErr, pval=10^log.P., n=as.integer(N), name=prot)
+             )
+  vcf_name <- file.path(INF,"METAL","keep",paste0(prot,".vcf"))
+  vcf_index <- paste0(vcf_name,".tbi")
+  writeVcf(out, file=vcf,index=TRUE)
+  create_rsidx_index_from_vcf(vcf_name, vcf_index)
+END
+}
