@@ -1,35 +1,31 @@
 <img src="doc/INF1.circlize.png" width="300" height="300" align="right">
 
----
+# SCALLOP-INF meta-analysis
 
-# SCALLOP Olink/INFlammation analysis
+## [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx](doc/SCALLOP_INF1_analysis_plan.docx))
 
----
+## Flow of analysis
 
-## TABLE OF CONTENTS ([Web site](https://jinghuazhao.github.io/INF/))
+```mermaid
+graph TB;
+tryggve ==> cardio;
+cardio ==> csd3;
+MetaAnalysis[Meta analysis: list.sh, format.sh,metal.sh, QCGWAS.sh, analysis.sh] --> GWAS[pQTL selection and Characterisation];
+GWAS --> Protyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
+Protyping --> Multi-omics-analysis;
+cardio --> cardioAnalysis[Prototyping and KORA data analysis];
+csd3 --> Analysis2[Conditional analysis,finemapping, etc];
+csd3 --> code[R Packages at CRAN/GitHub]; 
+```
 
-* [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx](doc/SCALLOP_INF1_analysis_plan.docx))
-* Analysis
-* References
-* Additional information
-  * [Approximately independent LD blocks](doc/aild.md)
-  * [Competitive logp/log10p functions](doc/logplog10p.md)
-  * [Notes on UniProt IDs](doc/uniprot.md)
-  * [TRYGGVE](https://neic.no/tryggve/)-[specific notes](tryggve/tryggve.md)
-  * URLs and downloading
+![](https://tinyurl.com/y6g4t8fm)
 
-<img src="doc/OPG-qmlf.png" width="400" height="800" align="right">
+###Comments
 
-## Analysis
-
-1. To implement the analysis plan, we started with analysis on INTERVAL as with [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](cardio/cardio.sh).
-
-2. Data preprocessig was done with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh). The meta-analysis was according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with addtional investigation.
-
-3. The main analysis follows [analysis.sh](tryggve/analysis.sh), initially from [tryggve](tryggve), which contains codes for Q-Q/Manhattan/LocusZoom/Forest plots (see the figure on the right for the OPG example, which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with [cardio](cardio) and [CSD3](csd3). cis/trans classificaiton has been done via [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) as validated by [cistrans.sh](cardio/cistrans.sh).
-
+1. We prototyped our analysis on cardio with INTERVAL such as [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](cardio/cardio.sh) as well as individual level data analysis for the KORA study.
+2. Data pre-processing was done on initially from [tryggve](tryggve) with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh), followed by meta-analysis according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with additional investigation.
+3. The main analysis followed [analysis.sh](tryggve/analysis.sh) containing codes for Q-Q/Manhattan/LocusZoom/Forest plots such as the OPG example, which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with [cardio](cardio) and [CSD3](csd3). cis/trans classification has been done via [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) as validated by [cistrans.sh](cardio/cistrans.sh).
 4. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (as in this page) as with `log10p`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and updates are made at [GitHub](https://github.com/jinghuazhao/R/tree/master/gap).
-
 5. Downstream analysis links examples such as CAD summary statistics for MR and MAGMA [here](https://jinghuazhao.github.io/Omics-analysis/CAD/), colocalisation analysis of simulated data in [software notes on association analysis](https://jinghuazhao.github.io/software-notes/AA.html) as well as the [BMI example](https://jinghuazhao.github.io/Omics-analysis/BMI/).
 
 ## References
@@ -45,9 +41,21 @@ Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
 
-## URLs and downloading
+## Downloading
 
-### URLs
+```{bash}
+git clone https://github.com/jinghua/INF
+```
+
+##Additional Information
+
+* [Approximately independent LD blocks](doc/aild.md)
+* [Competitive logp/log10p functions](doc/logplog10p.md)
+* [Notes on UniProt IDs](doc/uniprot.md)
+* [TRYGGVE](https://neic.no/tryggve/)-[specific notes](tryggve/tryggve.md)
+* URLs and downloading
+
+## URLs
 
 * [SCALLOP consortium](http://www.scallop-consortium.com/).
 * [Olink location](https://www.olink.com/scallop/), [What is NPX](https://www.olink.com/question/what-is-npx/), [F2F London meeting](https://www.olink.com/scallop-f2f-2019/), [Data Science Workshop 2019](https://www.olink.com/data-science-workshop-2019/).
@@ -58,10 +66,3 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 * [Aging Plasma Proteome](https://twc-stanford.shinyapps.io/aging_plasma_proteome/) ([DEswan](https://github.com/lehallib/DEswan)).
 * [ImmunoBase](https://genetics.opentargets.org/immunobase).
 * [Worldwide PDB](http://www.wwpdb.org/)
-
-### downloading
-
-```{bash}
-git clone https://github.com/jinghua/INF
-```
-
