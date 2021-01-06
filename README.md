@@ -44,7 +44,7 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 git clone https://github.com/jinghua/INF
 ```
 
-##Additional Information
+## Study Information
 
 * [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx](doc/SCALLOP_INF1_analysis_plan.docx))
 * [Approximately independent LD blocks](doc/aild.md)
@@ -53,7 +53,7 @@ git clone https://github.com/jinghua/INF
 * [TRYGGVE](https://neic.no/tryggve/)-[specific notes](tryggve/tryggve.md)
 * URLs and downloading
 
-## URLs
+## Related links
 
 * [SCALLOP consortium](http://www.scallop-consortium.com/).
 * [Olink location](https://www.olink.com/scallop/), [What is NPX](https://www.olink.com/question/what-is-npx/), [F2F London meeting](https://www.olink.com/scallop-f2f-2019/), [Data Science Workshop 2019](https://www.olink.com/data-science-workshop-2019/).
