@@ -63,9 +63,6 @@ function gwas2vcf()
   module load python/3.7
   cd ${HPC_WORK}/gwas2vcf
   source env/bin/activate
-  if [ ! -f hg19.chromAlias.tsv ]; then
-     chromToUcsc --get hg19
-  fi
   if [ ! -f ${INF}/METAL/gwas2vcf/${prot}.vcf.gz ]; then
      python main.py --out ${INF}/METAL/gwas2vcf/${prot}.vcf.gz --data ${INF}/METAL/gwas2vcf/${prot}.txt.gz \
                     --id ${prot} --ref human_g1k_v37.fasta --json ${INF}/rsid/gwas2vcf.json \
@@ -76,6 +73,9 @@ function gwas2vcf()
   cd -
 }
 # notes only
+# if [ ! -f hg19.chromAlias.tsv ]; then
+#    chromToUcsc --get hg19
+# fi
 # --dbsnp ~/rds/public_databases/dbsnp/snp154_GCF_000001405.25.gz \
 # --alias hg19.chromAlias.tsv
 
