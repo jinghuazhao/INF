@@ -8,7 +8,7 @@ do
    export prot=${prot}
    export MarkerName=${MarkerName}
    if [ ! -f ${INF}/coloc/${prot}-${MarkerName}.pdf ] || [ ! -f ${INF}/coloc/${prot}-${MarkerName}.RDS ]; then
-     cd ${HPC_WORK}/work
+     cd ${INF}/coloc
      R --no-save < ${INF}/rsid/coloc.R 2>&1 | tee ${prot}-${MarkerName}.log
 #    ls *tbi | xargs -I {} bash -c "rm {}"
      cd -

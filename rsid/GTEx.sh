@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
-function cis()
-{
+# cis-pQTLs
 R --no-save <<END
   options(width=200)
   library(pQTLtools)
-  cvt <- read.csv("work/INF1.merge.cis.vs.trans")
+  INF <- Sys.getenv("INF")
+  cvt <- read.csv(paste0(INF,"/work/INF1.merge.cis.vs.trans"))
   cvt_cis <- merge(subset(cvt,cis),inf1[c("gene","ensembl_gene_id")],by.x="p.gene",by.y="gene")
   cis_dat <- within(cvt_cis,{seqnames <- paste0("chr",Chr); start <- as.integer(bp-1); end <- as.integer(bp)})
   ord_cis <- with(cis_dat,order(Chr,bp))
@@ -23,10 +23,8 @@ R --no-save <<END
   names(cis_dat38) <- c("chr38","start38","end38")
   write.table(data.frame(cis_dat,cis_dat38),file="cis-pQTL.dat",quote=FALSE,row.names=FALSE,sep="\t")
 END
-}
 
-function eQTL()
-{
+# cis-eQTLs from GTEx v8
 export GTEx_v8=${HPC_WORK}/GTEx_Analysis_v8_eQTL
 export ext=.v8.signif_variant_gene_pairs.txt.gz
 export col_gene=2
@@ -56,8 +54,8 @@ export nlines=60
 sort -k1,1 -k2,2 > eQTL_GTEx.dat
 awk '$5==$11' eQTL_GTEx.dat | cut -f1 | uniq
 awk '$5==$11' eQTL_GTEx.dat
-}
 
+# Variants cis-eQTL regions, subject to check on r2
 R --no-save <<END
   options(width=200)
   library(pQTLtools)
@@ -89,3 +87,4 @@ do
   plink --bfile INTERVAL/cardio/INTERVAL --extract ${SNP}.snps --make-bed --out ${SNP}
   plink --bfile ${SNP} --no-sex --no-pheno --r2 inter-chr --out ${SNP}
 done
+ls *.ld | xargs -I {} basename {} .ld | parallel -C' ' 'grep {} {}.ld'
