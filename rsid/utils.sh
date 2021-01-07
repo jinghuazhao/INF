@@ -117,7 +117,7 @@ uniq > work/INF1.gene
 
 function ieu()
 {
-  md5sum * > INF1.md5sum
+  md5sum *.tsv.gz > INF1.md5sum
   md5sum --check INF1.md5sum
-  ls  *gz | parallel -C' ' 'echo {}; gunzip -c {} | wc -l' | paste - - | sort -k1,1 > INF1.size
+  ls  *.tsv.gz | parallel -C' ' 'echo {}; gunzip -c {} | wc -l' | paste - - | sort -k1,1 > INF1.size
 }
