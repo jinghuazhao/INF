@@ -8,8 +8,8 @@
 graph TB;
 tryggve ==> cardio ==> csd3;
 MetaAnalysis[Meta analysis: list.sh, format.sh,metal.sh, QCGWAS.sh, analysis.sh] --> GWAS[pQTL selection and Characterisation];
-GWAS --> Protyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
-Protyping --> Multi-omics-analysis;
+GWAS --> Prottoyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
+Prototyping --> Multi-omics-analysis;
 cardio --> cardioAnalysis[Prototyping and KORA data analysis];
 csd3 --> FurtherAnalysis[Conditional analysis,finemapping, etc];
 csd3 --> code[R Packages at CRAN/GitHub]; 
