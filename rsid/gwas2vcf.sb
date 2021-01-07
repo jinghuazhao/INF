@@ -38,7 +38,7 @@ function metalLP()
        grep -v "<" | \
        sort -k1,1n -k2,2n
      ) | \
-     gzip -f > ${INF}/METAL/gwas2vcf/LP/${prot}.txt.gz
+     bgzip -f > ${INF}/METAL/gwas2vcf/LP/${prot}.txt.gz
   fi
 }
 
@@ -52,7 +52,7 @@ function metalP()
        grep -v "<" | \
        sort -k1,1n -k2,2n
      ) | \
-     gzip -f > ${INF}/METAL/gwas2vcf/${prot}.txt.gz
+     bgzip -f > ${INF}/METAL/gwas2vcf/${prot}.txt.gz
   fi
 }
 
