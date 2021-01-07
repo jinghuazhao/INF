@@ -51,7 +51,6 @@ git clone https://github.com/jinghua/INF
 * [Competitive logp/log10p functions](doc/logplog10p.md)
 * [Notes on UniProt IDs](doc/uniprot.md)
 * [TRYGGVE](https://neic.no/tryggve/)-[specific notes](tryggve/tryggve.md)
-* URLs and downloading
 
 ## Related links
 
