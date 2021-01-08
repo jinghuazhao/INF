@@ -38,7 +38,7 @@ Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
 
-## Downloading
+## Download
 
 ```{bash}
 git clone https://github.com/jinghua/INF
