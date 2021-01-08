@@ -48,7 +48,7 @@ git clone https://github.com/jinghua/INF
 
 * [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx](doc/SCALLOP_INF1_analysis_plan.docx))
 * [Approximately independent LD blocks](doc/aild.md)
-* [Competitive logp/log10p functions](doc/logplog10p.md)
+* [Competitive logp/log10p/pvalue functions](doc/logplog10ppvalue.md)
 * [Notes on UniProt IDs](doc/uniprot.md)
 * [TRYGGVE](https://neic.no/tryggve/)-[specific notes](tryggve/tryggve.md)
 
