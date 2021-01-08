@@ -1,5 +1,3 @@
-#!/rds/user/jhz22/hpc-work/bin/Rscript --vanilla
-
 liftRegion <- function(x,chain)
 {
   require(GenomicRanges)
@@ -10,16 +8,13 @@ liftRegion <- function(x,chain)
   chr <- gsub("chr","",chr)
   start <- min(unlist(start(gr38)))
   end <- max(unlist(end(gr38)))
-# chr <- as.character(seqnames(gr38))
-# start <- as.character(start(gr38))
-# end <- as.character(end(gr38))
   invisible(list(chr=chr,start=start,end=end,region=paste0(chr,":",start,"-",end)))
 }
 
 coloc_sumstats <- function(prot,chr,region37)
 {
   cat("GWAS sumstats\n")
-  gwas_stats <- gwasvcf::query_gwas(file.path(INF,"METAL/vcf",paste0(prot,".vcf.gz")), chrompos = region37)
+  gwas_stats <- gwasvcf::query_gwas(file.path(INF,"METAL/gwas2vcf",paste0(prot,".vcf.gz")), chrompos = region37)
   gwas_stats <- gwasvcf::vcf_to_granges(gwas_stats) %>% keepSeqlevels(chr) %>% renameSeqlevels(paste0("chr",chr))
   gwas_stats_hg38 <- rtracklayer::liftOver(gwas_stats, chain) %>%
     unlist() %>%
@@ -78,7 +73,6 @@ coloc_c <- function(gwas_stats_hg38,ensGene,region38)
 
 mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
 {
-  pdf(paste0(out,".pdf"))
   gwas_stats_hg38 <- coloc_sumstats(prot,chr,region37)
   if (run_all)
   {
@@ -90,7 +84,7 @@ mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FAL
       coloc_df = dplyr::bind_rows(coloc_df_microarray, coloc_df_rnaseq, coloc_df_imported)
       saveRDS(coloc_df, file=paste0(out,".RDS"))
       dplyr::arrange(coloc_df, -PP.H4.abf)
-      ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
+      p <- ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
     }
   } else {
     coloc_df_imported <- coloc_c(gwas_stats_hg38,ensGene,region38)
@@ -98,10 +92,11 @@ mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FAL
     {
       saveRDS(coloc_df_imported,file=paste0(out,".RDS"))
       dplyr::arrange(coloc_df_imported, -PP.H4.abf)
-      ggplot(coloc_df_imported, aes(x = PP.H4.abf)) + geom_histogram()
+      p <- ggplot(coloc_df_imported, aes(x = PP.H4.abf)) + geom_histogram()
     }
   }
-  dev.off()
+  ggsave(plot = p, filename = paste0(out, ".pdf"), path = file.path(INF,"coloc"), device = "pdf",
+         height = 15, width = 15, units = "cm", dpi = 300)
 }
 
 single_run <- function(r)
@@ -132,18 +127,18 @@ library(pQTLtools)
 f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
 chain <- rtracklayer::import.chain(f)
 invisible(lapply(c("dplyr", "ggplot2", "readr", "coloc", "GenomicRanges","seqminer"), require, character.only = TRUE))
-gwasvcf::set_bcftools("/rds/user/jhz22/hpc-work/bin/bcftools")
+HPC_WORK <- Sys.getenv("HPC_WORK")
+gwasvcf::set_bcftools(file.path(HPC_WORK,"bin",bcftools"))
 f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths.tsv")
 tabix_paths <- read.delim(f, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
 HOME <- Sys.getenv("HOME")
 f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths_imported.tsv")
 imported_tabix_paths <- within(read.delim(f, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble(),
-      {ftp_path <- gsub("ftp://ftp.ebi.ac.uk/pub/databases/spot/eQTL/csv/GTEx_V8/ge",paste0(HOME,"/rds/public_databases/GTEx/csv"),ftp_path)})
+      {ftp_path <- gsub("ftp://ftp.ebi.ac.uk/pub/databases/spot/eQTL/csv/GTEx_V8/ge",
+                        paste0(HOME,"/rds/public_databases/GTEx/csv"),ftp_path)})
 INF <- Sys.getenv("INF")
 M <- 1e6
 sentinels <- subset(read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans")),cis)
-
-# uncomment for all runs inside R
 # for (r in 1:nrow(sentinels))
 {
   r <- as.integer(Sys.getenv("r"))
