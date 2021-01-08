@@ -12,7 +12,7 @@ GWAS --> Prototyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
 Prototyping --> Multi-omics-analysis;
 cardio --> cardioAnalysis[Prototyping and KORA data analysis];
 csd3 --> csd3Analysis[Conditional analysis,finemapping, etc];
-csd3 --> code[R Packages at CRAN/GitHub]; 
+csd3 --> software[R Packages at CRAN/GitHub]; 
 ```
 
 ![](https://tinyurl.com/y6g4t8fm)
