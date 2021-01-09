@@ -57,11 +57,11 @@ do
     unlink(paste0(prefix,"-heterogeneity.txt"))
     unlink(paste0(prefix,"-pleiotropy.txt"))
   END
-  ' ::: $(cat ${INF}/rsid/mrbase-id.txt) ::: $(seq ${nrows})
-  export nrows=$(cat ${INF}/rsid/mrbase-id.txt | wc -l)
+  ' ::: $(cat ${INF}/rsid/opengwas-id.txt) ::: $(seq ${nrows})
+  export nrows=$(cat ${INF}/rsid/opengwas-id.txt | wc -l)
   for i in $(seq ${nrows})
   do
-    export id=$(awk -vnr=${i} 'NR==nr{print $1}' ${INF}/rsid/mrbase-id.txt)
+    export id=$(awk -vnr=${i} 'NR==nr{print $1}' ${INF}/rsid/opengwas-id.txt)
     export prefix=INF1
     collect
     export prefix=INF1_rev

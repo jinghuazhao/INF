@@ -95,7 +95,7 @@ mixed_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FAL
       p <- ggplot(coloc_df_imported, aes(x = PP.H4.abf)) + geom_histogram()
     }
   }
-  ggsave(plot = p, filename = paste0(out, ".pdf"), path = file.path(INF,"coloc"), device = "pdf",
+  ggsave(plot = p, filename = paste0(out, ".pdf"), path = "", device = "pdf",
          height = 15, width = 15, units = "cm", dpi = 300)
 }
 
