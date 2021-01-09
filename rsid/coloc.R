@@ -128,7 +128,7 @@ f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain
 chain <- rtracklayer::import.chain(f)
 invisible(lapply(c("dplyr", "ggplot2", "readr", "coloc", "GenomicRanges","seqminer"), require, character.only = TRUE))
 HPC_WORK <- Sys.getenv("HPC_WORK")
-gwasvcf::set_bcftools(file.path(HPC_WORK,"bin",bcftools"))
+gwasvcf::set_bcftools(file.path(HPC_WORK,"bin","bcftools"))
 f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths.tsv")
 tabix_paths <- read.delim(f, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
 HOME <- Sys.getenv("HOME")

@@ -11,7 +11,6 @@
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_gwas2vcf_%A_%a.err
 #SBATCH --export ALL
 
-export job=$SLURM_ARRAY_TASK_ID
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
 if [ ! -f ${INF}/rsid/gwas2vcf.json ]; then
@@ -43,6 +42,8 @@ function metalLP()
   fi
 }
 
+metalLP
+
 function metalP()
 {
   if [ ! -f ${INF}/METAL/gwas2vcf/${prot}.txt.gz ]; then
@@ -66,7 +67,7 @@ function gwas2vcf()
   cd ${HPC_WORK}/gwas2vcf
   source env/bin/activate
   if [ ! -f ${INF}/METAL/gwas2vcf/${prot}.vcf.gz ]; then
-     python main.py --out ${INF}/METAL/gwas2vcf/${prot}.vcf.gz --data ${INF}/METAL/gwas2vcf/${prot}.txt.gz \
+     python main.py --out ${INF}/METAL/gwas2vcf/${prot}.vcf.gz --data ${INF}/METAL/gwas2vcf/${prot}.tsv.gz \
                     --id ${prot} --ref human_g1k_v37.fasta --json ${INF}/rsid/gwas2vcf.json \
                     --dbsnp dbsnp.v153.b37.vcf.gz \
                     --alias alias.txt
@@ -80,8 +81,6 @@ function gwas2vcf()
 # fi
 # --dbsnp ~/rds/public_databases/dbsnp/snp154_GCF_000001405.25.gz \
 # --alias hg19.chromAlias.tsv
-
-gwas2vcf
 
 function vcfops()
 # perform liftover
