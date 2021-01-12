@@ -162,7 +162,7 @@ function scaled_assoc()
   {
     qctool -g ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.bgen \
            -s ${INF}/finemapping/INTERVAL.sample \
-           -incl-range ${chr}:${start}-${end} \
+           -incl-range ${start}-${end} \
            -og ${INF}/finemapping/${prot}-${MarkerName}.bgen -os ${INF}/finemapping/${prot}-${MarkerName}.sample
   }
   bgen
