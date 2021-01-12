@@ -135,3 +135,5 @@ R --no-save -q <<END
 END
 
 cd -
+
+# ieugwasr::associations("1:10000-100000",id="ieu-b-18")

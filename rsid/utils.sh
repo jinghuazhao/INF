@@ -121,3 +121,63 @@ function ieu()
   md5sum --check INF1.md5sum
   ls  *.tsv.gz | parallel -C' ' 'echo {}; gunzip -c {} | wc -l' | paste - - | sort -k1,1 > INF1.size
 }
+
+# Scaled phenotypes
+R --no-save <<END
+  INF <- Sys.getenv("INF")
+  f <- file.path(INF,"INTERVAL","o5000-inf1-outlier_in-r2.sample")
+  ph <- read.delim(f,sep=" ",nrows=1)
+  p <- read.table(f,col.names=names(ph),skip=2)
+  PCs <- paste0("PC", 1:20)
+  covars <- c(c("sexPulse", "age", "season", "plate", "bleed_to_process_time"), PCs)
+  proteins <- p[setdiff(names(inf1h),c("ID_1","ID_2","missing",covars))]
+  regress <- function(x)
+  {
+    fmla <- as.formula(paste(names(proteins)[x]," ~ ", paste(covars, collapse= "+")))
+    l <- lm(fmla,data=p)
+    r <- proteins[,x]-predict(l,na.action=na.pass)
+    scale(r)
+  }
+  z <- sapply(1:92,regress)
+  colnames(z) <- names(proteins)
+  rownames(z) <- with(p,ID_1)
+  z <- as.data.frame(z)
+  gap::snptest_sample(p,file.path(INF,"work","INTERVAL.sample"),P=names(proteins))
+END
+
+function scaled_assoc()
+{
+  head -1 finemapping/INTERVAL.sample | cut -d' ' -f1-3 --complement | tr ' ' '\n' > ${INF}/finemapping/INTERVAL.prot
+  export M=1e6
+  cut -f5,6,8,9 --output-delimiter=" " ${INF}/work/INF1.merge | \
+  sed '1d' | \
+  parallel -C' ' --env M '
+  export prot={1}
+  export MarkerName={2}
+  export chr={3}
+  export pos={4}
+  export start=$(awk -vpos=${pos} -vflanking=${M} "BEGIN{start=pos-flanking;if(start<0) start=0;print start}")
+  export end=$(awk -vpos=${pos} -vflanking=${M} "BEGIN{print pos+flanking}")
+  function bgen()
+  {
+    qctool -g ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.bgen \
+           -s ${INF}/finemapping/INTERVAL.sample \
+           -incl-range ${chr}:${start}-${end} \
+           -og ${INF}/finemapping/${prot}-${MarkerName}.bgen -os ${INF}/finemapping/${prot}-${MarkerName}.sample
+  }
+  bgen
+  export phenocol=$(grep ${prot} ${INF}/finemapping/INTERVAL.prot)
+  function assoc_test()
+  {
+    snptest \
+            -data ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.bgen ${INF}/finemapping/INTERVAL.sample \
+            -log ${INF}/finemapping/${prot}-${MarkerName}-snptest.log \
+            -filetype bgen -range ${chr}:${start}-${end} \
+            -frequentist 1 -hwe -missing_code NA,-999 -use_raw_phenotypes \
+            -method score \
+            -pheno ${phenocol} -printids \
+            -o ${INF}/finemapping/${prot}-${MarkerName}.out
+  }
+  assoc_test
+ '
+}

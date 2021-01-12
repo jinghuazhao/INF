@@ -33,7 +33,9 @@ R --no-save <<END
   url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
   efo <- subset(openxlsx::read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:4), rows=c(1:78)),!is.na(MRBASEID))
   write.table(efo, file="efo.txt",quote=FALSE,row.names=FALSE,sep="\t")
-  epigraphdb::mr(outcome_trait=with(efo,trait)[6])
+  mr_summary <- epigraphdb::mr(outcome_trait=with(efo,trait)[6])
+  names(mr_summary)[c(2,3,5,6,7)] <- c("exposure","outcome","b","se","pval")
+  tryx::volcano_plot(mr_summary)
 END
 parallel --env INF -C' ' '
   export MRBASEID={1}; 
