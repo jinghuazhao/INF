@@ -130,7 +130,7 @@ R --no-save <<END
   p <- read.table(f,col.names=names(ph),skip=2)
   PCs <- paste0("PC", 1:20)
   covars <- c(c("sexPulse", "age", "season", "plate", "bleed_to_process_time"), PCs)
-  proteins <- p[setdiff(names(inf1h),c("ID_1","ID_2","missing",covars))]
+  proteins <- p[setdiff(names(ph),c("ID_1","ID_2","missing",covars))]
   regress <- function(x)
   {
     fmla <- as.formula(paste(names(proteins)[x]," ~ ", paste(covars, collapse= "+")))
@@ -142,7 +142,7 @@ R --no-save <<END
   colnames(z) <- names(proteins)
   rownames(z) <- with(p,ID_1)
   z <- as.data.frame(z)
-  gap::snptest_sample(p,file.path(INF,"work","INTERVAL.sample"),P=names(proteins))
+  gap::snptest_sample(p,file.path(INF,"finemapping","INTERVAL.sample"),P=names(proteins))
 END
 
 function scaled_assoc()
