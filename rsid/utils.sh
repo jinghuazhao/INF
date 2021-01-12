@@ -170,9 +170,9 @@ function scaled_assoc()
   function assoc_test()
   {
     snptest \
-            -data ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.bgen ${INF}/finemapping/INTERVAL.sample \
+            -data ${INF}/finemapping/${prot}-${MarkerName}.bgen ${INF}/finemapping/INTERVAL.sample \
             -log ${INF}/finemapping/${prot}-${MarkerName}-snptest.log \
-            -filetype bgen -range ${chr}:${start}-${end} \
+            -filetype bgen \
             -frequentist 1 -hwe -missing_code NA,-999 -use_raw_phenotypes \
             -method score \
             -pheno ${phenocol} -printids \
