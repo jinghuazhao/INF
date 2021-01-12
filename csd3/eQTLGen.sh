@@ -23,6 +23,7 @@ do
   sort -k4,4 | \
   join -14 -22 - <(cut -d' ' -f2 ${cistrans_rsid} | zgrep -f - -w ${eQTLGen}/${cistrans}.txt.gz | cut -f1,2,5,6,9 | sort -k2,2) | \
   awk '$4==$8' > work/eQTLGen.${cistrans}
+# all from eQTLGen but with LD
   cistrans_python | \
   sort -k3,3 | \
   join -13 -25 - <(gunzip -c ${eQTLGen}/${cistrans}.txt.gz | cut -f1,2,5,6,9 | sort -k5,5) > work/eQTLGen.${cistrans}-all
