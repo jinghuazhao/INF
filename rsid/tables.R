@@ -44,12 +44,11 @@ pqtlstudies <- pqtlstudies[ord,]
 rownames(pqtlstudies) <- seq(nrow(pqtlstudies))
 eqtlstudies <- data.frame(Studies="Studies",pmid="pmid")
 pqtldisease <- data.frame(Studies="Studies",pmid="pmid")
-somalogic <- data.frame(Studies="Studies",pmid="pmid")
 
 xlsx <- paste0("work/SCALLOP-INF.xlsx")
-outsheets <- c("summary","studies","inf1","pqtls","cojo","eqtls","eqtlstudies","knownpqtls","pqtlstudies","somalogic","pqtldisease")
+outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","eqtls","eqtlstudies","pqtldisease")
 titles <- c("summary","study information","panel information","pQTLs","conditional analysis",
-            "eQTLs","eQTL studies","known pQTLs","previous pQTL studies","SomaLogic replication","Disease GWAS overlap")
+            "known pQTLs","previous pQTL studies","SomaLogic replication","eQTLs","eQTL studies","Disease GWAS overlap")
 wb <- createWorkbook(xlsx)
 for (i in 1:length(outsheets))
 {
