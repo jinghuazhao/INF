@@ -151,3 +151,17 @@ R --no-save <<END
   data.frame(table(ps$pmid))
   write.table(names(table(ps$pmid)),file="pmid",quote=FALSE,row.names=FALSE,col.names=FALSE)
 END
+
+R --no-save <<END
+# ORCADES/VIS data
+  options(width=200)
+  url <- "https://journals.plos.org/plosgenetics/article/file?type=supplementary&id=info:doi/10.1371/journal.pgen.1008785.s001"
+  inf1 <- gap::inf1
+  INF <- Sys.getenv("INF")
+  INF1_merge <- read.delim(file.path(INF,"work","INF1.merge"),as.is=TRUE)
+  table1 <- subset(read.delim(url,as.is=TRUE),uniprot_swissprot%in%inf1$uniprot)
+# replicated_pqtl & p_sec<=5e-8)
+  vars <- c("hgnc_symbol","snpid","rsid","p_pri","p_sec","uniprot_swissprot","ensembl_gene_id")
+  orcades_vis <- within(table1,{snpid=gap::chr_pos_a1_a2(chr,pos,a0,a1)})[vars]
+  merge(INF1_merge,orcades_vis,by.x="MarkerName",by.y="snpid")
+END
