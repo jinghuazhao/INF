@@ -8,7 +8,7 @@ read.sheet <- function(sheet,cols,rows) read.xlsx(url,sheet=sheet,colNames=TRUE,
  studies <- read.sheet("Studies", 1:3, 2:14)
    pqtls <- read.sheet("pQTLs", 1:21, 2:182)
 interval <- read.sheet("INTERVAL", 1:12, 2:29)
-     okl <- read.sheet("OtherKnownLoci", 1:12, 2:102)
+      os <- read.sheet("OtherStudies", 1:12, 2:102)
     cvd1 <- read.sheet("CVD1", 1:12, 2:53)
 aristotl <- read.sheet("ARISTOTLE", 1:14, 2:182)
     cojo <- read.sheet("cojo", 1:19, 2:229)
@@ -30,7 +30,7 @@ mr_immue <- read.sheet("pqtlMR-immune", 1:7, 2:67)
     mvmr <- read.sheet("MVMR", 1:9, 2:6)
      gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
 
-knownpqtls_dup <- within(rbind(interval,okl,cvd1),{
+knownpqtls_dup <- within(rbind(interval,os,cvd1),{
                          Sentinels <- gsub(" ","",Sentinels)
                          UniProt <- gsub(" ","",UniProt)
                          Protein <- gsub(" ","",Protein)
@@ -42,13 +42,17 @@ pqtlstudies <- unique(knownpqtls_dup[c("Source","PMID")])
 ord <- with(pqtlstudies,order(PMID))
 pqtlstudies <- pqtlstudies[ord,]
 rownames(pqtlstudies) <- seq(nrow(pqtlstudies))
-eqtlstudies <- data.frame(Studies="Studies",pmid="pmid")
-pqtldisease <- data.frame(Studies="Studies",pmid="pmid")
+
+url <- "https://jhz22.user.srcf.net/pqtl-immune_infection_edited.xlsx"
+  metal <- read.sheet("METAL",1:20,1:181)
+  short <- read.sheet("short",1:51,1:220)
+
+pqtldisease <- subset(short,Keep==1,select=c(MarkerName,nprots,prots,Allele1,Allele2,Effects,SEs,cistrans,trait,efo,study,pmid,dataset,infection))
 
 xlsx <- paste0("work/SCALLOP-INF.xlsx")
-outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","eqtls","eqtlstudies","pqtldisease")
+outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","eqtls","pqtldisease")
 titles <- c("summary","study information","panel information","pQTLs","conditional analysis",
-            "known pQTLs","previous pQTL studies","SomaLogic replication","eQTLs","eQTL studies","Disease GWAS overlap")
+            "known pQTLs","previous pQTL studies","SomaLogic replication","eQTLs","Disease GWAS overlap")
 wb <- createWorkbook(xlsx)
 for (i in 1:length(outsheets))
 {
