@@ -6,6 +6,12 @@ export chembl=INF1.merge.chembl
 export f=INF1.merge.compounds
 
 (
+# https://chembl.gitbook.io/chembl-interface-documentation/downloads
+  echo -e "From\tTo"
+  cut -f2 ${INF}/work/inf1.tmp | grep -f - ${INF}/docs/chembl_uniprot_mapping.txt | cut -f1,2
+) > ${INF}/work/${chembl}
+
+(
   echo gene
   cut -d, -f10 INF1.merge.cis.vs.trans | sed '1d' | sort | uniq
 ) > INF1.merge.glist
@@ -31,7 +37,7 @@ with g:
 print(gene_ids)
 g.close()
 
-from django.db.models.loading import get_model
+from django.db import models
 def dump(qs, outfile_path):
 	"""
 	Takes in a Django queryset and spits out a CSV file.
@@ -50,12 +56,10 @@ def dump(qs, outfile_path):
 	"""
         model = qs.model
 	writer = csv.writer(open(outfile_path, 'w'))
-	
 	headers = []
 	for field in model._meta.fields:
 		headers.append(field.name)
 	writer.writerow(headers)
-	
 	for obj in qs:
 		row = []
 		for field in headers:
@@ -85,6 +89,11 @@ target = new_client.target
 records = target.get(chembl_ids)
 
 # this requires R/jsonlite
+# records = json.dumps(res)
+# open("INF1.merge.target","w").write(records)
+# rs = open("in.json","r").read()
+# s = json.loads(rs)
+
 with open('INF1.merge.target', 'w') as outfile:
     json.dump(records, outfile)
 
