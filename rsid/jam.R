@@ -1,4 +1,4 @@
-# 11-5-2019 JHZ
+# 16-1-2021 JHZ
 
 options(scipen=20, width=2000)
 f <- Sys.getenv("pr")
@@ -24,12 +24,12 @@ snp <- make.names(with(sumstats,rsid))
 priors <- list("a"=k, "b"=nrow(sumstats), "Variables"=snp)
 X <- with(sumstats,beta)
 names(X) <- colnames(X.ref) <- snp
-jam <- JAM(marginal.betas=X, n=n, X.ref=X.ref, n.mil=5, tau=n, model.space.priors=priors)
+jam <- JAM(marginal.betas=X, n=n, X.ref=X.ref, n.mil=5, tau=n, model.space.priors=priors, trait.variance=1)
 ref <- within(b, {variants <- subset(variants,rsid%in%snp);data <- subset(data,rownames(data)%in%snp)})
 save(X,X.ref,ref,n,priors,jam,file=paste0(f,"-jam.rda"))
 pst <- slot(jam, "posterior.summary.table")
 tm <- TopModels(jam)
-cs <- CredibleSet(jam, credible.percentile.threshold=0.75)
+cs <- CredibleSet(jam, credible.percentile.threshold=0.95)
 msbf <- ModelSizeBayesFactors(jam)[[1]]
 png(paste0(f,"-jam.png"),height=12,width=8,units="in",res=300)
 ManhattanPlot(jam)

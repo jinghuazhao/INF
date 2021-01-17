@@ -8,8 +8,8 @@ export pr=${p}-${r}
 export chr=$(sed '1d' ${list} | awk -v job=${job} 'NR==job{print $8}')
 export pos=$(sed '1d' ${list} | awk -v job=${job} 'NR==job{print $9}')
 export flanking=1e6
-export start=$(sed '1d' ${list} | awk -v job=${job} -v d=${flanking} 'NR==job{start=$2-d;if(start<0) start=0; print start}')
-export end=$(sed '1d' ${list} | awk -v job=${job} -v d=${flanking} 'NR==job{print $3+d}')
+export start=$(sed '1d' ${list} | awk -v job=${job} -v d=${flanking} 'NR==job{start=$9-d;if(start<0) start=0; print start}')
+export end=$(sed '1d' ${list} | awk -v job=${job} -v d=${flanking} 'NR==job{print $9+d}')
 export genotype=${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}
 
 if [ "${study}" == "" ] || [ "${sample}" == "" ] || [ "${N}" == "" ] || [ "${dir}" == "" ] ; then
@@ -42,6 +42,7 @@ function jam()
   else
      export k=$(awk "END{print NR-1}" ${dir}/${pr}.jma.cojo)
   fi
+  ln -fs ${INF}/finemap/${pr}.z
   awk 'NR>1{print $1}' ${pr}.z | \
   sort | \
   join - ${pr}-jam.prune > ${pr}-jam.incl
@@ -58,8 +59,7 @@ function clean_up()
   rm ${pr}-jam.bgen ${pr}-jam.bgen.bgi ${pr}-jam.bgi
 }
 
-cd ${INF}/work
+cd ${INF}/jam
 prune
 jam
-clean_up
 cd -
