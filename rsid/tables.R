@@ -54,13 +54,19 @@ outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudi
 titles <- c("summary","study information","panel information","pQTLs","conditional analysis",
             "known pQTLs","previous pQTL studies","SomaLogic replication","eQTLs","Disease GWAS overlap")
 wb <- createWorkbook(xlsx)
+options("openxlsx.borderColour"="#4F80BD")
+hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
 for (i in 1:length(outsheets))
 {
   sheetnames <- paste0("ST",i,"-",titles[i])
   cat(outsheets[i],sheetnames,"\n")
   addWorksheet(wb, sheetnames)
-  writeDataTable(wb, sheetnames, get(outsheets[i]))
+  writeDataTable(wb, sheetnames, get(outsheets[i]), headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
 }
 sheets(wb)
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 
+novelpqtls <- subset(pqtls,!paste0(prot,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),select=c(MarkerName,rsid,prot,uniprot))
+ord <- with(novelpqtls,order(prot,MarkerName))
+write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls[ord,]), file="novelpqtls.xlsx", colNames=TRUE,
+           borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
