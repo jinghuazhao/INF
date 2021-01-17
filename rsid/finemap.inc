@@ -22,6 +22,7 @@ export list=${INF}/work/INF1.merge
 export p=$(sed '1d' ${list} | awk -v job=${job} 'NR==job{print $5}')
 export r=$(sed '1d' ${list} | awk -v job=${job} 'NR==job{print $6}')
 export sumstats=${INF}/finemapping/${p}-${r}.out
+export sample=${INF}/finemapping/${p}-${r}.sample
 
 cd ${INF}/finemap
 # z0 - INTERVAL data only excluding NLRP2 region if overlapped and employs P value cutoff to avoid nonsense results
@@ -104,6 +105,6 @@ function ld_finemap2()
 ld_finemap
 gzip -f ${pr}.ld
 R -q --no-save < ${INF}/rsid/finemap.R > /dev/null
-rm -f ${pr}.z0 ${pr}.flip ${pr}.master ${pr}.master2 ${pr}.bcor ${pr}.ld.gz ${pr}.bgen ${pr}.bgen.bgi ${pr}.bgi
+# rm -f ${pr}.z0 ${pr}.flip ${pr}.master ${pr}.master2 ${pr}.bcor ${pr}.ld.gz ${pr}.bgen ${pr}.bgen.bgi ${pr}.bgi
 
 cd -

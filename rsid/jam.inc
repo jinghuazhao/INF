@@ -21,7 +21,7 @@ function prune()
 {
   module load plink/2.00-alpha
   plink2 --bfile ${genotype} --chr ${chr} --from-bp ${start} --to-bp ${end} \
-         --geno 0.1 --mind 0.1 --maf 0.01 --indep-pairwise 1000kb 1 0.8 --out ${pr}-jam
+         --geno 0.1 --mind 0.1 --maf 0.01 --indep-pairwise 1000kb 1 0.1 --out ${pr}-jam
   if [ $(grep -w ${r} ${pr}-jam.prune.in | wc -l) -eq 0 ]; then
      export i=$(grep -w -f ${pr}-jam.prune.in ${genotype}.bim | \
      awk -vpos=${pos} 'function abs(x) {if (x<0) return -x; else return x;}

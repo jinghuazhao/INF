@@ -1,4 +1,4 @@
-# 6-5-2020 JHZ
+# 17-1-2021 JHZ
 
 zld <- function(z)
 {
@@ -40,7 +40,8 @@ wb <- createWorkbook(xlsx)
   d <- within(snp,{log10p_incl <- gap::log10p(mean_incl/sd_incl)})
   name_snp <- d[,setdiff(names(d),c("chromosome","position","allele1","allele2","maf","beta","se","rank"))]
   addWorksheet(wb, "snp", zoom=150)
-  writeDataTable(wb, "snp", name_snp)
+  ord <- with(name_snp,order(-prob_group))
+  writeDataTable(wb, "snp", name_snp[ord,])
 # pip.plot
   pip.log10bf.plot()
   addWorksheet(wb, "pip.plot", zoom=150)
