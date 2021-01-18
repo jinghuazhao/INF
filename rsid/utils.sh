@@ -166,7 +166,7 @@ function scaled_assoc()
            -og ${INF}/finemapping/${prot}-${MarkerName}.bgen -os ${INF}/finemapping/${prot}-${MarkerName}.sample
   }
   bgen
-  export phenocol=$(grep ${prot} ${INF}/finemapping/INTERVAL.prot)
+  export phenocol=$(grep ${prot}_ ${INF}/finemapping/INTERVAL.prot)
   function assoc_test()
   {
     snptest \

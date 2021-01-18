@@ -4,6 +4,7 @@ export dir=rsid
 ${dir}/NLRP2.sh
 ${dir}/prune.sh
 ${dir}/ma.sh
+${dir}/cs.sh
 ${dir}/slct.sh
 ${dir}/finemap.sh
 ${dir}/jam.sh

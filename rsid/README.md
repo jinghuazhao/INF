@@ -20,6 +20,7 @@ The last point regards software `finemap`, which uses summary statistics associa
 File specification | Function
 -----|------------------------------
 NLRP2.sh | the exclusion list
+cs.sh | Credible sets
 ma.sh | INF1 sumstats
 INTERVAL-ma.sh | INTERVAL sumstats
 prune.sh | pruning
@@ -32,18 +33,17 @@ fastenloc.sb | fastenloc analysis
 garfield.sh | GARFIELD analysis
 hyprcoloc.sh | hyprcoloc analysis
 st.sh | batch command file
-work/ | working directory
+cs/, finemap/, jam/, prune/, work/ | working directories
 
 ### Steps
 
-st.sh executes the following elements,
-
-0. NLRP2.sh
-1. prune.sh
-2. ma.sh
-3. slct.sh
-4. finemap.sh
-5. jam.sh
+`st.sh` executes the following elements,
+```mermaid
+NLRP2.sh --> prune.sh --> ma.sh --> slct.sh
+prune.sh --> |"scaled association"| cs.sh
+utils.sh --> |"scaled association"| finemap.sh
+utils.sh --> |"scaled association + prune.sh"| jam.sh
+```
 
 Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
 

@@ -15,7 +15,7 @@ export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export study=INTERVAL
 export N=4994
 export n=1000
-export TMPDIR=/tmp
+export TMPDIR=${HPC_WORK}/work
 export dir=${INF}/sentinels
 # scaled results
 export list=${INF}/work/INF1.merge

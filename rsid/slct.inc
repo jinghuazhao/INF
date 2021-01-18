@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export job=$1
-export TMPDIR=/tmp
+export TMPDIR=${HPC_WORK}/work
 export list=${INF}/work/INF1.merge-rsid
 export p=$(awk -v job=$job 'NR==job+1{print $5}' ${list})
 export r=$(awk -v job=$job 'NR==job+1{print $6}' ${list})
