@@ -60,8 +60,10 @@ for (i in 1:length(outsheets))
 {
   sheetnames <- paste0("ST",i,"-",titles[i])
   cat(outsheets[i],sheetnames,"\n")
-  addWorksheet(wb, sheetnames)
-  writeDataTable(wb, sheetnames, get(outsheets[i]), headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
+  addWorksheet(wb, sheetnames, zoom=150)
+  writeData(wb, sheetnames, sheetnames, startCol=1, startRow=1)
+  writeDataTable(wb, sheetnames, get(outsheets[i]), startCol=1, startRow=2,
+                 headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
 }
 sheets(wb)
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
