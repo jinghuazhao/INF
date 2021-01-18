@@ -1,21 +1,18 @@
-## Joint/condtional analysis and finemapping
+## Joint/conditional analysis and fine-mapping
 
-The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the delimma that the reference data, possibly
+The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the dilemma that the reference data, possibly
 like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsid is undesirable so SNPID, i.e.,
 chr:pos_A1_A2, (A1<=A2) is necessary.
 
-After a rather long and laborious process involving many software, it turned out a simple wayout is to obtain sentinels using SNPID but return to rsid at
-this stage and forward. The implementation here reflects this. The file INTERVAL.rsid contains SNPID-rsid mapping and could be generated from programs
-such as `qctool/bgenix/plink`.
+After a rather long and laborious process involving many software, it turned out a simple way out is to obtain sentinels using SNPID but return to rsid at
+this stage and forward. The implementation here reflects this. The file INTERVAL.rsid contains SNPID-rsid mapping and could be generated from programs such as `qctool/bgenix/plink`.
 
 A note on regions is ready. It is attractive to use the last genomic region from iterative merging for analysis and perhaps a flanking version. This is
-more appropriate than genomewide hard and fast 10MB windows or approximately independent LD blocks. For the latter, we found that the boundaries from the distributed
-1000Genomes project were often inappropriate and one may not attempt to compute them for specific reference panel. Nevertheless, the iterative procedure
-actually just does empirically. Again the HLA region is condensed.
+more appropriate than genomewide hard and fast 10MB windows or approximately independent LD blocks. For the latter, we found that the boundaries from the distributed 1000Genomes project were often inappropriate and one may not attempt to compute them for specific reference panel. Nevertheless, the iterative procedure actually just does empirically. Again the HLA region is condensed.
 
 The last point regards software `finemap`, which uses summary statistics associated with the reference panel rather than that from meta-analysis.
 
-### A summary
+### Main analyses
 
 File specification | Function
 -----|------------------------------
@@ -35,21 +32,7 @@ hyprcoloc.sh | hyprcoloc analysis
 st.sh | batch command file
 cs/, finemap/, jam/, prune/, work/ | working directories
 
-### Steps
-
-`st.sh` executes the following elements,
-```mermaid
-NLRP2.sh --> prune.sh --> ma.sh --> slct.sh
-prune.sh --> |"scaled association"| cs.sh
-utils.sh --> |"scaled association"| finemap.sh
-utils.sh --> |"scaled association + prune.sh"| jam.sh
-```
-
-Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
-
-*Date last changed:* **8/6/2020**
-
-### Micellaneous analyses and utilities
+### Miscellaneous analyses and utilities
 
 FIle | Description
 -----|---------------------------
@@ -90,3 +73,19 @@ Stacked associaiton plots
 3. TNFB-rs2364485.sh
 4. TNFB-rs2364485-MR.sh (a two-sample MR)
 5. OPG-TRANCE.sh
+
+### Steps
+
+`st.sh` conceptually executes the following elements,
+
+```mermaid
+graph TD
+NLRP2.sh --> prune.sh --> ma.sh --> slct.sh --> |"--n-causal-snps k"| finemap.sh
+utils.sh --> prune.sh
+prune.sh --> cs.sh
+utils.sh --> cs.sh
+utils.sh --> |"internal prune.sh" | jam.sh
+```
+Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
+
+*Date last changed:* **18/2/2021**
