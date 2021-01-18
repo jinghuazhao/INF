@@ -1,4 +1,4 @@
-# 16-1-2021 JHZ
+# 18-1-2021 JHZ
 
 options(scipen=20, width=2000)
 f <- Sys.getenv("pr")
@@ -21,7 +21,7 @@ sumstats <- m[with(m,ord),]
 # JAM
 require(R2BGLiMS)
 snp <- make.names(with(sumstats,rsid))
-priors <- list("a"=k, "b"=nrow(sumstats), "Variables"=snp)
+priors <- list("a"=1, "b"=nrow(sumstats), "Variables"=snp)
 X <- with(sumstats,beta)
 names(X) <- colnames(X.ref) <- snp
 jam <- JAM(marginal.betas=X, n=n, X.ref=X.ref, n.mil=5, tau=n, model.space.priors=priors, trait.variance=1)

@@ -88,4 +88,4 @@ utils.sh --> |"internal prune.sh" | jam.sh
 ```
 Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
 
-*Date last changed:* **18/2/2021**
+*Date last changed:* **18/1/2021**
