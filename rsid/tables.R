@@ -49,16 +49,20 @@ url <- "https://jhz22.user.srcf.net/pqtl-immune_infection_edited.xlsx"
 
 pqtldisease <- subset(short,Keep==1,select=c(MarkerName,nprots,prots,Allele1,Allele2,Effects,SEs,cistrans,trait,efo,study,pmid,dataset,infection))
 
-xlsx <- paste0("work/SCALLOP-INF.xlsx")
 outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","eqtls","pqtldisease")
 titles <- c("summary","study information","panel information","pQTLs","conditional analysis",
             "known pQTLs","previous pQTL studies","SomaLogic replication","eQTLs","Disease GWAS overlap")
+description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
+uppered <- c("PQTLs","EQTLs")
+description[description%in%uppered] <- titles[description%in%uppered]
+summary <- data.frame(Sheetnames=paste0("ST",1:length(outsheets)),Description=description)
+xlsx <- paste0("work/SCALLOP-INF.xlsx")
 wb <- createWorkbook(xlsx)
 options("openxlsx.borderColour"="#4F80BD")
 hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
 for (i in 1:length(outsheets))
 {
-  sheetnames <- paste0("ST",i,"-",titles[i])
+  sheetnames <- with(summary,paste0(Sheetnames,"-",Description)[i])
   cat(outsheets[i],sheetnames,"\n")
   addWorksheet(wb, sheetnames, zoom=150)
   writeData(wb, sheetnames, sheetnames, startCol=1, startRow=1)
