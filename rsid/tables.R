@@ -1,4 +1,4 @@
-#options(scipen=20, width=2000)
+options(width=2000)
 require(openxlsx)
 url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
 read.sheet <- function(sheet,cols,rows) read.xlsx(url,sheet=sheet,colNames=TRUE,cols=cols,rows=rows,skipEmptyRows=TRUE)
@@ -44,10 +44,12 @@ pqtlstudies <- pqtlstudies[ord,]
 rownames(pqtlstudies) <- seq(nrow(pqtlstudies))
 
 url <- "https://jhz22.user.srcf.net/pqtl-immune_infection_edited.xlsx"
-  metal <- read.sheet("METAL",1:20,1:181)
-  short <- read.sheet("short",1:51,1:220)
-
+metal <- read.sheet("METAL",1:20,1:181)
+short <- read.sheet("short",1:51,1:220)
 pqtldisease <- subset(short,Keep==1,select=c(MarkerName,nprots,prots,Allele1,Allele2,Effects,SEs,cistrans,trait,efo,study,pmid,dataset,infection))
+INF <- Sys.getenv("INF")
+credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c("prot","MarkerName","CredibleSet"),sep="\t")
+pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName"))
 
 outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","eqtls","pqtldisease")
 titles <- c("summary","study information","panel information","pQTLs","conditional analysis",
@@ -69,7 +71,7 @@ for (i in 1:length(outsheets))
   writeDataTable(wb, sheetnames, get(outsheets[i]), startCol=1, startRow=2,
                  headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
 }
-sheets(wb)
+data.frame(sheets(wb))
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 
 novelpqtls <- subset(pqtls,!paste0(prot,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),select=c(MarkerName,rsid,prot,uniprot))

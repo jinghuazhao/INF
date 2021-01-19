@@ -24,10 +24,9 @@ export r=$(sed '1d' ${list} | awk -v job=${job} 'NR==job{print $6}')
 export sumstats=${INF}/finemapping/${p}-${r}.out
 export sample=${INF}/finemapping/${p}-${r}.sample
 
-cd ${INF}/cs
 # z0 - INTERVAL data only excluding NLRP2 region if overlapped and employs P value cutoff to avoid nonsense results
 (
-  echo MarkerName Chromosome Position Allele2 Allele1 MAF Effect StdErr
+  echo MarkerName Chromosome Position Allele2 Allele1 MAF Effect StdErr P N
 # zcat ${sumstats} | \
 # awk 'NR > 1' | \
   cat ${sumstats} | \
@@ -38,7 +37,7 @@ cd ${INF}/cs
        chr=$3+0;a1=toupper($5);a2=toupper($6);
        if(a1<a2) snpid=chr ":" $4 "_" a1 "_" a2; else snpid=chr ":" $4 "_" a2 "_" a1;
        if ($2!=".") MarkerName=$2; else MarkerName=snpid;
-       if ($24 != "NA" && $25 != "NA") print MarkerName, chr, $4, a2, a1, $19, $24, $25
+       if ($24 != "NA" && $25 != "NA") print MarkerName, chr, $4, a2, a1, $19, $24, $25, $22, $18
     }
   } ' | \
   sort -k1,1 | \
@@ -49,4 +48,3 @@ export list=${INF}/work/INF1.merge-rsid
 export p=$(sed '1d' ${list} | awk -v job=${job} 'NR==job{print $5}')
 export r=$(sed '1d' ${list} | awk -v job=${job} 'NR==job{print $6}')
 R --no-save < ${INF}/rsid/cs.R > /dev/null
-cd -

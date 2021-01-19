@@ -19,7 +19,7 @@ function prune()
   module load plink/2.00-alpha
   plink2 --bfile ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr} \
          --chr ${chr} --from-bp ${start} --to-bp ${end} \
-         --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.5 --out ${pr}
+         --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.8 --out ${pr}
   if [ $(grep -w ${r} ${pr}.prune.in | wc -l) -eq 0 ]; then
      export i=$(grep -w -f ${pr}.prune.in ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.bim | \
      awk -vpos=${pos} 'function abs(x) {if (x<0) return -x; else return x;}
