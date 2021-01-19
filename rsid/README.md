@@ -8,7 +8,7 @@ After a rather long and laborious process involving many software, it turned out
 this stage and forward. The implementation here reflects this. The file INTERVAL.rsid contains SNPID-rsid mapping and could be generated from programs such as `qctool/bgenix/plink`.
 
 A note on regions is ready. It is attractive to use the last genomic region from iterative merging for analysis and perhaps a flanking version. This is
-more appropriate than genomewide hard and fast 10MB windows or approximately independent LD blocks. For the latter, we found that the boundaries from the distributed 1000Genomes project were often inappropriate and one may not attempt to compute them for specific reference panel. Nevertheless, the iterative procedure actually just does empirically. Again the HLA region is condensed.
+more appropriate than genome-wide hard and fast 10MB windows or approximately independent LD blocks. For the latter, we found that the boundaries from the distributed 1000Genomes project were often inappropriate and one may not attempt to compute them for specific reference panel. Nevertheless, the iterative procedure actually just does empirically. Again the HLA region is condensed.
 
 The last point regards software `finemap`, which uses summary statistics associated with the reference panel rather than that from meta-analysis.
 
@@ -31,6 +31,20 @@ garfield.sh | GARFIELD analysis
 hyprcoloc.sh | hyprcoloc analysis
 st.sh | batch command file
 cs/, finemap/, jam/, prune/, work/ | working directories
+
+### Steps
+
+`st.sh` conceptually executes the following elements,
+
+```mermaid
+graph TB
+sumstats("sumstats from METAL") --> |"variants from prune.sh"| slct.sh
+utils.sh("INTERVAL sumstats from standardized residuals ~ genotypes") --> |"variants from prune.sh"| cs.sh
+utils.sh --> |"internal prune" | jam.sh
+utils.sh  --> |"--n-causal-snps k"| finemap.sh
+```
+
+Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
 
 ### Miscellaneous analyses and utilities
 
@@ -66,7 +80,7 @@ utils.sh | utilties
 vep.sh | VEP annotation
 wgcna.sh | experiment on modules
 
-Stacked associaiton plots
+##Stacked association plots
 
 1. IL.18-rs385076.sh
 2. rs12075.sh
@@ -74,18 +88,4 @@ Stacked associaiton plots
 4. TNFB-rs2364485-MR.sh (a two-sample MR)
 5. OPG-TRANCE.sh
 
-### Steps
-
-`st.sh` conceptually executes the following elements,
-
-```mermaid
-graph TD
-NLRP2.sh --> prune.sh --> ma.sh --> slct.sh --> |"--n-causal-snps k"| finemap.sh
-utils.sh --> prune.sh
-prune.sh --> cs.sh
-utils.sh --> cs.sh
-utils.sh --> |"internal prune.sh" | jam.sh
-```
-Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
-
-*Date last changed:* **18/1/2021**
+*Date last changed:* **19/1/2021**
