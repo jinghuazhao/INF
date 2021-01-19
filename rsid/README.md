@@ -80,7 +80,7 @@ utils.sh | utilties
 vep.sh | VEP annotation
 wgcna.sh | experiment on modules
 
-##Stacked association plots
+## Stacked association plots
 
 1. IL.18-rs385076.sh
 2. rs12075.sh
