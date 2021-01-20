@@ -44,7 +44,7 @@ library(ontologyIndex)
 # GO
 data(go)
 # EFO
-file <- "annotate/efo.obo"
+file <- "efo.obo"
 get_relation_names(file)
 efo <- get_ontology(file, extract_tags="everything")
 
@@ -66,12 +66,12 @@ isd <- data.frame(efo_0000540,efo_0000540name)
 fang_efo <- with(inf1,id)
 fang_disease <- data.frame(id=efo$id[fang_efo],name=efo$name[fang_efo])
 save(efo,diseases,fang_disease,isd,efoidname,goidname, file="work/efo.rda")
-write.table(isd,file="work/efo_0000540.csv",col.names=FALSE,row.names=FALSE,sep=",")
+write.table(isd,file="efo_0000540.csv",col.names=FALSE,row.names=FALSE,sep=",")
 
 efo_0000540_plot <- function()
 {
   library(ontologyPlot)
-  pdf("work/efo_0000540.pdf",height=15,width=15)
+  pdf("efo_0000540.pdf",height=15,width=15)
   onto_plot(efo,efo_0000540)
   dev.off()
 }
