@@ -15,12 +15,9 @@ options(width=500)
 library(dplyr)
 library(pQTLtools)
 proxies <- "EUR"; p <- 5e-8; r2 <- 0.8; build <- 37; prefix <- "cis-pQTL"; out <- paste0(prefix,".eQTL");
-chkList <- c("rs6827617", "rs4241577", "rs149278")
-chkout <- query(chkList,keep=FALSE)
-subset(chkout,hgnc==exp_gene,select=-c(hg19_coordinates,a1,a2,consequence,pmid))
 INF <- Sys.getenv("INF")
 metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE)
-INF1 <- within(left_join(subset(metal,cis.trans=="cis"),subset(inf1,select=-c(start,end))),{
+INF1 <- within(left_join(subset(metal,cis.trans=="cis"),subset(gap::inf1,select=-c(start,end))),{
                  hg19_coordinates <- paste0("chr",Chromosome,":",Position)
                  HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)
                }) %>% rename(INF1_rsid=rsid) %>% rename(Total=N) %>% rename(gene_gwas=gene) %>% rename(uniprot_gwas=uniprot)
@@ -44,6 +41,9 @@ eQTL <- within(subset(eQTL,tissue!="Normal prepouch ileum"), {
   tissue <- gsub("Skin not sun exposed suprapubic|Skin sun exposed lower leg","Skin",tissue)
 })
 save(eQTL,file=file.path(INF,"work",paste0(prefix,".eQTL.rda")))
+chkList <- c("rs6827617", "rs4241577", "rs149278")
+chkout <- query(chkList,keep=FALSE)
+subset(chkout,hgnc==exp_gene,select=-c(hg19_coordinates,a1,a2,consequence,pmid))
 keep <- c("MarkerName","Allele1","Allele2","gene_snpid","INF1_rsid","prot", "gene", "uniprot_gwas", "gene_gwas", "cis.trans", "HLA")
 eQTL_overlap <- merge(INF1_aggr[keep],eQTL,by="gene_snpid")
 write.table(eQTL_overlap,file=file.path(INF,"work",paste0(prefix,"_eQTL.tsv")),quote=FALSE,row.names=FALSE,sep="\t")
@@ -60,6 +60,17 @@ sum(tbl.trans)
 tbl <- with(within(eQTL_overlap,{rsidProts <- paste0(INF1_rsid," (",gene_gwas,")")}),table(rsidProts,tissue))
 tbl[tbl>1] <- 1
 write.table(as.data.frame.matrix(tbl),file=file.path(INF,"work",paste0(prefix,"_eQTL_matrix.tsv")),quote=FALSE,sep="\t")
+cis_pQTL_eQTL <- eQTL_overlap %>% mutate(rsidProts=paste0(INF1_rsid," (",gene_gwas,")"),
+                                          tissue_tags=paste0("P=",p,"[",tissue,",",study,",",pmid,"]")) %>%
+                 group_by(rsidProts,tissue) %>%
+                 summarize(rsidProts_tissue=paste(tissue_tags,collapse=";"))
+cis_pQTL_eQTL_table <- with(cis_pQTL_eQTL,table(rsidProts,tissue))
+for(row in rownames(cis_pQTL_eQTL_table))
+for(col in colnames(cis_pQTL_eQTL_table))
+if (cis_pQTL_eQTL_table[row,col]==0) cis_pQTL_eQTL_table[row,col] <- "" else
+cis_pQTL_eQTL_table[row,col] <- subset(cis_pQTL_eQTL,rsidProts==row&tissue==col)[["rsidProts_tissue"]]
+write.table(cis_pQTL_eQTL_table,file=file.path(INF,"work","cis_pQTL_eQTL_table.tsv"),sep="\t")
+
 library(pheatmap)
 pal <- colorRampPalette(c("white","red"))
 col <- pal(3)
