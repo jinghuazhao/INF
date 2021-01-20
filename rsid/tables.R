@@ -52,11 +52,11 @@ credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName"))
 coloc <- read.delim(file.path(INF,"coloc","GTEx.tsv"))
 
-outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","eqtls","coloc","pqtldisease")
+outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","coloc","pqtldisease")
 titles <- c("summary","study information","panel information","pQTLs","conditional analysis",
-            "known pQTLs","previous pQTL studies","SomaLogic replication","eQTLs","GTEx coloc","Disease GWAS overlap")
+            "known pQTLs","previous pQTL studies","SomaLogic replication","GTEx coloc","Disease GWAS overlap")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
-uppered <- c("PQTLs","EQTLs")
+uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
 summary <- data.frame(Sheetnames=paste0("ST",1:length(outsheets)),Description=description)
 xlsx <- paste0("work/SCALLOP-INF.xlsx")
@@ -66,7 +66,7 @@ hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, font
 for (i in 1:length(outsheets))
 {
   sheetnames <- with(summary,paste0(Sheetnames,"-",Description)[i])
-  cat(outsheets[i],sheetnames,"\n")
+  cat(sheetnames,"\n")
   addWorksheet(wb, sheetnames, zoom=150)
   writeData(wb, sheetnames, sheetnames, startCol=1, startRow=1)
   writeDataTable(wb, sheetnames, get(outsheets[i]), startCol=1, startRow=2,
