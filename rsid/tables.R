@@ -50,10 +50,11 @@ pqtldisease <- subset(short,Keep==1,select=c(MarkerName,nprots,prots,Allele1,All
 INF <- Sys.getenv("INF")
 credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c("prot","MarkerName","CredibleSet"),sep="\t")
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName"))
+coloc <- read.delim(file.path(INF,"coloc","GTEx.tsv"))
 
-outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","eqtls","pqtldisease")
+outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","eqtls","coloc","pqtldisease")
 titles <- c("summary","study information","panel information","pQTLs","conditional analysis",
-            "known pQTLs","previous pQTL studies","SomaLogic replication","eQTLs","Disease GWAS overlap")
+            "known pQTLs","previous pQTL studies","SomaLogic replication","eQTLs","GTEx coloc","Disease GWAS overlap")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs","EQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]

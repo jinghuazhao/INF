@@ -122,7 +122,6 @@ single_run <- function(r)
 # mixed_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
 }
 
-options(width=200)
 library(pQTLtools)
 f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
 chain <- rtracklayer::import.chain(f)
@@ -136,11 +135,34 @@ f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths_impor
 imported_tabix_paths <- within(read.delim(f, sep = "\t", header = TRUE, stringsAsFactors = FALSE) %>% dplyr::as_tibble(),
       {ftp_path <- gsub("ftp://ftp.ebi.ac.uk/pub/databases/spot/eQTL/csv/GTEx_V8/ge",
                         paste0(HOME,"/rds/public_databases/GTEx/csv"),ftp_path)})
+options(width=200)
 INF <- Sys.getenv("INF")
 M <- 1e6
 sentinels <- subset(read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans")),cis)
+prot_rsid <- subset(read.delim(file.path(INF,"work","INF1.merge.cis.vs.trans-rsid"),sep=" "),cis,select=c(prot,SNP))
 # for (r in 1:nrow(sentinels))
 {
   r <- as.integer(Sys.getenv("r"))
   single_run(r)
+}
+library(dplyr)
+collect <- function()
+{
+  coloc <- data.frame()
+  for(r in 1:nrow(sentinels))
+  {
+    prot <- sentinels[["prot"]][r]
+    snpid <- sentinels[["SNP"]][r]
+    rsid <- prot_rsid[["SNP"]][r]
+    f <- file.path(INF,"coloc",paste0(prot,"-",snpid,".RDS"))
+    if (!file.exists(f)) next
+    cat(prot,"-",rsid,"\n")
+    rds <- readRDS(f)
+    if (nrow(rds)==0) next
+    select <- subset(rds,PP.H3.abf+PP.H4.abf>=0.9&PP.H4.abf/PP.H3.abf>=3)
+    if (nrow(select)==0) next
+    coloc <- rbind(coloc,data.frame(prot=prot,rsid=rsid,snpid=snpid,select))
+  }
+  coloc <- within(coloc,{qtl_id <- gsub("GTEx_V8_","",qtl_id)}) %>% rename(H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf)
+  write.table(coloc,file=file.path(INF,"coloc","GTEx.tsv"),quote=FALSE,row.names=FALSE,sep="\t")
 }
