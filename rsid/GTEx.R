@@ -17,7 +17,7 @@ library(pQTLtools)
 proxies <- "EUR"; p <- 5e-8; r2 <- 0.8; build <- 37; prefix <- "cis-pQTL-GTEx"; out <- paste0(prefix,".eQTL");
 INF <- Sys.getenv("INF")
 metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE)
-INF1 <- within(left_join(subset(metal,cis.trans=="cis"),subset(inf1,select=-c(start,end))),{
+INF1 <- within(left_join(subset(metal,cis.trans=="cis"),subset(gap::inf1,select=-c(start,end))),{
                  hg19_coordinates <- paste0("chr",Chromosome,":",Position)
                  HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)
                }) %>% rename(INF1_rsid=rsid) %>% rename(Total=N) %>% rename(gene_gwas=gene) %>% rename(uniprot_gwas=uniprot)
