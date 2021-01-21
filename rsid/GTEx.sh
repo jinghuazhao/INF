@@ -25,7 +25,7 @@ R --no-save <<END
 END
 
 # cis-eQTLs from GTEx v8
-export GTEx_v8=${HPC_WORK}/GTEx_Analysis_v8_eQTL
+export GTEx_v8=~/rds/public_databases/GTEx/GTEx_Analysis_v8_eQTL
 export ext=.v8.signif_variant_gene_pairs.txt.gz
 export col_gene=2
 export col_variant=1
@@ -39,19 +39,21 @@ export nlines=60
   parallel -C' ' --env GTEx_v8 --env ext --env col --env M '
     read SNP hgnc ensGene pos chrpos < <(awk -v row={1} "NR==row{print \$4,\$7,\$8,\$13,\$11\"_\"\$13}" ${INF}/coloc/cis-pQTL.dat)
     zgrep ${ensGene} ${GTEx_v8}/{2}${ext} | \
-    awk -v col_gene=${col_gene} -v col_variant=${col_variant} -v ensGene=${ensGene} -v M=${M} -v bp=${pos} -v OFS="\t" "{
+    awk -v col_gene=${col_gene} -v col_variant=${col_variant} -v ensGene=${ensGene} -v M=${M} -v bp=${pos} -v OFS="\t" "
+    {
        split(\$col_variant,a,\"_\");
        chr=a[1];pos=a[2];a1=a[3];a2=a[4];
        if(a[3]<a[4]) {a1=a[3];a2=a[4]} else {a1=a[4];a2=a[3]}
        \$col_variant=chr\":\"pos\"_\"a1\"_\"a2;
        snpid=chr\":\"bp\"_\"a1\"_\"a2
        if(index(\$col_gene,ensGene) && bp>=a[2]-M && bp<a[2]+M && length(a1)==1 && length(a2)==1) print \$col_gene,\$col_variant,\$7,chr,pos,a1,a2,snpid
-     }" > ${INF}/coloc/${SNP}-${ensGene}-{2}.dat
+    }" > ${INF}/coloc/${SNP}-${ensGene}-{2}.dat
     cat ${INF}/coloc/${SNP}-${ensGene}-{2}.dat | \
     sort -k3,3g | \
     awk -vSNP=${SNP} -vensGene=${ensGene} -vtissue={2} -vOFS="\t" "NR==1 {print SNP,ensGene,tissue,\$0}"
   ' ::: $(seq 2 ${nlines}) ::: $(ls ${GTEx_v8} | grep -v egenes | xargs -l basename -s ${ext})
 ) | \
+find . -type f -empty -delete
 sort -k1,1 -k2,2 > ${INF}/coloc/eQTL_GTEx.dat
 awk '$5==$11' ${INF}/coloc/eQTL_GTEx.dat | cut -f1 | uniq
 awk '$5==$11' ${INF}/coloc/eQTL_GTEx.dat | cut -f1 | uniq | grep -f - ${INF}/work/INF1.METAL | cut -f2,3
@@ -90,3 +92,25 @@ do
   plink --bfile ${SNP} --no-sex --no-pheno --r2 inter-chr --out ${SNP}
 done
 ls *.ld | xargs -I {} basename {} .ld | parallel -C' ' 'grep {} {}.ld'
+
+# 95%CS
+export cs95=~/rds/public_databases/GTEx/GTEx_v8_finemapping_DAPG/GTEx_v8_finemapping_DAPG.CS95.txt.gz
+export cs95tissue=${INF}/coloc/cs95tissue.dat
+echo tissue> ${cs95tissue}
+(
+  sed '1d' ${INF}/coloc/cis-pQTL.dat | cut -f4,7,8,11,13 | awk '{print $1,$2,$3,$4"_"$5}' | \
+  parallel -C' ' --env cs95 --env cs95tissue '
+    zgrep {3} ${CS95} | zgrep {4} | \
+    awk -v snpid={1} -v hgnc_symbol={2} -v ensGene={3} -v chrpos={4} -v OFS="\t" -v cs95tissue=${cs95tissue} "
+    {
+      printf snpid OFS hgnc_symbol OFS ensGene OFS chrpos OFS \$3
+      split(\$6,a,\"|\")
+      for(v in a) if(index(a[v],ensGene))
+      {
+        split(a[v],b,\"@\"); printf \" \" b[2];
+        split(b[2],c,\"=\"); print c[1] >> cs95tissue
+      }
+      printf \"\n\"
+    }"
+  '
+) | sort -k1,1 | join -t$'\t' <(cat ${INF}/work/INTERVAL.rsid | tr ' ' '\t') - > ${INF}/coloc/cis-eQTL-cs95.tsv
