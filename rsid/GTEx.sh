@@ -99,7 +99,7 @@ export cs95=${INF}/coloc/cis-eQTL_cs95.tsv
 export cs95tissue=${INF}/coloc/cs95tissue.dat
 echo tissue> ${cs95tissue}
 (
-  sed '1d' ${INF}/coloc/cis-pQTL.dat | cut -f4,7,8,11,13 | awk '{print $1,$2,$3,$4"_"$5}' | \
+  sed '1d' ${INF}/coloc/cis-pQTL.dat | cut -f4,6,8,11,13 | awk '{print $1,$2,$3,$4"_"$5}' | \
   parallel -C' ' --env DAPG --env cs95tissue '
     zgrep {3} ${DAPG} | zgrep {4} | \
     awk -v snpid={1} -v hgnc_symbol={2} -v ensGene={3} -v chrpos={4} -v OFS="\t" -v cs95tissue=${cs95tissue} "
@@ -118,17 +118,17 @@ echo tissue> ${cs95tissue}
 R --no-save <<END
   eqtl_file <- Sys.getenv("cs95")
   eqtls <- within(read.table(eqtl_file,sep="\t", col.names=c("SNPid","rsid","gene","ensGene","chrpos","GTExSNP","tissue_p")),
-                  {rsidGene <- paste0(rsid," (",gene,")");tissue_p <- sub("^ ","",tissue_p)})
+                  {rsidProt <- paste0(rsid," (",gene,")");tissue_p <- sub("^ ","",tissue_p)})
   ord <- with(eqtls,order(gene))
   eqtls <- eqtls[ord,]
   tissue_file <- Sys.getenv("cs95tissue")
   tissues <- with(read.table(tissue_file,header=TRUE),sort(unique(tissue)))
   eqtl_table <- matrix("",nrow(eqtls),length(tissues))
-  rownames(eqtl_table) <- with(eqtls,rsidGene)
+  rownames(eqtl_table) <- with(eqtls,rsidProt)
   colnames(eqtl_table) <- tissues
-  for(row in with(eqtls,rsidGene))
+  for(row in with(eqtls,rsidProt))
   {
-    all_pairs <- unlist(strsplit(subset(eqtls,rsidGene==row)[["tissue_p"]]," "))
+    all_pairs <- unlist(strsplit(subset(eqtls,rsidProt==row)[["tissue_p"]]," "))
     cat(row,length(all_pairs))
     for(tp in all_pairs)
     {
@@ -150,7 +150,7 @@ R --no-save <<END
   pal <- colorRampPalette(c("white","red"))
   col <- pal(3)
   library(grid)
-  png(file.path(INF,"coloc","cis_eQTL.png"),res=300,width=18,height=18,units="in")
+  png(file.path(INF,"coloc","cis_eQTL.png"),res=300,width=18,height=18,units="cm")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   pheatmap(tbl, legend=FALSE, angle_col="45", color=col, width=8, height=40, cluster_rows=FALSE, cluster_cols=FALSE, fontsize=22)
   setHook("grid.newpage", NULL, "replace")
