@@ -52,7 +52,7 @@ credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName"))
 coloc <- read.delim(file.path(INF,"coloc","GTEx.tsv"))
 cs95 <- read.delim(file.path(INF,"coloc","cis-eQTL_table.tsv"))
-cs95 <- data.frame(rsidGene=rownames(cs95),cs95)
+cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
 
 outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","coloc","cs95","pqtldisease")
 titles <- c("summary","study information","panel information","pQTLs","conditional analysis",
