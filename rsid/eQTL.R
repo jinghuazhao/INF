@@ -65,10 +65,9 @@ cis_pQTL_eQTL <- eQTL_overlap %>% mutate(rsidProts=paste0(INF1_rsid," (",gene_gw
                  group_by(rsidProts,tissue) %>%
                  summarize(rsidProts_tissue=paste(tissue_tags,collapse=";"))
 cis_pQTL_eQTL_table <- with(cis_pQTL_eQTL,table(rsidProts,tissue))
-for(row in rownames(cis_pQTL_eQTL_table))
-for(col in colnames(cis_pQTL_eQTL_table))
-if (cis_pQTL_eQTL_table[row,col]==0) cis_pQTL_eQTL_table[row,col] <- "" else
-cis_pQTL_eQTL_table[row,col] <- subset(cis_pQTL_eQTL,rsidProts==row&tissue==col)[["rsidProts_tissue"]]
+for(row in rownames(cis_pQTL_eQTL_table)) for(col in colnames(cis_pQTL_eQTL_table))
+  if (cis_pQTL_eQTL_table[row,col]==0) cis_pQTL_eQTL_table[row,col] <- "" else
+  cis_pQTL_eQTL_table[row,col] <- subset(cis_pQTL_eQTL,rsidProts==row&tissue==col)[["rsidProts_tissue"]]
 write.table(cis_pQTL_eQTL_table,file=file.path(INF,"work","cis_pQTL_eQTL_table.tsv"),sep="\t")
 
 library(pheatmap)

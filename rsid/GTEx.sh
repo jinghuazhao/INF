@@ -94,16 +94,17 @@ done
 ls *.ld | xargs -I {} basename {} .ld | parallel -C' ' 'grep {} {}.ld'
 
 # 95%CS
-export cs95=~/rds/public_databases/GTEx/GTEx_v8_finemapping_DAPG/GTEx_v8_finemapping_DAPG.CS95.txt.gz
+export DAPG=~/rds/public_databases/GTEx/GTEx_v8_finemapping_DAPG/GTEx_v8_finemapping_DAPG.CS95.txt.gz
+export cs95=${INF}/coloc/cis-eQTL_cs95.tsv
 export cs95tissue=${INF}/coloc/cs95tissue.dat
 echo tissue> ${cs95tissue}
 (
   sed '1d' ${INF}/coloc/cis-pQTL.dat | cut -f4,7,8,11,13 | awk '{print $1,$2,$3,$4"_"$5}' | \
-  parallel -C' ' --env cs95 --env cs95tissue '
-    zgrep {3} ${CS95} | zgrep {4} | \
+  parallel -C' ' --env DAPG --env cs95tissue '
+    zgrep {3} ${DAPG} | zgrep {4} | \
     awk -v snpid={1} -v hgnc_symbol={2} -v ensGene={3} -v chrpos={4} -v OFS="\t" -v cs95tissue=${cs95tissue} "
     {
-      printf snpid OFS hgnc_symbol OFS ensGene OFS chrpos OFS \$3
+      printf snpid OFS hgnc_symbol OFS ensGene OFS chrpos OFS \$3 OFS
       split(\$6,a,\"|\")
       for(v in a) if(index(a[v],ensGene))
       {
@@ -113,4 +114,47 @@ echo tissue> ${cs95tissue}
       printf \"\n\"
     }"
   '
-) | sort -k1,1 | join -t$'\t' <(cat ${INF}/work/INTERVAL.rsid | tr ' ' '\t') - > ${INF}/coloc/cis-eQTL-cs95.tsv
+) | sort -k1,1 | join -t$'\t' <(cat ${INF}/work/INTERVAL.rsid | tr ' ' '\t') - > ${cs95}
+R --no-save <<END
+  eqtl_file <- Sys.getenv("cs95")
+  eqtls <- within(read.table(eqtl_file,sep="\t", col.names=c("SNPid","rsid","gene","ensGene","chrpos","GTExSNP","tissue_p")),
+                  {rsidGene <- paste0(rsid," (",gene,")");tissue_p <- sub("^ ","",tissue_p)})
+  ord <- with(eqtls,order(gene))
+  eqtls <- eqtls[ord,]
+  tissue_file <- Sys.getenv("cs95tissue")
+  tissues <- with(read.table(tissue_file,header=TRUE),sort(unique(tissue)))
+  eqtl_table <- matrix("",nrow(eqtls),length(tissues))
+  rownames(eqtl_table) <- with(eqtls,rsidGene)
+  colnames(eqtl_table) <- tissues
+  for(row in with(eqtls,rsidGene))
+  {
+    all_pairs <- unlist(strsplit(subset(eqtls,rsidGene==row)[["tissue_p"]]," "))
+    cat(row,length(all_pairs))
+    for(tp in all_pairs)
+    {
+      z <- unlist(strsplit(tp,"="))
+      tissue <- z[1]
+      p <- z[2]
+      cat(",",tissue)
+      eqtl_table[row,tissue] <- gsub("^;","",paste(eqtl_table[row,tissue],p,sep=";"))
+    }
+    cat("\n")
+  }
+  INF <- Sys.getenv("INF")
+  write.table(eqtl_table,file=file.path(INF,"coloc","cis-eQTL_table.tsv"),sep="\t")
+  tbl <- eqtl_table
+  tbl[eqtl_table==""] <- 0
+  tbl[eqtl_table!=""] <- 1
+  storage.mode(tbl) <- "integer"
+  library(pheatmap)
+  pal <- colorRampPalette(c("white","red"))
+  col <- pal(3)
+  library(grid)
+  png(file.path(INF,"coloc","cis_eQTL.png"),res=300,width=18,height=18,units="in")
+  setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
+  pheatmap(tbl, legend=FALSE, angle_col="45", color=col, width=8, height=40, cluster_rows=FALSE, cluster_cols=FALSE, fontsize=22)
+  setHook("grid.newpage", NULL, "replace")
+  grid.text("Tissue", y=-0.07, gp=gpar(fontsize=15))
+  grid.text("pQTL", x=-0.07, rot=90, gp=gpar(fontsize=15))
+  dev.off()
+END
