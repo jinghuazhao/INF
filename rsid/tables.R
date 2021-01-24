@@ -43,11 +43,18 @@ ord <- with(pqtlstudies,order(PMID))
 pqtlstudies <- pqtlstudies[ord,]
 rownames(pqtlstudies) <- seq(nrow(pqtlstudies))
 
+INF <- Sys.getenv("INF")
+options("openxlsx.borderColour"="#4F80BD")
+hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
+novelpqtls <- subset(pqtls,!paste0(prot,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),select=c(MarkerName,rsid,prot,uniprot))
+ord <- with(novelpqtls,order(prot,MarkerName))
+write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls[ord,]), file=file.path(INF,"work","novelpqtls.xlsx"), colNames=TRUE,
+           borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
+
 url <- "https://jhz22.user.srcf.net/pqtl-immune_infection_edited.xlsx"
 metal <- read.sheet("METAL",1:20,1:181)
 short <- read.sheet("short",1:51,1:220)
 pqtldisease <- subset(short,Keep==1,select=c(MarkerName,nprots,prots,Allele1,Allele2,Effects,SEs,cistrans,trait,efo,study,pmid,dataset,infection))
-INF <- Sys.getenv("INF")
 credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c("prot","MarkerName","CredibleSet"),sep="\t")
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName"))
 coloc <- read.delim(file.path(INF,"coloc","GTEx.tsv"))
@@ -65,8 +72,6 @@ prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(
 summary <- data.frame(Sheetnames=prefix,Description=description)
 xlsx <- paste0("work/SCALLOP-INF.xlsx")
 wb <- createWorkbook(xlsx)
-options("openxlsx.borderColour"="#4F80BD")
-hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
 for (i in 1:length(outsheets))
 {
   sheetnames <- with(summary[i,], ifelse(i<=n0, Description, paste0(Sheetnames,"-",Description)))
@@ -78,8 +83,3 @@ for (i in 1:length(outsheets))
 }
 data.frame(sheets(wb))
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
-
-novelpqtls <- subset(pqtls,!paste0(prot,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),select=c(MarkerName,rsid,prot,uniprot))
-ord <- with(novelpqtls,order(prot,MarkerName))
-write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls[ord,]), file="novelpqtls.xlsx", colNames=TRUE,
-           borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
