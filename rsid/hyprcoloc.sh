@@ -65,6 +65,14 @@ R --no-save -q <<END
   colnames(betas) <- colnames(ses) <- traits <- paste0("T",1:n.traits)
   rownames(betas) <- rownames(ses) <- rsid
   hyprcoloc(betas, ses, trait.names=traits, snp.id=rsid)
+  d <- read.table("work/rs12075-beta.gassoc",col.names=c("snpid","marker","chr","pos","MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"))
+  markers <- d[c("marker","chr","pos")]
+  betas <- as.matrix(d[c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count")])
+  rownames(betas) <- with(d,marker)
+  d <- read.table("work/rs12075-se.gassoc",col.names=c("snpid","marker","chr","pos","MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"))
+  ses <- as.matrix(d[c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count")])
+  rownames(ses) <- with(d,marker)
+  hyprcoloc(betas, ses, trait.names=colnames(ses), snp.id=with(markers,marker))
 END
 
 zcat Whole_Blood.allpairs.txt.gz | cut -f1 | awk 'NR>1{print substr($1,1,15)}' | sort | uniq > work/wb
