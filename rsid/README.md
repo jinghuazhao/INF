@@ -85,7 +85,7 @@ wgcna.sh | experiment on modules
 1. IL.18-rs385076.sh
 2. rs12075.sh
 3. TNFB-rs2364485.sh
-4. TNFB-rs2364485-MR.sh (a two-sample MR)
+4. TNFB-MS-MR.sh (two-sample MRs)
 5. OPG-TRANCE.sh
 
-*Date last changed:* **19/1/2021**
+*Date last changed:* **30/1/2021**
