@@ -73,8 +73,28 @@ function pqtl_qtl_mr()
 }
 
 export prot=TNFB
-export M=500000
+export M=250000
 export get_data=yes
+(
+   awk -vOFS="\t" 'BEGIN{print "Phenotype", "SNP", "chr", "pos", "beta", "se", "snpid", "effect_allele", "other_allele", "eaf", "pval", "N"}'
+   zgrep -e chr12:6514963_A_C -e chr12:6440009_C_T -e chr6:31540757_A_C -e chr6:31073047_A_G ${INF}/METAL/${prot}-1.tbl.gz
+   awk -vFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} '(NR>1 && $1 == chr && $2 >= start && $2 <= end) {
+        split($3,a,"_"); print a[1],$1,$2,$10,$11,$3,toupper($4),toupper($5),$6,10^$12,$18
+   }' | \
+   sort -k1,1 | \
+   join -12 -21 ${INF}/work/snp_pos - | \
+   awk 'a[$7]++==0' | \
+   awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}'
+) > ${INF}/work/${prot}-pQTL.dat
+R --no-save -q <<END
+  library(pQTLtools)
+  prot <- Sys.getenv("prot")
+  pqtl <- file.path("INF","work",prot,"-pQTL.dat")
+  ivs <- read.table(pqtl,as.is=TRUE,header=TRUE)
+  pqtlMR(ivs,"ieu-b-18",prefix="MS")
+END
+
+# +/- 0.25Mb
 (
   export rsid=rs2364485
   export chr=12
