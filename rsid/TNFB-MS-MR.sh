@@ -2,26 +2,25 @@
 
 function pqtl_qtl_mr()
 {
-  export start=$(expr ${pos} - 1000000)
-  export end=$(expr ${pos} + 1000000)
-  if [ ${data_generation} -eq 1 ]; then
+  export start=$(expr ${pos} - ${M})
+  export end=$(expr ${pos} + ${M})
+  if [ ${get_data} == "yes" ]; then
     (
-      awk -vOFS="\t" 'BEGIN{print "TNFB", "rsid", "chr", "pos", "beta", "se", "snpid", "A1", "A2", "EAF", "P", "N"}'
-      gunzip -c METAL/${prot}-1.tbl.gz | \
-      sed '1d' | \
-      awk -vFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} '($1 == chr && $2 >= start && $2 <= end) {
+      awk -vprot=${prot} -vOFS="\t" 'BEGIN{print prot, "rsid", "chr", "pos", "beta", "se", "snpid", "A1", "A2", "EAF", "P", "N"}'
+      gunzip -c ${INF}/METAL/${prot}-1.tbl.gz | \
+      awk -vFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} '(NR>1 && $1 == chr && $2 >= start && $2 <= end) {
           split($3,a,"_"); print a[1],$1,$2,$10,$11,$3,toupper($4),toupper($5),$6,-$12,$18
       }' | \
       sort -k1,1 | \
-      join -12 -21 work/snp_pos - | \
+      join -12 -21 ${INF}/work/snp_pos - | \
       awk 'a[$7]++==0' | \
-      awk -vOFS="\t" '{print "TNFB", $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}'
-    ) > work/${prot}-pQTL-${rsid}.dat
+      awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}'
+    ) > ${INF}/work/${prot}-pQTL-${rsid}.dat
     gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz | \
-    awk 'NR>1 && $1==ENVIRON["chr"] && $2>=ENVIRON["start"] && $2<=ENVIRON["end"] {$3="chr" $1 ":" $2;$6="";print $0,"MS"}' | \
+    awk -vchr=${chr} -vstart=${start} -vend=${end} 'NR>1 && $1==chr && $2>=start && $2<=end {$3="chr" $1 ":" $2;$6="";print $0,"MS"}' | \
     sort -k3,3 | \
-    join -12 -23 work/snp_pos - | \
-    awk 'a[$1]++==0' > work/${prot}-QTL-${rsid}.dat
+    join -12 -23 ${INF}/work/snp_pos - | \
+    awk 'a[$1]++==0' > ${INF}/work/${prot}-QTL-${rsid}.dat
   fi
   R --no-save -q <<\ \ END
     options(width=200)
@@ -32,7 +31,7 @@ function pqtl_qtl_mr()
     cat("##",pQTL,"-",QTL,"##\n")
     library(TwoSampleMR)
     x <- read_exposure_data(pQTL,
-         clump = TRUE,
+         clump = FALSE,
          sep = "\t",
          phenotype_col = "TNFB",
          snp_col = "rsid",
@@ -45,6 +44,9 @@ function pqtl_qtl_mr()
          samplesize_col = "N",
          id_col = "rsid",
          log_pval = TRUE)
+    y <- extract_outcome_data(with(x,SNP), "ieu-b-18", proxies = TRUE, rsq = 0.8)
+    xy <- mr(harmonise_data(x, y))
+    print(xy)
     ms <- read.table(QTL,as.is=TRUE,col.names=c("chrpos","rsid","chr","pos","A1","A2","P","OR","MS"))
     ms <- within(ms, {beta <- log(OR); se <- abs(beta/qnorm(P/2))})
     z <- format_data(ms,
@@ -64,16 +66,40 @@ function pqtl_qtl_mr()
          chr_col = "chr",
          pos_col = "pos",
          log_pval = FALSE)
-    h <- harmonise_data(x, z)
-    xz <- mr(h)
+    xz <- mr(harmonise_data(x, z))
     print(xz)
-    y <- extract_outcome_data(with(ms,rsid), "ieu-b-18", proxies = TRUE, rsq = 0.8)
-    h <- harmonise_data(x, y)
-    xy <- mr(h)
-    print(xy)
   END
 # rm work/${prot}-*-${rsid}.dat
 }
+
+export prot=TNFB
+export M=500000
+export get_data=yes
+(
+  export rsid=rs2364485
+  export chr=12
+  export pos=6514963
+  pqtl_qtl_mr
+  export rsid=rs1800693
+  export pos=6440009
+  pqtl_qtl_mr
+  export rsid=rs2229092
+  export chr=6
+  export pos=31540757
+  pqtl_qtl_mr
+  export rsid=rs9263621
+  export pos=31073047
+  pqtl_qtl_mr
+) 2>&1 | tee TNFB-MS-MR.log
+
+# trans pQTL
+# chr12:6514963_A_C rs2364485
+# chr12:6440009_C_T rs1800693
+# r2=0.0029
+# cis pQTLs
+# chr6:31540757_A_C rs2229092
+# chr6:31073047_A_G rs9263621
+
 R --no-save -q <<END
   info <- function()
   {
@@ -105,28 +131,3 @@ R --no-save -q <<END
 #   ukb-a-100          Non-cancer illness code  self-reported: psoriasis ieu-a-1025 11.0119963 1.86965907 3.865659e-09
   }
 END
-# trans pQTL
-# chr12:6514963_A_C rs2364485
-# chr12:6440009_C_T rs1800693
-# r2=0.0029
-# cis pQTLs
-# chr6:31540757_A_C rs2229092
-# chr6:31073047_A_G rs9263621
-(
-  export prot=TNFB
-  export data_generation=1
-  export rsid=rs2364485
-  export chr=12
-  export pos=6514963
-  pqtl_qtl_mr
-  export rsid=rs1800693
-  export pos=6440009
-  pqtl_qtl_mr
-  export rsid=rs2229092
-  export chr=6
-  export pos=31540757
-  pqtl_qtl_mr
-  export rsid=rs9263621
-  export pos=31073047
-  pqtl_qtl_mr
-) 2>&1 | tee TNFB-MS-MR.log
