@@ -2,6 +2,8 @@
 
 function pqtl_qtl_mr()
 {
+  export start=$(expr ${pos} - 1000000)
+  export end=$(expr ${pos} + 1000000)
   if [ ${data_generation} -eq 1 ]; then
     (
       awk -vOFS="\t" 'BEGIN{print "TNFB", "rsid", "chr", "pos", "beta", "se", "snpid", "A1", "A2", "EAF", "P", "N"}'
@@ -27,6 +29,7 @@ function pqtl_qtl_mr()
     rsid <- Sys.getenv("rsid")
     pQTL <- paste0("work/",prot,"-pQTL-",rsid,".dat")
     QTL <- paste0("work/",prot,"-QTL-",rsid,".dat")
+    cat("##",pQTL,"-",QTL,"##\n")
     library(TwoSampleMR)
     x <- read_exposure_data(pQTL,
          clump = FALSE,
@@ -49,7 +52,7 @@ function pqtl_qtl_mr()
          snps = NULL,
          header = TRUE,
          phenotype_col = "MS",
-         snp_col = "SNP",
+         snp_col = "rsid",
          beta_col = "beta",
          se_col = "se",
          eaf_col = "NA",
@@ -69,8 +72,12 @@ function pqtl_qtl_mr()
     h <- harmonise_data(x, y)
     xy <- mr(h)
     print(xy)
-    info <- function()
-    {
+  END
+# rm work/${prot}-*-${rsid}.dat
+}
+R --no-save -q <<END
+  info <- function()
+  {
     # https://gwas.mrcieu.ac.uk/datasets/?trait__icontains=multiple%20sclerosis
       ms_ids <- c("ukb-b-17670","ieu-b-18","ieu-a-1025","ebi-a-GCST005531","ieu-a-1024","ebi-a-GCST001198","ieu-a-820","ieu-a-821","finn-a-G6_MS")
       ms_gwasinfo <- ieugwasr::gwasinfo(ms_ids)
@@ -97,11 +104,8 @@ function pqtl_qtl_mr()
 #   ieu-a-294                                 Inflammatory bowel disease ieu-a-1025  0.1232999 0.01697710 1.375433e-10
 #   ukb-a-104 Non-cancer illness code  self-reported: ulcerative colitis ieu-a-1025 20.4956226 3.23034883 2.228468e-10
 #   ukb-a-100          Non-cancer illness code  self-reported: psoriasis ieu-a-1025 11.0119963 1.86965907 3.865659e-09
-}
-  END
-# rm work/${prot}-pQTL-${rsid}.2s work/${prot}-QTL-${rsid}.2s
-}
-
+  }
+END
 # trans pQTL
 # chr12:6514963_A_C rs2364485
 # chr12:6440009_C_T rs1800693
@@ -111,24 +115,19 @@ function pqtl_qtl_mr()
 # chr6:31073047_A_G rs9263621
 (
   export prot=TNFB
-  export gene=LTBR
   export data_generation=1
   export rsid=rs2364485
   export chr=12
-  export start=6400000
-  export end=6520000
+  export pos=6514963
   pqtl_qtl_mr
   export rsid=rs1800693
-  export start=6434009
-  export end=6446009
+  export pos=6440009
   pqtl_qtl_mr
   export rsid=rs2229092
   export chr=6
-  export start=31534757
-  export end=31546757
+  export pos=31540757
   pqtl_qtl_mr
   export rsid=rs9263621
-  export start=31067047
-  export end=31079047
+  export pos=31073047
   pqtl_qtl_mr
 ) 2>&1 | tee TNFB-MS-MR.log
