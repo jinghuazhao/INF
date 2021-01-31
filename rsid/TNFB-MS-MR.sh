@@ -16,7 +16,7 @@ function pqtl_qtl_mr()
       awk -vOFS="\t" '{print "TNFB", $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}'
     ) > work/${prot}-pQTL-${rsid}.dat
     gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz | \
-    awk 'NR>1 && $1==ENVIRON["chr"] && $2>=ENVIRON["start"] && $2<=ENVIRON["end"] {$3="chr" $1 ":" $2;print $0,"MS"}' | \
+    awk 'NR>1 && $1==ENVIRON["chr"] && $2>=ENVIRON["start"] && $2<=ENVIRON["end"] {$3="chr" $1 ":" $2;$6="";print $0,"MS"}' | \
     sort -k3,3 | \
     join -12 -23 work/snp_pos - | \
     awk 'a[$1]++==0' > work/${prot}-QTL-${rsid}.dat
@@ -42,7 +42,7 @@ function pqtl_qtl_mr()
          samplesize_col = "N",
          id_col = "rsid",
          log_pval = TRUE)
-    ms <- with(read.table(QTL,as.is=TRUE,col.names=c("chrpos","rsid","chr","pos","A1","A2","N","P","OR","MS")))
+    ms <- with(read.table(QTL,as.is=TRUE,col.names=c("chrpos","rsid","chr","pos","A1","A2","P","OR","MS")))
     ms <- within(ms, {beta <- log(OR); se <- abs(beta/qnorm(P/2))})
     z <- format_data(ms,
          type = "outcome",
@@ -55,18 +55,18 @@ function pqtl_qtl_mr()
          eaf_col = "NA",
          effect_allele_col = "A1",
          other_allele_col = "A2",
+         ncase = 47429,
+         ncontrol = 68374,
          pval_col = "P",
          id_col = "rsid",
          chr_col = "chr",
          pos_col = "pos",
          log_pval = FALSE)
     h <- harmonise_data(x, z)
-    print(h)
     xz <- mr(h)
     print(xz)
     y <- extract_outcome_data(with(ms,rsid), "ieu-b-18", proxies = TRUE, rsq = 0.8)
     h <- harmonise_data(x, y)
-    print(h)
     xy <- mr(h)
     print(xy)
     info <- function()
@@ -109,25 +109,26 @@ function pqtl_qtl_mr()
 # cis pQTLs
 # chr6:31540757_A_C rs2229092
 # chr6:31073047_A_G rs9263621
-
-export prot=TNFB
-export gene=LTBR
-export data_generation=1
-export rsid=rs2364485
-export chr=12
-export start=6400000
-export end=6520000
-pqtl_qtl_mr
-export rsid=rs1800693
-export start=6434009
-export end=6446009
-pqtl_qtl_mr
-export rsid=rs2229092
-export chr=6
-export start=31534757
-export end=31546757
-pqtl_qtl_mr
-export rsid=rs9263621
-export start=31067047
-export end=31079047
-pqtl_qtl_mr
+(
+  export prot=TNFB
+  export gene=LTBR
+  export data_generation=1
+  export rsid=rs2364485
+  export chr=12
+  export start=6400000
+  export end=6520000
+  pqtl_qtl_mr
+  export rsid=rs1800693
+  export start=6434009
+  export end=6446009
+  pqtl_qtl_mr
+  export rsid=rs2229092
+  export chr=6
+  export start=31534757
+  export end=31546757
+  pqtl_qtl_mr
+  export rsid=rs9263621
+  export start=31067047
+  export end=31079047
+  pqtl_qtl_mr
+) 2>&1 | tee TNFB-MS-MR.log
