@@ -32,7 +32,7 @@ function pqtl_qtl_mr()
     cat("##",pQTL,"-",QTL,"##\n")
     library(TwoSampleMR)
     x <- read_exposure_data(pQTL,
-         clump = FALSE,
+         clump = TRUE,
          sep = "\t",
          phenotype_col = "TNFB",
          snp_col = "rsid",
@@ -55,7 +55,6 @@ function pqtl_qtl_mr()
          snp_col = "rsid",
          beta_col = "beta",
          se_col = "se",
-         eaf_col = "NA",
          effect_allele_col = "A1",
          other_allele_col = "A2",
          ncase = 47429,
