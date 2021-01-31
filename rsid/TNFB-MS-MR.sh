@@ -42,7 +42,7 @@ function pqtl_qtl_mr()
          samplesize_col = "N",
          id_col = "rsid",
          log_pval = TRUE)
-    ms <- with(read.table(QTL,as.is=TRUE,col.names=c("chrpos","rsid","chr","pos","A1","A2","P","OR","MS")))
+    ms <- read.table(QTL,as.is=TRUE,col.names=c("chrpos","rsid","chr","pos","A1","A2","P","OR","MS"))
     ms <- within(ms, {beta <- log(OR); se <- abs(beta/qnorm(P/2))})
     z <- format_data(ms,
          type = "outcome",
