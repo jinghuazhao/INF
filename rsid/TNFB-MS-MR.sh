@@ -14,7 +14,8 @@ function pqtl_qtl_mr()
       sort -k1,1 | \
       join -12 -21 ${INF}/work/snp_pos - | \
       awk 'a[$7]++==0' | \
-      awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}'
+      awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' | \
+      sort -k3,3n -k4,4n
     ) > ${INF}/work/${prot}-pQTL-${rsid}.dat
     gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz | \
     awk -vchr=${chr} -vstart=${start} -vend=${end} 'NR>1 && $1==chr && $2>=start && $2<=end {$3="chr" $1 ":" $2;$6="";print $0,"MS"}' | \
@@ -72,45 +73,56 @@ function pqtl_qtl_mr()
 # rm work/${prot}-*-${rsid}.dat
 }
 
+function pqtl()
+# pQTLs
+{
+  (
+     awk -vOFS="\t" 'BEGIN{print "Phenotype", "SNP", "chr", "pos", "beta", "se", "snpid", "effect_allele", "other_allele", "eaf", "pval", "N"}'
+     zgrep -e chr12:6514963_A_C -e chr12:6440009_C_T -e chr6:31540757_A_C -e chr6:31073047_A_G ${INF}/METAL/${prot}-1.tbl.gz | \
+     awk -vFS="\t" '{split($3,a,"_"); print a[1],$1,$2,$10,$11,$3,toupper($4),toupper($5),$6,10^$12,$18}' | \
+     sort -k1,1 | \
+     join -12 -21 ${INF}/work/snp_pos - | \
+     awk 'a[$7]++==0' | \
+     awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' | \
+     sort -k3,3n -k4,4n
+  ) > ${INF}/work/${prot}-pQTL.dat
+  R --no-save -q <<\ \ END
+    library(pQTLtools)
+    INF <- Sys.getenv("INF")
+    prot <- Sys.getenv("prot")
+    pqtl <- file.path(INF,"work",paste0(prot,"-pQTL.dat"))
+    ivs <- read.table(pqtl,as.is=TRUE,header=TRUE)
+    pqtlMR(ivs,"ieu-b-18",prefix="MS")
+  END
+}
+
+function pqtl_flanking()
+# +/- 0.25Mb
+{
+  (
+    export rsid=rs2364485
+    export chr=12
+    export pos=6514963
+    pqtl_qtl_mr
+    export rsid=rs1800693
+    export pos=6440009
+    pqtl_qtl_mr
+    export rsid=rs2229092
+    export chr=6
+    export pos=31540757
+    pqtl_qtl_mr
+    export rsid=rs9263621
+    export pos=31073047
+    pqtl_qtl_mr
+  ) 2>&1 | tee TNFB-MS-MR.log
+}
+
 export prot=TNFB
 export M=250000
 export get_data=yes
-(
-   awk -vOFS="\t" 'BEGIN{print "Phenotype", "SNP", "chr", "pos", "beta", "se", "snpid", "effect_allele", "other_allele", "eaf", "pval", "N"}'
-   zgrep -e chr12:6514963_A_C -e chr12:6440009_C_T -e chr6:31540757_A_C -e chr6:31073047_A_G ${INF}/METAL/${prot}-1.tbl.gz
-   awk -vFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} '(NR>1 && $1 == chr && $2 >= start && $2 <= end) {
-        split($3,a,"_"); print a[1],$1,$2,$10,$11,$3,toupper($4),toupper($5),$6,10^$12,$18
-   }' | \
-   sort -k1,1 | \
-   join -12 -21 ${INF}/work/snp_pos - | \
-   awk 'a[$7]++==0' | \
-   awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}'
-) > ${INF}/work/${prot}-pQTL.dat
-R --no-save -q <<END
-  library(pQTLtools)
-  prot <- Sys.getenv("prot")
-  pqtl <- file.path("INF","work",prot,"-pQTL.dat")
-  ivs <- read.table(pqtl,as.is=TRUE,header=TRUE)
-  pqtlMR(ivs,"ieu-b-18",prefix="MS")
-END
 
-# +/- 0.25Mb
-(
-  export rsid=rs2364485
-  export chr=12
-  export pos=6514963
-  pqtl_qtl_mr
-  export rsid=rs1800693
-  export pos=6440009
-  pqtl_qtl_mr
-  export rsid=rs2229092
-  export chr=6
-  export pos=31540757
-  pqtl_qtl_mr
-  export rsid=rs9263621
-  export pos=31073047
-  pqtl_qtl_mr
-) 2>&1 | tee TNFB-MS-MR.log
+pqtl
+pqtl_flanking
 
 # trans pQTL
 # chr12:6514963_A_C rs2364485
