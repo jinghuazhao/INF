@@ -14,7 +14,7 @@ function pgz()
 # HLA
     zcat ${INF}/MS/${prot}.p.gz | \
     awk 'NR>1 && !($1 == 6 && $2 >= 25392021 && $2 < 33392022)'
-    zcat {INF}/MS/${prot}.p.gz | \
+    zcat ${INF}/MS/${prot}.p.gz | \
     awk '$1 == 6 && $2 >= 25392021 && $2 < 33392022' | \
     sort -k12,12g | \
     awk 'NR==1'
@@ -79,14 +79,14 @@ function pqtl_qtl_rsid()
       awk 'a[$7]++==0' | \
       awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' | \
       sort -k3,3n -k4,4n
-    ) > ${INF}/work/${prot}-pQTL-${rsid}.dat
+    ) > ${INF}/MS/${prot}-pQTL-${rsid}.dat
   fi
   R --no-save -q <<\ \ END
     options(echo=FALSE,width=200)
     INF <- Sys.getenv("INF")
     prot <- Sys.getenv("prot")
     rsid <- Sys.getenv("rsid")
-    pQTL <- file.path(INF,"work",paste0(prot,"-pQTL-",rsid,".dat"))
+    pQTL <- file.path(INF,"MS",paste0(prot,"-pQTL-",rsid,".dat"))
     library(TwoSampleMR)
     x <- subset(read_exposure_data(pQTL,
                 clump = TRUE,
@@ -110,7 +110,6 @@ function pqtl_qtl_rsid()
       print(xy)
     }
   END
-  rm work/${prot}-*-${rsid}.dat
 }
 
 function pqtl()
@@ -125,12 +124,12 @@ function pqtl()
      awk 'a[$7]++==0' | \
      awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' | \
      sort -k3,3n -k4,4n
-  ) > ${INF}/work/${prot}-pQTL.dat
+  ) > ${INF}/MS/${prot}-pQTL.dat
   R --no-save -q <<\ \ END
     library(pQTLtools)
     INF <- Sys.getenv("INF")
     prot <- Sys.getenv("prot")
-    pqtl <- file.path(INF,"work",paste0(prot,"-pQTL.dat"))
+    pqtl <- file.path(INF,"MS",paste0(prot,"-pQTL.dat"))
     ivs <- read.table(pqtl,as.is=TRUE,header=TRUE)
     setwd(file.path(INF,"MS"))
     for(id in c("ieu-b-18","ieu-a-1025","ukb-b-17670","finn-a-G6_MS"))
