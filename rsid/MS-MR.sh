@@ -23,7 +23,7 @@ function pgz()
   if [ $lines -eq 0 ]; then rm ${INF}/MS/${prot}.p; fi
   (
     awk -vprot=${prot} -vOFS="\t" 'BEGIN{print prot, "rsid", "chr", "pos", "beta", "se", "snpid", "A1", "A2", "EAF", "P", "N"}'
-    awk -vFS="\t" '{split($3,a,"_"); print a[1],$1,$2,$10,$11,$3,toupper($4),toupper($5),$6,-$12,$18}' ${prot}.p | \
+    awk -vFS="\t" '{split($3,a,"_"); print a[1],$1,$2,$10,$11,$3,toupper($4),toupper($5),$6,-$12,$18}' ${INF}/MS/${prot}.p | \
     sort -k1,1 | \
     join -12 -21 ${INF}/work/snp_pos - | \
     awk 'a[$7]++==0' | \
