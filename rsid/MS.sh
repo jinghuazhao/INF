@@ -169,7 +169,7 @@ function pqtl_flanking()
 }
 
 export M=1000000
-export get_data=no
+export get_data=yes
 
 pqtl_flanking
 pqtl
