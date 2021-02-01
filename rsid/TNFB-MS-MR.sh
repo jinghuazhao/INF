@@ -1,6 +1,69 @@
 #!/usr/bin/bash
 
-function pqtl_qtl_mr()
+export prot=TNFB
+
+function pgz()
+{
+# all significant SNPs
+  (
+    zcat ${INF}/METAL/${prot}-1.tbl.gz | head -1
+    zcat ${INF}/METAL/${prot}-1.tbl.gz | \
+    awk 'NR>1 && length($4)==1 && length($5)==1 && $12<=-5' | \
+    sort -k1,1n -k2,2n | \
+    gzip -f > ${INF}/MS/${prot}.p.gz
+# HLA
+    zcat ${INF}/MS/${prot}.p.gz | \
+    awk 'NR>1 && !($1 == 6 && $2 >= 25392021 && $2 < 33392022)'
+    zcat {INF}/MS/${prot}.p.gz | \
+    awk '$1 == 6 && $2 >= 25392021 && $2 < 33392022' | \
+    sort -k12,12g | \
+    awk 'NR==1'
+  ) > ${INF}/MS/${prot}.p
+  export lines=$(expr $(wc -l ${INF}/MS/${prot}.p | cut -d' ' -f1) - 1)
+  if [ $lines -eq 0 ]; then rm ${INF}/MS/${prot}.p; fi
+  (
+    awk -vprot=${prot} -vOFS="\t" 'BEGIN{print prot, "rsid", "chr", "pos", "beta", "se", "snpid", "A1", "A2", "EAF", "P", "N"}'
+    awk -vFS="\t" '{split($3,a,"_"); print a[1],$1,$2,$10,$11,$3,toupper($4),toupper($5),$6,-$12,$18}' ${prot}.p | \
+    sort -k1,1 | \
+    join -12 -21 ${INF}/work/snp_pos - | \
+    awk 'a[$7]++==0' | \
+    awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' | \
+    sort -k3,3n -k4,4n
+  ) > ${INF}/MS/${prot}-pQTL.dat
+  R --no-save -q <<\ \ END
+    options(echo=FALSE,width=200)
+    INF <- Sys.getenv("INF")
+    prot <- Sys.getenv("prot")
+    rsid <- Sys.getenv("rsid")
+    pQTL <- file.path(INF,"MS",paste0(prot,"-pQTL.dat"))
+    library(TwoSampleMR)
+    x <- read_exposure_data(pQTL,
+         clump = TRUE,
+         sep = "\t",
+         phenotype_col = "TNFB",
+         snp_col = "rsid",
+         beta_col = "beta",
+         se_col = "se",
+         eaf_col = "EAF",
+         effect_allele_col = "A1",
+         other_allele_col = "A2",
+         pval_col = "P",
+         samplesize_col = "N",
+         id_col = "rsid",
+         log_pval = TRUE)
+    for(id in c("ieu-b-18","ieu-a-1025","ukb-b-17670","finn-a-G6_MS"))
+    {
+      cat("--",pQTL,"-",id,"--\n")
+      y <- extract_outcome_data(with(x,SNP), id, proxies = TRUE, rsq = 0.8)
+      xy <- mr(harmonise_data(x, y))
+      print(xy)
+    }
+  END
+}
+
+pgz > ${INF}/MS/${prot}-MS-MR.log
+
+function pqtl_qtl_rsid()
 {
   export start=$(expr ${pos} - ${M})
   export end=$(expr ${pos} + ${M})
@@ -17,60 +80,37 @@ function pqtl_qtl_mr()
       awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' | \
       sort -k3,3n -k4,4n
     ) > ${INF}/work/${prot}-pQTL-${rsid}.dat
-    gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz | \
-    awk -vchr=${chr} -vstart=${start} -vend=${end} 'NR>1 && $1==chr && $2>=start && $2<=end {$3="chr" $1 ":" $2;$6="";print $0,"MS"}' | \
-    sort -k3,3 | \
-    join -12 -23 ${INF}/work/snp_pos - | \
-    awk 'a[$1]++==0' > ${INF}/work/${prot}-QTL-${rsid}.dat
   fi
   R --no-save -q <<\ \ END
-    options(width=200)
+    options(echo=FALSE,width=200)
+    INF <- Sys.getenv("INF")
     prot <- Sys.getenv("prot")
     rsid <- Sys.getenv("rsid")
-    pQTL <- paste0("work/",prot,"-pQTL-",rsid,".dat")
-    QTL <- paste0("work/",prot,"-QTL-",rsid,".dat")
-    cat("##",pQTL,"-",QTL,"##\n")
+    pQTL <- file.path(INF,"work",paste0(prot,"-pQTL-",rsid,".dat"))
     library(TwoSampleMR)
-    x <- read_exposure_data(pQTL,
-         clump = FALSE,
-         sep = "\t",
-         phenotype_col = "TNFB",
-         snp_col = "rsid",
-         beta_col = "beta",
-         se_col = "se",
-         eaf_col = "EAF",
-         effect_allele_col = "A1",
-         other_allele_col = "A2",
-         pval_col = "P",
-         samplesize_col = "N",
-         id_col = "rsid",
-         log_pval = TRUE)
-    y <- extract_outcome_data(with(x,SNP), "ieu-b-18", proxies = TRUE, rsq = 0.8)
-    xy <- mr(harmonise_data(x, y))
-    print(xy)
-    ms <- read.table(QTL,as.is=TRUE,col.names=c("chrpos","rsid","chr","pos","A1","A2","P","OR","MS"))
-    ms <- within(ms, {beta <- log(OR); se <- abs(beta/qnorm(P/2))})
-    z <- format_data(ms,
-         type = "outcome",
-         snps = NULL,
-         header = TRUE,
-         phenotype_col = "MS",
-         snp_col = "rsid",
-         beta_col = "beta",
-         se_col = "se",
-         effect_allele_col = "A1",
-         other_allele_col = "A2",
-         ncase = 47429,
-         ncontrol = 68374,
-         pval_col = "P",
-         id_col = "rsid",
-         chr_col = "chr",
-         pos_col = "pos",
-         log_pval = FALSE)
-    xz <- mr(harmonise_data(x, z))
-    print(xz)
+    x <- subset(read_exposure_data(pQTL,
+                clump = TRUE,
+                sep = "\t",
+                phenotype_col = "TNFB",
+                snp_col = "rsid",
+                beta_col = "beta",
+                se_col = "se",
+                eaf_col = "EAF",
+                effect_allele_col = "A1",
+                other_allele_col = "A2",
+                pval_col = "P",
+                samplesize_col = "N",
+                id_col = "rsid",
+                log_pval = TRUE), pval<1e-5)
+    for(id in c("ieu-b-18","ieu-a-1025","ukb-b-17670","finn-a-G6_MS"))
+    {
+      cat("##",pQTL,"-",id,"##\n")
+      y <- extract_outcome_data(with(x,SNP), id, proxies = TRUE, rsq = 0.8)
+      xy <- mr(harmonise_data(x, y))
+      print(xy)
+    }
   END
-# rm work/${prot}-*-${rsid}.dat
+  rm work/${prot}-*-${rsid}.dat
 }
 
 function pqtl()
@@ -92,45 +132,48 @@ function pqtl()
     prot <- Sys.getenv("prot")
     pqtl <- file.path(INF,"work",paste0(prot,"-pQTL.dat"))
     ivs <- read.table(pqtl,as.is=TRUE,header=TRUE)
-    pqtlMR(ivs,"ieu-b-18",prefix="MS")
+    setwd(file.path(INF,"MS"))
+    for(id in c("ieu-b-18","ieu-a-1025","ukb-b-17670","finn-a-G6_MS"))
+    {
+      pqtlMR(subset(ivs,SNP%in%c("rs2364485","rs1800693")),id,prefix=paste0(prot,"-",id,"-trans"))
+      pqtlMR(subset(ivs,SNP%in%c("rs2229092","rs9263621")),id,prefix=paste0(prot,"-",id,"-cis"))
+    }
   END
 }
 
 function pqtl_flanking()
-# +/- 0.25Mb
+# +/- 0.5Mb
 {
   (
-    export rsid=rs2364485
-    export chr=12
-    export pos=6514963
-    pqtl_qtl_mr
-    export rsid=rs1800693
-    export pos=6440009
-    pqtl_qtl_mr
-    export rsid=rs2229092
+  # cis pQTLs
+  # chr6:31540757_A_C rs2229092
+  # chr6:31073047_A_G rs9263621
     export chr=6
+    export rsid=rs2229092
     export pos=31540757
-    pqtl_qtl_mr
+    pqtl_qtl_rsid
     export rsid=rs9263621
     export pos=31073047
-    pqtl_qtl_mr
-  ) 2>&1 | tee TNFB-MS-MR.log
+    pqtl_qtl_rsid
+  # trans pQTL
+  # chr12:6514963_A_C rs2364485
+  # chr12:6440009_C_T rs1800693
+  # r2=0.0029
+    export chr=12
+    export rsid=rs2364485
+    export pos=6514963
+    pqtl_qtl_rsid
+    export rsid=rs1800693
+    export pos=6440009
+    pqtl_qtl_rsid
+  ) >> ${INF}/MS/${prot}-MS-MR.log
 }
 
-export prot=TNFB
-export M=250000
-export get_data=yes
+export M=1000000
+export get_data=no
 
-pqtl
 pqtl_flanking
-
-# trans pQTL
-# chr12:6514963_A_C rs2364485
-# chr12:6440009_C_T rs1800693
-# r2=0.0029
-# cis pQTLs
-# chr6:31540757_A_C rs2229092
-# chr6:31073047_A_G rs9263621
+pqtl
 
 R --no-save -q <<END
   info <- function()

@@ -115,10 +115,19 @@ uniq > work/INF1.gene
 # phenoscanner -t T -c eQTL -x EUR -p 5e-8 -r 0.8 -i work/INF1.gene -o INF1
 # additionally from pqtlxQTL.R
 
+function ms()
+{
+  gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz | \
+  awk -vchr=${chr} -vstart=${start} -vend=${end} 'NR>1 && $1==chr && $2>=start && $2<=end {$3="chr" $1 ":" $2;$6="";print $0,"MS"}' | \
+  sort -k3,3 | \
+  join -12 -23 ${INF}/work/snp_pos - | \
+  awk 'a[$1]++==0' > ${INF}/work/${prot}-QTL-${rsid}.dat
+}
+
 function ieu()
 {
-  md5sum *.tsv.gz > INF1.md5sum
-  md5sum --check INF1.md5sum
+  md5sum *.vcf.gz* > vcf.md5sum
+  md5sum --check vcf.md5sum
   ls  *.tsv.gz | parallel -C' ' 'echo {}; gunzip -c {} | wc -l' | paste - - | sort -k1,1 > INF1.size
 }
 
