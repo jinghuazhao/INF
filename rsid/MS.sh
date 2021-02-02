@@ -1,48 +1,74 @@
 #!/usr/bin/bash
 
 export prot=TNFB
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+
+function blood_cell_traits()
+{
+  export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
+  export ext=_EUR_buildGRCh37.tsv.gz
+  ls ${dir}/*EUR* | xargs -I{} basename {} ${ext} | \
+  parallel -C' ' --env dir --env ext '
+  (
+    echo chromosome base_pair_location snpid effect_allele other_allele effect_allele_frequency beta standard_error p_value | \
+    tr " " "\t"
+    gunzip -c ${dir}/{}${ext} | \
+    sed "1d" | \
+    sort -k1,1n -k2,2n | \
+    awk -vOFS="\t" "{
+      if (\$3<\$4) snpid=\"chr\"\$1\":\"\$2\"_\"\$3\"_\"\$4;
+      else snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$3;
+      print \$1, \$2, snpid, \$3, \$4, \$5, \$6, \$7, \$8
+    }" 
+  ) | \
+  bgzip -f > ${dir}/tsv/EUR-{}.gz
+  tabix -f -S1 -s1 -b2 -e2 ${dir}/tsv/EUR-{}.gz
+  '
+}
+
+blood_cell_traits
 
 function gsmr()
 {
+# MS 
+  export ieu_id=ieu-a-1025
   (
-    gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz | \
-    awk '{$1=""; $2=""; $6=""; print}' | \
-    sort -k1,1 | \
-    join -12 -21 ${INF}/work/snp_pos - | \
-    awk 'a[$1]++==0'
-  ) | gzip -f > MS/gsmr_MS.ma.gz
-  R --no-save -q <<\ \ END
     echo SNP A1 A2 freq b se p N
-    ms <- within(read.table("MS/gsmr_MS.ma.gz",header=TRUE,col.names=c("SNP","A1","A2","OR","P")),{b <- log(OR);se <- abs(b)/abs(qnorm(P/2))})
-    f <- gzfile("MS/gsmr_MS.ma.gz")
-    write.table(ms,file="MS/gsmr_MS-rsid.ma",quote=FALSE,row.names=FALSE)
+    bcftools query -f "%CHROM %POS %ALT %REF %AF [%ES] [%SE] [%LP] [%SS]\n" ~/rds/results/public/gwas/multiple_sclerosis/${ieu_id}.vcf.gz | \
+    awk '{if ($3<$4) snpid="chr"$1":"$2"_"$3"_"$4;else snpid="chr"$1":"$2"_"$4"_"$3;print snpid, $3, $4, $5, $6, $7, $8, $9}' | \
+    awk 'a[$1]++==0'
+  ) | gzip -f > ${INF}/MS/gsmr_MS-${ieu_id}.gz
+  R --no-save -q <<\ \ END
+    INF <- Sys.getenv("INF")
+    ieu_id <- Sys.getenv("ieu_id")
+    ma <- file.path(INF,"MS",paste0("gsmr_MS-",ieu_id,".gz"))
+    ms <- within(read.table(ma,header=TRUE),{p <- 10^-p})
+    f <- gzfile(file.path(INF,"MS","gsmr_MS.ma.gz"))
+    write.table(ms,file=f,quote=FALSE,row.names=FALSE)
+    unlink(ma)
   END
+# prot
   (
     echo SNP A1 A2 freq b se p N
     zcat ${INF}/METAL/${prot}-1.tbl.gz | \
-    awk "NR>1 {print \$3,toupper(\$4),toupper(\$5),\$6,\$10,\$11,10^\$12,\$18}" | \
-    sort -k1,1 | \
-    join ${INF}/work/INTERVAL.rsid - | \
-    awk "{\$1=\"\";print}" | \
-    awk "{\$1=\$1};1"
-  ) | gzip -f > ${INF}/MS/${prot}-rsid.ma.gz
+    awk 'NR>1 {print $3,toupper($4),toupper($5),$6,$10,$11,10^$12,$18}'
+  ) | gzip -f > ${INF}/MS/gsmr_${prot}.ma.gz
+# control files
+  if [ ! -f ${INF}/MS/gsmr_ref_data ]; then echo ${INF}/work/INTERVAL > ${INF}/MS/gsmr_ref_data; fi
+  if [ ! -f ${INF}/MS/gsmr_MS ]; then echo MS ${INF}/MS/gsmr_MS.ma.gz > ${INF}/MS/gsmr_MS; fi
+  if [ ! -f ${INF}/MS/gsmr_${prot} ]; then echo ${prot} ${INF}/MS/gsmr_${prot}.ma.gz > ${INF}/MS/gsmr_${prot}; fi
 
-  export TMPDIR=/rds/user/jhz22/hpc-work/work
-  if [ ! -f MS/gsmr_ref_data ]; then echo $INF/work/INTERVAL > MS/gsmr_ref_data; fi
-  if [ ! -f MS/gsmr_MS ]; then echo MS MS/gsmr_MS.ma.gz > MS/gsmr_MS; fi
-  if [ ! -f MS/gsmr_${prot} ]; then echo ${prot} $INF/work/${prot}-rsid.ma > MS/gsmr_${prot}; fi
-
-  gcta-1.9 --mbfile MS/gsmr_ref_data --gsmr-file MS/gsmr_MS MS/gsmr_${prot} \
+  gcta-1.9 --mbfile ${INF}/MS/gsmr_ref_data --gsmr-file ${INF}/MS/gsmr_MS ${INF}/MS/gsmr_${prot} \
            --gsmr-direction 0 \
-           --clump-r2 0.05 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
-           --out MS/gsmr_${prot}_MS
+           --clump-r2 0.05 --gwas-thresh 1e-5 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
+           --out ${INF}/MS/gsmr_${prot}-MS
 
-  R --no-save -q <<END
+  R --no-save -q <<\ \ END
     prot <- Sys.getenv("prot")
     source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
-    gsmr_data <- read_gsmr_data(paste0("MS/gsmr_",prot,"_MS.eff_plot.gz"))
+    gsmr_data <- read_gsmr_data(paste0("MS/gsmr_",prot,"-MS.eff_plot.gz"))
     gsmr_summary(gsmr_data)
-    pdf(paste0("MS/gsmr_",prot,"_MS.eff_plot.pdf"))
+    pdf(paste0("MS/gsmr_",prot,"-MS.eff_plot.pdf"))
     plot_gsmr_effect(gsmr_data, prot, "MS", colors()[75])
     dev.off()
   END
@@ -84,7 +110,7 @@ function wgs()
     pQTL <- file.path(INF,"MS",paste0(prot,"-pQTL.dat"))
     library(TwoSampleMR)
     x <- read_exposure_data(pQTL,
-         clump = TRUE,
+         clump = FALSE,
          sep = "\t",
          phenotype_col = "TNFB",
          snp_col = "rsid",
@@ -97,13 +123,16 @@ function wgs()
          samplesize_col = "N",
          id_col = "rsid",
          log_pval = TRUE)
+    pdf(file.path(INF,"MS","MS-forestplot.pdf"))
     for(id in c("ieu-b-18","ieu-a-1025","ukb-b-17670","finn-a-G6_MS"))
     {
       cat("--",pQTL,"-",id,"--\n")
       y <- extract_outcome_data(with(x,SNP), id, proxies = TRUE, rsq = 0.8)
       xy <- mr(harmonise_data(x, y))
+      forest_plot(xy)
       print(xy)
     }
+    dev.off()
   END
 }
 
@@ -214,8 +243,8 @@ function pqtl_flanking()
   ) >> ${INF}/MS/${prot}-MS-MR.log
 }
 
-export M=1000000
-export get_data=yes
+export M=60000
+export get_data=no
 
 pqtl_flanking
 pqtl
@@ -239,7 +268,7 @@ R --no-save -q <<END
 # 8        ieu-a-821 2009   978      883   514572 HG19/GRCh37   Baranzini SE 19010793   European
 # 9     finn-a-G6_MS 2020   378    44677 16152119 HG19/GRCh37             NA       NA   European
 # 2,9 with no VCF
-# https://gwas.mrcieu.ac.uk/files/ukb-b-17670/ukb-b-17670.vcf.gz
+# https://gwas.mrcieu.ac.uk/files/ieu-a-1025/ieu-a-1025.vcf.gz
       mr_info <- as.data.frame(epigraphdb::mr(outcome_trait = "Multiple sclerosis", pval_threshold = 1e-8))
       select <- c("ukb-a-100","ukb-a-104","ieu-a-294","ieu-a-295","ieu-a-971")
       subset(mr_info,exposure.id%in%select,select=-c(outcome.trait,mr.selection,mr.method,mr.moescore))

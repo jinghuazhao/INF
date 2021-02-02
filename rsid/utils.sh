@@ -124,6 +124,22 @@ function ms()
   awk 'a[$1]++==0' > ${INF}/work/${prot}-QTL-${rsid}.dat
 }
 
+function rsid()
+{
+  sort -k1,1 | \
+  join ${INF}/work/INTERVAL.rsid - | \
+  awk '{$1="";print}' | \
+  awk '{$1=$1};1'
+
+  ln -sf ${INF}/INTERVAL/cardio/INTERVAL.bed ${INF}/MS/INTERVAL.bed
+  sort -k2,2 ${INF}/INTERVAL/cardio/INTERVAL.bim | \
+  join -12 -21 - ${INF}/work/INTERVAL.rsid | \
+  awk '{$1=$2" "$7; $7=""};1' | \
+  sort -k1,1n -k4,4n | \
+  tr ' ' '\t' > ${INF}/MS/INTERVAL.bim
+  ln -sf ${INF}/INTERVAL/cardio/INTERVAL.fam ${INF}/MS/INTERVAL.fam
+}
+
 function ieu()
 {
   md5sum *.vcf.gz* > vcf.md5sum
