@@ -209,8 +209,10 @@ function pqtl()
     setwd(file.path(INF,"MS"))
     for(id in c("ieu-b-18","ieu-a-1025","ukb-b-17670","finn-a-G6_MS"))
     {
-      pqtlMR(subset(ivs,SNP%in%c("rs2364485","rs1800693")),id,prefix=paste0(prot,"-",id,"-trans"))
-      pqtlMR(subset(ivs,SNP%in%c("rs2229092","rs9263621")),id,prefix=paste0(prot,"-",id,"-cis"))
+      pqtlMR(subset(ivs,SNP%in%"rs2364485"),id,prefix=paste0(prot,"-",id,"-rs2364485"))
+      pqtlMR(subset(ivs,SNP%in%"rs1800693"),id,prefix=paste0(prot,"-",id,"-rs1800693"))
+      pqtlMR(subset(ivs,SNP%in%"rs9263621"),id,prefix=paste0(prot,"-",id,"-rs9263621"))
+      pqtlMR(subset(ivs,SNP%in%"rs2229092"),id,prefix=paste0(prot,"-",id,"-rs2229092"))
     }
   END
 }
