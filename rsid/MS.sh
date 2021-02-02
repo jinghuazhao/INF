@@ -2,7 +2,53 @@
 
 export prot=TNFB
 
-function pgz()
+function gsmr()
+{
+  (
+    gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz | \
+    awk '{$1=""; $2=""; $6=""; print}' | \
+    sort -k1,1 | \
+    join -12 -21 ${INF}/work/snp_pos - | \
+    awk 'a[$1]++==0'
+  ) | gzip -f > MS/gsmr_MS.ma.gz
+  R --no-save -q <<\ \ END
+    echo SNP A1 A2 freq b se p N
+    ms <- within(read.table("MS/gsmr_MS.ma.gz",header=TRUE,col.names=c("SNP","A1","A2","OR","P")),{b <- log(OR);se <- abs(b)/abs(qnorm(P/2))})
+    f <- gzfile("MS/gsmr_MS.ma.gz")
+    write.table(ms,file="MS/gsmr_MS-rsid.ma",quote=FALSE,row.names=FALSE)
+  END
+  (
+    echo SNP A1 A2 freq b se p N
+    zcat ${INF}/METAL/${prot}-1.tbl.gz | \
+    awk "NR>1 {print \$3,toupper(\$4),toupper(\$5),\$6,\$10,\$11,10^\$12,\$18}" | \
+    sort -k1,1 | \
+    join ${INF}/work/INTERVAL.rsid - | \
+    awk "{\$1=\"\";print}" | \
+    awk "{\$1=\$1};1"
+  ) | gzip -f > ${INF}/MS/${prot}-rsid.ma.gz
+
+  export TMPDIR=/rds/user/jhz22/hpc-work/work
+  if [ ! -f MS/gsmr_ref_data ]; then echo $INF/work/INTERVAL > MS/gsmr_ref_data; fi
+  if [ ! -f MS/gsmr_MS ]; then echo MS MS/gsmr_MS.ma.gz > MS/gsmr_MS; fi
+  if [ ! -f MS/gsmr_${prot} ]; then echo ${prot} $INF/work/${prot}-rsid.ma > MS/gsmr_${prot}; fi
+
+  gcta-1.9 --mbfile MS/gsmr_ref_data --gsmr-file MS/gsmr_MS MS/gsmr_${prot} \
+           --gsmr-direction 0 \
+           --clump-r2 0.05 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
+           --out MS/gsmr_${prot}_MS
+
+  R --no-save -q <<END
+    prot <- Sys.getenv("prot")
+    source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
+    gsmr_data <- read_gsmr_data(paste0("MS/gsmr_",prot,"_MS.eff_plot.gz"))
+    gsmr_summary(gsmr_data)
+    pdf(paste0("MS/gsmr_",prot,"_MS.eff_plot.pdf"))
+    plot_gsmr_effect(gsmr_data, prot, "MS", colors()[75])
+    dev.off()
+  END
+}
+
+function wgs()
 {
 # all significant SNPs
   (
@@ -61,7 +107,7 @@ function pgz()
   END
 }
 
-pgz > ${INF}/MS/${prot}-MS-MR.log
+wgs > ${INF}/MS/${prot}-MS-MR.log
 
 function pqtl_qtl_rsid()
 {
