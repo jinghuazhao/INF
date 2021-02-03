@@ -1,11 +1,37 @@
 #!/usr/bin/bash
 
 export prot=TNFB
+export chr=12
+export start=6300000
+export end=6700000
+export region=${chr}:${start}-${end}
+export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
 export TMPDIR=/rds/user/jhz22/hpc-work/work
+
+function lz()
+{
+  rm -f ld_cache.db
+  ls ${dir}/tsv/*gz | xargs -I{} basename {} .gz | \
+  parallel -C' ' --env INF --env dir --env region --env chr --env start --env end  '
+  (
+    echo snpid rsid chromosome base_pair_location effect_allele other_allele effect_allele_frequency beta standard_error p_value
+    join -23 ${INF}/work/INTERVAL.rsid <(tabix ${dir}/tsv/{}.gz ${region}) | \
+    sort -k3,3n -k4,4n
+  ) | \
+  awk "!index(\$2,\":\")" | \
+  tr " " "\t" > ${INF}/MS/{}.lz
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/{}.lz --delim tab title="{}" \
+            --markercol rsid --pvalcol p_value --chr ${chr} --start ${start} --end ${end} \
+            --no-date --plotonly --prefix="{}" --rundir .
+  qpdf {}_chr${chr}_${start}-${end}.pdf --pages . 1 -- {}-lz.pdf
+  '
+  qpdf --empty --pages *lz.pdf -- blood-cell-traits.pdf
+}
+
+lz
 
 function blood_cell_traits()
 {
-  export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
   export ext=_EUR_buildGRCh37.tsv.gz
   ls ${dir}/*EUR* | xargs -I{} basename {} ${ext} | \
   parallel -C' ' --env dir --env ext '
@@ -233,7 +259,7 @@ function pqtl_flanking()
     pqtl_qtl_rsid
   # trans pQTL
   # chr12:6514963_A_C rs2364485
-  # chr12:6440009_C_T rs1800693
+  # chr12:111865049_C_G rs7310615; MS:chr12:6440009_C_T rs1800693
   # r2=0.0029
     export chr=12
     export rsid=rs2364485
@@ -241,6 +267,9 @@ function pqtl_flanking()
     pqtl_qtl_rsid
     export rsid=rs1800693
     export pos=6440009
+    pqtl_qtl_rsid
+    export rsid=rs7310615
+    export pos=111865049
     pqtl_qtl_rsid
   ) >> ${INF}/MS/${prot}-MS-MR.log
 }
@@ -282,3 +311,5 @@ R --no-save -q <<END
 #   ukb-a-100          Non-cancer illness code  self-reported: psoriasis ieu-a-1025 11.0119963 1.86965907 3.865659e-09
   }
 END
+
+# https://www.gtexportal.org/home/gene/RP1-102E24.8
