@@ -8,10 +8,74 @@ export region=${chr}:${start}-${end}
 export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
+function slct()
+{
+  module load plink/2.00-alpha
+  for cell in wbc mono neut lymph eo baso ieu-a-1025
+  do
+      plink2 --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/MS/EUR-${cell}.snpid \
+             --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.1 --out ${INF}/MS/EUR-${cell}
+      if [ $(grep -w -f ${INF}/MS/EUR-${cell}.top ${INF}/MS/EUR-${cell}.prune.in | wc -l) -eq 0 ]; then
+         export top=$(cat ${INF}/MS/EUR-${cell}.top)
+         export i=$(grep -w -f ${INF}/MS/EUR-${cell}.prune.in ${INF}/INTERVAL/cardio/INTERVAL.bim | \
+                    awk 'function abs(x) {if (x<0) return -x; else return x;} {
+                         top=ENVIRON["top"];split(top,a,":");split(a[2],b,"_")
+                         d=abs($4-b[1]);
+                         print $1, $2, $4, d}' | \
+                    sort -r -k4,4n | \
+                    awk 'NR==1 {print $2}')
+         sed -i 's/'"$i"'/'"$top"'/g' ${INF}/MS/EUR-${cell}.prune.in
+      fi
+      sort ${INF}/MS/EUR-${cell}.prune.in > ${INF}/MS/EUR-${cell}.prune
+      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+               --cojo-file ${INF}/MS/EUR-${cell}.ma \
+               --extract ${INF}/MS/EUR-${cell}.prune \
+               --cojo-slct \
+               --cojo-p 5e-8 \
+               --maf 0.005 \
+               --cojo-collinear 0.9 \
+               --out ${INF}/MS/EUR-${cell}
+  done
+}
+
+slct
+
+function ma()
+{
+  echo wbc mono neut lymph eo baso | \
+  tr ' ' '\n' | \
+  parallel -C' ' --env INF '
+  (
+    echo SNP A1 A2 ref b se p N
+    awk -vN=562132 "NR>1{print \$1,\$5,\$6,\$7,\$8,\$9,\$10,N}" ${INF}/MS/EUR-{}.lz
+  ) > ${INF}/MS/EUR-{}.ma
+  sed "1d" ${INF}/MS/EUR-{}.lz | \
+  cut -f1 > ${INF}/MS/EUR-{}.snpid
+  sed "1d" ${INF}/MS/EUR-{}.lz | \
+  sort -k10,10g | \
+  awk "NR==1{print \$1}" > ${INF}/MS/EUR-{}.top
+  '
+  export ieu_id=ieu-a-1025
+  (
+    echo SNP A1 A2 freq b se p N
+    bcftools query -f "%CHROM %POS %ALT %REF %AF [%ES] [%SE] [%LP] [%SS]\n" -r ${region} \
+                   ~/rds/results/public/gwas/multiple_sclerosis/${ieu_id}.vcf.gz | \
+    awk '{if ($3<$4) snpid="chr"$1":"$2"_"$3"_"$4;else snpid="chr"$1":"$2"_"$4"_"$3;print snpid, $3, $4, $5, $6, $7, $8, $9}' | \
+    awk 'a[$1]++==0 {$7=10^-$7};1'
+  ) > ${INF}/MS/EUR-${ieu_id}.ma
+  sed "1d" ${INF}/MS/EUR-${ieu_id}.ma | \
+  cut -d" " -f1 > ${INF}/MS/EUR-${ieu_id}.snpid
+  sed "1d" ${INF}/MS/EUR-${ieu_id}.ma | \
+  sort -k7,7g | \
+  awk "NR==1{print \$1}" > ${INF}/MS/EUR-${ieu_id}.top
+}
+
+ma
+
 function lz()
 {
-  rm -f ld_cache.db
   ls ${dir}/tsv/*gz | xargs -I{} basename {} .gz | \
+  grep -e wbc -e mono -e neut -e lymph -e eo -e baso | \
   parallel -C' ' --env INF --env dir --env region --env chr --env start --env end  '
   (
     echo snpid rsid chromosome base_pair_location effect_allele other_allele effect_allele_frequency beta standard_error p_value
@@ -20,6 +84,7 @@ function lz()
   ) | \
   awk "!index(\$2,\":\")" | \
   tr " " "\t" > ${INF}/MS/{}.lz
+  rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/{}.lz --delim tab title="{}" \
             --markercol rsid --pvalcol p_value --chr ${chr} --start ${start} --end ${end} \
             --no-date --plotonly --prefix="{}" --rundir .
