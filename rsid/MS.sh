@@ -49,7 +49,7 @@ function ma()
   parallel -C' ' --env INF '
   (
     echo SNP A1 A2 ref b se p N
-    awk -vN=562132 "NR>1 && \$7 <= 5e-8 {print \$1,\$5,\$6,\$7,\$8,\$9,\$10,N}" ${INF}/MS/EUR-{}.lz
+    awk -vN=562132 "NR>1 && \$10 <= 5e-8 {print \$1,\$5,\$6,\$7,\$8,\$9,\$10,N}" ${INF}/MS/EUR-{}.lz
   ) > ${INF}/MS/EUR-{}.ma
   sed "1d" ${INF}/MS/EUR-{}.lz | \
   cut -f1 > ${INF}/MS/EUR-{}.snpid
@@ -63,7 +63,7 @@ function ma()
     bcftools query -f "%CHROM %POS %ALT %REF %AF [%ES] [%SE] [%LP] [%SS]\n" -r ${region} \
                    ~/rds/results/public/gwas/multiple_sclerosis/${ieu_id}.vcf.gz | \
     awk '{if ($3<$4) snpid="chr"$1":"$2"_"$3"_"$4;else snpid="chr"$1":"$2"_"$4"_"$3;print snpid, $3, $4, $5, $6, $7, $8, $9}' | \
-    awk 'a[$1]++==0 && $7<5 {$7=10^-$7};1'
+    awk 'a[$1]++==0 && $8<5 {$7=10^-$7};1'
   ) > ${INF}/MS/EUR-${ieu_id}.ma
   sed "1d" ${INF}/MS/EUR-${ieu_id}.ma | \
   cut -d" " -f1 > ${INF}/MS/EUR-${ieu_id}.snpid
