@@ -28,11 +28,12 @@ function slct()
          sed -i 's/'"$i"'/'"$top"'/g' ${INF}/MS/EUR-${cell}.prune.in
       fi
       sort ${INF}/MS/EUR-${cell}.prune.in > ${INF}/MS/EUR-${cell}.prune
+      if [ ${cell} != "ieu-a-1025" ]; then export P_threshold=5e-8; else export P_threshold=1e-5; fi
       gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
                --cojo-file ${INF}/MS/EUR-${cell}.ma \
                --extract ${INF}/MS/EUR-${cell}.prune \
                --cojo-slct \
-               --cojo-p 5e-8 \
+               --cojo-p ${P_threshold} \
                --maf 0.005 \
                --cojo-collinear 0.9 \
                --out ${INF}/MS/EUR-${cell}
