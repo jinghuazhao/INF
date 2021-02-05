@@ -22,8 +22,10 @@ function prune()
          --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.8 --out ${pr}
   if [ $(grep -w ${r} ${pr}.prune.in | wc -l) -eq 0 ]; then
      export i=$(grep -w -f ${pr}.prune.in ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.bim | \
-     awk -vpos=${pos} 'function abs(x) {if (x<0) return -x; else return x;}
-         {d=$4-pos;print $1, $2, $4, d}' | sort -r -k4,4n | awk 'NR==1 {print $2}')
+                awk -vpos=${pos} 'function abs(x) {if (x<0) return -x; else return x;} {d=abs($4-pos);print $1, $2, $4, d}' | \
+                sort -r -k4,4n | \
+                awk 'NR==1 {print $2}' \
+              )
      sed -i 's/'"$i"'/'"$r"'/g' ${pr}.prune.in
   fi
   if [ ${chr} -eq 19 ]; then
