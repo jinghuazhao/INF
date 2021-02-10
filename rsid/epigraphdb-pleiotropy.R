@@ -110,7 +110,7 @@ get_shared_pathway <- function(pathway_df) {
   }
 
   pairwise_permutations <- pathway_df %>%
-    pull(`uniprot_id`) %>%
+    pull("uniprot_id") %>%
     gtools::permutations(n = length(.), r = 2, v = .)
   shared_pathway_df <- tibble(
     protein = pairwise_permutations[, 1],
