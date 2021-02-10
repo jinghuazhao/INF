@@ -7,7 +7,7 @@ EFO:0003785	allergy	0	ukb-b-16702	NA
 EFO:0005854	allergic rhinitis	0	ukb-b-16499	ukb-a-94
 EFO:0000384	Crohn's disease	0	ukb-a-552	ieu-a-12
 EFO:0000729	ulcerative colitis	0	ukb-b-19386	ieu-a-970
-EFO:0002690	systemic lupus erythematosus	0	ebi-a-GCST003156 	ieu-a-815
+EFO:0002690	systemic lupus erythematosus	0	ebi-a-GCST003156	ieu-a-815
 EFO:0003898	ankylosing spondylitis	0	ukb-b-18194	ukb-a-88
 EFO:0004274	gout	0	ukb-b-13251	ukb-a-107
 Orphanet:797	Sarcoidosis	0	finn-a-D3_SARCOIDOSIS	NA
