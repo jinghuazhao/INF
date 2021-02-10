@@ -31,11 +31,8 @@ parallel -j5 -C' ' '
 for type in cis pan; do export suffix=${type}; MR_dat; done
 R --no-save <<END
   url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
-  efo <- subset(openxlsx::read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:4), rows=c(1:78)),!is.na(MRBASEID))
+  efo <- subset(openxlsx::read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:5), rows=c(2:79)),!is.na(MRBASEID))
   write.table(efo, file="efo.txt",quote=FALSE,row.names=FALSE,sep="\t")
-  mr_summary <- epigraphdb::mr(outcome_trait=with(efo,trait)[6])
-  names(mr_summary)[c(2,3,5,6,7)] <- c("exposure","outcome","b","se","pval")
-  tryx::volcano_plot(mr_summary)
 END
 parallel --env INF -C' ' '
   export MRBASEID={1}; 
@@ -86,3 +83,5 @@ cd -
 #   join -23 <(zgrep "chr{3}" ${SUMSTATS}/snp150.snpid_rsid.gz) - | \
 #   awk "{\$3=\"chr\"\$1\":\"\$2;print}" | \
 #   join -23 -12 snp_pos - | \
+
+# ukb-b-19657 (FEV1), N=421,986

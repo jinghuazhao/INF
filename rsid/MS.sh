@@ -376,6 +376,9 @@ R --no-save -q <<END
 #   ieu-a-294                                 Inflammatory bowel disease ieu-a-1025  0.1232999 0.01697710 1.375433e-10
 #   ukb-a-104 Non-cancer illness code  self-reported: ulcerative colitis ieu-a-1025 20.4956226 3.23034883 2.228468e-10
 #   ukb-a-100          Non-cancer illness code  self-reported: psoriasis ieu-a-1025 11.0119963 1.86965907 3.865659e-09
+      mr_summary <- epigraphdb::mr(outcome_trait="Multiple sclerosis")
+      names(mr_summary)[c(2,3,5,6,7)] <- c("exposure","outcome","b","se","pval")
+      tryx::volcano_plot(mr_summary)
   }
 END
 
