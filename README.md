@@ -50,6 +50,7 @@ git clone https://github.com/jinghua/INF
 * [Approximately independent LD blocks](doc/aild.md)
 * [Joint/conditional analysis and fine-mapping](rsid/README.md)
 * [Notes on UniProt IDs](doc/uniprot.md)
+* [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html)
 * [TRYGGVE](https://neic.no/tryggve/)-[specific notes](tryggve/tryggve.md)
 
 ## Related links
