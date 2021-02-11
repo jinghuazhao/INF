@@ -4,9 +4,9 @@ cd work
 if [ ! -f INF1.merge.genes ]; then
    cut -f3,8,9,10 ${INF}/doc/olink.inf.panel.annot.tsv | grep -v BDNF | sed 's/"//g' | sort -k1,1 | join -12 inf1.tmp - > INF1.merge.genes
 fi
-if [ ! -d mr ]; then mkdir mr; fi
-if [ ! -d mr/cis ]; then mkdir mr/cis; fi
-if [ ! -d mr/pan ]; then mkdir mr/pan; fi
+if [ ! -d ${INF}/mr ]; then mkdir ${INF}/mr; fi
+if [ ! -d ${INF}/mr/cis ]; then mkdir ${INF}/mr/cis; fi
+if [ ! -d ${INF}/mr/pan ]; then mkdir ${INF}/mr/pan; fi
 
 function MR_dat()
 {
@@ -85,3 +85,5 @@ cd -
 #   join -23 -12 snp_pos - | \
 
 # ukb-b-19657 (FEV1), N=421,986
+# https://epigraphdb.org/pqtl/IL12B
+# https://www.targetvalidation.org/evidence/ENSG00000113302/EFO_0000540?view=sec:known_drug
