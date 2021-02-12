@@ -383,3 +383,5 @@ R --no-save -q <<END
 END
 
 # https://www.gtexportal.org/home/gene/RP1-102E24.8
+# ieugwasr::associations("12:6300000-6700000",id="ieu-b-18")
+

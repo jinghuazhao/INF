@@ -70,7 +70,7 @@ parallel --env INF -C' ' '
 
 for type in cis trans pan
 do
-  export nrows=$(sed '1d' ${INF}/mr/efo.txt | wc -l | cut -d' ' -f1)
+  export nrows=$(sed '1d' ${INF}/rsid/efo.txt | wc -l | cut -d' ' -f1)
   for i in $(seq ${nrows})
   do
     export trait=$(sed '1d' ${INF}/rsid/efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $2}')
@@ -87,7 +87,7 @@ do
   done
 done
 
-export all=$(ls ${INF}/mr/*/*result.txt | wc -l)
+export all=$(ls ${INF}/mr/*/*result.txt | grep -v pQTL | wc -l)
 export p=$(bc -l <<< 0.05/${all})
 awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${INF}/mr/*result
 
