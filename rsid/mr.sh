@@ -1,39 +1,55 @@
 #!/usr/bin/bash
 
-cd work
-if [ ! -f INF1.merge.genes ]; then
-   cut -f3,8,9,10 ${INF}/doc/olink.inf.panel.annot.tsv | grep -v BDNF | sed 's/"//g' | sort -k1,1 | join -12 inf1.tmp - > INF1.merge.genes
-fi
-if [ ! -d ${INF}/mr ]; then mkdir ${INF}/mr; fi
-if [ ! -d ${INF}/mr/cis ]; then mkdir ${INF}/mr/cis; fi
-if [ ! -d ${INF}/mr/pan ]; then mkdir ${INF}/mr/pan; fi
-
-function MR_dat()
-{
-cut -f3 INF1.METAL | sed '1d' | sort | uniq | grep -w -f - INF1.merge.genes | \
-parallel -j5 -C' ' '
-  echo --- {2} ---
-  gunzip -c ${INF}/METAL/{2}-1.tbl.gz | \
-  cut -f1-6,10-12,18 | \
-  awk -vchr={3} -vstart={4} -vend={5} -vM=1e6 -vlogp=-5.45131 -vsuffix=${suffix} "
-        (suffix==\"cis\" && \$1==chr && \$2>=start-M && \$2 <= end+M && \$9<=logp) || (suffix==\"pan\" && \$9<=logp)
-      " > mr/${suffix}/{2}-${suffix}.mri
-  (
-    echo -e "prot\trsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
-    awk "{\$4=toupper(\$4);\$5=toupper(\$5);print}" mr/${suffix}/{2}-${suffix}.mri | \
-    sort -k3,3 | \
-    join -23 INTERVAL.rsid - | \
-    awk -v prot={2} "{\$1=prot;print}" | \
-    tr " " "\t"
-  ) | gzip -f > mr/${suffix}/{2}-${suffix}.mrx
-'
-}
-for type in cis pan; do export suffix=${type}; MR_dat; done
 R --no-save <<END
+  INF <- Sys.getenv("INF")
   url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
   efo <- subset(openxlsx::read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:5), rows=c(2:79)),!is.na(MRBASEID))
-  write.table(efo, file="efo.txt",quote=FALSE,row.names=FALSE,sep="\t")
+  write.table(efo, file=file.path(INF,"rsid","efo.txt"),quote=FALSE,row.names=FALSE,sep="\t")
 END
+
+if [ ! -f ${INF}/work/INF1.merge.genes ]; then
+   grep -v BDNF ${INF}/doc/olink.inf.panel.annot.tsv | \
+   cut -f3,8,9,10 | \
+   sed 's/"//g' | \
+   sort -k1,1 | \
+   join -12 ${INF}/work/inf1.tmp - > ${INF}/work/INF1.merge.genes
+fi
+
+for type in cis trans pan
+do
+  if [ ! -d ${INF}/mr/${type} ]; then mkdir -p ${INF}/mr/${type}; fi; 
+  export suffix=${type};
+  export lp=-7.30103
+  cut -f3 ${INF}/work/INF1.METAL | sed '1d' | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  parallel -j5 --env suffix -C' ' '
+    echo --- {2} ---
+    (
+      case ${suffix} in
+      cis)
+        gunzip -c ${INF}/METAL/{2}-1.tbl.gz | cut -f1-6,10-12,18 | \
+        awk -vchr={3} -vstart={4} -vend={5} -vM=1e6 -vlogp=${lp} -vsuffix=${suffix} "(\$1==chr && \$2>=start-M && \$2 <= end+M && \$9<=logp)"
+        ;;
+      trans)
+        gunzip -c ${INF}/METAL/{2}-1.tbl.gz | cut -f1-6,10-12,18 | \
+        awk -vchr={3} -vstart={4} -vend={5} -vM=1e6 -vlogp=${lp} -vsuffix=${suffix} "!(\$1==chr && \$2>=start-M && \$2 <= end+M && \$9<=logp) && \$9<=logp"
+        ;;
+      pan)
+        gunzip -c ${INF}/METAL/{2}-1.tbl.gz | cut -f1-6,10-12,18 | \
+        awk -vchr={3} -vstart={4} -vend={5} -vM=1e6 -vlogp=${lp} -vsuffix=${suffix} "\$9<=logp"
+        ;;
+      esac
+    ) >  ${INF}/mr/${suffix}/{2}-${suffix}.mri
+    (
+      echo -e "prot\trsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
+      awk "{\$4=toupper(\$4);\$5=toupper(\$5);print}" ${INF}/mr/${suffix}/{2}-${suffix}.mri | \
+      sort -k3,3 | \
+      join -23 ${INF}/work/INTERVAL.rsid - | \
+      awk -v prot={2} "{\$1=prot;print}" | \
+      tr " " "\t"
+    ) | gzip -f > ${INF}/mr/${suffix}/{2}-${suffix}.mrx
+  '
+done
+
 parallel --env INF -C' ' '
   export MRBASEID={1}; 
   export prot={2}; 
@@ -43,35 +59,37 @@ parallel --env INF -C' ' '
   R --no-save <${INF}/rsid/mr.R>/dev/null
   for f in result loo single;
   do
-    export z=mr/${suffix}/${prefix}-${f};
+    export z=${INF}/mr/${suffix}/${prefix}-${f};
     if [ -f ${z}.txt ]; then
       awk -vFS="\t" "NR==1||(\$9<=0.05 && \$9!=\"NA\")" ${z}.txt > ${z}.sig;
       export l=$(wc -l ${z}.sig | cut -d" " -f1);
       if [ ${l} -le 1 ]; then rm ${z}.sig; fi;
     fi
   done
-' ::: $(awk -vFS="\t" 'NR>1 {print $4}' efo.txt) ::: $(sed '1d' INF1.merge | cut -f5 | sort -k1,1 | uniq) ::: cis pan
-export nrows=$(sed '1d' efo.txt | wc -l | cut -d' ' -f1)
-for i in $(seq ${nrows})
+' ::: $(awk -vFS="\t" 'NR>1 {print $4}' ${INF}/rsid/efo.txt) ::: $(sed '1d' ${INF}/work/INF1.merge | cut -f5 | sort -k1,1 | uniq) ::: cis trans pan
+
+for type in cis trans pan
 do
-  export trait=$(sed '1d' efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $2}')
-  export id=$(sed '1d' efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $4}')
-  echo ${id} -- ${trait}
-  (
-    cat mr/cis/*result.txt mr/pan/*result.txt | head -1
-    grep -h -w ${id} mr/cis/*result.txt mr/pan/*result.txt | grep "Inverse variance weighted"
-  ) > mr/${id}.result
-  (
-    cat mr/cis/*single.txt mr/pan/*single.txt | head -1
-    grep -h -w ${id} mr/cis/*single.txt mr/pan/*single.txt | grep -v -e Inverse
-  ) > mr/${id}.single
+  export nrows=$(sed '1d' ${INF}/mr/efo.txt | wc -l | cut -d' ' -f1)
+  for i in $(seq ${nrows})
+  do
+    export trait=$(sed '1d' ${INF}/rsid/efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $2}')
+    export id=$(sed '1d' ${INF}/rsid/efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $4}')
+    echo ${id} -- ${trait}
+    (
+      cat ${INF}/mr/${type}/*result.txt | head -1
+      grep -h -w ${id} ${INF}/mr/${type}/*result.txt | grep "Inverse variance weighted"
+    ) > ${INF}/mr/${id}-${type}.result
+    (
+      cat ${INF}/mr/${type}/*single.txt | head -1
+      grep -h -w ${id} ${INF}/mr/${type}/*single.txt | grep -v -e Inverse
+    ) > ${INF}/mr/${id}-${type}.single
+  done
 done
 
-export all=$(ls mr/cis/*result.txt mr/pan/*result.txt | wc -l)
+export all=$(ls ${INF}/mr/*/*result.txt | wc -l)
 export p=$(bc -l <<< 0.05/${all})
-awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' mr/*result
-
-cd -
+awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${INF}/mr/*result
 
 # uncomment if clumping outside TwoSampleMR:
 # cut -f3 mr/{2}-${suffix}.mri > mr/{2}-${suffix}.mrs

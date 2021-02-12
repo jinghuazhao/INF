@@ -1,7 +1,8 @@
 type <- Sys.getenv("type")
 prot <- Sys.getenv("prot")
 outcomes <- Sys.getenv("MRBASEID")
-outdir <- file.path("mr",type)
+INF <- Sys.getenv("INF")
+outdir <- file.path(INF,"mr",type)
 gz <- gzfile(file.path(outdir,paste0(prot,"-",type,".mrx")))
 d <- lapply(gz, function(x) tryCatch(read.delim(gz,as.is=TRUE), error=function(e) NULL))[[1]]
 if (nrow(d)!=0)

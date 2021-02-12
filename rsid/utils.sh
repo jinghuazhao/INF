@@ -206,3 +206,22 @@ function scaled_assoc()
   assoc_test
  '
 }
+
+function tbi()
+# to generate tbl.gz/tbl.gz.tbi from ${INF}/METAL
+{
+  export rt=${INF}/METAL
+  ls ${rt}/*tbl.gz | \
+  xargs -I{} basename {} .tbl.gz | \
+  parallel -j3 --env INF --env rt -C' ' '
+    (
+      gunzip -c ${rt}/{}.tbl.gz | head -1
+      gunzip -c ${rt}/{}.tbl.gz | \
+      sed "1d" | \
+      awk -f ${INF}/tryggve/metal.awk | \
+      sort -k1,1n -k2,2n
+    ) | \
+    bgzip -f > {}.tbl.gz; \
+    tabix -f -S1 -s1 -b2 -e2 {}.tbl.gz
+  '
+}

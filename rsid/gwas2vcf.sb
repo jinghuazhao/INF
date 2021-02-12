@@ -38,7 +38,7 @@ function metalLP()
        sort -k1,1n -k2,2n
      ) | \
      bgzip -f > ${INF}/METAL/gwas2vcf/LP/${prot}.tsv.gz
-     tabix -f -S1 -0 -s1 -b2 -e2 ${prot}.tsv.gz
+     tabix -f -S1 -s1 -b2 -e2 ${prot}.tsv.gz
   fi
 }
 
@@ -55,7 +55,7 @@ function metalP()
        sort -k1,1n -k2,2n
      ) | \
      bgzip -f > ${INF}/METAL/gwas2vcf/${prot}.tsv.gz
-     tabix -f -S1 -0 -s1 -b2 -e2 ${prot}.tsv.gz
+     tabix -f -S1 -s1 -b2 -e2 ${prot}.tsv.gz
   fi
 }
 
