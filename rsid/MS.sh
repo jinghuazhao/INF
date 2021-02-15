@@ -93,9 +93,9 @@ function lz()
     write.table(ieu_a_1025,file=file.path(INF,"MS","ieu-a-1025.assoc"),quote=FALSE,row.names=FALSE,sep="\t")
   END
   (
-    echo rsid p
+    echo rsid p | tr ' ' '\t'
     gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/Final-metaanalysis-echip.txt.gz | \
-    awk -vstart=${start} -vend=${end} '$1==12 && $2>=start && $2 <=end {gsub(/exm-/,"",$3);print $3,$7}'
+    awk -vstart=${start} -vend=${end} -vOFS="\t" '$1==12 && $2>=start && $2 <=end {gsub(/exm-/,"",$3);print $3,$7}'
   ) > ${INF}/MS/ieu-b-18-echip.assoc
 # gunzip -c discovery_metav3.0.meta.gz | grep rs1800693
 # CHR BP SNP A1 A2 N P OR

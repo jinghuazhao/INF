@@ -77,6 +77,9 @@ export flank_kb=1000
 export b1=6300000
 export b2=6700000
 export bracket=${b1}-${b2}
+
+tabix ${INF}/METAL/gwas2vcf/TNFB.tsv.gz ${chr}:${bracket} > TNFB.tbx
+
 INTERVAL
 eQTLGen
 SCALLOP
