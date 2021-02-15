@@ -92,7 +92,18 @@ function lz()
     write.table(ieu_b_18,file=file.path(INF,"MS","ieu-b-18.assoc"),quote=FALSE,row.names=FALSE,sep="\t")
     write.table(ieu_a_1025,file=file.path(INF,"MS","ieu-a-1025.assoc"),quote=FALSE,row.names=FALSE,sep="\t")
   END
-  for trait in ieu-b-18 ieu-a-1025
+  (
+    echo rsid p
+    gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/Final-metaanalysis-echip.txt.gz | \
+    awk -vstart=${start} -vend=${end} '$1==12 && $2>=start && $2 <=end {gsub(/exm-/,"",$3);print $3,$7}'
+  ) > ${INF}/MS/ieu-b-18-echip.assoc
+# gunzip -c discovery_metav3.0.meta.gz | grep rs1800693
+# CHR BP SNP A1 A2 N P OR
+# 12 6440009 rs1800693 T C 14 1.017e-13 0.8808
+# gunzip -c Final-metaanalysis-echip.txt.gz | grep 1800693
+#  CHR         BP            SNP  A1  A2   N           P        P(R)      OR   OR(R)       Q       I
+#  12     6440009  exm-rs1800693   T   C  13   1.003e-26    2.11e-09  1.0332  1.0300  0.0351   46.00
+  for trait in ieu-b-18 ieu-b-18-echip ieu-a-1025
   do
     rm -rf ld_cache.db
     locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/${trait}.assoc --delim tab title="${trait}" \
