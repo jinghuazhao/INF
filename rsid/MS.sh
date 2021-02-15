@@ -8,7 +8,7 @@ export region=${chr}:${start}-${end}
 export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
-function slct()
+function cojo()
 {
   module load plink/2.00-alpha
   for cell in wbc mono neut lymph eo baso ieu-a-1025
@@ -37,10 +37,18 @@ function slct()
                --maf 0.005 \
                --cojo-collinear 0.9 \
                --out ${INF}/MS/EUR-${cell}
+      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+               --cojo-file ${INF}/MS/EUR-${cell}.ma \
+               --extract ${INF}/MS/EUR-${cell}.prune \
+               --cojo-cond ${INF}/MS/EUR-${cell}.top \
+               --cojo-p ${P_threshold} \
+               --maf 0.005 \
+               --cojo-collinear 0.9 \
+               --out ${INF}/MS/EUR-${cell}
   done
 }
 
-slct
+cojo
 
 function ma()
 {
@@ -76,6 +84,22 @@ ma
 
 function lz()
 {
+  R --no-save -q <<\ \ END
+    INF <- Sys.getenv("INF")
+  # chr position beta se p n id rsid ea nea eaf
+    ieu_b_18 <- ieugwasr::associations("12:6300000-6700000",id="ieu-b-18")
+    ieu_a_1025 <- ieugwasr::associations("12:6300000-6700000",id="ieu-a-1025")
+    write.table(ieu_b_18,file=file.path(INF,"MS","ieu-b-18.assoc"),quote=FALSE,row.names=FALSE,sep="\t")
+    write.table(ieu_a_1025,file=file.path(INF,"MS","ieu-a-1025.assoc"),quote=FALSE,row.names=FALSE,sep="\t")
+  END
+  for trait in ieu-b-18 ieu-a-1025
+  do
+    rm -rf ld_cache.db
+    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/${trait}.assoc --delim tab title="${trait}" \
+              --markercol rsid --pvalcol p --chr ${chr} --start ${start} --end ${end} \
+              --no-date --plotonly --prefix="${trait}" --rundir .
+    qpdf ${trait}_chr${chr}_${start}-${end}.pdf --pages . 1 -- ${trait}-lz.pdf
+  done
   ls ${dir}/tsv/*gz | xargs -I{} basename {} .gz | \
   grep -e wbc -e mono -e neut -e lymph -e eo -e baso | \
   parallel -C' ' --env INF --env dir --env region --env chr --env start --env end  '
@@ -86,7 +110,7 @@ function lz()
   ) | \
   awk "!index(\$2,\":\")" | \
   tr " " "\t" > ${INF}/MS/{}.lz
-  rm -f ld_cache.db
+  rm -rf ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/{}.lz --delim tab title="{}" \
             --markercol rsid --pvalcol p_value --chr ${chr} --start ${start} --end ${end} \
             --no-date --plotonly --prefix="{}" --rundir .
@@ -383,5 +407,3 @@ R --no-save -q <<END
 END
 
 # https://www.gtexportal.org/home/gene/RP1-102E24.8
-# ieugwasr::associations("12:6300000-6700000",id="ieu-b-18")
-
