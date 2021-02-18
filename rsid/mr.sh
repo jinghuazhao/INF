@@ -87,9 +87,17 @@ do
   done
 done
 
-export all=$(ls ${INF}/mr/*/*result.txt | grep -v pQTL | wc -l)
+export all=$(ls ${INF}/mr/cis/*result.txt ${INF}/mr/trans/*result.txt ${INF}/mr/pan/*result.txt | wc -l)
 export p=$(bc -l <<< 0.05/${all})
-awk -vp=${p} -vFS="\t" -vOFS="\t" '$NF<p{split($1,a,"-");print $3,$4,a[5],$6,$7,$8,$9}' ${INF}/mr/*result
+echo ${all} ${p}
+awk -vp=${p} -vFS="\t" -vOFS="\t" '
+{
+  if (index(FILENAME,"cis")) tag="cis";
+  else if (index(FILENAME,"trans")) tag="trans";
+  else if (index(FILENAME,"pan")) tag="pan"
+# id.exposure id.outcome outcome exposure method nsnp b se pval
+  if ($NF<p) {print $3,$4,tag,$6,$7,$8,$9}
+}' ${INF}/mr/*result | \sed 's/|| id:/\t/' | xsel -i
 
 # uncomment if clumping outside TwoSampleMR:
 # cut -f3 mr/{2}-${suffix}.mri > mr/{2}-${suffix}.mrs

@@ -8,6 +8,12 @@ export region=${chr}:${start}-${end}
 export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
+function coloc()
+{
+  bcftools query -r 12:6514963-6514963 -f '%ID\t%ALT\t%REF\t%AF\t[%ES]\t[%SE]\t[%LP]\t[%SS]\t%CHROM\t%POS\n' ${INF}/METAL/gwas2vcf/TNFB.vcf.gz | \
+  awk -vOFS="\t" '{$7=10^-$7};1'> ${INF}/MS/TNFB.tsv
+}
+
 function cojo()
 {
   module load plink/2.00-alpha
