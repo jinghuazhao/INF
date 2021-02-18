@@ -1,4 +1,6 @@
-export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20200915/results/20201020
+# export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20200915/results/20201020
+export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20201215/results/20210107/
+export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-analysis/20201215/results/20210107/
 (
   echo "SNP A1 A2 freq b se p N"
   awk '
@@ -10,13 +12,16 @@ export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20200915/resu
     if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
     else snpid="chr" CHR ":" POS "_" a1 "_" a2
     if (NR>1) print snpid, a1, a2, $12, $7, $8, $9, $11
-  }' ${HGI}/eur/COVID19_HGI_C2_ALL_eur_leave_23andme_20201020.b37_1.0E-5.txt
+  }' ${HGI}/COVID19_HGI_C2_ALL_eur_leave_23andme_20210107.txt.gz_1.0E-5.txt
+  #  ${HGI}/eur/COVID19_HGI_C2_ALL_eur_leave_23andme_20201020.b37_1.0E-5.txt
 ) | \
-gzip -f > work/HGI/gsmr_C2.txt.gz
+gzip -f > ${INF}/HGI/gsmr_C2.txt.gz
 
 (
   echo "SNP A1 A2 freq b se p N"
-  gunzip -c $HGI/eur/COVID19_HGI_C2_ALL_eur_leave_23andme_20201020.b37.txt.gz | \
+# gunzip -c $HGI/eur/COVID19_HGI_C2_ALL_eur_leave_23andme_20201020.b37.txt.gz | \
+# gunzip -c $HGI/COVID19_HGI_C2_ALL_eur_leave_23andme_20210107.b37.txt.gz | \
+  gunzip -c $HGI/COVID19_HGI_C2_ALL_20210107.b37.txt.gz | \
   awk '
   {
     CHR=$1
@@ -29,8 +34,9 @@ gzip -f > work/HGI/gsmr_C2.txt.gz
   }'
 ) | \
 awk 'a[$1]++==0' | \
-gzip -f > work/HGI/gsmr_C2.txt.gz
+gzip -f > ${INF}/HGI/gsmr_C2.txt.gz
 
+#  head -1 ${HGI}/COVID19_HGI_C2_ALL_eur_leave_23andme_20210107.txt.gz_1.0E-5.txt | sed 's/\t/\n/g' | awk '{print "#" NR, $1}'
 #  head -1 ${HGI}/COVID19_HGI_C2_ALL_20201020.b37_1.0E-5.txt | sed 's/\t/\n/g' | awk '{print "#" NR, $1}'
 #1 #CHR
 #2 POS
@@ -46,15 +52,15 @@ gzip -f > work/HGI/gsmr_C2.txt.gz
 #12 all_meta_AF
 #13 rsid
 
-if [ -f work/HGI/INF1_C2.gsmr ]; then rm work/HGI/INF1_C2.gsmr; fi
+if [ -f ${INF}/HGI/INF1_C2.gsmr ]; then rm ${INF}/HGI/HGI/INF1_C2.gsmr; fi
 (
-  cat work/HGI/gsmr_C2*.gsmr | \
+  cat ${INF}/HGI/gsmr_C2*.gsmr | \
   head -1
-  ls work/HGI/gsmr_C2*gsmr | \
+  ls ${INF}/HGI/gsmr_C2*gsmr | \
   parallel -j1 -C' ' '
     if [ -f {} ]; then
        awk "NR>1" {}
     fi
   '
 ) | \
-grep -v nan > work/HGI/INF1_C2.gsmr
+grep -v nan > ${INF}/HGI/INF1_C2.gsmr

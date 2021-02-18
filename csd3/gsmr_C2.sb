@@ -14,21 +14,21 @@
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' ${INF}/work/inf1.tmp)
-if [ ! -f work/HGI/gsmr_C2 ]; then echo C2 work/HGI/gsmr_C2.txt.gz > work/HGI/gsmr_C2; fi
-if [ ! -f work/HGI/gsmr_ref_data ]; then echo $INF/work/INTERVAL > work/HGI/gsmr_ref_data; fi
-if [ ! -f work/HGI/gsmr_$p ]; then echo $p $INF/work/$p.ma > work/HGI/gsmr_$p; fi
+if [ ! -f HGI/gsmr_C2 ]; then echo C2 HGI/gsmr_C2.txt.gz > HGI/gsmr_C2; fi
+if [ ! -f HGI/gsmr_ref_data ]; then echo $INF/work/INTERVAL > HGI/gsmr_ref_data; fi
+if [ ! -f HGI/gsmr_$p ]; then echo $p $INF/work/$p.ma > HGI/gsmr_$p; fi
 
-gcta-1.9 --mbfile work/HGI/gsmr_ref_data --gsmr-file work/HGI/gsmr_$p work/HGI/gsmr_C2 \
+gcta-1.9 --mbfile HGI/gsmr_ref_data --gsmr-file HGI/gsmr_$p HGI/gsmr_C2 \
          --gsmr-direction 0 \
          --clump-r2 0.05 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
-         --out work/HGI/gsmr_C2_$p
+         --out HGI/gsmr_C2_$p
 
 R --no-save -q <<END
   p <- Sys.getenv("p")
   source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
-  gsmr_data <- read_gsmr_data(paste0("work/HGI/gsmr_C2_",p,".eff_plot.gz"))
+  gsmr_data <- read_gsmr_data(paste0("HGI/gsmr_C2_",p,".eff_plot.gz"))
   gsmr_summary(gsmr_data)
-  pdf(paste0("work/HGI/gsmr_C2_",p,".eff_plot.pdf"))
+  pdf(paste0("HGI/gsmr_C2_",p,".eff_plot.pdf"))
   plot_gsmr_effect(gsmr_data, p, "C2", colors()[75])
   dev.off()
 END
