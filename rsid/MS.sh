@@ -424,3 +424,9 @@ R --no-save -q <<END
 END
 
 # https://www.gtexportal.org/home/gene/RP1-102E24.8
+# no sample size (N)!!!
+export ichip=~/rds/results/public/gwas/multiple_sclerosis/ImmunoChip_Results/Immunochip_FinalResults_LimitedDiscovery.txt
+awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr&&$3>=start&&$3<=end {print $4,$5,$6,$7,log($10),$11,$9}' ${ichip}
+# CHR BPHG18 BPHG19 ImmunochipID Risk_Allele Ref_Allele Risk_Allele_Freq N P OR SE Q I Region
+# 1 1108138 1118275 vh_1_1108138 G A 0.9586 11 7.62E-01 1.012 0.0404 0.085 39.51 none
+
