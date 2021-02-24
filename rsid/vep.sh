@@ -32,7 +32,7 @@ export VEP=${HPC_WORK}/ensembl-vep
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
 cd ${LOFTEE}
-for f in $(ls ${INF}/annotate/*vcf)
+for f in $(ls ${INF}/annotate/*vcf | sed 's/.vcf//g')
 do
 # snpid --> rsid
   cp ${f}.vcf ${f}-rsid.vcf
