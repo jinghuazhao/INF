@@ -45,7 +45,7 @@ do
     "
   ) | bash
 # VEP annotation
-  vep --input_file ${INF}/work/${f}-rsid.vepinput --output_file ${INF}/annotate/${f}-rsid.tab --force_overwrite \
+  vep --input_file ${f}-rsid.vcf --output_file ${f}-rsid.tab --force_overwrite \
       --cache --dir_cache ${HPC_WORK}/ensembl-vep/.vep --dir_plugins ${HPC_WORK}/loftee --offline \
       --species homo_sapiens --assembly GRCh37 --pick --nearest symbol --symbol --plugin TSSDistance \
       --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz,conservation_file:phylocsf_gerp.sql.gz \
