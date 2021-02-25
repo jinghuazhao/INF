@@ -1,4 +1,4 @@
-# 21-10-2019 JHZ
+#!/usr/bin/bash
 
 options(width=500)
 glist <- scan("work/INF1.merge.gene",what="")
@@ -8,7 +8,7 @@ require(phenoscanner)
 for(s in 1:7)
 {
   if(s==7) gset <- 61:68 else gset <- ((s-1)*10+1:10)
-  g <- phenoscanner(genequery=glist[gset], catalogue="GWAS", proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  g <- phenoscanner(genequery=glist[gset], catalogue="GWAS", proxies = "EUR", pvalue = 5e-8, r2= 0.8, build=37)
   genes <- rbind(genes,with(g,genes))
   results <- rbind(results,with(g,results))
 }
@@ -26,13 +26,13 @@ results <- within(results,{
    a2[swap] <- ref_a1[swap]
    ref_snpid <- paste0(hg19_coordinates,":",a1,"_",a2)
 })
-sink("gene.genes")
+sink("ps/gene.genes")
 genes
 sink()
 for(d in unique(with(results,dataset)))
 {
   cat(d,"\n")
-  sink(paste("gene",d,sep="."))
+  sink(paste("ps/gene",d,sep="."))
   s <- subset(results[c("rsid","ref_snpid","rsid","p","n","trait","dataset","pmid")],dataset==d)
   print(s)
  sink()

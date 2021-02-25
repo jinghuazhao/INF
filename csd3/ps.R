@@ -1,4 +1,4 @@
-# 30-6-2020 JHZ
+#!/usr/bin/bash
 
 require(phenoscanner)
 catalogue <- Sys.getenv("catalogue")
@@ -26,23 +26,23 @@ results <- within(results,{
    ref_snpid <- paste0(ref_hg19_coordinates,"_",a1,"_",a2)
 })
 r <- list(snps=snps,results=results)
-save(r,file=paste0("work/INF1.merge.",catalogue))
+save(r,file=paste0("ps/INF1.merge.",catalogue))
 
 options(width=500)
-attach(r)
-for(d in unique(with(results,dataset)))
+snps_results <- with(r,dplyr::right_join(snps,results))
+for(d in unique(with(snps_results,dataset)))
 {
   cat(d,"\n")
   vars <- c("ref_rsid","ref_snpid","rsid","r2","p","trait","dataset","pmid")
-  s <- subset(results[vars],dataset==d)
+  s <- subset(snps_results[vars],dataset==d)
+  HOME <- Sys.getenv("HOME")
   if (d=="Sun-B_pQTL_EUR_2017")
   {
-     gs <-read.delim("INTERVAL_box.tsv",as.is=TRUE)
+     gs <-read.delim(file.path(HOME,"SomaLogic","doc","INTERVAL-box.tsv"),as.is=TRUE)
      m <- merge(s,gs,by.x="trait",by.y="TargetFullName")
-     s <- m[c("ref_rsid","ref_snpid","rsid","r2","p","trait","UniProt","UniProts","symbol")]
+     s <- m[c("ref_rsid","ref_snpid","rsid","r2","p","trait","UniProt","UniProtgwas","symbol")]
   }
-  sink(paste(catalogue,d,sep="."))
+  sink(file.path(HOME,"INF/ps",paste(catalogue,d,sep=".")))
   print(s)
   sink()
 }
-detach(r)

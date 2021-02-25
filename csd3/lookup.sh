@@ -12,29 +12,29 @@ function check()
 
 function Sun()
 {
-  grep -w $1 work/ps/pQTL.Sun-B_pQTL_EUR_2017
+  grep -w $1 ps/pQTL.Sun-B_pQTL_EUR_2017
   check $1
 }
 
 function Folkersen()
 {
-  grep -w $1 work/ps/pQTL.Folkersen-L_Proteins_EUR_2017
+  grep -w $1 ps/pQTL.Folkersen-L_Proteins_EUR_2017
   check $1
 }
 
 function Suhre()
 {
-  grep -w $1 work/ps/pQTL.Suhre-K_pQTL_EUR_2017
+  grep -w $1 ps/pQTL.Suhre-K_pQTL_EUR_2017
   check $1
 }
 
 function pQTL()
 {
-  grep -w $1 work/ps/pQTL.pQTL_2017
+  grep -w $1 ps/pQTL.pQTL_2017
   check $1
 }
 
-for rsid in $(sed '1d' work/ps/pQTL.Sun-B_pQTL_EUR_2017 | awk '{print $3}' | uniq)
+for rsid in $(sed '1d' ps/pQTL.Sun-B_pQTL_EUR_2017 | awk '{print $3}' | uniq)
 do
   echo --- ${rsid} ---
   Sun ${rsid}
@@ -48,7 +48,7 @@ function lookup()
   join <(awk 'NR>1{print $5,"chr" $8 ":" $9}' work/INF1.merge | sort -k1,1 -k2,2) <(sort -k1,1 work/inf1.tmp) | \
   parallel -C' ' '
     echo {1}+{2}+{3}
-    grep {2} pQTL.Sun-B_pQTL_EUR_2017 | \
+    grep {2} ps/pQTL.Sun-B_pQTL_EUR_2017 | \
     grep {3}
   ' > pQTL.Sun.log
 # Olink + SomaLogic signal overlap
