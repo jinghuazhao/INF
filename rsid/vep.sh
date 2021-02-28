@@ -55,6 +55,13 @@ do
       --symbol --pubmed --uniprot --protein --sift b --polyphen b --tab
 done
 cd -
+(
+  cat ${INF}/annotate/*tab | sed '1,48d' | head -1 | awk -vOFS="\t" '{print "Protein",$0}'
+  ls ${INF}/annotate/*tab | xargs -I{} basename {} | \
+  sed 's/.tab//;s/-/ /;s/chr//;s/_/ /' | \
+  parallel -C' ' --env INF 'grep {2} ${INF}/annotate/{1}-chr{2}_{3}.tab | awk -vprotein={1} -vOFS="\t" "{print protein,\$0}"'
+) > ${INF}/annotate/INF1.merge-annotate.tsv
+
 # Problematic with loftee
 # CCL11-chr7:75495667_A_G
 # CCL19-chr6:32444093_C_G
