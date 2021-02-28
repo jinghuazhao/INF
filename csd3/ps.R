@@ -28,21 +28,18 @@ results <- within(results,{
 r <- list(snps=snps,results=results)
 save(r,file=paste0("ps/INF1.merge.",catalogue))
 
-options(width=500)
 snps_results <- with(r,dplyr::right_join(snps,results))
 for(d in unique(with(snps_results,dataset)))
 {
   cat(d,"\n")
-  vars <- c("ref_rsid","ref_snpid","rsid","r2","p","trait","dataset","pmid")
+  vars <- c("ref_rsid","ref_snpid","rsid","ref_chr","ref_pos_hg19","chr","pos_hg19","proxy","r2","p","trait","dataset","pmid","study")
   s <- subset(snps_results[vars],dataset==d)
   HOME <- Sys.getenv("HOME")
   if (d=="Sun-B_pQTL_EUR_2017")
   {
-     gs <-read.delim(file.path(HOME,"SomaLogic","doc","INTERVAL-box.tsv"),as.is=TRUE)
+     gs <-read.delim(file.path(HOME,"SomaLogic","doc","SOMALOGIC_Master_Table_160410_1129info.tsv"),as.is=TRUE)
      m <- merge(s,gs,by.x="trait",by.y="TargetFullName")
-     s <- m[c("ref_rsid","ref_snpid","rsid","r2","p","trait","UniProt","UniProtgwas","symbol")]
+     s <- m[c(vars,"UniProt")]
   }
-  sink(file.path(HOME,"INF/ps",paste(catalogue,d,sep=".")))
-  print(s)
-  sink()
+  write.table(s,file.path(HOME,"INF/ps",paste(catalogue,d,"tsv",sep=".")),quote=FALSE,row.names=FALSE,sep="\t")
 }
