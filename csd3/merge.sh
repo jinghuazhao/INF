@@ -303,69 +303,6 @@ cut -d' ' -f2 SomaLogic.sentinels | sed 's/P29460,Q9NPF7/P29460/' | grep -f - wo
 cut -f1 | grep -f - work/INF1.merge | \
 cut -f5 | sort | uniq | wc -l
 
-R --no-save -q <<END
-  library(VennDiagram)
-  INF1_prot <- read.table("work/INF1.merge.prot",col.names=c("prot","uniprot"))
-  library(pQTLtools)
-  SomaLogic_prot <- unique(replace(st4$UniProt,st4$UniProt=="P29460,Q9NPF7","P29460"))
-  plist <- list(INF1_prot$uniprot,SomaLogic_prot)
-  ov <- VennDiagram::calculate.overlap(plist)
-  ov$a3
-  venn.plot <- draw.pairwise.venn(1469, 70, 28,
-               category = c("SomaLogic", "Olink"),
-               fill = c("blue", "red"),
-               lty = "blank",
-               cex = 2,
-               cat.cex = 2,
-               cat.pos = c(200, 50),
-               cat.dist = 0.09,
-               cat.just = list(c(-1, -1), c(1, 1)),
-               ext.pos = 30,
-               ext.dist = -0.05,
-               ext.length = 0.85,
-               ext.line.lwd = 2,
-               ext.line.lty = "dashed"
-             );
-  grid.draw(venn.plot);
-  png('SomaLogic-Olink-proteins.png', height=20, width=20, units="cm", res=300)
-  grid.draw(venn.plot);
-  dev.off();
-  grid.newpage()
-  venn.plot <- draw.pairwise.venn(45, 83, 10,
-               category = c("SomaLogic", "Olink"),
-               fill = c("blue", "red"),
-               lty = "blank",
-               cex = 2,
-               cat.cex = 2,
-               cat.pos = c(30, 10),
-               cat.dist = 0.09,
-               cat.just = list(c(-1, -1), c(1, 1)),
-               ext.pos = 30,
-               ext.dist = -0.05,
-               ext.length = 0.85,
-               ext.line.lwd = 2,
-               ext.line.lty = "dashed"
-             );
-  grid.draw(venn.plot);
-  png('SomaLogic-Olink-sentinels.png', height=20, width=20, units="cm", res=300)
-  grid.draw(venn.plot);
-  dev.off();
-  grid.newpage()
-  st6[c(39,53),"UniProt"] <- "P29460"
-  st6ov <- subset(st6,UniProt%in%ov$a3)
-# significant on INTERVAL (27)
-  dim(subset(st6ov,as.numeric(p.1)<1e-11))
-  z <- with(st6ov,{
-    chr <- st6ov[["Chr"]]
-    pos <- st6ov[["Pos"]]
-    a1 <- st6ov[["Effect.Allele.(EA)"]]
-    a2 <- st6ov[["Other.Allele.(OA)"]]
-    cbind(UniProt,snpid=gap::chr_pos_a1_a2(chr,pos,a1,a2))
-  })
-  write.table(merge(inf1,z,by.x="uniprot",by.y="UniProt")[c("snpid","prot","uniprot")],
-              file="SomaLogic.id3",col.names=FALSE,row.names=FALSE,quote=FALSE)
-END
-
 # --- SomaLogic --> Olink lookup --- NOTE these were not necessary Olink sentinels
 # Similar to ST6 of the SomaLogic paper and pQTLtools/inst/scripts/STs.R
 # from the replicates how many were from INF1 (41)
