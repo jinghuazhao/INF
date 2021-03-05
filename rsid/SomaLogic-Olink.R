@@ -1,10 +1,12 @@
 # Olink/SomaLogic overlap
 
+options(width=200)
+HOME <- Sys.getenv("HOME")
+INF <- Sys.getenv("INF")
+
 library(pQTLtools)
 library(VennDiagram)
 library(dplyr)
-HOME <- Sys.getenv("HOME")
-INF <- Sys.getenv("INF")
 
 # panels
 SomaLogic <- setdiff(with(SomaLogic160410,UniProt),"P23560")
@@ -35,9 +37,9 @@ source.vs.INF1(ps,"ps")
 ST4 <- st4 %>% select(Locus.ID,SOMAmer.ID,Target,UniProt,"Sentinel.variant*",Chr,Pos,"cis/.trans") %>%
        mutate(UniProt=if_else(UniProt=="P29460,Q9NPF7","P29460",UniProt)) %>%
        filter(UniProt %in% overlap) %>%
-       rename(cis_trans="cis/.trans")
+       rename(cis_trans="cis/.trans",rsid="Sentinel.variant*")
 source.vs.INF1(ST4,"ST4")
-
+## ST4
 UniProts <- unique(ST4$UniProt)
 uniprots <- unique(INF1$uniprot)
 both <- intersect(ST4$UniProt,INF1$uniprot)
@@ -45,9 +47,8 @@ UniProt_uniprot <- list(SomaLogic=ST4[["UniProt"]],Olink=INF1[["uniprot"]])
 ST4_INF1_prot <- venn.diagram(UniProt_uniprot,filename=NULL,fill=c("blue","red"),height=6,width=6,units="in")
 grid.newpage()
 grid.draw(ST4_INF1_prot)
-calc.overlap <- calculate.overlap(UniProt_uniprot)
-cat(unlist(lapply(calc.overlap,length)),sep="\t","\n")
 
+### Total
 OnlyUniProts <- setdiff(with(ST4,UniProt),both)
 Onlyuniprots <- setdiff(with(INF1,uniprot),both)
 table(subset(ST4,UniProt %in% OnlyUniProts)["cis_trans"])
@@ -55,15 +56,36 @@ table(subset(ST4,UniProt %in% both)["cis_trans"])
 table(subset(INF1,uniprot %in% both)["cis.trans"])
 table(subset(INF1,uniprot %in% Onlyuniprots)["cis.trans"])
 
-C1 <- subset(ST4,UniProt %in% both & cis_trans=="cis")[["UniProt"]]
-T1 <- subset(ST4,UniProt %in% both & cis_trans=="trans")[["UniProt"]]
-C2 <- subset(INF1,uniprot %in% both & cis.trans=="cis")[["uniprot"]]
-T2 <- subset(INF1,uniprot %in% both & cis.trans=="trans")[["uniprot"]]
-C1C2 <- intersect(C1,C2)
-T1T2 <- intersect(T1,T2)
+### Both
+ST4_unique <- ST4 %>% group_by(UniProt) %>%
+              mutate(c_t=if_else(cis_trans=="cis","C","T")) %>%
+              summarize(ST4_cistrans=paste(paste0(c_t,"-",rsid),collapse=",")) %>%
+              select(UniProt,ST4_cistrans) %>%
+              filter(UniProt %in% both) %>%
+              data.frame
+INF1_unique <- INF1 %>% group_by(uniprot) %>%
+               mutate(c.t=if_else(cis.trans=="cis","C","T")) %>%
+               summarize(INF1_cistrans=paste(paste0(c.t,"-",rsid),collapse=",")) %>%
+               select(uniprot,INF1_cistrans) %>%
+               filter(uniprot %in% both) %>%
+               data.frame
+ST4_INF1 <- merge(ST4_unique,INF1_unique,by.x="UniProt",by.y="uniprot") %>% data.frame
+ST4_INF1_A <- ST4_INF1 %>%
+              group_by(UniProt) %>%
+              summarize(intersect=paste(intersect(unlist(strsplit(ST4_cistrans,",")),unlist(strsplit(INF1_cistrans,","))),collapse=",")) %>%
+              right_join(ST4_INF1) %>%
+              data.frame
+write.table(ST4_INF1_A,file="ST4_INF1.tsv",quote=FALSE,row.names=FALSE,sep="\t")
 
-CC <- list(C1,C2)
-TT <- list(T1,T2)
+C1 <- subset(ST4,UniProt %in% both & cis_trans=="cis")
+T1 <- subset(ST4,UniProt %in% both & cis_trans=="trans")
+C2 <- subset(INF1,uniprot %in% both & cis.trans=="cis")
+T2 <- subset(INF1,uniprot %in% both & cis.trans=="trans")
+C1C2 <- intersect(C1[["UniProt"]],C2[["uniprot"]])
+T1T2 <- intersect(T1[["UniProt"]],T2[["uniprot"]])
+
+CC <- list(C1[["UniProt"]],C2[["uniprot"]])
+TT <- list(T1[["UniProt"]],T2[["uniprot"]])
 CT <- list(setdiff(C1,C1C2),setdiff(T2,T1T2))
 TC <- list(setdiff(T1,T1T2),setdiff(C2,C1C2))
 
@@ -101,7 +123,7 @@ vd(TC)
 # TC	3	0	7
 #
 # coloc???
-
+# All proteins regardless overlap
 INF1_prot <- read.table(file.path(INF,"work","INF1.merge.prot"),col.names=c("prot","uniprot"))
 SomaLogic_prot <- unique(replace(st4$UniProt,st4$UniProt=="P29460,Q9NPF7","P29460"))
 plist <- list(SomaLogic_prot,INF1_prot$uniprot)
@@ -110,7 +132,6 @@ calc.overlap <- calculate.overlap(plist)
 a1_a2_a3 <- unlist(lapply(calc.overlap,length))
 a1_a2_a3
 cat(c(a1_a2_a3[1]-a1_a2_a3[3],a1_a2_a3[3],a1_a2_a3[2]-a1_a2_a3[3]),sep="\t","\n")
-
 grid.newpage()
 venn.plot <- draw.pairwise.venn(a1_a2_a3[1],a1_a2_a3[2],a1_a2_a3[3],
              category = c("SomaLogic", "Olink"),
@@ -128,6 +149,7 @@ venn.plot <- draw.pairwise.venn(a1_a2_a3[1],a1_a2_a3[2],a1_a2_a3[3],
              ext.line.lty = "dashed"
            );
 grid.draw(venn.plot);
+## ST6
 grid.newpage()
 venn.plot <- draw.pairwise.venn(45, 83, 10,
              category = c("SomaLogic", "Olink"),
