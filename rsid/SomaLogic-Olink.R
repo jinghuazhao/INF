@@ -86,8 +86,8 @@ T1T2 <- intersect(T1[["UniProt"]],T2[["uniprot"]])
 
 CC <- list(C1[["UniProt"]],C2[["uniprot"]])
 TT <- list(T1[["UniProt"]],T2[["uniprot"]])
-CT <- list(setdiff(C1,C1C2),setdiff(T2,T1T2))
-TC <- list(setdiff(T1,T1T2),setdiff(C2,C1C2))
+CT <- list(setdiff(C1[["UniProt"]],C1C2),setdiff(T2[["uniprot"]],T1T2))
+TC <- list(setdiff(T1[["UniProt"]],T1T2),setdiff(C2[["uniprot"]],C1C2))
 
 vd <- function(dlist,diagram=FALSE)
 {
