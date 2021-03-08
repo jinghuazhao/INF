@@ -22,6 +22,14 @@ function turboman()
   ) | \
   paste - <(echo SNP BHLHE40 LPP IL12B MHC SH2B3 FLT3 RAD51B TRAF3 | tr ' ' '\n') > ${INF}/work/${prot}.annotate
 
+  (
+    echo chromosome position SNP
+    grep IL.12B ${INF}/annotate/INF1.merge-annotate.tsv | \
+    cut -f3,22 | \
+    sort -k1,1n -k2,2n | \
+    sed 's/:/\t/'
+  ) > ${INF}/work/${prot}.annotate
+
   export refgene_file_name=turboman_hg19_reference_data.rda
   R --no-save -q <<\ \ END
     INF <- Sys.getenv("INF")
@@ -30,7 +38,9 @@ function turboman()
     library(dplyr)
     refgene_gene_coordinates_h19 <- refgene_gene_coordinates_h19 %>%
                                     mutate(gene_name=if_else(gene_name=="LOC285626","IL12B",gene_name)) %>%
-                                    mutate(gene_name=if_else(gene_name=="PSORS1C3","MHC",gene_name))
+                                    mutate(gene_name=if_else(gene_name=="PSORS1C3","MHC",gene_name)) %>%
+                                    mutate(gene_name=if_else(gene_name=="SH2B3","ATXN2",gene_name)) %>%
+                                    mutate(gene_name=if_else(gene_name=="FLT3","URAD",gene_name))
     save(ld_block_breaks_pickrell_hg19_eur,refgene_gene_coordinates_h19,file=refgene_file_name,compress="xz")
   END
 
