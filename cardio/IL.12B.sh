@@ -3,13 +3,13 @@
 export prot=IL.12B
 export uniprot=P29460
 
-function test()
+function turboman()
 {
   (
     echo \#CHROM POS P
     gunzip -c ${INF}/METAL/${prot}-1.tbl.gz | \
     cut -f1,2,12 | \
-    sed '1d;s|\t| |g' | \
+    sed '1d;s|\t| |g;s|-||g' | \
     sort -k1,1n -k2,2n
   ) | \
   gzip -f > ${INF}/work/${prot}.dat.gz
@@ -30,4 +30,4 @@ function test()
     plot_title="${prot} (${uniprot})" < ${INF}/cardio/turboman.r
 }
 
-test
+turboman
