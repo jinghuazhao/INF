@@ -22,11 +22,23 @@ function turboman()
   ) | \
   paste - <(echo SNP BHLHE40 LPP IL12B MHC SH2B3 FLT3 RAD51B TRAF3 | tr ' ' '\n') > ${INF}/work/${prot}.annotate
 
+  export refgene_file_name=turboman_hg19_reference_data.rda
+  R --no-save -q <<\ \ END
+    INF <- Sys.getenv("INF")
+    refgene_file_name <- Sys.getenv("refgene_file_name")
+    load(file.path(INF,"cardio",refgene_file_name))
+    library(dplyr)
+    refgene_gene_coordinates_h19 <- refgene_gene_coordinates_h19 %>%
+                                    mutate(gene_name=if_else(gene_name=="LOC285626","IL12B",gene_name)) %>%
+                                    mutate(gene_name=if_else(gene_name=="PSORS1C3","MHC",gene_name))
+    save(ld_block_breaks_pickrell_hg19_eur,refgene_gene_coordinates_h19,file=refgene_file_name,compress="xz")
+  END
+
   R --slave --vanilla --args \
     input_data_path=${INF}/work/${prot}.dat.gz \
     output_data_rootname=${INF}/work/${prot} \
     custom_peak_annotation_file_path=${INF}/work/${prot}.annotate \
-    reference_file_path=${INF}/cardio/turboman_hg19_reference_data.rda \
+    reference_file_path=${refgene_file_name} \
     pvalue_sign=5e-10 \
     plot_title="${prot} (${uniprot})" < ${INF}/cardio/turboman.r
 }
