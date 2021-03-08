@@ -20,7 +20,7 @@ function turboman()
     cut -f8,9 | \
     sort -k1,1n -k2,2n
   ) | \
-  paste - <(echo SNP BHLHE40 LPP IL12B MHC SH2B3 FLT3 RAD51B TRAF3 |  tr ' ' '\n' ) > ${INF}/work/${prot}.annotate
+  paste - <(echo SNP BHLHE40 LPP IL12B MHC SH2B3 FLT3 RAD51B TRAF3 | tr ' ' '\n') > ${INF}/work/${prot}.annotate
 
   R --slave --vanilla --args \
     input_data_path=${INF}/work/${prot}.dat.gz \
