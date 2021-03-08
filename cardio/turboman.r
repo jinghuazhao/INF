@@ -600,6 +600,9 @@ if (dim(gene_plot_data)[1] > 0 ) {
 ## Set the default colors of the all association datapoints, grey and light grey, alternating between odd and even chromosome numbers
 col1="gray72"
 col2="gray50"
+col1="blue4"
+col2="skyblue"
+
 chromosome_colour <- ifelse (chromosomes%%2==0, col1, col2)
 
 ## Plot the association data

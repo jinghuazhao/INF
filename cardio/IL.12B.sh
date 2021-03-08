@@ -19,11 +19,12 @@ function turboman()
     grep ${prot} ${INF}/work/INF1.merge | \
     cut -f8,9 | \
     sort -k1,1n -k2,2n
-  ) > ${INF}/work/${prot}.annotate
+  ) | \
+  paste - <(echo SNP BHLHE40 LPP IL12B MHC SH2B3 FLT3 RAD51B TRAF3 |  tr ' ' '\n' ) > ${INF}/work/${prot}.annotate
 
   R --slave --vanilla --args \
     input_data_path=${INF}/work/${prot}.dat.gz \
-    output_data_rootname=${prot} \
+    output_data_rootname=${INF}/work/${prot} \
     custom_peak_annotation_file_path=${INF}/work/${prot}.annotate \
     reference_file_path=${INF}/cardio/turboman_hg19_reference_data.rda \
     pvalue_sign=5e-10 \
