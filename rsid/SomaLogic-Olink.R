@@ -75,7 +75,7 @@ ST4_INF1_A <- ST4_INF1 %>%
               summarize(intersect=paste(intersect(unlist(strsplit(ST4_cistrans,",")),unlist(strsplit(INF1_cistrans,","))),collapse=",")) %>%
               right_join(ST4_INF1) %>%
               data.frame
-write.table(ST4_INF1_A,file="ST4_INF1.tsv",quote=FALSE,row.names=FALSE,sep="\t")
+write.csv(ST4_INF1_A,file="ST4_INF1.csv",row.names=FALSE)
 
 C1 <- subset(ST4,UniProt %in% both & cis_trans=="cis")
 T1 <- subset(ST4,UniProt %in% both & cis_trans=="trans")
