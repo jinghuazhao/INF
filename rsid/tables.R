@@ -21,7 +21,7 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:7037)
   fusion <- read.sheet("FUSION", 1:26, 2:117)
      efo <- subset(read.sheet("EFO", 1:4, 2:79),!is.na(MRBASEID))
      smr <- read.sheet("SMR", 1:27, 2:83)
-mr_immue <- read.sheet("pqtlMR-immune", 1:7, 2:67)
+mr_immun <- read.sheet("pqtlMR-immune", 1:7, 2:67)
  mr_misc <- read.sheet("pqtlMR-misc", 1:7, 2:39)
      ivw <- read.sheet("IVW", 1:7, 2:12)
     gsmr <- read.sheet("GSMR", 1:12, 2:55)
@@ -48,7 +48,7 @@ options("openxlsx.borderColour"="#4F80BD")
 hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
 novelpqtls <- subset(pqtls,!paste0(prot,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),select=c(MarkerName,rsid,prot,uniprot))
 ord <- with(novelpqtls,order(prot,MarkerName))
-write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls[ord,]), file=file.path(INF,"work","novelpqtls.xlsx"), colNames=TRUE,
+write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls[ord,]), file=file.path(INF,"NG","novelpqtls.xlsx"), colNames=TRUE,
            borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
 
 url <- "https://jhz22.user.srcf.net/pqtl-immune_infection_edited.xlsx"
@@ -61,16 +61,20 @@ coloc <- read.delim(file.path(INF,"coloc","GTEx.tsv"))
 cs95 <- read.delim(file.path(INF,"coloc","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
 
-outsheets <- c("summary","studies","inf1","pqtls","cojo","knownpqtls","pqtlstudies","interval","coloc","cs95","pqtldisease")
-titles <- c("summary","study information","panel information","pQTLs","conditional analysis",
-            "known pQTLs","previous pQTL studies","SomaLogic replication","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap")
+outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
+               "pqtls","cojo","knownpqtls","pqtlstudies","coloc","cs95","pqtldisease","vep", "garfield",
+               "mr_immun","mr_misc","gsmr","gdb")
+titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
+            "pQTLs","conditional analysis",
+            "known pQTLs","previous pQTL studies","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
+            "VEP annotation", "GARFIELD outputs", "pQTL-immune-MR", "pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
-n0 <- 3
+n0 <- 7
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],paste0("ST",1:(length(outsheets)-n0)))
 summary <- data.frame(Sheetnames=prefix,Description=description)
-xlsx <- paste0("work/SCALLOP-INF.xlsx")
+xlsx <- file.path(INF,"NG","SCALLOP-INF.xlsx")
 wb <- createWorkbook(xlsx)
 for (i in 1:length(outsheets))
 {
