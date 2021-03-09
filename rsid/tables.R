@@ -62,12 +62,14 @@ cs95 <- read.delim(file.path(INF,"coloc","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
 
 outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
-               "pqtls","cojo","knownpqtls","pqtlstudies","coloc","cs95","pqtldisease","vep", "garfield",
+               "pqtls","cojo","knownpqtls","pqtlstudies","coloc","cs95","smr","pqtldisease",
+               "vep", "garfield",
                "mr_immun","mr_misc","gsmr","gdb")
 titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
             "pQTLs","conditional analysis",
-            "known pQTLs","previous pQTL studies","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
-            "VEP annotation", "GARFIELD outputs", "pQTL-immune-MR", "pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank")
+            "known pQTLs","previous pQTL studies","GTEx coloc","GTEx coloc 95%CS","SMR","Disease GWAS overlap",
+            "VEP annotation", "GARFIELD outputs",
+            "pQTL-immune-MR", "pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
