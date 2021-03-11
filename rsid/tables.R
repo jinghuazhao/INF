@@ -86,6 +86,7 @@ for (i in 1:length(outsheets))
   writeData(wb, sheetnames, sheetnames, startCol=1, startRow=1)
   writeDataTable(wb, sheetnames, get(outsheets[i]), startCol=1, startRow=2,
                  headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
+  freezePane(wb, sheetnames, firstCol=TRUE, firstActiveRow=3)
 }
 data.frame(sheets(wb))
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
