@@ -29,9 +29,9 @@ mr_immun <- read.sheet("pqtlMR-immune", 1:7, 2:67)
     mrc2 <- read.sheet("MRC2", 1:7, 2:8)
     mvmr <- read.sheet("MVMR", 1:9, 2:6)
      gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
-     at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1")
-     at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2")
-     at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3")
+     at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
+     at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2"); #names(at2) <- replace(names(at2),grepl("^[X]",names(at2)),"")
+     at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
 
 pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid") 
 data.frame(table(subset(pav,cis.trans=="cis")$Consequence))
@@ -70,42 +70,47 @@ cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
 outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
                "pqtls","cojo","knownpqtls","pqtlstudies","coloc","cs95","smr","pqtldisease",
                "vep","garfield",
-               "mr_immun","ivw","mr_misc","gsmr","gdb")
+               "mr_immun","ivw","mr_misc","gsmr","gdb","at1","at2","at3","reactome","great","efo")
 titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
             "pQTLs","conditional analysis",
             "known pQTLs","previous pQTL studies","GTEx coloc","GTEx coloc 95%CS","SMR","Disease GWAS overlap",
             "VEP annotation","GARFIELD outputs",
-            "pQTL-immune-MR","IVW","pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank")
+            "pQTL-immune-MR","IVW","pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank","Annotrans-1","Annotrans-2","Annotrans-3","Reactome","GREAT","EFO")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
 n0 <- 7
-prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],paste0("ST",1:(length(outsheets)-n0)))
+n1 <- 15
+prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
+            paste0("ST",1:15),
+            paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
+          )
 summary <- data.frame(Sheetnames=prefix,Description=description)
 xlsx <- file.path(INF,"NG","SCALLOP-INF.xlsx")
 wb <- createWorkbook(xlsx)
 for (i in 1:length(outsheets))
 {
-  sheetnames <- with(summary[i,], ifelse(i<=n0, Description, paste0(Sheetnames,"-",Description)))
+  sheetnames <- with(summary[i,], ifelse(i<=n0|i>n0+n1, Description, paste0(Sheetnames,"-",Description)))
   cat(sheetnames,"\n")
-  addWorksheet(wb, sheetnames, zoom=150)
-  writeData(wb, sheetnames, sheetnames, xy=c(1,1),
-                headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
-  body <- get(outsheets[i])
-  writeDataTable(wb, sheetnames, body, xy=c(1,2), headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
-  freezePane(wb, sheetnames, firstCol=TRUE, firstActiveRow=3)
-  width_vec <- apply(body, 2, function(x) max(nchar(as.character(x))+2, na.rm=TRUE))
-# width_vec_header <- nchar(colnames(body))+2
-  setColWidths(wb, sheetnames, cols = 1:ncol(body), widths = width_vec)
-  writeData(wb, sheetnames, tail(body,1), xy=c(1, nrow(body)+2), colNames=FALSE, borders="rows", borderStyle="thick")
-}
-for (i in 1:3)
-{
-  sheet <- paste0("ST",length(outsheets)-n0+i,"-Annotrans",i)
-  addWorksheet(wb,sheet,gridLines=FALSE)
-  writeData(wb,sheet,paste0("Trans-pQTL annotation-",i), xy=c(1,1),
-               headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
-  writeDataTable(wb,sheet, get(paste0("at",i)), xy=c(1,2), firstColumn=TRUE, bandedRows=FALSE)
+  if (i<=n0+n1 | i>n0+n1+3)
+  {
+    addWorksheet(wb, sheetnames, zoom=150)
+    writeData(wb, sheetnames, sheetnames, xy=c(1,1),
+                  headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
+    body <- get(outsheets[i])
+    writeDataTable(wb, sheetnames, body, xy=c(1,2), headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
+    freezePane(wb, sheetnames, firstCol=TRUE, firstActiveRow=3)
+    width_vec <- apply(body, 2, function(x) max(nchar(as.character(x))+2, na.rm=TRUE))
+  # width_vec_header <- nchar(colnames(body))+2
+    setColWidths(wb, sheetnames, cols = 1:ncol(body), widths = width_vec)
+    writeData(wb, sheetnames, tail(body,1), xy=c(1, nrow(body)+2), colNames=FALSE, borders="rows", borderStyle="thick")
+  } else {
+    sheet <- paste0("Annotrans-",i-n0-n1)
+    addWorksheet(wb,sheet,gridLines=FALSE)
+    writeData(wb,sheet,paste0("Trans-pQTL annotation-",i-n0-n1), xy=c(1,1),
+                 headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
+    writeDataTable(wb,sheet, get(paste0("at",i-n0-n1)), xy=c(1,2), firstColumn=TRUE, bandedRows=FALSE)
+  }
 }
 data.frame(sheets(wb))
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
