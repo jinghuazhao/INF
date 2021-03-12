@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # setup
-smr --beqtl-summary ~/COVID-19/smr/cage_eqtl_data_lite_hg19/CAGE.sparse.lite --extract-snp-p 5e-8 --add-n 2765 --make-besd --out CAGE
+smr --beqtl-summary ~/rds/public_databases/smr/cage_eqtl_data_lite_hg19/CAGE.sparse.lite --extract-snp-p 5e-8 --add-n 2765 --make-besd --out CAGE
 smr --beqtl-summary CAGE --show-n 
 ln -sf CAGE.besd CAGE_snpid.besd
 ln -sf CAGE.epi CAGE_snpid.epi
@@ -86,7 +86,7 @@ function plotSMR()
   export ma=$2
   export probe=$3
   export out=$4
-  smr --bfile ${bfile} --gwas-summary ${ma} --beqtl-summary CAGE_snpid --gene-list plot/glist_hg19_refseq.txt \
+  smr --bfile ${bfile} --gwas-summary ${ma} --beqtl-summary CAGE_snpid --gene-list ~/rds/public_databases/smr/plot/glist_hg19_refseq.txt \
       --probe ${probe} --probe-wind 500 \
       --plot --out ${out}
 }
