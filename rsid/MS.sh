@@ -368,7 +368,7 @@ function pqtl_flanking()
   # trans pQTL
   # chr12:6514963_A_C rs2364485
   # chr12:111865049_C_G rs7310615; MS:chr12:6440009_C_T rs1800693
-  # r2=0.0029
+  # r2(rs1800693,rs2364485)=0.0029, r2(rs1800693,rs7310615)=0.0023, r2(rs2364485,rs7310615)=0.0013
     export chr=12
     export rsid=rs2364485
     export pos=6514963
