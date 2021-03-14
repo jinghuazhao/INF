@@ -99,21 +99,25 @@ join -12 -25 - <(sort -k5,5 CAGE.epi) > INF1.merge.probe
 sed '1d' ${INF}/work/INF1.merge | \
 tr '\t' ' ' | \
 parallel -j1 -C' ' '
-  for probe in $(cut -d" " -f3,5 INF1.merge.probe | grep VEGF.A | cut -d" " -f2 | tr "\n" " ")
+  for probe in $(cut -d" " -f3,5 INF1.merge.probe | cut -d" " -f2 | tr "\n" " ")
   do
+    export probe=${probe}
     smr --bfile {5}-{6} --gwas-summary ${INF}/work/{5}.ma --beqtl-summary CAGE_snpid \
         --gene-list ~/rds/public_databases/smr/plot/glist_hg19_refseq.txt --probe ${probe} --probe-wind 500 --plot \
-        --out ${probe}
+        --out smr
+    R --no-save -q <<\ \ \ \ END
+      HPC_WORK <- Sys.getenv("HPC_WORK")
+      probe <- Sys.getenv("probe")
+      source(file.path(HPC_WORK,"smr_1.03_src","plot","plot_SMR.r"))
+    # Read the data file in R:
+      SMRData = ReadSMRData(file.path("plot",paste0("smr.",probe,".txt")))
+      png(file.path("plot",paste0(probe,".png")), res=300, units="cm", width=40, height=20)
+      SMRLocusPlot(data=SMRData, smr_thresh=8.4e-6, heidi_thresh=0.01, plotWindow=500, max_anno_probe=16)
+    # smr_thresh: genome-wide significance level for the SMR test.
+    # heidi_thresh: threshold for the HEIDI test. The default value is 0.05.
+    # cis_wind: size of a window centred around the probe to select cis-eQTLs for plot. The default value is 2000Kb.
+    # max_anno_probe: maximum number of probe names to be displayed on the figure. The default value is 16.
+      dev.off()
+    END
   done
 '
-R --no-save -q <<END
-  HPC_WORK <- Sys.getenv("HPC_WORK")
-  source(file.path(HPC_WORK,"smr_1.03_src","plot","plot_SMR.r"))
-# Read the data file in R:
-  SMRData = ReadSMRData("plot/smr.ILMN_1693060.txt")
-  SMRLocusPlot(data=SMRData, smr_thresh=8.4e-6, heidi_thresh=0.01, plotWindow=500, max_anno_probe=16)
-# smr_thresh: genome-wide significance level for the SMR test.
-# heidi_thresh: threshold for the HEIDI test. The default value is 0.05.
-# cis_wind: size of a window centred around the probe to select cis-eQTLs for plot. The default value is 2000Kb.
-# max_anno_probe: maximum number of probe names to be displayed on the figure. The default value is 16.
-END
