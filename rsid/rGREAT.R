@@ -11,11 +11,10 @@ INF <- Sys.getenv("INF")
 INF1_merge <- read.table(file.path(INF,"work","INF1.merge"),as.is=TRUE,header=TRUE)
 cis <- scan(file.path(INF,"work","INF1.merge.cis"),what="")
 INF1_merge_cis <- subset(INF1_merge,MarkerName%in%cis)
-regions <- INF1_merge_cis[c("Chrom","Start","End")]
-singletons <- with(regions, Start-End<=2)
-flank <- 5e+2
-regions[singletons,"Start"] <- regions[singletons,"Start"] - flank
-regions[singletons,"End"] <- regions[singletons,"End"] + flank
+regions <- INF1_merge_cis[c("Chrom","Start","End","POS")]
+flank <- 5e+5
+regions["Start"] <- regions["POS"] - flank
+regions["End"] <- regions["POS"] + flank
 reset <- with(regions,Start < 0)
 regions[reset,"Start"] <- 0
 library(rGREAT)
