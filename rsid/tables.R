@@ -68,12 +68,12 @@ cs95 <- read.delim(file.path(INF,"coloc","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
 
 outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
-               "pqtls","cojo","knownpqtls","pqtlstudies","coloc","cs95","smr","pqtldisease",
+               "pqtls","cojo","knownpqtls","pqtlstudies","smr","coloc","cs95","pqtldisease",
                "vep","garfield",
                "mr_immun","ivw","mr_misc","gsmr","gdb","at1","at2","at3","reactome","great","efo")
 titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
             "pQTLs","conditional analysis",
-            "known pQTLs","previous pQTL studies","GTEx coloc","GTEx coloc 95%CS","SMR","Disease GWAS overlap",
+            "known pQTLs","previous pQTL studies","SMR","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
             "VEP annotation","GARFIELD outputs",
             "pQTL-immune-MR","IVW","pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank","Annotrans-1","Annotrans-2","Annotrans-3","Reactome","GREAT","EFO")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
