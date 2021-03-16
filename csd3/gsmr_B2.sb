@@ -12,11 +12,12 @@
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_gsmr-B2_%A_%a.err
 #SBATCH --export ALL
 
-cd work
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' inf1.tmp)
-export r=/rds/user/jhz22/hpc-work/results/HGI
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+export r=${INF}/HGI
+
+cd ${INF}/HGI
 if [ ! -f gsmr_B2 ]; then echo B2 $r/gsmr_B2.txt.gz > gsmr_B2; fi
 if [ ! -f gsmr_ref_data ]; then echo $INF/work/INTERVAL > gsmr_ref_data; fi
 if [ ! -f gsmr_$p ]; then echo $p $INF/work/$p.ma > gsmr_$p; fi
