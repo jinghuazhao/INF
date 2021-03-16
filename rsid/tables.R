@@ -17,6 +17,7 @@ aristotl <- read.sheet("ARISTOTLE", 1:14, 2:182)
    eqtls <- read.sheet("eQTLs", 1:24, 2:24)
 reactome <- read.sheet("Reactome", 1:19, 2:589)
    great <- read.sheet("GREAT", 1:24, 2:101)
+  great3 <- read.sheet("IL12B-KITLG-TNFSF10", 1:25, 2:38)
 garfield <- read.sheet("GARFIELD", 1:18, 2:7037)
   fusion <- read.sheet("FUSION", 1:26, 2:117)
      efo <- subset(read.sheet("EFO", 1:4, 2:79),!is.na(MRBASEID))
@@ -69,20 +70,20 @@ cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
 
 outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
                "pqtls","cojo","knownpqtls","pqtlstudies","smr","coloc","cs95","pqtldisease",
-               "vep","garfield",
+               "vep","great3","garfield",
                "mr_immun","ivw","mr_misc","gsmr","gdb","at1","at2","at3","reactome","great","efo")
 titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
             "pQTLs","conditional analysis",
             "known pQTLs","previous pQTL studies","SMR","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
-            "VEP annotation","GARFIELD outputs",
+            "VEP annotation","IL12B-KITLG-TNFSF10","GARFIELD outputs",
             "pQTL-immune-MR","IVW","pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank","Annotrans-1","Annotrans-2","Annotrans-3","Reactome","GREAT","EFO")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
 n0 <- 7
-n1 <- 15
+n1 <- 16
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
-            paste0("ST",1:15),
+            paste0("ST",1:n1),
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
           )
 summary <- data.frame(Sheetnames=prefix,Description=description)
