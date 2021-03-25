@@ -54,13 +54,14 @@ INF <- Sys.getenv("INF")
 options("openxlsx.borderColour"="#4F80BD")
 hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
 novelpqtls <- subset(within(pqtls,{
+                                   chrpos=paste0(Chromosome,":",Position)
                                    a1a2=paste0(toupper(Allele1),"/",toupper(Allele2))
                                    bse=paste0(round(Effect,3)," (",round(StdErr,3),")")
                                    log10p=-log.P.
                                   }),
                      !paste0(prot,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),
-                     select=c(MarkerName,rsid,prot,uniprot,a1a2,bse,log10p))
-ord <- with(novelpqtls,order(prot,MarkerName))
+                     select=c(prot,uniprot,chrpos,rsid,a1a2,bse,log10p))
+ord <- with(novelpqtls,order(prot,chrpos))
 write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls[ord,]), file=file.path(INF,"NG","novelpqtls.xlsx"), colNames=TRUE,
            borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
 
