@@ -1,0 +1,44 @@
+#!/bin/bash
+
+#SBATCH --account=CARDIO-SL0-CPU
+#SBATCH --ntasks=1
+#SBATCH --job-name=_gsmr-HGI
+#SBATCH --time=12:00:00
+#SBATCH --partition=cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1-92%12
+#SBATCH --mem=128800
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_gsmr-hgi_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_gsmr-hgi_%A_%a.err
+#SBATCH --export ALL
+
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' ${INF}/work/inf1.tmp)
+
+function gsmr()
+{
+  export trait=$1
+  if [ ! -f HGI/gsmr_${trait} ]; then echo ${trait} HGI/gsmr_${trait}.txt.gz > ${INF}/HGI/gsmr_${trait}; fi
+  if [ ! -f HGI/gsmr_ref_data ]; then echo $INF/work/INTERVAL > HGI/gsmr_ref_data; fi
+  if [ ! -f HGI/gsmr_$p ]; then echo $p $INF/work/$p.ma > HGI/gsmr_$p; fi
+
+  gcta-1.9 --mbfile HGI/gsmr_ref_data --gsmr-file HGI/gsmr_$p HGI/gsmr_${trait} \
+           --gsmr-direction 0 \
+           --clump-r2 0.05 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
+           --out HGI/gsmr_${trait}_$p
+
+  R --no-save -q <<\ \ END
+    trait <- Sys.getenv("trait")
+    p <- Sys.getenv("p")
+    source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
+    gsmr_data <- read_gsmr_data(paste0("HGI/gsmr_",trait,"_",p,".eff_plot.gz"))
+    gsmr_summary(gsmr_data)
+    pdf(paste0("HGI/gsmr_",trait,"_",p,".eff_plot.pdf"))
+    plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
+    dev.off()
+  END
+}
+
+gsmr A2
+gsmr B2
+gsmr C2
