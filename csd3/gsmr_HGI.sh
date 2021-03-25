@@ -5,8 +5,8 @@ export A2=COVID19_HGI_A2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
 export B2=COVID19_HGI_B2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
 export C2=COVID19_HGI_C2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
 
-for trait in A2 B2 C2
-do
+function trait()
+{
   echo ${trait}
   (
     echo "SNP A1 A2 freq b se p N"
@@ -24,7 +24,10 @@ do
   ) | \
   awk 'a[$1]++==0' | \
   gzip -f > ${INF}/HGI/gsmr_${trait}.txt.gz
+}
 
+function collect()
+{
   if [ -f ${INF}/HGI/INF1_${trait}.gsmr ]; then rm ${INF}/HGI/INF1_${trait}.gsmr; fi
   (
     cat ${INF}/HGI/gsmr_${trait}*.gsmr | \
@@ -37,6 +40,12 @@ do
     '
   ) | \
   grep -v nan > ${INF}/HGI/INF1_${trait}.gsmr
+}
+
+for trait in A2 B2 C2
+do
+  trait
+  collect
 done
 
 # gunzip -c $HGI/$C2 | head -1 | tr '\t' '\n' | awk '{print "#" NR,$1}'
