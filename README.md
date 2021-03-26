@@ -6,7 +6,8 @@
 
 ```mermaid
 graph TB;
-tryggve ==> cardio ==> csd3;
+tryggve ==> cardio;
+cardio ==> csd3;
 tryggveAnalysis[Meta analysis: list.sh, format.sh,metal.sh, QCGWAS.sh, analysis.sh] --> GWAS[pQTL selection and Characterisation];
 GWAS --> Prototyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
 Prototyping --> Multi-omics-analysis;
