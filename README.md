@@ -16,8 +16,6 @@ csd3 --> csd3Analysis[Conditional analysis,finemapping, etc];
 csd3 --> software[R Packages at CRAN/GitHub]; 
 ```
 
-![](https://tinyurl.com/y6g4t8fm)
-
 ### Comments
 
 1. Data pre-processing was done initially from [tryggve](tryggve) with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh), followed by meta-analysis according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with additional investigation.
