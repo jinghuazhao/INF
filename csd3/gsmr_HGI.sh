@@ -59,23 +59,25 @@ done
 
 R --no-save -q <<END
   INF <- Sys.getenv("INF")
-  gsmr <- read.table(file.path(INF,"HGI","A2-B2-C2.txt"),header=TRUE)
+  gsmr <- within(read.table(file.path(INF,"HGI","A2-B2-C2.txt"),header=TRUE),{col="black"})
+  recolor <- with(gsmr,prot=="LIF.R")
+  gsmr[recolor,"col"] <- "red"
   n.prot <- nrow(gsmr)
   xtick <- seq(1,n.prot)
   png(file.path(INF,"HGI","A2-B2-C2.png"), res=300, units="cm", width=40, height=20)
   with(gsmr, {
       par(mfrow=c(3,1))
-      plot(-log10(p_A2), cex=0.8, pch=16, axes=FALSE, main="Critical illness (A2)", xlab="", ylab="", cex.lab=1)
+      plot(-log10(p_A2), col=col, cex=0.8, pch=16, axes=FALSE, main="Critical illness (A2)", xlab="", ylab="", cex.lab=1)
       axis(side=2, cex.axis=2)
       text(0.5,3.5,"-log10(p)", cex=1.5)
-      plot(-log10(p_B2), cex=0.8, pch=16, axes=FALSE, main="Hospitalisation (B2)", xlab="", ylab="",cex.lab=1)
+      plot(-log10(p_B2), col=col, cex=0.8, pch=16, axes=FALSE, main="Hospitalisation (B2)", xlab="", ylab="",cex.lab=1)
       axis(side=2, cex.axis=2)
       text(0.5,1.5,"-log10(p)", cex=1.5)
-      plot(-log10(p_C2), cex=0.8, pch=16, axes=FALSE, main="Reported infection (C2)", xlab="", ylab="",cex.lab=1)
+      plot(-log10(p_C2), col=col, cex=0.8, pch=16, axes=FALSE, main="Reported infection (C2)", xlab="", ylab="",cex.lab=1)
       axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.2)
       axis(side=2, cex.axis=2)
       text(0.5,6,"-log10(p)", cex=1.5)
-      text(x=xtick, y=-1, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=1.2)
+      text(x=xtick, y=-1, col=col, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=1.2)
   })
   dev.off()
 END
