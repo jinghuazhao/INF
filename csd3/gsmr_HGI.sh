@@ -57,6 +57,21 @@ done
   awk '$3!="NA"'
 ) > ${INF}/HGI/A2-B2-C2.txt
 
+join -o1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8 \
+     <(gunzip -c ${INF}/HGI/gsmr_B2_LIF.R.eff_plot.gz | \
+       awk '/effect_begin/,/effect_end/' | \
+       grep -v effect) \
+     <(gunzip -c ${INF}/HGI/gsmr_C2_LIF.R.eff_plot.gz | \
+       awk '/effect_begin/,/effect_end/' | \
+       grep -v effect) | \
+join -a1 -e "NA" -o2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16 \
+       - \
+       <(gunzip -c ${INF}/HGI/gsmr_A2_LIF.R.eff_plot.gz | \
+       awk '/effect_begin/,/effect_end/' | \
+       grep -v effect) | \
+awk '{$1=$9};1' | \
+join work/INTERVAL.rsid - > ${INF}/HGI/A2-B2-C2.snp_effects
+
 R --no-save -q <<END
   INF <- Sys.getenv("INF")
   gsmr <- within(read.table(file.path(INF,"HGI","A2-B2-C2.txt"),header=TRUE),{col="black"})
@@ -80,6 +95,26 @@ R --no-save -q <<END
       text(x=xtick, y=-1, col=col, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=1.2)
   })
   dev.off()
+  source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
+  read_gsmr_by_trait_p <- function(trait,p)
+  {
+      gsmr_data <- read_gsmr_data(file.path(INF,"HGI",paste0("gsmr_",trait,"_",p,".eff_plot.gz")))
+      plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
+      snp_effect <- with(gsmr_data,snp_effect[,-c(2:6)])
+      colnames(snp_effect) <- c("snpid",paste0(trait,"_",c("b1","se1","b2","se2")))
+      as.data.frame(snp_effect)
+  }
+  A2 <- read_gsmr_by_trait_p("A2","LIF.R")
+  B2 <- read_gsmr_by_trait_p("B2","LIF.R")
+  C2 <- read_gsmr_by_trait_p("C2","LIF.R")
+  A2_B2_C2 <- merge(merge(A2,B2,by="snpid",all.y=TRUE),C2,by="snpid")
+  snp_effect_id <- read.table(file.path(INF,"HGI","A2-B2-C2.snp_effects"))[,1:2]
+  snp_effects <- data.frame(snpid=snp_effect_id[["V2"]],apply(A2_B2_C2[,-1],2,as.numeric))
+  library(gap)
+  par(mfrow=c(1,3))
+  ESplot(snp_effects[c("snpid","A2_b2","A2_se2")])
+  ESplot(snp_effects[c("snpid","B2_b2","B2_se2")])
+  ESplot(snp_effects[c("snpid","C2_b2","C2_se2")])
 END
 
 # gunzip -c $HGI/$C2 | head -1 | tr '\t' '\n' | awk '{print "#" NR,$1}'
