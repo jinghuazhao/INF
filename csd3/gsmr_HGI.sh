@@ -110,11 +110,10 @@ R --no-save -q <<END
   A2_B2_C2 <- merge(merge(A2,B2,by="snpid",all.y=TRUE),C2,by="snpid")
   snp_effect_id <- read.table(file.path(INF,"HGI","A2-B2-C2.snp_effects"))[,1:2]
   snp_effects <- data.frame(snpid=snp_effect_id[["V2"]],apply(A2_B2_C2[,-1],2,as.numeric))
-  library(gap)
   par(mfrow=c(1,3))
-  ESplot(snp_effects[c("snpid","A2_b2","A2_se2")])
-  ESplot(snp_effects[c("snpid","B2_b2","B2_se2")])
-  ESplot(snp_effects[c("snpid","C2_b2","C2_se2")])
+  gap::ESplot(snp_effects[c("snpid","A2_b2","A2_se2")], logscale=FALSE)
+  gap::ESplot(snp_effects[c("snpid","B2_b2","B2_se2")], logscale=FALSE)
+  gap::ESplot(snp_effects[c("snpid","C2_b2","C2_se2")], logscale=FALSE)
 END
 
 # gunzip -c $HGI/$C2 | head -1 | tr '\t' '\n' | awk '{print "#" NR,$1}'
