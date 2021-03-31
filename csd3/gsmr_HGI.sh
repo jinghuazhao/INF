@@ -79,7 +79,7 @@ R --no-save -q <<END
   gsmr[recolor,"col"] <- "red"
   n.prot <- nrow(gsmr)
   xtick <- seq(1,n.prot)
-  png(file.path(INF,"HGI","A2-B2-C2.png"), res=300, units="cm", width=40, height=20)
+  png(file.path(INF,"HGI","A2-B2-C2.gsmr,png"), res=300, units="cm", width=40, height=20)
   with(gsmr, {
       par(mfrow=c(3,1))
       plot(-log10(p_A2), col=col, cex=2, pch=16, axes=FALSE, main="Critical illness (A2)", xlab="", ylab="", cex.lab=1)
@@ -104,16 +104,22 @@ R --no-save -q <<END
       colnames(snp_effect) <- c("snpid",paste0(trait,"_",c("b1","se1","b2","se2")))
       as.data.frame(snp_effect)
   }
+  png(file.path(INF,"HGI","A2-B2-C2.mr.png"),res=300, units="cm", width=40, height=20)
+  par(mfrow=c(1,3))
   A2 <- read_gsmr_by_trait_p("A2","LIF.R")
   B2 <- read_gsmr_by_trait_p("B2","LIF.R")
   C2 <- read_gsmr_by_trait_p("C2","LIF.R")
+  dev.off()
   A2_B2_C2 <- merge(merge(A2,B2,by="snpid",all.y=TRUE),C2,by="snpid")
   snp_effect_id <- read.table(file.path(INF,"HGI","A2-B2-C2.snp_effects"))[,1:2]
   snp_effects <- data.frame(snpid=snp_effect_id[["V2"]],apply(A2_B2_C2[,-1],2,as.numeric))
+  png(file.path(INF,"HGI","A2-B2-C2.ESplot.png"),res=300, units="cm", width=40, height=20)
   par(mfrow=c(1,3))
-  gap::ESplot(snp_effects[c("snpid","A2_b2","A2_se2")], logscale=FALSE)
-  gap::ESplot(snp_effects[c("snpid","B2_b2","B2_se2")], logscale=FALSE)
-  gap::ESplot(snp_effects[c("snpid","C2_b2","C2_se2")], logscale=FALSE)
+  gap::ESplot(snp_effects[c("snpid","A2_b2","A2_se2")], lty=2, xlim=c(-0.4,1), logscale=FALSE)
+  snp_effects["snpid"] <- ""
+  gap::ESplot(snp_effects[c("snpid","B2_b2","B2_se2")], lty=2, xlim=c(-0.3,1), logscale=FALSE)
+  gap::ESplot(snp_effects[c("snpid","C2_b2","C2_se2")], lty=2, xlim=c(-0.3,1), logscale=FALSE)
+  dev.off()
 END
 
 # gunzip -c $HGI/$C2 | head -1 | tr '\t' '\n' | awk '{print "#" NR,$1}'
