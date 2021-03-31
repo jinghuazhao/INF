@@ -79,7 +79,7 @@ R --no-save -q <<END
   gsmr[recolor,"col"] <- "red"
   n.prot <- nrow(gsmr)
   xtick <- seq(1,n.prot)
-  png(file.path(INF,"HGI","A2-B2-C2.gsmr,png"), res=300, units="cm", width=40, height=20)
+  png(file.path(INF,"HGI","A2-B2-C2.gsmr.png"), res=300, units="cm", width=40, height=20)
   with(gsmr, {
       par(mfrow=c(3,1))
       plot(-log10(p_A2), col=col, cex=2, pch=16, axes=FALSE, main="Critical illness (A2)", xlab="", ylab="", cex.lab=1)
