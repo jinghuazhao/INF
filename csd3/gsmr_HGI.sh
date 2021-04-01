@@ -95,7 +95,8 @@ R --no-save -q <<END
       text(x=xtick, y=-1, col=col, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=1.2)
   })
   dev.off()
-  source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
+# source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
+  source(file.path(INF,"csd3","gsmr_plot.r"))
   read_gsmr_by_trait_p <- function(trait,p)
   {
       gsmr_data <- read_gsmr_data(file.path(INF,"HGI",paste0("gsmr_",trait,"_",p,".eff_plot.gz")))
@@ -115,10 +116,10 @@ R --no-save -q <<END
   snp_effects <- data.frame(snpid=snp_effect_id[["V2"]],apply(A2_B2_C2[,-1],2,as.numeric))
   png(file.path(INF,"HGI","A2-B2-C2.ESplot.png"),res=300, units="cm", width=40, height=20)
   par(mfrow=c(1,3))
-  gap::ESplot(snp_effects[c("snpid","A2_b2","A2_se2")], lty=2, xlim=c(-0.4,1), logscale=FALSE)
+  gap::ESplot(snp_effects[c("snpid","A2_b2","A2_se2")], lty=2, v=0, xlim=c(-0.4,0.4), logscale=FALSE)
   snp_effects["snpid"] <- ""
-  gap::ESplot(snp_effects[c("snpid","B2_b2","B2_se2")], lty=2, xlim=c(-0.3,1), logscale=FALSE)
-  gap::ESplot(snp_effects[c("snpid","C2_b2","C2_se2")], lty=2, xlim=c(-0.3,1), logscale=FALSE)
+  gap::ESplot(snp_effects[c("snpid","B2_b2","B2_se2")], lty=2, v=0, xlim=c(-0.3,0.4), logscale=FALSE)
+  gap::ESplot(snp_effects[c("snpid","C2_b2","C2_se2")], lty=2, v=0, xlim=c(-0.3,0.4), logscale=FALSE)
   dev.off()
 END
 
