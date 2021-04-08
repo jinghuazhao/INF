@@ -72,6 +72,11 @@ join -a1 -e "NA" -o2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1
 awk '{$1=$9};1' | \
 join work/INTERVAL.rsid - > ${INF}/HGI/A2-B2-C2.snp_effects
 
+(
+  echo SNP b.LIF.R SE.LIF.R b.A2 SE.A2 b.B2 SE.B2 b.C2 SE.C2
+  cut -d' ' -f2,6,7,8,9,16,17,24,25 ${INF}/HGI/A2-B2-C2.snp_effects
+) > ${INF}/HGI/INF1_A2-B2-C2.gsmr
+
 R --no-save -q <<END
   INF <- Sys.getenv("INF")
   gsmr <- within(read.table(file.path(INF,"HGI","A2-B2-C2.txt"),header=TRUE),{col="black"})
