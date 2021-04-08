@@ -33,8 +33,8 @@ join work/INTERVAL.rsid - > ${INF}/gsmr/INF1_CAD-FEV1.snp_effects
   cut -d' ' -f2,6,7,8,9,16,17 ${INF}/gsmr/INF1_CAD-FEV1.snp_effects
 ) > ${INF}/gsmr/INF1_CAD-FEV1.gsmr
 
-function collect()
-{
+for trait in A2 B2 C2
+do
   if [ -f ${INF}/HGI/INF1_${trait}.gsmr ]; then rm ${INF}/HGI/INF1_${trait}.gsmr; fi
   (
     cat ${INF}/HGI/gsmr_${trait}*.gsmr | \
@@ -47,12 +47,6 @@ function collect()
     '
   ) | \
   grep -v nan > ${INF}/HGI/INF1_${trait}.gsmr
-}
-
-for trait in A2 B2 C2
-do
-  trait
-  collect
 done
 
 (
