@@ -24,6 +24,7 @@ coloc.sb | coloc analysis -- clumsy verion
 coloc.R | coloc analysis via pQTLtools
 fastenloc.sb | fastenloc analysis
 garfield.sh | GARFIELD analysis
+gsmr.sh | GSMR processing
 hyprcoloc.sh | hyprcoloc analysis
 st.sh | batch command file
 cs/, finemap/, jam/, prune/, work/ | working directories
