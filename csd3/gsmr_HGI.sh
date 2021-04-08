@@ -5,8 +5,8 @@ export A2=COVID19_HGI_A2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
 export B2=COVID19_HGI_B2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
 export C2=COVID19_HGI_C2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
 
-function trait()
-{
+for trait in A2 B2 C2
+do
   echo ${trait}
   (
     echo "SNP A1 A2 freq b se p N"
@@ -24,7 +24,7 @@ function trait()
   ) | \
   awk 'a[$1]++==0' | \
   gzip -f > ${INF}/HGI/gsmr_${trait}.txt.gz
-}
+done
 
 R --no-save -q <<END
   INF <- Sys.getenv("INF")
