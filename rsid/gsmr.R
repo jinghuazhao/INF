@@ -23,17 +23,20 @@ weighted.median.boot = function(bXG, sebXG, bYG, sebYG, weights, n.boot=1000)
    sd(med)
 }
 
-gsmr <- function(dat, X, Y, alpha=0.05)
+gsmr <- function(data, X, Y, alpha=0.05)
 {
    c <- abs(qnorm(alpha/2))
    nxy <- vector("list", length(X)*length(Y))
    k <- 1
-   bzx <- eval(parse(text = paste0("dat$b.", X)))
-   SEzx <- eval(parse(text = paste0("dat$SE.", X)))
    for(i in Y)
    {
-       bzy <- eval(parse(text = paste0("dat$b.", i)))
-       SEzy <- eval(parse(text = paste0("dat$SE.", i)))
+       SNP <- data[["SNP"]]
+       bzx <- eval(parse(text = paste0("data$b.", X)))
+       SEzx <- eval(parse(text = paste0("data$SE.", X)))
+       bzy <- eval(parse(text = paste0("data$b.", i)))
+       SEzy <- eval(parse(text = paste0("data$SE.", i)))
+       dat <- subset(data.frame(SNP,bzx,SEzx,bzy,SEzy),!is.na(bzx+SEzx+bzy+SEzy))
+       SNP <- dat[["SNP"]]; bzx <- dat[["bzx"]]; SEzx <- dat[["SEzx"]]; bzy <- dat[["bzy"]]; SEzy <- dat[["SEzy"]]
        nxy[k] <- paste0(X, ".", i)
        bIVW <- summary(lm(bzy~bzx-1, weights=SEzy^-2))$coef[1, 1]
        sebIVW <- summary(lm(bzy~bzx-1, weights=SEzy^-2))$coef[1, 2] / min(summary(lm(bzy~bzx-1, weights=SEzy^-2))$sigma, 1)
@@ -70,10 +73,12 @@ gsmr <- function(dat, X, Y, alpha=0.05)
                            geom_errorbar(aes(ymin=bzyLCL, ymax=bzyUCL)) +
                            geom_errorbarh(aes(xmin=bzxLCL, xmax=bzxUCL)) +
                            geom_abline(intercept=0, slope=0, size=1) +
-                           geom_abline(intercept=0, slope=bIVW, size=1, colour="red") +
-                           geom_abline(intercept=0, slope=bEGGER, size=1, colour="blue") +
-                           geom_abline(intercept=0, slope=bWM, size=1, colour="green") +
-                           geom_abline(intercept=0, slope=bPWM, size=1, colour="orange") +
+                           geom_abline(intercept=0, slope=bIVW, size=1, colour="red", show.legend=TRUE) +
+                           geom_abline(intercept=0, slope=bEGGER, size=1, colour="blue", show.legend=TRUE) +
+                           geom_abline(intercept=0, slope=bWM, size=1, colour="green", show.legend=TRUE) +
+                           geom_abline(intercept=0, slope=bPWM, size=1, colour="orange", show.legend=TRUE) +
+                           theme(legend.position="right") +
+                           theme(legend.text = element_text(colour="blue", size=10, face="bold")) +
                            geom_vline(xintercept=0, size=1) +
                            ggtitle(graph_title) +
                            xlab(x_title) +
