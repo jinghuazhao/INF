@@ -10,17 +10,24 @@ weighted.median <- function(x, w)
    x.order[below] + (x.order[below+1]-x.order[below]) * (0.5-ws[below]) / (ws[below+1]-ws[below])
 }
 
-weighted.median.boot = function(bXG, sebXG, bYG, sebYG, w, n.boot=1000)
+mr.boot = function(bXG, sebXG, bYG, sebYG, w, n.boot=1000, method="median")
 {
-   med <- vector('numeric')
+   boot <- vector('numeric')
    for(i in 1:n.boot)
    {
        bXG.boot <- rnorm(length(bXG), mean = bXG, sd = sebXG)
        bYG.boot <- rnorm(length(bYG), mean = bYG, sd = sebYG)
-       bIV.boot <- bYG.boot / bXG.boot
-       med[i] <- weighted.median(bIV.boot, w)
+       if(method=="Egger")
+       {
+         bYG.boot = bYG.boot*sign(bXG.boot)
+         bXG.boot = abs(bXG.boot)
+         boot[i] = coef(summary(lm(bYG.boot~bXG.boot,weights=sebYG^-2)))[2,1]
+       } else {
+         bIV.boot <- bYG.boot / bXG.boot
+         boot[i] <- weighted.median(bIV.boot, w)
+      }
    }
-   sd(med)
+   sd(boot)
 }
 
 gsmr <- function(data, X, Y, alpha=0.05, other_plots=FALSE)
@@ -39,21 +46,23 @@ gsmr <- function(data, X, Y, alpha=0.05, other_plots=FALSE)
        bzx <- dat[["bzx"]]; SEzx <- dat[["SEzx"]]
        bzy <- dat[["bzy"]]; SEzy <- dat[["SEzy"]]
        nxy[k] <- paste0(X, ".", i)
-       bIVW <- summary(lm(bzy~bzx-1, weights=SEzy^-2))$coef[1, 1]
-       sebIVW <- summary(lm(bzy~bzx-1, weights=SEzy^-2))$coef[1, 2] / min(summary(lm(bzy~bzx-1, weights=SEzy^-2))$sigma, 1)
-       bEGGER <- summary(lm(bzy~bzx, weights=SEzy^-2))$coef[2, 1]
-       sebEGGER <- summary(lm(bzy~bzx, weights=SEzy^-2))$coef[2, 2] / min(summary(lm(bzy~bzx, weights=SEzy^-2))$sigma, 1)
-       intEGGER <- summary(lm(bzy~bzx, weights=SEzy^-2))$coef[1, 1]
-       seintEGGER <- summary(lm(bzy~bzx, weights=SEzy^-2))$coef[1, 2]
+       m1 <- lm(bzy~bzx-1, weights=SEzy^-2); summary.m1 <- summary(m1); coef.summary.m1 <- coef(summary.m1)
+       m <- lm(bzy~bzx, weights=SEzy^-2); summary.m <- summary(m); coef.summary.m <- coef(summary.m)
+       bIVW <- coef.summary.m1[1,1]
+       sebIVW <- coef.summary.m1[1,2] / min(with(summary.m1, sigma), 1)
+       bEGGER <- coef.summary.m[2,1]
+       sebEGGER <- coef.summary.m[2,2] / min(with(summary.m, sigma), 1)
+       intEGGER <- coef.summary.m[1,1]
+       seintEGGER <- coef.summary.m[1,2]
        bIV <- bzy / bzx
        weights <- (SEzy / bzx)^-2
        bIVW <- sum(bzy*bzx*SEzy^-2) / sum(bzx^2 * SEzy^-2)
        bWM <- weighted.median(bIV, weights)
-       sebWM <- weighted.median.boot(bzx, SEzx, bzy, SEzy, weights)
+       sebWM <- mr.boot(bzx, SEzx, bzy, SEzy, weights)
        penalty <- pchisq(weights*(bIV-bIVW)^2, df=1, lower.tail=FALSE)
        penalty.weights <- weights*pmin(1, penalty * 20)
        bPWM <- weighted.median(bIV, penalty.weights)
-       sebPWM <- weighted.median.boot(bzx, SEzx, bzy, SEzy, penalty.weights)
+       sebPWM <- mr.boot(bzx, SEzx, bzy, SEzy, penalty.weights)
        res <- metafor::rma(bIV, 1/sqrt(weights), method="FE")
        CochQ <- res$QE
        CochQp <- res$QEp
@@ -64,11 +73,11 @@ gsmr <- function(data, X, Y, alpha=0.05, other_plots=FALSE)
        {
          metafor::funnel(res, main=paste(graph_title), xlab=y_title)
          abline(v=0, lty="dashed", col="red")
-         metafor::forest(res, main=paste(graph_title), addfit=FALSE, slab=dat$SNP, xlab=y_title)
+         metafor::forest(res, main=paste(graph_title), addfit=FALSE, slab=SNP, xlab=y_title)
        }
        bzxLCL <- bzx+c*SEzx; bzxUCL <- bzx-c*SEzx
        bzyLCL <- bzy-c*SEzy; bzyUCL <- bzy+c*SEzy
-       ES_plot[[i]] <- ggplot2::ggplot(data=data.frame(bzx, SEzx, bzy, SEzy, bzxLCL, bzxUCL, bzyLCL, bzyUCL),
+       ES_plot[[i]] <- ggplot2::ggplot(data.frame(bzx, SEzx, bzy, SEzy, bzxLCL, bzxUCL, bzyLCL, bzyUCL),
                                 aes(x=bzx, y=bzy)) +
                                 geom_point() +
                                 theme_bw() +
