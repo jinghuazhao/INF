@@ -1,16 +1,16 @@
 # Adapted from code by Felix Day 16/9/2015
 
-weighted.median <- function(bIV, weights)
+weighted.median <- function(x, w)
 {
-   bIV.order <- bIV[order(bIV)]
-   weights.order <- weights[order(bIV)]
-   weights.sum <- cumsum(weights.order)-0.5*weights.order
-   weights.sum <- weights.sum/sum(weights.order)
-   below <- max(which(weights.sum < 0.5))
-   bIV.order[below] + (bIV.order[below+1]-bIV.order[below]) * (0.5-weights.sum[below]) / (weights.sum[below+1]-weights.sum[below])
+   x.order <- x[order(x)]
+   w.order <- w[order(x)]
+   ws <- cumsum(w.order)-0.5*w.order
+   ws <- ws / sum(w.order)
+   below <- max(which(ws < 0.5))
+   x.order[below] + (x.order[below+1]-x.order[below]) * (0.5-ws[below]) / (ws[below+1]-ws[below])
 }
 
-weighted.median.boot = function(bXG, sebXG, bYG, sebYG, weights, n.boot=1000)
+weighted.median.boot = function(bXG, sebXG, bYG, sebYG, w, n.boot=1000)
 {
    med <- vector('numeric')
    for(i in 1:n.boot)
@@ -18,7 +18,7 @@ weighted.median.boot = function(bXG, sebXG, bYG, sebYG, weights, n.boot=1000)
        bXG.boot <- rnorm(length(bXG), mean = bXG, sd = sebXG)
        bYG.boot <- rnorm(length(bYG), mean = bYG, sd = sebYG)
        bIV.boot <- bYG.boot / bXG.boot
-       med[i] <- weighted.median(bIV.boot, weights)
+       med[i] <- weighted.median(bIV.boot, w)
    }
    sd(med)
 }
@@ -32,8 +32,9 @@ gsmr <- function(data, X, Y, alpha=0.05, other_plots=FALSE)
    for(i in Y)
    {
        dat <- subset(data.frame(SNP = data[["SNP"]],
-       bzx = eval(parse(text = paste0("data$b.", X))), SEzx = eval(parse(text = paste0("data$SE.", X))),
-       bzy = eval(parse(text = paste0("data$b.", i))), SEzy = eval(parse(text = paste0("data$SE.", i)))),!is.na(bzx+SEzx+bzy+SEzy))
+                                bzx = eval(parse(text = paste0("data$b.", X))), SEzx = eval(parse(text = paste0("data$SE.", X))),
+                                bzy = eval(parse(text = paste0("data$b.", i))), SEzy = eval(parse(text = paste0("data$SE.", i)))),
+                    !is.na(bzx+SEzx+bzy+SEzy))
        SNP <- dat[["SNP"]]
        bzx <- dat[["bzx"]]; SEzx <- dat[["SEzx"]]
        bzy <- dat[["bzy"]]; SEzy <- dat[["SEzy"]]
