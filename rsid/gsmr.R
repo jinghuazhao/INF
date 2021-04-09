@@ -1,4 +1,7 @@
+library(cowplot)
+library(ggplot2)
 library(gap)
+
 INF <- Sys.getenv("INF")
 # https://wilkelab.org/cowplot/articles/shared_legends.html
 
