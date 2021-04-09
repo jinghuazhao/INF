@@ -4,13 +4,16 @@ export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20201215/resu
 export A2=COVID19_HGI_A2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
 export B2=COVID19_HGI_B2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
 export C2=COVID19_HGI_C2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
+export A2=COVID19_HGI_A2_ALL_eur_leave_23andme_20210107.b37.txt.gz
+export B2=COVID19_HGI_B2_ALL_eur_leave_23andme_20210107.b37.txt.gz
+export C2=COVID19_HGI_C2_ALL_eur_leave_23andme_20210107.b37.txt.gz
 
 for trait in A2 B2 C2
 do
   echo ${trait}
   (
     echo "SNP A1 A2 freq b se p N"
-    gunzip -c ${HGI}/COVID19_HGI_${trait}_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz | \
+    gunzip -c ${HGI}/COVID19_HGI_${trait}_ALL_eur_leave_23andme_20210107.b37.txt.gz | \
     awk '
     {
       CHR=$1
