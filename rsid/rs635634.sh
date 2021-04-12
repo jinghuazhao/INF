@@ -23,7 +23,7 @@ do
 done
 
 # Covid-19
-# export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20200915/results/20201020
+     # HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20200915/results/20201020
 export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20201215/results/20210107
 module load gcc/6
 awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
@@ -31,8 +31,7 @@ awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
   if ($3<$4) snpid="chr" $1 ":" $2 "_" $3 "_" $4;
   else snpid="chr" $1 ":" $2 "_" $4 "_" $3
   if($1==chr && $2>=start-M && $2 <=end+M) print $13,$1,$2,$7/$8,snpid,$3,$4,$8
-}' ${HGI}/COVID19_HGI_C2_ALL_eur_leave_23andme_20210107.txt.gz_1.0E-5.txt > ${INF}/HGI/HGI-QTL.lz
-# ${HGI}/COVID19_HGI_C2_ALL_20201020.b37_1.0E-5.txt > ${INF}/HGI/HGI-QTL.lz
+}' ${HGI}/COVID19_HGI_C2_ALL_eur_leave_23andme_20210107.txt.gz.txt > ${INF}/HGI/HGI-QTL.lz
 
 join -j5 <(sort -k5,5 ${INF}/HGI/CCL25-pQTL.lz) <(sort -k5,5 ${INF}/HGI/CX3CL1-pQTL.lz) | \
 join -25 - <(sort -k5,5 ${INF}/HGI/LIF.R-pQTL.lz) | \
