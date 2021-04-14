@@ -5,6 +5,8 @@ export start=136155000
 export end=136155000
 export M=1e6
 
+function lz()
+{
 # SCALLOP/INF
 for prot in CCL25 CX3CL1 LIF.R
 do
@@ -23,9 +25,7 @@ do
 done
 
 # Covid-19
-     # HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20200915/results/20201020
 export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20201215/results/20210107
-module load gcc/6
 for trait in A2 B2 C2
 do
    gunzip -c ${HGI}/COVID19_HGI_${trait}_ALL_eur_leave_23andme_20210107.b37.txt.gz | \
@@ -36,7 +36,10 @@ do
      if($1==chr && $2>=start-M && $2 <=end+M) print $13,$1,$2,$7/$8,snpid,$3,$4,$8
    }' > ${INF}/HGI/HGI-${trait}.lz
 done
+}
 
+function ld()
+{
 for trait in A2 B2 C2
 do
   join -j5 <(sort -k5,5 ${INF}/HGI/CCL25-pQTL.lz) <(sort -k5,5 ${INF}/HGI/CX3CL1-pQTL.lz) | \
@@ -60,11 +63,17 @@ do
   cut -f2 ${INF}/HGI/rs635634-${trait}.bim > ${INF}/HGI/rs635634-${trait}.left
   plink --bfile ${INF}/HGI/rs635634-${trait} --r square --out ${INF}/HGI/rs635634-${trait}
 done
+}
 
+module load gcc/6
+
+function mvmr()
+{
 for trait in A2 B2 C2; do export trait=${trait}
 R --no-save -q <<END
-  INF <- Sys.getenv("INF")
   trait <- Sys.getenv("trait")
+  cat(trait,"\n")
+  INF <- Sys.getenv("INF")
   library(gassocplot)
   c3 <- c("CCL25","CX3CL1","LIF.R")
   c4 <- c(c3,trait)
@@ -88,7 +97,7 @@ R --no-save -q <<END
     bse <- mr_input(bx,bxse,by,byse,snps=markernames)
     mr_plot(bse)
     print(mr_ivw(bse))
-   print(mr_egger(bse))
+    print(mr_egger(bse))
   }
   bx <- cbind(CCL25=d[["CCL25"]],CX3CL1=d[["CX3CL1"]],LIF.R=d[["LIF.R"]])
   bxse <- cbind(se_CCL25=d[["se_CCL25"]],se_CX3CL1=d[["se_CX3CL1"]],se_LIF.R=d[["se_LIF.R"]])
@@ -99,6 +108,7 @@ R --no-save -q <<END
   mr_plot(mvbse)
 END
 done
+}
 
 function ma()
 (
@@ -106,3 +116,5 @@ function ma()
   gunzip -c ${INF}/HGI/gsmr_C2.txt.gz | sed '1d' | sort -k1,1 | join <(gunzip -c ~/SUMSTATS/snp150.snpid_rsid.gz) - | \
   cut -d' ' -f1 --complement
 ) > ${INF}/HGI/gcta_C2.ma
+
+mvmr > ${INF}/HGI/rs635634-A2-B2-C2.out

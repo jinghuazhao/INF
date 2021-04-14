@@ -10,7 +10,7 @@ The last point regards software `finemap`, which uses summary statistics associa
 
 ### Main analyses
 
-File specification | Function
+File | Description
 -----|------------------------------
 NLRP2.sh | the exclusion list
 cs.sh | Credible sets
@@ -29,7 +29,7 @@ hyprcoloc.sh | hyprcoloc analysis
 st.sh | batch command file
 cs/, finemap/, jam/, prune/, work/ | working directories
 
-### Steps
+**Steps**
 
 `st.sh` conceptually executes the following elements,
 
@@ -43,9 +43,17 @@ utils.sh  --> |"--n-causal-snps k"| finemap.sh
 
 Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
 
+### HGI analysis
+
+File | Description
+-----|-----------------
+HGI.sh, HGI.R | pQTLMR
+gsmr.sh, gsmr.R | GSMR
+rs635634.sh |  +/- 1Mb
+
 ### Miscellaneous analyses and utilities
 
-FIle | Description
+File | Description
 -----|---------------------------
 chembl.sh | toy CHEMBL queries
 CRP.sh | an inflammation score
@@ -77,7 +85,7 @@ utils.sh | utilties
 vep.sh | VEP annotation
 wgcna.sh | experiment on modules
 
-## Stacked association plots
+### Stacked association plots
 
 1. IL.18-rs385076.sh
 2. rs12075.sh
@@ -85,4 +93,4 @@ wgcna.sh | experiment on modules
 4. MS.sh (two-sample MRs)
 5. OPG-TRANCE.sh
 
-*Date last changed:* **2/2/2021**
+*Date last changed:* **14/4/2021**
