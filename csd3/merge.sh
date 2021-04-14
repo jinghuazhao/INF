@@ -191,7 +191,7 @@ R --no-save -q <<END
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
   mhtplot.trunc(IL.12B, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
-                cex.mtext=1.2, cex.text=1.2,
+                cex.mtext=1.2, cex.text=0.7,
                 annotatelog10P=-log10(5e-10), annotateTop = FALSE, highlight=with(genes,gene),
                 mtext.line=3, y.brk1=115, y.brk2=200, delta=0.01, cex.axis=1.2, cex.y=1.2, cex=0.5, font=2, font.axis=1,
                 y.ax.space=20,
