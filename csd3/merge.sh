@@ -164,7 +164,7 @@ R --no-save -q <<END
   mhtplot.trunc(IL.17C, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
                 cex.mtext=0.6, cex.text=0.7,
-                mtext.line=4, y.brk1=10, y.brk2=12, cex.axis=0.6, cex.y=0.6, cex=0.5,
+                mtext.line=4, y.brk1=10, y.brk2=12, delta=0.04, cex.axis=0.6, cex.y=0.6, cex=0.5,
                 y.ax.space=20,
                 col = c("blue4", "skyblue")
   )
@@ -193,7 +193,7 @@ R --no-save -q <<END
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=1.2,
                 annotatelog10P=-log10(5e-10), annotateTop = FALSE, highlight=with(genes,gene),
-                mtext.line=3, y.brk1=115, y.brk2=200, cex.axis=1.2, cex.y=1.2, cex=0.5, font=2, font.axis=1,
+                mtext.line=3, y.brk1=115, y.brk2=200, delta=0.01, cex.axis=1.2, cex.y=1.2, cex=0.5, font=2, font.axis=1,
                 y.ax.space=20,
                 col = c("blue4", "skyblue")
   )
