@@ -2,24 +2,25 @@ options(width=500)
 library(dplyr)
 library(pQTLtools)
 library(TwoSampleMR)
+
 INF <- Sys.getenv("INF")
 
 MR <- function(clumping=FALSE)
 {
-  f <- file.path(INF,"work","HGI","INF.ins")
+  f <- file.path(INF,"HGI","mr","INF.ins")
   ivs <- read.delim(f,sep=" ")
   for(row in 1:nrow(ivs))
   {
     prot <- ivs[row,"Phenotype"]
     rsid <- ivs[row,"SNP"]
     cat(row, prot,"-",rsid,"\n")
-    d <- read.delim(file.path(INF,"work","HGI",paste0(prot,"-",rsid,".mrx")))
+    d <- read.delim(file.path(INF,"HGI","mr",paste0(prot,"-",rsid,".mrx")))
     d <- within(d,{P <- 10^logP})
     e <- format_data(d, type="exposure", phenotype_col="prot", header = TRUE, snp_col = "rsid",
                      effect_allele_col = "Allele1", other_allele_col = "Allele2",
                      eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
                      samplesize_col = "N")
-    d <- read.delim(file.path(INF,"work","HGI",paste0(prot,"-",rsid,"_1e-5")))
+    d <- read.delim(file.path(INF,"HGI","mr",paste0(prot,"-",rsid)))
     if (nrow(d)<=1) next
     o <- format_data(d, type="outcome", header = TRUE, snp_col = "rsid",
                      effect_allele_col = "ALT", other_allele_col = "REF",
@@ -30,7 +31,7 @@ MR <- function(clumping=FALSE)
                      samplesize_col = "all_meta_sample_N")
     if (clumping)
     {
-      outcome_dat <- clump_data(o)
+      outcome_dat <- clump_data(o,clump_r2 = 0.01)
       if (nrow(outcome_dat)==0) next
       d <- merge(e,outcome_dat,by="SNP")
       if (nrow(d)<=1) next
@@ -56,7 +57,7 @@ MR <- function(clumping=FALSE)
     prefix <- paste0("MR-",prot,"-",rsid)
     invisible(lapply(c("directionality","result","heterogeneity","pleiotropy","single","loo"), function(x) {
                     v <- lapply(x, function(x) tryCatch(get(x), error=function(e) NULL))[[1]]
-                    if (!is.null(v)) write.table(format(v,digits=3),file=file.path(INF,"work","HGI",paste0(prefix,"-",x,".txt")),
+                    if (!is.null(v)) write.table(format(v,digits=3),file=file.path(INF,"HGI","mr",paste0(prefix,"-",x,".txt")),
                                                  quote=FALSE,row.names=FALSE,sep="\t")
                }))
   }
@@ -65,7 +66,7 @@ MR()
 
 pqtlMR <- function()
 {
-  f <- file.path(INF,"work","HGI","INF.ins")
+  f <- file.path(INF,"HGI","mr","INF.ins")
   ivs <- read.delim(f,sep=" ")
   for(row in 1:nrow(ivs))
   {
@@ -76,7 +77,7 @@ pqtlMR <- function()
                      effect_allele_col = "Allele1", other_allele_col = "Allele2",
                      eaf_col = "EAF", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
                      samplesize_col = "N")
-    d <- read.delim(file.path(INF,"work","HGI",paste0(prot,"-",rsid)))
+    d <- read.delim(file.path(INF,"HGI","mr",paste0(prot,"-",rsid)))
     o <- format_data(d, type="outcome", header = TRUE, snp_col = "rsid",
                      effect_allele_col = "ALT", other_allele_col = "REF",
                      eaf_col = "all_meta_AF", 
@@ -84,7 +85,7 @@ pqtlMR <- function()
                      se_col = "all_inv_var_meta_sebeta",
                      pval_col = "all_inv_var_meta_p", log_pval = FALSE,
                      samplesize_col = "all_meta_sample_N")
-    outcome_dat <- clump_data(o)
+    outcome_dat <- clump_data(o,clump_r2 = 0.01)
     if (nrow(e) != nrow(subset(o,SNP==ivs[row,"SNP"]))) next
     dat <- harmonise_data(e, subset(o,SNP==ivs[row,"SNP"]), action = 1)
     directionality <- directionality_test(dat)
@@ -96,7 +97,7 @@ pqtlMR <- function()
     prefix <- paste0("pqtlMR-",prot,"-",rsid)
     invisible(lapply(c("directionality","result","heterogeneity","pleiotropy","single","loo"), function(x) {
                     v <- lapply(x, function(x) tryCatch(get(x), error=function(e) NULL))[[1]]
-                    if (!is.null(v)) write.table(format(v,digits=3),file=file.path(INF,"work","HGI",paste0(prefix,"-",x,".txt")),
+                    if (!is.null(v)) write.table(format(v,digits=3),file=file.path(INF,"HGI","mr",paste0(prefix,"-",x,".txt")),
                                                  quote=FALSE,row.names=FALSE,sep="\t")
                }))
   }
