@@ -62,7 +62,12 @@ function _exposure()
 _exposure
 
 module load gcc/6
-R --no-save < rsid/HGI.R
+
+for trait in A2 B2 C2
+do
+  export trait=${trait}
+  R --no-save < rsid/HGI.R
+done
 
 # grep -e chr3 -e chr9 work/INF1.merge-rsid | cut -f6 | zgrep -f - -w $C2
 ls *-rs* | sed 's/-/ /g' | \
