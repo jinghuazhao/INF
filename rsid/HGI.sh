@@ -44,7 +44,7 @@ function _exposure()
     export trait=${trait}
     cut -f5,6,8,9 --output-delimiter=' ' ${INF}/work/INF1.merge-rsid | \
     sed '1d' | \
-    parallel -j5 --env trait -C' ' '
+    parallel -j15 --env trait -C' ' '
       gunzip -c ${INF}/METAL/{1}-1.tbl.gz | \
       cut -f1-6,10-12,18 | \
       awk -vchr={3} -vpos={4} -vM=1e6 -vlogp=-5.45131 "\$1==chr && \$2>=pos-M && \$2 <= pos+M && \$9<=logp" > ${INF}/HGI/mr/${trait}-{1}-{2}.mri
