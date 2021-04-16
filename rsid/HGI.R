@@ -39,7 +39,7 @@ MR <- function(clumping=FALSE)
       e <- subset(e,SNP%in%with(d,SNP))
       o <- subset(outcome_dat,SNP%in%with(d,SNP))
       if (nrow(e)==0 | nrow(outcome_dat)==0) next
-      dat <- harmonise_data(e, outcome_dat, action = 1)
+      dat <- harmonise_data(e, o, action = 1)
     } else {
       d <- merge(e,o,by="SNP")
       if (nrow(d)<=1) next
@@ -63,7 +63,6 @@ MR <- function(clumping=FALSE)
                }))
   }
 }
-MR()
 
 pqtlMR <- function()
 {
@@ -103,4 +102,5 @@ pqtlMR <- function()
                }))
   }
 }
-pqtlMR()
+
+MR(clumping=FALSE)

@@ -35,7 +35,7 @@ function _exposure()
 {
   (
     echo SNP Phenotype Allele1 Allele2 EAF Effect StdErr P N
-    grep -e chr3 -e chr9 ${INF}/work/INF1.METAL | \
+    sed '1d' ${INF}/work/INF1.METAL | \
     cut -f2,3,6,7,8-11,17,21 | \
     awk '{print $1,$2,toupper($3),toupper($4),$5,$6,$7,10^$8,$9}'
   ) > ${INF}/HGI/mr/INF.ins
@@ -63,11 +63,7 @@ _exposure
 
 module load gcc/6
 
-for trait in A2 B2 C2
-do
-  export trait=${trait}
-  R --no-save < rsid/HGI.R
-done
+for trait in A2 B2 C2; do export trait=${trait}; R --no-save < rsid/HGI.R; done
 
 # grep -e chr3 -e chr9 work/INF1.merge-rsid | cut -f6 | zgrep -f - -w $C2
 ls *-rs* | sed 's/-/ /g' | \
@@ -77,3 +73,11 @@ parallel -C' ' '
     grep -w -e {1} work/INF1.merge.cis.vs.trans-rsid | grep -w {2};
     grep -w -e {1} INF.ins | grep -e {2}
 '
+
+function clumping()
+{
+  ls ${INF}/HGI/mr/no-clumping/MR*result* | \
+  sed 's/-/ /g;' | \
+  cut -d' ' -f5-7 | \
+  parallel -C' ' 'echo {1} {2} {3}'
+}

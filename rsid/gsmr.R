@@ -54,4 +54,5 @@ library(gap)
 
 INF <- Sys.getenv("INF")
 
+CAD_FEV1 <- cad_fev1()
 HGIr5 <- abc()

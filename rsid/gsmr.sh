@@ -77,3 +77,9 @@ join work/INTERVAL.rsid - > ${INF}/HGI/A2-B2-C2.snp_effects
   echo SNP b.LIF.R SE.LIF.R b.A2 SE.A2 b.B2 SE.B2 b.C2 SE.C2
   cut -d' ' -f2,6,7,8,9,16,17,24,25 ${INF}/HGI/A2-B2-C2.snp_effects
 ) > ${INF}/HGI/INF1_A2-B2-C2.gsmr
+
+for ext in png tif
+do
+  convert ${INF}/gsmr/INF1_CAD-FEV1.pdf ${INF}/gsmr/INF1_CAD-FEV1.${ext}
+  convert ${INF}/HGI/INF1_A2-B2-C2.pdf ${INF}/HGI/INF1_A2-B2-C2.${ext}
+done
