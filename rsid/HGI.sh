@@ -31,7 +31,54 @@ function _outcome_r5()
 }
 _outcome_r5
 
+function _ins()
+(
+  echo SNP Phenotype Allele1 Allele2 EAF Effect StdErr P N
+  sed '1d' ${INF}/work/INF1.METAL | \
+  cut -f2,3,6,7,8-11,17,21 | \
+  awk '{print $1,$2,toupper($3),toupper($4),$5,$6,$7,10^$8,$9}'
+) > ${INF}/HGI/mr/INF.ins
+_ins
+
 function _exposure()
+  for trait in A2 B2 C2
+  do
+    export trait=${trait}
+    cut -f5,6,8,9 --output-delimiter=' ' ${INF}/work/INF1.merge-rsid | \
+    sed '1d' | \
+    awk -vM=1e6 '{start=$4-M;if(start<0) start=1;end=$4+M;print $1,$2,$3":"start"-"end}' | \
+    parallel -j15 --env INF --env trait -C' ' '
+    (
+      echo -e "prot\trsid\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN\tChromosome\tPosition"
+      bcftools query -f "{1}\t%ID\t%ALT\t%REF\t%AF\t[%ES]\t[%SE]\t[%LP]\t[%SS]\t%CHROM\t%POS\n" \
+                     -r {3} ${INF}/METAL/gwas2vcf/{1}.vcf.gz
+    ) | \
+    gzip -f > ${INF}/HGI/mr/${trait}-{1}-{2}.gz
+    '
+  done
+_exposure
+
+module load gcc/6
+
+for trait in A2 B2 C2; do export trait=${trait}; R --no-save < ${INF}/rsid/HGI.R; done
+
+function etc()
+{
+# grep -e chr3 -e chr9 work/INF1.merge-rsid | cut -f6 | zgrep -f - -w $C2
+  ls *-rs* | sed 's/-/ /g' | \
+  parallel -C' ' '
+      echo {1} - {2};
+      grep -w {2} {1}-{2};
+      grep -w -e {1} work/INF1.merge.cis.vs.trans-rsid | grep -w {2};
+      grep -w -e {1} INF.ins | grep -e {2}
+  '
+  ls ${INF}/HGI/mr/no-clumping/MR*result* | \
+  sed 's/-/ /g;' | \
+  cut -d' ' -f5-7 | \
+  parallel -C' ' 'echo {1} {2} {3}'
+}
+
+function _exposure_METAL()
 {
   (
     echo SNP Phenotype Allele1 Allele2 EAF Effect StdErr P N
@@ -58,26 +105,4 @@ function _exposure()
       ) | gzip -f > ${INF}/HGI/mr/${trait}-{1}-{2}.mrx
     '
   done
-}
-_exposure
-
-module load gcc/6
-
-for trait in A2 B2 C2; do export trait=${trait}; R --no-save < rsid/HGI.R; done
-
-# grep -e chr3 -e chr9 work/INF1.merge-rsid | cut -f6 | zgrep -f - -w $C2
-ls *-rs* | sed 's/-/ /g' | \
-parallel -C' ' '
-    echo {1} - {2};
-    grep -w {2} {1}-{2};
-    grep -w -e {1} work/INF1.merge.cis.vs.trans-rsid | grep -w {2};
-    grep -w -e {1} INF.ins | grep -e {2}
-'
-
-function clumping()
-{
-  ls ${INF}/HGI/mr/no-clumping/MR*result* | \
-  sed 's/-/ /g;' | \
-  cut -d' ' -f5-7 | \
-  parallel -C' ' 'echo {1} {2} {3}'
 }

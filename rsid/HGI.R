@@ -15,11 +15,10 @@ MR <- function(clumping=FALSE)
     prot <- ivs[row,"Phenotype"]
     rsid <- ivs[row,"SNP"]
     cat(row, trait, "-", prot,"-",rsid,"\n")
-    d <- read.delim(file.path(INF,"HGI","mr",paste0(trait,"-",prot,"-",rsid,".mrx")))
-    d <- within(d,{P <- 10^logP})
+    d <- read.delim(file.path(INF,"HGI","mr",paste0(trait,"-",prot,"-",rsid,".gz")))
     e <- format_data(d, type="exposure", phenotype_col="prot", header = TRUE, snp_col = "rsid",
                      effect_allele_col = "Allele1", other_allele_col = "Allele2",
-                     eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
+                     eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "logP", log_pval = TRUE,
                      samplesize_col = "N")
     d <- read.delim(file.path(INF,"HGI","mr",paste0(trait,"-",prot,"-",rsid)))
     if (nrow(d)<=1) next
@@ -103,4 +102,4 @@ pqtlMR <- function()
   }
 }
 
-MR(clumping=FALSE)
+MR(clumping=TRUE)
