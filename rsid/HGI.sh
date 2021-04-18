@@ -118,3 +118,12 @@ function _exposure_METAL()
   done
 }
 _exposure_METAL
+
+function MR_collect()
+  awk -vOFS="\t" '/Inverse/ && $NF<0.05/180 {print FILENAME,$9,$10,$11}' ${INF}/HGI/mr/0.001/MR*result*
+
+function pqtlMR_collect()
+  awk -vOFS="\t" '$NF<0.05/180 {print FILENAME,$8,$9,$10}' pqtl*result* | \
+  awk '{gsub(/pqtlMR-|-result.txt/,"",$1)};1' | \
+  awk -vOFS="\t" '{gsub(/-/,"\t",$1)};1' | \
+  xsel -i
