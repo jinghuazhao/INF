@@ -61,7 +61,17 @@ _exposure
 
 module load gcc/6
 
-for trait in A2 B2 C2; do export trait=${trait}; R --no-save < ${INF}/rsid/HGI.R; done
+for trait in A2 B2 C2
+do
+  export trait=${trait}
+  sed '1d' ${INF}/HGI/mr/INF.ins | \
+  parallel -C' ' '
+    export prot={2}; export rsid={1};
+    export Allele1={3}; export Allele2={4}; export EAF={5}
+    export Effect={6}; export StdErr={7}; export P={8}; export N={9}
+    R --no-save < ${INF}/rsid/HGI.R
+  '
+done
 
 function etc()
 {
