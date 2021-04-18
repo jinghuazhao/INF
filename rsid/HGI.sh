@@ -51,7 +51,8 @@ function _exposure()
     (
       echo -e "prot\trsid\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN\tChromosome\tPosition"
       bcftools query -f "{1}\t%ID\t%ALT\t%REF\t%AF\t[%ES]\t[%SE]\t[%LP]\t[%SS]\t%CHROM\t%POS\n" \
-                     -r {3} ${INF}/METAL/gwas2vcf/{1}.vcf.gz
+                     -r {3} ${INF}/METAL/gwas2vcf/{1}.vcf.gz | \
+      awk "a[\$2]++==0"
     ) | \
     gzip -f > ${INF}/HGI/mr/${trait}-{1}-{2}.gz
     '
@@ -94,15 +95,16 @@ function _exposure_METAL()
     parallel -j15 --env trait -C' ' '
       gunzip -c ${INF}/METAL/{1}-1.tbl.gz | \
       cut -f1-6,10-12,18 | \
-      awk -vchr={3} -vpos={4} -vM=1e6 -vlogp=-5.45131 "\$1==chr && \$2>=pos-M && \$2 <= pos+M && \$9<=logp" > ${INF}/HGI/mr/${trait}-{1}-{2}.mri
+      awk -vchr={3} -vpos={4} -vM=1e6 "\$1==chr && \$2>=pos-M && \$2 <= pos+M" > ${INF}/HGI/mr/${trait}-{1}-{2}.mri
       (
         echo -e "prot\trsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
         awk "{\$4=toupper(\$4);\$5=toupper(\$5);print}" ${INF}/HGI/mr/${trait}-{1}-{2}.mri | \
         sort -k3,3 | \
         join -23 ${INF}/work/INTERVAL.rsid - | \
-        awk -v prot={1} "{\$1=prot;print}" | \
+        awk -v prot={1} "a[\$2]++==0{\$1=prot;print}" | \
         tr " " "\t"
       ) | gzip -f > ${INF}/HGI/mr/${trait}-{1}-{2}.mrx
     '
   done
 }
+_exposure_METAL
