@@ -44,7 +44,6 @@ MR <- function(clumping=FALSE, r2=0.01)
   if (nrow(e)==0 | nrow(o)==0) return
   dat <- harmonise_data(e, o, action = 1)
   cat(nrow(dat), "\n")
-# directionality <- directionality_test(dat)
   result <- mr(dat)
   heterogeneity <- mr_heterogeneity(dat)
   pleiotropy <- mr_pleiotropy_test(dat)
@@ -58,14 +57,14 @@ MR <- function(clumping=FALSE, r2=0.01)
          }))
 }
 
-pqtlMR <- function()
+pqtlMR <- function(r2=0.001)
 {
   cat(id3,"\n")
   e <- format_data(data.frame(SNP=rsid,Allele1,Allele2,EAF,Effect,StdErr,P,N), type="exposure", header = TRUE, snp_col = "SNP",
                    effect_allele_col = "Allele1", other_allele_col = "Allele2",
                    eaf_col = "EAF", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
                    samplesize_col = "N")
-  d <- within(read.delim(file.path(INF,"HGI","mr",paste0(trait,"-",prot,"-",rsid))),{outcome=prot})
+  d <- within(read.delim(file.path(INF,"HGI","mr",id3)),{outcome=prot})
   o <- format_data(d, type="outcome", header = TRUE,  phenotype_col = "outcome", snp_col = "rsid",
                    effect_allele_col = "ALT", other_allele_col = "REF",
                    eaf_col = "all_meta_AF", 
@@ -73,7 +72,7 @@ pqtlMR <- function()
                    se_col = "all_inv_var_meta_sebeta",
                    pval_col = "all_inv_var_meta_p", log_pval = FALSE,
                    samplesize_col = "all_meta_sample_N")
-  outcome_dat <- clump_data(o,clump_r2 = 0.01)
+  outcome_dat <- clump_data(o,clump_r2 = r2)
   if (nrow(e) != nrow(subset(o,SNP==rsid))) return
   dat <- harmonise_data(e, subset(o,SNP==rsid), action = 1)
   directionality <- directionality_test(dat)
@@ -90,4 +89,5 @@ pqtlMR <- function()
              }))
 }
 
-MR(clumping=TRUE)
+# MR(clumping=TRUE,r2=0.001)
+pqtlMR()
