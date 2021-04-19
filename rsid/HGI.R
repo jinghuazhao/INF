@@ -16,7 +16,7 @@ StdErr <- Sys.getenv("StdErr")
 P <- Sys.getenv("P")
 N <- Sys.getenv("N")
 
-MR <- function(clumping=FALSE, r2=0.01)
+MR <- function(clumping=TRUE, r2=0.001)
 {
   y <- within(read.delim(file.path(INF,"HGI","mr",id3)), {outcome=prot})
   if (nrow(y)<=1) return
@@ -27,11 +27,11 @@ MR <- function(clumping=FALSE, r2=0.01)
                    se_col = "all_inv_var_meta_sebeta",
                    pval_col = "all_inv_var_meta_p", log_pval = FALSE,
                    samplesize_col = "all_meta_sample_N")
-  x <- read.delim(file.path(INF,"HGI","mr",paste0(id3,".gz")))
+  x <- read.delim(file.path(INF,"HGI","mr",paste0(id3,".tsv.gz")))
   e <- format_data(x, type="exposure", phenotype_col="prot", header = TRUE, snp_col = "rsid",
                    effect_allele_col = "Allele1", other_allele_col = "Allele2",
-                   eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "logP", log_pval = TRUE,
-                   samplesize_col = "N") %>% mutate(pval.exposure=pval)
+                   eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
+                   samplesize_col = "N")
   if (clumping)
   {
     e <- clump_data(e,clump_r2 = r2)
@@ -89,5 +89,5 @@ pqtlMR <- function(r2=0.001)
              }))
 }
 
-# MR(clumping=TRUE,r2=0.001)
+MR()
 pqtlMR()

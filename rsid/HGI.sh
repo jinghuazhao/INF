@@ -40,7 +40,7 @@ function _ins()
 ) > ${INF}/HGI/mr/INF.ins
 _ins
 
-function _exposure()
+function _exposure_vcf()
   for trait in A2 B2 C2
   do
     export trait=${trait}
@@ -57,7 +57,7 @@ function _exposure()
     gzip -f > ${INF}/HGI/mr/${trait}-{1}-{2}.gz
     '
   done
-_exposure
+_exposure_vcf
 
 module load gcc/6
 
@@ -73,30 +73,31 @@ do
   '
 done
 
-function etc()
+function _exposure_tsv()
 {
-# grep -e chr3 -e chr9 work/INF1.merge-rsid | cut -f6 | zgrep -f - -w $C2
-  ls *-rs* | sed 's/-/ /g' | \
-  parallel -C' ' '
-      echo {1} - {2};
-      grep -w {2} {1}-{2};
-      grep -w -e {1} work/INF1.merge.cis.vs.trans-rsid | grep -w {2};
-      grep -w -e {1} INF.ins | grep -e {2}
-  '
-  ls ${INF}/HGI/mr/no-clumping/MR*result* | \
-  sed 's/-/ /g;' | \
-  cut -d' ' -f5-7 | \
-  parallel -C' ' 'echo {1} {2} {3}'
+  for trait in A2 B2 C2
+  do
+    export trait=${trait}
+    cut -f5,6,8,9 --output-delimiter=' ' ${INF}/work/INF1.merge-rsid | \
+    sed '1d' | \
+    awk -vM=1e6 '{start=$4-M;if(start<0) start=1;end=$4+M;print $1,$2,$3":"start"-"end}' | \
+    parallel -j15 --env INF --env trait -C' ' '
+    (
+      echo -e "prot\trsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tP\tN"
+      tabix ${INF}/METAL/gwas2vcf/{1}.tsv.gz {3} | \
+      awk "{\$4=toupper(\$4);\$5=toupper(\$5);print}" | \
+      sort -k3,3 | \
+      join -23 ${INF}/work/INTERVAL.rsid - | \
+      awk -v prot={1} "a[\$2]++==0{\$1=prot;print}" | \
+      tr " " "\t"
+    ) | gzip -f > ${INF}/HGI/mr/${trait}-{1}-{2}.tsv.gz
+    '
+  done
 }
+_exposure_tsv
 
 function _exposure_METAL()
 {
-  (
-    echo SNP Phenotype Allele1 Allele2 EAF Effect StdErr P N
-    sed '1d' ${INF}/work/INF1.METAL | \
-    cut -f2,3,6,7,8-11,17,21 | \
-    awk '{print $1,$2,toupper($3),toupper($4),$5,$6,$7,10^$8,$9}'
-  ) > ${INF}/HGI/mr/INF.ins
   for trait in A2 B2 C2
   do
     export trait=${trait}
@@ -120,10 +121,30 @@ function _exposure_METAL()
 _exposure_METAL
 
 function MR_collect()
-  awk -vOFS="\t" '/Inverse/ && $NF<0.05/180 {print FILENAME,$9,$10,$11}' ${INF}/HGI/mr/0.001/MR*result*
+{
+  awk -vOFS="\t" '/Inverse/ && $NF<0.05/180 {print FILENAME,$9,$10,$11}' ${INF}/HGI/mr/MR*result*
+}
 
 function pqtlMR_collect()
+{
   awk -vOFS="\t" '$NF<0.05/180 {print FILENAME,$8,$9,$10}' pqtl*result* | \
   awk '{gsub(/pqtlMR-|-result.txt/,"",$1)};1' | \
   awk -vOFS="\t" '{gsub(/-/,"\t",$1)};1' | \
   xsel -i
+}
+
+function etc()
+{
+# grep -e chr3 -e chr9 work/INF1.merge-rsid | cut -f6 | zgrep -f - -w $C2
+  ls *-rs* | sed 's/-/ /g' | \
+  parallel -C' ' '
+      echo {1} - {2};
+      grep -w {2} {1}-{2};
+      grep -w -e {1} work/INF1.merge.cis.vs.trans-rsid | grep -w {2};
+      grep -w -e {1} INF.ins | grep -e {2}
+  '
+  ls ${INF}/HGI/mr/no-clumping/MR*result* | \
+  sed 's/-/ /g;' | \
+  cut -d' ' -f5-7 | \
+  parallel -C' ' 'echo {1} {2} {3}'
+}
