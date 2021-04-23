@@ -29,6 +29,8 @@ do
   gzip -f > ${INF}/HGI/gsmr_${trait}.txt.gz
 done
 
+grep -v se ${INF}/HGI/INF1_?2.gsmr | sort -k5,5gr | tail -17 | sed 's/:/\t/' | cut -f1 --complement
+
 R --no-save -q <<END
   INF <- Sys.getenv("INF")
   gsmr <- within(read.table(file.path(INF,"HGI","A2-B2-C2.txt"),header=TRUE),{col="black"})
