@@ -11,33 +11,25 @@ function iv()
     cut -f2,3,6,7,8-11,17,21 ${INF}/work/INF1.METAL | \
     awk -vtype=${type} '$10==type {print $1,$2,toupper($3),toupper($4),$5,$6,$7,10^$8,$9}'
   ) > ${INF}/mr/pQTLs/INF1_${type}.ins
-  if [ ${type} == "pan" ]; then
-    cut -f2,3,6,7,8-11,17,21 ${INF}/work/INF1.METAL | \
-    awk -vtype=${type} '{print $1,$2,toupper($3),toupper($4),$5,$6,$7,10^$8,$9}' > ${INF}/mr/pQTLs/INF1_${type}.ins
-  fi
 }
 
-function INF1()
+function INF1_efo()
 {
   R --no-save -q <<\ \ END
-      INF <- Sys.getenv("INF")
-      outcomes <- c("ieu-a-7","ebi-a-GCST007432")
-      ieugwasr::gwasinfo(id = outcomes)
-      type <- Sys.getenv("type")
-      ivs <- read.table(file.path(INF,"mr","pQTLs",paste0("INF1_",type,".ins")),as.is=TRUE,header=TRUE)
-      Ins <- TwoSampleMR::format_data(ivs,snp_col="SNP",samplesize_col="N")
-      Ids <- TwoSampleMR::extract_outcome_data(snps=with(Ins,SNP),outcomes=outcomes)
-      harmonise <- TwoSampleMR::harmonise_data(Ins, Ids)
-      prefix <- file.path(INF,"mr","pQTLs",paste0("INF1_pQTL-combined-",type))
-      pQTLtools::pqtlMR(pqtlMRinput=list(Ins,Ids,harmonise),prefix=prefix)
-      prefix <- file.path(INF,"mr","pQTLs",paste0("INF1_rev_pQTL-combined-",type))
-      pQTLtools::pqtlMR(pqtlMRinput=list(Ins,Ids,harmonise),prefix=prefix,reverse=TRUE)
+    INF <- Sys.getenv("INF")
+    outcomes <- c("ieu-a-7","ebi-a-GCST007432")
+    ieugwasr::gwasinfo(id = outcomes)
+    type <- Sys.getenv("type")
+    ivs <- read.table(file.path(INF,"mr","pQTLs",paste0("INF1_",type,".ins")),as.is=TRUE,header=TRUE)
+    Ins <- TwoSampleMR::format_data(ivs,snp_col="SNP",samplesize_col="N")
+    Ids <- TwoSampleMR::extract_outcome_data(snps=with(Ins,SNP),outcomes=outcomes)
+    harmonise <- TwoSampleMR::harmonise_data(Ins, Ids)
+    prefix <- file.path(INF,"mr","pQTLs",paste0("INF1_pQTL-combined-",type,"-"))
+    pQTLtools::pqtlMR(pqtlMRinput=list(Ins,Ids,harmonise),prefix=prefix)
+    prefix <- file.path(INF,"mr","pQTLs",paste0("INF1_rev_pQTL-combined-",type,"-"))
+    pQTLtools::pqtlMR(pqtlMRinput=list(Ins,Ids,harmonise),prefix=prefix,reverse=TRUE)
   END
-}
-
-function efo()
-{
-R --no-save -q <<END
+  R --no-save -q <<\ \ END
     INF <- Sys.getenv("INF")
     outcomes <- with(read.delim(file.path(INF,"rsid","efo.txt")),MRBASEID)
     type <- Sys.getenv("type")
@@ -45,37 +37,37 @@ R --no-save -q <<END
     Ins <- TwoSampleMR::format_data(ivs,snp_col="SNP",samplesize_col="N")
     Ids <- TwoSampleMR::extract_outcome_data(snps=with(Ins,SNP),outcomes=outcomes)
     harmonise <- TwoSampleMR::harmonise_data(Ins,Ids)
-    prefix <- file.path(INF,"mr","pQTLs",paste0("efo_pQTL-combined-",type))
+    prefix <- file.path(INF,"mr","pQTLs",paste0("efo_pQTL-combined-",type,"-"))
     pQTLtools::pqtlMR(pqtlMRinput=list(Ins, Ids, harmonise),prefix=prefix)
-    prefix <- file.path(INF,"mr","pQTLs",paste0("efo_rev_pQTL-combined-",type))
+    prefix <- file.path(INF,"mr","pQTLs",paste0("efo_rev_pQTL-combined-",type,"-"))
     pQTLtools::pqtlMR(pqtlMRinput=list(Ins, Ids, harmonise),prefix=prefix,reverse=TRUE)
-END
+  END
 }
 
 function collect()
 {
   echo ${prefix} -- ${id} -- ${trait}
   (
-    cat ${prefix}_*result.txt | head -1
-    grep -w ${id} ${prefix}_*result.txt | grep "Wald ratio"
-  ) | grep -v _rev_ > ${prefix}-${id}.result
+    cat ${prefix}result.txt | head -1
+    grep -w ${id} ${prefix}*result.txt | grep "Wald ratio"
+  ) | grep -v _rev_ > ${prefix}${id}.result
   (
-    cat ${prefix}_*single.txt | head -1
-    grep -w ${id} ${prefix}_*single.txt | grep -v -e Egger -e Inverse
-  ) | grep -v _rev_ > ${prefix}-${id}.single
+    cat ${prefix}single.txt | head -1
+    grep -w ${id} ${prefix}*single.txt | grep -v -e Egger -e Inverse
+  ) | grep -v _rev_ > ${prefix}${id}.single
 }
 
 function collect_rev()
 {
   echo ${prefix} -- ${id} -- ${trait}
   (
-    cat ${prefix}_*result.txt | head -1
+    cat ${prefix}result.txt | head -1
     grep -w ${id} ${prefix}*result.txt | grep "Wald ratio"
-  ) | awk 'NR==1||$1~/rev/' > ${prefix}-${id}.result
+  ) | awk 'NR==1||$1~/rev/' > ${prefix}${id}.result
   (
-    cat ${prefix}_*single.txt | head -1
-    grep -w ${id} ${prefix}*single.txt | grep -v -e Egger -e Inverse
-  ) | awk 'NR==1||$1~/rev/' > ${prefix}-${id}.single
+    cat ${prefix}single.txt | head -1
+    grep -w ${id}${prefix}*single.txt | grep -v -e Egger -e Inverse
+  ) | awk 'NR==1||$1~/rev/' > ${prefix}${id}.single
 }
 
 function collect_all()
@@ -88,9 +80,9 @@ function collect_all()
       else
          export trait="FEV1 || ${i}"
       fi
-      export prefix=${INF}/mr/pQTLs/INF1_pQTL-combined-
+      export prefix=${INF}/mr/pQTLs/INF1_pQTL-combined-${type}-
       collect
-      export prefix=${INF}/mr/pQTLs/INF1_rev_pQTL-combined-
+      export prefix=${INF}/mr/pQTLs/INF1_rev_pQTL-combined-${type}-
       collect_rev
   done
   export nrows=$(sed '1d' ${INF}/rsid/efo.txt | wc -l | cut -d' ' -f1)
@@ -98,9 +90,9 @@ function collect_all()
   do
       export trait=$(sed '1d' ${INF}/rsid/efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $2}')
       export id=$(sed '1d' ${INF}/rsid/efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $4}')
-      export prefix=${INF}/mr/pQTLs/efo_pQTL-combined-
+      export prefix=${INF}/mr/pQTLs/efo_pQTL-combined-${type}-
       collect
-      export prefix=${INF}/mr/pQTLs/efo_rev_pQTL-combined-
+      export prefix=${INF}/mr/pQTLs/efo_rev_pQTL-combined-${type}-
       collect_rev
   done
 }
@@ -109,15 +101,13 @@ for type in cis trans
 do
   export type=${type}
   iv
-  INF1
-  efo
+  INF1_efo
+  collect_all
 done
-
-# INF1 awk 'NR==3,NR==36' ${INF}/mr/pqtlMR.out | sed 's/|| id:/\t/' | xsel -i
-# efo  awk 'NR==54,NR==150' ${INF}/mr/pqtlMR.out | sed 's/|| id:/\t/' | xsel -i
 
 # Bidirectionality test for FGF.5
 function dummy()
+{
 R --no-save -q <<END
   options(width=200)
   INF1_cis <- read.delim("INF1_cis.ins",sep=" ")
@@ -139,3 +129,4 @@ R --no-save -q <<END
   h <- data.frame(h,samplesize.exposure=11787,r.exposure=r.exposure,r.outcome=r.outcome)
   directionality_test(h)
 END
+}
