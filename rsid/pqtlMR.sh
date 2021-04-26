@@ -63,11 +63,11 @@ function collect_rev()
   (
     cat ${prefix}result.txt | head -1
     grep -w ${id} ${prefix}result.txt | grep "Wald ratio"
-  ) | awk 'NR==1||$1~/rev/' > ${prefix}${id}.result
+  ) | awk -v FS="\t" -v id=${id} 'NR==1||$1==id' > ${prefix}${id}.result
   (
     cat ${prefix}single.txt | head -1
     grep -w ${id} ${prefix}single.txt | grep -v -e Egger -e Inverse
-  ) | awk 'NR==1||$1~/rev/' > ${prefix}${id}.single
+  ) | awk -v FS="\t" -v id=${id} 'NR==1||$3==id' > ${prefix}${id}.single
 }
 
 function collect_all()
