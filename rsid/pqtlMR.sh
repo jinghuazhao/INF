@@ -66,7 +66,7 @@ function collect_rev()
   ) | awk 'NR==1||$1~/rev/' > ${prefix}${id}.result
   (
     cat ${prefix}single.txt | head -1
-    grep -w ${id}${prefix}single.txt | grep -v -e Egger -e Inverse
+    grep -w ${id} ${prefix}single.txt | grep -v -e Egger -e Inverse
   ) | awk 'NR==1||$1~/rev/' > ${prefix}${id}.single
 }
 
@@ -75,7 +75,7 @@ function collect_all()
   for i in ieu-a-7 ebi-a-GCST007432
   do
       export id=${i}
-      if [ ${i} == "ieu-a-7" ]; then
+      if [ "${i}" == "ieu-a-7" ]; then
          export trait="CHD || ${i}"
       else
          export trait="FEV1 || ${i}"
