@@ -49,11 +49,11 @@ function collect()
   echo ${prefix} -- ${id} -- ${trait}
   (
     cat ${prefix}result.txt | head -1
-    grep -w ${id} ${prefix}*result.txt | grep "Wald ratio"
+    grep -w ${id} ${prefix}result.txt | grep "Wald ratio"
   ) | grep -v _rev_ > ${prefix}${id}.result
   (
     cat ${prefix}single.txt | head -1
-    grep -w ${id} ${prefix}*single.txt | grep -v -e Egger -e Inverse
+    grep -w ${id} ${prefix}single.txt | grep -v -e Egger -e Inverse
   ) | grep -v _rev_ > ${prefix}${id}.single
 }
 
@@ -62,11 +62,11 @@ function collect_rev()
   echo ${prefix} -- ${id} -- ${trait}
   (
     cat ${prefix}result.txt | head -1
-    grep -w ${id} ${prefix}*result.txt | grep "Wald ratio"
+    grep -w ${id} ${prefix}result.txt | grep "Wald ratio"
   ) | awk 'NR==1||$1~/rev/' > ${prefix}${id}.result
   (
     cat ${prefix}single.txt | head -1
-    grep -w ${id}${prefix}*single.txt | grep -v -e Egger -e Inverse
+    grep -w ${id}${prefix}single.txt | grep -v -e Egger -e Inverse
   ) | awk 'NR==1||$1~/rev/' > ${prefix}${id}.single
 }
 
