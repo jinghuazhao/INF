@@ -114,6 +114,12 @@ export dir=${INF}/mr/pQTLs/
   awk '/FEV1/' ${dir}INF1_pQTL-combined-trans-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "trans"}'
 ) > ${dir}/pQTL-ieu-FEV1.txt
 
+(
+  awk 'NR==1' ${dir}efo_pQTL-combined-cis-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "cistrans"}'
+  awk 'NR>1' ${dir}efo_pQTL-combined-cis-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "trans"}'
+  awk 'NR>1' ${dir}efo_pQTL-combined-trans-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "trans"}'
+) > ${dir}/pQTL-efo.txt
+
 # Bidirectionality test for FGF.5
 function dummy()
 {

@@ -22,8 +22,6 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:7037)
   fusion <- read.sheet("FUSION", 1:26, 2:117)
      efo <- subset(read.sheet("EFO", 1:4, 2:79),!is.na(MRBASEID))
      smr <- read.sheet("SMR", 1:27, 2:83)
-mr_immun <- read.sheet("pqtlMR-immune", 1:7, 2:67)
- mr_misc <- read.sheet("pqtlMR-misc", 1:7, 2:39)
      ivw <- read.sheet("IVW", 1:8, 2:19)
     gsmr <- read.sheet("GSMR", 1:12, 2:55)
      crp <- read.sheet("CRP", 1:15, 2:30)
@@ -35,7 +33,9 @@ mr_immun <- read.sheet("pqtlMR-immune", 1:7, 2:67)
      at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
 
 INF <- Sys.getenv("INF")
-mr_misc <- read.delim(file.path(INF,"mr","pQTLs",,"pQTL-ieu-FEV1.txt"))
+mr_immun <- read.delim(file.path(INF,"mr","pQTLs","pQTL-efo.txt"))
+mr_immun <- mr_immun[with(mr_immun,order(outcome,pval)),]
+mr_misc <- read.delim(file.path(INF,"mr","pQTLs","pQTL-ieu-FEV1.txt"))
 mr_misc <- mr_misc[with(mr_misc,order(outcome,pval)),]
 
 pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid") 
@@ -126,3 +126,6 @@ for (i in 1:length(outsheets))
 }
 data.frame(sheets(wb))
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
+
+# mr_immun <- read.sheet("pqtlMR-immune", 1:7, 2:67)
+#  mr_misc <- read.sheet("pqtlMR-misc", 1:7, 2:39)
