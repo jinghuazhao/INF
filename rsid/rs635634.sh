@@ -118,3 +118,18 @@ function ma()
 ) > ${INF}/HGI/gcta_C2.ma
 
 mvmr > ${INF}/HGI/rs635634-A2-B2-C2.out
+
+R --no-save <<END
+  library(ieugwasr)
+  # GET
+  api_query("associations/prot-a-1737/rs635634")
+  # POST
+  api_query("associations", query=list(rsid="rs635634", id="prot-a-1737"))
+  associations(variants="rs635634", id=c("prot-a-1737"))
+  rs635634 <- subset(data.frame(phewas(variants="rs635634", pval=5e-8)),grepl("prot",id))
+  library(pQTLtools)
+  d <- subset(merge(SomaLogic160410,rs635634,by.x="TargetFullName",by.y="trait"),entGene=="LIFR")
+  d
+  gwasinfo(with(d,id))
+  data.frame(ieugwasr::afl2_rsid(c("rs635634")))
+END

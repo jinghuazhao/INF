@@ -34,6 +34,10 @@ mr_immun <- read.sheet("pqtlMR-immune", 1:7, 2:67)
      at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2"); #names(at2) <- replace(names(at2),grepl("^[X]",names(at2)),"")
      at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
 
+INF <- Sys.getenv("INF")
+mr_misc <- read.delim(file.path(INF,"mr","pQTLs",,"pQTL-ieu-FEV1.txt"))
+mr_misc <- mr_misc[with(mr_misc,order(outcome,pval)),]
+
 pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid") 
 data.frame(table(subset(pav,cis.trans=="cis")$Consequence))
 

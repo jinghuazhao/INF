@@ -49,11 +49,11 @@ function collect()
   echo ${prefix} -- ${id} -- ${trait}
   (
     cat ${prefix}result.txt | head -1
-    grep -w ${id} ${prefix}result.txt | grep "Wald ratio"
+    grep -w ${id} ${prefix}result.txt | grep -e "Wald ratio" -e Inverse | awk '$NF!="NA"'
   ) | grep -v _rev_ > ${prefix}${id}.result
   (
     cat ${prefix}single.txt | head -1
-    grep -w ${id} ${prefix}single.txt | grep -v -e Egger -e Inverse
+    grep -w ${id} ${prefix}single.txt | awk '$NF!="NA"'
   ) | grep -v _rev_ > ${prefix}${id}.single
 }
 
@@ -62,11 +62,11 @@ function collect_rev()
   echo ${prefix} -- ${id} -- ${trait}
   (
     cat ${prefix}result.txt | head -1
-    grep -w ${id} ${prefix}result.txt | grep "Wald ratio"
+    grep -w ${id} ${prefix}result.txt | grep -e "Wald ratio" -e Inverse | awk '$NF!="NA"'
   ) | awk -v FS="\t" -v id=${id} 'NR==1||$1==id' > ${prefix}${id}.result
   (
     cat ${prefix}single.txt | head -1
-    grep -w ${id} ${prefix}single.txt | grep -v -e Egger -e Inverse
+    grep -w ${id} ${prefix}single.txt | awk '$NF!="NA"'
   ) | awk -v FS="\t" -v id=${id} 'NR==1||$3==id' > ${prefix}${id}.single
 }
 
@@ -104,6 +104,15 @@ do
   INF1_efo
   collect_all
 done
+
+export dir=${INF}/mr/pQTLs/
+(
+  awk 'NR==1' ${dir}INF1_pQTL-combined-cis-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "cistrans"}'
+  awk '/ieu/' ${dir}INF1_pQTL-combined-cis-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "cis"}'
+  awk '/ieu/' ${dir}INF1_pQTL-combined-trans-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "trans"}'
+  awk '/FEV1/' ${dir}INF1_pQTL-combined-cis-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "cis"}'
+  awk '/FEV1/' ${dir}INF1_pQTL-combined-trans-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "trans"}'
+) > ${dir}/pQTL-ieu-FEV1.txt
 
 # Bidirectionality test for FGF.5
 function dummy()
