@@ -8,8 +8,8 @@ INF <- Sys.getenv("INF")
 outdir <- file.path(INF,"mr",type)
 gz <- gzfile(file.path(outdir,paste0(prot,"-",type,".mrx")))
 d <- lapply(gz, function(x) tryCatch(read.delim(gz,as.is=TRUE), error=function(e) NULL))[[1]]
+d <- d %>% group_by(rsid) %>% slice(which.max(abs(Effect/StdErr)))
 d <- within(d,{P <- 10^logP})
-d <- d %>% group_by(rsid) %>% slice(which.min(P))
 e <- format_data(d, type="exposure", phenotype_col="prot", header = TRUE, snp_col = "rsid",
                  effect_allele_col = "Allele1", other_allele_col = "Allele2",
                  eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
