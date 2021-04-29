@@ -129,7 +129,16 @@ for (i in 1:length(outsheets))
     writeDataTable(wb,sheet, get(paste0("at",i-n0-n1)), xy=c(1,2), firstColumn=TRUE, bandedRows=FALSE)
   }
 }
-data.frame(sheets(wb))
+sheets_wb <- sheets(wb)
+data.frame(sheets_wb)
+
+bStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
+hStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+conditionalFormatting(wb, sheets_wb[grepl("GARFIELD",sheets_wb)], cols = 4, rows = 3:nrow(garfield), rule = "<=1e-5", style = hStyle)
+conditionalFormatting(wb, sheets_wb[grepl("immune-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_immun), rule = "==\"x\"", style = hStyle)
+conditionalFormatting(wb, sheets_wb[grepl("MR results",sheets_wb)], cols = 9, rows = 3:nrow(mr), rule = "==\"x\"", style = hStyle)
+conditionalFormatting(wb, sheets_wb[grepl("misc-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_misc), rule = "==\"x\"", style = hStyle)
+
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 
 # mr_immun <- read.sheet("pqtlMR-immune", 1:7, 2:67)
