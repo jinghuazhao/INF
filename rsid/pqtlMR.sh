@@ -38,9 +38,9 @@ function INF1_efo()
     Ids <- TwoSampleMR::extract_outcome_data(snps=with(Ins,SNP),outcomes=outcomes)
     harmonise <- TwoSampleMR::harmonise_data(Ins,Ids)
     prefix <- file.path(INF,"mr","pQTLs",paste0("efo_pQTL-combined-",type,"-"))
-    pQTLtools::pqtlMR(pqtlMRinput=list(Ins, Ids, harmonise),prefix=prefix)
+    pQTLtools::pqtlMR(harmonise,prefix=prefix)
     prefix <- file.path(INF,"mr","pQTLs",paste0("efo_rev_pQTL-combined-",type,"-"))
-    pQTLtools::pqtlMR(pqtlMRinput=list(Ins, Ids, harmonise),prefix=prefix,reverse=TRUE)
+    pQTLtools::pqtlMR(harmonise,prefix=prefix,reverse=TRUE)
   END
 }
 

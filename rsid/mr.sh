@@ -62,7 +62,8 @@ function mr()
     export prefix={1}-{2}-{3};
     export suffix=${type};
     echo ${prefix}
-    R --no-save <${INF}/rsid/mr.R>/dev/null
+    R --no-save <${INF}/rsid/mr.R 2>&1 | \
+    tee ${INF}/mr/${type}/${prefix}.log
     for f in result loo single;
     do
       export z=${INF}/mr/${suffix}/${prefix}-${f};
