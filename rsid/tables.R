@@ -22,11 +22,8 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:7037)
   fusion <- read.sheet("FUSION", 1:26, 2:117)
      efo <- subset(read.sheet("EFO", 1:4, 2:79),!is.na(MRBASEID))
      smr <- read.sheet("SMR", 1:27, 2:83)
-     ivw <- read.sheet("IVW", 1:8, 2:19)
-    gsmr <- read.sheet("GSMR", 1:12, 2:55)
+     gsmr <- read.sheet("GSMR", 1:12, 2:55)
      crp <- read.sheet("CRP", 1:15, 2:30)
-    mrc2 <- read.sheet("MRC2", 1:7, 2:8)
-    mvmr <- read.sheet("MVMR", 1:9, 2:6)
      gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
      at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
      at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2"); #names(at2) <- replace(names(at2),grepl("^[X]",names(at2)),"")
@@ -37,6 +34,8 @@ mr_immun <- read.delim(file.path(INF,"mr","pQTLs","pQTL-efo.txt"))
 mr_immun <- mr_immun[with(mr_immun,order(outcome,pval)),]
 mr_misc <- read.delim(file.path(INF,"mr","pQTLs","pQTL-ieu-FEV1.txt"))
 mr_misc <- mr_misc[with(mr_misc,order(outcome,pval)),]
+mr <- read.delim(file.path(INF,"mr","efo-result.txt"))
+mr <- mr[with(mr,order(outcome,pval)),]
 
 pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid") 
 data.frame(table(subset(pav,cis.trans=="cis")$Consequence))
@@ -54,7 +53,6 @@ ord <- with(pqtlstudies,order(PMID))
 pqtlstudies <- pqtlstudies[ord,]
 rownames(pqtlstudies) <- seq(nrow(pqtlstudies))
 
-INF <- Sys.getenv("INF")
 options("openxlsx.borderColour"="#4F80BD")
 hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
 novelpqtls <- subset(within(pqtls,{
@@ -82,12 +80,12 @@ cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
 outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
                "pqtls","cojo","knownpqtls","pqtlstudies","smr","coloc","cs95","pqtldisease",
                "vep","great3","garfield",
-               "mr_immun","ivw","mr_misc","gsmr","gdb","at1","at2","at3","reactome","great","efo")
+               "mr_immun","mr","mr_misc","gsmr","gdb","at1","at2","at3","reactome","great","efo")
 titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
             "pQTLs","conditional analysis",
             "known pQTLs","previous pQTL studies","SMR","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
             "VEP annotation","IL12B-KITLG-TNFSF10","GARFIELD outputs",
-            "pQTL-immune-MR","IVW","pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank","Annotrans-1","Annotrans-2","Annotrans-3","Reactome","GREAT","EFO")
+            "pQTL-immune-MR","MR","pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank","Annotrans-1","Annotrans-2","Annotrans-3","Reactome","GREAT","EFO")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
@@ -129,3 +127,6 @@ saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 
 # mr_immun <- read.sheet("pqtlMR-immune", 1:7, 2:67)
 #  mr_misc <- read.sheet("pqtlMR-misc", 1:7, 2:39)
+#      ivw <- read.sheet("IVW", 1:8, 2:19)
+#     mrc2 <- read.sheet("MRC2", 1:7, 2:8)
+#     mvmr <- read.sheet("MVMR", 1:9, 2:6)

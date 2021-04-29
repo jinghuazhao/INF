@@ -91,15 +91,24 @@ function collect()
       export id=$(sed '1d' ${INF}/rsid/efo.txt | awk -vFS="\t" -vnr=${i} 'NR==nr{print $4}')
       echo ${id} -- ${trait}
       (
-        cat ${INF}/mr/${type}/*result.txt | head -1
-        grep -h -w ${id} ${INF}/mr/${type}/*result.txt | grep "Inverse variance weighted"
+        cat ${INF}/mr/${type}/*result.txt | head -1 | \
+        cut -f1,2 --complement | awk -v OFS="\t"  '{print $0, "cistrans"}'
+        grep -h -w ${id} ${INF}/mr/${type}/*result.txt | grep -e Inverse -e ratio | \
+        cut -f1,2 --complement | awk -v OFS="\t" -v type=${type} '{print $0, type}'
       ) > ${INF}/mr/${id}-${type}.result
       (
-        cat ${INF}/mr/${type}/*single.txt | head -1
-        grep -h -w ${id} ${INF}/mr/${type}/*single.txt | grep -v -e Inverse
+        cat ${INF}/mr/${type}/*single.txt | head -1 | \
+        cut -f3,4 --complement | awk -v OFS="\t"  '{print $0, "cistrans"}'
+        grep -h -w ${id} ${INF}/mr/${type}/*single.txt | awk '$NF!="NA"' | \
+        cut -f3,4 --complement | awk -v OFS="\t" -v type=${type} '{print $0, type}'
       ) > ${INF}/mr/${id}-${type}.single
     done
   done
+
+  (
+    cat ${INF}/mr/*result | head -1
+    grep -h -v cistrans ${INF}/mr/*result
+  ) > ${INF}/mr/efo-result.txt
 
   export all=$(ls ${INF}/mr/cis/*result.txt ${INF}/mr/trans/*result.txt ${INF}/mr/pan/*result.txt | wc -l)
   export p=$(bc -l <<< 0.05/${all})
