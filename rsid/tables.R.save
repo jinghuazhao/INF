@@ -30,19 +30,18 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:7037)
      at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
 
 INF <- Sys.getenv("INF")
-read_table <- function(f, exprs="pval <= 0.05/nrow(t)")
+read_table <- function(f, cond=NULL)
 {
    t <- within(read.delim(f), {Flag=""})
    o <- with(t,order(outcome,pval))
-   cond <- str2expression(exprs)
-   n <- subset(t, eval(cond))
-   x <- with(t,eval(cond))
+   n <- ifelse (is.null(cond), t, subset(t, cond))
+   x <- with(ifelse(is.null(cond),t,subset(t,cond)), pval<=0.05/nrow(n))
    t[x, "Flag"] <- "x"
    t[o,]
 }
 mr_immun <- read_table(file.path(INF,"mr","pQTLs","pQTL-efo.txt"))
 mr_misc <- read_table(file.path(INF,"mr","pQTLs","pQTL-ieu-FEV1.txt"))
-mr <- read_table(file.path(INF,"mr","efo-result.txt"),exprs="cistrans!=\"pan\" & pval <= 0.05/nrow(t)")
+mr <- read_table(file.path(INF,"mr","efo-result.txt"),cistrans!="pan")
 
 pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid") 
 data.frame(table(subset(pav,cis.trans=="cis")$Consequence))
@@ -92,7 +91,7 @@ titles <- c("summary","study information","panel information","INTERVAL study","
             "pQTLs","conditional analysis",
             "known pQTLs","previous pQTL studies","SMR","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
             "VEP annotation","IL12B-KITLG-TNFSF10","GARFIELD outputs",
-            "pQTL-immune-MR","MR results","pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank","Annotrans-1","Annotrans-2","Annotrans-3","Reactome","GREAT","EFO")
+            "pQTL-immune-MR","MR","pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank","Annotrans-1","Annotrans-2","Annotrans-3","Reactome","GREAT","EFO")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
