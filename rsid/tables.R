@@ -2,18 +2,26 @@ options(width=2000)
 require(openxlsx)
 url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
 read.sheet <- function(sheet,cols,rows) read.xlsx(url,sheet=sheet,colNames=TRUE,cols=cols,rows=rows,skipEmptyRows=TRUE)
-
+require(dplyr)
+gap_inf1 <- gap::inf1[c("uniprot", "prot", "target.short")]
  summary <- read.sheet("Summary", 1:2, 2:36)
-    inf1 <- subset(read.sheet("INF1", 1:12, 2:94),uniprot!="P23560")
+    inf1 <- subset(read.sheet("INF1", 1:12, 2:94),uniprot!="P23560") %>% select(-panel); names(inf1)[2] <- "Protein"
  studies <- read.sheet("Studies", 1:3, 2:14)
-   pqtls <- read.sheet("pQTLs", 1:21, 2:182)
-interval <- read.sheet("INTERVAL", 1:12, 2:29)
-      os <- read.sheet("OtherStudies", 1:12, 2:102)
-    cvd1 <- read.sheet("CVD1", 1:12, 2:53)
-aristotl <- read.sheet("ARISTOTLE", 1:14, 2:182)
-    cojo <- read.sheet("cojo", 1:19, 2:229)
+   pqtls <- merge(read.sheet("pQTLs", 1:21, 2:182),gap_inf1[c("prot","target.short")],by="prot")
+interval <- merge(within(read.sheet("INTERVAL", 1:12, 2:29),{Protein <- gsub(" ", "", Protein)}),
+                  gap_inf1[c("prot","target.short")],by.x="Protein",by.y="prot") %>%
+            mutate(Protein=target.short) %>% select(-target.short)
+      os <- merge(read.sheet("OtherStudies", 1:12, 2:102),gap_inf1[c("prot","target.short")],by.x="Protein",by.y="prot") %>%
+            mutate(Protein=target.short) %>% select(-target.short)
+    cvd1 <- merge(read.sheet("CVD1", 1:12, 2:53),gap_inf1[c("prot","target.short")],by.x="Protein",by.y="prot") %>%
+            mutate(Protein=target.short) %>% select(-target.short)
+aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","target.short")], by.x="Protein", by.y="prot") %>%
+            mutate(Protein=target.short) %>% select(-target.short)
+    cojo <- merge(read.sheet("cojo", 1:19, 2:229),gap_inf1[c("prot","target.short")],by="prot") %>%
+            mutate(prot=target.short) %>% rename(Protein=prot) %>% select(-target.short)
    h2pve <- read.sheet("h2pve", 1:10, 2:93)
-     vep <- read.sheet("VEP", 1:27, 2:182)
+     vep <- merge(read.sheet("VEP", 1:27, 2:182),gap_inf1,by.x="Protein",by.y="prot") %>%
+            mutate(Protein=target.short) %>% select(-target.short)
    eqtls <- read.sheet("eQTLs", 1:24, 2:24)
 reactome <- read.sheet("Reactome", 1:19, 2:589)
    great <- read.sheet("GREAT", 1:24, 2:101)
@@ -21,8 +29,16 @@ reactome <- read.sheet("Reactome", 1:19, 2:589)
 garfield <- read.sheet("GARFIELD", 1:18, 2:7037); o <- with(garfield, order(Pvalue)); garfield <- garfield[o,]
   fusion <- read.sheet("FUSION", 1:26, 2:117)
      efo <- subset(read.sheet("EFO", 1:4, 2:79),!is.na(MRBASEID))
-     smr <- read.sheet("SMR", 1:27, 2:83)
-    gsmr <- read.sheet("GSMR", 1:12, 2:55)
+     smr <- merge(read.sheet("SMR", 1:27, 2:83),gap_inf1,by="prot") %>%
+            mutate(prot=target.short) %>% rename(Protein=prot) %>% select(-target.short)
+            d <- read.sheet("GSMR", 1:12, 2:55)
+            na1 <- with(d,is.na(Exposure1))
+            na2 <- with(d,is.na(Exposure2))
+            d[na1,"Exposure1"] <- d[na1,"Exposure2"]
+            d[na2,"Exposure2"] <- d[na2,"Exposure1"]
+    gsmr <- merge(d, gap_inf1[c("prot","target.short")],by.x="Exposure1",by.y="prot") %>%
+            mutate(Exposure1=target.short,Exposure2=target.short) %>% rename(Protein1=Exposure1,Protein2=Exposure2) %>%
+            select(-target.short)
      crp <- read.sheet("CRP", 1:15, 2:30)
      gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
      at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
@@ -40,9 +56,13 @@ read_table <- function(f, exprs="pval <= 0.05/nrow(t)")
    t[x, "Flag"] <- "x"
    t[o,]
 }
-mr_immun <- read_table(file.path(INF,"mr","pQTLs","pQTL-efo.txt"))
-mr_misc <- read_table(file.path(INF,"mr","pQTLs","pQTL-ieu-FEV1.txt"))
-mr <- read_table(file.path(INF,"mr","efo-result.txt"),exprs="cistrans!=\"pan\" & pval <= 0.05/nrow(t)")
+mr_immun <- merge(read_table(file.path(INF,"mr","pQTLs","pQTL-efo.txt")),gap_inf1,by.x="exposure",by.y="prot") %>%
+            mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short)
+mr_misc <- merge(read_table(file.path(INF,"mr","pQTLs","pQTL-ieu-FEV1.txt")),gap_inf1,by.x="exposure",by.y="prot") %>%
+           mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short)
+mr <- merge(read_table(file.path(INF,"mr","efo-result.txt"),exprs="cistrans!=\"pan\" & pval <= 0.05/nrow(t)"),
+            gap_inf1, by.x="exposure",by.y="prot") %>%
+      mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short)
 
 pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid") 
 data.frame(table(subset(pav,cis.trans=="cis")$Consequence))
@@ -79,8 +99,10 @@ metal <- read.sheet("METAL",1:20,1:181)
 short <- read.sheet("short",1:51,1:220)
 pqtldisease <- subset(short,Keep==1,select=c(MarkerName,nprots,prots,Allele1,Allele2,Effects,SEs,cistrans,trait,efo,study,pmid,dataset,infection))
 credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c("prot","MarkerName","CredibleSet"),sep="\t")
-pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName"))
-coloc <- read.delim(file.path(INF,"coloc","GTEx.tsv"))
+pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
+         rename(Protein=prot) %>% mutate(Protein=target.short) %>% select(-target.short)
+coloc <- merge(read.delim(file.path(INF,"coloc","GTEx.tsv")),gap_inf1,by="prot") %>%
+         mutate(prot=target.short) %>% rename(Protein=prot) %>% select(-target.short)
 cs95 <- read.delim(file.path(INF,"coloc","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
 
