@@ -4,7 +4,7 @@
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
-#SBATCH --array=1-41,43-92
+#SBATCH --array=4,6,20,22,34,50,52
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_coloc_%A_%a.err
@@ -15,6 +15,8 @@ export job=${SLURM_ARRAY_TASK_ID}
 export trait=$(awk -v job=${job} 'NR==job {print $1}' ${INF}/work/inf1.tmp)
 export FUSION=${HPC_WORK}/fusion_twas
 
+function fusion()
+{
 cd work
 (
   awk -v OFS='\t' 'BEGIN{print "SNP","A1","A2","N","CHISQ","Z"}'
@@ -59,3 +61,26 @@ do
   awk '$NF!="NA"' > ${trait}-${tissue}-coloc.dat
 done
 cd -
+}
+
+function gtex()
+{
+  export r=${SLURM_ARRAY_TASK_ID}
+  export cvt=${INF}/work/INF1.merge.cis.vs.trans
+  read prot MarkerName < \
+                       <(awk -vFS="," '$14=="cis"' ${cvt} | \
+                         awk -vFS="," -vr=${r} 'NR==r{print $2,$5}')
+  echo ${r} - ${prot} - ${MarkerName}
+  export prot=${prot}
+  export MarkerName=${MarkerName}
+  if [ ! -f ${INF}/coloc/${prot}-${MarkerName}.pdf ] || \
+     [ ! -f ${INF}/coloc/${prot}-${MarkerName}.RDS ]; then
+    cd ${INF}/coloc
+    R --no-save < ${INF}/rsid/coloc.R 2>&1 | \
+    tee ${prot}-${MarkerName}.log
+#   ls *tbi | xargs -I {} bash -c "rm {}"
+    cd -
+  fi
+}
+
+gtex
