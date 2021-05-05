@@ -171,7 +171,7 @@ single_run(r)
 # with the same setup, to collect results when all single runs are done
 collect <- function()
 {
-  df_coloc <- data.frame()
+  df_coloc <- df_all <- data.frame()
   for(r in 1:nrow(sentinels))
   {
     prot <- sentinels[["prot"]][r]
@@ -182,12 +182,15 @@ collect <- function()
     cat(prot,"-",rsid,"\n")
     rds <- readRDS(f)
     if (nrow(rds)==0) next
+    df_all <- rbind(df_all,data.frame(prot=prot,rsid=rsid,snpid=snpid,rds))
     select <- subset(rds,PP.H3.abf+PP.H4.abf>=0.9&PP.H4.abf/PP.H3.abf>=3)
     if (nrow(select)==0) next
     df_coloc <- rbind(df_coloc,data.frame(prot=prot,rsid=rsid,snpid=snpid,select))
   }
   df_coloc <- within(df_coloc,{qtl_id <- gsub("GTEx_V8_","",qtl_id)}) %>%
               rename(H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf)
+  write.table(df_all,file=file.path(INF,"coloc","GTEx-all.tsv"),
+              quote=FALSE,row.names=FALSE,sep="\t")
   write.table(df_coloc,file=file.path(INF,"coloc","GTEx.tsv"),
               quote=FALSE,row.names=FALSE,sep="\t")
 }
