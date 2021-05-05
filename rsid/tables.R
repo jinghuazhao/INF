@@ -84,7 +84,8 @@ credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
          rename(Protein=prot) %>% mutate(Protein=target.short) %>% select(-target.short)
 coloc <- merge(read.delim(file.path(INF,"coloc","GTEx-all.tsv")),gap_inf1,by="prot") %>%
-         mutate(prot=target.short) %>% rename(Protein=prot) %>% select(-target.short)
+         mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
+         rename(Protein=prot) %>% select(-target.short)
 cs95 <- read.delim(file.path(INF,"coloc.1M","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
 
