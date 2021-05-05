@@ -4,7 +4,7 @@
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
-#SBATCH --array=4,6,20,22,34,50,52
+#SBATCH --array=1-59
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_coloc_%A_%a.err
