@@ -48,21 +48,19 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:7037); o <- with(garfield, order(Pval
 INF <- Sys.getenv("INF")
 read_table <- function(f, exprs="pval <= 0.05/nrow(t)")
 {
-   t <- within(read.delim(f), {Flag=""})
-   o <- with(t,order(outcome,pval))
-   cond <- str2expression(exprs)
-   n <- subset(t, eval(cond))
-   x <- with(t,eval(cond))
-   t[x, "Flag"] <- "x"
-   t[o,]
+  t <- within(read.delim(f), {flag=""})
+  x <- with(t,eval(str2expression(exprs)))
+  t[x, "flag"] <- "x"
+  t
 }
+
 mr_immun <- merge(read_table(file.path(INF,"mr","pQTLs","pQTL-efo.txt")),gap_inf1,by.x="exposure",by.y="prot") %>%
-            mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short)
+            mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(desc(flag))
 mr_misc <- merge(read_table(file.path(INF,"mr","pQTLs","pQTL-ieu-FEV1.txt")),gap_inf1,by.x="exposure",by.y="prot") %>%
-           mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short)
+           mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(desc(flag))
 mr <- merge(read_table(file.path(INF,"mr","efo-result.txt"),exprs="cistrans!=\"pan\" & pval <= 0.05/nrow(t)"),
             gap_inf1, by.x="exposure",by.y="prot") %>%
-      mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short)
+      mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(desc(flag))
 
 pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid") 
 data.frame(table(subset(pav,cis.trans=="cis")$Consequence))
