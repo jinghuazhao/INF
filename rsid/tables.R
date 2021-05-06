@@ -74,15 +74,17 @@ rownames(pqtlstudies) <- seq(nrow(pqtlstudies))
 options("openxlsx.borderColour"="#4F80BD")
 hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
 url <- "https://jhz22.user.srcf.net/pqtl-immune_infection_edited.xlsx"
-metal <- read.sheet("METAL",1:20,1:181)
-short <- read.sheet("short",1:51,1:220)
 credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c("prot","MarkerName","CredibleSet"),sep="\t")
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
-         rename(Protein=prot) %>% mutate(Protein=target.short) %>% select(-target.short)
-pqtldisease <- subset(short,Keep==1,select=c(MarkerName,prots,Allele1,Allele2,Effects,SEs,cistrans,trait,efo,study,pmid,dataset,infection)) %>%
-               left_join(pqtls[c("Protein","MarkerName")]) %>%
+         rename(Protein=prot) %>% mutate(prots=Protein,Protein=target.short) %>% select(-target.short)
+metal <- read.delim(file.path(INF,"work","INF1.METAL"))
+pqtldisease <- subset(read.sheet("short",1:51,1:220),Keep==1) %>%
+               left_join(unique(pqtls[c("Protein","prots")]),by="prots") %>%
                mutate(prots=if_else(grepl(";",prots),prots,str_replace(prots,prots,Protein))) %>%
-               mutate(prots=if_else(grepl("CXCL9;IL.12B",prots),str_replace_all(prots,c("IL.12B"="IL-12B")),prots))
+               mutate(prots=if_else(grepl("CXCL9;IL.12B",prots),str_replace_all(prots,c("IL.12B"="IL-12B")),prots)) %>%
+               mutate(prots=if_else(grepl("MMP.10;CST5",prots),str_replace_all(prots,c("MMP.10"="MMP-10")),prots)) %>%
+               rename(Proteins=prots) %>% left_join(distinct(metal[c("MarkerName","rsid")])) %>%
+               select(rsid,Proteins,Allele1,Allele2,Effects,SEs,cistrans,trait,efo,study,pmid,dataset,infection)
 coloc <- merge(read.delim(file.path(INF,"coloc","GTEx-all.tsv")),gap_inf1,by="prot") %>%
          mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
          rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
@@ -156,10 +158,10 @@ saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 #     mvmr <- read.sheet("MVMR", 1:9, 2:6)
 
 novelpqtls <- subset(within(pqtls,{
-                                   chrpos=paste0(Chromosome,":",Position)
-                                   a1a2=paste0(toupper(Allele1),"/",toupper(Allele2))
-                                   bse=paste0(round(Effect,3)," (",round(StdErr,3),")")
-                                   log10p=-log.P.
+                                    chrpos=paste0(Chromosome,":",Position)
+                                    a1a2=paste0(toupper(Allele1),"/",toupper(Allele2))
+                                    bse=paste0(round(Effect,3)," (",round(StdErr,3),")")
+                                    log10p=-log.P.
                                   }),
                      !paste0(Protein,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),
                      select=c(Protein,uniprot,chrpos,rsid,a1a2,bse,log10p)) %>%
