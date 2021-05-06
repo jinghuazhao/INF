@@ -3,6 +3,7 @@ require(openxlsx)
 url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
 read.sheet <- function(sheet,cols,rows) read.xlsx(url,sheet=sheet,colNames=TRUE,cols=cols,rows=rows,skipEmptyRows=TRUE)
 require(dplyr)
+require(stringr)
 gap_inf1 <- gap::inf1[c("uniprot", "prot", "target.short")]
  summary <- read.sheet("Summary", 1:2, 2:36)
     inf1 <- subset(read.sheet("INF1", 1:12, 2:94),uniprot!="P23560") %>% select(-panel); names(inf1)[2] <- "Protein"
@@ -67,9 +68,7 @@ data.frame(table(subset(pav,cis.trans=="cis")$Consequence))
 
 knownpqtls_dup <- rbind(interval,os,cvd1)
 knownpqtls <- unique(knownpqtls_dup[c("Sentinels","SNPid","UniProt","Protein")])
-pqtlstudies <- unique(knownpqtls_dup[c("Source","PMID")])
-ord <- with(pqtlstudies,order(PMID))
-pqtlstudies <- pqtlstudies[ord,]
+pqtlstudies <- unique(knownpqtls_dup[c("Source","PMID")]) %>% arrange(PMID)
 rownames(pqtlstudies) <- seq(nrow(pqtlstudies))
 
 options("openxlsx.borderColour"="#4F80BD")
@@ -77,25 +76,30 @@ hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, font
 url <- "https://jhz22.user.srcf.net/pqtl-immune_infection_edited.xlsx"
 metal <- read.sheet("METAL",1:20,1:181)
 short <- read.sheet("short",1:51,1:220)
-pqtldisease <- subset(short,Keep==1,select=c(MarkerName,nprots,prots,Allele1,Allele2,Effects,SEs,cistrans,trait,efo,study,pmid,dataset,infection))
 credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c("prot","MarkerName","CredibleSet"),sep="\t")
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
          rename(Protein=prot) %>% mutate(Protein=target.short) %>% select(-target.short)
+pqtldisease <- subset(short,Keep==1,select=c(MarkerName,prots,Allele1,Allele2,Effects,SEs,cistrans,trait,efo,study,pmid,dataset,infection)) %>%
+               left_join(pqtls[c("Protein","MarkerName")]) %>%
+               mutate(prots=if_else(grepl(";",prots),prots,str_replace(prots,prots,Protein))) %>%
+               mutate(prots=if_else(grepl("CXCL9;IL.12B",prots),str_replace_all(prots,c("IL.12B"="IL-12B")),prots))
 coloc <- merge(read.delim(file.path(INF,"coloc","GTEx-all.tsv")),gap_inf1,by="prot") %>%
          mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
          rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
 cs95 <- read.delim(file.path(INF,"coloc.1M","cis-eQTL_table.tsv"))
-cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
+cs95 <- data.frame(rsidProt=str_replace(rownames(cs95),"[.]","-"),cs95)
 
 outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
                "pqtls","cojo","knownpqtls","pqtlstudies","smr","coloc","cs95","pqtldisease",
                "vep","great3","garfield",
-               "mr_immun","mr","mr_misc","gsmr","gdb","at1","at2","at3","reactome","great","efo")
+               "mr_immun","mr","mr_misc","gsmr",
+               "gdb","at1","at2","at3","reactome","great","efo")
 titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
             "pQTLs","conditional analysis",
             "known pQTLs","previous pQTL studies","SMR","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
             "VEP annotation","IL12B-KITLG-TNFSF10","GARFIELD outputs",
-            "pQTL-immune-MR","MR results","pQTL-misc-MR","GSMR-FEV1CVD","geneDrugbank","Annotrans-1","Annotrans-2","Annotrans-3","Reactome","GREAT","EFO")
+            "pQTL-immune-MR","MR results","pQTL-misc-MR","GSMR-FEV1CVD",
+            "geneDrugbank","Annotrans-1","Annotrans-2","Annotrans-3","Reactome","GREAT","EFO")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
@@ -137,7 +141,7 @@ data.frame(sheets_wb)
 
 bStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
 hStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-conditionalFormatting(wb, sheets_wb[grepl("coloc",sheets_wb)], cols = 12, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
+conditionalFormatting(wb, sheets_wb[grepl("GTEx coloc$",sheets_wb)], cols = 12, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
 conditionalFormatting(wb, sheets_wb[grepl("GARFIELD",sheets_wb)], cols = 4, rows = 3:nrow(garfield), rule = "<=1e-5", style = hStyle)
 conditionalFormatting(wb, sheets_wb[grepl("immune-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_immun), rule = "==\"x\"", style = hStyle)
 conditionalFormatting(wb, sheets_wb[grepl("MR results",sheets_wb)], cols = 9, rows = 3:nrow(mr), rule = "==\"x\"", style = hStyle)
