@@ -83,7 +83,7 @@ pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName
          rename(Protein=prot) %>% mutate(Protein=target.short) %>% select(-target.short)
 coloc <- merge(read.delim(file.path(INF,"coloc","GTEx-all.tsv")),gap_inf1,by="prot") %>%
          mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
-         rename(Protein=prot) %>% select(-target.short)
+         rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
 cs95 <- read.delim(file.path(INF,"coloc.1M","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=rownames(cs95),cs95)
 
@@ -137,6 +137,7 @@ data.frame(sheets_wb)
 
 bStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
 hStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+conditionalFormatting(wb, sheets_wb[grepl("coloc",sheets_wb)], cols = 12, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
 conditionalFormatting(wb, sheets_wb[grepl("GARFIELD",sheets_wb)], cols = 4, rows = 3:nrow(garfield), rule = "<=1e-5", style = hStyle)
 conditionalFormatting(wb, sheets_wb[grepl("immune-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_immun), rule = "==\"x\"", style = hStyle)
 conditionalFormatting(wb, sheets_wb[grepl("MR results",sheets_wb)], cols = 9, rows = 3:nrow(mr), rule = "==\"x\"", style = hStyle)
