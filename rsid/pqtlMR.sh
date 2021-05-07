@@ -114,7 +114,7 @@ export dir=${INF}/mr/pQTLs/
 
 (
   awk 'NR==1' ${dir}efo_pQTL-combined-cis-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "cistrans"}'
-  awk 'NR>1' ${dir}efo_pQTL-combined-cis-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "trans"}'
+  awk 'NR>1' ${dir}efo_pQTL-combined-cis-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "cis"}'
   awk 'NR>1' ${dir}efo_pQTL-combined-trans-result.txt | cut -f1,2,5,6 --complement | awk -v OFS="\t" '{print $0, "trans"}'
 ) > ${dir}/pQTL-efo.txt
 
