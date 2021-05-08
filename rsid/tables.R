@@ -90,23 +90,26 @@ coloc <- merge(read.delim(file.path(INF,"coloc","GTEx-all.tsv")),gap_inf1,by="pr
          rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
 cs95 <- read.delim(file.path(INF,"coloc.1M","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=str_replace(rownames(cs95),"[.]","-"),cs95)
+HOME <- Sys.getenv("HOME")
+load(file.path(HOME,"software-notes","docs","files","pi_database.rda"))
+drug <- subset(pi_drug,target%in%with(gap::inf1,gene)) %>% left_join(pi_trait)
 
 outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
                "pqtls","cojo","knownpqtls","pqtlstudies","smr","coloc","cs95","pqtldisease",
                "vep","great3","garfield",
-               "mr_immun","mr","mr_misc","gsmr",
+               "mr_immun","mr","mr_misc","gsmr","drug",
                "gdb","at1","at2","at3","reactome","great","efo")
 titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
             "pQTLs","conditional analysis",
             "known pQTLs","previous pQTL studies","SMR","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
             "VEP annotation","IL12B-KITLG-TNFSF10","GARFIELD outputs",
-            "pQTL-immune-MR","MR results","pQTL-misc-MR","GSMR-FEV1CVD",
-            "geneDrugbank","Annotrans-1","Annotrans-2","Annotrans-3","Reactome","GREAT","EFO")
+            "pQTL-immune-MR","MR results","pQTL-misc-MR","GSMR-FEV1CVD","PI drug",
+            "geneDrugbank","AnnoTrans-1","AnnoTrans-2","AnnoTrans-3","Reactome","GREAT","EFO")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
 n0 <- 7
-n1 <- 16
+n1 <- 17
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
             paste0("ST",1:n1),
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
