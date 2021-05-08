@@ -1,6 +1,6 @@
 # SCALLOP-INF meta-analysis
 
-## Flow of analysis (paste to [mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor/) to view)
+## Flow of analysis (diagram visible from [mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor/))
 
 ```mermaid
 graph TB;
