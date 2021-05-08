@@ -20,7 +20,7 @@ csd3 --> software[R Packages at CRAN/GitHub];
 2. The main analysis followed with [analysis.sh](tryggve/analysis.sh) containing codes for Q-Q/Manhattan/LocusZoom/Forest plots such as the OPG example (see the diagram below), which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with [cardio](cardio) and [CSD3](csd3). cis/trans classification has been done via [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) as validated by [cistrans.sh](cardio/cistrans.sh).
 3. We prototyped our analysis on cardio with INTERVAL such as [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](cardio/cardio.sh) as well as individual level data analysis for the KORA study.
 4. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` (as in this page) as with `cs`, `log10p`, `logp`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d`, `pvalue` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and updates are made at [GitHub](https://github.com/jinghuazhao/R/).
-5. Downstream analysis links colocalisation and Mendelian randomisation with CAD, FEV1 and the meta-analysis summary statistics are now described in [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
+5. Downstream analyses links colocalisation and Mendelian randomisation with CAD, FEV1 and the meta-analysis summary statistics are now described in [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
 
 ## References
 
