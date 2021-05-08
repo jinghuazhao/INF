@@ -1,10 +1,14 @@
 <img src="doc/INF1.circlize.png" width="300" height="300" align="right">
-
+<script>
+  valine: 'https://unpkg.com/valine/dist/Valine.min.js',
+  mathjax: 'https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML',
+  mermaid: 'https://cdn.bootcss.com/mermaid/8.0.0-rc.8/mermaid.min.js'
+</script>
 # SCALLOP-INF meta-analysis
 
 ## Flow of analysis
 
-```mermaid
+<pre><code class="language-mermaid">
 graph TB;
 tryggve ==> cardio;
 cardio ==> csd3;
@@ -14,7 +18,7 @@ Prototyping --> Multi-omics-analysis;
 cardio --> cardioAnalysis[Prototyping and KORA data analysis];
 csd3 --> csd3Analysis[Conditional analysis,finemapping, etc];
 csd3 --> software[R Packages at CRAN/GitHub]; 
-```
+</code></pre>
 
 ### Comments
 
