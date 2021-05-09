@@ -119,7 +119,7 @@ function collect()
     else if (index(FILENAME,"trans")) tag="trans";
     else if (index(FILENAME,"pan")) tag="pan"
   # id.exposure id.outcome outcome exposure method nsnp b se pval
-    if ($NF<p) {print $3,$4,tag,$6,$7,$8,$9}
+    if ($(NF-1)<p) {print $1,$2,$3,$4,tag,$6,$7,$8,$9}
   }' ${INF}/mr/*result | \sed 's/|| id:/\t/' | xsel -i
 }
 
