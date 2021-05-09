@@ -14,10 +14,10 @@ e <- format_data(within(d, {P <- 10^logP}), type="exposure", phenotype_col="prot
                  effect_allele_col = "Allele1", other_allele_col = "Allele2",
                  eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
                  samplesize_col = "N")
-exposure <- clump_data(e)
+exposure <- clump_data(e,clump_r2 = 0.01)
 outcome <- extract_outcome_data(exposure$SNP, outcomes, proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.5)
 harmonise <- harmonise_data(exposure, outcome, action = 2)
 prefix <- file.path(outdir,paste0(outcomes,"-",prot,"-",type))
 pdf(paste0(prefix,".pdf"))
-run_TwoSampleMR(harmonise, plot="New", prefix=prefix)
+run_TwoSampleMR(harmonise, mr_plot="New", prefix=prefix)
 dev.off()
