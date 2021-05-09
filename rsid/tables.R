@@ -59,11 +59,13 @@ mr_immun <- merge(read_table(file.path(INF,"mr","pQTLs","pQTL-efo.txt")),gap_inf
             mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(desc(flag))
 mr_misc <- merge(read_table(file.path(INF,"mr","pQTLs","pQTL-ieu-FEV1.txt")),gap_inf1,by.x="exposure",by.y="prot") %>%
            mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(desc(flag))
-mr <- merge(read_table(file.path(INF,"mr","efo-result.txt"),exprs="cistrans!=\"pan\" & pval <= 0.05/nrow(t)"),
+mr <- merge(read_table(file.path(INF,"mr","efo-result.txt"),
+            exprs="cistrans!=\"pan\" & pval <= 0.05/nrow(subset(t,cistrans!=\"pan\"))"),
             gap_inf1, by.x="exposure",by.y="prot") %>%
       mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(desc(flag))
 
-pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid") 
+pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),
+             within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid")
 data.frame(table(subset(pav,cis.trans=="cis")$Consequence))
 
 knownpqtls_dup <- rbind(interval,os,cvd1)
