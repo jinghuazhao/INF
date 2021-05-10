@@ -25,8 +25,6 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
             mutate(Protein=target.short) %>% select(-target.short)
    eqtls <- read.sheet("eQTLs", 1:24, 2:24)
 reactome <- read.sheet("Reactome", 1:19, 2:589)
-   great <- read.sheet("GREAT", 1:24, 2:101)
-  great3 <- read.sheet("IL12B-KITLG-TNFSF10", 1:25, 2:38)
 garfield <- read.sheet("GARFIELD", 1:18, 2:7037); o <- with(garfield, order(Pvalue)); garfield <- garfield[o,]
   fusion <- read.sheet("FUSION", 1:26, 2:117)
      efo <- subset(read.sheet("EFO", 1:4, 2:79),!is.na(MRBASEID))
@@ -47,6 +45,11 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:7037); o <- with(garfield, order(Pval
      at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
 
 INF <- Sys.getenv("INF")
+great3 <- read.delim(file.path(INF,"GREAT","IL12B-KITLG-TNFSF10.tsv")) %>%
+          mutate(flag=if_else(BinomP<1e-4,"x","")) %>% arrange(desc(flag))
+great <- read.delim(file.path(INF,"GREAT","cistrans.tsv")) %>%
+          mutate(flag=if_else(BinomP<1e-4,"x","")) %>% arrange(desc(flag))
+
 read_table <- function(f, exprs="pval <= 0.05/nrow(t)")
 {
   t <- within(read.delim(f), {flag=""})
@@ -148,6 +151,8 @@ data.frame(sheets_wb)
 
 bStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
 hStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+conditionalFormatting(wb, sheets_wb[grepl("IL12B-KITLG-TNFSF10",sheets_wb)], cols = 26, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
+conditionalFormatting(wb, sheets_wb[grepl("GREAT",sheets_wb)], cols = 25, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
 conditionalFormatting(wb, sheets_wb[grepl("GTEx coloc$",sheets_wb)], cols = 12, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
 conditionalFormatting(wb, sheets_wb[grepl("GARFIELD",sheets_wb)], cols = 4, rows = 3:nrow(garfield), rule = "<=1e-5", style = hStyle)
 conditionalFormatting(wb, sheets_wb[grepl("immune-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_immun), rule = "==\"x\"", style = hStyle)
