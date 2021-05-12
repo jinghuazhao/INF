@@ -47,8 +47,8 @@ INF1_merge <- read.delim(file.path(INF,"work","INF1.merge")) %>%
 cistrans <- INF1_merge %>% select(chr,start,end) %>% arrange(chr,start,end) %>% distinct()
 
 # Specific regions
-IL12B <- filter(INF1_merge,prot=="IL.12B") %>% select(-c(prot,MarkerName))
-KITLG <- filter(INF1_merge,prot=="SCF") %>% select(-c(prot,MarkerName))
-TNFSF10 <- filter(INF1_merge,prot=="TRAIL") %>% select(-c(prot,MarkerName))
+IL12B <- filter(INF1_merge,prot=="IL.12B") %>% select(chr,start,end)
+KITLG <- filter(INF1_merge,prot=="SCF") %>% select(chr,start,end)
+TNFSF10 <- filter(INF1_merge,prot=="TRAIL") %>% select(chr,start,end)
 
 all_regions()

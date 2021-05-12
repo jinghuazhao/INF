@@ -25,7 +25,7 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
             mutate(Protein=target.short) %>% select(-target.short)
    eqtls <- read.sheet("eQTLs", 1:24, 2:24)
 reactome <- read.sheet("Reactome", 1:19, 2:589)
-garfield <- read.sheet("GARFIELD", 1:18, 2:7037); o <- with(garfield, order(Pvalue)); garfield <- garfield[o,]
+garfield <- read.sheet("GARFIELD", 1:18, 2:3017); o <- with(garfield, order(Pvalue)); garfield <- garfield[o,]
   fusion <- read.sheet("FUSION", 1:26, 2:117)
      efo <- subset(read.sheet("EFO", 1:4, 2:79),!is.na(MRBASEID))
      smr <- merge(read.sheet("SMR", 1:27, 2:83),gap_inf1,by="prot") %>%
