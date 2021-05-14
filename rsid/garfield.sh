@@ -42,11 +42,12 @@ done
 
 module load gcc/6
 
+# v1
 R --no-save <<END
   library(garfield)
   garfield.run("INF1", data.dir="garfield-data", trait="INF1", run.option = "prep", chrs = 1:22)
-  n.perm <- 100000
-  e <- c(5:10,100)
+  n.perm <- 1e50
+  e <- 50
   garfield.run("INF1", data.dir="garfield-data", run.option = "perm", nperm = n.perm,
                thresh = 10^-e, pt_thresh = 10^-e,  maf.bins = 5, tags.bins = 5, tss.bins = 5,
                prep.file = "INF1.prep", optim_mode = TRUE, minit = 100, thresh_perm = 0.0001)
@@ -66,5 +67,9 @@ R --no-save <<END
   detach(p)
 END
 
+# v2
 cd /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/R/garfield-v2
 garfield-INF1
+
+# Celltypes
+cut -d' ' -f15 garfield.test.INF1.out | sort | grep -v -w -e Celltype -e NA | uniq | wc -l

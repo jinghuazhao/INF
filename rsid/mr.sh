@@ -2,13 +2,6 @@
 
 function setup()
 {
-  R --no-save <<\ \ END
-  INF <- Sys.getenv("INF")
-  url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
-  efo <- subset(openxlsx::read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:5), rows=c(2:79)),!is.na(MRBASEID))
-  write.table(efo, file=file.path(INF,"rsid","efo.txt"),quote=FALSE,row.names=FALSE,sep="\t")
-  END
-
   if [ ! -f ${INF}/work/INF1.merge.genes ]; then
      grep -v BDNF ${INF}/doc/olink.inf.panel.annot.tsv | \
      cut -f3,8,9,10 | \

@@ -28,7 +28,6 @@ reactome <- read.sheet("Reactome", 1:19, 2:589)
 garfield <- read.sheet("GARFIELD", 1:18, 2:3017) %>%
             select(ID,PThresh,Pvalue,Annotation,Celltype,Tissue,Type,Category,OR,Beta,SE,CI95_lower,CI95_upper,NAnnotThesh,NAnnot,NThresh,N,linkID)
   fusion <- read.sheet("FUSION", 1:26, 2:117)
-     efo <- subset(read.sheet("EFO", 1:4, 2:79),!is.na(MRBASEID))
      smr <- merge(read.sheet("SMR", 1:27, 2:83),gap_inf1,by="prot") %>%
             mutate(prot=target.short) %>% rename(Protein=prot) %>% select(-target.short)
             d <- read.sheet("GSMR", 1:12, 2:55)
@@ -99,6 +98,7 @@ cs95 <- data.frame(rsidProt=str_replace(rownames(cs95),"[.]","-"),cs95)
 HOME <- Sys.getenv("HOME")
 load(file.path(HOME,"software-notes","docs","files","pi_database.rda"))
 drug <- subset(pi_drug,target%in%with(gap::inf1,gene)) %>% left_join(pi_trait)
+efo <- read.delim(file.path(INF,"rsid","efo.txt"))
 
 outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
                "pqtls","cojo","knownpqtls","pqtlstudies","smr","coloc","cs95","pqtldisease",
