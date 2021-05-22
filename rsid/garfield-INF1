@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd ${HPC_WORK}/garfield-v2
 INPUTNAME=INF1
 DATADIR=${SCALLOP}/R/garfield-data
 
@@ -52,7 +53,7 @@ echo 'GARFIELD model selection complete'
 # Step to extract variants driving the enrichment signals
 echo 'Extracting variants driving enrichment analysis signals'
 PTHRESH=1e-8 ## GWAS threshold
-PENRICH=1e-9 ## Enrichment significance threshold - by default you might want to use $Padj
+PENRICH=$Padj ## Enrichment significance threshold - by default you might want to use $Padj
 GARFIELD_significant_annotations=$F2.significant.annotations.$PTHRESH.$PENRICH
 GARFIELD_VARS=${GARFIELD_significant_annotations}.variants
 ./garfield_extract_variants_overlapping_enriched_annotations.sh $PRUNETAGSDIR $CLUMPTAGSDIR $ANNOTDIR $PVALDIR $F1 $F2 $GARFIELD_significant_annotations $GARFIELD_VARS $PTHRESH $PENRICH
