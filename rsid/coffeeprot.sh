@@ -10,9 +10,9 @@ END
 
 # rsID,trait_name,snp_bp_abs,snp_chr,empirical_pvalue,trait_category
 (
-  echo rsID,trait_name,snp_chr,snp_bp_abs,LOD,trait_category
+  echo rsID,trait_name,snp_chr,snp_bp_abs,pvalue,trait_category
   sed '1d' ${INF}/work/INF1.METAL | \
-  awk '{print $2,$3,$4,$5,-$11,$21}' | \
+  awk '{print $2,$3,$4,$5,10^$11,$21}' | \
   sort -k2,2 | \
   join -22 -o2.1,1.2,2.3,2.4,2.5,2.6 <(sort -k1,1 ${INF}/work/INF1.merge.target) - | \
   tr ' ' ','
@@ -20,8 +20,8 @@ END
 
 # rsID,snp_bp_abs,snp_chr,gene_symbol,gene_start_abs,gene_end_abs,gene_chr,pvalue,proxy
 (
-  echo rsID,snp_bp_abs,snp_chr,gene_symbol,gene_start_abs,gene_end_abs,gene_chr,LOD,proxy
-  awk -v FS="," 'NR>1{print $5,$4,$3,$10,$12,$13,$11,-$6,$14}' ${INF}/work/INF1.merge.cis.vs.trans | \
+  echo rsID,snp_bp_abs,snp_chr,gene_symbol,gene_start_abs,gene_end_abs,gene_chr,pvalue,proxy
+  awk -v FS="," 'NR>1{print $5,$4,$3,$10,$12,$13,$11,10^$6,$14}' ${INF}/work/INF1.merge.cis.vs.trans | \
   sort -k1,1 | \
   join ${INF}/work/INF1.merge.rsid - | \
   cut -d' ' -f1 --complement --output-delimiter=","
@@ -58,7 +58,7 @@ R --no-save <<END
   fn <- featureNames(x)
   m <- exprs(x)
   INF <- Sys.getenv("INF")
-  a <- gap::inf1[c("prot","target.short")]
+  a <- gap::inf1[c("prot","gene")]
   b <- data.frame(prot=fn,m)
   INF1_prot <- read.table(file.path(INF,"work","INF1.merge.prot"),col.names=c("prot","uniprot"))
   prot <- subset(merge(a,b,by="prot"),prot%in%with(INF1_prot,prot),select=-prot)

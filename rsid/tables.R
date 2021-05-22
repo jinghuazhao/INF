@@ -67,6 +67,21 @@ mr <- merge(read_table(file.path(INF,"mr","efo-result.txt"),
             gap_inf1, by.x="exposure",by.y="prot") %>%
       mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(desc(flag))
 
+protein_correlation <- read.csv(file.path(INF,"coffeeprot","table_complex.csv")) %>%
+                       arrange(desc(cor)) %>%
+                       mutate(varID1=toupper(varID1),varID2=toupper(varID2),VarVar=toupper(VarVar))
+protein_annotation <- read.csv(file.path(INF,"coffeeprot","protein_annotated.csv")) %>%
+                      select(varID,ID,HPA_IF_protein_location,CP_loc,inDGIdb) %>%
+                      mutate(gene=toupper(ID)) %>%
+                      left_join(gap::inf1[c("gene","target.short")]) %>%
+                      rename(Protein=target.short) %>%
+                      select(-c(varID,ID,gene))
+pqtl_annotation <- read.csv(file.path(INF,"coffeeprot","table_qtl_processed.csv")) %>%
+                   rename(gene=gene_symbol) %>%
+                   left_join(gap::inf1[c("gene","target.short")]) %>%
+                   rename(Protein=target.short) %>%
+                   select(-pvalue)
+
 pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),
              within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid")
 data.frame(table(subset(pav,cis.trans=="cis")$Consequence))
@@ -104,13 +119,13 @@ outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
                "pqtls","cojo","knownpqtls","pqtlstudies","smr","coloc","cs95","pqtldisease",
                "vep","great3","garfield",
                "mr_immun","mr","mr_misc","gsmr","drug",
-               "gdb","at1","at2","at3","reactome","great","efo")
+               "gdb","at1","at2","at3","reactome","great","efo", "protein_correlation", "protein_annotation", "pqtl_annotation")
 titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
             "pQTLs","conditional analysis",
             "known pQTLs","previous pQTL studies","SMR","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
             "VEP annotation","IL12B-KITLG-TNFSF10","GARFIELD outputs",
             "pQTL-immune-MR","MR results","pQTL-misc-MR","GSMR-FEV1CVD","PI drug",
-            "geneDrugbank","AnnoTrans-1","AnnoTrans-2","AnnoTrans-3","Reactome","GREAT","EFO")
+            "geneDrugbank","AnnoTrans-1","AnnoTrans-2","AnnoTrans-3","Reactome","GREAT","EFO","Protein correlation","Protein annotation","pQTL annotation")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
