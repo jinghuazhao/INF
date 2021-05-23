@@ -81,6 +81,8 @@ pqtl_annotation <- read.csv(file.path(INF,"coffeeprot","table_qtl_processed.csv"
                    left_join(gap::inf1[c("gene","target.short")]) %>%
                    rename(Protein=target.short) %>%
                    select(-pvalue)
+protein_annotation <- protein_annotation %>% select(Protein,names(protein_annotation))
+pqtl_annotation <- pqtl_annotation %>% select(Protein,names(pqtl_annotation))
 
 pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),
              within(vep,{prot_rsid=paste0(Protein,"-",vep[["#Uploaded_variation"]])}),by="prot_rsid")
