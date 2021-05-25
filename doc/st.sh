@@ -4,6 +4,8 @@ git add .gitignore
 git commit -m ".gitignore"
 git add README.md
 git commit -m "README"
+git add index.html
+git commit -m "index.html"
 git add doc
 git commit -m "Documents and auxiliary files"
 git add cardio
