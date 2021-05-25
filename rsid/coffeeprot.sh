@@ -70,3 +70,12 @@ for suffix in ct intra ve vi
 do
   convert \( mhtplot-${suffix}.png -append edges-${suffix}.png -append proteins-${suffix}.png -append \) +append mep-${suffix}.png
 done
+
+function IL12B_KITLG_TNFSF10()
+{
+  export dir=${INF}/coffeeprot
+  export name=IL12B-KITLG-TNFSF10
+  awk 'NR==1||/IL12B|KITLG|TNFSF10/' ${dir}/interval.csv > ${dir}/protein-${name}.csv
+  awk 'NR==1||/IL12B|KITLG|TNFSF10/' ${dir}/pqtl.csv > ${dir}/pqtl-${name}.csv
+  awk 'NR==1||/IL-12B|SCF|TRAIL/' ${dir}/qtl.csv > ${dir}/qtl-${name}.csv
+}
