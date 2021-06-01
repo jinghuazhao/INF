@@ -207,7 +207,7 @@ function scaled_assoc()
  '
 }
 
-function tbi()
+function tbi_INF()
 # to generate tbl.gz/tbl.gz.tbi from ${INF}/METAL
 {
   export rt=${INF}/METAL
@@ -224,4 +224,12 @@ function tbi()
     bgzip -f > {}.tbl.gz; \
     tabix -f -S1 -s1 -b2 -e2 {}.tbl.gz
   '
+}
+
+function tbi_INTERVAL()
+{
+  cd ${INF}/sumstats
+  ls INTERVAL/ | sed 's/INTERVAL.//;s/.gz//' | parallel -j15 -C' ' 'gunzip -c INTERVAL/INTERVAL.{}.gz | bgzip -f > INTERVAL.{}.gz'
+  mv INTERVAL.* INTERVAL
+  ls INTERVAL/ | sed 's/INTERVAL.//;s/.gz//' | parallel -j15 -C' ' 'tabix -f -S1 -s2 -b3 -e3 INTERVAL/INTERVAL.{}.gz'
 }

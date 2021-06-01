@@ -19,5 +19,5 @@ outcome <- extract_outcome_data(exposure$SNP, outcomes, proxies = 1, rsq = 0.8, 
 harmonise <- harmonise_data(exposure, outcome, action = 2)
 prefix <- file.path(outdir,paste0(outcomes,"-",prot,"-",type))
 pdf(paste0(prefix,".pdf"))
-run_TwoSampleMR(harmonise, mr_plot="New", prefix=prefix)
+run_TwoSampleMR(harmonise, mr_plot="pQTLtools", prefix=prefix)
 dev.off()
