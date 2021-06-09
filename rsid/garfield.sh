@@ -155,31 +155,25 @@ END
 ) | grep -v options | awk 'NR==1 || (NR>1 && !/OR/)' > ${INF}/garfield/garfield-3.txt
 
 R --no-save -q <<END
-  library(dplyr)
-  INF <- Sys.getenv("INF")
-  INF1 <- read.table(file.path(INF,"garfield-data","output","INF1","garfield.test.INF1.out"),header=TRUE) %>%
-          filter(Pvalue<=1e-6 & !is.na(Tissue)) %>%
-          mutate(ID=paste(Tissue,sep=":",if_else(Category=="Hotspots","HS","HM")),logOR=log(OR),index=1:n(),prot="") %>%
-          arrange(desc(Category))
-  prot3 <- read.table(file.path(INF,"garfield","garfield-3.txt"),header=TRUE) %>%
-           mutate(prot=if_else(prot=="FGF.5","FGF-5",prot),
-                  ID=paste(prot,sep=":",Tissue,if_else(Category=="Hotspots","HS","HM")),logOR=log(OR),index=1:n())
-  png(file.path(INF,"garfield","garfield.png"),res=300,height=10,width=18,units="in")
-  par(mfrow=c(1,2))
-  with(INF1,gap::ESplot(INF1[c("ID","logOR","CI95_lower","CI95_upper")],SE=FALSE,logscale=FALSE,xlim=c(0.1,0.9),v=0))
-  title("All protein effects")
-  with(prot3,gap::ESplot(prot3[c("ID","logOR","CI95_lower","CI95_upper")],SE=FALSE,logscale=FALSE,xlim=c(-0.5,5.5),v=10))
-  title("Protein specific effects")
-  dev.off()
+  testfun <- function()
+  {
+  # clear but less elegant.
+    par(mfrow=c(1,2))
+    with(INF1,gap::ESplot(INF1[c("ID","logOR","CI95_lower","CI95_upper")],SE=FALSE,logscale=FALSE,xlim=c(0.1,0.9),v=0))
+    title("All protein effects")
+    with(prot3,gap::ESplot(prot3[c("ID","logOR","CI95_lower","CI95_upper")],SE=FALSE,logscale=FALSE,xlim=c(-0.5,5.5),v=10))
+    title("Protein specific effects")
+  }
 #
   library(ggplot2)
   esplot <- function(data,sep,xlim,breaks,title)
   {
+  # Somehow there are extra empty lines.
     p <- ggplot(data=data, aes(y=index, x=Beta, xmin=CI95_lower, xmax=CI95_upper))+
     geom_point()+
     geom_errorbarh()+
     scale_x_continuous(limits = xlim, breaks = breaks, name=expression(""))+
-    scale_y_continuous(name = "", breaks=with(data,index), labels = with(data,paste(prot,sep,Tissue)), trans="reverse")+
+    scale_y_continuous(name = "", breaks=with(data,index), labels = with(data,ID), trans="reverse")+
     geom_vline(xintercept=0, color="black", linetype="dashed", alpha=.5)+
     facet_grid(Category~., scales= "free", space="free")+
     ggtitle(title)+
@@ -188,7 +182,23 @@ R --no-save -q <<END
     theme(panel.spacing = unit(1, "lines"))
     p
   }
-  esplot(prot3,sep="-",xlim=c(-0.5,6),breaks=seq(-0.5,5.5,by=0.5),title="Protein-specific effects")
-  esplot(INF1,sep="",xlim=c(-0.1,1.5),breaks=seq(-0.1,0.85,0.05),title="All protein effects")
+  INF <- Sys.getenv("INF")
+  library(dplyr)
+  library(ggforestplot)
+  library(ggplot2)
+  INF1 <- read.table(file.path(INF,"garfield-data","output","INF1","garfield.test.INF1.out"),header=TRUE) %>%
+          filter(Pvalue<=1e-6 & !is.na(Tissue)) %>%
+          mutate(ID=paste(Tissue,Celltype,sep=":",if_else(Category=="Hotspots","HS","HM")),logOR=log(OR),index=1:n(),prot="") %>%
+          arrange(desc(Category))
+  prot3 <- read.table(file.path(INF,"garfield","garfield-3.txt"),header=TRUE) %>%
+           mutate(prot=if_else(prot=="FGF.5","FGF-5",prot),
+                  ID=paste(prot,sep=":",Tissue,Celltype,if_else(Category=="Hotspots","HS","HM")),logOR=log(OR),index=1:n())
+# p1 <- esplot(INF1,sep="",xlim=c(-0.1,1.5),breaks=seq(-0.1,0.85,0.2),title="All protein effects")
+# p2 <- esplot(prot3,sep="-",xlim=c(-0.5,6),breaks=seq(-0.5,5.5,by=2),title="Protein-specific effects")
+#
+  p1 <- ggforestplot::forestplot(INF1, name = ID, estimate = Beta, se = SE)
+  p2 <- ggforestplot::forestplot(prot3, name = ID, estimate = Beta, se = SE)
+  ggsave(p1,filename=file.path(INF,"garfield","garfield-INF1.png"),device="png")
+  ggsave(p2,filename=file.path(INF,"garfield","garfield-prot.png"),device="png")
 END
 }

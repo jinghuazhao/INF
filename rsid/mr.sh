@@ -116,6 +116,46 @@ function collect()
   }' ${INF}/mr/*result | \sed 's/|| id:/\t/' | xsel -i
 }
 
+R --no-save -q <<END
+   library(dplyr)
+   library(ggforestplot)
+   select <- function(cistrans)
+   {
+      d <- read.delim(file.path(INF,"mr","efo-result.txt")) %>%
+           filter(exposure=="IL.12B" & cistrans==cistrans) %>%
+           mutate(pos=str_locate(outcome,"[|]{1}")-2) %>%
+           mutate(disorder=substr(outcome,1,pos[,1]))
+      forestplot(d, name=disorder, estimate=b, se=se, pvalue=pval) +
+      xlab("Effect size")
+   }
+   options(width=120)
+   INF <- Sys.getenv("INF")
+   select("cis")
+   select("trans")
+   select("pan")
+   efo <- read.delim(file.path(INF,"rsid","efo.txt")) %>%
+          mutate(x=1:n()) %>%
+          select(MRBASEID,trait,x)
+   d3 <- read.delim(file.path(INF,"mr","efo-result.txt")) %>%
+         filter(exposure=="IL.12B") %>%
+         mutate(MRBASEID=unlist(lapply(strsplit(outcome,"id:"),"[",2)),y=b) %>%
+         select(-outcome,-method) %>%
+         left_join(efo) %>%
+         arrange(trait)
+   p <- ggplot(d3,aes(y = trait, x = y))+
+   theme_bw()+
+   geom_point()+
+   facet_wrap(~cistrans,ncol=3)+
+   geom_segment(aes(x = b-1.96*se, xend = b+1.96*se, yend = trait))+
+   geom_vline(lty=2, aes(xintercept=0), colour = 'red')+
+   xlab("Effect size")+
+   ylab("Trait")
+   ggsave(p,filename=file.path(INF,"mr","mr-IL.12B.png"),device="png")
+END
+# d3[d3$cistrans=="pan","trait"] <- d3[d3$cistrans=="pan","x"]
+# d3[d3$cistrans=="trans","trait"] <- d3[d3$cistrans=="trans","x"]
+# unlist(gregexpr("[|]{1}","abc||"))
+#  
 # uncomment if clumping outside TwoSampleMR:
 # cut -f3 mr/{2}-${suffix}.mri > mr/{2}-${suffix}.mrs
 # plink --bfile INTERVAL/cardio/INTERVAL --extract mr/{2}-${suffix}.mrs \
