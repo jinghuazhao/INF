@@ -118,21 +118,8 @@ function collect()
 
 R --no-save -q <<END
    library(dplyr)
-   library(ggforestplot)
-   select <- function(cistrans)
-   {
-      d <- read.delim(file.path(INF,"mr","efo-result.txt")) %>%
-           filter(exposure=="IL.12B" & cistrans==cistrans) %>%
-           mutate(pos=str_locate(outcome,"[|]{1}")-2) %>%
-           mutate(disorder=substr(outcome,1,pos[,1]))
-      forestplot(d, name=disorder, estimate=b, se=se, pvalue=pval) +
-      xlab("Effect size")
-   }
    options(width=120)
    INF <- Sys.getenv("INF")
-   select("cis")
-   select("trans")
-   select("pan")
    efo <- read.delim(file.path(INF,"rsid","efo.txt")) %>%
           mutate(x=1:n()) %>%
           select(MRBASEID,trait,x)
@@ -151,6 +138,16 @@ R --no-save -q <<END
    xlab("Effect size")+
    ylab("Trait")
    ggsave(p,filename=file.path(INF,"mr","mr-IL.12B.png"),device="png")
+   library(ggforestplot)
+   select <- function(cistrans)
+   {
+      d <- filter(d3,cistrans==cistrans)
+      forestplot(d, name=trait, estimate=b, se=se, pvalue=pval) +
+      xlab("Effect size")
+   }
+   select("cis")
+   select("trans")
+   select("pan")
 END
 # d3[d3$cistrans=="pan","trait"] <- d3[d3$cistrans=="pan","x"]
 # d3[d3$cistrans=="trans","trait"] <- d3[d3$cistrans=="trans","x"]
