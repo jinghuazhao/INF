@@ -118,6 +118,7 @@ function collect()
 
 R --no-save -q <<END
    library(dplyr)
+   library(ggplot2)
    options(width=120)
    INF <- Sys.getenv("INF")
    efo <- read.delim(file.path(INF,"rsid","efo.txt")) %>%
@@ -125,18 +126,21 @@ R --no-save -q <<END
           select(MRBASEID,trait,x)
    d3 <- read.delim(file.path(INF,"mr","efo-result.txt")) %>%
          filter(exposure=="IL.12B") %>%
-         mutate(MRBASEID=unlist(lapply(strsplit(outcome,"id:"),"[",2)),y=b) %>%
+         mutate(MRBASEID=unlist(lapply(strsplit(outcome,"id:"),"[",2)),y=b,
+                col=case_when(cistrans=="cis" ~ "red",
+                              cistrans=="trans" ~ "blue",
+                              cistrans=="pan" ~ "black")) %>%
          select(-outcome,-method) %>%
          left_join(efo) %>%
          arrange(trait)
    p <- ggplot(d3,aes(y = trait, x = y))+
    theme_bw()+
    geom_point()+
-   facet_wrap(~cistrans,ncol=3)+
-   geom_segment(aes(x = b-1.96*se, xend = b+1.96*se, yend = trait))+
-   geom_vline(lty=2, aes(xintercept=0), colour = 'red')+
+   facet_wrap(~cistrans,ncol=3,scales="free_x")+
+   geom_segment(aes(x = b-1.96*se, xend = b+1.96*se, yend = trait, colour=cistrans), show.legend=FALSE)+
+   geom_vline(lty=2, aes(xintercept=0), colour = "red")+
    xlab("Effect size")+
-   ylab("Trait")
+   ylab("")
    ggsave(p,filename=file.path(INF,"mr","mr-IL.12B.png"),device="png")
    library(ggforestplot)
    select <- function(cistrans)
