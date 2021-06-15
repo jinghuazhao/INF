@@ -18,7 +18,7 @@ N <- Sys.getenv("N")
 
 MR <- function(clumping=TRUE, r2=0.001)
 {
-  y <- within(read.delim(file.path(INF,"HGI","mr",id3)), {outcome=prot})
+  y <- within(read.delim(file.path(INF,"HGI","mr","tsv",id3)), {outcome=prot})
   if (nrow(y)<=1) return (-1)
   o <- format_data(y, type="outcome", header = TRUE, phenotype_col = "outcome", snp_col = "rsid",
                    effect_allele_col = "ALT", other_allele_col = "REF",

@@ -7,11 +7,12 @@ function _outcome_r6()
   export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20210415/results/20210614/
   export TMPDIR=${HPC_WORK}/work
   export b38tob37=~/hpc-work/bin/hg38ToHg19.over.chain.gz
-  for trait in A2 B2 C2
+  for trait in A2 B1 B2 C2
   do
     export trait=${trait}
     export src=${HGI}/COVID19_HGI_${trait}_ALL_leave_23andme_20210607.txt.gz
     if [ ${trait} == "A2" ]; then export fields=82-91
+    elif [ ${trait} == "B1" ]; then export fields=76-85
     elif [ ${trait} == "B2" ]; then export fields=136-145
     elif [ ${trait} == "C2" ]; then export fields=229-238
     fi
@@ -63,7 +64,7 @@ _ins
 
 function _exposure_tsv()
 {
-  for trait in A2 B2 C2
+  for trait in A2 B1 B2 C2
   do
     export trait=${trait}
     cut -f5,6,8,9 --output-delimiter=' ' ${INF}/work/INF1.merge-rsid | \
@@ -78,7 +79,7 @@ function _exposure_tsv()
       join -23 ${INF}/work/INTERVAL.rsid - | \
       awk -v prot={1} "a[\$2]++==0{\$1=prot;print}" | \
       tr " " "\t"
-    ) | gzip -f > ${INF}/HGI/mr/${trait}-{1}-{2}.tsv.gz
+    ) | gzip -f > ${INF}/HGI/mr/tsv/r6-${trait}-{1}-{2}.tsv.gz
     '
   done
 }
@@ -86,7 +87,7 @@ _exposure_tsv
 
 module load gcc/6
 
-for trait in A2 B2 C2
+for trait in A2 B1 B2 C2
 do
   export trait=${trait}
   sed '1d' ${INF}/HGI/mr/INF.ins | \
@@ -97,30 +98,6 @@ do
     R --no-save < ${INF}/rsid/HGI.R
   '
 done
-
-function _exposure_METAL()
-{
-  for trait in A2 B2 C2
-  do
-    export trait=${trait}
-    cut -f5,6,8,9 --output-delimiter=' ' ${INF}/work/INF1.merge-rsid | \
-    sed '1d' | \
-    parallel -j15 --env trait -C' ' '
-      gunzip -c ${INF}/METAL/{1}-1.tbl.gz | \
-      cut -f1-6,10-12,18 | \
-      awk -vchr={3} -vpos={4} -vM=1e6 "\$1==chr && \$2>=pos-M && \$2 <= pos+M" > ${INF}/HGI/mr/${trait}-{1}-{2}.mri
-      (
-        echo -e "prot\trsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
-        awk "{\$4=toupper(\$4);\$5=toupper(\$5);print}" ${INF}/HGI/mr/${trait}-{1}-{2}.mri | \
-        sort -k3,3 | \
-        join -23 ${INF}/work/INTERVAL.rsid - | \
-        awk -v prot={1} "a[\$2]++==0{\$1=prot;print}" | \
-        tr " " "\t"
-      ) | gzip -f > ${INF}/HGI/mr/${trait}-{1}-{2}.mrx
-    '
-  done
-}
-_exposure_METAL
 
 function MR_collect()
 {
@@ -134,6 +111,8 @@ function pqtlMR_collect()
   awk -vOFS="\t" '{gsub(/-/,"\t",$1)};1' | \
   xsel -i
 }
+
+# --- optional replacement ---
 
 function etc()
 {
@@ -197,3 +176,27 @@ function _exposure_vcf()
     '
   done
 _exposure_vcf
+
+function _exposure_METAL()
+{
+  for trait in A2 B2 C2
+  do
+    export trait=${trait}
+    cut -f5,6,8,9 --output-delimiter=' ' ${INF}/work/INF1.merge-rsid | \
+    sed '1d' | \
+    parallel -j15 --env trait -C' ' '
+      gunzip -c ${INF}/METAL/{1}-1.tbl.gz | \
+      cut -f1-6,10-12,18 | \
+      awk -vchr={3} -vpos={4} -vM=1e6 "\$1==chr && \$2>=pos-M && \$2 <= pos+M" > ${INF}/HGI/mr/${trait}-{1}-{2}.mri
+      (
+        echo -e "prot\trsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
+        awk "{\$4=toupper(\$4);\$5=toupper(\$5);print}" ${INF}/HGI/mr/${trait}-{1}-{2}.mri | \
+        sort -k3,3 | \
+        join -23 ${INF}/work/INTERVAL.rsid - | \
+        awk -v prot={1} "a[\$2]++==0{\$1=prot;print}" | \
+        tr " " "\t"
+      ) | gzip -f > ${INF}/HGI/mr/${trait}-{1}-{2}.mrx
+    '
+  done
+}
+_exposure_METAL
