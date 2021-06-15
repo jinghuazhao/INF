@@ -135,10 +135,10 @@ R --no-save -q <<END
          arrange(trait)
    p <- ggplot(d3,aes(y = trait, x = y))+
    theme_bw()+
-   geom_point()+
    facet_wrap(~cistrans,ncol=3,scales="free_x")+
    geom_segment(aes(x = b-1.96*se, xend = b+1.96*se, yend = trait, colour=cistrans), show.legend=FALSE)+
    geom_vline(lty=2, aes(xintercept=0), colour = "red")+
+   geom_point()+
    xlab("Effect size")+
    ylab("")
    ggsave(p,filename=file.path(INF,"mr","mr-IL.12B.png"),device="png")
