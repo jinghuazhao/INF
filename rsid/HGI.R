@@ -19,7 +19,7 @@ N <- Sys.getenv("N")
 MR <- function(clumping=TRUE, r2=0.001)
 {
   y <- within(read.delim(file.path(INF,"HGI","mr",id3)), {outcome=prot})
-  if (nrow(y)<=1) return
+  if (nrow(y)<=1) return (-1)
   o <- format_data(y, type="outcome", header = TRUE, phenotype_col = "outcome", snp_col = "rsid",
                    effect_allele_col = "ALT", other_allele_col = "REF",
                    eaf_col = "all_meta_AF", 
@@ -35,13 +35,13 @@ MR <- function(clumping=TRUE, r2=0.001)
   if (clumping)
   {
     e <- clump_data(e,clump_r2 = r2)
-    if (nrow(e)==0) return
+    if (nrow(e)==0) return (-2)
   }
   d <- merge(e,o,by="SNP")
-  if (nrow(d)<=1) return
+  if (nrow(d)<=1) return (-3)
   e <- subset(e,SNP%in%d[["SNP"]])
   o <- subset(o,SNP%in%d[["SNP"]])
-  if (nrow(e)==0 | nrow(o)==0) return
+  if (nrow(e)==0 | nrow(o)==0) return (-4)
   dat <- harmonise_data(e, o, action = 1)
   cat(nrow(dat), "\n")
   result <- mr(dat)
