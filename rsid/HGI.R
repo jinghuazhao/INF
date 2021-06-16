@@ -1,24 +1,45 @@
-options(width=500, echo=FALSE)
-library(dplyr)
-library(pQTLtools)
-library(TwoSampleMR)
-
-INF <- Sys.getenv("INF")
-trait <- Sys.getenv("trait"); prot <- Sys.getenv("prot"); rsid <- Sys.getenv("rsid");
-id3 <- paste(trait,prot,rsid,sep="-")
-cat(id3,"\n",sep="")
-
-Allele1 <- Sys.getenv("Allele1")
-Allele2 <- Sys.getenv("Allele2")
-EAF <- Sys.getenv("EAF")
-Effect <- Sys.getenv("Effect")
-StdErr <- Sys.getenv("StdErr")
-P <- Sys.getenv("P")
-N <- Sys.getenv("N")
+pqtlMR <- function(r2=0.001)
+{
+  cat(id3,"\n")
+  y <- within(read.delim(file.path(INF,"HGI","mr",paste0(id3,".gz"))),{outcome=prot})
+  o <- format_data(y, type="outcome", header = TRUE, phenotype_col = "outcome", snp_col = "rsid",
+                   effect_allele_col = "ALT", other_allele_col = "REF",
+                   eaf_col = "all_meta_AF", 
+                   beta_col = "all_inv_var_meta_beta",
+                   se_col = "all_inv_var_meta_sebeta",
+                   pval_col = "all_inv_var_meta_p", log_pval = FALSE,
+                   samplesize_col = "all_meta_sample_N")
+  Allele1 <- Sys.getenv("Allele1")
+  Allele2 <- Sys.getenv("Allele2")
+  EAF <- as.numeric(Sys.getenv("EAF"))
+  Effect <- as.numeric(Sys.getenv("Effect"))
+  StdErr <- as.numeric(Sys.getenv("StdErr"))
+  P <- as.numeric(Sys.getenv("P"))
+  N <- as.integer(Sys.getenv("N"))
+  x <- data.frame(prot,SNP=rsid,Allele1,Allele2,EAF,Effect,StdErr,P,N)
+  e <- format_data(x, type="exposure", header = TRUE, phenotype_col="prot", snp_col = "SNP",
+                   effect_allele_col = "Allele1", other_allele_col = "Allele2",
+                   eaf_col = "EAF", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
+                   samplesize_col = "N")
+  print(head(e))
+  print(head(o))
+  dat <- harmonise_data(e, o, action = 1)
+  result <- mr(dat)
+  heterogeneity <- mr_heterogeneity(dat)
+  pleiotropy <- mr_pleiotropy_test(dat)
+  single <- mr_singlesnp(dat)
+  loo <- mr_leaveoneout(dat)
+  prefix <- paste0("pqtlMR-",id3)
+  invisible(lapply(c("result","heterogeneity","pleiotropy","single","loo"), function(x) {
+                  v <- lapply(x, function(x) tryCatch(get(x), error=function(e) NULL))[[1]]
+                  if (!is.null(v)) write.table(format(v,digits=3),file=file.path(INF,"HGI","mr",paste0(prefix,"-",x,".txt")),
+                                               quote=FALSE,row.names=FALSE,sep="\t")
+             }))
+}
 
 MR <- function(clumping=TRUE, r2=0.001)
 {
-  y <- within(read.delim(file.path(INF,"HGI","mr","tsv",id3)), {outcome=prot})
+  y <- within(read.delim(file.path(INF,"HGI","mr",paste0(id3,".gz"))), {outcome=prot})
   if (nrow(y)<=1) return (-1)
   o <- format_data(y, type="outcome", header = TRUE, phenotype_col = "outcome", snp_col = "rsid",
                    effect_allele_col = "ALT", other_allele_col = "REF",
@@ -27,7 +48,7 @@ MR <- function(clumping=TRUE, r2=0.001)
                    se_col = "all_inv_var_meta_sebeta",
                    pval_col = "all_inv_var_meta_p", log_pval = FALSE,
                    samplesize_col = "all_meta_sample_N")
-  x <- read.delim(file.path(INF,"HGI","mr",paste0(id3,".tsv.gz")))
+  x <- read.delim(file.path(INF,"HGI","mr","tsv",paste0(id3,".tsv.gz")))
   e <- format_data(x, type="exposure", phenotype_col="prot", header = TRUE, snp_col = "rsid",
                    effect_allele_col = "Allele1", other_allele_col = "Allele2",
                    eaf_col = "Freq1", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
@@ -57,37 +78,15 @@ MR <- function(clumping=TRUE, r2=0.001)
          }))
 }
 
-pqtlMR <- function(r2=0.001)
-{
-  cat(id3,"\n")
-  e <- format_data(data.frame(SNP=rsid,Allele1,Allele2,EAF,Effect,StdErr,P,N), type="exposure", header = TRUE, snp_col = "SNP",
-                   effect_allele_col = "Allele1", other_allele_col = "Allele2",
-                   eaf_col = "EAF", beta_col = "Effect", se_col = "StdErr", pval_col = "P", log_pval = FALSE,
-                   samplesize_col = "N")
-  d <- within(read.delim(file.path(INF,"HGI","mr",id3)),{outcome=prot})
-  o <- format_data(d, type="outcome", header = TRUE,  phenotype_col = "outcome", snp_col = "rsid",
-                   effect_allele_col = "ALT", other_allele_col = "REF",
-                   eaf_col = "all_meta_AF", 
-                   beta_col = "all_inv_var_meta_beta",
-                   se_col = "all_inv_var_meta_sebeta",
-                   pval_col = "all_inv_var_meta_p", log_pval = FALSE,
-                   samplesize_col = "all_meta_sample_N")
-  outcome_dat <- clump_data(o,clump_r2 = r2)
-  if (nrow(e) != nrow(subset(o,SNP==rsid))) return
-  dat <- harmonise_data(e, subset(o,SNP==rsid), action = 1)
-  directionality <- directionality_test(dat)
-  result <- mr(dat)
-  heterogeneity <- mr_heterogeneity(dat)
-  pleiotropy <- mr_pleiotropy_test(dat)
-  single <- mr_singlesnp(dat)
-  loo <- mr_leaveoneout(dat)
-  prefix <- paste0("pqtlMR-",id3)
-  invisible(lapply(c("directionality","result","heterogeneity","pleiotropy","single","loo"), function(x) {
-                  v <- lapply(x, function(x) tryCatch(get(x), error=function(e) NULL))[[1]]
-                  if (!is.null(v)) write.table(format(v,digits=3),file=file.path(INF,"HGI","mr",paste0(prefix,"-",x,".txt")),
-                                               quote=FALSE,row.names=FALSE,sep="\t")
-             }))
-}
+options(width=500, echo=FALSE)
+library(dplyr)
+library(pQTLtools)
+library(TwoSampleMR)
+
+INF <- Sys.getenv("INF")
+trait <- Sys.getenv("trait"); prot <- Sys.getenv("prot"); rsid <- Sys.getenv("rsid");
+id3 <- paste("r6",trait,prot,rsid,sep="-")
+cat(id3,"\n",sep="")
 
 MR()
 pqtlMR()
