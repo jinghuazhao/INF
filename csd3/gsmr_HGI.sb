@@ -5,7 +5,7 @@
 #SBATCH --job-name=_gsmr-HGI
 #SBATCH --time=12:00:00
 #SBATCH --partition=skylake
-#SBATCH --array=1-92%12
+#SBATCH --array=1-92
 #SBATCH --mem=128800
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_gsmr-hgi_%A_%a.out
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_gsmr-hgi_%A_%a.err
