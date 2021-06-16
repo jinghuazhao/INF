@@ -1,19 +1,13 @@
 #!/usr/bin/bash
 
-export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20201215/results/20210107/
-export A2=COVID19_HGI_A2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
-export B2=COVID19_HGI_B2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
-export C2=COVID19_HGI_C2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
-export A2=COVID19_HGI_A2_ALL_eur_leave_23andme_20210107.b37.txt.gz
-export B2=COVID19_HGI_B2_ALL_eur_leave_23andme_20210107.b37.txt.gz
-export C2=COVID19_HGI_C2_ALL_eur_leave_23andme_20210107.b37.txt.gz
-
-for trait in A2 B2 C2
+export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20210415/results/20210607
+for trait in A2 B1 B2 C2
 do
+  export src=${HGI}/COVID19_HGI_${trait}_ALL_leave_23andme_20210607.b37.txt.gz
   echo ${trait}
   (
     echo "SNP A1 A2 freq b se p N"
-    gunzip -c ${HGI}/COVID19_HGI_${trait}_ALL_eur_leave_23andme_20210107.b37.txt.gz | \
+    gunzip -c ${src} | \
     awk '
     {
       CHR=$1
@@ -22,7 +16,7 @@ do
       a2=$3
       if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
       else snpid="chr" CHR ":" POS "_" a1 "_" a2
-      if (NR>1) print snpid, a1, a2, $12, $7, $8, $9, $11
+      if (NR>1) print snpid, a1, a2, $14, $7, $8, $9, $10+$11
     }'
   ) | \
   awk 'a[$1]++==0' | \
@@ -38,7 +32,7 @@ R --no-save -q <<END
   gsmr[recolor,"col"] <- "red"
   n.prot <- nrow(gsmr)
   xtick <- seq(1,n.prot)
-  png(file.path(INF,"HGI","A2-B2-C2.gsmr.png"), res=300, units="cm", width=40, height=20)
+ png(file.path(INF,"HGI","A2-B2-C2.gsmr.png"), res=300, units="cm", width=40, height=20)
   with(gsmr, {
       par(mfrow=c(3,1))
       plot(-log10(p_A2), col=col, cex=2, pch=16, axes=FALSE, main="Critical illness (A2)", xlab="", ylab="", cex.lab=1)
@@ -85,3 +79,14 @@ END
 # gunzip -c $HGI/$C2 | head -1 | tr '\t' '\n' | awk '{print "#" NR,$1}'
 # export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20200915/results/20201020
 # gunzip -c $HGI/eur/COVID19_HGI_C2_ALL_eur_leave_23andme_20201020.b37.txt.gz | \
+
+function r5()
+{
+  export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20201215/results/20210107/
+  export A2=COVID19_HGI_A2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
+  export B2=COVID19_HGI_B2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
+  export C2=COVID19_HGI_C2_ALL_eur_leave_ukbb_23andme_20210107.b37.txt.gz
+  export A2=COVID19_HGI_A2_ALL_eur_leave_23andme_20210107.b37.txt.gz
+  export B2=COVID19_HGI_B2_ALL_eur_leave_23andme_20210107.b37.txt.gz
+  export C2=COVID19_HGI_C2_ALL_eur_leave_23andme_20210107.b37.txt.gz
+}
