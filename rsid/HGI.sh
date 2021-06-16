@@ -71,6 +71,19 @@ done
 sed 's|/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/HGI/mr/||;s|-result.txt||' | \
 awk -vOFS="\t" '{gsub(/-/,"\t",$1)};1' > ${INF}/HGI/mr.tsv
 
+cut -f3-5 --output-delimiter=" " ${INF}/HGI/mr.tsv | \
+parallel -C' ' 'awk -vtrait={1} -vprot={2} -vrsid={3} "\$2==rsid && \$3==prot {print trait,prot,rsid,\$4,\$5,\$21}" work/INF1.METAL' | \
+sort -k1,1 -k4,4n | \
+uniq
+
+R --no-save -q <<END
+  regions <- data.frame(chr="chr19",start=49206145,end=49206674)
+  job <- submitGreatJob(regions, species="hg19", version="3.0.0")
+  et <- getEnrichmentTables(job,download_by = 'tsv')
+  tb <- do.call('rbind',et)
+  write.table(tb,file=paste0("tb.tsv"),quote=FALSE,row.names=FALSE,sep="\t")
+END
+
 # --- optional replacement ---
 
 function etc()

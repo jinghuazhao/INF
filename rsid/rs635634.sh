@@ -4,20 +4,17 @@ export chr=9
 export start=136155000
 export end=136155000
 export M=1e6
+export r=$(awk 'BEGIN{start=ENVIRON["start"]-ENVIRON["M"];if(start<0) start=1;end=ENVIRON["end"]+ENVIRON["M"];print ENVIRON["chr"]":"start"-"end}')
 
 function lz()
 {
 # SCALLOP/INF
 for prot in CCL25 CX3CL1 LIF.R
 do
-  gunzip -c ${INF}/METAL/${prot}-1.tbl.gz | \
-  awk -vOFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} '
+  tabix ${INF}/METAL/gwas2vcf/${prot}.tsv.gz ${r} | \
+  awk '
   {
-    if ($1 == chr && $2 >= start - M && $2 <= end + M) 
-    {
-      split($3,a,"_")
-      print a[1],$1,$2,$10/$11,$3,toupper($4),toupper($5),$11
-    }
+    print "chr"$1":"$2,$1,$2,$7/$8,$3,toupper($4),toupper($5),$8
   }' | \
   sort -k1,1 | \
   join -12 -21 ${INF}/work/snp_pos - | \
@@ -25,15 +22,21 @@ do
 done
 
 # Covid-19
+# r5
 export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20201215/results/20210107
+export src=${HGI}/COVID19_HGI_${trait}_ALL_eur_leave_23andme_20210107.b37.txt.gz
+# r6
+export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20210415/results/20210607
 for trait in A2 B2 C2
 do
-   gunzip -c ${HGI}/COVID19_HGI_${trait}_ALL_eur_leave_23andme_20210107.b37.txt.gz | \
+   export trait=${trait}
+   export src=${HGI}/COVID19_HGI_${trait}_ALL_leave_23andme_20210607.b37.txt.gz
+   tabix ${src} ${r} | \
    awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
    {
      if ($3<$4) snpid="chr" $1 ":" $2 "_" $3 "_" $4;
      else snpid="chr" $1 ":" $2 "_" $4 "_" $3
-     if($1==chr && $2>=start-M && $2 <=end+M) print $13,$1,$2,$7/$8,snpid,$3,$4,$8
+     print $13,$1,$2,$7/$8,snpid,$3,$4,$8
    }' > ${INF}/HGI/HGI-${trait}.lz
 done
 }
