@@ -63,15 +63,13 @@ do
   '
 done
 
-function MR_collect()
-{
+(
+  awk -vOFS="\t" 'BEGIN{print "Method","Batch","Trait","Protein","pQTL","b","se","p"}'
   awk -vOFS="\t" '/Inverse/ && $NF<0.05/180 {print FILENAME,$9,$10,$11}' ${INF}/HGI/mr/MR*r6*result*
-}
-
-function pqtlMR_collect()
-{
   awk -vOFS="\t" '$NF<0.05/180 {print FILENAME,$8,$9,$10}' ${INF}/HGI/mr/pqtl*r6*result*
-}
+) | \
+sed 's|/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/HGI/mr/||;s|-result.txt||' | \
+awk -vOFS="\t" '{gsub(/-/,"\t",$1)};1' > ${INF}/HGI/mr.tsv
 
 # --- optional replacement ---
 

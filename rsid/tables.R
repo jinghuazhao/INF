@@ -1,6 +1,8 @@
 options(width=2000)
 require(openxlsx)
 url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
+INF <- Sys.getenv("INF")
+url <- file.path(INF,"work","INF1.latest.xlsx")
 read.sheet <- function(sheet,cols,rows) read.xlsx(url,sheet=sheet,colNames=TRUE,cols=cols,rows=rows,skipEmptyRows=TRUE)
 require(dplyr)
 require(stringr)
@@ -44,7 +46,6 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:3017) %>%
      at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2"); #names(at2) <- replace(names(at2),grepl("^[X]",names(at2)),"")
      at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
 
-INF <- Sys.getenv("INF")
 great3 <- read.delim(file.path(INF,"GREAT","IL12B-KITLG-TNFSF10.tsv")) %>%
           mutate(flag=if_else(BinomP<1e-4,"x","")) %>% arrange(desc(flag))
 great <- read.delim(file.path(INF,"GREAT","cistrans.tsv")) %>%
@@ -97,6 +98,7 @@ rownames(pqtlstudies) <- seq(nrow(pqtlstudies))
 options("openxlsx.borderColour"="#4F80BD")
 hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
 url <- "https://jhz22.user.srcf.net/pqtl-immune_infection_edited.xlsx"
+url <- file.path(INF,"work","pqtl-immune_infection_edited.xlsx")
 credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c("prot","MarkerName","CredibleSet"),sep="\t")
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
          rename(Protein=prot) %>% mutate(prots=Protein,Protein=target.short) %>% select(-target.short)
@@ -117,23 +119,24 @@ HOME <- Sys.getenv("HOME")
 load(file.path(HOME,"software-notes","docs","files","pi_database.rda"))
 drug <- subset(pi_drug,target%in%with(gap::inf1,gene)) %>% left_join(pi_trait)
 efo <- read.delim(file.path(INF,"rsid","efo.txt"))
+hgi <- read.delim(file.path(INF,"HGI","mr.tsv"))
 
 outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
                "pqtls","cojo","knownpqtls","pqtlstudies","smr","coloc","cs95","pqtldisease",
                "vep","great3","garfield",
-               "mr_immun","mr","mr_misc","gsmr","drug",
+               "mr_immun","mr","mr_misc","gsmr","hgi","drug",
                "gdb","at1","at2","at3","reactome","great","efo", "protein_correlation", "protein_dgi", "pqtl_impact")
 titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
             "pQTLs","conditional analysis",
             "known pQTLs","previous pQTL studies","SMR","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
             "VEP annotation","IL12B-KITLG-TNFSF10","GARFIELD outputs",
-            "pQTL-immune-MR","MR results","pQTL-misc-MR","GSMR-FEV1CVD","PI drug",
+            "pQTL-immune-MR","MR results","pQTL-misc-MR","GSMR-FEV1CVD","HGI r6","PI drug",
             "geneDrugbank","AnnoTrans-1","AnnoTrans-2","AnnoTrans-3","Reactome","GREAT","EFO","Protein correlation","DGI membership", "pQTL impact")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
 n0 <- 7
-n1 <- 17
+n1 <- 18
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
             paste0("ST",1:n1),
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
