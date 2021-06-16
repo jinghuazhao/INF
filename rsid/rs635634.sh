@@ -113,21 +113,14 @@ END
 done
 }
 
-function ma()
-(
-  gunzip -c ${INF}/HGI/gsmr_C2.txt.gz | head -1
-  gunzip -c ${INF}/HGI/gsmr_C2.txt.gz | sed '1d' | sort -k1,1 | join <(gunzip -c ~/SUMSTATS/snp150.snpid_rsid.gz) - | \
-  cut -d' ' -f1 --complement
-) > ${INF}/HGI/gcta_C2.ma
-
 mvmr > ${INF}/HGI/rs635634-A2-B2-C2.out
 
 R --no-save <<END
+  options(width=200)
   library(ieugwasr)
   # GET
   api_query("associations/prot-a-1737/rs635634")
   # POST
-  api_query("associations", query=list(rsid="rs635634", id="prot-a-1737"))
   associations(variants="rs635634", id=c("prot-a-1737"))
   rs635634 <- subset(data.frame(phewas(variants="rs635634", pval=5e-8)),grepl("prot",id))
   library(pQTLtools)
@@ -136,3 +129,10 @@ R --no-save <<END
   gwasinfo(with(d,id))
   data.frame(ieugwasr::afl2_rsid(c("rs635634")))
 END
+
+function ma()
+(
+  gunzip -c ${INF}/HGI/gsmr_C2.txt.gz | head -1
+  gunzip -c ${INF}/HGI/gsmr_C2.txt.gz | sed '1d' | sort -k1,1 | join <(gunzip -c ~/SUMSTATS/snp150.snpid_rsid.gz) - | \
+  cut -d' ' -f1 --complement
+) > ${INF}/HGI/gcta_C2.ma
