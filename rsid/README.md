@@ -94,4 +94,13 @@ wgcna.sh | experiment on modules
 4. MS.sh (two-sample MRs)
 5. OPG-TRANCE.sh
 
-*Date last changed:* **14/4/2021**
+### Nested PGS model
+
+The figure ![grViz.png](grViz.png) is obtained with [grViz.gv](grViz.gv) and RStudio; a somewhat smaller size could also be obtained with
+
+```bash
+dot -Tpdf grViz.gv -ogrViz.pdf
+```
+for a PDF version.
+
+*Date last changed:* **17/6/2021**
