@@ -104,7 +104,7 @@ The figure is obtained with
 
 ```bash
 dot -Tpng grViz.gv -ogrViz.png
-``
+```
 which also be  obtained from RStudio for somewhat larger size.
 
 *Date last changed:* **17/6/2021**
