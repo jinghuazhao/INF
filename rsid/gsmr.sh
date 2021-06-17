@@ -33,7 +33,7 @@ join work/INTERVAL.rsid - > ${INF}/gsmr/INF1_CAD-FEV1.snp_effects
   cut -d' ' -f2,6,7,8,9,16,17 ${INF}/gsmr/INF1_CAD-FEV1.snp_effects
 ) > ${INF}/gsmr/INF1_CAD-FEV1.gsmr
 
-for trait in A2 B2 C2
+for trait in A2 B1 B2 C2
 do
   if [ -f ${INF}/HGI/INF1_${trait}.gsmr ]; then rm ${INF}/HGI/INF1_${trait}.gsmr; fi
   (
@@ -58,25 +58,25 @@ done
   awk '$3!="NA"'
 ) > ${INF}/HGI/A2-B2-C2.txt
 
-join -o1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8 \
-     <(gunzip -c ${INF}/HGI/gsmr_B2_LIF.R.eff_plot.gz | \
-       awk '/effect_begin/,/effect_end/' | \
-       grep -v effect) \
-     <(gunzip -c ${INF}/HGI/gsmr_C2_LIF.R.eff_plot.gz | \
-       awk '/effect_begin/,/effect_end/' | \
-       grep -v effect) | \
-join -a1 -e "NA" -o2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,1.14,1.15,1.16 \
-       - \
-       <(gunzip -c ${INF}/HGI/gsmr_A2_LIF.R.eff_plot.gz | \
-       awk '/effect_begin/,/effect_end/' | \
-       grep -v effect) | \
-awk '{$1=$9};1' | \
-join work/INTERVAL.rsid - > ${INF}/HGI/A2-B2-C2.snp_effects
+for trait in A2 B2 C2
+do
+  gunzip -c ${INF}/HGI/gsmr_${trait}_LIF.R.eff_plot.gz | \
+  awk '/effect_begin/,/effect_end/' | \
+  grep -v effect > ${INF}/HGI/gsmr_${trait}_LIF.R.dat
+done
 
-(
-  echo SNP b.LIF.R SE.LIF.R b.A2 SE.A2 b.B2 SE.B2 b.C2 SE.C2
-  cut -d' ' -f2,6,7,8,9,16,17,24,25 ${INF}/HGI/A2-B2-C2.snp_effects
-) > ${INF}/HGI/INF1_A2-B2-C2.gsmr
+R --no-save -q <<END
+  options(width=200)
+  INF <- Sys.getenv("INF")
+  A2 <- read.table(file.path(INF,"HGI","gsmr_A2_LIF.R.dat"),col.names=c("snpid","A2.a1","A2.a2",paste0("x",1:5)))
+  B2 <- read.table(file.path(INF,"HGI","gsmr_B2_LIF.R.dat"),col.names=c("snpid","B2.a1","B2.a2",paste0("y",1:5)))
+  C2 <- read.table(file.path(INF,"HGI","gsmr_C2_LIF.R.dat"),col.names=c("snpid","C2.a1","C2.a2",paste0("z",1:5)))
+  A2_B2_C2 <- merge(merge(A2,B2,by="snpid",all=TRUE),C2,by="snpid",all=TRUE)
+  vars <- c("snpid",paste0("x",1:5),paste0("y",4:5),paste0("z",4:5))
+  snp_effects <- A2_B2_C2[vars]
+  names(snp_effects) <- c("SNP", "MAF.LIF.R", "b.LIF.R", "SE.LIF.R", "b.A2", "SE.A2", "b.B2", "SE.B2", "b.C2", "SE.C2")
+  write.table(snp_effects,file=file.path(INF,"HGI","INF1_A2-B2-C2.gsmr"),row.names=FALSE,quote=FALSE)
+END
 
 for ext in png tif
 do

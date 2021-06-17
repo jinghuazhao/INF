@@ -30,7 +30,7 @@ cad_fev1 <- function()
 
 abc <- function()
 {
-  hgi <- read.table(file.path(INF,"HGI-ukb","INF1_A2-B2-C2.gsmr"), header=TRUE)
+  hgi <- read.table(file.path(INF,"HGI","INF1_A2-B2-C2.gsmr"), header=TRUE)
   pdf(file.path(INF,"HGI","INF1_A2-B2-C2.pdf"))
   mr <- gsmr(hgi, "LIF.R", c("A2","B2","C2"))
   f <- file.path(INF,"HGI","INF1_A2-B2-C2.csv")
@@ -55,4 +55,4 @@ library(gap)
 INF <- Sys.getenv("INF")
 
 CAD_FEV1 <- cad_fev1()
-HGIr5 <- abc()
+HGI <- abc()

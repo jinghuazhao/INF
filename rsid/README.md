@@ -48,6 +48,7 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 File | Description
 -----|-----------------
 HGI.sh, HGI.R | pQTLMR
+gsmr_HGI.sb, gsmr_HGI.sh | GSMR
 gsmr.sh, gsmr.R | GSMR
 rs635634.sh |  +/- 1Mb
 

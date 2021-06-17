@@ -114,6 +114,7 @@ done
 }
 
 mvmr > ${INF}/HGI/rs635634-A2-B2-C2.out
+grep -e IVW -e intercept -e Egger -e exposure HGI/rs635634-A2-B2-C2.out
 
 R --no-save <<END
   options(width=200)
