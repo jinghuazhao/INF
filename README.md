@@ -24,8 +24,7 @@ csd3 --> software[R Packages at CRAN/GitHub];
 
 ## References
 
-Choi WM, Mak TSH, O’Reilly PF (2018). A guide to performing Polygenic Risk Score analyses. [a tutorial](https://choishingwan.github.io/PRS-Tutorial/) ([GitHub](https://github.com/choishingwan/PRSice)),
-https://www.biorxiv.org/content/10.1101/416545v1.
+Choi SW, Mak TS, O'Reilly PF Tutorial: a guide to performing polygenic risk score analyses. *Nat Protoc* 15, 2759-2772 (2020), [GitHub document](https://choishingwan.github.io/PRS-Tutorial/) ([GitHub](https://github.com/choishingwan/PRSice)),
 
 Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. *PLoS Genetics* 13(4), doi.org/10.1371/journal.pgen.1006706.
 
