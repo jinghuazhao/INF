@@ -79,6 +79,7 @@ After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `
 * `finemap.sb` uses the unpruned version.
 * `fm.sb` and `INTERVAL-fm.sb` use pruned variants to compromise `JAM`. The `.z` file is also appropriate for both `finemap` and `JAM`.
 * `INTERVAL-fm.sh` and `INTERVAL-fm.ini` works on INTERVAL data.
+
 ```bash
 # ldstore v1.1
 
@@ -94,6 +95,7 @@ ldstore --in-files ${pr}.master2 --write-bcor --write-bdose
 
 finemap --sss --in-files ${pr}.master2 --n-causal-snps 10
 ```
+
 where ${pr}.master2 contains two lines,
 ```
 z;bgen;bgi;bcor;bdose;snp;config;cred;log;n_samples
@@ -115,4 +117,4 @@ This is furnished with [ps.sh](ps.sh). Information on previously unidentified pQ
 
 File [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.
 
-*Date laste changed:* **16/7/2020**
+*Date laste changed:* **17/6/2021**
