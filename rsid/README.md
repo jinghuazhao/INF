@@ -96,13 +96,15 @@ wgcna.sh | experiment on modules
 
 ### Nested PGS model
 
-Without loss of generality, we have genotype data G1, G2, G3, which link with proteins P1, P2, P3 as predictor for outcome y.
+![grViz.png](grViz.png)
 
-The figure ![grViz.png](grViz.png) is obtained with [grViz.gv](grViz.gv) and RStudio; a somewhat smaller size could also be obtained with
+Without loss of generality, we have genotype data G1, G2, G3, which link with proteins P1, P2, P3 as predictors for outcome y.
+
+The figure is obtained with
 
 ```bash
-dot -Tpdf grViz.gv -ogrViz.pdf
-```
-for a PDF version.
+dot -Tpng grViz.gv -ogrViz.png
+``
+which also be  obtained from RStudio for somewhat larger size.
 
 *Date last changed:* **17/6/2021**
