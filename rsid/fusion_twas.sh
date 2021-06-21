@@ -10,6 +10,8 @@ function init()
     print snpid, \$2
   }" ${FUSION}/LDREF/1000G.EUR.{}.bim > ${INF}/FUSION/1000G.EUR.{}.snpid' ::: $(seq 22)
   Rscript -e "write.table(pQTLtools::inf1,file=file.path(Sys.getenv('INF'),'FUSION','INF1.tsv'),row.names=FALSE,quote=FALSE,sep='\t')"
+  grep NA ${INF}/INTERVAL/cardio/INTERVAL.pheno | cut -d' ' -f1,2 > ${INF}/FUSION/remove.id
+  grep -v NA ${INF}/INTERVAL/cardio/INTERVAL.qcovar > ${INF}/FUSION/INTERVAL.qcovar
 }
 export GCTA=${HPC_WORK}/bin/gcta64
 export PLINK="${HPC_WORK}/bin/plink-1.9 --allow-no-sex"
@@ -24,11 +26,11 @@ parallel --env FUSION --env INF -C' ' '
   export P1=$(expr {5} + 1000000)
   export col=$(awk "\$1 == ENVIRON[\"prot\"] {print NR}" ${INF}/csd3/prot.list)
   $PLINK --bfile ${INF}/INTERVAL/cardio/INTERVAL --make-bed --out ${INF}/FUSION/${prot}-${gene} \
-         --chr ${chr} --from-bp ${P0} --to-bp ${P1} --maf 0.01 > /dev/null
+         --chr ${chr} --from-bp ${P0} --to-bp ${P1} --maf 0.01 --remove ${INF}/FUSION/remove.id > /dev/null
   cut -d" " -f1,2,${col} ${INF}/INTERVAL/cardio/INTERVAL.pheno > ${INF}/FUSION/${prot}-${gene}.pheno
   Rscript ${FUSION}/FUSION.compute_weights.R --verbose 2 --save_hsq --PATH_gcta $GCTA --PATH_gemma $GEMMA \
           --bfile ${INF}/FUSION/${prot}-${gene} \
-          --pheno ${INF}/FUSION/${prot}-${gene}.pheno --covar ${INF}/INTERVAL/cardio/INTERVAL.qcovar \
+          --pheno ${INF}/FUSION/${prot}-${gene}.pheno --covar ${INF}/FUSION/INTERVAL.qcovar \
           --tmp ${INF}/FUSION/${prot}-${gene} --out ${INF}/FUSION/${prot}-${gene} \
           --models top1,blup,bslmm,lasso,enet
 '
