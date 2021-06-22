@@ -23,7 +23,7 @@ jam.sh | `JAM` analysis
 coloc.sb | coloc analysis -- clumsy verion
 coloc.R | coloc analysis via pQTLtools
 fastenloc.sb | fastenloc analysis
-fusion_twas.sh | FUSION TWAS experiment
+fusion_twas.sb | FUSION TWAS experiment
 garfield.sh | GARFIELD analysis
 gsmr.sh | GSMR processing
 hyprcoloc.sh | hyprcoloc analysis
