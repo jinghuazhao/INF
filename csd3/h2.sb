@@ -37,7 +37,7 @@ export LDAK=ldak5.1.linux
 function h2_inf1()
 {
 # http://dougspeed.com/summary-statistics/
-  cd ${INF}/work
+  cd ${INF}/ldak
   gunzip -c ${INF}/METAL/${p}-1.tbl.gz | \
   awk '{
     if(NR==1) print "Predictor","A1","A2","n","Z";

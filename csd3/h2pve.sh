@@ -1,9 +1,9 @@
 #!/usr/bin/bash
 
-cd work
 R --no-save <<END
+  INF <- Sys.getenv("INF")
   require(gap)
-  t <- read.delim("INF1.tbl",as.is=TRUE)
+  t <- read.delim(file.path(INF,"work","INF1.tbl"),as.is=TRUE)
   tbl <- within(t, {
       prot <- sapply(strsplit(Chromosome,":"),"[",1)
       Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
@@ -23,23 +23,24 @@ R --no-save <<END
   s <- with(tbl, aggregate(r2,list(prot),sum))
   names(s) <- c("prot", "pve")
   se2 <- with(tbl, aggregate(v,list(prot),sum))
-  names(se2) <- c("p1","v")
+  names(se2) <- c("p1","se")
   m <- with(tbl, aggregate(r2,list(prot),length))
   names(m) <- c("p2","m")
-  pve <- cbind(s,se2,m)
+  pve <- within(cbind(s,se2,m),{se=sqrt(se)})
   ord <- with(pve, order(pve))
-  sink("pve.dat")
-  print(pve[ord, c("prot","pve","v","m")], row.names=FALSE)
+  sink(file.path(INF,"h2","pve.dat"))
+  print(pve[ord, c("prot","pve","se","m")], row.names=FALSE)
   sink()
-  write.csv(tbl,file="INF1.csv",quote=FALSE,row.names=FALSE)
+  write.csv(tbl,file=file.path(INF,"h2","INF1.csv"),quote=FALSE,row.names=FALSE)
 END
 
-join <(sort -k1,1 h2.tsv) <(sed '1d' pve.dat | sort -k1,1) > h2pve.dat
+join <(sort -k1,1 ${INF}/h2/h2.tsv) <(sed '1d' ${INF}/h2/pve.dat | sort -k1,1) > ${INF}/h2/h2pve.dat
 
 R --no-save -q <<END
-  png("h2pve.png", res=300, units="cm", width=40, height=20)
+  INF <- Sys.getenv("INF")
+  png(file.path(INF,"h2","h2pve.png"), res=300, units="cm", width=40, height=20)
   par(mfrow=c(1,2))
-  with(read.delim("INF1.METAL",as.is=TRUE),
+  with(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),
   {
     MAF <- Freq1
     repl <- MAF > 1-MAF
@@ -47,7 +48,7 @@ R --no-save -q <<END
     plot(MAF,abs(Effect),cex.axis=2,cex.lab=2,pch=19,main="a",xlab="MAF",
          ylab="Effect size",col=c("red","blue")[2-(cis.trans=="cis")])
   })
-  h2pve <- read.table("h2pve.dat",col.names=c("prot","h2","h2se","pve","sepve","m"))
+  h2pve <- read.table(file.path(INF,"h2","h2pve.dat"),col.names=c("prot","h2","h2se","pve","sepve","m"))
   with(h2pve,summary(h2))
   subset(h2pve, h2>0.3 & pve > 0.3)
   attach(h2pve)
@@ -62,12 +63,13 @@ END
 R --no-save -q <<END
 # This part needs to be run inside R
   options(width=200)
-  png("h2-pve.png", res=300, units="cm", width=40, height=40)
+  INF <- Sys.getenv("INF")
+  png(file.path(INF,"h2","h2-pve.png"), res=300, units="cm", width=40, height=40)
   par(mfrow=c(3,1))
-  h2 <- read.table("h2.tsv",as.is=TRUE,col.names=c("prot","h2","se"))
+  h2 <- read.table(file.path(INF,"h2","h2.tsv"),as.is=TRUE,col.names=c("prot","h2","se"))
   summary(h2)
   ord <- with(h2, order(h2))
-  sink("h2.dat")
+  sink(file.path(INF,"h2","h2.dat"))
   print(h2[ord, c("prot","h2","se")], row.names=FALSE)
   sink()
   np <- nrow(h2)
@@ -83,11 +85,11 @@ R --no-save -q <<END
     axis(side=2, cex.axis=2)
     text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=1.2)
   })
-  ldak <- read.table("ldak/INF1.ldak.h2",as.is=TRUE,skip=1)
+  ldak <- read.table(file.path(INF,"ldak","INF1.ldak.h2"),as.is=TRUE,skip=1)
   names(ldak) <- c("prot","h2","se","inf","inf_se")
   summary(ldak)
   ord <- with(ldak,order(h2))
-  sink("ldak.dat")
+  sink(file.path(INF,"ldak","ldak.dat"))
   print(ldak[ord, c("prot","h2","se")], row.names=FALSE)
   sink()
   with(ldak[ord,],{
@@ -102,13 +104,12 @@ R --no-save -q <<END
     axis(side=2, cex.axis=2)
     text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=1.2)
   })
-  pve <- read.table("pve.dat",as.is=TRUE,header=TRUE)
+  pve <- read.table(file.path(INF,"h2","pve.dat"),as.is=TRUE,header=TRUE)
   summary(pve)
   np <- nrow(pve)
   with(pve, {
       plot(pve, cex=0.8, pch=16, axes=FALSE, main="c", xlab="Protein", cex.lab=2)
       xy <- xy.coords(pve)
-      se <- sqrt(v)
       segments(xy$x, pve-1.96*se, xy$x, pve+1.96*se)
       xtick <- seq(1, np, by=1)
       axis(side=1, at=xtick, labels = FALSE, lwd.tick=0.2)
@@ -120,6 +121,5 @@ R --no-save -q <<END
   names(ldak) <- c("prot","h2_scallop","SE_h2_scallop", "inf", "se_inf")
   names(pve) <- c("prot","pve","SE_pve","m")
   h2_ldak_pve <- merge(merge(h2,ldak,by="prot"),pve,by="prot",all=TRUE)
-  write.csv(h2_ldak_pve,file="h2-ldak-pve.csv",quote=FALSE,row.names=FALSE)
+  write.csv(h2_ldak_pve,file=file.path(INF,"ldak","h2-ldak-pve.csv"),quote=FALSE,row.names=FALSE)
 END
-cd -

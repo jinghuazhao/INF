@@ -47,7 +47,7 @@ cut -d' ' -f29- ${s} | head -1 | sed 's/ /\n/g' | awk '{split($1,a,"__"); print 
 
 sbatch --wait csd3/h2.sb
 
-cd work
+cd h2
 grep V\(G\) *hsq | grep Vp | sed 's|.hsq:V(G)/Vp||g' > h2.tsv
 cd -
 
@@ -79,7 +79,7 @@ ${LDAK} --calc-tagging INTERVAL --bfile ref --ignore-weights YES --power -1 --wi
 
 sbatch --wait ${INF}/csd3/h2.sb
 
-cd work
+cd ldak
 (
   echo Component Heritability Her_SD Influence Inf_SD
   grep -n Base *hers | sed 's/.ldak.hers:2:Her_Base//'
