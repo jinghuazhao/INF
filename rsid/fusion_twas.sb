@@ -7,8 +7,8 @@
 #SBATCH --array=53
 #SBATCH --mem=40800
 #SBATCH --time=5-00:00:00
-#SBATCH --output=/rds/user/jhz22/hpc-work/work/_mr_%A_%a.out
-#SBATCH --error=/rds/user/jhz22/hpc-work/work/_mr_%A_%a.err
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_fusion_twas_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_fusion_twas_%A_%a.err
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -62,6 +62,7 @@ function compute_weights()
 {
   export FUSION=${HPC_WORK}/fusion_twas
   export prot=$(awk 'NR==ENVIRON["job"]' ${INF}/csd3/prot.list)
+  cd ${INF}/FUSION/tmp
   grep -w ${prot} ${INF}/work/INF1.merge | cut -f8,9 --output-delimiter=' ' | while read chr pos;
   do
     export P0=$(awk -v pos=${pos} "BEGIN{if(pos<1e6) print 1; else print pos-1e6}")
@@ -74,7 +75,7 @@ function compute_weights()
             --covar ${INF}/FUSION/plink/INTERVAL.qcovar \
             --tmp ${prot}-${P0}-${P1} \
             --out ${INF}/FUSION/${prot}-${P0}-${P1} \
-            --hsq_set 0.1 --models top1,blup,bslmm,lasso,enet
+            --hsq_set 0.8
   done
 }
 

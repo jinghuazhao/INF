@@ -206,13 +206,14 @@ R --no-save -q <<END
   INF1_prot <- rbind(INF1[vars],prot3[vars])
   p <- ggplot(INF1_prot,aes(y = ID, x = y))+
   theme_bw()+
-  theme(text = element_text(size=15))+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text.y = element_text(size=14),
+       text = element_text(size=15))+
   geom_point()+
   facet_wrap(~src,ncol=2,scales="free")+
   geom_segment(aes(x = Beta-1.96*SE, xend = Beta+1.96*SE, yend = ID), show.legend=FALSE)+
   geom_vline(lty=2, aes(xintercept=0), colour = "red")+
   xlab("Effect size")+
   ylab("")
-  ggsave(p,filename=file.path(INF,"garfield","garfield.png"),device="png",width=15,height=10)
+  ggsave(p,filename=file.path(INF,"garfield","garfield.png"),device="png",dpi=300,width=15,height=10)
 END
 }

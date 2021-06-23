@@ -130,18 +130,20 @@ R --no-save -q <<END
                 col=case_when(cistrans=="cis" ~ "red",
                               cistrans=="trans" ~ "blue",
                               cistrans=="pan" ~ "black")) %>%
+         mutate(cistrans=recode(cistrans,cis="(a) cis",trans="(b) trans",pan="(c) pan")) %>%
          select(-outcome,-method) %>%
          left_join(efo) %>%
          arrange(trait)
    p <- ggplot(d3,aes(y = trait, x = y))+
    theme_bw()+
+   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),axis.text.y = element_text(size=14),text = element_text(size=15))+
    facet_wrap(~cistrans,ncol=3,scales="free_x")+
    geom_segment(aes(x = b-1.96*se, xend = b+1.96*se, yend = trait, colour=cistrans), show.legend=FALSE)+
    geom_vline(lty=2, aes(xintercept=0), colour = "red")+
    geom_point()+
    xlab("Effect size")+
    ylab("")
-   ggsave(p,filename=file.path(INF,"mr","mr-IL.12B.png"),device="png")
+   ggsave(p,filename=file.path(INF,"mr","mr-IL.12B.png"),device="png",dpi=300,height=15,width=12)
    library(ggforestplot)
    select <- function(cistrans)
    {
