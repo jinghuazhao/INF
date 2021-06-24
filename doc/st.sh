@@ -15,6 +15,13 @@ git commit -m "Notes and programs on TRYGGVE"
 git push
 }
 
+function setup()
+{
+module load python/3.7
+source ~/COVID-19/py37/bin/activate
+pip install mkdocs-mermaid2-plugin
+}
+
 mkdocs build
 mkdocs gh-deploy
 
