@@ -1,6 +1,6 @@
 # Analysis plan
 
-SCALLOP consortium analysis plan for Olink/INFlammation panel proteins
+SCALLOP consortium analysis plan (also [SCALLOP_INF1_analysis_plan.docx](SCALLOP_INF1_analysis_plan.docx)) for Olink/INFlammation panel proteins
 
 ***Adapted from SCALLOP/CVD1 analysis plan, last updated 27/2/2019***
 
