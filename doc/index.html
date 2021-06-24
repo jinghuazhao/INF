@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Notes - SCALLOP-INF</title>
+        <title>Other notes - SCALLOP-INF</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
@@ -45,9 +45,6 @@
                             <li class="navitem">
                                 <a href=".." class="nav-link">Home</a>
                             </li>
-                            <li class="navitem active">
-                                <a href="./" class="nav-link">Notes</a>
-                            </li>
                             <li class="navitem">
                                 <a href="SCALLOP_INF1_analysis_plan/" class="nav-link">Analysis plan</a>
                             </li>
@@ -63,6 +60,9 @@
                             <li class="navitem">
                                 <a href="../rsid/" class="nav-link">On rsid</a>
                             </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Other notes</a>
+                            </li>
                         </ul>
 
                     <ul class="nav navbar-nav ml-auto">
@@ -72,12 +72,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href=".." class="nav-link">
+                                <a rel="prev" href="../rsid/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="SCALLOP_INF1_analysis_plan/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -99,7 +99,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#notes" class="nav-link">Notes</a>
+            <li class="nav-item" data-level="1"><a href="#other-notes" class="nav-link">Other notes</a>
               <ul class="nav flex-column">
             <li class="nav-item" data-level="2"><a href="#uniprot-ids" class="nav-link">UniProt IDs</a>
               <ul class="nav flex-column">
@@ -120,7 +120,7 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="notes">Notes</h1>
+<h1 id="other-notes">Other notes</h1>
 <h2 id="uniprot-ids">UniProt IDs</h2>
 <p>The list of proteins on inflammation is within one of the <a href="https://www.olink.com/products/">Olink</a> panels (as in <a href="Olink%20validation%20data%20all%20panels.xlsx">Olink validation data all panels.xlsx</a>) each containing 92 proteins. Information contained in these panels can be retrieved into R via <a href="Olink.R">Olink.R</a>, which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.</p>
 <p>BDNF has recently been removed from the assay and replaced with CD8A, <a href="https://www.olink.com/bdnf-info/">https://www.olink.com/bdnf-info/</a>, and there are also changes on TNF and IFN.gamma, <a href="https://www.olink.com/inflammation-upgrade/">https://www.olink.com/inflammation-upgrade/</a>.</p>
