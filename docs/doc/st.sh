@@ -29,8 +29,6 @@ git add .gitignore
 git commit -m ".gitignore"
 git add README.md
 git commit -m "README"
-git add index.html
-git commit -m "index.html"
 git add docs
 git commit -m "docs"
 git add mkdocs.yml
