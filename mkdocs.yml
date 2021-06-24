@@ -1,0 +1,23 @@
+site_name: SCALLOP-INF
+nav:
+  - Home: README.md
+  - doc/SCALLOP_INF1_analysis_plan.md
+  - cardio/cardio.md
+  - csd3/README.md
+  - tryggve/README.md
+  - rsid/README.md
+  - doc/README.md
+theme:
+    name: mkdocs
+    nav_style: dark
+    highlightjs: true
+    hljs_languages:
+        - Bash
+        - HTML
+        - Java
+        - JavaScript
+        - Perl
+        - Python
+        - R
+        - rust
+        - yaml
