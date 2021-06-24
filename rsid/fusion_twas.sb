@@ -11,33 +11,42 @@
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_fusion_twas_%A_%a.err
 #SBATCH --export ALL
 
+export FUSION=${HPC_WORK}/fusion_twas
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=$SLURM_ARRAY_TASK_ID
 
 function init()
 {
+  ln -sf ${FUSION}/gcta_nr_robust ${HPC_WORK}/bin/gcta_nr_robust
+  ln -sf /usr/local/Cluster-Apps/plink/2.00-alpha/plink2 ${HPC_WORK}/bin/plink2
   if [ ! -d ${INF}/FUSION ]; then mkdir ${INF}/FUSION; fi
   if [ ! -d ${INF}/FUSION/plink ]; then mkdir ${INF}/FUSION/plink; fi
   if [ ! -d ${INF}/FUSION/tmp ]; then mkdir ${INF}/FUSION/tmp; fi
-  ln -sf . output
-  parallel --env FUSION --env INF -C' ' 'awk -vOFS="\t" "
-  {
-    if (\$5 < \$6) snpid=\"chr\"\$1\":\"\$4\"_\"\$5\"_\"\$6;
-    else snpid=\"chr\"\$1\":\"\$4\"_\"\$6\"_\"\$5
-    print snpid, \$2
-  }" ${FUSION}/LDREF/1000G.EUR.{}.bim > ${INF}/FUSION/1000G.EUR.{}.snpid' ::: $(seq 22)
-  grep NA ${INF}/INTERVAL/cardio/INTERVAL.pheno | cut -d' ' -f1,2 > ${INF}/FUSION/plink/remove.id
-  grep -v NA ${INF}/INTERVAL/cardio/INTERVAL.qcovar > ${INF}/FUSION/plink/INTERVAL.qcovar
+  parallel --env FUSION --env INF -C' ' '
+  (
+    awk -vOFS="\t" "
+    {
+      if (\$5 < \$6) snpid=\"chr\"\$1\":\"\$4\"_\"\$5\"_\"\$6;
+      else snpid=\"chr\"\$1\":\"\$4\"_\"\$6\"_\"\$5
+      print snpid, \$2
+    }" ${FUSION}/LDREF/1000G.EUR.{}.bim > ${INF}/FUSION/1000G.EUR.{}.snpid
+    cat ${INF}/FUSION/1000G.EUR.{}.snpid
+  )' ::: $(seq 22) > ${INF}/FUSION/1000G.EUR.snpid
+  export s=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/INTERVAL/o5000-inf1-outlier_in-r2.sample
+  cut -d' ' -f1-2,29- ${s} | sed '1,2d' > ${INF}/FUSION/INTERVAL.pheno
+  cut -d' ' -f1-2,4-28 ${s} | sed '1,2d' > ${INF}/FUSION/INTERVAL.covars
+  grep NA ${INF}/FUSION/INTERVAL.pheno | cut -d' ' -f1,2 > ${INF}/FUSION/remove.id
+  plink2 --bfile ${INF}/INTERVAL/cardio/INTERVAL --pheno ${INF}/FUSION/INTERVAL.pheno \
+         --extract ${INF}/FUSION/1000G.EUR.snpid --make-bed --out ${INF}/FUSION/INTERVAL
   Rscript -e "write.table(pQTLtools::inf1,file=file.path(Sys.getenv('INF'),'FUSION','INF1.tsv'),row.names=FALSE,quote=FALSE,sep='\t')"
-  sed '1d' ${INF}/FUSION/INF1.tsv | cut -f2,5-8 --output-delimiter=' ' | sort -k2,2 | \
-  join -o1.1,1.2,1.3,1.4,2.1,2.2,2.3,2.4 -e NA -a2 -12 -24 - <(sort -k4,4 ${INF}/csd3/glist-hg19)
-  ln -sf ${FUSION}/gcta_nr_robust ${HPC_WORK}/bin/gcta_nr_robust
-  ln -sf /usr/local/Cluster-Apps/plink/2.00-alpha/plink2 ${HPC_WORK}/bin/plink2
+# sed '1d' ${INF}/FUSION/INF1.tsv | cut -f2,5-8 --output-delimiter=' ' | sort -k2,2 | \
+# join -o1.1,1.2,1.3,1.4,2.1,2.2,2.3,2.4 -e NA -a2 -12 -24 - <(sort -k4,4 ${INF}/csd3/glist-hg19)
 }
 
 function compute_weights_parallel()
 {
-  export FUSION=${HPC_WORK}/fusion_twas
+  cd ${INF}/FUSION/tmp
+  ln -sf . output
   sed '1d' ${INF}/FUSION/INF1.tsv | cut -f2,5-8 --output-delimiter=' ' | sort -k2,2n | \
   parallel --env FUSION --env INF -C' ' '
     export prot={1}
@@ -46,36 +55,36 @@ function compute_weights_parallel()
     export P0=$(awk -v start={4} "BEGIN{if(start<1e6) print 1; else print start-1e6}")
     export P1=$(expr {5} + 1000000)
     export col=$(awk "\$1 == ENVIRON[\"prot\"] {print NR}" ${INF}/csd3/prot.list)
-    plink2 --bfile ${INF}/INTERVAL/cardio/INTERVAL --pheno ${INF}/INTERVAL/cardio/INTERVAL.pheno --pheno-col-nums ${col} \
-           --make-bed --out ${INF}/FUSION/plink/${prot}-${P0}-${P1}-plink --allow-no-sex \
-           --chr ${chr} --from-bp ${P0} --to-bp ${P1} --maf 0.01 --remove ${INF}/FUSION/plink/remove.id > /dev/null
+    plink2 --bfile ${INF}/FUSION/INTERVAL --pheno ${INF}/FUSION/INTERVAL.pheno --pheno-col-nums ${col} \
+           --make-bed --out ${INF}/FUSION/plink/${prot}-${chr}-${P0}-${P1}-plink --allow-no-sex \
+           --chr ${chr} --from-bp ${P0} --to-bp ${P1} --maf 0.01 --remove ${INF}/FUSION/remove.id > /dev/null
     Rscript ${FUSION}/FUSION.compute_weights.R --verbose 2 --save_hsq \
-            --bfile ${INF}/FUSION/plink/${prot}-${P0}-${P1}-plink \
-            --covar ${INF}/FUSION/plink/INTERVAL.qcovar \
-            --tmp ${prot}-${P0}-${P1} \
-            --out ${INF}/FUSION/${prot}-${P0}-${P1} \
+            --bfile ${INF}/FUSION/plink/${prot}-${chr}-${P0}-${P1}-plink \
+            --covar ${INF}/FUSION/INTERVAL.covars \
+            --tmp ${prot}-${chr}-${P0}-${P1} \
+            --out ${INF}/FUSION/${prot}-${chr}-${P0}-${P1} \
             --hsq_set 0.1 --models top1,blup,bslmm,lasso,enet
   '
 }
 
 function compute_weights()
 {
-  export FUSION=${HPC_WORK}/fusion_twas
   export prot=$(awk 'NR==ENVIRON["job"]' ${INF}/csd3/prot.list)
   cd ${INF}/FUSION/tmp
+  ln -sf . output
   grep -w ${prot} ${INF}/work/INF1.merge | cut -f8,9 --output-delimiter=' ' | while read chr pos;
   do
     export P0=$(awk -v pos=${pos} "BEGIN{if(pos<1e6) print 1; else print pos-1e6}")
     export P1=$(expr ${pos} + 1000000)
-    plink2 --bfile ${INF}/INTERVAL/cardio/INTERVAL --pheno ${INF}/INTERVAL/cardio/INTERVAL.pheno --pheno-col-nums ${job} \
-           --make-bed --out ${INF}/FUSION/plink/${prot}-${P0}-${P1}-plink --allow-no-sex \
-           --chr ${chr} --from-bp ${P0} --to-bp ${P1} --maf 0.01 --remove ${INF}/FUSION/plink/remove.id > /dev/null
+    plink2 --bfile ${INF}/FUSION/INTERVAL --pheno ${INF}/FUSION/INTERVAL.pheno --pheno-col-nums ${job} \
+           --make-bed --out ${INF}/FUSION/plink/${prot}-${chr}-${P0}-${P1}-plink --allow-no-sex \
+           --chr ${chr} --from-bp ${P0} --to-bp ${P1} --maf 0.01 --remove ${INF}/FUSION/remove.id > /dev/null
     Rscript ${FUSION}/FUSION.compute_weights.R --verbose 2 --save_hsq \
-            --bfile ${INF}/FUSION/plink/${prot}-${P0}-${P1}-plink \
-            --covar ${INF}/FUSION/plink/INTERVAL.qcovar \
-            --tmp ${prot}-${P0}-${P1} \
-            --out ${INF}/FUSION/${prot}-${P0}-${P1} \
-            --hsq_set 0.8
+            --bfile ${INF}/FUSION/plink/${prot}-${chr}-${P0}-${P1}-plink \
+            --covar ${INF}/FUSION/INTERVAL.covars \
+            --tmp ${prot}-${chr}-${P0}-${P1} \
+            --out ${INF}/FUSION/${prot}-${chr}-${P0}-${P1} \
+            --hsq_set 0.8 --models top1,blup,bslmm,lasso,enet
   done
 }
 
