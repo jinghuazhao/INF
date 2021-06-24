@@ -21,3 +21,6 @@ theme:
         - R
         - rust
         - yaml
+plugins:
+    - search
+    - mermaid2
