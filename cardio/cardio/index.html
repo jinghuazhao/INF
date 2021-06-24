@@ -1,159 +1,146 @@
 <!DOCTYPE html>
+
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        
-        
-        <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>Cardio - SCALLOP-INF</title>
-        <link href="../../css/bootstrap.min.css" rel="stylesheet">
-        <link href="../../css/font-awesome.min.css" rel="stylesheet">
-        <link href="../../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-
-        <script src="../../js/jquery-1.10.2.min.js" defer></script>
-        <script src="../../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Java.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/JavaScript.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Perl.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Python.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/rust.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script> 
-    </head>
-
-    <body>
-        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="../..">SCALLOP-INF</a>
-                <!-- Expander button -->
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <!-- Expanded navigation -->
-                <div id="navbar-collapse" class="navbar-collapse collapse">
-                        <!-- Main navigation -->
-                        <ul class="nav navbar-nav">
-                            <li class="navitem">
-                                <a href="../.." class="nav-link">Home</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">Analysis plan</a>
-                            </li>
-                            <li class="navitem active">
-                                <a href="./" class="nav-link">Cardio</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../../csd3/" class="nav-link">CSD3</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../../tryggve/" class="nav-link">Tryggve</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../../rsid/" class="nav-link">On rsid</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../../doc/" class="nav-link">Other notes</a>
-                            </li>
-                        </ul>
-
-                    <ul class="nav navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
-                                <i class="fa fa-search"></i> Search
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Cardio - SCALLOP-INF</title>
+<link href="../../css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../../css/font-awesome.min.css" rel="stylesheet"/>
+<link href="../../css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script defer="" src="../../js/jquery-1.10.2.min.js"></script>
+<script defer="" src="../../js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/JavaScript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Perl.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/rust.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+<div class="container">
+<a class="navbar-brand" href="../..">SCALLOP-INF</a>
+<!-- Expander button -->
+<button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<!-- Main navigation -->
+<ul class="nav navbar-nav">
+<li class="navitem">
+<a class="nav-link" href="../..">Home</a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="../../doc/SCALLOP_INF1_analysis_plan/">Analysis plan</a>
+</li>
+<li class="navitem active">
+<a class="nav-link" href="./">Cardio</a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="../../csd3/">CSD3</a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="../../tryggve/">Tryggve</a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="../../rsid/">On rsid</a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="../../doc/">Other notes</a>
+</li>
+</ul>
+<ul class="nav navbar-nav ml-auto">
+<li class="nav-item">
+<a class="nav-link" data-target="#mkdocs_search_modal" data-toggle="modal" href="#">
+<i class="fa fa-search"></i> Search
                             </a>
-                        </li>
-                            <li class="nav-item">
-                                <a rel="prev" href="../../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">
-                                    <i class="fa fa-arrow-left"></i> Previous
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../../doc/SCALLOP_INF1_analysis_plan/" rel="prev">
+<i class="fa fa-arrow-left"></i> Previous
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" href="../../csd3/" class="nav-link">
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../../csd3/" rel="next">
                                     Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
-                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
-            <span class="fa fa-angle-down"></span>
-        </button>
-    </div>
-
-    
-    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
-        <ul class="nav flex-column">
-            
-            <li class="nav-item" data-level="1"><a href="#cardio" class="nav-link">Cardio</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#interval-reference" class="nav-link">INTERVAL reference</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#interval-sumstats" class="nav-link">INTERVAL sumstats</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#manhattan-plots-by-cohort" class="nav-link">Manhattan plots by cohort</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#meta-analysis-sumstats-manhattanq-qlocuszoom-plots" class="nav-link">Meta-analysis sumstats + Manhattan/Q-Q/LocusZoom plots</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
-            
-            <li class="nav-item" data-level="1"><a href="#results-based-on-aproximately-independent-ld-blocks-aild" class="nav-link">Results based on aproximately independent LD blocks (AILD)</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#snpsindels" class="nav-link">SNPs+indels</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#snps-only" class="nav-link">SNPs only</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
-            
-            <li class="nav-item" data-level="1"><a href="#genomewide-results-based-on-slide-windows" class="nav-link">Genomewide results based on slide windows</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#clumping-results" class="nav-link">Clumping results</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#conditionaljoint-analysis" class="nav-link">Conditional/joint analysis</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#conditionaljoint-analysis-with-regions-in-high-ld" class="nav-link">Conditional/joint analysis with regions in high LD</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
-        </ul>
-    </div>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-target="#toc-collapse" data-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-level="1"><a class="nav-link" href="#cardio">Cardio</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#interval-reference">INTERVAL reference</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#interval-sumstats">INTERVAL sumstats</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#manhattan-plots-by-cohort">Manhattan plots by cohort</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#meta-analysis-sumstats-manhattanq-qlocuszoom-plots">Meta-analysis sumstats + Manhattan/Q-Q/LocusZoom plots</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item" data-level="1"><a class="nav-link" href="#results-based-on-aproximately-independent-ld-blocks-aild">Results based on aproximately independent LD blocks (AILD)</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#snpsindels">SNPs+indels</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#snps-only">SNPs only</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item" data-level="1"><a class="nav-link" href="#genomewide-results-based-on-slide-windows">Genomewide results based on slide windows</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#clumping-results">Clumping results</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#conditionaljoint-analysis">Conditional/joint analysis</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#conditionaljoint-analysis-with-regions-in-high-ld">Conditional/joint analysis with regions in high LD</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
 </div></div>
-                    <div class="col-md-9" role="main">
-
+<div class="col-md-9" role="main">
 <h1 id="cardio">Cardio</h1>
 <h2 id="interval-reference">INTERVAL reference</h2>
 <p>/scratch/jhz22/data/INTERVAL</p>
@@ -163,7 +150,7 @@
 <p>location: /scratch/jhz22/INF/plots</p>
 <h2 id="meta-analysis-sumstats-manhattanq-qlocuszoom-plots">Meta-analysis sumstats + Manhattan/Q-Q/LocusZoom plots</h2>
 <p>location: /scratch/jhz22/INF/METAL</p>
-<hr />
+<hr/>
 <h1 id="results-based-on-aproximately-independent-ld-blocks-aild">Results based on aproximately independent LD blocks (AILD)</h1>
 <p><em>See https://bitbucket.org/nygcresearch/ldetect-data</em></p>
 <h2 id="snpsindels">SNPs+indels</h2>
@@ -182,7 +169,7 @@
 <li>clump/, PLINK --clump results for all (INF1*) and individual proteins</li>
 <li>clump0/ PLINK --clump-r2 0 for independent signals</li>
 </ul>
-<hr />
+<hr/>
 <h1 id="genomewide-results-based-on-slide-windows">Genomewide results based on slide windows</h1>
 <h2 id="clumping-results">Clumping results</h2>
 <p>location: /scratch/jhz22/INF/clumping</p>
@@ -209,93 +196,90 @@ phenoscanner -c All -l No -p 0.0000001 -i INF1.ps -o INF1r
 <pre><code class="language-bash">R --no-save -q &lt;&lt;END
   library(MendelianRandomization)
 # SNPID not possible
-  INF1 &lt;- read.table(&quot;INF1.ps&quot;,as.is=TRUE)
+  INF1 &lt;- read.table("INF1.ps",as.is=TRUE)
 # batches in 100 only
-  INF1 &lt;- with(read.csv(&quot;INF1_PhenoScanner_SNP_Info.csv&quot;),rsID)
-  r1 &lt;- phenoscanner(snpquery=  INF1[1:100], proxies = &quot;EUR&quot;, pvalue = 1e-07, r2= 0.6, build=37)
-  r2 &lt;- phenoscanner(snpquery=INF1[101:200], proxies = &quot;EUR&quot;, pvalue = 1e-07, r2= 0.6, build=37)
-  r3 &lt;- phenoscanner(snpquery=INF1[201:300], proxies = &quot;EUR&quot;, pvalue = 1e-07, r2= 0.6, build=37)
-  r4 &lt;- phenoscanner(snpquery=INF1[301:376], proxies = &quot;EUR&quot;, pvalue = 1e-07, r2= 0.6, build=37)
-  save(r1,r2,r3,r4,file=&quot;INF1r.rda&quot;,version=2)
+  INF1 &lt;- with(read.csv("INF1_PhenoScanner_SNP_Info.csv"),rsID)
+  r1 &lt;- phenoscanner(snpquery=  INF1[1:100], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  r2 &lt;- phenoscanner(snpquery=INF1[101:200], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  r3 &lt;- phenoscanner(snpquery=INF1[201:300], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  r4 &lt;- phenoscanner(snpquery=INF1[301:376], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
+  save(r1,r2,r3,r4,file="INF1r.rda",version=2)
 END
 </code></pre></div>
-            </div>
-        </div>
-
-        <footer class="col-md-12">
-            <hr>
-            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script>
             var base_url = "../..",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="../../js/base.js" defer></script>
-        <script src="../../search/main.js" defer></script>
-
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="searchModalLabel">Search</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            </div>
-            <div class="modal-body">
-                <p>
+<script defer="" src="../../js/base.js"></script>
+<script defer="" src="../../search/main.js"></script>
+<div aria-hidden="true" aria-labelledby="searchModalLabel" class="modal" id="mkdocs_search_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="searchModalLabel">Search</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<p>
                     From here you can search these documents. Enter
                     your search terms below.
                 </p>
-                <form>
-                    <div class="form-group">
-                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
-                    </div>
-                </form>
-                <div id="mkdocs-search-results"></div>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="help shortcut"><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td class="next shortcut"><kbd>n</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td class="prev shortcut"><kbd>p</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td class="search shortcut"><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
+<form>
+<div class="form-group">
+<input class="form-control" id="mkdocs-search-query" placeholder="Search..." title="Type search term here" type="search"/>
 </div>
-
-    </body>
+</form>
+<div id="mkdocs-search-results"></div>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div><div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+</body>
 </html>
