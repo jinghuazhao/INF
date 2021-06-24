@@ -1,0 +1,9 @@
+Call:
+hyprcoloc
+
+Results:
+  iteration                                     traits posterior_prob
+1         1 MCP.1, MCP.2, MCP.3, MCP.4, Monocyte_count          0.978
+  regional_prob candidate_snp posterior_explained_by_snp dropped_trait
+1        0.9964       rs12075                          1            NA
+
