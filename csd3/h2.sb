@@ -1,0 +1,52 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=h2
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --ntasks=1
+#SBATCH --time=8:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=128800
+#SBATCH --array=1-92%15
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_h2_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_h2_%A_%a.err
+#SBATCH --export ALL
+
+export job=${SLURM_ARRAY_TASK_ID}
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+export rt=${INF}/INTERVAL/cardio/INTERVAL
+export s=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
+export p=$(awk -v job=$job 'NR==job' ${INF}/csd3/prot.list)
+
+function h2_INTERVAL()
+{
+  gcta64 --reml \
+         --grm ${rt} \
+         --pheno ${rt}.pheno \
+         --covar ${rt}.covar \
+         --qcovar ${rt}.qcovar \
+         --mpheno ${job} \
+         --thread-num 2 \
+         --out ${INF}/work/${p}
+}
+
+export LDAK=ldak5.1.linux
+
+function h2_inf1()
+{
+# http://dougspeed.com/summary-statistics/
+  cd ${INF}/ldak
+  gunzip -c ${INF}/METAL/${p}-1.tbl.gz | \
+  awk '{
+    if(NR==1) print "Predictor","A1","A2","n","Z";
+    else if(length($4)==1&&length($5)==1) print $3,toupper($4),toupper($5),$18,$10/$11
+  }' > ${p}.sumstats
+
+# SNP heritability under BLD-LDAK model
+  ${LDAK} --sum-hers ${p}.ldak --tagfile INTERVAL.tagging --summary ${p}.sumstats --check-sums NO
+  cd -
+}
+
+h2_inf1

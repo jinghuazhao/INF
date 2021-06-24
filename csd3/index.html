@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Scripts on CSD3 - SCALLOP-INF</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Java.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/JavaScript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Perl.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/rust.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="..">SCALLOP-INF</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../cardio/cardio/" class="nav-link">GWAS sumstats and plots</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../cardio/clump-cojo/" class="nav-link">Near-independent signals from cojo and clumping</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Scripts on CSD3</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">SCALLOP consortium analysis plan for INF panel proteins</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../doc/aild/" class="nav-link">Aild</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../doc/uniprot/" class="nav-link">Uniprot</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../rsid/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../rsid/latex/" class="nav-link">Latex</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../tryggve/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../tryggve/tryggve/" class="nav-link">SCALLOP/INFlammation anlaysis on TRYGGVE</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../cardio/clump-cojo/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#scripts-on-csd3" class="nav-link">Scripts on CSD3</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#qq-and-manhattan-plots" class="nav-link">QQ and Manhattan plots</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#sentinel-identification" class="nav-link">Sentinel identification</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#3d-scatter-plot" class="nav-link">3d scatter plot</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#pgs" class="nav-link">PGS</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#trans-pqtl-hotspots-and-proteins-as-polygenic-targets" class="nav-link">Trans-pQTL hotspots and proteins as polygenic targets</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#annotation" class="nav-link">Annotation</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#ld-reference-panels" class="nav-link">LD reference panels</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#snpid-rsid-mappings-conditional-analysis-and-finemapping" class="nav-link">SNPID-rsid mappings, conditional analysis and finemapping</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#low-abundance-check" class="nav-link">Low abundance check</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#phenoscanner" class="nav-link">PhenoScanner</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#known-variants" class="nav-link">Known variants</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="scripts-on-csd3">Scripts on CSD3</h1>
+<p><strong>NOTE</strong>: now merge.sh and INTERVAL-rsid.ini works directly to the original INTERVAL bgen files.</p>
+<h2 id="qq-and-manhattan-plots">QQ and Manhattan plots</h2>
+<p>The version for meta-analysis was part of <code>analysis.sh</code> at tryggve/. <a href="qqman.sh">qqman.sh</a> calls turboqq and turboman by Bram Prins.</p>
+<h2 id="sentinel-identification">Sentinel identification</h2>
+<p>This is now furnished with <a href="merge.sh">merge.sh</a>.</p>
+<p>Clumping by fixed distance by <code>sentinels_nold.sh</code> is superseded with its failure to handle long LD regions.</p>
+<p>There are scripts for heritability analysis and proportion of variance explained.</p>
+<h2 id="3d-scatter-plot">3d scatter plot</h2>
+<p>Furnished with <a href="js.R">js.R</a>, the JSON output could be used as data in the Supplementary Figure 1 of Sun et al. (2018).</p>
+<h2 id="pgs">PGS</h2>
+<p>These are <a href="prsice.sh">prsice.sh</a> and <a href="pgs.sh">pgs.sh</a>.</p>
+<h2 id="trans-pqtl-hotspots-and-proteins-as-polygenic-targets">Trans-pQTL hotspots and proteins as polygenic targets</h2>
+<p>This is illustrated with circos plots and by default this works on <code>work/INF1.merge.cis.vs.trans</code> and requires <a href="glist-hg19">glist-hg19</a>.
+Because circos plots are gene-centric, in both cases, the protein-coding gene is handled in mind.</p>
+<p>Try</p>
+<pre><code class="language-bash">./hotspot.sh chr1:159175354_A_G
+./hotspot.sh chr12:111884608_C_T
+</code></pre>
+<p>giving results linking <em>ACKR1</em> and <em>SH2B3</em>, respectively, while</p>
+<pre><code class="language-bash">./polygene.sh IL12B
+./polygene.sh TNFSF10
+</code></pre>
+<p>linking IL.12B and TRAIL, respectively.</p>
+<p>To generate all possible plots, wo do</p>
+<pre><code class="language-bash">for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; hotspot.sh $h; done
+for g in $(cat work/INF1.merge.gene); do echo $g; polygene.sh $g; done
+</code></pre>
+<h2 id="annotation">Annotation</h2>
+<p><a href="annotate.sh">annotate.sh</a> involves ANNOVAR, PolyPhen 2, VEP and some R packages.</p>
+<h2 id="ld-reference-panels">LD reference panels</h2>
+<p>The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to generate <code>binary_ped</code> with SNPIDs (bgen/*map)
+* by qctool -- it also creates <code>bgen</code> with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
+* by PLINK -- it has a <code>_snpid</code> tag.</p>
+<p>In both cases duplicates (bgen/*rmdup.list) are excluded.</p>
+<ol>
+<li>INTERVAL.sh (INTERVAL.sb). The utility <code>INTERVAL.sh</code> extracts data from  </li>
+</ol>
+<pre><code>/DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
+/DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_imputed_info_0.4_phwe_1e-4_filtered/per_chr
+</code></pre>
+<p>on Cardio into region-specific data in <code>bgen</code> format according to work/INF1.merge.</p>
+<ol>
+<li>ukb (ukb.sh). The utility <code>ukb.sh</code> extracts data from ukb_imp_chr[x-xx]_v3.bgen as in</li>
+</ol>
+<pre><code>/DO-NOT-MODIFY-SCRATCH/uk_biobank/500k/imputed_v3
+/DO-NOT-MODIFY-SCRATCH/curated_genetic_data/uk_biobank/reference_files/full_release
+</code></pre>
+<p>on Cardio into region-specific data in <code>bgen</code> format (ukb/bgen) according to work/INF1.merge.</p>
+<h2 id="snpid-rsid-mappings-conditional-analysis-and-finemapping">SNPID-rsid mappings, conditional analysis and finemapping</h2>
+<p>This is furnished with <code>snpid_rsid.sb</code>, whose results will be attached to GCTA/finemap results via <code>finemap.R</code>, <code>slct.R</code> and <code>jam.R</code>.
+After snpid-rsid.sb is called, it is ready to use script <code>slct.sb</code> followed by <code>slct.sh</code>. Optionally, the results are fed into <code>finemap.sb</code> via <code>--n-causal-snps</code>.</p>
+<ul>
+<li><code>finemap.sb</code> uses the unpruned version.</li>
+<li><code>fm.sb</code> and <code>INTERVAL-fm.sb</code> use pruned variants to compromise <code>JAM</code>. The <code>.z</code> file is also appropriate for both <code>finemap</code> and <code>JAM</code>.</li>
+<li><code>INTERVAL-fm.sh</code> and <code>INTERVAL-fm.ini</code> works on INTERVAL data.</li>
+</ul>
+<pre><code class="language-bash"># ldstore v1.1
+
+export pr=IL.6-chr1:154426970_A_C
+
+ldstore --bcor ${pr} --bgen ${pr}.bgen
+ldstore --bcor ${pr} --merge 1
+ldstore --bcor ${pr} --matrix ${pr}.ld
+
+# ldstore 2 (and finemap-1.4)
+
+ldstore --in-files ${pr}.master2 --write-bcor --write-bdose
+
+finemap --sss --in-files ${pr}.master2 --n-causal-snps 10
+</code></pre>
+<p>where ${pr}.master2 contains two lines,</p>
+<pre><code>z;bgen;bgi;bcor;bdose;snp;config;cred;log;n_samples
+IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.bgi;IL.6-chr1:154426970_A_C.bcor;IL.6-chr1:154426970_A_C.bdose;IL.6-chr1:154426970_A_C.snp;IL.6-chr1:154426970_A_C.config;IL.6-chr1:154426970_A_C.cred;IL.6-chr1:154426970_A_C.log;4994
+</code></pre>
+<p>The environmental variable <code>LDREF</code> provides an option to use either INTERVAL or UKB data.</p>
+<h2 id="low-abundance-check">Low abundance check</h2>
+<p>This is down with <a href="qc.sh">qc.sh</a>.</p>
+<h2 id="phenoscanner">PhenoScanner</h2>
+<p>This is furnished with <a href="ps.sh">ps.sh</a>. Information on previously unidentified pQTLs is with <a href="pqtl.sh">pqtl.sh</a></p>
+<h2 id="known-variants">Known variants</h2>
+<p><a href="lookup.sh">lookup.sh</a>, which uses PhenoScanner output from <a href="pqtl.R">pqtl.R</a>, can be used to check if pQTLs were known.</p>
+<p>File <a href="cvd1.sh">cvd1.sh</a> gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.</p>
+<p><em>Date laste changed:</em> <strong>17/6/2021</strong></p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
