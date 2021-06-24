@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Scripts on CSD3 - SCALLOP-INF</title>
+        <title>CSD3 - SCALLOP-INF</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
@@ -46,34 +46,22 @@
                                 <a href=".." class="nav-link">Home</a>
                             </li>
                             <li class="navitem">
-                                <a href="../cardio/cardio/" class="nav-link">GWAS sumstats and plots</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../cardio/clump-cojo/" class="nav-link">Near-independent signals from cojo and clumping</a>
+                                <a href="../cardio/cardio/" class="nav-link">Cardio</a>
                             </li>
                             <li class="navitem active">
-                                <a href="./" class="nav-link">Scripts on CSD3</a>
+                                <a href="./" class="nav-link">CSD3</a>
                             </li>
                             <li class="navitem">
-                                <a href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">SCALLOP consortium analysis plan for INF panel proteins</a>
+                                <a href="../doc/" class="nav-link">Notes</a>
                             </li>
                             <li class="navitem">
-                                <a href="../doc/aild/" class="nav-link">Aild</a>
+                                <a href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">Analysis plan</a>
                             </li>
                             <li class="navitem">
-                                <a href="../doc/uniprot/" class="nav-link">Uniprot</a>
+                                <a href="../rsid/" class="nav-link">Use of rsid</a>
                             </li>
                             <li class="navitem">
-                                <a href="../rsid/" class="nav-link">Index</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../rsid/latex/" class="nav-link">Latex</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../tryggve/" class="nav-link">Index</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../tryggve/tryggve/" class="nav-link">SCALLOP/INFlammation anlaysis on TRYGGVE</a>
+                                <a href="../tryggve/" class="nav-link">Tryggve</a>
                             </li>
                         </ul>
 
@@ -84,12 +72,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../cardio/clump-cojo/" class="nav-link">
+                                <a rel="prev" href="../cardio/cardio/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">
+                                <a rel="next" href="../doc/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -111,7 +99,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#scripts-on-csd3" class="nav-link">Scripts on CSD3</a>
+            <li class="nav-item" data-level="1"><a href="#csd3" class="nav-link">CSD3</a>
               <ul class="nav flex-column">
             <li class="nav-item" data-level="2"><a href="#qq-and-manhattan-plots" class="nav-link">QQ and Manhattan plots</a>
               <ul class="nav flex-column">
@@ -164,7 +152,7 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="scripts-on-csd3">Scripts on CSD3</h1>
+<h1 id="csd3">CSD3</h1>
 <p><strong>NOTE</strong>: now merge.sh and INTERVAL-rsid.ini works directly to the original INTERVAL bgen files.</p>
 <h2 id="qq-and-manhattan-plots">QQ and Manhattan plots</h2>
 <p>The version for meta-analysis was part of <code>analysis.sh</code> at tryggve/. <a href="qqman.sh">qqman.sh</a> calls turboqq and turboman by Bram Prins.</p>
@@ -243,7 +231,7 @@ IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.b
 <h2 id="low-abundance-check">Low abundance check</h2>
 <p>This is down with <a href="qc.sh">qc.sh</a>.</p>
 <h2 id="phenoscanner">PhenoScanner</h2>
-<p>This is furnished with <a href="ps.sh">ps.sh</a>. Information on previously unidentified pQTLs is with <a href="pqtl.sh">pqtl.sh</a></p>
+<p>This is furnished with <a href="ps.sh">ps.sh</a>.</p>
 <h2 id="known-variants">Known variants</h2>
 <p><a href="lookup.sh">lookup.sh</a>, which uses PhenoScanner output from <a href="pqtl.R">pqtl.R</a>, can be used to check if pQTLs were known.</p>
 <p>File <a href="cvd1.sh">cvd1.sh</a> gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.</p>

@@ -7,15 +7,15 @@
         
         
         
-        <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>Near-independent signals from cojo and clumping - SCALLOP-INF</title>
-        <link href="../../css/bootstrap.min.css" rel="stylesheet">
-        <link href="../../css/font-awesome.min.css" rel="stylesheet">
-        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Notes - SCALLOP-INF</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
 
-        <script src="../../js/jquery-1.10.2.min.js" defer></script>
-        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
@@ -32,7 +32,7 @@
     <body>
         <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" href="../..">SCALLOP-INF</a>
+                <a class="navbar-brand" href="..">SCALLOP-INF</a>
                 <!-- Expander button -->
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
@@ -43,37 +43,25 @@
                         <!-- Main navigation -->
                         <ul class="nav navbar-nav">
                             <li class="navitem">
-                                <a href="../.." class="nav-link">Home</a>
+                                <a href=".." class="nav-link">Home</a>
                             </li>
                             <li class="navitem">
-                                <a href="../cardio/" class="nav-link">GWAS sumstats and plots</a>
+                                <a href="../cardio/cardio/" class="nav-link">Cardio</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../csd3/" class="nav-link">CSD3</a>
                             </li>
                             <li class="navitem active">
-                                <a href="./" class="nav-link">Near-independent signals from cojo and clumping</a>
+                                <a href="./" class="nav-link">Notes</a>
                             </li>
                             <li class="navitem">
-                                <a href="../../csd3/" class="nav-link">Scripts on CSD3</a>
+                                <a href="SCALLOP_INF1_analysis_plan/" class="nav-link">Analysis plan</a>
                             </li>
                             <li class="navitem">
-                                <a href="../../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">SCALLOP consortium analysis plan for INF panel proteins</a>
+                                <a href="../rsid/" class="nav-link">Use of rsid</a>
                             </li>
                             <li class="navitem">
-                                <a href="../../doc/aild/" class="nav-link">Aild</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../../doc/uniprot/" class="nav-link">Uniprot</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../../rsid/" class="nav-link">Index</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../../rsid/latex/" class="nav-link">Latex</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../../tryggve/" class="nav-link">Index</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../../tryggve/tryggve/" class="nav-link">SCALLOP/INFlammation anlaysis on TRYGGVE</a>
+                                <a href="../tryggve/" class="nav-link">Tryggve</a>
                             </li>
                         </ul>
 
@@ -84,12 +72,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../cardio/" class="nav-link">
+                                <a rel="prev" href="../csd3/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../csd3/" class="nav-link">
+                                <a rel="next" href="SCALLOP_INF1_analysis_plan/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -111,8 +99,20 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#near-independent-signals-from-cojo-and-clumping" class="nav-link">Near-independent signals from cojo and clumping</a>
+            <li class="nav-item" data-level="1"><a href="#notes" class="nav-link">Notes</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#uniprot-ids" class="nav-link">UniProt IDs</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#approximately-independent-ld-blocks" class="nav-link">Approximately independent LD blocks:</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#near-independent-signals-from-cojo-and-clumping" class="nav-link">Near-independent signals from cojo and clumping</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -120,7 +120,102 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="near-independent-signals-from-cojo-and-clumping">Near-independent signals from cojo and clumping</h1>
+<h1 id="notes">Notes</h1>
+<h2 id="uniprot-ids">UniProt IDs</h2>
+<p>The list of proteins on inflammation is within one of the <a href="https://www.olink.com/products/">Olink</a> panels (as in <a href="Olink%20validation%20data%20all%20panels.xlsx">Olink validation data all panels.xlsx</a>) each containing 92 proteins. Information contained in these panels can be retrieved into R via <a href="Olink.R">Olink.R</a>, which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.</p>
+<p>BDNF has recently been removed from the assay and replaced with CD8A, <a href="https://www.olink.com/bdnf-info/">https://www.olink.com/bdnf-info/</a>, and there are also changes on TNF and IFN.gamma, <a href="https://www.olink.com/inflammation-upgrade/">https://www.olink.com/inflammation-upgrade/</a>.</p>
+<p>A <a href="https://www.uniprot.org/">UniProt</a> ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While <a href="inf1.csv">inf1.csv</a> 
+edits Q4ACW9, <a href="inf2.csv">inf2.csv</a> is inline with UCSC with respect to P12034 and P30203.</p>
+<p>The use of uniprot IDs is noted in two aspects,</p>
+<ol>
+<li>
+<p>The protein list in <a href="inf1.csv">inf1.csv</a> notes both O43508 and Q4ACW9.</p>
+</li>
+<li>
+<p>Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
+point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). <a href="hgTables.tsv">hgTables.tsv</a> is based on UCSC, checked over
+UniProt IDs as follows,</p>
+</li>
+</ol>
+<pre><code class="language-bash">grep inf1 doc/olink.prot.list.txt | \
+sed 's/inf1_//g;s/___/\t/g' &gt; inf1.list
+join -t$'\t' -12 -24 &lt;(sort -k2,2 inf1.list) &lt;(awk '{split($4,f,&quot;-&quot;); $4=f[1]; if(!index($1,&quot;_&quot;)) print}' OFS='\t' doc/hgTables.tsv | sort -k4,4) &gt; 12
+# 90 lines
+wc -l 12
+# Q8NF90 (FGF.5), Q8WWJ7 (CD6) are missing
+join -v2 -22 12 &lt;(sort -k2,2 inf1.list)
+rm 12
+</code></pre>
+<p>Likewise, <a href="olink.inf.panel.annot.tsv">olink.inf.panel.annot.tsv</a> from <a href="olink.annotation.R">olink.annotation.R</a> also has the following two entries</p>
+<table>
+<thead>
+<tr>
+<th>"target"</th>
+<th>"target.short"</th>
+<th>"uniprot"</th>
+<th>"panel"</th>
+<th>"prot.on.multiple.panel"</th>
+<th>"panels.with.prot"</th>
+<th>"hgnc_symbol"</th>
+<th>"chromosome_name"</th>
+<th>"start_position"</th>
+<th>"end_position"</th>
+<th>"olink.id"</th>
+<th>"alternate.uniprot"</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Fibroblast growth factor 5 (FGF-5)"</td>
+<td>"FGF-5"</td>
+<td>"Q8NF90"</td>
+<td>"inf"</td>
+<td>FALSE</td>
+<td>NA</td>
+<td>NA</td>
+<td>"4"</td>
+<td>81187753</td>
+<td>81257834</td>
+<td>"141_FGF-5"</td>
+<td>"P12034"</td>
+</tr>
+<tr>
+<td>"T-cell surface glycoprotein CD6 isoform (CD6)"</td>
+<td>"CD6"</td>
+<td>"Q8WWJ7"</td>
+<td>"inf"</td>
+<td>FALSE</td>
+<td>NA</td>
+<td>NA</td>
+<td>"11"</td>
+<td>60739115</td>
+<td>60787849</td>
+<td>"131_CD6"</td>
+<td>"P30203"</td>
+</tr>
+</tbody>
+</table>
+<p>whose hgnc_symbol can be amended as follows</p>
+<pre><code class="language-bash">awk '!/BDNF/&amp;&amp;NR&gt;1{if($3==&quot;\&quot;Q8NF90\&quot;&quot;) $7=&quot;\&quot;FGF5\&quot;&quot;; else if($3==&quot;\&quot;Q8WWJ7\&quot;&quot;) $7=&quot;\&quot;CD6\&quot;&quot;;print}' FS='\t' OFS='\t' doc/olink.inf.panel.annot.tsv
+</code></pre>
+<p>The overlap with SomaLogic panel is characterised with <a href="Olink.R">Olink.R</a> which also gives a Venn diagram.
+<img src="Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right"></p>
+<h2 id="approximately-independent-ld-blocks">Approximately independent LD blocks:</h2>
+<ol>
+<li>Set up 1703 autosomal regions as defined in <a href="../tryggve/EURLD.bed">EURLD.bed</a>.</li>
+<li>Extract variants outside the <a href="../tryggve/high-LD-regions-hg19.txt">regions in high LD</a> to <a href="../tryggve/EURLD-no-high-LD-regions-hg19.bed">1672 regions</a> by <a href="../tryggve/EURLD.sh">EURLD.sh</a>.</li>
+<li>Overlap regions and GWAS sumstats:</li>
+<li>Tag GWAS sumstats with regions through <a href="../cardio/aild-rma.sb">aild-rma.sb</a>.</li>
+<li>Pair protein-region which contains genomewide significant signals by <a href="../cardio/aild-list.sb">aild-list.sb</a>.</li>
+<li>Independently, list variants by region in the reference panel by <a href="../cardio/aild-snplist.sb">aild-snplist.sb</a>.</li>
+<li>clump via <a href="../cardio/aild-clump.sb">aild-clump.sb</a>.</li>
+<li>cojo via <a href="../cardio/aild-cojo.sb">aild-cojo.sb</a>.</li>
+<li>Downstream analyses with PhenoScanner (preferably v2) as in <a href="../cardio/ps.sh">ps.sh</a> and forest plots on TRYGGVE (with study-specific sumstats).</li>
+</ol>
+<p>The regions are predefined. As shown in <a href="../tryggve/EURLD.tsv">EURLD.tsv</a> by <a href="../tryggve/EURLD.R">EURLD.R</a>, the LD patterns across the genome are more variable than the norm in a typical genomewide association analysis therefore slide windows such as 250kb (36), 500kb (300), or even 10Mb (1071), seeing that the sentinel variant may not necessarily lie right in the middle of a window. The number of signals in our case were close to GCTA but overestimated (53 by PLINK) as in the following table. For instance, it is often seen from the PLINK --clump-range outputs that sliding windows can give results in two neighbouring LD blocks.</p>
+<p>Note that pairing regions of interest would reduce the burden of genomewide analysis, and also that region-specific reference will not affect results from steps 4 and 5 regarding use of variants from GWAS sumstats.</p>
+<p>Steps 4 and 5 both use <code>INF1.aild</code>, which contains all the protein-region pairs. The results are classified as in <a href="../tryggve/analysis.sh">analysis.sh</a>. In particular, for step 5 this is done with <a href="../cardio/aild.sh">aild.sh</a>.</p>
+<h2 id="near-independent-signals-from-cojo-and-clumping">Near-independent signals from cojo and clumping</h2>
 <table>
 <thead>
 <tr>
@@ -253,11 +348,11 @@
             <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
         <script>
-            var base_url = "../..",
+            var base_url = "..",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="../../js/base.js" defer></script>
-        <script src="../../search/main.js" defer></script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
 
         <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">

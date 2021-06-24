@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Index - SCALLOP-INF</title>
+        <title>Use of rsid - SCALLOP-INF</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
@@ -46,34 +46,22 @@
                                 <a href=".." class="nav-link">Home</a>
                             </li>
                             <li class="navitem">
-                                <a href="../cardio/cardio/" class="nav-link">GWAS sumstats and plots</a>
+                                <a href="../cardio/cardio/" class="nav-link">Cardio</a>
                             </li>
                             <li class="navitem">
-                                <a href="../cardio/clump-cojo/" class="nav-link">Near-independent signals from cojo and clumping</a>
+                                <a href="../csd3/" class="nav-link">CSD3</a>
                             </li>
                             <li class="navitem">
-                                <a href="../csd3/" class="nav-link">Scripts on CSD3</a>
+                                <a href="../doc/" class="nav-link">Notes</a>
                             </li>
                             <li class="navitem">
-                                <a href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">SCALLOP consortium analysis plan for INF panel proteins</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../doc/aild/" class="nav-link">Aild</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../doc/uniprot/" class="nav-link">Uniprot</a>
+                                <a href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">Analysis plan</a>
                             </li>
                             <li class="navitem active">
-                                <a href="./" class="nav-link">Index</a>
+                                <a href="./" class="nav-link">Use of rsid</a>
                             </li>
                             <li class="navitem">
-                                <a href="latex/" class="nav-link">Latex</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../tryggve/" class="nav-link">Index</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../tryggve/tryggve/" class="nav-link">SCALLOP/INFlammation anlaysis on TRYGGVE</a>
+                                <a href="../tryggve/" class="nav-link">Tryggve</a>
                             </li>
                         </ul>
 
@@ -84,12 +72,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../doc/uniprot/" class="nav-link">
+                                <a rel="prev" href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="latex/" class="nav-link">
+                                <a rel="next" href="../tryggve/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -111,8 +99,32 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
+            <li class="nav-item" data-level="1"><a href="#use-of-rsid" class="nav-link">Use of rsid</a>
+              <ul class="nav flex-column">
             <li class="nav-item" data-level="2"><a href="#jointconditional-analysis-and-fine-mapping" class="nav-link">Joint/conditional analysis and fine-mapping</a>
               <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#hgi-analysis" class="nav-link">HGI analysis</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#miscellaneous-analyses-and-utilities" class="nav-link">Miscellaneous analyses and utilities</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#stacked-association-plots" class="nav-link">Stacked association plots</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#nested-pgs-model" class="nav-link">Nested PGS model</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#latex-formulae" class="nav-link">LaTeX formulae</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -120,12 +132,12 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
+<h1 id="use-of-rsid">Use of rsid</h1>
 <h2 id="jointconditional-analysis-and-fine-mapping">Joint/conditional analysis and fine-mapping</h2>
 <p>The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the dilemma that the reference data, possibly like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsids is undesirable so SNPID, i.e., chr:pos_A1_A2, (A1&lt;=A2) is necessary.</p>
 <p>After a rather long and laborious process involving many software, it turned out a simple way out is to obtain sentinels using SNPID but return to rsids at this stage and forward. The implementation here reflects this. The file INTERVAL.rsid contains SNPID-rsid mapping and could be generated from programs such as <code>qctool/bgenix/plink</code>. A related file is <code>snp_pos</code> containing rsid -- chr:pos mappings; for instance this could be built from dbSNP.</p>
 <p>A note on regions is ready. It is attractive to use the last genomic region from iterative merging for analysis and perhaps a flanking version. This is more appropriate than genome-wide hard and fast 10MB windows or approximately independent LD blocks. For the latter, we found that the boundaries from the distributed 1000Genomes project were often inappropriate and one may not attempt to compute them for specific reference panel. Nevertheless, the iterative procedure actually just does empirically. Again the HLA region is condensed.</p>
 <p>The last point regards software <code>finemap</code>, which uses summary statistics associated with the reference panel rather than that from meta-analysis.</p>
-<h3 id="main-analyses">Main analyses</h3>
 <table>
 <thead>
 <tr>
@@ -167,34 +179,6 @@
 <td><code>JAM</code> analysis</td>
 </tr>
 <tr>
-<td>coloc.sb</td>
-<td>coloc analysis -- clumsy verion</td>
-</tr>
-<tr>
-<td>coloc.R</td>
-<td>coloc analysis via pQTLtools</td>
-</tr>
-<tr>
-<td>fastenloc.sb</td>
-<td>fastenloc analysis</td>
-</tr>
-<tr>
-<td>fusion_twas.sb</td>
-<td>FUSION TWAS experiment</td>
-</tr>
-<tr>
-<td>garfield.sh</td>
-<td>GARFIELD analysis</td>
-</tr>
-<tr>
-<td>gsmr.sh</td>
-<td>GSMR processing</td>
-</tr>
-<tr>
-<td>hyprcoloc.sh</td>
-<td>hyprcoloc analysis</td>
-</tr>
-<tr>
 <td>st.sh</td>
 <td>batch command file</td>
 </tr>
@@ -213,7 +197,7 @@ utils.sh --&gt; |&quot;internal prune&quot; | jam.sh
 utils.sh  --&gt; |&quot;--n-causal-snps k&quot;| finemap.sh
 </code></pre>
 <p>Note that the <code>GCTA</code> .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to <code>finemap</code>.</p>
-<h3 id="hgi-analysis">HGI analysis</h3>
+<h2 id="hgi-analysis">HGI analysis</h2>
 <table>
 <thead>
 <tr>
@@ -240,7 +224,7 @@ utils.sh  --&gt; |&quot;--n-causal-snps k&quot;| finemap.sh
 </tr>
 </tbody>
 </table>
-<h3 id="miscellaneous-analyses-and-utilities">Miscellaneous analyses and utilities</h3>
+<h2 id="miscellaneous-analyses-and-utilities">Miscellaneous analyses and utilities</h2>
 <table>
 <thead>
 <tr>
@@ -262,12 +246,40 @@ utils.sh  --&gt; |&quot;--n-causal-snps k&quot;| finemap.sh
 <td>SCALLOP-CVDI supplementary tables</td>
 </tr>
 <tr>
+<td>coloc.sb</td>
+<td>coloc analysis -- clumsy verion</td>
+</tr>
+<tr>
+<td>coloc.R</td>
+<td>coloc analysis via pQTLtools</td>
+</tr>
+<tr>
 <td>efo.R</td>
 <td>experimental factor ontology</td>
 </tr>
 <tr>
 <td>eQTL.R</td>
 <td>cis-pQTL eQTL lookup (PhenoScanner)</td>
+</tr>
+<tr>
+<td>fastenloc.sb</td>
+<td>fastenloc analysis</td>
+</tr>
+<tr>
+<td>fusion_twas.sb</td>
+<td>FUSION TWAS experiment</td>
+</tr>
+<tr>
+<td>garfield.sh</td>
+<td>GARFIELD analysis</td>
+</tr>
+<tr>
+<td>gdigt.R</td>
+<td>GDI and gene-trials</td>
+</tr>
+<tr>
+<td>gsmr.sh</td>
+<td>GSMR processing</td>
 </tr>
 <tr>
 <td>GTEx.R</td>
@@ -278,16 +290,16 @@ utils.sh  --&gt; |&quot;--n-causal-snps k&quot;| finemap.sh
 <td>cis-pQTL GTEx eQTL lookup (GTEx v8)</td>
 </tr>
 <tr>
-<td>gdigt.R</td>
-<td>GDI and gene-trials</td>
-</tr>
-<tr>
 <td>gwasvcf.sh</td>
 <td>GWAS to VCF conversion</td>
 </tr>
 <tr>
 <td>gwas2vcf.sb</td>
 <td>gwas2vcf + VCF operations</td>
+</tr>
+<tr>
+<td>hyprcoloc.sh</td>
+<td>hyprcoloc analysis</td>
 </tr>
 <tr>
 <td>h2pve.R</td>
@@ -371,7 +383,7 @@ utils.sh  --&gt; |&quot;--n-causal-snps k&quot;| finemap.sh
 </tr>
 </tbody>
 </table>
-<h3 id="stacked-association-plots">Stacked association plots</h3>
+<h2 id="stacked-association-plots">Stacked association plots</h2>
 <ol>
 <li>IL.18-rs385076.sh</li>
 <li>rs12075.sh</li>
@@ -379,14 +391,20 @@ utils.sh  --&gt; |&quot;--n-causal-snps k&quot;| finemap.sh
 <li>MS.sh (two-sample MRs)</li>
 <li>OPG-TRANCE.sh</li>
 </ol>
-<h3 id="nested-pgs-model">Nested PGS model</h3>
+<h2 id="nested-pgs-model">Nested PGS model</h2>
 <p><img alt="grViz.png" src="grViz.png" /></p>
 <p>Without loss of generality, we have genotype data G1, G2, G3, which link with proteins P1, P2, P3 as predictors for outcome y.</p>
 <p>The figure is obtained with</p>
 <pre><code class="language-bash">dot -Tpng grViz.gv -ogrViz.png
 </code></pre>
 <p>which also be  obtained from RStudio for somewhat larger size.</p>
-<p><em>Date last changed:</em> <strong>17/6/2021</strong></p></div>
+<p><em>Date last changed:</em> <strong>17/6/2021</strong></p>
+<h2 id="latex-formulae">LaTeX formulae</h2>
+<p>PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$</p>
+<p>$\sum_{i=1}^T{\frac{1}{N_i-1}}$</p>
+<p>$p_i=\sum_{i=1}^k{m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$</p>
+<p>$\sum_{i=1}^k{m\choose{i}}$</p>
+<p>$\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}$</p></div>
             </div>
         </div>
 
