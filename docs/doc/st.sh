@@ -15,6 +15,9 @@ git commit -m "Notes and programs on TRYGGVE"
 git push
 }
 
+mkdocs build
+mkdocs gh-deploy
+
 git add .gitignore
 git commit -m ".gitignore"
 git add README.md
