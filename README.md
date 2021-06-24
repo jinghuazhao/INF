@@ -1,6 +1,8 @@
 # SCALLOP-INF meta-analysis
 
-## Flow of analysis (view diagram by pasting script to [mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor/))
+## Flow of analysis
+
+(view diagram by pasting script to [mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor/))
 
 ```mermaid
 graph TB;
@@ -23,7 +25,7 @@ csd3 --> software[R Packages at CRAN/GitHub];
 5. Downstream analyses links colocalisation and Mendelian randomisation with CAD, FEV1 and the meta-analysis summary statistics are now described in [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
 6. A nested predictive model based on genotype data G1/G2/G3, which link with proteins P1/P2/P3 as predictors for outcome y, is sketched as follows,
 
-![](rsid/grViz.png)
+![](docs/rsid/grViz.png)
 
 ## References
 
@@ -36,20 +38,6 @@ Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identi
 Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. *Nat Med*. https://doi.org/10.1038/s41591-019-0415-5
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
-
-## Download
-
-```{bash}
-git clone https://github.com/jinghua/INF
-```
-
-## Study Information
-
-* [Analysis plan](doc/SCALLOP_INF1_analysis_plan.md) ([docx](doc/SCALLOP_INF1_analysis_plan.docx))
-* [Approximately independent LD blocks](doc/aild.md)
-* [Joint/conditional analysis and fine-mapping](rsid)
-* [Notes on UniProt IDs](doc/uniprot.md)
-* [TRYGGVE](https://neic.no/tryggve/)-[specific notes](tryggve/tryggve.md)
 
 ## Related links
 
@@ -65,4 +53,8 @@ git clone https://github.com/jinghua/INF
 * [ImmunoBase](https://genetics.opentargets.org/immunobase).
 * [Worldwide PDB](http://www.wwpdb.org/)
 
-The OPG example,<img src="doc/OPG-qmlf.png">
+## The OPG example
+
+See the stacked image below.
+
+<img src="docs/doc/OPG-qmlf.png">
