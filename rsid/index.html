@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Use of rsid - SCALLOP-INF</title>
+        <title>On rsid - SCALLOP-INF</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/font-awesome.min.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
@@ -46,22 +46,22 @@
                                 <a href=".." class="nav-link">Home</a>
                             </li>
                             <li class="navitem">
+                                <a href="../doc/" class="nav-link">Notes</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">Analysis plan</a>
+                            </li>
+                            <li class="navitem">
                                 <a href="../cardio/cardio/" class="nav-link">Cardio</a>
                             </li>
                             <li class="navitem">
                                 <a href="../csd3/" class="nav-link">CSD3</a>
                             </li>
                             <li class="navitem">
-                                <a href="../doc/" class="nav-link">Notes</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">Analysis plan</a>
+                                <a href="../tryggve/" class="nav-link">Tryggve</a>
                             </li>
                             <li class="navitem active">
-                                <a href="./" class="nav-link">Use of rsid</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../tryggve/" class="nav-link">Tryggve</a>
+                                <a href="./" class="nav-link">On rsid</a>
                             </li>
                         </ul>
 
@@ -72,12 +72,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">
+                                <a rel="prev" href="../tryggve/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../tryggve/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -99,7 +99,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#use-of-rsid" class="nav-link">Use of rsid</a>
+            <li class="nav-item" data-level="1"><a href="#on-rsid" class="nav-link">On rsid</a>
               <ul class="nav flex-column">
             <li class="nav-item" data-level="2"><a href="#jointconditional-analysis-and-fine-mapping" class="nav-link">Joint/conditional analysis and fine-mapping</a>
               <ul class="nav flex-column">
@@ -132,7 +132,7 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="use-of-rsid">Use of rsid</h1>
+<h1 id="on-rsid">On rsid</h1>
 <h2 id="jointconditional-analysis-and-fine-mapping">Joint/conditional analysis and fine-mapping</h2>
 <p>The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the dilemma that the reference data, possibly like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsids is undesirable so SNPID, i.e., chr:pos_A1_A2, (A1&lt;=A2) is necessary.</p>
 <p>After a rather long and laborious process involving many software, it turned out a simple way out is to obtain sentinels using SNPID but return to rsids at this stage and forward. The implementation here reflects this. The file INTERVAL.rsid contains SNPID-rsid mapping and could be generated from programs such as <code>qctool/bgenix/plink</code>. A related file is <code>snp_pos</code> containing rsid -- chr:pos mappings; for instance this could be built from dbSNP.</p>
