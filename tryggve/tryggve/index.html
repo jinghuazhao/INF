@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>SCALLOP/INFlammation anlaysis on TRYGGVE - SCALLOP-INF</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Java.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/JavaScript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Perl.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/rust.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="../..">SCALLOP-INF</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../cardio/cardio/" class="nav-link">GWAS sumstats and plots</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../cardio/clump-cojo/" class="nav-link">Near-independent signals from cojo and clumping</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">SCALLOP consortium analysis plan for INF panel proteins</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../doc/aild/" class="nav-link">Aild</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../doc/uniprot/" class="nav-link">Uniprot</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../rsid/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../rsid/latex/" class="nav-link">Latex</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">SCALLOP/INFlammation anlaysis on TRYGGVE</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#scallopinflammation-anlaysis-on-tryggve" class="nav-link">SCALLOP/INFlammation anlaysis on TRYGGVE</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#modules" class="nav-link">Modules</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#parallel-computing" class="nav-link">Parallel computing</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#software-issues" class="nav-link">SOFTWARE ISSUES</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#code-extraction" class="nav-link">Code extraction</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#a-summary-of-files" class="nav-link">A SUMMARY OF FILES</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="scallopinflammation-anlaysis-on-tryggve">SCALLOP/INFlammation anlaysis on TRYGGVE</h1>
+<p>The repository covers various aspects such as software and data.</p>
+<h2 id="modules">Modules</h2>
+<p>Instances are exemplified as follows,</p>
+<pre><code class="language-bash">module load anaconda2/4.4.0
+module load bedtools/2.28.0
+module load bgen/20180807
+module load perl/5.24.0 annovar/2019oct24
+module load bcftools/1.9
+module load emacs/26.1
+module load gcta/1.91.0beta
+module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 lapack/3.8.0 R/3.5.3-ICC-MKL rstudio/1.1.453
+module load libreoffice/6.0.5.2
+module load locuszoom/1.4
+module load metal/20180828
+module load pandoc/2.1
+module load parallel/20190122
+module load plink2/1.90beta5.4
+module load vcftools/0.1.16
+module load xpdf/3.04
+export threads=1
+</code></pre>
+<p>e.g., </p>
+<pre><code class="language-bash">pandoc tryggve.md -o tryggve.docx
+soffice tryggve.docx
+xterm -fa arial -fs 12 -bg black -fg white
+</code></pre>
+<h2 id="parallel-computing">Parallel computing</h2>
+<p><a href="../METAL.qsub">METAL.qsub</a> was intended to run batch jobs under <a href="https://en.wikipedia.org/wiki/TORQUE">Terascale Open-source
+Resource and QUEue Manager (TORQUE)</a> controls batch jobs and
+distributed compute nodes, enabling integration with <a href="https://en.wikipedia.org/wiki/Moab_Cluster_Suite">Moab cluster
+suite</a> and extending
+<a href="https://en.wikipedia.org/wiki/Portable_Batch_System">Portable Batch System (PBS)</a> with respect
+to extend scalability, fault tolerance, and functionality. Information on
+job scheduling on Computerome is availble from https://www.computerome.dk/display/CW/Batch+System,</p>
+<p>However, the SCALLOP securitycloud is a 1-node cloud and we resort to
+parallel instead, e.g,</p>
+<pre><code class="language-bash">module load metal/20110325 parallel/20190122
+ls METAL/*.run | parallel --dry-run --env HOME -j8 -C' ' 'metal $HOME/INF/{}'
+</code></pre>
+<p>NB METAL add -1 to the filenames.</p>
+<h2 id="software-issues">SOFTWARE ISSUES</h2>
+<h3 id="bash-functions">Bash functions</h3>
+<p>There might be problems with R/3.5.3-ICC-MKL so functions are defined in <code>.bashrc</code> which can be invoked at the start of a session,
+then one invokes R.3.5.3 when necessary. </p>
+<pre><code class="language-bash"># This could be very slow
+function R.3.5.3()
+{
+  export R_LIBS=/data/$USER/R:/services/tools/R/3.5.3-ICC-MKL/lib64/R/library
+  module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 lapack/3.8.0 R/3.5.3-ICC-MKL lapack/3.8.0
+  source /data/jinhua/parallel-20190222/bin/env_parallel.bash
+  alias R='/services/tools/R/3.5.3-ICC-MKL/bin/R -q $@'
+}
+# An alternative
+function R.3.3.1()
+{
+  module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.3.1-ICC-MKL
+}
+</code></pre>
+<p>We also use R 3.3.x below.</p>
+<h2 id="code-extraction">Code extraction</h2>
+<p>This is possible with codedown, as noted <a href="https://github.com/jinghuazhao/physalia/blob/master/NOTES.md">here</a>.</p>
+<h3 id="locuszoom-14">LocusZoom 1.4</h3>
+<p>To use LocusZoom 1.4, one only needs to start with</p>
+<pre><code class="language-bash">module load gcc/5.4.0
+module load R/3.2.5
+module load anaconda2/4.4.0
+module load locuszoom/1.4
+</code></pre>
+<h3 id="finemapldstore">finemap/ldstore</h3>
+<p>finemap 1.3.1 and ldstore 1.1 are available from /data/jinhua and can be enabled as follows,</p>
+<pre><code class="language-bash">ln -fs /data/jinhua/ldstore_v1.1_x86_64/ldstore $HOME/bin/ldstore_v1.1
+ln -fs /data/jinhua/finemap_v1.3.1_x86_64/finemap_v1.3.1_x86_64 $HOME/bin/finemap_v1.3.1
+````
+finemap 1.4 and ldstore 2.0b are available from /data/jinhua/finemap-1.4.
+
+### qctool
+
+TRYGGVE now fixed issue with qctool/2.0.1 for lack of lapack shared libraries as in /data/jinhua/lapack-3.8.0/ and its installation described on GitHub repository, https://github.com/jinghuazhao/Computational-Statistics.
+
+It is then possible to issue `module load gcc/5.4.0 lapack/3.8.0 qctool/2.0.1`.
+
+## NEW SOFTWARE
+
+There are a number of software updates/additions which are worthy of note.
+
+### GCTA
+
+A more recenve version is available from /data/jinhua/gcta_1.91.7beta/.
+This version can handle chi-squared statistics instead of p values in the joint/conditional (COJO) analysis; it also allows for `--grm file --pca --out file`, i.e., same file root.
+
+### GNU parallel
+
+The latest version parallel-20190222 has new features and use them directly on TRYGGVE without invoking modules as follows,
+```bash
+export src=/data/jinhua/parallel-20190222/bin
+for i in $(ls $src); do ln -fs $src/$i $HOME/bin/$i; done
+export MANPATH=/data/jinhua/parallel-20190222/share/man:$MANPATH
+</code></pre>
+<p>The last line enables <code>man parallel</code> and <code>info parallel</code>.</p>
+<h3 id="imagemagick">ImageMagick</h3>
+<p>This is version 7.0.8-22, made available due to the inability to use the imagemagick/7.0.8-16 module, e.g.,</p>
+<pre><code class="language-bash">export PATH=/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
+convert OPG.lz-1.png -resize 130% OPG.lz-3.png
+convert \( OPG.qq.png -append OPG.manhattan.png -append OPG.lz-3.png -append \) +append OPG-qml.png
+</code></pre>
+<p>used to generate the figure in the front page. Another very useful utility is its <code>display</code>.</p>
+<h3 id="metal">METAL</h3>
+<p>The version as in /data/jinhua/METAL-2018-08-28 contains modification which allows for CUSTOMVARIABLE to use integer position rather than scientific format as in <a href="https://github.com/jinghuazhao/software-notes/blob/master/AA.md">software-notes</a>.</p>
+<p>An extension was made with the Direction column so that if a variant with '+' and '-' effects becomes 'p' and 'n', respectively with P &lt;= 0.05.</p>
+<p>To avoid loading the default /usr/bin/metal, one can add</p>
+<pre><code class="language-bash">ln -sf /data/jinhua/METAL-2018-08-28/metal $HOME/bin/metal
+export PATH=$HOME/bin:/data/jinhua/ImageMagick-7.0.8-22/bin:$PATH
+</code></pre>
+<p>into $HOME/.bashrc.</p>
+<h3 id="openvpn">OpenVPN</h3>
+<p>In case you see message "All TAP-Windows aapters on this system are currently in use", read <a href="https://vpn.ac/knowledgebase/64/OpenVPN-Error-All-TAP-Windows-adapters-on-this-system-are-currently-in-use.html">this post</a>, esp. install <a href="https://swupdate.openvpn.org/community/releases/tap-windows-9.21.2.exe">tap-windows-8.21.2</a>.</p>
+<p>The log is usually located at "%USERPROFILE%/OpenVPN/log".</p>
+<h3 id="r">R</h3>
+<p><strong>EasyQC/EasyStrata</strong></p>
+<p>The version is 18.1 rather than 9.2 and 8.6 currently online, https://www.uni-regensburg.de/medizin/epidemiologie-praeventivmedizin/genetische-epidemiologie/software/.</p>
+<p><strong>gap</strong></p>
+<p>First, run R.3.5.3 as defined above.</p>
+<p>This version contains functions cis.vs.trans.classification, gc.lambda, invnormal, and here is the way to go</p>
+<pre><code class="language-bash">module load intel/redist/2019 intel/perflibs/64/2019 gcc/5.4.0 R/3.5.3-ICC-MKL
+tar xvfz gap_1.2.2.tar.gz
+cd gap/src
+gcc -I/services/tools/intel/perflibs/2019/compilers_and_libraries/linux/mpi/intel64/include -L/services/tools/intel/perflibs/2019/compilers_and_libraries/linux/mpi/intel64/lib/release -L/services/tools/intel/perflibs/2019/compilers_and_libraries/linux/mpi/intel64/lib -Xlinker --enable-new-dtags -Xlinker -rpath -Xlinker /services/tools/intel/perflibs/2019/compilers_and_libraries/linux/mpi/intel64/lib/release -Xlinker -rpath -Xlinker /services/tools/intel/perflibs/2019/compilers_and_libraries/linux/mpi/intel64/lib -Xlinker -rpath -Xlinker /opt/intel/mpi-rt/2017.0.0/intel64/lib/release -Xlinker -rpath -Xlinker /opt/intel/mpi-rt/2017.0.0/intel64/lib -lmpifort -lmpi -ldl -lrt -lpthread -L/services/tools/intel/perflibs/2019//compilers_and_libraries_2019.0.117/linux/mpi/intel64/libfabric/lib -fPIC -c *.c *.f
+gcc -shared -L/services/tools/R/3.5.3-ICC-MKL/lib64/R/lib -L/usr/local/lib64 -o gap.so 2k.o 2ld.o cline.o gcontrol_c.o gcx.o gif_c.o hap_c.o hwe.hardy.o kin.morgan.o makeped_c.o mia.o muvar.o package_native_routine_registration_skeleton.o pfc.o pfc.sim.o pgc_c.o whscore.o -L/usr/lib/gcc/x86_64-redhat-linux/4.8.2 -lgfortran -lm -lquadmath -L/services/tools/R/3.5.3-ICC-MKL/lib64/R/lib -lR
+cd -
+R CMD INSTALL gap -l /data/jinhua/R
+</code></pre>
+<p>The rather imtimidating compiler flags are derived from <code>mpiicc -show</code> as with initial pass requested for libfabric.so.1, and the idea is to get around check for icc which does not exist on the system. To faciliate compiling, <a href="../gap.sh">gap.sh</a> contains these lines for use.</p>
+<p>To take advantage of the <code>circos.mhtplot</code> function, package R/gap.datasets is also made available. The following is an example for cross-check,</p>
+<pre><code class="language-bash">R --no-save -q &lt;&lt;END
+  gz &lt;- &quot;sumstats/STABILITY/STABILITY.IFN.gamma.gz&quot;
+  STABILITY &lt;-  read.table(gz,as.is=TRUE,header=TRUE,sep=&quot;\t&quot;)
+  summary(STABILITY)
+  library(&quot;GenABEL&quot;)
+  estlambda(with(STABILITY,PVAL), method=&quot;median&quot;)
+END
+</code></pre>
+<p>Somehow R/gap thus compiled was very slow; so attempt was also made with R 3.3.1 via <a href="../gap.3.3.1.sh">gap.3.3.1.sh</a> which requires registration of routine <code>family</code> (defined in <code>pfc.f</code>) altered to <code>family_</code> and the change is made as default.</p>
+<p>The <code>fp()</code> function in <code>analysis.sh</code> requires <code>R.3.3.1</code> to be called.</p>
+<p><strong>QCGWAS</strong></p>
+<p>The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.</p>
+<h2 id="a-summary-of-files">A SUMMARY OF FILES</h2>
+<table>
+<thead>
+<tr>
+<th>File specification</th>
+<th>Descrription</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>doc/</td>
+<td>Oringal documents</td>
+</tr>
+<tr>
+<td>-- <a href="../KORA.prot.preproc.belowlod.v2.R">KORA.prot.preproc.belowlod.v2.R*</a></td>
+<td>R code for data preprocessing</td>
+</tr>
+<tr>
+<td>-- kora.normalised.prot.txt*</td>
+<td>sex, age, normalised proteins</td>
+</tr>
+<tr>
+<td>-- <a href="../KORA.pc.below.llod.pdf">KORA.pc.below.llod.pdf*</a></td>
+<td>llod check</td>
+</tr>
+<tr>
+<td>METAL/</td>
+<td>METAL/output scripts by protein</td>
+</tr>
+<tr>
+<td>sumstats/</td>
+<td>File lists and study directories</td>
+</tr>
+<tr>
+<td>tryggve/</td>
+<td>Auxiliary files</td>
+</tr>
+<tr>
+<td>-- <a href="../list.sh">list.sh</a></td>
+<td>Generation of file list and directory</td>
+</tr>
+<tr>
+<td>-- <a href="../format.sh">format.sh</a></td>
+<td>Code for format GWAS summary statistics</td>
+</tr>
+<tr>
+<td>-- <a href="../lz14.sh">lz14.sh</a></td>
+<td>Code to extract LocusZoom 1.4 databases for <a href="../analysis.sh">analysis.sh</a></td>
+</tr>
+<tr>
+<td>-- <a href="../analysis.sh">analysis.sh</a></td>
+<td>Bash code for analysis calling <a href="../analysis.ini">analysis.ini</a></td>
+</tr>
+<tr>
+<td>-- <a href="../metal.sh">metal.sh</a></td>
+<td>Generation/execution of METAL scripts</td>
+</tr>
+<tr>
+<td>-- <a href="../METAL.qsub">METAL.qsub</a></td>
+<td>TORQUE qsub script for METAL</td>
+</tr>
+<tr>
+<td>-- <a href="../INTERVAL.sh">INTERVAL.sh</a></td>
+<td>INTERVAL analysis</td>
+</tr>
+<tr>
+<td>-- <a href="../KORA.sh">KORA.sh</a></td>
+<td>Bash/R scripts to hand KORA data</td>
+</tr>
+<tr>
+<td>-- <a href="../KORA.txt">KORA.txt</a></td>
+<td>obsolete version to use simulated data</td>
+</tr>
+<tr>
+<td>-- <a href="../KORA.R">KORA.R</a></td>
+<td>R code to simulate phenotypes</td>
+</tr>
+<tr>
+<td>-- <a href="../EURLD.bed">EURLD.bed</a></td>
+<td>approximately independent LD blocks for Europeans.</td>
+</tr>
+<tr>
+<td>-- <a href="../QCGWAS.sh">QCGWAS.sh</a></td>
+<td>QCGWAS for specific proteins, calling <a href="../QCGWAS.R">QCGWAS.R</a></td>
+</tr>
+<tr>
+<td>-- <a href="../snpstats.sh">snpstats.sh</a></td>
+<td>sumstats/qctool -snp-stats summary, see also <a href="../qctool.txt">qctool.txt</a></td>
+</tr>
+<tr>
+<td>tryggve.md</td>
+<td>This document</td>
+</tr>
+</tbody>
+</table>
+<p>* from Jimmy</p>
+<p>In total, 92 proteins are expected as given in <a href="../../doc/olink.prot.list.txt">olink.prot.list.txt</a>.</p>
+<ul>
+<li><strong>BioFinder</strong>. 91 (no BDNF) proteins. sumstats file named after genes and converted to protein names.</li>
+<li><strong>NSPHS</strong>. 91 (no BDNF) proteins, originally a tar.gz file is unpacked into \$HOME/INF/work leading to 10 proteins</li>
+<li><strong>EGCUT</strong>. 91 (no BDNF) proteins, orginally only 18 proteins though stratified by chromsomes</li>
+<li><strong>INTERVAL</strong>. 92 proteins. raw SNPTEST output with information such as info/chip SNPs to be added</li>
+<li><strong>KORA</strong>. 91 (no BDNF) proteins, age, sex and individual level imputed genotypes</li>
+<li><strong>LifeLinesDeep</strong>. Only 1/25 proteins (unused)</li>
+<li><strong>MadCam</strong>. 91 (no IL.6) proteins</li>
+<li><strong>ULSAM</strong>. 25 proteins (unused)</li>
+<li><strong>PIVUS</strong>. 23 proteins (unused)</li>
+<li><strong>ORCADES</strong>. 91 (no BDNF) protein results are available but adding CCL3 which overlaps with MMP.1</li>
+<li><strong>RECOMBINE</strong>. 91 (no BDNF) protein results are available with information as described in the analysis plan</li>
+<li><strong>VIS</strong>. 91 (no BDNF) protein restults as with ORCADES</li>
+<li><strong>STABILITY</strong>. 90 (no BDNF, IL.2) protein.</li>
+<li><strong>STANLEY</strong>. 91 (no BDNF) largely complete protein results for lah1 and swe6</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

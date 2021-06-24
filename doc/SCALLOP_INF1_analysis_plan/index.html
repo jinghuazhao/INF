@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>SCALLOP consortium analysis plan for INF panel proteins - SCALLOP-INF</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Java.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/JavaScript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Perl.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/rust.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="../..">SCALLOP-INF</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../cardio/cardio/" class="nav-link">GWAS sumstats and plots</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../cardio/clump-cojo/" class="nav-link">Near-independent signals from cojo and clumping</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">SCALLOP consortium analysis plan for INF panel proteins</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../aild/" class="nav-link">Aild</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../uniprot/" class="nav-link">Uniprot</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../rsid/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../rsid/latex/" class="nav-link">Latex</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../tryggve/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../tryggve/tryggve/" class="nav-link">SCALLOP/INFlammation anlaysis on TRYGGVE</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../../cardio/clump-cojo/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../aild/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#scallop-consortium-analysis-plan-for-inf-panel-proteins" class="nav-link">SCALLOP consortium analysis plan for INF panel proteins</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#1-overview" class="nav-link">1. Overview</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#2-data-and-analysis" class="nav-link">2. Data and analysis</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#3-descriptive-statistics" class="nav-link">3. Descriptive statistics</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#4-file-formats-for-gwas-results" class="nav-link">4. File formats for GWAS results</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#5-meta-analysis" class="nav-link">5. Meta-analysis</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#6-uploading-of-results" class="nav-link">6. Uploading of results</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#7-contact-information" class="nav-link">7. Contact information</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#appendix" class="nav-link">Appendix</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="scallop-consortium-analysis-plan-for-inf-panel-proteins">SCALLOP consortium analysis plan for INF panel proteins</h1>
+<p><strong><em>Adapted from SCALLOP/CVD1 analysis plan, last updated 27/2/2019</em></strong></p>
+<hr />
+<p align="center">
+<b><font align="top" size="16">Timeline for completing cohort-specific analyses and uploading the results for this project: </font></b><br><br>
+
+<img src="deadline.png" align="middle">
+</p>
+
+<hr />
+<h2 id="1-overview">1. Overview</h2>
+<p>The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for discovery and 
+follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on Olink CVD1 panel data from participating cohorts; 
+consequent requests were sent and contributions made on the Olink INF panel. This document follows closely the SCALLOP/CVD1 analysis plan for the analysis, and in 
+particular highlights relevant information required to facilitate the meta-analysis.</p>
+<p>As with the CVD1 meta-analysis, the tasks will involve</p>
+<ul>
+<li>Identification of pQTLs in SCALLOP discovery cohorts</li>
+<li>Study of pQTLs in replication cohorts</li>
+<li>Investigation of the mechanistic basis of identified cis- and trans-pQTL by functional annotation</li>
+<li>Examination of pQTL pleiotropic effects</li>
+<li>Evaluation over the causal role of INF proteins disease outcomes such as CHD and stroke</li>
+<li>Other downstream analysis</li>
+</ul>
+<h2 id="2-data-and-analysis">2. Data and analysis</h2>
+<h3 id="proteins">Proteins</h3>
+<p>The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao/INF/blob/master/doc/olink.inf.panel.annot.tsv.</p>
+<h3 id="snps">SNPs</h3>
+<ul>
+<li>1000 genomes imputation, build 37 (hg19) positions.</li>
+<li>SNPs filtering on imputation quality at time of meta-analysis.</li>
+<li>Quality control on aspects such as SNP/sample call rates, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, heterozygosity and Hardy-Weinberg equilibrium test.</li>
+</ul>
+<h3 id="association-analysis">Association analysis</h3>
+<ul>
+<li>Rank-based inverse normal transformation on the raw measurement of proteins including those below lower limit of detection, e.g., via <code>invnormal</code> function,</li>
+</ul>
+<pre><code class="language-r">invnormal &lt;- function(x) qnorm((rank(x,na.last=&quot;keep&quot;)-0.5)/sum(!is.na(x)))
+</code></pre>
+<ul>
+<li>Multiple linear regression for all samples including sex, age, principal components and other cohort specific covariates.</li>
+<li>Additive genetic model</li>
+<li>For case-control data, cases and controls are analysed separately – results will be merged at meta-analysis stage</li>
+</ul>
+<h3 id="software">Software</h3>
+<p>It is preferable to use software which account for genotype uncertainty, such as SNPTEST, QUICKTEST, and BOLT-LMM.</p>
+<h2 id="3-descriptive-statistics">3. Descriptive statistics</h2>
+<p>A Google sheet has been set up for filling up the information online:</p>
+<p><a href="https://tinyurl.com/y9sw8b5u">https://tinyurl.com/y9sw8b5u</a></p>
+<p>Alternatively, you can use the <a href="../SCALLOP-INF1.xlsx">Excel spreadsheet</a> from this repository. </p>
+<h2 id="4-file-formats-for-gwas-results">4. File formats for GWAS results</h2>
+<h3 id="snp-table-for-gwas-results">SNP table for GWAS results</h3>
+<p>Please include the following columns. Missing values are coded as “NA”.</p>
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>Variable name</th>
+<th>Description of variable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>SNPID</td>
+<td>CHR:POS_A1_A2 (such that A1&lt;A2) or rsid</td>
+</tr>
+<tr>
+<td>2</td>
+<td>CHR</td>
+<td>Chromosome number</td>
+</tr>
+<tr>
+<td>3</td>
+<td>POS</td>
+<td>Physical position for the reference sequence (please indicate NCBI build in descriptive file)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>STRAND</td>
+<td>Indicator of strand direction. Please specify “+” if positive or forward strand and “-” if negative or reverse strand.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>N</td>
+<td>Number of non-missing observations</td>
+</tr>
+<tr>
+<td>6</td>
+<td>EFFECT_ALLELE</td>
+<td>Allele for which the effect (beta coefficient) is reported. For example, in an A/G SNP in which AA = 0, AG=1, and GG=2, the coded allele is G.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>REFERENCE_ALLELE</td>
+<td>Second allele at the SNP (the other allele). In the example above, the non-coded allele is A.</td>
+</tr>
+<tr>
+<td>8</td>
+<td>CODE_ALL_FQ</td>
+<td>Allele frequency for the coded allele – “NA” if not available</td>
+</tr>
+<tr>
+<td>9</td>
+<td>BETA</td>
+<td>Effect size for the coded allele, beta estimate from the genotype-phenotype association, with at least 5 decimal places. Note: if not available, please report “NA” for this variable.</td>
+</tr>
+<tr>
+<td>10</td>
+<td>SE</td>
+<td>Standard error of the beta estimate, to at least 5 decimal places - “NA” if not available.</td>
+</tr>
+<tr>
+<td>11</td>
+<td>PVAL</td>
+<td>p-value of Wald test statistic – “NA” if not available</td>
+</tr>
+<tr>
+<td>12</td>
+<td>RSQ</td>
+<td>Residual phenotypic variance explained by SNP. “NA” if not available</td>
+</tr>
+<tr>
+<td>13</td>
+<td>RSQ_IMP</td>
+<td>Observed divided by expected variance for imputed allele dosage.</td>
+</tr>
+<tr>
+<td>14</td>
+<td>IMP</td>
+<td>Please specify whether the SNP was imputed or genotyped: 1: imputed SNP, 0: directly genotyped SNP</td>
+</tr>
+</tbody>
+</table>
+<h3 id="file-naming-convention">File-naming convention</h3>
+<p>It is recommended to use format STUDY_analyst_inf1_protein_UniProtID_date.gz, see https://www.uniprot.org/ for additional information on UniProt IDs.</p>
+<h3 id="notes-on-plink">Notes on PLINK</h3>
+<p>Due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis with which one may see the following information: </p>
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>Name</th>
+<th>Description</th>
+<th>Additional comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>BP</td>
+<td>Position in base pairs</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>CHR</td>
+<td>Chromosome</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>SNP</td>
+<td>CHR:POS_A1_A2 or rsid</td>
+<td></td>
+</tr>
+<tr>
+<td>4*</td>
+<td>HWE</td>
+<td>Hardy-Weinberg equilibrium P-value</td>
+<td></td>
+</tr>
+<tr>
+<td>5*</td>
+<td>MAF</td>
+<td>Minor allele frequency</td>
+<td>Please indicate if this is the effect allele frequency</td>
+</tr>
+<tr>
+<td>6</td>
+<td>A1</td>
+<td>Allele 1</td>
+<td>Please indicate if this is the effect/reference allele</td>
+</tr>
+<tr>
+<td>7*</td>
+<td>A2</td>
+<td>Allele 2</td>
+<td>Please indicate if this is the effect/reference allele</td>
+</tr>
+<tr>
+<td>8</td>
+<td>NMISS</td>
+<td>Sample size</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>BETA</td>
+<td>Regression coefficient</td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>STAT</td>
+<td>Regression test statistic</td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>P</td>
+<td>P value</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>* may be taken from the PLINK --hardy option and .bim file, see http://zzz.bwh.harvard.edu/plink/anal.shtml#glm.</p>
+<p>In this case, please provide for each SNP information on strand, effect allele, effect allele frequency, and the information measures for imputation -- the information 
+measure can be on the genotype level obtained once for a cohort rather than from phenotype-genotype regression through software such as SNPTEST. SNP and sample based 
+statistics can be greatly facilitated with software qctool, http://www.well.ox.ac.uk/~gav/qctool_v2/. As is the case with INTERVAL.bgen and INTERVAL.sample, one can obtain the SNP-based statistics as follows,</p>
+<pre><code class="language-bash">qctool -g INTERVAL.bgen -s INTERVAL.sample -snp-stats -osnp INTERVAL.snp-stats -sample-stats -osample INTERVAL.sample-stats
+</code></pre>
+<p>See also the full SLURM sbatch script in the Appendix.</p>
+<p>When a dosage format is used, PLINK also gives an INFO measure; see http://zzz.bwh.harvard.edu/plink/dosage.shtml. However, per-SNP sample size is not given, which again could be obtained from qctool as described above.</p>
+<h2 id="5-meta-analysis">5. Meta-analysis</h2>
+<p>Meta-analysis will be performed centrally using the inverse-N weighted analysis of regression betas and standard errors, as implemented in the software METAL 
+(https://github.com/statgen/METAL).</p>
+<p>Genomic control and appropriate marker filters will be applied at this stage.</p>
+<ul>
+<li><strong>Marker exclusion filters</strong>: we will apply imputation quality filters at the meta-analysis stage, so provide unfiltered results. </li>
+<li><strong>Genomic control (GC)</strong>: genomic control will be applied at the meta-analysis stage (single GC), so GC-correction is not needed for each cohort. </li>
+<li><strong>Significance</strong>: the Bonferroni threshold for the genome-wide analyses will be set at 5 x 10<sup>-10</sup>. The results will be replicated in independent cohorts.</li>
+</ul>
+<h2 id="6-uploading-of-results">6. Uploading of results</h2>
+<p>See the CVD1 analysis plan.</p>
+<h2 id="7-contact-information">7. Contact information</h2>
+<p>For general questions about SCALLOP, please contact Anders Malarstig (anders.malarstig@ki.se). For technical issues about TRYGGVE, please contact Lasse Folkersen (lasfol@cbs.dtu.dk).</p>
+<p>For questions regarding SCALLOP/INF, please contact Jing Hua Zhao (jhz22@medschl.cam.ac.uk) and James Peters (jp549@medschl.cam.ac.uk).</p>
+<h2 id="appendix">Appendix</h2>
+<p><strong>SLURM script for qctool 2.0.1</strong></p>
+<p>This is called with <code>sbatch qctool.sb</code>, where <code>qctool.sb</code> contains the following lines:</p>
+<pre><code class="language-bash">#!/bin/bash --login
+
+#SBATCH -J qctool
+#SBATCH -o qctool.log
+#SBATCH -p long
+#SBATCH -t 4-0:0
+#SBATCH --export ALL
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+
+export DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
+export INTERVAL=$DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only
+ln -sf $INTERVAL.bgen INTERVAL.bgen
+ln -sf $INTERVAL.sample INTERVAL.sample
+
+# to obtain SNP-specific statistics as in .bgen and .sample format with qctool, tested with qctool 2.0.1
+
+qctool -g INTERVAL.bgen -s INTERVAL.sample -snp-stats -osnp INTERVAL.snp-stats -sample-stats -osample INTERVAL.sample-stats
+
+# Note in particular: the # option allows for chromosome-specific analysis; the -strand option will enable results in positive strand.
+</code></pre>
+<p>The following obtains SNP-specific statistics by chromosome.</p>
+<pre><code class="language-bash">#!/bin/bash --login
+
+#SBATCH -J qctool
+#SBATCH -o qctool.log
+#SBATCH -p long
+#SBATCH -a 1-22
+#SBATCH -t 4-0:0
+#SBATCH --export ALL
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+
+export DIR=/scratch/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only/per_chr
+export INTERVAL=$DIR/interval_olink_subset_unrelated_4994_pihat_0.1875_autosomal_typed_only_chr_
+export chr=$SLURM_ARRAY_TASK_ID
+
+qctool -g ${INTERVAL}${chr}.bgen -s ${INTERVAL}${chr}.sample -snp-stats -osnp INTERVAL-${chr}.snp-stats
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

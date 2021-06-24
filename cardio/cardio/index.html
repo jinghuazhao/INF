@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>GWAS sumstats and plots - SCALLOP-INF</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Java.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/JavaScript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Perl.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/rust.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="../..">SCALLOP-INF</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">GWAS sumstats and plots</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../clump-cojo/" class="nav-link">Near-independent signals from cojo and clumping</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">SCALLOP consortium analysis plan for INF panel proteins</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../doc/aild/" class="nav-link">Aild</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../doc/uniprot/" class="nav-link">Uniprot</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../rsid/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../rsid/latex/" class="nav-link">Latex</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../tryggve/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../tryggve/tryggve/" class="nav-link">SCALLOP/INFlammation anlaysis on TRYGGVE</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../.." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../clump-cojo/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#gwas-sumstats-and-plots" class="nav-link">GWAS sumstats and plots</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#interval-reference" class="nav-link">INTERVAL reference</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#interval-sumstats" class="nav-link">INTERVAL sumstats</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#manhattan-plots-by-cohort" class="nav-link">Manhattan plots by cohort</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#meta-analysis-sumstats-manhattanq-qlocuszoom-plots" class="nav-link">Meta-analysis sumstats + Manhattan/Q-Q/LocusZoom plots</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#results-based-on-aproximately-independent-ld-blocks-aild" class="nav-link">Results based on aproximately independent LD blocks (AILD)</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#snpsindels" class="nav-link">SNPs+indels</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#snps-only" class="nav-link">SNPs only</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#genomewide-results-based-on-slide-windows" class="nav-link">Genomewide results based on slide windows</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#clumping-results" class="nav-link">Clumping results</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#conditionaljoint-analysis" class="nav-link">Conditional/joint analysis</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#conditionaljoint-analysis-with-regions-in-high-ld" class="nav-link">Conditional/joint analysis with regions in high LD</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="gwas-sumstats-and-plots">GWAS sumstats and plots</h1>
+<h2 id="interval-reference">INTERVAL reference</h2>
+<p>/scratch/jhz22/data/INTERVAL</p>
+<h2 id="interval-sumstats">INTERVAL sumstats</h2>
+<p>location: /scratch/jhz22/INF/sumstats/INTERVAL</p>
+<h2 id="manhattan-plots-by-cohort">Manhattan plots by cohort</h2>
+<p>location: /scratch/jhz22/INF/plots</p>
+<h2 id="meta-analysis-sumstats-manhattanq-qlocuszoom-plots">Meta-analysis sumstats + Manhattan/Q-Q/LocusZoom plots</h2>
+<p>location: /scratch/jhz22/INF/METAL</p>
+<hr />
+<h1 id="results-based-on-aproximately-independent-ld-blocks-aild">Results based on aproximately independent LD blocks (AILD)</h1>
+<p><em>See https://bitbucket.org/nygcresearch/ldetect-data</em></p>
+<h2 id="snpsindels">SNPs+indels</h2>
+<p>location, /scratch/jhz22/INF/aild</p>
+<ul>
+<li>cojo/, GCTA --cojo-slct results for all (INF1*) and individual proteins</li>
+<li>ps/, PhenoScanner v2 results. coded as in /scratch/jhz22/INF/cardio/ps.sh</li>
+<li>clump/, PLINK --clump results for all (INF1*) and individual proteins</li>
+</ul>
+<h2 id="snps-only">SNPs only</h2>
+<p>location, /scratch/jhz22/INF/snps</p>
+<ul>
+<li>cojo/, GCTA --cojo-slct results for all (INF1*) and individual proteins</li>
+<li>ps/, PhenoScanner v2 results.</li>
+<li>lz/, LocusZoom plots</li>
+<li>clump/, PLINK --clump results for all (INF1*) and individual proteins</li>
+<li>clump0/ PLINK --clump-r2 0 for independent signals</li>
+</ul>
+<hr />
+<h1 id="genomewide-results-based-on-slide-windows">Genomewide results based on slide windows</h1>
+<h2 id="clumping-results">Clumping results</h2>
+<p>location: /scratch/jhz22/INF/clumping</p>
+<p>Files: study.reference.LD-cutoff.clumped_reults, e.g., INTERVAL.UK10K+1KG.r2-0.1.clumped</p>
+<h2 id="conditionaljoint-analysis">Conditional/joint analysis</h2>
+<p>location: /scratch/jhz22/INF/cojo</p>
+<h2 id="conditionaljoint-analysis-with-regions-in-high-ld">Conditional/joint analysis with regions in high LD</h2>
+<p>location: /scratch/jhz22/INF/aild-ld</p>
+<ul>
+<li>aild-indel/, all variants</li>
+<li>ps, PhenoScanner v2 and v1.1/ </li>
+<li>aild-snp/,  SNPs only</li>
+</ul>
+<p>Results from PhenoScanner which contains protein-specific and whole (INF1_<em> and INF1r_</em>, see below) results.</p>
+<pre><code class="language-bash"># those INF1_*
+# All results, no LD, p=1e-5
+# phenoscanner -c All -l No -p 0.00001 -i INF1.ps -o INF1
+
+# revised
+# All results, no LD, p=1e-7
+phenoscanner -c All -l No -p 0.0000001 -i INF1.ps -o INF1r
+</code></pre>
+<p>The results on GWAS with LD r2=0.6 in INF1r_* are available from R as follows,</p>
+<pre><code class="language-bash">R --no-save -q &lt;&lt;END
+  library(MendelianRandomization)
+# SNPID not possible
+  INF1 &lt;- read.table(&quot;INF1.ps&quot;,as.is=TRUE)
+# batches in 100 only
+  INF1 &lt;- with(read.csv(&quot;INF1_PhenoScanner_SNP_Info.csv&quot;),rsID)
+  r1 &lt;- phenoscanner(snpquery=  INF1[1:100], proxies = &quot;EUR&quot;, pvalue = 1e-07, r2= 0.6, build=37)
+  r2 &lt;- phenoscanner(snpquery=INF1[101:200], proxies = &quot;EUR&quot;, pvalue = 1e-07, r2= 0.6, build=37)
+  r3 &lt;- phenoscanner(snpquery=INF1[201:300], proxies = &quot;EUR&quot;, pvalue = 1e-07, r2= 0.6, build=37)
+  r4 &lt;- phenoscanner(snpquery=INF1[301:376], proxies = &quot;EUR&quot;, pvalue = 1e-07, r2= 0.6, build=37)
+  save(r1,r2,r3,r4,file=&quot;INF1r.rda&quot;,version=2)
+END
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

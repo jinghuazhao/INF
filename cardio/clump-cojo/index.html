@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Near-independent signals from cojo and clumping - SCALLOP-INF</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Java.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/JavaScript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Perl.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/rust.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="../..">SCALLOP-INF</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../cardio/" class="nav-link">GWAS sumstats and plots</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Near-independent signals from cojo and clumping</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">SCALLOP consortium analysis plan for INF panel proteins</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../doc/aild/" class="nav-link">Aild</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../doc/uniprot/" class="nav-link">Uniprot</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../rsid/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../rsid/latex/" class="nav-link">Latex</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../tryggve/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../../tryggve/tryggve/" class="nav-link">SCALLOP/INFlammation anlaysis on TRYGGVE</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../cardio/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../doc/SCALLOP_INF1_analysis_plan/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#near-independent-signals-from-cojo-and-clumping" class="nav-link">Near-independent signals from cojo and clumping</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="near-independent-signals-from-cojo-and-clumping">Near-independent signals from cojo and clumping</h1>
+<table>
+<thead>
+<tr>
+<th><strong>Run</strong></th>
+<th><strong>Option</strong></th>
+<th><strong>cis</strong></th>
+<th><strong>trans</strong></th>
+<th><strong>total</strong></th>
+<th><strong>Comments/location<sup>+</sup></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GCTA</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1</td>
+<td>LD blocks</td>
+<td>210</td>
+<td>147</td>
+<td>357</td>
+<td>only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx</td>
+</tr>
+<tr>
+<td>+ indels</td>
+<td>LD blocks</td>
+<td>220</td>
+<td>155</td>
+<td>375</td>
+<td>SNPs+indels, cojo/aild-indel/INF1.jma.*</td>
+</tr>
+<tr>
+<td>2</td>
+<td>default</td>
+<td>234</td>
+<td>173</td>
+<td>407</td>
+<td>--cojo-collinear 0.9 --cojo-wind 10000, doc/SCALLOP_INF1-260419.xlsx</td>
+</tr>
+<tr>
+<td>3</td>
+<td>small R2 &amp; window</td>
+<td>189</td>
+<td>186</td>
+<td>375</td>
+<td>--cojo-collinear 0.1 --cojo-wind 500, doc/SCALLOP_INF1-260419.xlsx</td>
+</tr>
+<tr>
+<td><strong>PLINK</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>LD blocks</td>
+<td>594</td>
+<td>252</td>
+<td>846</td>
+<td>only SNPs, clumping/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx</td>
+</tr>
+<tr>
+<td>+ indels</td>
+<td>LD blocks</td>
+<td>621</td>
+<td>258</td>
+<td>879</td>
+<td>SNPs+indels, clumping/aild-indel/INF1.jma.*</td>
+</tr>
+<tr>
+<td>5</td>
+<td>INTERVAL LD panel</td>
+<td>657</td>
+<td>275</td>
+<td>932</td>
+<td>--clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx</td>
+</tr>
+<tr>
+<td>6</td>
+<td>1000G LD panel</td>
+<td>405</td>
+<td>229</td>
+<td>634</td>
+<td>--clump-r2 0.1 --clump-kb 500, clumping/INF1.1KG.r2-0.1.clumped.*</td>
+</tr>
+<tr>
+<td>7</td>
+<td>INTERVAL data</td>
+<td>424</td>
+<td>188</td>
+<td>612</td>
+<td>--clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx</td>
+</tr>
+<tr>
+<td>8</td>
+<td>1000G LD panel</td>
+<td>402</td>
+<td>226</td>
+<td>628</td>
+<td>--clump-r2 0.1 --clump-kb 1000, on tryggve</td>
+</tr>
+</tbody>
+</table>
+<p><sup>+</sup>The directories are relative to /scratch/jhz22/INF, i.e., doc/, cojo/ and clumping/, Results in 2 and 3 include regions in high LD excluded in other analyses.</p>
+<p>A few observations can be made,</p>
+<ul>
+<li>indels lead to more signals in cojo (1) and clumping (4) analyses.</li>
+<li><strong>default GCTA --cojo-collinear and --cojo-wind parameters did quite well in numbers, esp. taking ~30 away regions in LD</strong> (1, 2).</li>
+<li>Although it looks close, GCTA --cojo-collinear 0.1 produces considerably less signals compared to --cojo-collinear 0.9 (3).</li>
+<li>the number of signals increase with the values of GCTA parameters (2, 3), yet moderate changes in LD window have less impact than the reference panel (5, 8).</li>
+<li>PLINK --clump gives more signals than GCTA --cojo (1, 4 and 2, 5).</li>
+<li><strong>Specification of sliding LD windows disregarding AILD patterns in clumping gives 53 additional signals</strong> (4, 5).</li>
+<li>Thanks to the larger sample size and perhaps greater variant number, INTERVAL as LD reference leads to more signals than 1000Genomes (5, 6).</li>
+<li>Summary statistics from larger sample size gives more signals (5, 7).</li>
+<li>Unpruned results are likely to give more cis signals but this is subject to scrutiny perhaps on individual cases.</li>
+</ul>
+<p>It can be concluded that it is desirable to employ approximately independent LD blocks for both GCTA (1) and PLINK (4), and also that reference such as UK10K+1KG would be desirable with respect to both sample size and variant number.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

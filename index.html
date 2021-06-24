@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>SCALLOP-INF</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Java.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/JavaScript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Perl.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/rust.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body class="homepage">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href=".">SCALLOP-INF</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem active">
+                                <a href="." class="nav-link">Home</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="cardio/cardio/" class="nav-link">GWAS sumstats and plots</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="cardio/clump-cojo/" class="nav-link">Near-independent signals from cojo and clumping</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="doc/SCALLOP_INF1_analysis_plan/" class="nav-link">SCALLOP consortium analysis plan for INF panel proteins</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="doc/aild/" class="nav-link">Aild</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="doc/uniprot/" class="nav-link">Uniprot</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="rsid/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="rsid/latex/" class="nav-link">Latex</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="tryggve/" class="nav-link">Index</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="tryggve/tryggve/" class="nav-link">SCALLOP/INFlammation anlaysis on TRYGGVE</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" class="nav-link disabled">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="cardio/cardio/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#scallop-inf-meta-analysis" class="nav-link">SCALLOP-INF meta-analysis</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#flow-of-analysis-view-diagram-by-pasting-script-to-mermaid-live-editor" class="nav-link">Flow of analysis (view diagram by pasting script to mermaid live editor)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#references" class="nav-link">References</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#download" class="nav-link">Download</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#study-information" class="nav-link">Study Information</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#related-links" class="nav-link">Related links</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="scallop-inf-meta-analysis">SCALLOP-INF meta-analysis</h1>
+<h2 id="flow-of-analysis-view-diagram-by-pasting-script-to-mermaid-live-editor">Flow of analysis (view diagram by pasting script to <a href="https://mermaid-js.github.io/mermaid-live-editor/">mermaid live editor</a>)</h2>
+<pre><code class="language-mermaid">graph TB;
+tryggve ==&gt; cardio;
+cardio ==&gt; csd3;
+tryggveAnalysis[Meta analysis: list.sh, format.sh,metal.sh, QCGWAS.sh, analysis.sh] --&gt; GWAS[pQTL selection and Characterisation];
+GWAS --&gt; Prototyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
+Prototyping --&gt; Multi-omics-analysis;
+cardio --&gt; cardioAnalysis[Prototyping and KORA data analysis];
+csd3 --&gt; csd3Analysis[Conditional analysis,finemapping, etc];
+csd3 --&gt; software[R Packages at CRAN/GitHub]; 
+</code></pre>
+<h3 id="comments">Comments</h3>
+<ol>
+<li>Data pre-processing was done initially from <a href="tryggve">tryggve</a> with <a href="tryggve/list.sh">list.sh</a> and <a href="tryggve/format.sh">format.sh</a>, followed by meta-analysis according to <a href="tryggve/metal.sh">metal.sh</a> using METAL whose results were cross-examined with <a href="tryggve/QCGWAS.sh">QCGWAS.sh</a> together with additional investigation.</li>
+<li>The main analysis followed with <a href="tryggve/analysis.sh">analysis.sh</a> containing codes for Q-Q/Manhattan/LocusZoom/Forest plots such as the OPG example (see the diagram below), which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with <a href="cardio">cardio</a> and <a href="csd3">CSD3</a>. cis/trans classification has been done via <a href="cardio/cis.vs.trans.classification.R">cis.vs.trans.classification.R</a> as validated by <a href="cardio/cistrans.sh">cistrans.sh</a>.</li>
+<li>We prototyped our analysis on cardio with INTERVAL such as <a href="tryggve/INTERVAL.sh">INTERVAL.sh</a> and <a href="cardio/cardio.sh">cardio.sh</a> as well as individual level data analysis for the KORA study.</li>
+<li>The <code>cis.vs.trans.classification</code>, <code>circos.cis.vs.trans.plot</code> as with <code>cs</code>, <code>log10p</code>, <code>logp</code>, <code>gc.lambda</code>, <code>invnormal</code>, <code>METAL_forestplot</code>, <code>mhtplot.trunc</code>, <code>mhtplot2d</code>, <code>pvalue</code> functions are now part of R/gap at <a href="https://CRAN.R-project.org/package=gap">CRAN</a> and updates such as <code>pqtl2dplot/pqtl2dplotly/pqtl3dplotly</code> are made at <a href="https://github.com/jinghuazhao/R/">GitHub</a>.</li>
+<li>Downstream analyses links colocalisation and Mendelian randomisation with CAD, FEV1 and the meta-analysis summary statistics are now described in <a href="https://jinghuazhao.github.io/pQTLtools/articles/index.html">pQTLtools articles</a>.</li>
+<li>A nested predictive model based on genotype data G1/G2/G3, which link with proteins P1/P2/P3 as predictors for outcome y, is sketched as follows,</li>
+</ol>
+<p><img alt="" src="rsid/grViz.png" /></p>
+<h2 id="references">References</h2>
+<p>Choi SW, Mak TS, O'Reilly PF Tutorial: a guide to performing polygenic risk score analyses. <em>Nat Protoc</em> 15, 2759-2772 (2020), <a href="https://github.com/choishingwan/PRSice">GitHub</a> <a href="https://choishingwan.github.io/PRS-Tutorial/">documentation</a>.</p>
+<p>Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. <em>PLoS Genetics</em> 13(4), doi.org/10.1371/journal.pgen.1006706.</p>
+<p>Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. <em>Hum Mol Genet</em> 23(24): 6684–6693.</p>
+<p>Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. <em>Nat Med</em>. https://doi.org/10.1038/s41591-019-0415-5</p>
+<p>Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. <em>Nature</em> 558: 73–79.</p>
+<h2 id="download">Download</h2>
+<pre><code>git clone https://github.com/jinghua/INF
+</code></pre>
+<h2 id="study-information">Study Information</h2>
+<ul>
+<li><a href="doc/SCALLOP_INF1_analysis_plan/">Analysis plan</a> (<a href="doc/SCALLOP_INF1_analysis_plan.docx">docx</a>)</li>
+<li><a href="doc/aild/">Approximately independent LD blocks</a></li>
+<li><a href="rsid">Joint/conditional analysis and fine-mapping</a></li>
+<li><a href="doc/uniprot/">Notes on UniProt IDs</a></li>
+<li><a href="https://neic.no/tryggve/">TRYGGVE</a>-<a href="tryggve/tryggve/">specific notes</a></li>
+</ul>
+<h2 id="related-links">Related links</h2>
+<ul>
+<li><a href="https://github.com/Olink-Proteomics/OlinkRPackage">OlinkAnalyze</a></li>
+<li><a href="https://tinyurl.com/shj46ukj">Olink Insights Stat Analysis</a></li>
+<li><a href="http://www.scallop-consortium.com/">SCALLOP consortium</a>.</li>
+<li><a href="https://www.olink.com/scallop/">Olink location</a>, <a href="https://www.olink.com/question/what-is-npx/">What is NPX</a>, <a href="https://www.olink.com/scallop-f2f-2019/">F2F London meeting</a>, <a href="https://www.olink.com/data-science-workshop-2019/">Data Science Workshop 2019</a>.</li>
+<li><a href="https://github.com/lassefolkersen/scallop">GitHub repository</a> for the 2017 <em>PLoS Genetics</em> paper above.</li>
+<li><a href="https://secureremote.dtu.dk/vpn/index.html">securecloud</a>.</li>
+<li><a href="https://www.olink.com/data-you-can-trust/publications/">Olink publications</a>.</li>
+<li><a href="http://www.phpc.cam.ac.uk/ceu/proteins">SomaLogic plasma protein GWAS summary statistics</a>.</li>
+<li><a href="https://twc-stanford.shinyapps.io/aging_plasma_proteome/">Aging Plasma Proteome</a> (<a href="https://github.com/lehallib/DEswan">DEswan</a>).</li>
+<li><a href="https://genetics.opentargets.org/immunobase">ImmunoBase</a>.</li>
+<li><a href="http://www.wwpdb.org/">Worldwide PDB</a></li>
+</ul>
+<p>The OPG example,<img src="doc/OPG-qmlf.png"></p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.1.2
+Build Date UTC : 2021-06-24 19:25:57.059136+00:00
+-->
