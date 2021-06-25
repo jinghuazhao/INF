@@ -164,5 +164,11 @@ $\sum_{i=1}^k{m\choose{i}}$
 
 $\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}$
 
-*Date last changed:* **25/6/2021**
+Transcriptomewide association statistic $z_{TWAS}$ was originally proposed for gene expression data. For a given Trait of interest **T** for which GWAS summary statistics $z_T$ is available, the corresponding Wald statistic for TWAS is defined such that
+$$
+z_{TWAS} = \frac{w^T_{P}z_T}{\sqrt{w^T_{P}Vw_{P}}}
+$$
 
+where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_T$, respectively.
+
+*Date last changed:* **25/6/2021**
