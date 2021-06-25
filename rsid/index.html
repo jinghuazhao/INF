@@ -203,8 +203,8 @@ rm 12
 <p>whose hgnc_symbol can be amended as follows</p>
 <pre><code class="language-bash">awk '!/BDNF/&amp;&amp;NR&gt;1{if($3=="\"Q8NF90\"") $7="\"FGF5\""; else if($3=="\"Q8WWJ7\"") $7="\"CD6\"";print}' FS='\t' OFS='\t' olink.inf.panel.annot.tsv
 </code></pre>
-<p>The overlap with SomaLogic panel is characterised with <a href="../doc/Olink.R">Olink.R</a> which also gives a Venn diagram.
-<img align="right" height="300" src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300"/></p>
+<p><img align="right" height="300" src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300"/></p>
+<p>The overlap with SomaLogic panel is characterised with <a href="../doc/Olink.R">Olink.R</a> which also gives a Venn diagram.</p>
 <h2 id="jointconditional-analysis-and-fine-mapping">Joint/conditional analysis and fine-mapping</h2>
 <p>The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the dilemma that the reference data, possibly like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsids is undesirable so SNPID, i.e., chr:pos_A1_A2, (A1&lt;=A2) is necessary.</p>
 <p>After a rather long and laborious process involving many software, it turned out a simple way out is to obtain sentinels using SNPID but return to rsids at this stage and forward. The implementation here reflects this. The file INTERVAL.rsid contains SNPID-rsid mapping and could be generated from programs such as <code>qctool/bgenix/plink</code>. A related file is <code>snp_pos</code> containing rsid -- chr:pos mappings; for instance this could be built from dbSNP.</p>
@@ -476,10 +476,8 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p><span class="arithmatex">\(p_i=\sum_{i=1}^k{m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}\)</span></p>
 <p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
 <p><span class="arithmatex">\(\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}\)</span></p>
-<p>Transcriptomewide association statistic <span class="arithmatex">\(z_{TWAS}\)</span> was originally proposed for gene expression data. For a given Trait of interest <strong>T</strong> for which GWAS summary statistics <span class="arithmatex">\(z_T\)</span> is available, the corresponding Wald statistic for TWAS is defined such that
-$$
-z_{TWAS} = \frac{w^T_{P}z_T}{\sqrt{w^T_{P}Vw_{P}}}
-$$</p>
+<p>Transcriptomewide association statistic <span class="arithmatex">\(z_{TWAS}\)</span> was originally proposed for gene expression data. For a given Trait of interest <strong>T</strong> for which GWAS summary statistics <span class="arithmatex">\(z_T\)</span> is available, the corresponding Wald statistic for TWAS is defined such that</p>
+<p><span class="arithmatex">\(z_{TWAS} = \frac{w^T_{P}z_T}{\sqrt{w^T_{P}Vw_{P}}}\)</span></p>
 <p>where <span class="arithmatex">\(w_{P}\)</span> is a weight associated with protein abundance level and <strong>V</strong> covariance matrix for <span class="arithmatex">\(z_T\)</span>, respectively.</p>
 <p><em>Date last changed:</em> <strong>25/6/2021</strong></p></div>
 </div>
