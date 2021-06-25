@@ -125,6 +125,9 @@ function assoc_test()
             --chr ${chr} \
             --out ${INF}/FUSION/${trait}.${chr}-${P0}-${P1}.dat
   done
+  cd ${INF}/FUSION
+  cut -f8- ${trait}*dat | awk 'NR==1 || !/TWAS/' > ${prot}.tsv
+
 }
 
 compute_weights
