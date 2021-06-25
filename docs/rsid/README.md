@@ -6,12 +6,12 @@ The list of proteins on inflammation is within one of the [Olink](https://www.ol
 
 BDNF has recently been removed from the assay and replaced with CD8A, [https://www.olink.com/bdnf-info/](https://www.olink.com/bdnf-info/), and there are also changes on TNF and IFN.gamma, [https://www.olink.com/inflammation-upgrade/](https://www.olink.com/inflammation-upgrade/).
 
-A [UniProt](https://www.uniprot.org/) ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While [inf1.csv](inf1.csv) 
-edits Q4ACW9, [inf2.csv](inf2.csv) is inline with UCSC with respect to P12034 and P30203.
+A [UniProt](https://www.uniprot.org/) ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While [inf1.csv](../doc/inf1.csv) 
+edits Q4ACW9, [inf2.csv](../doc/inf2.csv) is inline with UCSC with respect to P12034 and P30203.
 
 The use of uniprot IDs is noted in two aspects,
 
-1. The protein list in [inf1.csv](inf1.csv) notes both O43508 and Q4ACW9.
+1. The protein list in [inf1.csv](../doc/inf1.csv) notes both O43508 and Q4ACW9.
 
 2. Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
 point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.tsv](hgTables.tsv) is based on UCSC, checked over
@@ -29,7 +29,7 @@ wc -l 12
 join -v2 -22 12 <(sort -k2,2 inf1.list)
 rm 12
 ```
-Likewise, [olink.inf.panel.annot.tsv](olink.inf.panel.annot.tsv) from [olink.annotation.R](olink.annotation.R) also has the following two entries
+Likewise, [olink.inf.panel.annot.tsv](../doc/olink.inf.panel.annot.tsv) from [olink.annotation.R](../doc/olink.annotation.R) also has the following two entries
 
 "target" | "target.short" | "uniprot" | "panel" | "prot.on.multiple.panel" | "panels.with.prot" | "hgnc_symbol" | "chromosome_name" | "start_position" | "end_position" | "olink.id" | "alternate.uniprot"
 ---------|----------------|-----------|---------|--------------------------|--------------------|---------------|-------------------|------------------|----------------|------------|--------------------
@@ -40,7 +40,7 @@ whose hgnc_symbol can be amended as follows
 ```bash
 awk '!/BDNF/&&NR>1{if($3=="\"Q8NF90\"") $7="\"FGF5\""; else if($3=="\"Q8WWJ7\"") $7="\"CD6\"";print}' FS='\t' OFS='\t' doc/olink.inf.panel.annot.tsv
 ```
-The overlap with SomaLogic panel is characterised with [Olink.R](Olink.R) which also gives a Venn diagram.
+The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 <img src="Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
 
 ## Joint/conditional analysis and fine-mapping
