@@ -49,11 +49,3 @@ st.bed*
 sumstats/
 ukb/
 work/
-
-doc/STANLEY_INF_I_annotation.txt
-tryggve/kora.normalised.prot.txt
-
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
