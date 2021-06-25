@@ -25,6 +25,7 @@ plugins:
     - search
     - mermaid2
 markdown_extensions:
+  - attr_list
   - pymdownx.arithmatex:
       generic: true
 extra_javascript:
