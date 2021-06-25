@@ -6,7 +6,7 @@
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="../img/favicon.ico" rel="shortcut icon"/>
-<title>On rsid - SCALLOP-INF</title>
+<title>Notes - SCALLOP-INF</title>
 <link href="../css/bootstrap.min.css" rel="stylesheet"/>
 <link href="../css/font-awesome.min.css" rel="stylesheet"/>
 <link href="../css/base.css" rel="stylesheet"/>
@@ -53,10 +53,10 @@
 <a class="nav-link" href="../tryggve/">Tryggve</a>
 </li>
 <li class="navitem active">
-<a class="nav-link" href="./">On rsid</a>
+<a class="nav-link" href="./">Notes</a>
 </li>
 <li class="navitem">
-<a class="nav-link" href="../doc/">Other notes</a>
+<a class="nav-link" href="../doc/README.md">None</a>
 </li>
 </ul>
 <ul class="nav navbar-nav ml-auto">
@@ -71,7 +71,7 @@
                                 </a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../doc/" rel="next">
+<a class="nav-link disabled" rel="next">
                                     Next <i class="fa fa-arrow-right"></i>
 </a>
 </li>
@@ -89,8 +89,12 @@
 </div>
 <div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
 <ul class="nav flex-column">
-<li class="nav-item" data-level="1"><a class="nav-link" href="#on-rsid">On rsid</a>
+<li class="nav-item" data-level="1"><a class="nav-link" href="#notes">Notes</a>
 <ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#uniprot-ids">UniProt IDs</a>
+<ul class="nav flex-column">
+</ul>
+</li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#jointconditional-analysis-and-fine-mapping">Joint/conditional analysis and fine-mapping</a>
 <ul class="nav flex-column">
 </ul>
@@ -121,7 +125,89 @@
 </div>
 </div></div>
 <div class="col-md-9" role="main">
-<h1 id="on-rsid">On rsid</h1>
+<h1 id="notes">Notes</h1>
+<h2 id="uniprot-ids">UniProt IDs</h2>
+<p>The list of proteins on inflammation is within one of the <a href="https://www.olink.com/products/">Olink</a> panels (as in <a href="Olink%20validation%20data%20all%20panels.xlsx">Olink validation data all panels.xlsx</a>) each containing 92 proteins. Information contained in these panels can be retrieved into R via <a href="Olink.R">Olink.R</a>, which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.</p>
+<p>BDNF has recently been removed from the assay and replaced with CD8A, <a href="https://www.olink.com/bdnf-info/">https://www.olink.com/bdnf-info/</a>, and there are also changes on TNF and IFN.gamma, <a href="https://www.olink.com/inflammation-upgrade/">https://www.olink.com/inflammation-upgrade/</a>.</p>
+<p>A <a href="https://www.uniprot.org/">UniProt</a> ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While <a href="inf1.csv">inf1.csv</a> 
+edits Q4ACW9, <a href="inf2.csv">inf2.csv</a> is inline with UCSC with respect to P12034 and P30203.</p>
+<p>The use of uniprot IDs is noted in two aspects,</p>
+<ol>
+<li>
+<p>The protein list in <a href="inf1.csv">inf1.csv</a> notes both O43508 and Q4ACW9.</p>
+</li>
+<li>
+<p>Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
+point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). <a href="hgTables.tsv">hgTables.tsv</a> is based on UCSC, checked over
+UniProt IDs as follows,</p>
+</li>
+</ol>
+<pre><code class="language-bash">grep inf1 doc/olink.prot.list.txt | \
+sed 's/inf1_//g;s/___/\t/g' &gt; inf1.list
+join -t$'\t' -12 -24 \
+     &lt;(sort -k2,2 inf1.list) \
+     &lt;(awk '{split($4,f,"-"); $4=f[1]; if(!index($1,"_")) print}' OFS='\t' doc/hgTables.tsv | sort -k4,4) \
+     &gt; 12
+# 90 lines
+wc -l 12
+# Q8NF90 (FGF.5), Q8WWJ7 (CD6) are missing
+join -v2 -22 12 &lt;(sort -k2,2 inf1.list)
+rm 12
+</code></pre>
+<p>Likewise, <a href="olink.inf.panel.annot.tsv">olink.inf.panel.annot.tsv</a> from <a href="olink.annotation.R">olink.annotation.R</a> also has the following two entries</p>
+<table>
+<thead>
+<tr>
+<th>"target"</th>
+<th>"target.short"</th>
+<th>"uniprot"</th>
+<th>"panel"</th>
+<th>"prot.on.multiple.panel"</th>
+<th>"panels.with.prot"</th>
+<th>"hgnc_symbol"</th>
+<th>"chromosome_name"</th>
+<th>"start_position"</th>
+<th>"end_position"</th>
+<th>"olink.id"</th>
+<th>"alternate.uniprot"</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Fibroblast growth factor 5 (FGF-5)"</td>
+<td>"FGF-5"</td>
+<td>"Q8NF90"</td>
+<td>"inf"</td>
+<td>FALSE</td>
+<td>NA</td>
+<td>NA</td>
+<td>"4"</td>
+<td>81187753</td>
+<td>81257834</td>
+<td>"141_FGF-5"</td>
+<td>"P12034"</td>
+</tr>
+<tr>
+<td>"T-cell surface glycoprotein CD6 isoform (CD6)"</td>
+<td>"CD6"</td>
+<td>"Q8WWJ7"</td>
+<td>"inf"</td>
+<td>FALSE</td>
+<td>NA</td>
+<td>NA</td>
+<td>"11"</td>
+<td>60739115</td>
+<td>60787849</td>
+<td>"131_CD6"</td>
+<td>"P30203"</td>
+</tr>
+</tbody>
+</table>
+<p>whose hgnc_symbol can be amended as follows</p>
+<pre><code class="language-bash">awk '!/BDNF/&amp;&amp;NR&gt;1{if($3=="\"Q8NF90\"") $7="\"FGF5\""; else if($3=="\"Q8WWJ7\"") $7="\"CD6\"";print}' FS='\t' OFS='\t' doc/olink.inf.panel.annot.tsv
+</code></pre>
+<p>The overlap with SomaLogic panel is characterised with <a href="Olink.R">Olink.R</a> which also gives a Venn diagram.
+<img align="right" height="300" src="Olink-SomaLogic-Venn-diagram.png" width="300"/></p>
 <h2 id="jointconditional-analysis-and-fine-mapping">Joint/conditional analysis and fine-mapping</h2>
 <p>The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the dilemma that the reference data, possibly like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsids is undesirable so SNPID, i.e., chr:pos_A1_A2, (A1&lt;=A2) is necessary.</p>
 <p>After a rather long and laborious process involving many software, it turned out a simple way out is to obtain sentinels using SNPID but return to rsids at this stage and forward. The implementation here reflects this. The file INTERVAL.rsid contains SNPID-rsid mapping and could be generated from programs such as <code>qctool/bgenix/plink</code>. A related file is <code>snp_pos</code> containing rsid -- chr:pos mappings; for instance this could be built from dbSNP.</p>
