@@ -2,7 +2,7 @@
 
 ## UniProt IDs
 
-The list of proteins on inflammation is within one of the [Olink](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [Olink.R](Olink.R), which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.
+The list of proteins on inflammation is within one of the [Olink](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](../doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [Olink.R](../doc/Olink.R), which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.
 
 BDNF has recently been removed from the assay and replaced with CD8A, [https://www.olink.com/bdnf-info/](https://www.olink.com/bdnf-info/), and there are also changes on TNF and IFN.gamma, [https://www.olink.com/inflammation-upgrade/](https://www.olink.com/inflammation-upgrade/).
 
@@ -14,7 +14,7 @@ The use of uniprot IDs is noted in two aspects,
 1. The protein list in [inf1.csv](../doc/inf1.csv) notes both O43508 and Q4ACW9.
 
 2. Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
-point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.tsv](hgTables.tsv) is based on UCSC, checked over
+point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.tsv](../doc/hgTables.tsv) is based on UCSC, checked over
 UniProt IDs as follows,
 ```bash
 grep inf1 doc/olink.prot.list.txt | \
@@ -38,10 +38,10 @@ Likewise, [olink.inf.panel.annot.tsv](../doc/olink.inf.panel.annot.tsv) from [ol
 
 whose hgnc_symbol can be amended as follows
 ```bash
-awk '!/BDNF/&&NR>1{if($3=="\"Q8NF90\"") $7="\"FGF5\""; else if($3=="\"Q8WWJ7\"") $7="\"CD6\"";print}' FS='\t' OFS='\t' doc/olink.inf.panel.annot.tsv
+awk '!/BDNF/&&NR>1{if($3=="\"Q8NF90\"") $7="\"FGF5\""; else if($3=="\"Q8WWJ7\"") $7="\"CD6\"";print}' FS='\t' OFS='\t' olink.inf.panel.annot.tsv
 ```
 The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
-<img src="Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
+<img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
 
 ## Joint/conditional analysis and fine-mapping
 
