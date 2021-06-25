@@ -19,7 +19,9 @@ UniProt IDs as follows,
 ```bash
 grep inf1 doc/olink.prot.list.txt | \
 sed 's/inf1_//g;s/___/\t/g' > inf1.list
-join -t$'\t' -12 -24 <(sort -k2,2 inf1.list) <(awk '{split($4,f,"-"); $4=f[1]; if(!index($1,"_")) print}' OFS='\t' doc/hgTables.tsv | sort -k4,4) > 12
+join -t$'\t' -12 -24 <(sort -k2,2 inf1.list) \
+                     <(awk '{split($4,f,"-"); $4=f[1]; if(!index($1,"_")) print}' OFS='\t' doc/hgTables.tsv | sort -k4,4) \
+                     > 12
 # 90 lines
 wc -l 12
 # Q8NF90 (FGF.5), Q8WWJ7 (CD6) are missing
