@@ -6,7 +6,6 @@ nav:
   - csd3/README.md
   - tryggve/README.md
   - rsid/README.md
-  - doc/README.md
 theme:
     name: mkdocs
     nav_style: dark
