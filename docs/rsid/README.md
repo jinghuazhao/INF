@@ -40,8 +40,10 @@ whose hgnc_symbol can be amended as follows
 ```bash
 awk '!/BDNF/&&NR>1{if($3=="\"Q8NF90\"") $7="\"FGF5\""; else if($3=="\"Q8WWJ7\"") $7="\"CD6\"";print}' FS='\t' OFS='\t' olink.inf.panel.annot.tsv
 ```
-The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
+
 <img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
+
+The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
 ## Joint/conditional analysis and fine-mapping
 
@@ -165,9 +167,8 @@ $\sum_{i=1}^k{m\choose{i}}$
 $\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}$
 
 Transcriptomewide association statistic $z_{TWAS}$ was originally proposed for gene expression data. For a given Trait of interest **T** for which GWAS summary statistics $z_T$ is available, the corresponding Wald statistic for TWAS is defined such that
-$$
-z_{TWAS} = \frac{w^T_{P}z_T}{\sqrt{w^T_{P}Vw_{P}}}
-$$
+
+$z_{TWAS} = \frac{w^T_{P}z_T}{\sqrt{w^T_{P}Vw_{P}}}$
 
 where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_T$, respectively.
 
