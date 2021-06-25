@@ -44,7 +44,7 @@
 <a class="nav-link" href="SCALLOP_INF1_analysis_plan/">Analysis plan</a>
 </li>
 <li class="navitem">
-<a class="nav-link" href="../cardio/cardio/">Cardio</a>
+<a class="nav-link" href="../cardio/">Cardio</a>
 </li>
 <li class="navitem">
 <a class="nav-link" href="../csd3/">CSD3</a>
@@ -92,14 +92,6 @@
 <li class="nav-item" data-level="1"><a class="nav-link" href="#other-notes">Other notes</a>
 <ul class="nav flex-column">
 <li class="nav-item" data-level="2"><a class="nav-link" href="#uniprot-ids">UniProt IDs</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#approximately-independent-ld-blocks">Approximately independent LD blocks:</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#near-independent-signals-from-cojo-and-clumping">Near-independent signals from cojo and clumping</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -188,147 +180,7 @@ rm 12
 <pre><code class="language-bash">awk '!/BDNF/&amp;&amp;NR&gt;1{if($3=="\"Q8NF90\"") $7="\"FGF5\""; else if($3=="\"Q8WWJ7\"") $7="\"CD6\"";print}' FS='\t' OFS='\t' doc/olink.inf.panel.annot.tsv
 </code></pre>
 <p>The overlap with SomaLogic panel is characterised with <a href="Olink.R">Olink.R</a> which also gives a Venn diagram.
-<img align="right" height="300" src="Olink-SomaLogic-Venn-diagram.png" width="300"/></p>
-<h2 id="approximately-independent-ld-blocks">Approximately independent LD blocks:</h2>
-<ol>
-<li>Set up 1703 autosomal regions as defined in <a href="../tryggve/EURLD.bed">EURLD.bed</a>.</li>
-<li>Extract variants outside the <a href="../tryggve/high-LD-regions-hg19.txt">regions in high LD</a> to <a href="../tryggve/EURLD-no-high-LD-regions-hg19.bed">1672 regions</a> by <a href="../tryggve/EURLD.sh">EURLD.sh</a>.</li>
-<li>Overlap regions and GWAS sumstats:</li>
-<li>Tag GWAS sumstats with regions through <a href="../cardio/aild-rma.sb">aild-rma.sb</a>.</li>
-<li>Pair protein-region which contains genomewide significant signals by <a href="../cardio/aild-list.sb">aild-list.sb</a>.</li>
-<li>Independently, list variants by region in the reference panel by <a href="../cardio/aild-snplist.sb">aild-snplist.sb</a>.</li>
-<li>clump via <a href="../cardio/aild-clump.sb">aild-clump.sb</a>.</li>
-<li>cojo via <a href="../cardio/aild-cojo.sb">aild-cojo.sb</a>.</li>
-<li>Downstream analyses with PhenoScanner (preferably v2) as in <a href="../cardio/ps.sh">ps.sh</a> and forest plots on TRYGGVE (with study-specific sumstats).</li>
-</ol>
-<p>The regions are predefined. As shown in <a href="../tryggve/EURLD.tsv">EURLD.tsv</a> by <a href="../tryggve/EURLD.R">EURLD.R</a>, the LD patterns across the genome are more variable than the norm in a typical genomewide association analysis therefore slide windows such as 250kb (36), 500kb (300), or even 10Mb (1071), seeing that the sentinel variant may not necessarily lie right in the middle of a window. The number of signals in our case were close to GCTA but overestimated (53 by PLINK) as in the following table. For instance, it is often seen from the PLINK --clump-range outputs that sliding windows can give results in two neighbouring LD blocks.</p>
-<p>Note that pairing regions of interest would reduce the burden of genomewide analysis, and also that region-specific reference will not affect results from steps 4 and 5 regarding use of variants from GWAS sumstats.</p>
-<p>Steps 4 and 5 both use <code>INF1.aild</code>, which contains all the protein-region pairs. The results are classified as in <a href="../tryggve/analysis.sh">analysis.sh</a>. In particular, for step 5 this is done with <a href="../cardio/aild.sh">aild.sh</a>.</p>
-<h2 id="near-independent-signals-from-cojo-and-clumping">Near-independent signals from cojo and clumping</h2>
-<table>
-<thead>
-<tr>
-<th><strong>Run</strong></th>
-<th><strong>Option</strong></th>
-<th><strong>cis</strong></th>
-<th><strong>trans</strong></th>
-<th><strong>total</strong></th>
-<th><strong>Comments/location<sup>+</sup></strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>GCTA</strong></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>1</td>
-<td>LD blocks</td>
-<td>210</td>
-<td>147</td>
-<td>357</td>
-<td>only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx</td>
-</tr>
-<tr>
-<td>+ indels</td>
-<td>LD blocks</td>
-<td>220</td>
-<td>155</td>
-<td>375</td>
-<td>SNPs+indels, cojo/aild-indel/INF1.jma.*</td>
-</tr>
-<tr>
-<td>2</td>
-<td>default</td>
-<td>234</td>
-<td>173</td>
-<td>407</td>
-<td>--cojo-collinear 0.9 --cojo-wind 10000, doc/SCALLOP_INF1-260419.xlsx</td>
-</tr>
-<tr>
-<td>3</td>
-<td>small R2 &amp; window</td>
-<td>189</td>
-<td>186</td>
-<td>375</td>
-<td>--cojo-collinear 0.1 --cojo-wind 500, doc/SCALLOP_INF1-260419.xlsx</td>
-</tr>
-<tr>
-<td><strong>PLINK</strong></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>4</td>
-<td>LD blocks</td>
-<td>594</td>
-<td>252</td>
-<td>846</td>
-<td>only SNPs, clumping/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx</td>
-</tr>
-<tr>
-<td>+ indels</td>
-<td>LD blocks</td>
-<td>621</td>
-<td>258</td>
-<td>879</td>
-<td>SNPs+indels, clumping/aild-indel/INF1.jma.*</td>
-</tr>
-<tr>
-<td>5</td>
-<td>INTERVAL LD panel</td>
-<td>657</td>
-<td>275</td>
-<td>932</td>
-<td>--clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx</td>
-</tr>
-<tr>
-<td>6</td>
-<td>1000G LD panel</td>
-<td>405</td>
-<td>229</td>
-<td>634</td>
-<td>--clump-r2 0.1 --clump-kb 500, clumping/INF1.1KG.r2-0.1.clumped.*</td>
-</tr>
-<tr>
-<td>7</td>
-<td>INTERVAL data</td>
-<td>424</td>
-<td>188</td>
-<td>612</td>
-<td>--clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx</td>
-</tr>
-<tr>
-<td>8</td>
-<td>1000G LD panel</td>
-<td>402</td>
-<td>226</td>
-<td>628</td>
-<td>--clump-r2 0.1 --clump-kb 1000, on tryggve</td>
-</tr>
-</tbody>
-</table>
-<p><sup>+</sup>The directories are relative to /scratch/jhz22/INF, i.e., doc/, cojo/ and clumping/, Results in 2 and 3 include regions in high LD excluded in other analyses.</p>
-<p>A few observations can be made,</p>
-<ul>
-<li>indels lead to more signals in cojo (1) and clumping (4) analyses.</li>
-<li><strong>default GCTA --cojo-collinear and --cojo-wind parameters did quite well in numbers, esp. taking ~30 away regions in LD</strong> (1, 2).</li>
-<li>Although it looks close, GCTA --cojo-collinear 0.1 produces considerably less signals compared to --cojo-collinear 0.9 (3).</li>
-<li>the number of signals increase with the values of GCTA parameters (2, 3), yet moderate changes in LD window have less impact than the reference panel (5, 8).</li>
-<li>PLINK --clump gives more signals than GCTA --cojo (1, 4 and 2, 5).</li>
-<li><strong>Specification of sliding LD windows disregarding AILD patterns in clumping gives 53 additional signals</strong> (4, 5).</li>
-<li>Thanks to the larger sample size and perhaps greater variant number, INTERVAL as LD reference leads to more signals than 1000Genomes (5, 6).</li>
-<li>Summary statistics from larger sample size gives more signals (5, 7).</li>
-<li>Unpruned results are likely to give more cis signals but this is subject to scrutiny perhaps on individual cases.</li>
-</ul>
-<p>It can be concluded that it is desirable to employ approximately independent LD blocks for both GCTA (1) and PLINK (4), and also that reference such as UK10K+1KG would be desirable with respect to both sample size and variant number.</p></div>
+<img align="right" height="300" src="Olink-SomaLogic-Venn-diagram.png" width="300"/></p></div>
 </div>
 </div>
 <footer class="col-md-12">

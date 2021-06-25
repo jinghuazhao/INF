@@ -5,14 +5,14 @@
 <meta charset="utf-8"/>
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
 <title>Cardio - SCALLOP-INF</title>
-<link href="../../css/bootstrap.min.css" rel="stylesheet"/>
-<link href="../../css/font-awesome.min.css" rel="stylesheet"/>
-<link href="../../css/base.css" rel="stylesheet"/>
+<link href="../css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../css/font-awesome.min.css" rel="stylesheet"/>
+<link href="../css/base.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
-<script defer="" src="../../js/jquery-1.10.2.min.js"></script>
-<script defer="" src="../../js/bootstrap.min.js"></script>
+<script defer="" src="../js/jquery-1.10.2.min.js"></script>
+<script defer="" src="../js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
@@ -28,7 +28,7 @@
 <body>
 <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
 <div class="container">
-<a class="navbar-brand" href="../..">SCALLOP-INF</a>
+<a class="navbar-brand" href="..">SCALLOP-INF</a>
 <!-- Expander button -->
 <button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
 <span class="navbar-toggler-icon"></span>
@@ -38,25 +38,25 @@
 <!-- Main navigation -->
 <ul class="nav navbar-nav">
 <li class="navitem">
-<a class="nav-link" href="../..">Home</a>
+<a class="nav-link" href="..">Home</a>
 </li>
 <li class="navitem">
-<a class="nav-link" href="../../doc/SCALLOP_INF1_analysis_plan/">Analysis plan</a>
+<a class="nav-link" href="../doc/SCALLOP_INF1_analysis_plan/">Analysis plan</a>
 </li>
 <li class="navitem active">
 <a class="nav-link" href="./">Cardio</a>
 </li>
 <li class="navitem">
-<a class="nav-link" href="../../csd3/">CSD3</a>
+<a class="nav-link" href="../csd3/">CSD3</a>
 </li>
 <li class="navitem">
-<a class="nav-link" href="../../tryggve/">Tryggve</a>
+<a class="nav-link" href="../tryggve/">Tryggve</a>
 </li>
 <li class="navitem">
-<a class="nav-link" href="../../rsid/">On rsid</a>
+<a class="nav-link" href="../rsid/">On rsid</a>
 </li>
 <li class="navitem">
-<a class="nav-link" href="../../doc/">Other notes</a>
+<a class="nav-link" href="../doc/">Other notes</a>
 </li>
 </ul>
 <ul class="nav navbar-nav ml-auto">
@@ -66,12 +66,12 @@
                             </a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../../doc/SCALLOP_INF1_analysis_plan/" rel="prev">
+<a class="nav-link" href="../doc/SCALLOP_INF1_analysis_plan/" rel="prev">
 <i class="fa fa-arrow-left"></i> Previous
                                 </a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="../../csd3/" rel="next">
+<a class="nav-link" href="../csd3/" rel="next">
                                     Next <i class="fa fa-arrow-right"></i>
 </a>
 </li>
@@ -132,6 +132,14 @@
 </ul>
 </li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#conditionaljoint-analysis-with-regions-in-high-ld">Conditional/joint analysis with regions in high LD</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#approximately-independent-ld-blocks">Approximately independent LD blocks:</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#near-independent-signals-from-cojo-and-clumping">Near-independent signals from cojo and clumping</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -205,7 +213,147 @@ phenoscanner -c All -l No -p 0.0000001 -i INF1.ps -o INF1r
   r4 &lt;- phenoscanner(snpquery=INF1[301:376], proxies = "EUR", pvalue = 1e-07, r2= 0.6, build=37)
   save(r1,r2,r3,r4,file="INF1r.rda",version=2)
 END
-</code></pre></div>
+</code></pre>
+<h2 id="approximately-independent-ld-blocks">Approximately independent LD blocks:</h2>
+<ol>
+<li>Set up 1703 autosomal regions as defined in <a href="../tryggve/EURLD.bed">EURLD.bed</a>.</li>
+<li>Extract variants outside the <a href="../tryggve/high-LD-regions-hg19.txt">regions in high LD</a> to <a href="../tryggve/EURLD-no-high-LD-regions-hg19.bed">1672 regions</a> by <a href="../tryggve/EURLD.sh">EURLD.sh</a>.</li>
+<li>Overlap regions and GWAS sumstats:</li>
+<li>Tag GWAS sumstats with regions through <a href="aild-rma.sb">aild-rma.sb</a>.</li>
+<li>Pair protein-region which contains genomewide significant signals by <a href="aild-list.sb">aild-list.sb</a>.</li>
+<li>Independently, list variants by region in the reference panel by <a href="aild-snplist.sb">aild-snplist.sb</a>.</li>
+<li>clump via <a href="aild-clump.sb">aild-clump.sb</a>.</li>
+<li>cojo via <a href="aild-cojo.sb">aild-cojo.sb</a>.</li>
+<li>Downstream analyses with PhenoScanner (preferably v2) as in <a href="ps.sh">ps.sh</a> and forest plots on TRYGGVE (with study-specific sumstats).</li>
+</ol>
+<p>The regions are predefined. As shown in <a href="../tryggve/EURLD.tsv">EURLD.tsv</a> by <a href="../tryggve/EURLD.R">EURLD.R</a>, the LD patterns across the genome are more variable than the norm in a typical genomewide association analysis therefore slide windows such as 250kb (36), 500kb (300), or even 10Mb (1071), seeing that the sentinel variant may not necessarily lie right in the middle of a window. The number of signals in our case were close to GCTA but overestimated (53 by PLINK) as in the following table. For instance, it is often seen from the PLINK --clump-range outputs that sliding windows can give results in two neighbouring LD blocks.</p>
+<p>Note that pairing regions of interest would reduce the burden of genomewide analysis, and also that region-specific reference will not affect results from steps 4 and 5 regarding use of variants from GWAS sumstats.</p>
+<p>Steps 4 and 5 both use <code>INF1.aild</code>, which contains all the protein-region pairs. The results are classified as in <a href="../tryggve/analysis.sh">analysis.sh</a>. In particular, for step 5 this is done with <a href="aild.sh">aild.sh</a>.</p>
+<h2 id="near-independent-signals-from-cojo-and-clumping">Near-independent signals from cojo and clumping</h2>
+<table>
+<thead>
+<tr>
+<th><strong>Run</strong></th>
+<th><strong>Option</strong></th>
+<th><strong>cis</strong></th>
+<th><strong>trans</strong></th>
+<th><strong>total</strong></th>
+<th><strong>Comments/location<sup>+</sup></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GCTA</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1</td>
+<td>LD blocks</td>
+<td>210</td>
+<td>147</td>
+<td>357</td>
+<td>only SNPs, cojo/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx</td>
+</tr>
+<tr>
+<td>+ indels</td>
+<td>LD blocks</td>
+<td>220</td>
+<td>155</td>
+<td>375</td>
+<td>SNPs+indels, cojo/aild-indel/INF1.jma.*</td>
+</tr>
+<tr>
+<td>2</td>
+<td>default</td>
+<td>234</td>
+<td>173</td>
+<td>407</td>
+<td>--cojo-collinear 0.9 --cojo-wind 10000, doc/SCALLOP_INF1-260419.xlsx</td>
+</tr>
+<tr>
+<td>3</td>
+<td>small R2 &amp; window</td>
+<td>189</td>
+<td>186</td>
+<td>375</td>
+<td>--cojo-collinear 0.1 --cojo-wind 500, doc/SCALLOP_INF1-260419.xlsx</td>
+</tr>
+<tr>
+<td><strong>PLINK</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>LD blocks</td>
+<td>594</td>
+<td>252</td>
+<td>846</td>
+<td>only SNPs, clumping/aild-snp/INF1.jma.*, also doc/INF1.paper.xlsx</td>
+</tr>
+<tr>
+<td>+ indels</td>
+<td>LD blocks</td>
+<td>621</td>
+<td>258</td>
+<td>879</td>
+<td>SNPs+indels, clumping/aild-indel/INF1.jma.*</td>
+</tr>
+<tr>
+<td>5</td>
+<td>INTERVAL LD panel</td>
+<td>657</td>
+<td>275</td>
+<td>932</td>
+<td>--clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx</td>
+</tr>
+<tr>
+<td>6</td>
+<td>1000G LD panel</td>
+<td>405</td>
+<td>229</td>
+<td>634</td>
+<td>--clump-r2 0.1 --clump-kb 500, clumping/INF1.1KG.r2-0.1.clumped.*</td>
+</tr>
+<tr>
+<td>7</td>
+<td>INTERVAL data</td>
+<td>424</td>
+<td>188</td>
+<td>612</td>
+<td>--clump-r2 0.1 --clump-kb 500, doc/SCALLOP_INF1-120419.xlsx</td>
+</tr>
+<tr>
+<td>8</td>
+<td>1000G LD panel</td>
+<td>402</td>
+<td>226</td>
+<td>628</td>
+<td>--clump-r2 0.1 --clump-kb 1000, on tryggve</td>
+</tr>
+</tbody>
+</table>
+<p><sup>+</sup>The directories are relative to /scratch/jhz22/INF, i.e., doc/, cojo/ and clumping/, Results in 2 and 3 include regions in high LD excluded in other analyses.</p>
+<p>A few observations can be made,</p>
+<ul>
+<li>indels lead to more signals in cojo (1) and clumping (4) analyses.</li>
+<li><strong>default GCTA --cojo-collinear and --cojo-wind parameters did quite well in numbers, esp. taking ~30 away regions in LD</strong> (1, 2).</li>
+<li>Although it looks close, GCTA --cojo-collinear 0.1 produces considerably less signals compared to --cojo-collinear 0.9 (3).</li>
+<li>the number of signals increase with the values of GCTA parameters (2, 3), yet moderate changes in LD window have less impact than the reference panel (5, 8).</li>
+<li>PLINK --clump gives more signals than GCTA --cojo (1, 4 and 2, 5).</li>
+<li><strong>Specification of sliding LD windows disregarding AILD patterns in clumping gives 53 additional signals</strong> (4, 5).</li>
+<li>Thanks to the larger sample size and perhaps greater variant number, INTERVAL as LD reference leads to more signals than 1000Genomes (5, 6).</li>
+<li>Summary statistics from larger sample size gives more signals (5, 7).</li>
+<li>Unpruned results are likely to give more cis signals but this is subject to scrutiny perhaps on individual cases.</li>
+</ul>
+<p>It can be concluded that it is desirable to employ approximately independent LD blocks for both GCTA (1) and PLINK (4), and also that reference such as UK10K+1KG would be desirable with respect to both sample size and variant number.</p></div>
 </div>
 </div>
 <footer class="col-md-12">
@@ -213,11 +361,11 @@ END
 <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
 </footer>
 <script>
-            var base_url = "../..",
+            var base_url = "..",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-<script defer="" src="../../js/base.js"></script>
-<script defer="" src="../../search/main.js"></script>
+<script defer="" src="../js/base.js"></script>
+<script defer="" src="../search/main.js"></script>
 <div aria-hidden="true" aria-labelledby="searchModalLabel" class="modal" id="mkdocs_search_modal" role="dialog" tabindex="-1">
 <div class="modal-dialog modal-lg">
 <div class="modal-content">
