@@ -9,7 +9,7 @@ SCALLOP consortium analysis plan (also [SCALLOP_INF1_analysis_plan.docx](SCALLOP
 <p align="center">
 <b><font align="top" size="14">Timeline for completing cohort-specific analyses and uploading the results for this project: </font></b><br>
 </p>
-<p align="center", style="color:red;font-size:30px">31 December 2018</p>
+<p align="center", style="color:red;font-size:30px"><b>31 December 2018</b></p>
 
 ---
 
