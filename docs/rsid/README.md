@@ -109,9 +109,7 @@ dot -Tpng grViz.gv -ogrViz.png
 ```
 which also be  obtained from RStudio for somewhat larger size.
 
-*Date last changed:* **17/6/2021**
-
-## LaTeX formulae
+## Mathematical expressions
 
 PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
 
@@ -122,3 +120,6 @@ $p_i=\sum_{i=1}^k{m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\rig
 $\sum_{i=1}^k{m\choose{i}}$
 
 $\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}$
+
+*Date last changed:* **25/6/2021**
+
