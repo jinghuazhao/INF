@@ -38,7 +38,11 @@ Likewise, [olink.inf.panel.annot.tsv](../doc/olink.inf.panel.annot.tsv) from [ol
 
 whose hgnc_symbol can be amended as follows
 ```bash
-awk '!/BDNF/&&NR>1{if($3=="\"Q8NF90\"") $7="\"FGF5\""; else if($3=="\"Q8WWJ7\"") $7="\"CD6\"";print}' FS='\t' OFS='\t' olink.inf.panel.annot.tsv
+awk '
+!/BDNF/&&NR>1
+{
+  if($3=="\"Q8NF90\"") $7="\"FGF5\""; else if($3=="\"Q8WWJ7\"") $7="\"CD6\"";print
+}' FS='\t' OFS='\t' olink.inf.panel.annot.tsv
 ```
 
 <img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
