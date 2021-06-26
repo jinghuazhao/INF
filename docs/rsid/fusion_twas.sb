@@ -12,6 +12,7 @@
 #SBATCH --export ALL
 
 export FUSION=${HPC_WORK}/fusion_twas
+export EWAS_fusion=${HPC_WORK}/EWAS-fusion
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=$SLURM_ARRAY_TASK_ID
 export prot=$(awk 'NR==ENVIRON["job"]' ${INF}/csd3/prot.list)
@@ -60,6 +61,8 @@ function init()
     }'
   ) | \
   tr ' ' '\t' > ${INF}/FUSION/${trait}.sumstats
+  bcftools query -f "%ID\t%ALT\t%REF\t[%ES]\t[%SE]\n" ${INF}/METAL/gwas2vcf/IL.12B.vcf.gz | \
+  awk -v OFS="\t" '{print $1,$2,$3,$4/$5}' > ${EWAS_fusion}/${prot}
 }
 
 function compute_weights_parallel()
