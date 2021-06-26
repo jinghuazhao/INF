@@ -25,15 +25,15 @@ csd3 --> software[R Packages at CRAN/GitHub];
 
 ![](rsid/grViz.png)
 
-## Summary statistics
-
-The link will be added here when available.
-
 ## The OPG example
 
 See the stacked image below.
 
 <img src="doc/OPG-qmlf.png">
+
+## Summary statistics
+
+The link will be added here when available.
 
 ## Related links
 
