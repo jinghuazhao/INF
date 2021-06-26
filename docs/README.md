@@ -23,7 +23,7 @@ csd3 --> software[R Packages at CRAN/GitHub];
 5. Downstream analyses links colocalisation and Mendelian randomisation with CAD, FEV1 and the meta-analysis summary statistics are now described in [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
 6. A nested predictive model based on genotype data G1/G2/G3, which link with proteins P1/P2/P3 as predictors for outcome y, is sketched as follows,
 
-![](rsid/grViz.png)
+<img src="rsid/grViz.png">
 
 ## The OPG example
 
