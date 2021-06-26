@@ -162,11 +162,7 @@ rm 12
 <th>"prot.on.multiple.panel"</th>
 <th>"panels.with.prot"</th>
 <th>"hgnc_symbol"</th>
-<th>"chromosome_name"</th>
-<th>"start_position"</th>
-<th>"end_position"</th>
-<th>"olink.id"</th>
-<th>"alternate.uniprot"</th>
+<th>...</th>
 </tr>
 </thead>
 <tbody>
@@ -178,11 +174,7 @@ rm 12
 <td>FALSE</td>
 <td>NA</td>
 <td>NA</td>
-<td>"4"</td>
-<td>81187753</td>
-<td>81257834</td>
-<td>"141_FGF-5"</td>
-<td>"P12034"</td>
+<td></td>
 </tr>
 <tr>
 <td>"T-cell surface glycoprotein CD6 isoform (CD6)"</td>
@@ -192,21 +184,11 @@ rm 12
 <td>FALSE</td>
 <td>NA</td>
 <td>NA</td>
-<td>"11"</td>
-<td>60739115</td>
-<td>60787849</td>
-<td>"131_CD6"</td>
-<td>"P30203"</td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p>whose hgnc_symbol can be amended as follows</p>
-<pre><code class="language-bash">awk '
-!/BDNF/&amp;&amp;NR&gt;1
-{
-  if($3=="\"Q8NF90\"") $7="\"FGF5\""; else if($3=="\"Q8WWJ7\"") $7="\"CD6\"";print
-}' FS='\t' OFS='\t' olink.inf.panel.annot.tsv
-</code></pre>
+<p>whose hgnc_symbol can be amended.</p>
 <p><img align="right" height="300" src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300"/></p>
 <p>The overlap with SomaLogic panel is characterised with <a href="../doc/Olink.R">Olink.R</a> which also gives a Venn diagram.</p>
 <h2 id="jointconditional-analysis-and-fine-mapping">Joint/conditional analysis and fine-mapping</h2>
