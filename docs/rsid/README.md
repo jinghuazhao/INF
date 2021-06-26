@@ -155,11 +155,17 @@ which also be  obtained from RStudio for somewhat larger size.
 
 PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
 
-$\sum_{i=1}^T{\frac{1}{N_i-1}}$
+$SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}$
+
+The prior probability for i out of m variants is causal, is obtained as a binomial probability
 
 $p_i=\sum_{i=1}^k{m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
 
+The posterior number of causal signals in the genomic region is obtained as the expectation ∑i Pi|data × i. The search of total number of configurations
+
 $\sum_{i=1}^k{m\choose{i}}$
+
+The GREAT Binomial test is
 
 $\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}$
 
@@ -169,4 +175,4 @@ $z_{TWAS} = \frac{w^T_{P}z_T}{\sqrt{w^T_{P}Vw_{P}}}$
 
 where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_T$, respectively.
 
-*Date last changed:* **25/6/2021**
+*Date last changed:* **26/6/2021**
