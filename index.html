@@ -93,7 +93,15 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#references">References</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#comments">Comments</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#summary-statistics">Summary statistics</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#the-opg-example">The OPG example</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -101,7 +109,7 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#the-opg-example">The OPG example</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#references">References</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -123,7 +131,7 @@ cardio --&gt; cardioAnalysis[Prototyping and KORA data analysis];
 csd3 --&gt; csd3Analysis[Conditional analysis,finemapping, etc];
 csd3 --&gt; software[R Packages at CRAN/GitHub]; 
 </div>
-<h3 id="comments">Comments</h3>
+<h2 id="comments">Comments</h2>
 <ol>
 <li>Data pre-processing was done initially from <a href="tryggve">tryggve</a> with <a href="tryggve/list.sh">list.sh</a> and <a href="tryggve/format.sh">format.sh</a>, followed by meta-analysis according to <a href="tryggve/metal.sh">metal.sh</a> using METAL whose results were cross-examined with <a href="tryggve/QCGWAS.sh">QCGWAS.sh</a> together with additional investigation.</li>
 <li>The main analysis followed with <a href="tryggve/analysis.sh">analysis.sh</a> containing codes for Q-Q/Manhattan/LocusZoom/Forest plots such as the OPG example (see the diagram below), which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with <a href="cardio">cardio</a> and <a href="csd3">CSD3</a>. cis/trans classification has been done via <a href="cardio/cis.vs.trans.classification.R">cis.vs.trans.classification.R</a> as validated by <a href="cardio/cistrans.sh">cistrans.sh</a>.</li>
@@ -133,12 +141,11 @@ csd3 --&gt; software[R Packages at CRAN/GitHub];
 <li>A nested predictive model based on genotype data G1/G2/G3, which link with proteins P1/P2/P3 as predictors for outcome y, is sketched as follows,</li>
 </ol>
 <p><img alt="" src="rsid/grViz.png"/></p>
-<h2 id="references">References</h2>
-<p>Choi SW, Mak TS, O'Reilly PF Tutorial: a guide to performing polygenic risk score analyses. <em>Nat Protoc</em> 15, 2759-2772 (2020), <a href="https://github.com/choishingwan/PRSice">GitHub</a> <a href="https://choishingwan.github.io/PRS-Tutorial/">documentation</a>.</p>
-<p>Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. <em>PLoS Genetics</em> 13(4), doi.org/10.1371/journal.pgen.1006706.</p>
-<p>Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. <em>Hum Mol Genet</em> 23(24): 6684–6693.</p>
-<p>Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. <em>Nat Med</em>. https://doi.org/10.1038/s41591-019-0415-5</p>
-<p>Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. <em>Nature</em> 558: 73–79.</p>
+<h2 id="summary-statistics">Summary statistics</h2>
+<p>The link will be added here when available.</p>
+<h2 id="the-opg-example">The OPG example</h2>
+<p>See the stacked image below.</p>
+<p><img src="doc/OPG-qmlf.png"/></p>
 <h2 id="related-links">Related links</h2>
 <ul>
 <li><a href="https://github.com/Olink-Proteomics/OlinkRPackage">OlinkAnalyze</a></li>
@@ -153,9 +160,12 @@ csd3 --&gt; software[R Packages at CRAN/GitHub];
 <li><a href="https://genetics.opentargets.org/immunobase">ImmunoBase</a>.</li>
 <li><a href="http://www.wwpdb.org/">Worldwide PDB</a></li>
 </ul>
-<h2 id="the-opg-example">The OPG example</h2>
-<p>See the stacked image below.</p>
-<p><img src="doc/OPG-qmlf.png"/></p></div>
+<h2 id="references">References</h2>
+<p>Choi SW, Mak TS, O'Reilly PF Tutorial: a guide to performing polygenic risk score analyses. <em>Nat Protoc</em> 15, 2759-2772 (2020), <a href="https://github.com/choishingwan/PRSice">GitHub</a> <a href="https://choishingwan.github.io/PRS-Tutorial/">documentation</a>.</p>
+<p>Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. <em>PLoS Genetics</em> 13(4), doi.org/10.1371/journal.pgen.1006706.</p>
+<p>Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. <em>Hum Mol Genet</em> 23(24): 6684–6693.</p>
+<p>Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. <em>Nat Med</em>. https://doi.org/10.1038/s41591-019-0415-5</p>
+<p>Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. <em>Nature</em> 558: 73–79.</p></div>
 </div>
 </div>
 <footer class="col-md-12">
@@ -238,5 +248,5 @@ csd3 --&gt; software[R Packages at CRAN/GitHub];
 </html>
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-06-25 19:42:53.744235+00:00
+Build Date UTC : 2021-06-26 08:35:43.186308+00:00
 -->
