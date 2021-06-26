@@ -2,6 +2,8 @@
 
 ## Flow of analysis
 
+(view the diagram from [Mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor/))
+
 ```mermaid
 graph TB;
 tryggve ==> cardio;
