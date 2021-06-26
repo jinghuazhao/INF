@@ -458,14 +458,17 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>which also be  obtained from RStudio for somewhat larger size.</p>
 <h2 id="mathematical-expressions">Mathematical expressions</h2>
 <p>PVE=<span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}\)</span></p>
-<p><span class="arithmatex">\(\sum_{i=1}^T{\frac{1}{N_i-1}}\)</span></p>
+<p><span class="arithmatex">\(SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}\)</span></p>
+<p>The prior probability for i out of m variants is causal, is obtained as a binomial probability</p>
 <p><span class="arithmatex">\(p_i=\sum_{i=1}^k{m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}\)</span></p>
+<p>The posterior number of causal signals in the genomic region is obtained as the expectation ∑i Pi|data × i. The search of total number of configurations</p>
 <p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
+<p>The GREAT Binomial test is</p>
 <p><span class="arithmatex">\(\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}\)</span></p>
 <p>Transcriptomewide association statistic <span class="arithmatex">\(z_{TWAS}\)</span> was originally proposed for gene expression data. For a given Trait of interest <strong>T</strong> for which GWAS summary statistics <span class="arithmatex">\(z_T\)</span> is available, the corresponding Wald statistic for TWAS is defined such that</p>
 <p><span class="arithmatex">\(z_{TWAS} = \frac{w^T_{P}z_T}{\sqrt{w^T_{P}Vw_{P}}}\)</span></p>
 <p>where <span class="arithmatex">\(w_{P}\)</span> is a weight associated with protein abundance level and <strong>V</strong> covariance matrix for <span class="arithmatex">\(z_T\)</span>, respectively.</p>
-<p><em>Date last changed:</em> <strong>25/6/2021</strong></p></div>
+<p><em>Date last changed:</em> <strong>26/6/2021</strong></p></div>
 </div>
 </div>
 <footer class="col-md-12">
