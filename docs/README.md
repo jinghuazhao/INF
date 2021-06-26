@@ -14,7 +14,7 @@ csd3 --> csd3Analysis[Conditional analysis,finemapping, etc];
 csd3 --> software[R Packages at CRAN/GitHub]; 
 ```
 
-### Comments
+## Comments
 
 1. Data pre-processing was done initially from [tryggve](tryggve) with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh), followed by meta-analysis according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with additional investigation.
 2. The main analysis followed with [analysis.sh](tryggve/analysis.sh) containing codes for Q-Q/Manhattan/LocusZoom/Forest plots such as the OPG example (see the diagram below), which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with [cardio](cardio) and [CSD3](csd3). cis/trans classification has been done via [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) as validated by [cistrans.sh](cardio/cistrans.sh).
@@ -25,17 +25,15 @@ csd3 --> software[R Packages at CRAN/GitHub];
 
 ![](rsid/grViz.png)
 
-## References
+## Summary statistics
 
-Choi SW, Mak TS, O'Reilly PF Tutorial: a guide to performing polygenic risk score analyses. *Nat Protoc* 15, 2759-2772 (2020), [GitHub](https://github.com/choishingwan/PRSice) [documentation](https://choishingwan.github.io/PRS-Tutorial/).
+The link will be added here when available.
 
-Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. *PLoS Genetics* 13(4), doi.org/10.1371/journal.pgen.1006706.
+## The OPG example
 
-Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. *Hum Mol Genet* 23(24): 6684–6693.
+See the stacked image below.
 
-Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. *Nat Med*. https://doi.org/10.1038/s41591-019-0415-5
-
-Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
+<img src="doc/OPG-qmlf.png">
 
 ## Related links
 
@@ -51,8 +49,14 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 * [ImmunoBase](https://genetics.opentargets.org/immunobase).
 * [Worldwide PDB](http://www.wwpdb.org/)
 
-## The OPG example
+## References
 
-See the stacked image below.
+Choi SW, Mak TS, O'Reilly PF Tutorial: a guide to performing polygenic risk score analyses. *Nat Protoc* 15, 2759-2772 (2020), [GitHub](https://github.com/choishingwan/PRSice) [documentation](https://choishingwan.github.io/PRS-Tutorial/).
 
-<img src="doc/OPG-qmlf.png">
+Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. *PLoS Genetics* 13(4), doi.org/10.1371/journal.pgen.1006706.
+
+Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. *Hum Mol Genet* 23(24): 6684–6693.
+
+Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. *Nat Med*. https://doi.org/10.1038/s41591-019-0415-5
+
+Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
