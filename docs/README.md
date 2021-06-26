@@ -29,7 +29,7 @@ csd3 --> software[R Packages at CRAN/GitHub];
 
 ## The OPG example
 
-See the stacked image below.
+This proves to be a positive control. The stacked image below shows Q-Q, Manhattan, LocusZoom and forest plots.
 
 <p align="center">
 <img src="doc/OPG-qmlf.png">
