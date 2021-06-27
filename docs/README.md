@@ -32,7 +32,6 @@ graph TB;
 SNP["LD reference panel (bed,bim,fam)"] --> |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
 Methylation --> Trait;
 SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Trait;
-', height=350, width=750)
 ```
 
 ## The OPG example
