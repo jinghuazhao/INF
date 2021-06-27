@@ -42,6 +42,8 @@ This proves to be a positive control. The stacked image below shows Q-Q, Manhatt
 
 ## EWAS with IL-12B
 
+(EWAS, joint/conditional) Q-Q and Manhattan plots from `ewas-plot.R`.
+
 <p align="center"><img src="doc/ewas-plot.png"></p>
 
 ## Summary statistics
