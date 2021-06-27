@@ -39,7 +39,7 @@ This proves to be a positive control. The stacked image below shows Q-Q, Manhatt
 <img src="doc/OPG-qmlf.png">
 </p>
 
-### EWAS with IL-12B
+## EWAS with IL-12B
 
 <embed width=200 height=200
     src="doc/IL-12B.tif" type="image/tiff"
