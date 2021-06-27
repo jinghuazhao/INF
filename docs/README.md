@@ -30,8 +30,8 @@ csd3 --> software[R Packages at CRAN/GitHub];
 ```mermaid
 graph TB;
 SNP["LD reference panel (bed,bim,fam)"] --> |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
-Methylation --> Trait;
-SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Trait;
+Methylation --> Protein;
+SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 ```
 
 ## The OPG example
