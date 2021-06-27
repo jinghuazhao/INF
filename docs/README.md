@@ -29,12 +29,20 @@ csd3 --> software[R Packages at CRAN/GitHub];
 <img src="rsid/grViz.png">
 </p>
 
+7. TWAS with protein and methylation data with fusion_twas and EWAS-fusion.
+
 ## The OPG example
 
 This proves to be a positive control. The stacked image below shows Q-Q, Manhattan, LocusZoom and forest plots.
 
 <p align="center">
 <img src="doc/OPG-qmlf.png">
+</p>
+
+### 
+
+<p align="center">
+<img src="doc/IL-12B.tif">
 </p>
 
 ## Summary statistics
