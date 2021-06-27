@@ -29,7 +29,7 @@ csd3 --> software[R Packages at CRAN/GitHub];
 <img src="rsid/grViz.png">
 </p>
 
-7. TWAS with protein and methylation data with fusion_twas and EWAS-fusion.
+7. TWAS and EWAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
 
 ## The OPG example
 
@@ -39,7 +39,7 @@ This proves to be a positive control. The stacked image below shows Q-Q, Manhatt
 <img src="doc/OPG-qmlf.png">
 </p>
 
-### 
+### EWAS with IL-12B
 
 <p align="center">
 <img src="doc/IL-12B.tif">
