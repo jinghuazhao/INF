@@ -27,6 +27,13 @@ csd3 --> software[R Packages at CRAN/GitHub];
 
 &nbsp; &nbsp; &nbsp; <p align="center"><img src="rsid/grViz.png"></p>
 7. TWAS and EWAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
+```mermaid
+graph TB;
+SNP["LD reference panel (bed,bim,fam)"] --> |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
+Methylation --> Trait;
+SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Trait;
+', height=350, width=750)
+```
 
 ## The OPG example
 
