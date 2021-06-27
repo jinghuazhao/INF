@@ -24,9 +24,8 @@ csd3 --> software[R Packages at CRAN/GitHub];
 4. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` as with `cs`, `log10p`, `logp`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d`, `pvalue` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and updates such as `pqtl2dplot/pqtl2dplotly/pqtl3dplotly` are made at [GitHub](https://github.com/jinghuazhao/R/).
 5. Downstream analyses links colocalisation and Mendelian randomisation with CAD, FEV1 and the meta-analysis summary statistics are now described in [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
 6. A nested predictive model based on genotype data G1/G2/G3, which link with proteins P1/P2/P3 as predictors for outcome y, is sketched as follows,
-<p align="center">
-<img src="rsid/grViz.png">
-</p>
+
+<p align="center"><img src="rsid/grViz.png"></p>
 7. TWAS and EWAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
 
 ## The OPG example
