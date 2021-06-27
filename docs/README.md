@@ -41,9 +41,9 @@ This proves to be a positive control. The stacked image below shows Q-Q, Manhatt
 
 ### EWAS with IL-12B
 
-<p align="center">
-<img src="doc/IL-12B.tif">
-</p>
+<embed width=200 height=200
+    src="doc/IL-12B.tif" type="image/tiff"
+    negative=yes>
 
 ## Summary statistics
 
