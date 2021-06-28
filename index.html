@@ -136,10 +136,10 @@
   Prototyping --&gt; Multi-omics-analysis;
 </div>
 <h2 id="comments">Comments</h2>
-<p>The tryggve, cardio and csd3 directories here are associated with the Linux cluster(s) used for the analysis over time.</p>
+<p>The <a href="tryggve">tryggve</a>, <a href="cardio">cardio</a> and <a href="csd3">csd3</a> directories here are associated with the Linux cluster(s) used for the analysis over time.</p>
 <ol>
-<li>Data pre-processing was done initially from <a href="tryggve">tryggve</a> with <a href="tryggve/list.sh">list.sh</a> and <a href="tryggve/format.sh">format.sh</a>, followed by meta-analysis according to <a href="tryggve/metal.sh">metal.sh</a> using METAL whose results were cross-examined with <a href="tryggve/QCGWAS.sh">QCGWAS.sh</a> together with additional investigation.</li>
-<li>The main analysis followed with <a href="tryggve/analysis.sh">analysis.sh</a> containing codes for Q-Q/Manhattan/LocusZoom/Forest plots such as the OPG example (see the diagram below), which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with <a href="cardio">cardio</a> and <a href="csd3">CSD3</a>. cis/trans classification has been done via <a href="cardio/cis.vs.trans.classification.R">cis.vs.trans.classification.R</a> as validated by <a href="cardio/cistrans.sh">cistrans.sh</a>.</li>
+<li>Data pre-processing was done initially from tryggve with <a href="tryggve/list.sh">list.sh</a> and <a href="tryggve/format.sh">format.sh</a>, followed by meta-analysis according to <a href="tryggve/metal.sh">metal.sh</a> using METAL whose results were cross-examined with <a href="tryggve/QCGWAS.sh">QCGWAS.sh</a> together with additional investigation.</li>
+<li>The main analysis followed with <a href="tryggve/analysis.sh">analysis.sh</a> containing codes for Q-Q/Manhattan/LocusZoom/Forest plots such as the OPG example (see the diagram below), which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with cardio and csd3. cis/trans classification has been done via <a href="cardio/cis.vs.trans.classification.R">cis.vs.trans.classification.R</a> as validated by <a href="cardio/cistrans.sh">cistrans.sh</a>.</li>
 <li>We prototyped our analysis on cardio with INTERVAL such as <a href="tryggve/INTERVAL.sh">INTERVAL.sh</a> and <a href="cardio/cardio.sh">cardio.sh</a> as well as individual level data analysis for the KORA study.</li>
 <li>The <code>cis.vs.trans.classification</code>, <code>circos.cis.vs.trans.plot</code> as with <code>cs</code>, <code>log10p</code>, <code>logp</code>, <code>gc.lambda</code>, <code>invnormal</code>, <code>METAL_forestplot</code>, <code>mhtplot.trunc</code>, <code>mhtplot2d</code>, <code>pvalue</code> functions are now part of R/gap at <a href="https://CRAN.R-project.org/package=gap">CRAN</a> and updates such as <code>pqtl2dplot/pqtl2dplotly/pqtl3dplotly</code> are made at <a href="https://github.com/jinghuazhao/R/">GitHub</a>.</li>
 <li>Downstream analyses links colocalisation and Mendelian randomisation with CAD, FEV1 and the meta-analysis summary statistics are now described in <a href="https://jinghuazhao.github.io/pQTLtools/articles/index.html">pQTLtools articles</a>.</li>
@@ -262,5 +262,5 @@ SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 </html>
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-06-28 20:33:07.403250+00:00
+Build Date UTC : 2021-06-28 20:35:39.642396+00:00
 -->
