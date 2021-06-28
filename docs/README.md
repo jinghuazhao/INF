@@ -8,7 +8,7 @@
 graph TB;
   tryggve ==> cardio;
   cardio ==> csd3;
-  cardio --> cardioAnalysis[Prototyping and KORA data analysis];
+  cardio --> cardioAnalysis[KORA data analysis];
   csd3 --> csd3Analysis[Conditional analysis,finemapping, etc];
   csd3 --> software[R Packages at CRAN/GitHub]; 
   tryggveAnalysis[Meta analysis: list.sh, format.sh,metal.sh, QCGWAS.sh, analysis.sh] --> GWAS[pQTL selection and Characterization];
