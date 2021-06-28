@@ -450,15 +450,8 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <li>OPG-TRANCE.sh</li>
 </ol>
 <h2 id="nested-pgs-model">Nested PGS model</h2>
-<div class="mermaid">graph LR;
-G --&gt; P1
-G --&gt; P2
-G --&gt; P3
-P1 --&gt; y
-P2 --&gt; y
-P3 --&gt; y
-</div>
-<p>Without loss of generality, we have genotype data G1, G2, G3, which link with proteins P1, P2, P3 as predictors for outcome y.</p>
+<p align="center"><img src="rsid/grViz.png"/></p>
+<p>Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.</p>
 <p>The figure is obtained with</p>
 <pre><code class="language-bash">dot -Tpng grViz.gv -ogrViz.png
 </code></pre>
