@@ -6,18 +6,14 @@
 
 ```mermaid
 graph TB;
-subgraph directories
-tryggve ==> cardio;
-cardio ==> csd3;
-cardio --> cardioAnalysis[Prototyping and KORA data analysis];
-csd3 --> csd3Analysis[Conditional analysis,finemapping, etc];
-csd3 --> software[R Packages at CRAN/GitHub]; 
-end
-subgraph contents
-tryggveAnalysis[Meta analysis: list.sh, format.sh,metal.sh, QCGWAS.sh, analysis.sh] --> GWAS[pQTL selection and Characterisation];
-GWAS --> Prototyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
-Prototyping --> Multi-omics-analysis;
-end
+  tryggve ==> cardio;
+  cardio ==> csd3;
+  cardio --> cardioAnalysis[Prototyping and KORA data analysis];
+  csd3 --> csd3Analysis[Conditional analysis,finemapping, etc];
+  csd3 --> software[R Packages at CRAN/GitHub]; 
+  tryggveAnalysis[Meta analysis: list.sh, format.sh,metal.sh, QCGWAS.sh, analysis.sh] --> GWAS[pQTL selection and Characterization];
+  GWAS --> Prototyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
+  Prototyping --> Multi-omics-analysis;
 ```
 
 ## Comments
