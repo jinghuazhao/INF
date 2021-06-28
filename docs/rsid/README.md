@@ -140,7 +140,7 @@ wgcna.sh | experiment on modules
 
 ## Nested PGS model
 
-<p align="center"><img src="rsid/grViz.png"></p>
+<p align="center"><img src="grViz.png"></p>
 
 Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
 
