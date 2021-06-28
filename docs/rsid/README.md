@@ -141,7 +141,7 @@ wgcna.sh | experiment on modules
 ## Nested PGS model
 
 ```mermaid
-graph TD;
+graph LR;
 G --> P1
 G --> P2
 G --> P3
