@@ -136,6 +136,7 @@
   Prototyping --&gt; Multi-omics-analysis;
 </div>
 <h2 id="comments">Comments</h2>
+<p>tryggve, cardio and csd3 were the Linux cluster(s) used for the analysis and here associated with their named directories.</p>
 <ol>
 <li>Data pre-processing was done initially from <a href="tryggve">tryggve</a> with <a href="tryggve/list.sh">list.sh</a> and <a href="tryggve/format.sh">format.sh</a>, followed by meta-analysis according to <a href="tryggve/metal.sh">metal.sh</a> using METAL whose results were cross-examined with <a href="tryggve/QCGWAS.sh">QCGWAS.sh</a> together with additional investigation.</li>
 <li>The main analysis followed with <a href="tryggve/analysis.sh">analysis.sh</a> containing codes for Q-Q/Manhattan/LocusZoom/Forest plots such as the OPG example (see the diagram below), which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with <a href="cardio">cardio</a> and <a href="csd3">CSD3</a>. cis/trans classification has been done via <a href="cardio/cis.vs.trans.classification.R">cis.vs.trans.classification.R</a> as validated by <a href="cardio/cistrans.sh">cistrans.sh</a>.</li>
@@ -261,5 +262,5 @@ SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 </html>
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-06-28 20:19:45.506744+00:00
+Build Date UTC : 2021-06-28 20:23:41.269805+00:00
 -->
