@@ -127,14 +127,18 @@
 <h2 id="flow-of-analysis">Flow of analysis</h2>
 <p>(view the diagram from <a href="https://mermaid-js.github.io/mermaid-live-editor/">Mermaid live editor</a>)</p>
 <div class="mermaid">graph TB;
+subgraph directories
 tryggve ==&gt; cardio;
 cardio ==&gt; csd3;
-tryggveAnalysis[Meta analysis: list.sh, format.sh,metal.sh, QCGWAS.sh, analysis.sh] --&gt; GWAS[pQTL selection and Characterisation];
-GWAS --&gt; Prototyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
-Prototyping --&gt; Multi-omics-analysis;
 cardio --&gt; cardioAnalysis[Prototyping and KORA data analysis];
 csd3 --&gt; csd3Analysis[Conditional analysis,finemapping, etc];
 csd3 --&gt; software[R Packages at CRAN/GitHub]; 
+end
+subgraph contents
+tryggveAnalysis[Meta analysis: list.sh, format.sh,metal.sh, QCGWAS.sh, analysis.sh] --&gt; GWAS[pQTL selection and Characterisation];
+GWAS --&gt; Prototyping[Prototyping: INTERVAL.sh, cardio.sh, ...];
+Prototyping --&gt; Multi-omics-analysis;
+end
 </div>
 <h2 id="comments">Comments</h2>
 <ol>
@@ -262,5 +266,5 @@ SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 </html>
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-06-27 09:05:14.520835+00:00
+Build Date UTC : 2021-06-28 19:53:37.181208+00:00
 -->

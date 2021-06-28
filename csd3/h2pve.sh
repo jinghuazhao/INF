@@ -50,6 +50,7 @@ R --no-save -q <<END
   })
   h2pve <- read.table(file.path(INF,"h2","h2pve.dat"),col.names=c("prot","h2","h2se","pve","sepve","m"))
   with(h2pve,summary(h2))
+  with(h2pve,cor(pve,h2))
   subset(h2pve, h2>0.3 & pve > 0.3)
   attach(h2pve)
   cor(h2,pve)
