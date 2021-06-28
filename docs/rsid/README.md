@@ -140,7 +140,15 @@ wgcna.sh | experiment on modules
 
 ## Nested PGS model
 
-![grViz.png](grViz.png)
+```mermaid
+graph LR;
+G --> P1
+G --> P2
+G --> P3
+P1 --> y
+P2 --> y
+P3 --> y
+```
 
 Without loss of generality, we have genotype data G1, G2, G3, which link with proteins P1, P2, P3 as predictors for outcome y.
 
