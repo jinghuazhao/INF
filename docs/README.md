@@ -17,21 +17,23 @@ graph TB;
 
 ## Comments
 
-The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are associated with the Linux cluster(s) used for the analysis over time.
+The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are associated with the named Linux cluster(s) used for the analysis over time.
 
 1. Data pre-processing was done initially from tryggve with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh), followed by meta-analysis according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with additional investigation.
 2. The main analysis followed with [analysis.sh](tryggve/analysis.sh) containing codes for Q-Q/Manhattan/LocusZoom/Forest plots such as the OPG example (see the diagram below), which replicated results of Kwan et al. (2014) as identified by PhenoScanner), clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with cardio and csd3. cis/trans classification has been done via [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) as validated by [cistrans.sh](cardio/cistrans.sh).
 3. We prototyped our analysis on cardio with INTERVAL such as [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](cardio/cardio.sh) as well as individual level data analysis for the KORA study.
 4. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` as with `cs`, `log10p`, `logp`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d`, `pvalue` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and updates such as `pqtl2dplot/pqtl2dplotly/pqtl3dplotly` are made at [GitHub](https://github.com/jinghuazhao/R/).
 5. Downstream analyses links colocalisation and Mendelian randomisation with CAD, FEV1 and the meta-analysis summary statistics are now described in [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
-6. A nested predictive model based on genotype data G, which link with proteins P1/P2/P3 as predictors for outcome y, is sketched as follows,
+6. A nested predictive model based on genotype data G, which link with proteins P1, P2, ..., Pn as predictors for outcome y, is sketched as follows,
 ```mermaid
 graph LR;
 G --> P1
 G --> P2
-G --> P3
+G --> ...
+G --> Pn
 P1 --> y
 P2 --> y
+... --> y
 P3 --> y
 ```
 7. TWAS and EWAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
