@@ -114,6 +114,7 @@ R --no-save -q <<END
   tbl_ann <- unique(merge(subset(r$data,select=-c(chr1,pos1,chr2,pos2,y,log10p,gene,target,cistrans)),
                           subset(rsid_cistrans,select=-c(Chr,bp)),by.x="id",by.y="SNP"))
   tbl_ann$SYMBOL[1] <- rsid_cistrans[i,"gene"] <- unlist(lapply(strsplit(rsid_cistrans[1,"gene"],":"),"[",1))
+  tbl_ann$SYMBOL[8] <- "rs635634"
   with(tbl_ann[-3,],
   {
     text(x,max(r$CM)+hg19[23],SYMBOL,srt=45,cex=0.8)
@@ -207,7 +208,6 @@ R --no-save -q <<END
 END
 
 R --no-save -q <<END
-  library(gap)
   library(dplyr)
   INF <- Sys.getenv("INF")
   gz <- gzfile(file.path(INF,"METAL","IL.12B-1.tbl.gz"))
@@ -222,10 +222,13 @@ R --no-save -q <<END
   IL.12B <- left_join(IL.12B,genes,by=c("MarkerName"="snpid"),keep=TRUE) %>%
              mutate(MarkerName=ifelse(!is.na(snpid),gene,MarkerName)) %>%
              select(-c(chr,snpid,snp))
-  save(IL.12B, file=file.path(INF,"work","IL.12B.rda"))
+  save(IL.12B, genes, file=file.path(INF,"work","IL.12B.rda"))
+# load(file.path(INF,"work","IL.12B.rda"))
   subset(IL.12B,!is.na(gene))
+  library(gap)
   png("IL.12B-mhtplot.trunc.png", res=300, units="in", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
+  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc.R"))
   mhtplot.trunc(IL.12B, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=0.7,
@@ -414,4 +417,3 @@ xsel -i
 
 # trans pQTL hotspots
 cut -f1,2,21 work/INF1.METAL|sed '1d' | uniq -c -d
-
