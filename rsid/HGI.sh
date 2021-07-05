@@ -2,6 +2,9 @@
 
 if [ ! -d ${INF}/HGI/mr ]; then mkdir ${INF}/HGI/mr; fi
 
+# gs://covid19-hg-public/20210415/results/20210607/
+# gs://covid19-hg-public/20210415/results/ancestry/20210622
+
 function _outcome_r6()
 {
   export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20210415/results/20210607

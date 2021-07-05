@@ -88,10 +88,46 @@ mv INF1.merge.circlize-000001.png INF1.merge.circlize.png
 
 R --no-save -q <<END
   library(gap)
-  d <- read.csv("INF1.merge.cis.vs.trans",as.is=TRUE)
-  png("INF1.merge.png",height=20,width=20,units="cm",res=300)
-  mhtplot2d(d)
+  library(dplyr)
+  library(ieugwasr)
+
+  INF <- Sys.getenv("INF")
+  d <- read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans"),as.is=TRUE)
+  vep <- read.delim(file.path(INF,"work","VEP.txt")) %>% rename(rsid=X.Uploaded_variation)
+
+  snp_cistrans <- subset(d[c("SNP","cis.trans")],cis.trans=="trans")
+  dup <- gap::allDuplicated(snp_cistrans)
+  tbl <- data.frame(table(snp_cistrans[dup,]))
+  tbl_ext <- within(unique(merge(tbl,subset(d,select=c(SNP,Chr,bp)),by="SNP")),{Location=paste0(Chr,":",bp)})
+  rsid_cistrans <- unique(merge(vep[,c(2,3,19)],tbl_ext,by.x="Location",by.y="Location"))
+
+  png("pqtl2dplot.png",height=20,width=20,units="cm",res=300)
+  r <- pqtl2dplot(d,chrlen = gap::hg19[1:22])
+
+  rsid_cistrans$gene <- NA
+  for(i in 1:nrow(rsid_cistrans))
+  {
+    print(i)
+    rsid_cistrans[i,"gene"] <- variants_rsid(rsid_cistrans[i,"rsid"])$geneinfo
+  }
+  options(width=200)
+  tbl_ann <- unique(merge(subset(r$data,select=-c(chr1,pos1,chr2,pos2,y,log10p,gene,target,cistrans)),
+                          subset(rsid_cistrans,select=-c(Chr,bp)),by.x="id",by.y="SNP"))
+  tbl_ann$SYMBOL[1] <- rsid_cistrans[i,"gene"] <- unlist(lapply(strsplit(rsid_cistrans[1,"gene"],":"),"[",1))
+  tbl_ann$SYMBOL[8] <- "rs635634"
+  with(tbl_ann[-3,],
+  {
+    text(x,max(r$CM)+hg19[23],SYMBOL,srt=45,cex=0.8)
+    segments(x,max(r$CM),x,max(r$CM)+hg19[23]/2)
+  })
+  with(tbl_ann[3,],
+  {
+    text(x,max(r$CM)+hg19[23]/2,SYMBOL,srt=45,cex=0.8)
+    segments(x,max(r$CM),x,max(r$CM)+hg19[23]/4)
+  })
   dev.off()
+# rs635634 link with ABO similarly with rs635634
+  ieugwasr::ld_matrix(c("rs579459","rs635634"))
 END
 
 # rsid
@@ -172,23 +208,27 @@ R --no-save -q <<END
 END
 
 R --no-save -q <<END
-  library(gap)
+  library(dplyr)
   INF <- Sys.getenv("INF")
   gz <- gzfile(file.path(INF,"METAL","IL.12B-1.tbl.gz"))
-  IL.12B <- within(read.delim(gz,as.is=TRUE), {Z <- Effect/StdErr; P <- pvalue(Z); log10P <- -log10p(Z)})
+  IL.12B <- within(read.delim(gz,as.is=TRUE), {Z <- Effect/StdErr; P <- pvalue(Z); log10P <- -log10p(Z)}) %>%
+            select(Chromosome,Position,MarkerName,Z,P,log10P)
   genes <- data.frame(chr=c("chr3","chr3","chr5","chr6","chr12","chr13","chr14","chr14"),
                       snpid=c("chr3:5026008_A_G","chr3:188115682_A_C","chr5:158792819_C_G","chr6:31154493_A_G","chr12:111884608_C_T",
                               "chr13:28604007_C_T","chr14:68760141_C_T","chr14:103230758_C_G"),
                       snp=c("rs11130215","rs9815073","rs10076557","rs3130510","rs3184504","rs76428106","rs12588969","rs1950897"),
                       gene=c("BHLHE40","LPP","IL12B","MHC","SH2B3","FLT3","RAD51B","TARF3")
            )
-  library(dplyr)
   IL.12B <- left_join(IL.12B,genes,by=c("MarkerName"="snpid"),keep=TRUE) %>%
              mutate(MarkerName=ifelse(!is.na(snpid),gene,MarkerName)) %>%
              select(-c(chr,snpid,snp))
+  save(IL.12B, genes, file=file.path(INF,"work","IL.12B.rda"))
+# load(file.path(INF,"work","IL.12B.rda"))
   subset(IL.12B,!is.na(gene))
+  library(gap)
   png("IL.12B-mhtplot.trunc.png", res=300, units="in", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
+  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc.R"))
   mhtplot.trunc(IL.12B, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=0.7,
@@ -374,3 +414,6 @@ cut -d, -f1 | \
 sort | \
 uniq | \
 xsel -i
+
+# trans pQTL hotspots
+cut -f1,2,21 work/INF1.METAL|sed '1d' | uniq -c -d

@@ -196,7 +196,8 @@ novelpqtls <- subset(within(pqtls,{
                                     log10p=-log.P.
                                   }),
                      !paste0(Protein,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),
-                     select=c(Protein,uniprot,chrpos,rsid,a1a2,bse,log10p)) %>%
+                     select=c(Protein,uniprot,chrpos,rsid,a1a2,bse,log10p,cis.trans)) %>%
               arrange(Protein,chrpos)
-write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls), file=file.path(INF,"NG","novelpqtls.xlsx"), colNames=TRUE,
+write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls), file=file.path(INF,"NG","novelpqtls.xlsx"), overwrite=TRUE,
+           colNames=TRUE,
            borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
