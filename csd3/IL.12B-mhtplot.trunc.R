@@ -3,7 +3,7 @@
 #' To generate truncated Manhattan plot, e.g., of genomewide significance (P values) or a random variable that is uniformly distributed.
 #'
 #' The rationale of this function is to extend mhtplot() to handle extremely small p values as often seen from a protein GWAS; for R will break down when p <= 1e-324.
-#' 
+#'
 #' @param x A data.frame.
 #' @param chr Chromosome.
 #' @param bp Position.
@@ -16,7 +16,7 @@
 #' @param suggestiveline Suggestive line.
 #' @param genomewideline Genomewide line.
 #' @param highlight A list of SNPs to be highlighted.
-#' @param annotatelog10P. Threshold of -log10(P) to annotate.
+#' @param annotatelog10P Threshold of -log10(P) to annotate.
 #' @param annotateTop Annotate top.
 #' @param cex.mtext axis label extension factor.
 #' @param cex.text SNP label extension factor.
@@ -33,17 +33,17 @@
 #' options(width=120)
 #' require(gap.datasets)
 #' mhtdata <- within(mhtdata, {z=qnorm(p/2, lower.tail=FALSE)})
-#' mhtplot.trunc(mhtdata, chr = "chr", bp = "pos", z = "z", snp = "rsn", 
-#'               y.brk1=10, y.brk2=12, mtext.line=2.5)
+#' mhtplot.trunc(mhtdata, chr = "chr", bp = "pos", z = "z", snp = "rsn",
+#'               y.brk1=6, y.brk2=10, y.ax.space=1, mtext.line=2.5)
 #' # https://portals.broadinstitute.org/collaboration/
 #' # giant/images/0/0f/Meta-analysis_Locke_et_al+UKBiobank_2018.txt.gz
 #' gz <- gzfile("work/Meta-analysis_Locke_et_al+UKBiobank_2018_UPDATED.txt.gz")
 #' BMI <- within(read.delim(gz,as.is=TRUE), {Z <- BETA/SE})
 #' print(subset(BMI[c("CHR","POS","SNP","P")],CHR!=16 & P<=1e-150))
 #' library(Rmpfr)
-#' print(within(subset(BMI, P==0, select=c(CHR,POS,SNP,Z)), 
-#'             {P <- format(2*pnorm(mpfr(abs(Z),100),lower.tail=FALSE));
-#'              Pvalue <- pvalue(Z); log10P <- -log10p(Z)}))
+#' print(within(subset(BMI, P==0, select=c(CHR,POS,SNP,Z)),
+#'              {P <- format(2*pnorm(mpfr(abs(Z),100),lower.tail=FALSE));
+#'               Pvalue <- pvalue(Z); log10P <- -log10p(Z)}))
 #' png("BMI.png", res=300, units="in", width=9, height=6)
 #' par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
 #' mhtplot.trunc(BMI, chr="CHR", bp="POS", z="Z", snp="SNP",
@@ -138,10 +138,9 @@ mhtplot.trunc <- function (x, chr = "CHR", bp = "BP", p = NULL, log10p = NULL, z
   do.call("plot", c(NA, dotargs, def_args[!names(def_args) %in% names(dotargs)]))
   mtext(text = xlabel, side = 1, line = mtext.line, cex = cex.mtext, font=2)
   mtext(text = expression(-log[10](italic(p))), side=2, line = mtext.line, cex = cex.mtext, font=2)
-  y.lab.tick.pos <- seq(from = 0, by = y.ax.space, to = ceiling(max.y) - offset)
+  y.lab.tick.pos <- seq(from = 0, by = y.ax.space, to = ceiling(max.y) - offset + y.ax.space/3)
   pre.brk.labs <- seq(from = 0, by = y.ax.space, to = y.brk1)
-  post.brk.labs <- seq(from = y.brk2+y.ax.space, by=y.ax.space, to = max(y.lab.tick.pos))
-  y.labels <- c(pre.brk.labs, seq(from=y.brk2+y.ax.space, by=y.ax.space, length.out=length(y.lab.tick.pos)-length(pre.brk.labs)))
+  y.labels <- c(pre.brk.labs, seq(from=y.brk2, by=y.ax.space, length.out=length(y.lab.tick.pos)-length(pre.brk.labs)))
   axis(side=2, at=y.lab.tick.pos, labels=y.labels, cex.axis=cex.y, las=1)
   plotrix::axis.break(axis = 2, breakpos = y.brk1, style = "slash")
   if (!is.null(chrlabs)) {

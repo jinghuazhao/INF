@@ -16,7 +16,6 @@ export study=INTERVAL
 export N=4994
 export n=1000
 export TMPDIR=${HPC_WORK}/work
-export dir=${INF}/sentinels
 # scaled results
 export list=${INF}/work/INF1.merge
 export p=$(sed '1d' ${list} | awk -v job=${job} 'NR==job{print $5}')
