@@ -37,4 +37,18 @@ cd ${INF}/cs
       awk -vprot={1} -vrsid={2} -vOFS="\t" "{print prot,rsid,\$0}" ${INF}/cs/{1}-{2}.cs
   '
 ) > ${INF}/work/INF1.merge-rsid.cs
+
+R --no-save -q <<END
+  library(dplyr)
+  INF <- Sys.getenv("INF")
+  cs <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"), col.names=c("prot","pQTL","set"), sep='\t')
+  for (i in 1:nrow(cs))
+  {
+    cs$n[i] <- length(unlist(strsplit(cs$set[i]," ")))
+    cs$isin[i] <- grepl(cs$pQTL[i],cs$set[i])
+  }
+  options(width=200)
+  table(cs$n)
+  table(cs$isin)
+END
 cd -

@@ -55,8 +55,10 @@ R --no-save -q <<END
   attach(h2pve)
   cor(h2,pve)
   plot(h2,pve,pch=19,cex.axis=2,cex.lab=2,main="b",xlab="h2",ylab="pve")
-  abline(lm(pve~h2), col="red")
-  lines(lowess(h2,pve), col="blue")
+  reg <- lm(pve~h2)
+  summary(reg)
+  abline(reg, col="red")
+# lines(lowess(h2,pve), col="blue")
   detach(h2pve)
   dev.off()
 END
