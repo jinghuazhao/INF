@@ -29,21 +29,18 @@ The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are a
 
 5. Downstream analyses links colocalisation and Mendelian randomisation with CAD, FEV1 and the meta-analysis summary statistics are now described in [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
 
-6. A nested predictive model based on genotype data G, which link with proteins P1, P2, ..., Pn as predictors for outcome y, is sketched as follows,
+6. A nested predictive model based on genotype data G, which link with proteins P1, P2, ..., Pn as predictors for outcome y. Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
 ```mermaid
-graph LR;
+graph TD;
   G --> P1
   G --> P2
   G --> ...
   G --> Pn
   P1 --> y
   P2 --> y
-  .. --> y
+  ... --> y
   Pn --> y
-```
-Alternative routes are T(P)WAS and EWAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
-```mermaid
-graph TB;
+
   SNP["LD reference panel (bed,bim,fam)"] --> |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
   Methylation --> Protein;
   SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
