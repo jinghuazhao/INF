@@ -155,9 +155,8 @@
 </li>
 <li>
 <p>A nested predictive model based on genotype data G, which link with proteins P1, P2, ..., Pn as predictors for outcome y, is sketched as follows,</p>
-</li>
-</ol>
-<div class="mermaid">graph LR;
+<p><code>mermaid
+graph LR;
 G --&gt; P1
 G --&gt; P2
 G --&gt; ...
@@ -165,16 +164,17 @@ G --&gt; Pn
 P1 --&gt; y
 P2 --&gt; y
 ... --&gt; y
-Pn --&gt; y
-</div>
-<ol>
-<li>TWAS and EWAS with <a href="http://gusevlab.org/projects/fusion/">fusion_twas</a> and <a href="https://jinghuazhao.github.io/EWAS-fusion/">EWAS-fusion</a>.</li>
-</ol>
-<div class="mermaid">graph TB;
+Pn --&gt; y</code></p>
+</li>
+<li>
+<p>TWAS and EWAS with <a href="http://gusevlab.org/projects/fusion/">fusion_twas</a> and <a href="https://jinghuazhao.github.io/EWAS-fusion/">EWAS-fusion</a>.</p>
+<p><code>mermaid
+graph TB;
 SNP["LD reference panel (bed,bim,fam)"] --&gt; |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
 Methylation --&gt; Protein;
-SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
-</div>
+SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;</code></p>
+</li>
+</ol>
 <h2 id="the-opg-example">The OPG example</h2>
 <p>This proves to be a positive control. The stacked image below shows Q-Q, Manhattan, LocusZoom and forest plots.</p>
 <p align="center"><img src="doc/OPG-qmlf.png"/></p>
@@ -285,5 +285,5 @@ SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 </html>
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-07-07 20:27:59.518833+00:00
+Build Date UTC : 2021-07-07 20:29:41.547427+00:00
 -->
