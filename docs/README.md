@@ -36,6 +36,7 @@ P2 --> y
 ... --> y
 Pn --> y
 ```
+
 7. TWAS and EWAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
 ```mermaid
 graph TB;
