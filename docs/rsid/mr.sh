@@ -12,7 +12,7 @@ function setup()
 
   for type in cis trans pan
   do
-    if [ ! -d ${INF}/mr/${type} ]; then mkdir -p ${INF}/mr/${type}; fi; 
+    if [ ! -d ${INF}/mr/${type} ]; then mkdir -p ${INF}/mr/${type}; fi 
     export suffix=${type};
     export lp=-7.30103
     cut -f3 ${INF}/work/INF1.METAL | sed '1d' | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
@@ -63,7 +63,7 @@ function mr()
       if [ -f ${z}.txt ]; then
         awk -vFS="\t" "NR==1||(\$9<=0.05 && \$9!=\"NA\")" ${z}.txt > ${z}.sig;
         export l=$(wc -l ${z}.sig | cut -d" " -f1);
-        if [ ${l} -le 1 ]; then rm ${z}.sig; fi;
+        if [ ${l} -le 1 ]; then rm ${z}.sig; fi
       fi
     done
   ' ::: $(awk -vFS="\t" 'NR>1 {print $4}' ${INF}/rsid/efo.txt) \
@@ -173,3 +173,95 @@ END
 # ukb-b-19657 (FEV1), N=421,986
 # https://epigraphdb.org/pqtl/IL12B
 # https://www.targetvalidation.org/evidence/ENSG00000113302/EFO_0000540?view=sec:known_drug
+
+# All GSMR
+
+export suffix=cis
+if [ ! -d ${INF}/mr/gsmr ]; then mkdir -p ${INF}/mr/gsmr; fi
+
+function mrx()
+{
+  if [ ! -d ${INF}/mr/gsmr/mrx ]; then mkdir -p ${INF}/mr/gsmr/mrx; fi
+  awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  parallel -j5 --env suffix -C' ' '
+      echo --- {2} ---
+      (
+        gunzip -c ${INF}/METAL/{2}-1.tbl.gz | cut -f1-6,10-12,18 | \
+        awk -vchr={3} -vstart={4} -vend={5} -vM=1e6 -vsuffix=${suffix} "(\$1==chr && \$2>=start-M && \$2 <= end+M)"
+      ) >  ${INF}/mr/gsmr/{2}-${suffix}.mri
+      (
+        echo -e "prot\trsid\tChromosome\tPosition\tAllele1\tAllele2\tFreq1\tEffect\tStdErr\tlogP\tN"
+        awk "{\$4=toupper(\$4);\$5=toupper(\$5);print}" ${INF}/mr/${suffix}/{2}-${suffix}.mri | \
+        sort -k3,3 | \
+        join -23 ${INF}/work/INTERVAL.rsid - | \
+        awk -v prot={2} "{\$1=prot;print}" | \
+        tr " " "\t"
+      ) | gzip -f > ${INF}/mr/gsmr/mrx/{2}-${suffix}.mrx
+    '
+}
+
+# mrx
+
+function exposure()
+{
+  if [ ! -d ${INF}/mr/gsmr/ma ]; then mkdir -p ${INF}/mr/gsmr/ma; fi
+  awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  parallel -j15 --env INF --env suffix -C' ' '
+    (
+      echo -e "SNP A1 A2 freq b se p N"
+      gunzip -c ${INF}/mr/gsmr/mrx/{2}-${suffix}.mrx | \
+      sed "1d" | \
+      cut -f1,3,4 --complement | \
+      awk "{\$7=10^\$7;print}"
+    ) | gzip -f > ${INF}/mr/gsmr/ma/{2}-${suffix}.ma.gz
+  '
+}
+
+# exposure
+
+function opengwas()
+{
+  cd ${INF}/OpenGWAS
+  for id in $(sed '1d' ${INF}/rsid/efo.txt | cut -f4)
+  do
+    export f=https://gwas.mrcieu.ac.uk/files/${id}/${id}.vcf.gz
+    if [ ! -f ${f} ]; then wget ${f}; fi
+    if [ ! -f ${f}.tbi ]; then wget ${f}.tbi; fi
+  done
+  cd -
+}
+
+# opengwas
+
+function outcome()
+{
+  if [ ! -d ${INF}/mr/gsmr/trait ]; then mkdir -p ${INF}/mr/gsmr/trait; fi
+  awk -vFS="\t" 'NR>1 {print $4,$5+$6}' ${INF}/rsid/efo.txt | \
+  while read efo N
+  do
+    export efo=${efo}
+    export N=${N}
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
+    parallel -C' ' -j15 --env INF --env efo --env N --env suffix '
+      (
+        echo -e "SNP A1 A2 freq b se p N"
+        bcftools query -f "%ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [$N] \n" -r {3} ${INF}/OpenGWAS/${efo}.vcf.gz | \
+        awk "{\$7=10^-\$7};1"
+      ) | \
+      gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
+    '
+  done
+}
+
+# outcome
+
+# zgrep SAMPLE ${INF}/OpenGWAS/*.vcf.gz | cut -f1,7,8 > ${INF}/OpenGWAS/ieu.sample
+# sed 's/.vcf.gz:/\t/;s/TotalControls=/\t/;s/,TotalCases=/\t/;s/,StudyType/\t/' ieu.sample | cut -f1,3,4 > ${INF}/OpenGWAS/ieu.N
+#   zgrep -h SAMPLE ${INF}/OpenGWAS/${efo}.vcf.gz | cut -f1,7,8 > ${INF}/mr/gsmr/trait/${efo}.sample
+
+function gsmr()
+{
+  if [ ! -d ${INF}/mr/gsmr/results ]; then mkdir -p ${INF}/mr/gsmr/results; fi
+  sbatch ${INF}/rsid/mr.sb
+}

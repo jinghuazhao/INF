@@ -2,7 +2,7 @@ options(width=200)
 
 INF <- Sys.getenv("INF")
 url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
-efo <- subset(openxlsx::read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:5), rows=c(2:79)),!is.na(MRBASEID))
+efo <- subset(openxlsx::read.xlsx(url, sheet="EFO", colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:7), rows=c(2:79)),!is.na(MRBASEID))
 
 library(gwasrapidd)
 library(dplyr)
