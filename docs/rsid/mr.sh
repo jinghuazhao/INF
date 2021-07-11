@@ -212,8 +212,8 @@ function exposure()
       gunzip -c ${INF}/mr/gsmr/mrx/{2}-${suffix}.mrx | \
       sed "1d" | \
       cut -f1,3,4 --complement | \
-      awk "{\$7=10^\$7;print}"
-    ) | gzip -f > ${INF}/mr/gsmr/ma/{2}-${suffix}.ma.gz
+      awk "a[\$1]++==0{\$7=10^\$7;print}"
+    ) | gzip -f > ${INF}/mr/gsmr/prot/{2}-${suffix}.gz
   '
 }
 
@@ -247,7 +247,7 @@ function outcome()
       (
         echo -e "SNP A1 A2 freq b se p N"
         bcftools query -f "%ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [$N] \n" -r {3} ${INF}/OpenGWAS/${efo}.vcf.gz | \
-        awk "{\$7=10^-\$7};1"
+        awk "a[\$1]++==0{\$7=10^-\$7};1"
       ) | \
       gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
     '
@@ -262,6 +262,5 @@ function outcome()
 
 function gsmr()
 {
-  if [ ! -d ${INF}/mr/gsmr/results ]; then mkdir -p ${INF}/mr/gsmr/results; fi
   sbatch ${INF}/rsid/mr.sb
 }
