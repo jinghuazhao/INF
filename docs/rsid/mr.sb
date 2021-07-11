@@ -26,6 +26,8 @@ function bfile()
     export chr=${chr}
     echo ${chr} ${start} ${end} > ${INF}/mr/gsmr/ref/${prot}-cis.bed1
     plink2 --pfile ${pgen}/impute_dedup_${chr}_interval --extract bed1 ${INF}/mr/gsmr/ref/${prot}-cis.bed1 \
+           --rm-dup force-first list --out ${INF}/mr/gsmr/ref/${prot}-cis
+    plink2 --pfile ${pgen}/impute_dedup_${chr}_interval --extract ${INF}/mr/gsmr/ref/${prot}-cis.rmdup.list \
            --make-bed --out ${INF}/mr/gsmr/ref/${prot}-cis
   done
 }
