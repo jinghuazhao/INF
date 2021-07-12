@@ -13,6 +13,25 @@
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=$SLURM_ARRAY_TASK_ID
 
+function rmdup()
+{
+  echo ${chr} ${start} ${end} > ${INF}/mr/gsmr/ref/${prot}-cis.bed1
+  plink2 --pfile ${pgen}/impute_dedup_${chr}_interval --extract bed1 ${INF}/mr/gsmr/ref/${prot}-cis.bed1 \
+         --make-bed --rm-dup force-first list --out ${INF}/mr/gsmr/ref/${prot}-cis
+}
+
+function rmall()
+{
+    awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr && $2>=start && $2<end {print $3}' ${pgen}/impute_dedup_${chr}_interval.pvar \
+        > ${INF}/mr/gsmr/ref/${prot}-cis.list
+    join -v1 <(sort ${INF}/mr/gsmr/ref/${prot}-cis.list) \
+             <(awk 'a[$1]++>0' ${INF}/mr/gsmr/ref/${prot}-cis.list | sort) \
+             > ${INF}/mr/gsmr/ref/${prot}-cis.keep
+    plink2 --pfile ${pgen}/impute_dedup_${chr}_interval \
+           --extract ${INF}/mr/gsmr/ref/${prot}-cis.keep \
+           --make-bed --out ${INF}/mr/gsmr/ref/${prot}-cis
+}
+
 function bfile()
 {
   if [ ! -d ${INF}/mr/gsmr/ref ]; then mkdir ${INF}/mr/gsmr/ref; fi
@@ -25,17 +44,7 @@ function bfile()
     export chr=${chr}
     export start=${start}
     export end=${end}
-#   echo ${chr} ${start} ${end} > ${INF}/mr/gsmr/ref/${prot}-cis.bed1
-#   plink2 --pfile ${pgen}/impute_dedup_${chr}_interval --extract bed1 ${INF}/mr/gsmr/ref/${prot}-cis.bed1 \
-#          --make-bed --rm-dup force-first --out ${INF}/mr/gsmr/ref/${prot}-cis
-    awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr && $2>=start && $2<end {print $3}' ${pgen}/impute_dedup_${chr}_interval.pvar \
-        > ${INF}/mr/gsmr/ref/${prot}-cis.list
-    join -v1 <(sort ${INF}/mr/gsmr/ref/${prot}-cis.list) \
-             <(awk 'a[$1]++>0' ${INF}/mr/gsmr/ref/${prot}-cis.list | sort) \
-             > ${INF}/mr/gsmr/ref/${prot}-cis.keep
-    plink2 --pfile ${pgen}/impute_dedup_${chr}_interval \
-           --extract ${INF}/mr/gsmr/ref/${prot}-cis.keep \
-           --make-bed --out ${INF}/mr/gsmr/ref/${prot}-cis
+    rmdup
   done
 }
 
