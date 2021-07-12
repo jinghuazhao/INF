@@ -1,12 +1,11 @@
 #!/usr/bin/bash
 
 #SBATCH --job-name=mr
-#SBATCH --account CARDIO-SL0-CPU
-#SBATCH --partition cardio
-#SBATCH --qos=cardio
+#SBATCH --account PETERS-SL3-CPU
+#SBATCH --partition skylake
 #SBATCH --array=1-59
 #SBATCH --mem=40800
-#SBATCH --time=5-00:00:00
+#SBATCH --time=12:00:00
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_mr_%A_%a.out
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_mr_%A_%a.err
 #SBATCH --export ALL
@@ -24,15 +23,23 @@ function bfile()
   do
     export prot=${prot}
     export chr=${chr}
-    echo ${chr} ${start} ${end} > ${INF}/mr/gsmr/ref/${prot}-cis.bed1
-    plink2 --pfile ${pgen}/impute_dedup_${chr}_interval --extract bed1 ${INF}/mr/gsmr/ref/${prot}-cis.bed1 \
-           --rm-dup force-first list --out ${INF}/mr/gsmr/ref/${prot}-cis
-    plink2 --pfile ${pgen}/impute_dedup_${chr}_interval --extract ${INF}/mr/gsmr/ref/${prot}-cis.rmdup.list \
+    export start=${start}
+    export end=${end}
+#   echo ${chr} ${start} ${end} > ${INF}/mr/gsmr/ref/${prot}-cis.bed1
+#   plink2 --pfile ${pgen}/impute_dedup_${chr}_interval --extract bed1 ${INF}/mr/gsmr/ref/${prot}-cis.bed1 \
+#          --make-bed --rm-dup force-first --out ${INF}/mr/gsmr/ref/${prot}-cis
+    awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr && $2>=start && $2<end {print $3}' ${pgen}/impute_dedup_${chr}_interval.pvar \
+        > ${INF}/mr/gsmr/ref/${prot}-cis.list
+    join -v1 <(sort ${INF}/mr/gsmr/ref/${prot}-cis.list) \
+             <(awk 'a[$1]++>0' ${INF}/mr/gsmr/ref/${prot}-cis.list | sort) \
+             > ${INF}/mr/gsmr/ref/${prot}-cis.keep
+    plink2 --pfile ${pgen}/impute_dedup_${chr}_interval \
+           --extract ${INF}/mr/gsmr/ref/${prot}-cis.keep \
            --make-bed --out ${INF}/mr/gsmr/ref/${prot}-cis
   done
 }
 
-# bfile
+bfile
 
 function gsmr()
 {
@@ -53,7 +60,7 @@ function gsmr()
       gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_${prot} \
                --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${trait} \
                --gsmr-direction 0 \
-               --clump-r2 0.05 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
+               --clump-r2 0.05 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
                --out ${INF}/mr/gsmr/out/${trait}-${prot}
 
       R --no-save -q <<\ \ \ \ \ \ END

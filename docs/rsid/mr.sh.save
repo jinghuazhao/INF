@@ -263,23 +263,6 @@ function outcome()
 function gsmr()
 {
 # sbatch ${INF}/rsid/mr.sb
-  (
-    cat ${INF}/mr/gsmr/out/*gsmr | head -1
-    grep -e Exposure -e nan -v ${INF}/mr/gsmr/out/*gsmr | tr ':' '\t' | cut -f1 --complement
-  ) > ${INF}/mr/gsmr/gsmr.txt
-  R --no-save -q <<\ \ END
-    INF <- Sys.getenv("INF")
-    efo <- read.delim(file.path(INF,"rsid","efo.txt"))
-    gsmr <- read.delim(file.path(INF,"mr","gsmr","gsmr.txt"))
-    library(dplyr)
-    gsmr_efo <- gsmr %>%
-                left_join(pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
-                left_join(efo,by=c("Outcome"="MRBASEID")) %>%
-                rename(protein=Exposure,MRBASEID=Outcome) %>%
-                mutate(protein=target.short,fdr=p.adjust(p,method="fdr")) %>%
-                select(protein,MRBASEID,trait,bxy,se,p,nsnp,fdr,Ncases,Ncontrols,id,uri,Zhengetal) %>%
-                arrange(fdr)
-    subset(gsmr_efo[setdiff(names(gsmr_efo),c("Zhengetal","uri"))],fdr<=0.05)
-    write.table(gsmr_efo,file.path(INF,"mr","gsmr","gsmr-efo.txt"),row.names=FALSE,quote=FALSE,sep="\t")
-  END
+  cat ${INF}/mr/gsmr/out/*gsmr | head -1
+  grep -e Exposure -e nan -v ${INF}/mr/gsmr/out/*gsmr | tr ':' '\t' | cut -f1 --complement
 }

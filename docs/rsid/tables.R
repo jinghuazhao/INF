@@ -40,11 +40,12 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:3017) %>%
     gsmr <- merge(d, gap_inf1[c("prot","target.short")],by.x="Exposure1",by.y="prot") %>%
             mutate(Exposure1=target.short,Exposure2=target.short) %>% rename(Protein1=Exposure1,Protein2=Exposure2) %>%
             select(-target.short)
-     crp <- read.sheet("CRP", 1:15, 2:30)
-     gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
-     at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
-     at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2"); #names(at2) <- replace(names(at2),grepl("^[X]",names(at2)),"")
-     at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
+    gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt"))
+    crp <- read.sheet("CRP", 1:15, 2:30)
+    gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
+    at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
+    at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2"); #names(at2) <- replace(names(at2),grepl("^[X]",names(at2)),"")
+    at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
 
 great3 <- read.delim(file.path(INF,"GREAT","IL12B-KITLG-TNFSF10.tsv")) %>%
           mutate(flag=if_else(BinomP<1e-4,"x","")) %>% arrange(desc(flag))
@@ -122,21 +123,24 @@ efo <- read.delim(file.path(INF,"rsid","efo.txt"))
 hgi <- read.delim(file.path(INF,"HGI","mr.tsv"))
 
 outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
-               "pqtls","cojo","knownpqtls","pqtlstudies","smr","coloc","cs95","pqtldisease",
-               "vep","great3","garfield",
-               "mr_immun","mr","mr_misc","gsmr","hgi","drug",
-               "gdb","at1","at2","at3","reactome","great","efo", "protein_correlation", "protein_dgi", "pqtl_impact")
+               "pqtls","cojo","knownpqtls","coloc","cs95","pqtldisease",
+               "vep","garfield",
+               "gsmr_efo","hgi","drug",
+               "great3","mr_immun","smr","pqtlstudies","mr","mr_misc","gsmr",
+               "at1","at2","at3","reactome","great","efo","gdb",
+               "protein_correlation", "protein_dgi", "pqtl_impact")
 titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
-            "pQTLs","conditional analysis",
-            "known pQTLs","previous pQTL studies","SMR","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
-            "VEP annotation","IL12B-KITLG-TNFSF10","GARFIELD outputs",
-            "pQTL-immune-MR","MR results","pQTL-misc-MR","GSMR-FEV1CVD","HGI r6","PI drug",
-            "geneDrugbank","AnnoTrans-1","AnnoTrans-2","AnnoTrans-3","Reactome","GREAT","EFO","Protein correlation","DGI membership", "pQTL impact")
+            "pQTLs","conditional analysis","known pQTLs","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
+            "VEP annotation","GARFIELD outputs",
+            "GSMR results","HGI r6","PI drug",
+            "AnnoTrans-1","AnnoTrans-2","AnnoTrans-3","Reactome","GREAT","EFO","geneDrugbank",
+            "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","previous pQTL studies","MR results","pQTL-misc-MR","GSMR-FEV1CVD",
+            "Protein correlation","DGI membership", "pQTL impact")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
 n0 <- 7
-n1 <- 18
+n1 <- 11
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
             paste0("ST",1:n1),
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
