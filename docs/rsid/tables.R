@@ -122,24 +122,26 @@ drug <- subset(pi_drug,target%in%with(gap::inf1,gene)) %>% left_join(pi_trait)
 efo <- read.delim(file.path(INF,"rsid","efo.txt"))
 hgi <- read.delim(file.path(INF,"HGI","mr.tsv"))
 
-outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
+outsheets <- c("summary","studies","inf1",
                "pqtls","cojo","knownpqtls","coloc","cs95","pqtldisease",
                "vep","garfield",
                "gsmr_efo","hgi","drug",
-               "great3","mr_immun","smr","pqtlstudies","mr","mr_misc","gsmr",
                "at1","at2","at3","reactome","great","efo","gdb",
+               "interval","os","cvd1","aristotl","pqtlstudies",
+               "great3","mr_immun","smr","mr","mr_misc","gsmr",
                "protein_correlation", "protein_dgi", "pqtl_impact")
-titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
+titles <- c("summary","study information","panel information",
             "pQTLs","conditional analysis","known pQTLs","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
             "VEP annotation","GARFIELD outputs",
             "GSMR results","HGI r6","PI drug",
             "AnnoTrans-1","AnnoTrans-2","AnnoTrans-3","Reactome","GREAT","EFO","geneDrugbank",
-            "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","previous pQTL studies","MR results","pQTL-misc-MR","GSMR-FEV1CVD",
+            "INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study","previous pQTL studies",
+            "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","MR results","pQTL-misc-MR","GSMR-FEV1CVD",
             "Protein correlation","DGI membership", "pQTL impact")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
-n0 <- 7
+n0 <- 3
 n1 <- 11
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
             paste0("ST",1:n1),
