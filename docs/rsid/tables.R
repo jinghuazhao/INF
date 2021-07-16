@@ -126,7 +126,7 @@ outsheets <- c("summary","studies","inf1",
                "pqtls","cojo","knownpqtls","coloc","cs95","pqtldisease",
                "vep","garfield",
                "gsmr_efo","hgi","drug",
-               "at1","at2","at3","reactome","great","efo","gdb",
+               "reactome","great","efo","gdb",
                "interval","os","cvd1","aristotl","pqtlstudies",
                "great3","mr_immun","smr","mr","mr_misc","gsmr",
                "protein_correlation", "protein_dgi", "pqtl_impact")
@@ -134,7 +134,7 @@ titles <- c("summary","study information","panel information",
             "pQTLs","conditional analysis","known pQTLs","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
             "VEP annotation","GARFIELD outputs",
             "GSMR results","HGI r6","PI drug",
-            "AnnoTrans-1","AnnoTrans-2","AnnoTrans-3","Reactome","GREAT","EFO","geneDrugbank",
+            "Reactome","GREAT","EFO","geneDrugbank",
             "INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study","previous pQTL studies",
             "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","MR results","pQTL-misc-MR","GSMR-FEV1CVD",
             "Protein correlation","DGI membership", "pQTL impact")
@@ -154,8 +154,8 @@ for (i in 1:length(outsheets))
 {
   sheetnames <- with(summary[i,], ifelse(i<=n0|i>n0+n1, Description, paste0(Sheetnames,"-",Description)))
   cat(sheetnames,"\n")
-  if (i<=n0+n1 | i>n0+n1+3)
-  {
+# if (i<=n0+n1 | i>n0+n1+3)
+# {
     addWorksheet(wb, sheetnames, zoom=150)
     writeData(wb, sheetnames, sheetnames, xy=c(1,1),
                   headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
@@ -166,26 +166,26 @@ for (i in 1:length(outsheets))
   # width_vec_header <- nchar(colnames(body))+2
     setColWidths(wb, sheetnames, cols = 1:ncol(body), widths = width_vec)
     writeData(wb, sheetnames, tail(body,1), xy=c(1, nrow(body)+2), colNames=FALSE, borders="rows", borderStyle="thick")
-  } else {
-    sheet <- paste0("Annotrans-",i-n0-n1)
-    addWorksheet(wb,sheet,gridLines=FALSE)
-    writeData(wb,sheet,paste0("Trans-pQTL annotation-",i-n0-n1), xy=c(1,1),
-                 headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
-    writeDataTable(wb,sheet, get(paste0("at",i-n0-n1)), xy=c(1,2), firstColumn=TRUE, bandedRows=FALSE)
-  }
+# } else {
+#   sheet <- paste0("Annotrans-",i-n0-n1)
+#   addWorksheet(wb,sheet,gridLines=FALSE)
+#   writeData(wb,sheet,paste0("Trans-pQTL annotation-",i-n0-n1), xy=c(1,1),
+#             headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
+#   writeDataTable(wb,sheet, get(paste0("at",i-n0-n1)), xy=c(1,2), firstColumn=TRUE, bandedRows=FALSE)
+# }
 }
 sheets_wb <- sheets(wb)
 data.frame(sheets_wb)
 
 bStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
 hStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-conditionalFormatting(wb, sheets_wb[grepl("IL12B-KITLG-TNFSF10",sheets_wb)], cols = 26, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("GREAT",sheets_wb)], cols = 25, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("GTEx coloc$",sheets_wb)], cols = 12, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("GARFIELD",sheets_wb)], cols = 3, rows = 3:nrow(garfield), rule = "<=1e-5", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("immune-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_immun), rule = "==\"x\"", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("MR results",sheets_wb)], cols = 9, rows = 3:nrow(mr), rule = "==\"x\"", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("misc-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_misc), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("IL12B-KITLG-TNFSF10",sheets_wb)], cols = 26, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("GREAT",sheets_wb)], cols = 25, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("GTEx coloc$",sheets_wb)], cols = 12, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("GARFIELD",sheets_wb)], cols = 3, rows = 3:nrow(garfield), rule = "<=1e-5", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("immune-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_immun), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("MR results",sheets_wb)], cols = 9, rows = 3:nrow(mr), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("misc-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_misc), rule = "==\"x\"", style = hStyle)
 
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 
