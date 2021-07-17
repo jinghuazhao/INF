@@ -182,6 +182,8 @@ write.table(merge(inf1,z,by.x="uniprot",by.y="UniProt")[c("snpid","prot","unipro
             file="SomaLogic.id3",col.names=FALSE,row.names=FALSE,quote=FALSE)
 dev.off()
 
+# ~/rds/post_qc_data/interval/phenotype/somalogic_proteomics
+
 cross_plat <- "https://www.biorxiv.org/content/biorxiv/early/2021/03/19/2021.03.18.435919/DC2/embed/media-2.xlsx?download=true"
 st1 <- openxlsx::read.xlsx(cross_plat, sheet=2, startRow=2, colNames=TRUE)
 somalogic_olink <- subset(st1,Olink.panel=="Olink INFLAMMATION(v.3012)")
