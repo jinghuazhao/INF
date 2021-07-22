@@ -204,7 +204,7 @@ function mrx()
 
 function exposure()
 {
-  if [ ! -d ${INF}/mr/gsmr/ma ]; then mkdir -p ${INF}/mr/gsmr/ma; fi
+  if [ ! -d ${INF}/mr/gsmr/prot ]; then mkdir -p ${INF}/mr/gsmr/prot; fi
   awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
   parallel -j15 --env INF --env suffix -C' ' '
     (
@@ -283,3 +283,44 @@ function gsmr()
     write.table(gsmr_efo,file.path(INF,"mr","gsmr","gsmr-efo.txt"),row.names=FALSE,quote=FALSE,sep="\t")
   END
 }
+
+# --- HGI
+
+function hgi()
+{
+  export suffix=cis
+  if [ ! -d ${INF}/mr/gsmr/hgi ]; then mkdir -p ${INF}/mr/gsmr/hgi; fi
+  awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  parallel -j15 --env INF --env suffix -C' ' '
+    (
+      echo -e "SNP A1 A2 freq b se p N"
+      cut -f1,2 --complement ${INF}/mr/gsmr/mrx/{2}-${suffix}.mri | \
+      awk "{\$2=toupper(\$2);\$3=toupper(\$3);\$7=10^\$7;print}"
+    ) | gzip -f > ${INF}/mr/gsmr/hgi/{2}.gz
+  '
+  export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20210415/results/20210607
+  for trait in A2 B1 B2 C2
+  do
+    export trait=${trait}
+    export src=${HGI}/COVID19_HGI_${trait}_ALL_leave_23andme_20210607.b37.txt.gz
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
+    parallel -C' ' -j15 --env INF --env trait --env suffix '
+      (
+        echo -e "SNP A1 A2 freq b se p N"
+        tabix -h ${src} {3} | awk "
+        NR>1{
+               if (\$4<\$3) snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$3;
+               else snpid=\"chr\"\$1\":\"\$2\"_\"\$3\"_\"\$4
+               print snpid,\$4,\$3,\$14,\$7,\$8,\$9,\$10+\$11
+            }"
+      ) | \
+      gzip -f> ${INF}/mr/gsmr/hgi/${trait}-{2}.gz
+    '
+  done
+}
+
+hgi
+
+cat ${INF}/mr/gsmr/hgi/*gsmr | grep -v -e nsnp -e nan | sort -k5,5gr
+

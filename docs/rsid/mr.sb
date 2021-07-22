@@ -1,13 +1,13 @@
 #!/usr/bin/bash
 
-#SBATCH --job-name=mr
+#SBATCH --job-name=gsmr
 #SBATCH --account PETERS-SL3-CPU
 #SBATCH --partition skylake
 #SBATCH --array=1-59
 #SBATCH --mem=40800
 #SBATCH --time=12:00:00
-#SBATCH --output=/rds/user/jhz22/hpc-work/work/_mr_%A_%a.out
-#SBATCH --error=/rds/user/jhz22/hpc-work/work/_mr_%A_%a.err
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_gsmr_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_gsmr_%A_%a.err
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -48,8 +48,6 @@ function bfile()
   done
 }
 
-bfile
-
 function gsmr()
 {
   if [ ! -d ${INF}/mr/gsmr/out ]; then mkdir -p ${INF}/mr/gsmr/out; fi
@@ -87,7 +85,43 @@ function gsmr()
   done
 }
 
-gsmr
+# bfile
+# gsmr ## EFO traits
+
+function gsmr_hgi()
+{
+  for trait in A2 B1 B2 C2
+  do
+  export trait=${trait}
+  export p=$(awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | \
+             grep -w -f - ${INF}/work/INF1.merge.genes | \
+             awk -vM=1e6 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $2}')
+  if [ ! -f ${INF}/mr/gsmr/hgi//gsmr_ref_data ]; then echo ${INF}/work/INTERVAL > ${INF}/mr/gsmr/hgi/gsmr_ref_data; fi
+  if [ ! -f ${INF}/mr/gsmr/hgi/gsmr_${p} ]; then echo $p ${INF}/mr/gsmr/hgi/${p}.gz > ${INF}/mr/gsmr/hgi/gsmr_${p}; fi
+  if [ ! -f ${INF}/mr/gsmr/hgi/gsmr_${trait}_${p} ]; then
+     echo ${trait} ${INF}/mr/gsmr/hgi/${trait}-${p}.gz > ${INF}/mr/gsmr/hgi/gsmr_${trait}_${p}
+  fi
+  gcta-1.9 --mbfile ${INF}/mr/gsmr/hgi/gsmr_ref_data \
+           --gsmr-file ${INF}/mr/gsmr/hgi/gsmr_${p} ${INF}/mr/gsmr/hgi/gsmr_${trait}_${p} \
+           --gsmr-direction 0 \
+           --clump-r2 0.05 --gwas-thresh 1e-6 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
+           --out ${INF}/mr/gsmr/hgi//gsmr_${trait}_${p}
+  R --no-save -q <<\ \ END
+    INF <- Sys.getenv("INF")
+    trait <- Sys.getenv("trait")
+    p <- Sys.getenv("p")
+    source(file.path(INF,"csd3","gsmr_plot.r"))
+#   source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
+    gsmr_data <- read_gsmr_data(paste0(INF,"/HGI/gsmr_",trait,"_",p,".eff_plot.gz"))
+    gsmr_summary(gsmr_data)
+    pdf(paste0(INF,"/HGI/gsmr_",trait,"_",p,".eff_plot.pdf"))
+    plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
+    dev.off()
+  END
+  done
+}
+
+gsmr_hgi
 
 ### --- the following is obsolete
 
