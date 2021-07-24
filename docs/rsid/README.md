@@ -115,13 +115,11 @@ gwas2vcf.sb | gwas2vcf + VCF operations
 hyprcoloc.sh | hyprcoloc analysis
 h2pve.R | h2/pve contrast
 HGI.sh | HGI data analysis
-latex.tex | LaTeX formulas embedded in Markdown
-latex.docx | LaTeX formulas embedded in MicroSoft Word
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
-pleiotropy.R | horizontal and vertical pleiotropy
-ppi.R | PPI using EpiGraphDB
+epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
+epigraphdb-ppi.R | PPI using EpiGraphDB
 pqtlGWAS.R | pQTL-GWAS lookup
 pQTL.R | pQTL lookup
 pqtlMR.sh | pQTL MR analysis
