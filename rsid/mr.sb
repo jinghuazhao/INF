@@ -1,18 +1,131 @@
 #!/usr/bin/bash
 
-#SBATCH --job-name=MR.data
+#SBATCH --job-name=gsmr
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
-#SBATCH --array=1-70%8
-#SBATCH --mem=40800
+#SBATCH --array=1-59
+#SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
-#SBATCH --output=/rds/user/jhz22/hpc-work/work/_mr_%A_%a.out
-#SBATCH --error=/rds/user/jhz22/hpc-work/work/_mr_%A_%a.err
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_gsmr_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_gsmr_%A_%a.err
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=$SLURM_ARRAY_TASK_ID
+
+function rmdup()
+{
+  echo ${chr} ${start} ${end} > ${INF}/mr/gsmr/ref/${prot}-cis.bed1
+  plink2 --pfile ${pgen}/impute_dedup_${chr}_interval --extract bed1 ${INF}/mr/gsmr/ref/${prot}-cis.bed1 \
+         --make-bed --rm-dup force-first list --out ${INF}/mr/gsmr/ref/${prot}-cis
+}
+
+function rmall()
+{
+    awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr && $2>=start && $2<end {print $3}' ${pgen}/impute_dedup_${chr}_interval.pvar \
+        > ${INF}/mr/gsmr/ref/${prot}-cis.list
+    join -v1 <(sort ${INF}/mr/gsmr/ref/${prot}-cis.list) \
+             <(awk 'a[$1]++>0' ${INF}/mr/gsmr/ref/${prot}-cis.list | sort) \
+             > ${INF}/mr/gsmr/ref/${prot}-cis.keep
+    plink2 --pfile ${pgen}/impute_dedup_${chr}_interval \
+           --extract ${INF}/mr/gsmr/ref/${prot}-cis.keep \
+           --make-bed --out ${INF}/mr/gsmr/ref/${prot}-cis
+}
+
+function bfile()
+{
+  if [ ! -d ${INF}/mr/gsmr/ref ]; then mkdir ${INF}/mr/gsmr/ref; fi
+  export pgen=~/rds/post_qc_data/interval/imputed/uk10k_1000g_b37/imputed/plink_format/pgen
+  awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  awk -vM=1e6 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $2, $3, $4-M, $5+M}' | \
+  while read prot chr start end
+  do
+    export prot=${prot}
+    export chr=${chr}
+    export start=${start}
+    export end=${end}
+    rmdup
+  done
+}
+
+function gsmr()
+{
+  if [ ! -d ${INF}/mr/gsmr/out ]; then mkdir -p ${INF}/mr/gsmr/out; fi
+  awk -vFS="\t" 'NR>1 {print $4}' ${INF}/rsid/efo.txt | \
+  while read efo
+  do
+    export trait=${efo}
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk -vM=1e6 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $2}' | \
+    while read prot
+    do
+      export prot=${prot}
+      echo ${INF}/mr/gsmr/ref/${prot} > ${INF}/mr/gsmr/ref/gsmr_${prot}
+      echo ${prot} ${INF}/mr/gsmr/prot/${prot}.gz > ${INF}/mr/gsmr/prot/gsmr_${prot}
+      echo ${trait} ${INF}/mr/gsmr/trait/${trait}-${prot}.gz > ${INF}/mr/gsmr/trait/gsmr_${trait}
+
+      gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_${prot} \
+               --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${trait} \
+               --gsmr-direction 0 \
+               --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
+               --out ${INF}/mr/gsmr/out/${trait}-${prot}
+
+      R --no-save -q <<\ \ \ \ \ \ END
+        INF <- Sys.getenv("INF")
+        trait <- Sys.getenv("trait")
+        p <- Sys.getenv("prot")
+        source(file.path(INF,"csd3","gsmr_plot.r"))
+        gsmr_data <- read_gsmr_data(paste0(INF,"/mr/gsmr/out/",trait,"-",p,".eff_plot.gz"))
+        gsmr_summary(gsmr_data)
+        pdf(paste0(INF,"/mr/gsmr/out/",trait,"-",p,".eff_plot.pdf"))
+        plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
+        dev.off()
+      END
+    done
+  done
+}
+
+# bfile
+# gsmr ## EFO traits
+
+function gsmr_hgi()
+{
+  for trait in A2 B1 B2 C2
+  do
+  export trait=${trait}
+  export p=$(awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | \
+             grep -w -f - ${INF}/work/INF1.merge.genes | \
+             awk -vM=1e6 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $2}')
+  if [ ! -f ${INF}/mr/gsmr/ref/gsmr_ref_${p} ]; then echo ${INF}/mr/gsmr/ref/${p} > ${INF}/mr/gsmr/ref/gsmr_ref_${p}; fi
+  if [ ! -f ${INF}/mr/gsmr/prot/gsmr_${p} ]; then echo ${p} ${INF}/mr/gsmr/prot/${p}.gz > ${INF}/mr/gsmr/prot/gsmr_${p}; fi
+  if [ ! -f ${INF}/mr/gsmr/trait/gsmr_${trait}_${p} ]; then
+     echo ${trait} ${INF}/mr/gsmr/trait/${trait}-${p}.gz > ${INF}/mr/gsmr/trait/gsmr_${trait}_${p}
+  fi
+  gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_ref_${p} \
+           --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${p} ${INF}/mr/gsmr/trait/gsmr_${trait}_${p} --gsmr-direction 0 \
+           --clump-r2 0.1 --gwas-thresh 1e-5 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
+           --out ${INF}/mr/gsmr/hgi//gsmr_${trait}_${p}
+  R --no-save -q <<\ \ END
+    INF <- Sys.getenv("INF")
+    trait <- Sys.getenv("trait")
+    p <- Sys.getenv("p")
+    source(file.path(INF,"csd3","gsmr_plot.r"))
+#   source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
+    gsmr_data <- read_gsmr_data(paste0(INF,"/mr/gsmr/hgi/gsmr_",trait,"_",p,".eff_plot.gz"))
+    gsmr_summary(gsmr_data)
+    pdf(paste0(INF,"/mr/gsmr/hgi/gsmr_",trait,"_",p,".eff_plot.pdf"))
+    plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
+    dev.off()
+  END
+  done
+}
+
+gsmr_hgi
+
+### --- the following is obsolete
+
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' ${INF}/work/inf1.tmp)
 
 function MR_dat()
 {
@@ -39,8 +152,11 @@ parallel -j1 -C' ' '
 '
 }
 
-if [ ! -f work/INF1.merge.genes ]; then
-   cut -f3,8,9,10 doc/olink.inf.panel.annot.tsv | grep -v BDNF | sed 's/"//g' | sort -k1,1 | join -12 work/inf1.tmp - > work/INF1.merge.genes
-fi
-if [ ! -d work/mr ]; then mkdir work/mr; fi
-for type in cis pan; do export suffix=${type}; MR_dat; done
+function MR_dat_run()
+{
+  if [ ! -f work/INF1.merge.genes ]; then
+     cut -f3,8,9,10 doc/olink.inf.panel.annot.tsv | grep -v BDNF | sed 's/"//g' | sort -k1,1 | join -12 work/inf1.tmp - > work/INF1.merge.genes
+  fi
+  if [ ! -d work/mr ]; then mkdir work/mr; fi
+  for type in cis pan; do export suffix=${type}; MR_dat; done
+}

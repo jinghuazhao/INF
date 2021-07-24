@@ -1,13 +1,16 @@
 options(width=200)
 
 library(dplyr)
+library(gap)
 library(pQTLtools)
 
 INF <- Sys.getenv("INF")
 INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
-                    hg19_coordinates=paste0("chr",Chromosome,":",Position)}) %>% rename(INF1_rsid=rsid) %>% rename(Total=N)
+                    hg19_coordinates=paste0("chr",Chromosome,":",Position)}) %>%
+                    rename(INF1_rsid=rsid, Total=N) %>%
+                    left_join(gap::inf1[c("prot","gene")])
 INF1_aggr <- INF1_metal %>%
-  select(Chromosome,Position,prot,hg19_coordinates,MarkerName,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans,INF1_rsid) %>%
+  select(Chromosome,Position,prot,gene,hg19_coordinates,MarkerName,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans,INF1_rsid) %>%
   group_by(Chromosome,Position,MarkerName,INF1_rsid,hg19_coordinates) %>% summarise(nprots=n(),
             prots=paste(prot,collapse=";"),
             Allele1=paste(toupper(Allele1),collapse=";"),
@@ -114,16 +117,28 @@ view("chr6:32424882_C_T","Orphanet_797")
 # Primary sclerosing cholangitis
 view("chr6:32424882_C_T","EFO_0004268")
 
+inf1_targetshort <- vector()
+for(i in 1:92) inf1_targetshort[inf1[i,"prot"]] <- inf1[i,"target.short"]
+
 xlsx <- "work/pqtl-immune_infection_edited.xlsx"
-pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220))
-v=c("prots","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2",
-    "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
+pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220)) %>%
+                         mutate(target.short=prots)
+for(i in 1:nrow(pqtl_immune_infection))
+{
+  nprots <- pqtl_immune_infection[i,"nprots"]
+  aa <- pqtl_immune_infection[i,"prots"]
+  ij <- unlist(strsplit(pqtl_immune_infection[i,"prots"],";"))
+  for(j in 1:nprots) aa <- gsub(ij[j],inf1_targetshort[ij[j]],aa)
+  pqtl_immune_infection[i, "target.short"] <- aa
+}
+v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2",
+       "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
 mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
 {
   flag <- (HLA==1)
   prefix <- rsid
   prefix[flag] <- paste0(rsid[flag],"*")
-  rsidProts <- paste0(prefix," (",prots,")")
+  rsidProts <- paste0(prefix," [",target.short,"](",hgnc,")")
   trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
   trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
   trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
@@ -162,8 +177,8 @@ col <- colorRampPalette(c("#4287f5","grey","#ffffff","grey","#e32222"))(5)
 pheatmap(rxc,
          color = col,
          legend = TRUE,
-         main = "Olink pQTLs overlapping with QTLs for immune outcomes",
-         angle_col = "45",
+         main = "",
+         angle_col = "315",
          filename = "INF1_pQTL_immune_qtl_unclustered.png",
          width = 16,
          height = 10,
@@ -176,8 +191,8 @@ pheatmap(rxc,
 pheatmap(rxc,
          color = col,
          legend = TRUE,
-         main = "Olink pQTLs overlapping with QTLs for immune outcomes",
-         angle_col = "45",
+         main = "",
+         angle_col = "315",
          filename = "INF1_pQTL_immune_qtl.png",
          width = 16,
          height = 10,
@@ -289,3 +304,9 @@ obsolete <- function()
 # gplots
   heatmap.2(scale(rxc), scale = "none", col = bluered(100), Rowv = Rowv, Colv = Colv, trace = "none", density.info = "none")
 }
+
+R --no-save -q <<END
+  options(width=200)
+  IL_12Bcis <- ieugwasr::phewas("rs10076557")
+  data.frame(IL_12Bcis)
+END

@@ -40,11 +40,12 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:3017) %>%
     gsmr <- merge(d, gap_inf1[c("prot","target.short")],by.x="Exposure1",by.y="prot") %>%
             mutate(Exposure1=target.short,Exposure2=target.short) %>% rename(Protein1=Exposure1,Protein2=Exposure2) %>%
             select(-target.short)
-     crp <- read.sheet("CRP", 1:15, 2:30)
-     gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
-     at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
-     at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2"); #names(at2) <- replace(names(at2),grepl("^[X]",names(at2)),"")
-     at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
+    gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","out","5e-8","gsmr-efo.txt"))
+    crp <- read.sheet("CRP", 1:15, 2:30)
+    gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
+    at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
+    at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2"); #names(at2) <- replace(names(at2),grepl("^[X]",names(at2)),"")
+    at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
 
 great3 <- read.delim(file.path(INF,"GREAT","IL12B-KITLG-TNFSF10.tsv")) %>%
           mutate(flag=if_else(BinomP<1e-4,"x","")) %>% arrange(desc(flag))
@@ -119,24 +120,29 @@ HOME <- Sys.getenv("HOME")
 load(file.path(HOME,"software-notes","docs","files","pi_database.rda"))
 drug <- subset(pi_drug,target%in%with(gap::inf1,gene)) %>% left_join(pi_trait)
 efo <- read.delim(file.path(INF,"rsid","efo.txt"))
-hgi <- read.delim(file.path(INF,"HGI","mr.tsv"))
+hgi <- read.delim(file.path(INF,"mr","gsmr","hgi","5e-8","5e-8.tsv"))
 
-outsheets <- c("summary","studies","inf1","interval","os","cvd1","aristotl",
-               "pqtls","cojo","knownpqtls","pqtlstudies","smr","coloc","cs95","pqtldisease",
-               "vep","great3","garfield",
-               "mr_immun","mr","mr_misc","gsmr","hgi","drug",
-               "gdb","at1","at2","at3","reactome","great","efo", "protein_correlation", "protein_dgi", "pqtl_impact")
-titles <- c("summary","study information","panel information","INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study",
-            "pQTLs","conditional analysis",
-            "known pQTLs","previous pQTL studies","SMR","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
-            "VEP annotation","IL12B-KITLG-TNFSF10","GARFIELD outputs",
-            "pQTL-immune-MR","MR results","pQTL-misc-MR","GSMR-FEV1CVD","HGI r6","PI drug",
-            "geneDrugbank","AnnoTrans-1","AnnoTrans-2","AnnoTrans-3","Reactome","GREAT","EFO","Protein correlation","DGI membership", "pQTL impact")
+outsheets <- c("summary","studies","inf1",
+               "pqtls","cojo","knownpqtls","coloc","cs95","pqtldisease",
+               "vep","garfield",
+               "gsmr_efo","hgi","drug",
+               "reactome","great","efo","gdb",
+               "interval","os","cvd1","aristotl","pqtlstudies",
+               "great3","mr_immun","smr","mr","mr_misc","gsmr",
+               "protein_correlation", "protein_dgi", "pqtl_impact")
+titles <- c("summary","study information","panel information",
+            "pQTLs","conditional analysis","known pQTLs","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
+            "VEP annotation","GARFIELD outputs",
+            "GSMR results","HGI r6","PI drug",
+            "Reactome","GREAT","EFO","geneDrugbank",
+            "INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study","previous pQTL studies",
+            "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","MR results","pQTL-misc-MR","GSMR-FEV1CVD",
+            "Protein correlation","DGI membership", "pQTL impact")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
-n0 <- 7
-n1 <- 18
+n0 <- 3
+n1 <- 11
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
             paste0("ST",1:n1),
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
@@ -148,8 +154,8 @@ for (i in 1:length(outsheets))
 {
   sheetnames <- with(summary[i,], ifelse(i<=n0|i>n0+n1, Description, paste0(Sheetnames,"-",Description)))
   cat(sheetnames,"\n")
-  if (i<=n0+n1 | i>n0+n1+3)
-  {
+# if (i<=n0+n1 | i>n0+n1+3)
+# {
     addWorksheet(wb, sheetnames, zoom=150)
     writeData(wb, sheetnames, sheetnames, xy=c(1,1),
                   headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
@@ -160,26 +166,26 @@ for (i in 1:length(outsheets))
   # width_vec_header <- nchar(colnames(body))+2
     setColWidths(wb, sheetnames, cols = 1:ncol(body), widths = width_vec)
     writeData(wb, sheetnames, tail(body,1), xy=c(1, nrow(body)+2), colNames=FALSE, borders="rows", borderStyle="thick")
-  } else {
-    sheet <- paste0("Annotrans-",i-n0-n1)
-    addWorksheet(wb,sheet,gridLines=FALSE)
-    writeData(wb,sheet,paste0("Trans-pQTL annotation-",i-n0-n1), xy=c(1,1),
-                 headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
-    writeDataTable(wb,sheet, get(paste0("at",i-n0-n1)), xy=c(1,2), firstColumn=TRUE, bandedRows=FALSE)
-  }
+# } else {
+#   sheet <- paste0("Annotrans-",i-n0-n1)
+#   addWorksheet(wb,sheet,gridLines=FALSE)
+#   writeData(wb,sheet,paste0("Trans-pQTL annotation-",i-n0-n1), xy=c(1,1),
+#             headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
+#   writeDataTable(wb,sheet, get(paste0("at",i-n0-n1)), xy=c(1,2), firstColumn=TRUE, bandedRows=FALSE)
+# }
 }
 sheets_wb <- sheets(wb)
 data.frame(sheets_wb)
 
 bStyle <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
 hStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
-conditionalFormatting(wb, sheets_wb[grepl("IL12B-KITLG-TNFSF10",sheets_wb)], cols = 26, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("GREAT",sheets_wb)], cols = 25, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("GTEx coloc$",sheets_wb)], cols = 12, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("GARFIELD",sheets_wb)], cols = 3, rows = 3:nrow(garfield), rule = "<=1e-5", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("immune-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_immun), rule = "==\"x\"", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("MR results",sheets_wb)], cols = 9, rows = 3:nrow(mr), rule = "==\"x\"", style = hStyle)
-conditionalFormatting(wb, sheets_wb[grepl("misc-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_misc), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("IL12B-KITLG-TNFSF10",sheets_wb)], cols = 26, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("GREAT",sheets_wb)], cols = 25, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("GTEx coloc$",sheets_wb)], cols = 12, rows = 3:nrow(coloc), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("GARFIELD",sheets_wb)], cols = 3, rows = 3:nrow(garfield), rule = "<=1e-5", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("immune-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_immun), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("MR results",sheets_wb)], cols = 9, rows = 3:nrow(mr), rule = "==\"x\"", style = hStyle)
+#conditionalFormatting(wb, sheets_wb[grepl("misc-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_misc), rule = "==\"x\"", style = hStyle)
 
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 

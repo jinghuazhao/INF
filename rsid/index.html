@@ -96,7 +96,7 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#hgi-analysis">HGI analysis</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#mendelian-randomization-mr-analysis">Mendelian Randomization (MR) analysis</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -255,7 +255,9 @@ utils.sh --&gt; |"internal prune" | jam.sh
 utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 </div>
 <p>Note that the <code>GCTA</code> .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to <code>finemap</code>.</p>
-<h2 id="hgi-analysis">HGI analysis</h2>
+<h2 id="mendelian-randomization-mr-analysis">Mendelian Randomization (MR) analysis</h2>
+<p>There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in <code>mr.sh</code> and <code>mr.sb</code>. To get around the mishap with rsids we switched back to SNPids; we found the options <code>--clump-r2 0.1 --gsmr-snp-min 1</code> make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.</p>
+<p>It turned to be more efficient to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.</p>
 <table>
 <thead>
 <tr>
@@ -468,7 +470,7 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>Transcriptomewide association statistic <span class="arithmatex">\(z_{TWAS}\)</span> was originally proposed for gene expression data. For a given Trait of interest <strong>T</strong> for which GWAS summary statistics <span class="arithmatex">\(z_T\)</span> is available, the corresponding Wald statistic for TWAS is defined such that</p>
 <p><span class="arithmatex">\(z_{TWAS} = \frac{w^T_{P}z_T}{\sqrt{w^T_{P}Vw_{P}}}\)</span></p>
 <p>where <span class="arithmatex">\(w_{P}\)</span> is a weight associated with protein abundance level and <strong>V</strong> covariance matrix for <span class="arithmatex">\(z_T\)</span>, respectively.</p>
-<p><em>Date last changed:</em> <strong>26/6/2021</strong></p></div>
+<p><em>Date last changed:</em> <strong>24/7/2021</strong></p></div>
 </div>
 </div>
 <footer class="col-md-12">

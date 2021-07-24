@@ -26,33 +26,44 @@ R --no-save <<END
   names(m) <- c("p2","m")
   pve <- within(cbind(s,se2,m),{se=sqrt(se)})
   ord <- with(pve, order(pve))
-  sink(file.path(INF,"h2","pve.dat"))
+  sink(file.path(INF,"h2","pve-jma.dat"))
   print(pve[ord, c("prot","pve","se","m")], row.names=FALSE)
   sink()
-  write.csv(tbl,file=file.path(INF,"h2","INF1.csv"),quote=FALSE,row.names=FALSE)
+  write.csv(tbl,file=file.path(INF,"h2","INF1-jma.csv"),quote=FALSE,row.names=FALSE)
 END
 
-join <(sort -k1,1 ${INF}/h2/h2.tsv) <(sed '1d' ${INF}/h2/pve.dat | sort -k1,1) > ${INF}/h2/h2pve.dat
+join <(sort -k1,1 ${INF}/h2/h2.tsv) <(sed '1d' ${INF}/h2/pve-jma.dat | sort -k1,1) > ${INF}/h2/h2pve-jma.dat
 
 R --no-save -q <<END
   INF <- Sys.getenv("INF")
-  png(file.path(INF,"h2","h2pve.png"), res=300, units="cm", width=40, height=20)
-  par(mfrow=c(1,2))
-  with(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),
+  png(file.path(INF,"h2","h2pve-jma.png"), res=300, units="cm", width=40, height=20)
+  layout(matrix(c(1,2),1,2,byrow=TRUE),heights=c(3,1),widths=c(1.2,1))
+  jma <- read.delim(file.path(INF,"work","INF1.jma-rsid"))
+  jma.cistrans <- read.csv(file.path(INF,"work","INF1.jma-rsid.cis.vs.trans"))[c("prot","cis.trans")]
+  INF1_jma <- merge(jma,jma.cistrans,by="prot")
+  with(INF1_jma,
   {
-    MAF <- Freq1
+    MAF <- freq
     repl <- MAF > 1-MAF
     MAF[repl] <- 1-MAF[repl]
-    plot(MAF,abs(Effect),cex.axis=2,cex.lab=2,pch=19,main="a",xlab="MAF",
-         ylab="Effect size",col=c("red","blue")[2-(cis.trans=="cis")])
+    Effect <- bJ
+    v <- 2*MAF*(1-MAF)*Effect^2
+    col <- c("blue","red")[1+(cis.trans=="trans")]
+#   plot(MAF,abs(Effect),cex.axis=1.3,cex.lab=1.3,pch=19,main="a",xlab="MAF", ylab="Effect size",col=col)
+    library(scatterplot3d)
+    scatterplot3d(MAF,abs(Effect),v,color=col, main="a", pch=16, type="h", z.scale=1.5,
+                  xlab="MAF", ylab="Effect", zlab=expression(italic(2*MAF(1-MAF)*Effect^2)), cex.axis=1.3, cex.lab=1.3)
+    legend("right", legend=levels(as.factor(cis.trans)), box.lwd=0, col=c("red", "blue"), pch=16)
   })
-  h2pve <- read.table(file.path(INF,"h2","h2pve.dat"),col.names=c("prot","h2","h2se","pve","sepve","m"))
+  h2pve <- read.table(file.path(INF,"h2","h2pve-jma.dat"),col.names=c("prot","h2","h2se","pve","sepve","m"))
   with(h2pve,summary(h2))
   with(h2pve,cor(pve,h2))
-  subset(h2pve, h2>0.3 & pve > 0.3)
+  subset(h2pve, h2>0.25 & pve > 0.25)
   attach(h2pve)
   cor(h2,pve)
-  plot(h2,pve,pch=19,cex.axis=2,cex.lab=2,main="b",xlab="h2",ylab="pve")
+  plot(h2,pve,pch=19,cex.axis=1.3,cex.lab=1.3,main="b",xlab=expression(italic(h^2)),ylab="")
+  mtext("PVE", side=2, at=0.13, line=3, cex=1.5)
+  text(0,0.35,"pve")
   reg <- lm(pve~h2)
   summary(reg)
   abline(reg, col="red")
@@ -61,16 +72,18 @@ R --no-save -q <<END
   dev.off()
 END
 
+function obsolete()
+{
 R --no-save -q <<END
-# This part needs to be run inside R
+# This part needs to be run inside R but currently not in use
   options(width=200)
   INF <- Sys.getenv("INF")
-  png(file.path(INF,"h2","h2-pve.png"), res=300, units="cm", width=40, height=40)
+  png(file.path(INF,"h2","h2-pve-jma.png"), res=300, units="cm", width=40, height=40)
   par(mfrow=c(3,1))
   h2 <- read.table(file.path(INF,"h2","h2.tsv"),as.is=TRUE,col.names=c("prot","h2","se"))
   summary(h2)
   ord <- with(h2, order(h2))
-  sink(file.path(INF,"h2","h2.dat"))
+  sink(file.path(INF,"h2","h2-jma.dat"))
   print(h2[ord, c("prot","h2","se")], row.names=FALSE)
   sink()
   np <- nrow(h2)
@@ -122,5 +135,6 @@ R --no-save -q <<END
   names(ldak) <- c("prot","h2_scallop","SE_h2_scallop", "inf", "se_inf")
   names(pve) <- c("prot","pve","SE_pve","m")
   h2_ldak_pve <- merge(merge(h2,ldak,by="prot"),pve,by="prot",all=TRUE)
-  write.csv(h2_ldak_pve,file=file.path(INF,"ldak","h2-ldak-pve.csv"),quote=FALSE,row.names=FALSE)
+  write.csv(h2_ldak_pve,file=file.path(INF,"ldak","h2-ldak-jma.pve.csv"),quote=FALSE,row.names=FALSE)
 END
+}
