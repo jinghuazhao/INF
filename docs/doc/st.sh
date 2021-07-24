@@ -22,6 +22,8 @@ source ~/COVID-19/py37/bin/activate
 pip install mkdocs-mermaid2-plugin
 }
 
+# setup
+
 mkdocs build
 mkdocs gh-deploy
 
