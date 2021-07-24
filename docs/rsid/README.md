@@ -86,8 +86,8 @@ There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving 
 It turned to be more efficient to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.
 
 File | Description
------|-----------------
-HGI.sh, HGI.R | pQTLMR
+-----|-------------------
+HGI.sh, HGI.R | pQTLMR/MR
 gsmr_HGI.sb, gsmr_HGI.sh | GSMR
 gsmr.sh, gsmr.R | GSMR
 rs635634.sh |  +/- 1Mb
