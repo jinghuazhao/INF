@@ -179,6 +179,18 @@ END
 export suffix=cis
 if [ ! -d ${INF}/mr/gsmr ]; then mkdir -p ${INF}/mr/gsmr; fi
 
+function opengwas()
+{
+  cd ${INF}/OpenGWAS
+  for id in $(sed '1d' ${INF}/rsid/efo.txt | cut -f4)
+  do
+    export f=https://gwas.mrcieu.ac.uk/files/${id}/${id}.vcf.gz
+    if [ ! -f ${f} ]; then wget ${f}; fi
+    if [ ! -f ${f}.tbi ]; then wget ${f}.tbi; fi
+  done
+  cd -
+}
+
 function mrx()
 {
   if [ ! -d ${INF}/mr/gsmr/mrx ]; then mkdir -p ${INF}/mr/gsmr/mrx; fi
@@ -200,41 +212,29 @@ function mrx()
     '
 }
 
-# mrx
-
-function exposure()
+function ref_prot_outcome_gsmr()
 {
-  if [ ! -d ${INF}/mr/gsmr/prot ]; then mkdir -p ${INF}/mr/gsmr/prot; fi
-  awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  export suffix=cis
+  awk '$21==ENVIRON["suffix"] {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  awk -vM=1e6 '{print $2, $3, $4-M, $5+M}' | \
+  while read prot chr start end
+  do
+    export prot=${prot}
+    export chr=${chr}
+    export start=${start}
+    export end=${end}
+    echo ${chr} ${start} ${end} > ${INF}/mr/gsmr/ref/${prot}.bed1
+    plink2 --bfile ${INF}/work/INTERVAL --extract bed1 ${INF}/mr/gsmr/ref/${prot}.bed1 \
+           --make-bed --rm-dup force-first list --out ${INF}/mr/gsmr/ref/${prot}
+  done
+  awk '$21==ENVIRON["suffix"] {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
   parallel -j15 --env INF --env suffix -C' ' '
     (
       echo -e "SNP A1 A2 freq b se p N"
-      gunzip -c ${INF}/mr/gsmr/mrx/{2}-${suffix}.mrx | \
-      sed "1d" | \
-      cut -f1,3,4 --complement | \
-      awk "a[\$1]++==0{\$7=10^\$7;print}"
-    ) | gzip -f > ${INF}/mr/gsmr/prot/{2}-${suffix}.gz
+      cut -f1,2 --complement ${INF}/mr/gsmr/mrx/{2}-${suffix}.mri | \
+      awk "{\$2=toupper(\$2);\$3=toupper(\$3);\$7=10^\$7;print}"
+    ) | gzip -f > ${INF}/mr/gsmr/prot/{2}.gz
   '
-}
-
-# exposure
-
-function opengwas()
-{
-  cd ${INF}/OpenGWAS
-  for id in $(sed '1d' ${INF}/rsid/efo.txt | cut -f4)
-  do
-    export f=https://gwas.mrcieu.ac.uk/files/${id}/${id}.vcf.gz
-    if [ ! -f ${f} ]; then wget ${f}; fi
-    if [ ! -f ${f}.tbi ]; then wget ${f}.tbi; fi
-  done
-  cd -
-}
-
-# opengwas
-
-function outcome()
-{
   if [ ! -d ${INF}/mr/gsmr/trait ]; then mkdir -p ${INF}/mr/gsmr/trait; fi
   awk -vFS="\t" 'NR>1 {print $4,$5+$6}' ${INF}/rsid/efo.txt | \
   while read efo N
@@ -246,31 +246,25 @@ function outcome()
     parallel -C' ' -j15 --env INF --env efo --env N --env suffix '
       (
         echo -e "SNP A1 A2 freq b se p N"
-        bcftools query -f "%ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [$N] \n" -r {3} ${INF}/OpenGWAS/${efo}.vcf.gz | \
-        awk "a[\$1]++==0{\$7=10^-\$7};1"
+        bcftools query -f "%CHROM %POS %ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [$N] \n" -r {3} ${INF}/OpenGWAS/${efo}.vcf.gz | \
+        awk "{
+          if(\$4<\$5) snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$5; else snpid=\"chr\"\$1\":\"\$2"_"\$4"_"\$5
+          \$7=10^-\$7
+          print snpid, \$4, \$5, \$6, \$7, \$8, \$9, \$10
+        }"
       ) | \
       gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
     '
   done
-}
-
-# outcome
-
-# zgrep SAMPLE ${INF}/OpenGWAS/*.vcf.gz | cut -f1,7,8 > ${INF}/OpenGWAS/ieu.sample
-# sed 's/.vcf.gz:/\t/;s/TotalControls=/\t/;s/,TotalCases=/\t/;s/,StudyType/\t/' ieu.sample | cut -f1,3,4 > ${INF}/OpenGWAS/ieu.N
-#   zgrep -h SAMPLE ${INF}/OpenGWAS/${efo}.vcf.gz | cut -f1,7,8 > ${INF}/mr/gsmr/trait/${efo}.sample
-
-function gsmr()
-{
 # sbatch ${INF}/rsid/mr.sb
   (
-    cat ${INF}/mr/gsmr/out/*gsmr | head -1
-    grep -e Exposure -e nan -v ${INF}/mr/gsmr/out/*gsmr | tr ':' '\t' | cut -f1 --complement
-  ) > ${INF}/mr/gsmr/gsmr.txt
+    cat *.gsmr | head -1
+    grep -e Exposure -e nan -v *gsmr | tr ':' '\t' | cut -f1 --complement
+  ) > gsmr.txt
   R --no-save -q <<\ \ END
     INF <- Sys.getenv("INF")
     efo <- read.delim(file.path(INF,"rsid","efo.txt"))
-    gsmr <- read.delim(file.path(INF,"mr","gsmr","gsmr.txt"))
+    gsmr <- read.delim("gsmr.txt")
     library(dplyr)
     gsmr_efo <- gsmr %>%
                 left_join(pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
@@ -280,17 +274,32 @@ function gsmr()
                 select(protein,MRBASEID,trait,bxy,se,p,nsnp,fdr,Ncases,Ncontrols,id,uri,Zhengetal) %>%
                 arrange(fdr)
     subset(gsmr_efo[setdiff(names(gsmr_efo),c("Zhengetal","uri"))],fdr<=0.05)
-    write.table(gsmr_efo,file.path(INF,"mr","gsmr","gsmr-efo.txt"),row.names=FALSE,quote=FALSE,sep="\t")
+    write.table(gsmr_efo,"gsmr-efo.txt",row.names=FALSE,quote=FALSE,sep="\t")
   END
 }
+# zgrep SAMPLE ${INF}/OpenGWAS/*.vcf.gz | cut -f1,7,8 > ${INF}/OpenGWAS/ieu.sample
+# sed 's/.vcf.gz:/\t/;s/TotalControls=/\t/;s/,TotalCases=/\t/;s/,StudyType/\t/' ieu.sample | cut -f1,3,4 > ${INF}/OpenGWAS/ieu.N
+#   zgrep -h SAMPLE ${INF}/OpenGWAS/${efo}.vcf.gz | cut -f1,7,8 > ${INF}/mr/gsmr/trait/${efo}.sample
 
 # --- HGI
 
 function hgi()
 {
-  export suffix=cis
   if [ ! -d ${INF}/mr/gsmr/hgi ]; then mkdir -p ${INF}/mr/gsmr/hgi; fi
-  awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  export suffix=cis
+  awk '$21==ENVIRON["suffix"] {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  awk -vM=1e6 '{print $2, $3, $4-M, $5+M}' | \
+  while read prot chr start end
+  do
+    export prot=${prot}
+    export chr=${chr}
+    export start=${start}
+    export end=${end}
+    echo ${chr} ${start} ${end} > ${INF}/mr/gsmr/hgi/${prot}.bed1
+    plink2 --bfile ${INF}/work/INTERVAL --extract bed1 ${INF}/mr/gsmr/hgi/${prot}.bed1 \
+           --make-bed --rm-dup force-first list --out ${INF}/mr/gsmr/hgi/${prot}
+  done
+  awk '$21==ENVIRON["suffix"] {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
   parallel -j15 --env INF --env suffix -C' ' '
     (
       echo -e "SNP A1 A2 freq b se p N"
@@ -315,12 +324,37 @@ function hgi()
                print snpid,\$4,\$3,\$14,\$7,\$8,\$9,\$10+\$11
             }"
       ) | \
-      gzip -f> ${INF}/mr/gsmr/hgi/${trait}-{2}.gz
+      gzip -f> ${INF}/mr/gsmr/trait/${trait}-{2}.gz
     '
   done
 }
 
-hgi
+function gsmr_collect()
+# Accepts single argument as GWAS p value used.
+{
+  export f=$1
+  cat *.gsmr | grep -v -e nsnp -e nan | sort -k5,5gr > ${f}.txt
 
-cat ${INF}/mr/gsmr/hgi/*gsmr | grep -v -e nsnp -e nan | sort -k5,5gr
+  R --no-save -q <<\ \ END
+    f <- Sys.getenv("f")
+    gsmr <- read.table(paste0(f,".txt"),col.names=c("prot","trait","b","se","p","nsnp"))
+    write.table(within(gsmr,{fdr <- p.adjust(p,method="fdr")}),file=paste0(f,".tsv"),quote=FALSE,row.names=FALSE,sep="\t")
+  END
+}
 
+## rsid version -- at the expense of removing duplicates
+
+function exposure()
+{
+  if [ ! -d ${INF}/mr/gsmr/prot ]; then mkdir -p ${INF}/mr/gsmr/prot; fi
+  awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  parallel -j15 --env INF --env suffix -C' ' '
+    (
+      echo -e "SNP A1 A2 freq b se p N"
+      gunzip -c ${INF}/mr/gsmr/mrx/{2}-${suffix}.mrx | \
+      sed "1d" | \
+      cut -f1,3,4 --complement | \
+      awk "a[\$1]++==0{\$7=10^\$7;print}"
+    ) | gzip -f > ${INF}/mr/gsmr/prot/{2}-${suffix}.gz
+  '
+}

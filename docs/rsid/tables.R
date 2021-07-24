@@ -40,7 +40,7 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:3017) %>%
     gsmr <- merge(d, gap_inf1[c("prot","target.short")],by.x="Exposure1",by.y="prot") %>%
             mutate(Exposure1=target.short,Exposure2=target.short) %>% rename(Protein1=Exposure1,Protein2=Exposure2) %>%
             select(-target.short)
-    gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt"))
+    gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","out","5e-8","gsmr-efo.txt"))
     crp <- read.sheet("CRP", 1:15, 2:30)
     gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
     at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
@@ -120,7 +120,7 @@ HOME <- Sys.getenv("HOME")
 load(file.path(HOME,"software-notes","docs","files","pi_database.rda"))
 drug <- subset(pi_drug,target%in%with(gap::inf1,gene)) %>% left_join(pi_trait)
 efo <- read.delim(file.path(INF,"rsid","efo.txt"))
-hgi <- read.delim(file.path(INF,"HGI","mr.tsv"))
+hgi <- read.delim(file.path(INF,"mr","gsmr","hgi","5e-8","5e-8.tsv"))
 
 outsheets <- c("summary","studies","inf1",
                "pqtls","cojo","knownpqtls","coloc","cs95","pqtldisease",

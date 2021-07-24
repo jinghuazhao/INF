@@ -79,7 +79,11 @@ utils.sh  --> |"--n-causal-snps k"| finemap.sh
 
 Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
 
-## HGI analysis
+## Mendelian Randomization (MR) analysis
+
+There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in `mr.sh` and `mr.sb`. To get around the mishap with rsids we switched back to SNPids; we found the options `--clump-r2 0.1 --gsmr-snp-min 1` make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.
+
+It turned to be more efficient to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.
 
 File | Description
 -----|-----------------
@@ -175,4 +179,4 @@ $z_{TWAS} = \frac{w^T_{P}z_T}{\sqrt{w^T_{P}Vw_{P}}}$
 
 where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_T$, respectively.
 
-*Date last changed:* **26/6/2021**
+*Date last changed:* **24/7/2021**
