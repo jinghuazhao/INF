@@ -155,8 +155,8 @@ R --no-save -q <<END
    options(width=200)
    subset(mr,fdr<=0.05)
    library(pheatmap)
-   png(file.path(INF,"mr","efo-cis.png"),res=300,width=25,height=15,units="in")
-   pheatmap(mr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=18,fontsize_col=12)
+   png(file.path(INF,"mr","efo-cis.png"),res=300,width=30,height=15,units="in")
+   pheatmap(mr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=18,fontsize_col=18)
    dev.off()
 END
 
