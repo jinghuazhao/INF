@@ -116,6 +116,50 @@ function collect()
   }' ${INF}/mr/*result | \sed 's/|| id:/\t/' | xsel -i
 }
 
+# pheatmap
+R --no-save -q <<END
+   INF <- Sys.getenv("INF")
+   library(dplyr)
+   library(stringr)
+   efo <- read.delim(file.path(INF,"rsid","efo.txt"))
+   mr <- read.delim(file.path(INF,"mr","efo-result.txt")) %>%
+         filter(cistrans=="cis") %>%
+         mutate(fdr=p.adjust(pval,method="fdr"),
+                delimiter=str_locate(outcome,"\\|\\|"),
+                mrbaseid=substring(outcome,delimiter[,2]+2),
+                mrbaseid=gsub("id:","",mrbaseid)
+               ) %>%
+         left_join(efo,by=c("mrbaseid"="MRBASEID")) %>%
+         left_join(gap::inf1[c("prot","target.short")],by=c("exposure"="prot")) %>%
+         mutate(outcome=paste0(id," (",trait,")"),
+                exposure=target.short,
+                group=as.numeric(cut(b,breaks=quantile(b,seq(0,1,0.125)))),
+                log10p=sign(b)*(-log10(pval))
+               ) %>%
+         select(exposure,outcome,method,b,se,pval,nsnp,fdr,group,log10p)
+   exposure <- unique(with(mr,exposure))
+   outcome <- unique(with(mr,outcome))
+   n <- length(exposure)
+   m <- length(outcome)
+   mr_mat <- matrix(NA,m,n)
+   colnames(mr_mat) <- exposure
+   rownames(mr_mat) <- outcome
+   for(k in 1:nrow(mr))
+   {
+      t <- mr[k,c('exposure','outcome','b','group','log10p')]
+      i <- t[['outcome']]
+      j <- t[['exposure']]
+      v <- t[['log10p']]
+      mr_mat[i,j] <- v
+   }
+   options(width=200)
+   subset(mr,fdr<=0.05)
+   library(pheatmap)
+   png(file.path(INF,"mr","efo-cis.png"),res=300,width=25,height=15,units="in")
+   pheatmap(mr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=18,fontsize_col=12)
+   dev.off()
+END
+
 R --no-save -q <<END
    library(dplyr)
    library(ggplot2)
