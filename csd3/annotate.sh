@@ -223,10 +223,7 @@ do
   ) | bash
 done
 
-# ProGeM
-# Bottom-up
 # https://www.gtexportal.org/home/datasets
-# Top-down (GenomicRanges, KEGGREST, STRINGdb)
 # ftp://ftp.ensembl.org/pub/grch37/release-98/gtf/homo_sapiens/Homo_sapiens.GRCh37.87.gtf.gz
 # http://www.omim.org/
 # https://www.humanmine.org/

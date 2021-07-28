@@ -15,6 +15,7 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=$SLURM_ARRAY_TASK_ID
 
 function rmdup()
+# Remove duplicates via PLINK
 {
   echo ${chr} ${start} ${end} > ${INF}/mr/gsmr/ref/${prot}-cis.bed1
   plink2 --pfile ${pgen}/impute_dedup_${chr}_interval --extract bed1 ${INF}/mr/gsmr/ref/${prot}-cis.bed1 \
@@ -22,6 +23,7 @@ function rmdup()
 }
 
 function rmall()
+# Remove all duplicates by brute force
 {
     awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr && $2>=start && $2<end {print $3}' ${pgen}/impute_dedup_${chr}_interval.pvar \
         > ${INF}/mr/gsmr/ref/${prot}-cis.list
@@ -34,6 +36,7 @@ function rmall()
 }
 
 function bfile()
+# reference with rsids
 {
   if [ ! -d ${INF}/mr/gsmr/ref ]; then mkdir ${INF}/mr/gsmr/ref; fi
   export pgen=~/rds/post_qc_data/interval/imputed/uk10k_1000g_b37/imputed/plink_format/pgen
@@ -86,8 +89,9 @@ function gsmr()
   done
 }
 
+## EFO traits
 # bfile
-# gsmr ## EFO traits
+# gsmr
 
 function gsmr_hgi()
 {
@@ -104,7 +108,7 @@ function gsmr_hgi()
   fi
   gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_ref_${p} \
            --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${p} ${INF}/mr/gsmr/trait/gsmr_${trait}_${p} --gsmr-direction 0 \
-           --clump-r2 0.1 --gwas-thresh 1e-5 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
+           --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
            --out ${INF}/mr/gsmr/hgi//gsmr_${trait}_${p}
   R --no-save -q <<\ \ END
     INF <- Sys.getenv("INF")
