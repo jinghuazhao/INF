@@ -99,6 +99,7 @@ File | Description
 chembl.sh | toy CHEMBL queries
 CRP.sh | an inflammation score
 cvd1.sh | SCALLOP-CVDI supplementary tables
+circos.* | circos scripts
 coloc.sb | coloc analysis -- clumsy verion
 coloc.R | coloc analysis via pQTLtools
 efo.R | experimental factor ontology
