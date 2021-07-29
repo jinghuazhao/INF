@@ -11,6 +11,7 @@ R --no-save -q < ${INF}/rsid/circos.R
 
 if [! -d ${symdir} ]; then mkdir ${symdir}; fi
 cd ${symdir}
-for f in $(ls ${inf_circos}/*); do ln -sf $f; done
+# for f in $(ls ${inf_circos}/*); do ln -sf $f; done
+cp ${inf_circos}/* .
 ../bin/circos --conf circos.conf
 
