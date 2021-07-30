@@ -82,7 +82,8 @@ circlize <- function()
                                 track.height = 0.25, bg.border = NA, bg.col = "#FFFFFF", ylim = c(0, 150))
   circos.yaxis(side = "left", at = seq(0, 150, 50), labels = seq(0, 150, 50), sector.index = get.all.sector.index()[1], labels.cex = 0.3, lwd = 0.3,
                tick.length = 0.5*(convert_x(1, "mm", get.cell.meta.data("sector.index"), get.cell.meta.data("track.index"))))
-  circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col = pQTL_links[[7]], border = NA)
+  circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col = pQTL_links[[7]], border = NA, directional = 1, arr.length = 0.05,
+                     arr.width = 0.03, arr.lwd=0.05)
   dev.off()
 }
 # https://www.rapidtables.com/web/color/RGB_Color.html
