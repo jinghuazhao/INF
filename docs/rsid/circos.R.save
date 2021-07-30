@@ -57,17 +57,15 @@ circlize <- function()
            mutate(chr=gsub("hs","chr",chr),value2=gsub("color=vd","",value2))
   pQTL_labels <- read.table("pQTL_labels.txt",col.names=c("chr","start","end","value1","value2")) %>%
            mutate(chr=gsub("hs","chr",chr),value2=gsub("color=vd","",value2))
-  pQTL_links <- read.table("pQTL_links.txt",col.names=c("chr1","start1","end1","chr2","start2","end2","color")) %>%
-                mutate(chr1=gsub("hs","chr",chr1),chr2=gsub("hs","chr",chr2),color=gsub("color=l","",color))
   library("circlize")
   setEPS()
   postscript(file = "circlize.eps", width = 7.08, height = 7.08, horizontal = FALSE, paper = "special", colormodel="rgb")
   circos.clear()
   circos.par("start.degree" = 90, gap.degree = c(rep(c(0.7), 21), 8), track.margin = c(0.005, 0.005), cell.padding = c(0.001, 0.01, 0.01, 0.001))
-# circos.initializeWithIdeogram(plotType = NULL, species = "hg19", chromosome.index = paste0("chr", 1:22))
+# circos.initializeWithIdeogram(cytoband=file.path(INF,"circos","cytoband.txt"), plotType = NULL, species = "hg19", chromosome.index = paste0("chr", 1:22))
   circos.initializeWithIdeogram(cytoband=file.path(INF,"circos","cytoband.txt"), plotType=NULL)
-  circos.genomicLabels(pQTL_labels, labels.column = 4, side = "outside", cex = 0.45, line_lwd = 0.8,
-                       connection_height = convert_height(8, "mm"), col=pQTL_labels[[5]], line_col=pQTL_labels[[5]])
+  circos.genomicLabels(pQTL_labels, labels.column = 4, side = "outside", cex = 0.3, line_lwd = 0.8,
+                       connection_height = convert_height(8, "mm"), line_col=value[2,], col=value[,2])
   circos.track(ylim = c(0, 1),
                panel.fun = function(x, y) {
                  chr  = gsub("chr", CELL_META$sector.index, replace = "")
@@ -78,11 +76,11 @@ circlize <- function()
                },
                track.height = 0.03,  bg.border = NA)
   circos.genomicTrackPlotRegion(pQTLs, panel.fun = function(region, value, ...)
-                                circos.genomicPoints(region, value, pch = 16, col = value[,2], cex = 0.3),
-                                track.height = 0.25, bg.border = NA, bg.col = "#FFFFFF", ylim = c(0, 150))
+                                circos.genomicPoints(region, value1, pch = 16, col = value2, cex = 0.3),
+                                track.height = 0.4, bg.border = NA, bg.col = "#C0C0C0", ylim = c(0, 150))
   circos.yaxis(side = "left", at = seq(0, 150, 50), labels = seq(0, 150, 50), sector.index = get.all.sector.index()[1], labels.cex = 0.3, lwd = 0.3,
                tick.length = 0.5*(convert_x(1, "mm", get.cell.meta.data("sector.index"), get.cell.meta.data("track.index"))))
-  circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col = pQTL_links[[7]], border = NA)
+  title("A circlize plot of pQTLs")
   dev.off()
 }
 # https://www.rapidtables.com/web/color/RGB_Color.html
