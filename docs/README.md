@@ -1,3 +1,5 @@
+<p align="center"><img src="doc/circlize.png"></p>
+
 # SCALLOP-INF meta-analysis
 
 ## Flow of analysis
