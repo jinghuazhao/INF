@@ -65,18 +65,18 @@ circlize <- function()
   circos.clear()
   circos.par("start.degree" = 90, gap.degree = c(rep(c(0.7), 21), 8), track.margin = c(0.005, 0.005), cell.padding = c(0.001, 0.01, 0.01, 0.001))
 # circos.initializeWithIdeogram(plotType = NULL, species = "hg19", chromosome.index = paste0("chr", 1:22))
-  circos.initializeWithIdeogram(cytoband=file.path(INF,"circos","cytoband.txt"), plotType=NULL)
+  circos.initializeWithIdeogram(cytoband=file.path(INF,"circos","cytoband.txt"),plotType=NULL)
   circos.genomicLabels(pQTL_labels, labels.column = 4, side = "outside", cex = 0.45, line_lwd = 0.8,
                        connection_height = convert_height(8, "mm"), col=pQTL_labels[[5]], line_col=pQTL_labels[[5]])
-  circos.track(ylim = c(0, 1),
+  circos.track(ylim = c(0, 1), track.height = 0.05, bg.border = NA,
                panel.fun = function(x, y) {
                  chr  = gsub("chr", CELL_META$sector.index, replace = "")
                  xlim = CELL_META$xlim
                  ylim = CELL_META$ylim
-                 circos.rect(xlim[1], 0, xlim[2], 1, col = "white", cex = 0.2, lwd = 0.5 )
+                 circos.rect(xlim[1], 0, xlim[2], 1, col = "white", cex = 0.2, lwd = 0.5)
                  circos.text(mean(xlim), mean(ylim), chr, cex = 0.4, col = "black", facing = "inside", niceFacing = TRUE)
-               },
-               track.height = 0.03,  bg.border = NA)
+               # circos.genomicAxis(h = "bottom", direction = "inside")
+               })
   circos.genomicTrackPlotRegion(pQTLs, panel.fun = function(region, value, ...)
                                 circos.genomicPoints(region, value, pch = 16, col = value[,2], cex = 0.3),
                                 track.height = 0.25, bg.border = NA, bg.col = "#FFFFFF", ylim = c(0, 150))
