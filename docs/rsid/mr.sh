@@ -98,10 +98,13 @@ function collect()
     done
   done
 
+  for type in cis trans pan
+  do
   (
-    cat ${INF}/mr/*result | head -1
-    grep -h -v cistrans ${INF}/mr/*result
-  ) > ${INF}/mr/efo-result.txt
+    cat ${INF}/mr/*${type}.result | head -1
+    grep -h -v cistrans ${INF}/mr/*${type}.result
+  ) > ${INF}/mr/${type}-efo-result.txt
+  done
 
   export all=$(ls ${INF}/mr/cis/*result.txt ${INF}/mr/trans/*result.txt ${INF}/mr/pan/*result.txt | wc -l)
   export p=$(bc -l <<< 0.05/${all})

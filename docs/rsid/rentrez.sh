@@ -5,7 +5,7 @@ R --no-save <<END
   library(XML)
   library(gap)
   library(rentrez)
-  term <- "pQTLs OR (protein AND quantitative AND trait AND loci) AND human[MH] AND (plasma OR serum)"
+  term <- "pQTL OR pQTLs OR (protein quantitative trait loci) AND human[MH] AND (plasma OR serum)"
   r <- entrez_search(db="pubmed",term=term,retmax=3000)
   write.table(with(r,ids),file="entrez.ids",col.names=FALSE,row.names=FALSE,quote=FALSE)
 # Yao 30111768[uid]
