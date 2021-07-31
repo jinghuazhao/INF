@@ -66,10 +66,10 @@ function gsmr()
       export prot=${prot}
       echo ${INF}/mr/gsmr/ref/${prot} > ${INF}/mr/gsmr/ref/gsmr_${prot}
       echo ${prot} ${INF}/mr/gsmr/prot/${prot}.gz > ${INF}/mr/gsmr/prot/gsmr_${prot}
-      echo ${trait} ${INF}/mr/gsmr/trait/${trait}-${prot}.gz > ${INF}/mr/gsmr/trait/gsmr_${trait}
+      echo ${trait} ${INF}/mr/gsmr/trait/${trait}-${prot}.gz > ${INF}/mr/gsmr/trait/gsmr_${trait}-${prot}
 
       gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_${prot} \
-               --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${trait} \
+               --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${trait}-${prot} \
                --gsmr-direction 0 \
                --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
                --out ${INF}/mr/gsmr/out/${trait}-${prot}
@@ -91,7 +91,7 @@ function gsmr()
 
 ## EFO traits
 # bfile
-# gsmr
+gsmr
 
 function gsmr_hgi()
 {
@@ -125,7 +125,7 @@ function gsmr_hgi()
   done
 }
 
-gsmr_hgi
+# gsmr_hgi
 
 ### --- the following is obsolete
 
