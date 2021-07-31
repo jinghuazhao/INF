@@ -6,7 +6,7 @@ url <- file.path(INF,"work","INF1.latest.xlsx")
 read.sheet <- function(sheet,cols,rows) read.xlsx(url,sheet=sheet,colNames=TRUE,cols=cols,rows=rows,skipEmptyRows=TRUE)
 require(dplyr)
 require(stringr)
-gap_inf1 <- gap::inf1[c("uniprot", "prot", "target.short")]
+gap_inf1 <- gap.datasets::inf1[c("uniprot", "prot", "target.short")]
  summary <- read.sheet("Summary", 1:2, 2:36)
     inf1 <- subset(read.sheet("INF1", 1:12, 2:94),uniprot!="P23560") %>% select(-panel); names(inf1)[2] <- "Protein"
  studies <- read.sheet("Studies", 1:3, 2:15)
@@ -48,26 +48,32 @@ garfield <- read.sheet("GARFIELD", 1:18, 2:3017) %>%
     at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
 
 great3 <- read.delim(file.path(INF,"GREAT","IL12B-KITLG-TNFSF10.tsv")) %>%
-          mutate(flag=if_else(BinomP<1e-4,"x","")) %>% arrange(desc(flag))
+          mutate(fdr=p.adjust(BinomP,method="fdr")) %>% arrange(fdr)
 great <- read.delim(file.path(INF,"GREAT","cistrans.tsv")) %>%
-          mutate(flag=if_else(BinomP<1e-4,"x","")) %>% arrange(desc(flag))
+          mutate(fdr=p.adjust(BinomP,method="fdr")) %>% arrange(fdr)
 
 read_table <- function(f, exprs="pval <= 0.05/nrow(t)")
 {
-  t <- within(read.delim(f), {flag=""})
-  x <- with(t,eval(str2expression(exprs)))
-  t[x, "flag"] <- "x"
+  addflag <- function(exprs)
+  {
+    t <- within(read.delim(f), {flag=""})
+    x <- with(t,eval(str2expression(exprs)))
+    x <- with(t,eval(str2expression(e)))
+    t[x, "flag"] <- "x"
+  }
+  t <- within(read.delim(f), {fdr <- p.adjust(pval,method="fdr")})
+# t <- addflag(exprs)
   t
 }
 
 mr_immun <- merge(read_table(file.path(INF,"mr","pQTLs","pQTL-efo.txt")),gap_inf1,by.x="exposure",by.y="prot") %>%
-            mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(desc(flag))
+            mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(fdr)
 mr_misc <- merge(read_table(file.path(INF,"mr","pQTLs","pQTL-ieu-FEV1.txt")),gap_inf1,by.x="exposure",by.y="prot") %>%
-           mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(desc(flag))
+           mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(fdr)
 mr <- merge(read_table(file.path(INF,"mr","efo-result.txt"),
             exprs="cistrans!=\"pan\" & pval <= 0.05/nrow(subset(t,cistrans!=\"pan\"))"),
             gap_inf1, by.x="exposure",by.y="prot") %>%
-      mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(desc(flag))
+      mutate(exposure=target.short) %>% rename(Protein=exposure) %>% select(-target.short) %>% arrange(fdr)
 
 protein_correlation <- read.csv(file.path(INF,"coffeeprot","table_complex.csv")) %>%
                        arrange(desc(cor)) %>%
@@ -75,12 +81,12 @@ protein_correlation <- read.csv(file.path(INF,"coffeeprot","table_complex.csv"))
 protein_dgi <- read.csv(file.path(INF,"coffeeprot","protein_annotated.csv")) %>%
                select(varID,ID,HPA_IF_protein_location,CP_loc,inDGIdb) %>%
                mutate(gene=toupper(ID)) %>%
-               left_join(gap::inf1[c("gene","target.short")]) %>%
+               left_join(gap.datasets::inf1[c("gene","target.short")]) %>%
                rename(Protein=target.short) %>%
                select(-c(varID,ID,gene))
 pqtl_annotation <- read.csv(file.path(INF,"coffeeprot","table_qtl_processed.csv")) %>%
                    rename(gene=gene_symbol) %>%
-                   left_join(gap::inf1[c("gene","target.short")]) %>%
+                   left_join(gap.datasets::inf1[c("gene","target.short")]) %>%
                    rename(Protein=target.short) %>%
                    select(-pvalue)
 protein_dgi <- protein_dgi %>% select(Protein,names(protein_dgi))
@@ -118,9 +124,10 @@ cs95 <- read.delim(file.path(INF,"coloc.1M","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=str_replace(rownames(cs95),"[.]","-"),cs95)
 HOME <- Sys.getenv("HOME")
 load(file.path(HOME,"software-notes","docs","files","pi_database.rda"))
-drug <- subset(pi_drug,target%in%with(gap::inf1,gene)) %>% left_join(pi_trait)
+drug <- subset(pi_drug,target%in%with(gap.datasets::inf1,gene)) %>% left_join(pi_trait)
 efo <- read.delim(file.path(INF,"rsid","efo.txt"))
 hgi <- read.delim(file.path(INF,"mr","gsmr","hgi","5e-8","5e-8.tsv"))
+pqtls <- select(pqtls,-prots)
 
 outsheets <- c("summary","studies","inf1",
                "pqtls","cojo","knownpqtls","coloc","cs95","pqtldisease",
