@@ -20,7 +20,7 @@ annotate <- within(cvt,{gene=gene})
 is.cis <- with(annotate,cis)
 annotate[is.cis,"gene"] <- annotate[is.cis,"p.gene"]
 INF1_merge_cvt <- merge(INF1_merge,annotate,by=c("prot","MarkerName")) %>%
-                  left_join(gap::inf1[c("prot","target.short")]) %>%
+                  left_join(gap.datasets::inf1[c("prot","target.short")]) %>%
                   arrange(Chr,bp)
 
 pQTLs <- select(INF1_merge_cvt,chrom,start,end,value,fcolor)
@@ -75,11 +75,14 @@ circlize <- function()
                  ylim = CELL_META$ylim
                  circos.rect(xlim[1], 0, xlim[2], 1, col = "white", cex = 0.2, lwd = 0.5)
                  circos.text(mean(xlim), mean(ylim), chr, cex = 0.4, col = "black", facing = "inside", niceFacing = TRUE)
-               # circos.genomicAxis(h = "bottom", direction = "inside")
                })
-  circos.genomicTrackPlotRegion(pQTLs, panel.fun = function(region, value, ...)
-                                circos.genomicPoints(region, value, pch = 16, col = value[,2], cex = 0.3),
-                                track.height = 0.25, bg.border = NA, bg.col = "#FFFFFF", ylim = c(0, 150))
+  circos.track(ylim=c(0,1), track.height = 0.03, bg.border = NA, panel.fun=function(x, y) {
+               chr  = gsub("chr", CELL_META$sector.index, replace = "")
+               xlim = CELL_META$xlim
+               ylim = CELL_META$ylim
+               circos.genomicAxis(h = "top", direction = "inside", labels.cex=0.2, major.at=seq(0,1e10,5e7))})
+  circos.genomicTrackPlotRegion(pQTLs, track.height = 0.25, bg.border = NA, bg.col = "#FFFFFF", ylim = c(0, 150),
+                                panel.fun = function(region, value, ...) circos.genomicPoints(region, value, pch = 16, col = value[,2], cex = 0.3))
   circos.yaxis(side = "left", at = seq(0, 150, 50), labels = seq(0, 150, 50), sector.index = get.all.sector.index()[1], labels.cex = 0.3, lwd = 0.3,
                tick.length = 0.5*(convert_x(1, "mm", get.cell.meta.data("sector.index"), get.cell.meta.data("track.index"))))
   circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col = pQTL_links[[7]], border = NA, directional = 1, arr.length = 0.05,
