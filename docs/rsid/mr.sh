@@ -356,7 +356,7 @@ R --no-save -q <<END
    subset(gsmr,fdr<=0.05)
    library(pheatmap)
    png(file.path(INF,"mr","gsmr","out","gsmr-efo.png"),res=300,width=30,height=15,units="in")
-   pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=18,fontsize_col=18)
+   pheatmap(gsmr_mat,cluster_rows=TRUE,cluster_cols=TRUE,angle_col="315",fontsize_row=18,fontsize_col=18)
    dev.off()
 END
 
