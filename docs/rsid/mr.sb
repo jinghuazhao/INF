@@ -71,7 +71,7 @@ function gsmr()
       gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_${prot} \
                --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${trait}-${prot} \
                --gsmr-direction 0 \
-               --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
+               --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 30 --effect-plot \
                --out ${INF}/mr/gsmr/out/${trait}-${prot}
 
       R --no-save -q <<\ \ \ \ \ \ END

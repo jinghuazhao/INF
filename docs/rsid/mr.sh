@@ -303,7 +303,7 @@ function ref_prot_outcome_gsmr()
       gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
     '
   done
-# sbatch ${INF}/rsid/mr.sb
+# sbatch --wait ${INF}/rsid/mr.sb
   (
     cat *.gsmr | head -1
     grep -e Exposure -e nan -v *gsmr | tr ':' '\t' | cut -f1 --complement
@@ -327,6 +327,38 @@ function ref_prot_outcome_gsmr()
 # zgrep SAMPLE ${INF}/OpenGWAS/*.vcf.gz | cut -f1,7,8 > ${INF}/OpenGWAS/ieu.sample
 # sed 's/.vcf.gz:/\t/;s/TotalControls=/\t/;s/,TotalCases=/\t/;s/,StudyType/\t/' ieu.sample | cut -f1,3,4 > ${INF}/OpenGWAS/ieu.N
 #   zgrep -h SAMPLE ${INF}/OpenGWAS/${efo}.vcf.gz | cut -f1,7,8 > ${INF}/mr/gsmr/trait/${efo}.sample
+
+R --no-save -q <<END
+   INF <- Sys.getenv("INF")
+   library(dplyr)
+   library(stringr)
+   gsmr <- read.delim(file.path(INF,"mr","gsmr","out","5e-8","gsmr-efo.txt")) %>%
+           mutate(outcome=paste0(id," (",trait,")"),
+                  exposure=protein,
+                  group=as.numeric(cut(bxy,breaks=quantile(bxy,seq(0,1,0.125))))) %>%
+           select(exposure,outcome,bxy,se,p,nsnp,fdr,group)
+   exposure <- unique(with(gsmr,exposure))
+   outcome <- unique(with(gsmr,outcome))
+   n <- length(exposure)
+   m <- length(outcome)
+   gsmr_mat <- matrix(NA,m,n)
+   colnames(gsmr_mat) <- exposure
+   rownames(gsmr_mat) <- outcome
+   for(k in 1:nrow(gsmr))
+   {
+      t <- gsmr[k,c('exposure','outcome','bxy','group','fdr')]
+      i <- t[['outcome']]
+      j <- t[['exposure']]
+      v <- t[['bxy']]
+      gsmr_mat[i,j] <- v
+   }
+   options(width=200)
+   subset(gsmr,fdr<=0.05)
+   library(pheatmap)
+   png(file.path(INF,"mr","gsmr","out","gsmr-efo.png"),res=300,width=30,height=15,units="in")
+   pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=18,fontsize_col=18)
+   dev.off()
+END
 
 # --- HGI
 
