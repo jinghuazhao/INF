@@ -11,10 +11,9 @@ R --no-save <<END
   ord_cis <- with(cis_dat,order(Chr,bp))
   cis_dat <- data.frame(cis_dat[ord_cis,c("seqnames","start","end","SNP","uniprot","prot","p.gene","ensembl_gene_id","p.start","p.end")])
   cis_gr <- with(cis_dat,GenomicRanges::GRanges(seqnames=seqnames,IRanges::IRanges(start,end)))
-  hpc_work <- Sys.getenv("HPC_WORK")
-  path = file.path(hpc_work, "bin", "hg19ToHg38.over.chain")
+  f <- file.path(find.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
   library(rtracklayer)
-  chain <- import.chain(path)
+  chain <- import.chain(f)
   chain
   seqlevelsStyle(cis_gr) <- "UCSC"
   cis38 <- liftOver(cis_gr, chain)
@@ -35,8 +34,7 @@ export col_gene=1
 export col_variant=2
 export M=1e6
 export nlines=60
-(
-  parallel -C' ' --env GTEx_v8 --env ext --env col --env M '
+parallel -C' ' --env GTEx_v8 --env ext --env col --env M '
     read SNP hgnc ensGene pos chrpos < <(awk -v row={1} "NR==row{print \$4,\$7,\$8,\$13,\$11\"_\"\$13}" ${INF}/coloc/cis-pQTL.dat)
     zgrep ${ensGene} ${GTEx_v8}/{2}${ext} | \
     awk -v col_gene=${col_gene} -v col_variant=${col_variant} -v ensGene=${ensGene} -v M=${M} -v bp=${pos} -v OFS="\t" "
@@ -48,30 +46,35 @@ export nlines=60
        snpid=chr\":\"bp\"_\"a1\"_\"a2
        if(index(\$col_gene,ensGene) && bp>=a[2]-M && bp<a[2]+M && length(a1)==1 && length(a2)==1) print \$col_gene,\$col_variant,\$7,chr,pos,a1,a2,snpid
     }" > ${INF}/coloc/${SNP}-${ensGene}-{2}.dat
+' ::: $(seq 2 ${nlines}) ::: $(ls ${GTEx_v8} | grep -v egenes | xargs -l basename -s ${ext})
+(
+  parallel -C' ' --env GTEx_v8 --env ext --env col --env M '
+    read SNP hgnc ensGene pos chrpos < <(awk -v row={1} "NR==row{print \$4,\$7,\$8,\$13,\$11\"_\"\$13}" ${INF}/coloc/cis-pQTL.dat)
     cat ${INF}/coloc/${SNP}-${ensGene}-{2}.dat | \
     sort -k3,3g | \
     awk -vSNP=${SNP} -vensGene=${ensGene} -vtissue={2} -vOFS="\t" "NR==1 {print SNP,ensGene,tissue,\$0}"
   ' ::: $(seq 2 ${nlines}) ::: $(ls ${GTEx_v8} | grep -v egenes | xargs -l basename -s ${ext})
 ) | \
-find . -type f -empty -delete
 sort -k1,1 -k2,2 > ${INF}/coloc/eQTL_GTEx.dat
 awk '$5==$11' ${INF}/coloc/eQTL_GTEx.dat | cut -f1 | uniq
 awk '$5==$11' ${INF}/coloc/eQTL_GTEx.dat | cut -f1 | uniq | grep -f - ${INF}/work/INF1.METAL | cut -f2,3
 awk '$5==$11' ${INF}/coloc/eQTL_GTEx.dat
+# find . -type f -empty -delete
 
 # Variants cis-eQTL regions, subject to check on r2
-R --no-save <<END
+R --no-save -q <<END
   options(width=200)
   library(pQTLtools)
-  eQTL_GTEx <- read.table("eQTL_GTEx.dat",col.names=c("MarkerName","ensGene","tissue","gene","sentinel","p","chr","pos","a1","a2","eQTL"))
+  INF <- Sys.getenv("INF")
+  eQTL_GTEx <- read.table(file.path(INF,"coloc","eQTL_GTEx.dat"),
+                          col.names=c("MarkerName","ensGene","tissue","gene","sentinel","p","chr","pos","a1","a2","eQTL"))
   cis_dat <- within(eQTL_GTEx,{seqnames <- chr; start <- pos-1; end <- pos})
   ord_cis <- with(cis_dat,order(chr,pos))
   cis_dat <- cis_dat[ord_cis,c("seqnames","start","end","MarkerName","ensGene","tissue","gene","sentinel","eQTL","a1","a2")]
   cis_gr <- with(cis_dat,GenomicRanges::GRanges(seqnames=seqnames,IRanges::IRanges(start,end)))
-  hpc_work <- Sys.getenv("HPC_WORK")
-  path = file.path(hpc_work, "bin", "hg38ToHg19.over.chain")
   library(rtracklayer)
-  chain <- import.chain(path)
+  f <- file.path(find.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
+  chain <- import.chain(f)
   chain
   seqlevelsStyle(cis_gr) <- "UCSC"
   cis37 <- liftOver(cis_gr, chain)
@@ -79,19 +82,19 @@ R --no-save <<END
   cis_dat37 <- data.frame(cis37)[c("seqnames","start","end")]
   names(cis_dat37) <- c("chr37","start37","end37")
   cisQTL <- within(cbind(cis_dat,cis_dat37),{snpid <- paste0(chr37,":",end37,"_",a1,"_",a2)})
-  write.table(cisQTL,file="cis-eQTL.dat",quote=FALSE,row.names=FALSE,sep="\t")
+  write.table(cisQTL,file=file.path(INF,"coloc","cis-eQTL.dat"),quote=FALSE,row.names=FALSE,sep="\t")
 END
-for SNP in $(cut -f4 cis-eQTL.dat | sed '1d' | uniq)
+for SNP in $(cut -f4 ${INF}/coloc/cis-eQTL.dat | sed '1d' | uniq)
 do
   echo ${SNP}
   (
     echo ${SNP}
-    awk -vSNP=${SNP} '$4==SNP' cis-eQTL.dat | cut -f15 | uniq
-  ) > ${SNP}.snps
-  plink --bfile INTERVAL/cardio/INTERVAL --extract ${SNP}.snps --make-bed --out ${SNP}
-  plink --bfile ${SNP} --no-sex --no-pheno --r2 inter-chr --out ${SNP}
+    awk -vSNP=${SNP} '$4==SNP' ${INF}/coloc/cis-eQTL.dat | cut -f15 | uniq
+  ) > ${INF}/coloc/${SNP}.snps
+  plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/coloc/${SNP}.snps --make-bed --out ${INF}/coloc/${SNP}
+  plink --bfile ${INF}/coloc/${SNP} --no-sex --no-pheno --r2 inter-chr --out ${INF}/coloc/${SNP}
 done
-ls *.ld | xargs -I {} basename {} .ld | parallel -C' ' 'grep {} {}.ld'
+ls *.ld | xargs -I {} basename {} .ld | parallel -C' ' 'grep {} ${INF}/coloc/{}.ld'
 
 # 95%CS
 export DAPG=~/rds/public_databases/GTEx/GTEx_v8_finemapping_DAPG/GTEx_v8_finemapping_DAPG.CS95.txt.gz
@@ -116,11 +119,12 @@ echo tissue> ${cs95tissue}
   '
 ) | sort -k1,1 | join -t$'\t' <(cat ${INF}/work/INTERVAL.rsid | tr ' ' '\t') - > ${cs95}
 R --no-save <<END
+  library(dplyr)
   eqtl_file <- Sys.getenv("cs95")
-  eqtls <- within(read.table(eqtl_file,sep="\t", col.names=c("SNPid","rsid","gene","ensGene","chrpos","GTExSNP","tissue_p")),
-                  {rsidProt <- paste0(rsid," (",gene,")");tissue_p <- sub("^ ","",tissue_p)})
-  ord <- with(eqtls,order(gene))
-  eqtls <- eqtls[ord,]
+  eqtls <- read.table(eqtl_file,sep="\t", col.names=c("SNPid","rsid","prot","ensGene","chrpos","GTExSNP","tissue_p")) %>%
+           left_join(gap.datasets::inf1[c("prot","target.short")]) %>%
+           mutate(rsidProt=paste0(rsid," (",target.short,")"),tissue_p=sub("^ ","",tissue_p)) %>%
+           arrange(target.short)
   tissue_file <- Sys.getenv("cs95tissue")
   tissues <- with(read.table(tissue_file,header=TRUE),sort(unique(tissue)))
   eqtl_table <- matrix("",nrow(eqtls),length(tissues))
