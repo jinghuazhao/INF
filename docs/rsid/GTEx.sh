@@ -144,6 +144,8 @@ R --no-save <<END
     }
     cat("\n")
   }
+  library(stringr)
+  colnames(eqtl_table) <- gsub("ba","BA",gsub("_"," ",str_to_sentence(colnames(eqtl_table))))
   INF <- Sys.getenv("INF")
   write.table(eqtl_table,file=file.path(INF,"coloc","cis-eQTL_table.tsv"),sep="\t")
   tbl <- eqtl_table
