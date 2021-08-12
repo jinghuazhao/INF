@@ -16,7 +16,7 @@ interval <- merge(within(read.sheet("INTERVAL", 1:12, 2:29),{Protein <- gsub(" "
             mutate(Protein=target.short) %>% select(-target.short)
       os <- merge(read.sheet("OtherStudies", 1:12, 2:102),gap_inf1[c("prot","target.short")],by.x="Protein",by.y="prot") %>%
             mutate(Protein=target.short) %>% select(-target.short)
-    cvd1 <- merge(read.sheet("CVD1", 1:12, 2:53),gap_inf1[c("prot","target.short")],by.x="Protein",by.y="prot") %>%
+    cvd1 <- merge(read.sheet("CVD1", 1:12, 2:61),gap_inf1[c("prot","target.short")],by.x="Protein",by.y="prot") %>%
             mutate(Protein=target.short) %>% select(-target.short)
 aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","target.short")], by.x="Protein", by.y="prot") %>%
             mutate(Protein=target.short) %>% select(-target.short)
@@ -105,7 +105,7 @@ pav <- merge(within(pqtls,{prot_rsid=paste0(prot,"-",rsid)}),
 data.frame(table(subset(pav,cis.trans=="cis")$Consequence))
 
 knownpqtls_dup <- rbind(interval,os,cvd1)
-knownpqtls <- unique(knownpqtls_dup[c("Sentinels","SNPid","UniProt","Protein")])
+knownpqtls <- distinct(knownpqtls_dup[c("Sentinels","SNPid","UniProt","Protein")]) %>% arrange(Protein,SNPid)
 pqtlstudies <- unique(knownpqtls_dup[c("Source","PMID")]) %>% arrange(PMID)
 rownames(pqtlstudies) <- seq(nrow(pqtlstudies))
 
@@ -221,3 +221,9 @@ novelpqtls <- subset(within(pqtls,{
 write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls), file=file.path(INF,"NG","novelpqtls.xlsx"), overwrite=TRUE,
            colNames=TRUE,
            borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
+
+# known and novel pQTLs should be exclusive.
+s <- pqtls %>% mutate(prot_rsid=paste0(Protein,"-",rsid))
+s1 <- novelpqtls %>% mutate(prot_rsid=paste0(Protein,"-",rsid))
+s2 <- knownpqtls %>% mutate(prot_rsid=paste0(Protein,"-",Sentinels))
+c(s1$prot_rsid,s2$prot_rsid)[!c(s1$prot_rsid,s2$prot_rsid) %in% s$prot_rsid]
