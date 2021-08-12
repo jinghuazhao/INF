@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 
+if [ ! -d ${INF}/cvd1 ]; then mkdir ${INF}/cvd1; fi
+cd ${INF}/cvd1
+
 export stables=https://static-content.springer.com/esm/art%3A10.1038%2Fs42255-020-00287-2/MediaObjects/42255_2020_287_MOESM3_ESM.xlsx
 
 function download()
@@ -20,7 +23,7 @@ cat cvd1.txt | xargs -I {} bash -c "wget ${url}/{}.txt.gz -O ~/rds/results/publi
 #  ln -s ~/rds/results/public/proteomics/scallop-cvd1
 }
 
-if [ ! -d ${INF}/cvd1 ]; then mkdir ${INF}/cvd1; fi
+# write.table(pQTLtools::inf1[c("prot","target.short")],file="INF1.prot",quote=FALSE,row.names=FALSE,col.names=FALSE)
 
 (
   gunzip -c ~/rds/results/public/proteomics/scallop-cvd1/*txt.gz | \
@@ -42,7 +45,6 @@ if [ ! -d ${INF}/cvd1 ]; then mkdir ${INF}/cvd1; fi
 
 # snpid --> rsid
 sed 's/chr//;s/_/:/' ${INF}/work/INF1.merge.rsid > ${INF}/cvd1/INF1.merge.rsid
-cd ${INF}/cvd1
 for f in INF1.merge.replication.txt
 do
   awk -vOFS="\t" '{if(NF==1) printf $1 OFS; else print}' ${f} > ${f}-rsid
@@ -51,19 +53,37 @@ do
   parallel --dry-run -C' ' "
     export s={1};
     export r={2};
-    sed -i 's/'\"\${s}\"'/'\"\${r}\"'/g' ${f}-rsid
+    sed -i 's/'\"\${s}\"'/'\"\${r}\"'/' ${f}-rsid
   "
   ) | bash
 done
 awk -vOFS="\t" '{if(NR>1) {split($1,a,"-");$1=a[1]};print}' INF1.merge.replication.txt-rsid | xsel -i
+awk -vOFS='\t' '
+{
+  if (NR>1) {
+    sub(/-rs/," rs",$1)
+    gsub(/:/,"_",$2);$2="chr"$2
+    $3=toupper($3)
+    $4=toupper($4)
+  }
+  if (NR==1 || $9 <= 5e-8) print
+}
+' INF1.merge.replication.txt-rsid | \
+cut -f10,11 --complement > INF1.cvd1.replication
+
+(
+  head -1 INF1.cvd1.replication
+  sed '1d' INF1.cvd1.replication | \
+  sort -k1,1 -k2,2
+) > INF1.cvd1.txt
+rm INF1.cvd1.replication
+
 for p in 5e-8 1e-5 5e-2
 do
   echo ${p}
   cut -f9 ${INF}/cvd1/INF1.merge.replication.txt-rsid | awk -v p=${p} '$1<p{print $1}' | wc -l
 done
 cd -
-
-# write.table(gap::inf1[c("prot","target.short")],file="cvd1/INF1.prot",quote=FALSE,row.names=FALSE,col.names=FALSE)
 
 R --no-save -q <<END
   library(dplyr)
