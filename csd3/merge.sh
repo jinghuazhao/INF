@@ -337,75 +337,6 @@ R --no-save -q <<END
   write.table(cbind(snpid,sentinels),file="SomaLogic.sentinels",quote=FALSE,row.names=FALSE)
 END
 
-# --- protein overlap
-# Somalogic proteins with sentinels (1469) - NOTE P29460,Q9NPF7 in SomaLogic
-sed '1d' SomaLogic.sentinels | awk 'a[$2]++==0'| wc -l
-cut -f2 work/inf1.tmp | grep -v P23560 > work/INF1.uniprot
-
-# number of proteins with sentinels in both Olink and SomaLogic (28)
-cut -f2 work/INF1.merge.prot | grep -f - SomaLogic.sentinels | cut -d' ' -f2 | sort | uniq | wc -l
-cut -d' ' -f2 SomaLogic.sentinels | sed 's/P29460,Q9NPF7/P29460/' | grep -f - work/INF1.merge.prot | wc -l
-
-# --- signal overlap
-# all SomaLogic signals in Olink (51)
-join -j2 <(sort -k2,2 work/inf1.tmp | grep -v P23560) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2) | wc -l
-sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2 | grep -f work/INF1.uniprot - | wc -l
-
-# all SomaLogic signals from overlapping proteins (45)
-sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2 | grep -f work/INF1.merge.uniprot - | wc -l
-join -j2 <(sort -k2,2 work/INF1.merge.prot) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2) > SomaLogic.INF1.all
-(
-cut -d' ' -f1-3,5,7,8 SomaLogic.INF1.all | \
-parallel -C' ' '
-  zgrep -w {3} METAL/{2}-1.tbl.gz
-  gunzip -c METAL/{2}-1.tbl.gz | \
-  awk -vchr={4} -vstart={5} -vend={6} "NR==1||(\$1==chr&&\$2>=start&&\$2<=end&&\$12<-9.30103)" | \
-  cut -f1-5,10-12 | \
-  gzip -f > INF1.SomaLogic.{1}-{2}-{3}.gz
-  export lines=$(gunzip -c INF1.SomaLogic.{1}-{2}-{3}.gz | wc -l | cut -d" " -f1)
-  if [ ${lines} -eq 1 ]; then rm INF1.SomaLogic.{1}-{2}-{3}.gz; fi
-'
-) > INF1.SomaLogic.all
-
-# which are also genomewide significant (32)
-awk '$12<-9.30103' INF1.SomaLogic.all | wc -l
-
-# identical signals (10)
-cat SomaLogic.INF1.all | \
-parallel -C' ' 'awk -v prot={2} -v MarkerName={3} "\$5==prot && \$6==MarkerName" work/INF1.merge'
-join <(awk '{print $2"-"$3,$0}' SomaLogic.INF1.all | sort -k1,1) <(awk '{print $5"-"$6,$0}' work/INF1.merge | sort -k1,1)
-
-# Olink overlapping proteins
-cut -d' ' -f2 SomaLogic.sentinels | sed 's/P29460,Q9NPF7/P29460/' | grep -f - work/INF1.merge.prot | \
-cut -f1 | grep -f - work/INF1.merge | \
-cut -f5 | sort | uniq | wc -l
-
-# --- SomaLogic --> Olink lookup --- NOTE these were not necessary Olink sentinels
-# Similar to ST6 of the SomaLogic paper and pQTLtools/inst/scripts/STs.R
-# from the replicates how many were from INF1 (41)
-(
-cat SomaLogic.id3 | \
-parallel -C' ' '
-  zgrep -w {1} METAL/{2}-1.tbl.gz
-'
-) > SomaLogic.INF1
-# how many among INF1 variants were genomewide significant (28)
-wc -l SomaLogic.INF1
-awk '$12<-9.30103' SomaLogic.INF1 | wc -l
-
-(
-cat SomaLogic.id3 | \
-parallel -C' ' '
-  zgrep -w {1} METAL/{2}-1.tbl.gz | \
-  awk -v prot={2} -v uniprot={3} "{print prot,uniprot,\$0}"
-'
-) | \
-sort -k5,5 | \
-join -a1 -15 -e "NA" - work/INTERVAL.rsid > SomaLogic.INF1-rsid
-awk '$14<-9.30103 {print $2, $21}' SomaLogic.INF1-rsid
-
-rm SomaLogic.id3 SomaLogic.INF1 INF1.SomaLogic*gz SomaLogic.INF1.all  SomaLogic.INF1-rsid  SomaLogic.sentinels INF1.SomaLogic.all
-
 # REACTOME
 cut -d, -f10,14 work/INF1.merge.cis.vs.trans | \
 sed '1d' | \
@@ -417,3 +348,4 @@ xsel -i
 
 # trans pQTL hotspots
 cut -f1,2,21 work/INF1.METAL|sed '1d' | uniq -c -d
+
