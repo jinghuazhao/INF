@@ -1,4 +1,4 @@
-# Olink/SomaLogic overlap
+# Olink/Somascan overlap
 
 options(width=200)
 HOME <- Sys.getenv("HOME")
@@ -9,45 +9,75 @@ library(VennDiagram)
 library(dplyr)
 
 # panels
-SomaLogic <- setdiff(with(SomaLogic160410,UniProt),"P23560")
+# 1.
+Somascan <- with(SomaLogic160410,unique(UniProt))
 Olink <- setdiff(with(inf1,uniprot),"P23560")
-pdf("SomaLogic-Olink.pdf")
-panel <- venn.diagram(list(SomaLogic=SomaLogic, Olnk=Olink),filename=NULL,force.unique=FALSE,height=8,width=8,units="in")
-grid.newpage()
-grid.draw(panel)
-
-# pQTLs
-source.vs.INF1 <- function(source,group)
-{
-  dlist <- list(SomaLogic=source[["UniProt"]], Olink=INF1[["uniprot"]])
-  calc.overlap <- calculate.overlap(dlist)
-  a1_a2_a3 <- unlist(lapply(calc.overlap,length))
-  cat(c(a1_a2_a3[1]-a1_a2_a3[3],a1_a2_a3[3],a1_a2_a3[2]-a1_a2_a3[3]),sep="\t","\n")
-  pqtl <- venn.diagram(dlist,filename=NULL,force.unique=FALSE,height=8,width=8,units="in")
-  grid.newpage()
-  grid.draw(pqtl)
-}
-overlap <- intersect(SomaLogic,Olink)
+overlap <- intersect(Somascan,Olink)
 INF1_metal <- read.delim(file.path(INF,"work","INF1.METAL"))
 INF1 <- INF1_metal %>% filter(uniprot %in% overlap)
-box <- read.delim(file.path(HOME,"SomaLogic","doc","INTERVAL-box.tsv")) %>% filter(UniProt %in% overlap)
-source.vs.INF1(box,"box")
-ps <- read.delim(file.path(INF,"ps","pQTL.Sun-B_pQTL_EUR_2017.tsv")) %>% filter(UniProt %in% overlap)
-source.vs.INF1(ps,"ps")
+pdf("Somascan-Olink.pdf")
+panel <- venn.diagram(list(Somascan=Somascan, Olink=Olink),
+                      filename=NULL,force.unique=FALSE,height=8,width=8,
+                      main.cex=3,sub.cex=3,cat.cex=3,cat.pos = c(-20, 0),cex=3,units="in")
+grid.newpage()
+grid.draw(panel)
+grid.text("Somascan-Olink overlap according to unique uniprot IDs")
+# 2.
+Somascan_prot <- unique(replace(st4$UniProt,st4$UniProt=="P29460,Q9NPF7","P29460"))
+INF1_prot <- read.table(file.path(INF,"work","INF1.merge.prot"),col.names=c("prot","uniprot"))
+plist <- list(Somascan_prot,INF1_prot$uniprot)
+calc.overlap <- calculate.overlap(plist)
+a1_a2_a3 <- unlist(lapply(calc.overlap,length))
+a1_a2_a3
+cat(c(a1_a2_a3[1]-a1_a2_a3[3],a1_a2_a3[3],a1_a2_a3[2]-a1_a2_a3[3]),sep="\t");cat("\n")
+grid.newpage()
+venn.plot <- draw.pairwise.venn(a1_a2_a3[1],a1_a2_a3[2],a1_a2_a3[3],
+             category = c("Somascan", "Olink"),
+             fill = c("blue", "red"),
+             lty = "blank",
+             cex = 3,
+             cat.cex = 3,
+             cat.pos = c(-20, 0)
+           );
+grid.draw(venn.plot);
+grid.text("ST4 proteins regardless overlap")
+# 3.
 ST4 <- st4 %>% select(Locus.ID,SOMAmer.ID,Target,UniProt,"Sentinel.variant*",Chr,Pos,"cis/.trans") %>%
        mutate(UniProt=if_else(UniProt=="P29460,Q9NPF7","P29460",UniProt)) %>%
        filter(UniProt %in% overlap) %>%
        rename(cis_trans="cis/.trans",rsid="Sentinel.variant*")
-source.vs.INF1(ST4,"ST4")
-## ST4
-UniProts <- unique(ST4$UniProt)
-uniprots <- unique(INF1$uniprot)
-both <- intersect(ST4$UniProt,INF1$uniprot)
-UniProt_uniprot <- list(SomaLogic=ST4[["UniProt"]],Olink=INF1[["uniprot"]])
-ST4_INF1_prot <- venn.diagram(UniProt_uniprot,filename=NULL,fill=c("blue","red"),height=6,width=6,units="in")
+both <- intersect(ST4[["UniProt"]],INF1[["uniprot"]])
+UniProt_uniprot <- list(Somascan=ST4[["UniProt"]],Olink=INF1[["uniprot"]])
+ST4_INF1_prot <- venn.diagram(UniProt_uniprot,filename=NULL,force.unique=TRUE,
+                              cat.cex=3.5,cat.pos=c(-20,0),cex=3.5,fill=c("blue","red"),height=6,width=6,units="in")
 grid.newpage()
 grid.draw(ST4_INF1_prot)
+grid.text("ST4 Proteins")
 
+# pQTLs
+source.vs.INF1 <- function(source,group)
+{
+  dlist <- list(Somascan=source[["UniProt"]], Olink=INF1[["uniprot"]])
+  calc.overlap <- calculate.overlap(dlist)
+  a1_a2_a3 <- unlist(lapply(calc.overlap,length))
+  cat(c(a1_a2_a3[1]-a1_a2_a3[3],a1_a2_a3[3],a1_a2_a3[2]-a1_a2_a3[3]),sep="\t","\n")
+  pqtl <- venn.diagram(dlist,filename=NULL,
+                       cat.cex=3,cat.pos=c(-20,0),cex=3,force.unique=FALSE,height=8,width=8,units="in")
+  grid.newpage()
+  grid.draw(pqtl)
+}
+box <- read.delim(file.path(HOME,"SomaLogic","doc","INTERVAL-box.tsv")) %>% filter(UniProt %in% overlap)
+# 4.
+source.vs.INF1(box,"box")
+grid.text("pQTLs from box")
+ps <- read.delim(file.path(INF,"ps","pQTL.Sun-B_pQTL_EUR_2017.tsv")) %>% filter(UniProt %in% overlap)
+# 5.
+source.vs.INF1(ps,"ps")
+grid.text("pQTLs from PhenoScanner")
+# 6.
+source.vs.INF1(ST4,"ST4")
+grid.text("pQTLs from ST4")
+## ST4
 ### Total
 OnlyUniProts <- setdiff(with(ST4,UniProt),both)
 Onlyuniprots <- setdiff(with(INF1,uniprot),both)
@@ -93,82 +123,38 @@ vd <- function(dlist,diagram=FALSE)
 {
   calc.overlap <- calculate.overlap(dlist)
   a1_a2_a3 <- unlist(lapply(calc.overlap,length))
-  cat(c(a1_a2_a3[1]-a1_a2_a3[3],a1_a2_a3[3],a1_a2_a3[2]-a1_a2_a3[3]),sep="\t","\n")
+  cat(c(a1_a2_a3[1]-a1_a2_a3[3],a1_a2_a3[3],a1_a2_a3[2]-a1_a2_a3[3]),sep="\t");cat("\n")
   if (diagram)
   {
-    vd <- venn.diagram(dlist,category=c("SomaLogic","Olink"),force.unique=FALSE,height=8,width=8,units="in",filename=NULL)
+    vd <- venn.diagram(dlist,category=c("Somascan","Olink"),
+                       filename=NULL, force.unique=FALSE,height=8,width=8,units="in",main.cex=2,sub.cex=2,cat.cex=2,cat.pos = c(-20, 0),cex=2)
     grid.newpage()
     grid.draw(vd)
   }
 }
 
-vd(CC, diagram=TRUE)
-vd(TT, diagram=TRUE)
+# 7.
+vd(CC, diagram=TRUE);grid.text("cis pQTLs from ST4")
+# 8.
+vd(TT, diagram=TRUE);grid.text("trans pQTLs from ST4")
 vd(CT)
 vd(TC)
-
-#
-# Name	SL	both	Olink
-# proteins
-# Panel	3523	77	14
-# ST4	5	28	31
-# pQTLs
-# Box	48	54	102
-# PS	312	23	133
-# ST4	23	28	128
-# ST4/INF1
-# CC	5	17	7
-# TT	11	12	47
-# CT	0	0	10
-# TC	3	0	7
-#
-# coloc???
-# All proteins regardless overlap
-INF1_prot <- read.table(file.path(INF,"work","INF1.merge.prot"),col.names=c("prot","uniprot"))
-SomaLogic_prot <- unique(replace(st4$UniProt,st4$UniProt=="P29460,Q9NPF7","P29460"))
-plist <- list(SomaLogic_prot,INF1_prot$uniprot)
-ov <- VennDiagram::calculate.overlap(plist)
-calc.overlap <- calculate.overlap(plist)
-a1_a2_a3 <- unlist(lapply(calc.overlap,length))
-a1_a2_a3
-cat(c(a1_a2_a3[1]-a1_a2_a3[3],a1_a2_a3[3],a1_a2_a3[2]-a1_a2_a3[3]),sep="\t","\n")
-grid.newpage()
-venn.plot <- draw.pairwise.venn(a1_a2_a3[1],a1_a2_a3[2],a1_a2_a3[3],
-             category = c("SomaLogic", "Olink"),
-             fill = c("blue", "red"),
-             lty = "blank",
-             cex = 2,
-             cat.cex = 2,
-             cat.pos = c(200, 50),
-             cat.dist = 0.09,
-             cat.just = list(c(-1, -1), c(1, 1)),
-             ext.pos = 30,
-             ext.dist = -0.05,
-             ext.length = 0.85,
-             ext.line.lwd = 2,
-             ext.line.lty = "dashed"
-           );
-grid.draw(venn.plot);
-## ST6
+# 9.
 grid.newpage()
 venn.plot <- draw.pairwise.venn(45, 83, 10,
-             category = c("SomaLogic", "Olink"),
+             category = c("Somascan", "Olink"),
              fill = c("blue", "red"),
              lty = "blank",
-             cex = 2,
-             cat.cex = 2,
-             cat.pos = c(30, 10),
-             cat.dist = 0.09,
-             cat.just = list(c(-1, -1), c(1, 1)),
-             ext.pos = 30,
-             ext.dist = -0.05,
-             ext.length = 0.85,
-             ext.line.lwd = 2,
-             ext.line.lty = "dashed"
+             cex = 3,
+             cat.cex = 3,
+             cat.pos = c(0, -20)
            );
 grid.draw(venn.plot);
+grid.text("ST4 pQTLs")
+
+## ST6
 st6[c(39,53),"UniProt"] <- "P29460"
-st6ov <- subset(st6,UniProt%in%ov$a3)
+st6ov <- subset(st6,UniProt%in%calc.overlap$a3)
 # significant on INTERVAL (27)
 dim(subset(st6ov,as.numeric(p.1)<1e-11))
 z <- with(st6ov,{
@@ -182,9 +168,32 @@ write.table(merge(inf1,z,by.x="uniprot",by.y="UniProt")[c("snpid","prot","unipro
             file="SomaLogic.id3",col.names=FALSE,row.names=FALSE,quote=FALSE)
 dev.off()
 
+#
+# Name	SS	both	OL
+# Proteins
+# Panel	3523	77	14
+# ST4
+# All 	1441    28      42
+# +pQTL	5	28	31
+# pQTLs
+# Box	48	54	102
+# PS	312	23	133
+# ST4	23	28	128
+# ST4/INF1
+# CC	5	17	7
+# TT	11	12	47
+# CT	0	0	10
+# TC	3	0	7
+#
+
+# INTERVAL Somascan data
 # ~/rds/post_qc_data/interval/phenotype/somalogic_proteomics
 
-cross_plat <- "https://www.biorxiv.org/content/biorxiv/early/2021/03/19/2021.03.18.435919/DC2/embed/media-2.xlsx?download=true"
-st1 <- openxlsx::read.xlsx(cross_plat, sheet=2, startRow=2, colNames=TRUE)
-somalogic_olink <- subset(st1,Olink.panel=="Olink INFLAMMATION(v.3012)")
-st2 <- openxlsx::read.xlsx(cross_plat, sheet=3, startRow=3, colNames=TRUE)
+fenland <- function()
+{
+# Fenland data
+  cross_plat <- "https://www.biorxiv.org/content/biorxiv/early/2021/03/19/2021.03.18.435919/DC2/embed/media-2.xlsx?download=true"
+  st1 <- openxlsx::read.xlsx(cross_plat, sheet=2, startRow=2, colNames=TRUE)
+  somascan_olink <- subset(st1,Olink.panel=="Olink INFLAMMATION(v.3012)")
+  st2 <- openxlsx::read.xlsx(cross_plat, sheet=3, startRow=3, colNames=TRUE)
+}
