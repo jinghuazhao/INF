@@ -192,22 +192,6 @@ awk -v OFS="\t" '{
 };1' > work/INF1.merge.ukbsnp
 
 R --no-save -q <<END
-  library(gap)
-  gz <- gzfile("METAL/IL.17C-1.tbl.gz")
-  IL.17C <- within(read.delim(gz,as.is=TRUE), {Z <- Effect/StdErr})
-  png("IL.17C.png", res=300, units="in", width=9, height=6)
-  par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
-  mhtplot.trunc(IL.17C, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
-                suggestiveline=FALSE, genomewideline=-log10(5e-10),
-                cex.mtext=0.6, cex.text=0.7,
-                mtext.line=4, y.brk1=10, y.brk2=12, delta=0.04, cex.axis=0.6, cex.y=0.6, cex=0.5,
-                y.ax.space=20,
-                col = c("blue4", "skyblue")
-  )
-  dev.off()
-END
-
-R --no-save -q <<END
   library(dplyr)
   INF <- Sys.getenv("INF")
   gz <- gzfile(file.path(INF,"METAL","IL.12B-1.tbl.gz"))
@@ -329,14 +313,6 @@ parallel -j5 -C' ' '
   gzip -f > work/INF1.merge.{2}-{1}-{3}.gz
 '
 
-# regions according to SNPID which should have been bedtools merge.
-R --no-save -q <<END
-  library(pQTLtools)
-  sentinels <- st4[,5:12]
-  snpid <- gap::chr_pos_a1_a2(st4[,7],st4[,8],st4[,11],st4[,12])
-  write.table(cbind(snpid,sentinels),file="SomaLogic.sentinels",quote=FALSE,row.names=FALSE)
-END
-
 # REACTOME
 cut -d, -f10,14 work/INF1.merge.cis.vs.trans | \
 sed '1d' | \
@@ -348,4 +324,3 @@ xsel -i
 
 # trans pQTL hotspots
 cut -f1,2,21 work/INF1.METAL|sed '1d' | uniq -c -d
-

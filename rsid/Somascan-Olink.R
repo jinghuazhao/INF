@@ -191,6 +191,14 @@ write.table(merge(inf1,z,by.x="uniprot",by.y="UniProt")[c("snpid","prot","unipro
 # INTERVAL Somascan data
 # ~/rds/post_qc_data/interval/phenotype/somalogic_proteomics
 
+# regions according to SNPID which should have been bedtools merge.
+R --no-save -q <<END
+  library(pQTLtools)
+  sentinels <- st4[,5:12]
+  snpid <- gap::chr_pos_a1_a2(st4[,7],st4[,8],st4[,11],st4[,12])
+  write.table(cbind(snpid,sentinels),file="SomaLogic.sentinels",quote=FALSE,row.names=FALSE)
+END
+
 # --- protein overlap
 # Somalogic proteins with sentinels (1469) - NOTE P29460,Q9NPF7 in SomaLogic
 sed '1d' SomaLogic.sentinels | awk 'a[$2]++==0'| wc -l
