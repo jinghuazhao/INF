@@ -104,6 +104,8 @@ coloc.sb | coloc analysis -- clumsy verion
 coloc.R | coloc analysis via pQTLtools
 efo.R | experimental factor ontology
 eQTL.R | cis-pQTL eQTL lookup (PhenoScanner)
+epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
+epigraphdb-ppi.R | PPI using EpiGraphDB
 fastenloc.sb | fastenloc analysis
 fusion_twas.sb | FUSION TWAS experiment
 garfield.sh | GARFIELD analysis
@@ -119,13 +121,12 @@ HGI.sh | HGI data analysis
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
-epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
-epigraphdb-ppi.R | PPI using EpiGraphDB
 pqtlGWAS.R | pQTL-GWAS lookup
 pQTL.R | pQTL lookup
 pqtlMR.sh | pQTL MR analysis
 rentrez.sh | reuse of rentrez
 rGREAT.R | GREAT analysis
+Somascan-Olink.R | Somascan/Olink overlap
 stringdb.sh | STRINGdb
 tables.R | code to create Excel Tables
 uniprot.R | UniProt IDs to others
