@@ -126,7 +126,7 @@ pQTL.R | pQTL lookup
 pqtlMR.sh | pQTL MR analysis
 rentrez.sh | reuse of rentrez
 rGREAT.R | GREAT analysis
-Somascan-Olink.R | Somascan/Olink overlap
+Somascan-Olink.* | Somascan/Olink overlap
 stringdb.sh | STRINGdb
 tables.R | code to create Excel Tables
 uniprot.R | UniProt IDs to others
