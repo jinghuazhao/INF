@@ -202,20 +202,20 @@ END
 # --- protein overlap
 # Somalogic proteins with sentinels (1469) - NOTE P29460,Q9NPF7 in SomaLogic
 sed '1d' SomaLogic.sentinels | awk 'a[$2]++==0'| wc -l
-cut -f2 work/inf1.tmp | grep -v P23560 > work/INF1.uniprot
+cut -f2 ${INF}/work/inf1.tmp | grep -v P23560 > ${INF}/work/INF1.uniprot
 
 # number of proteins with sentinels in both Olink and SomaLogic (28)
 cut -f2 work/INF1.merge.prot | grep -f - SomaLogic.sentinels | cut -d' ' -f2 | sort | uniq | wc -l
-cut -d' ' -f2 SomaLogic.sentinels | sed 's/P29460,Q9NPF7/P29460/' | grep -f - work/INF1.merge.prot | wc -l
+cut -d' ' -f2 SomaLogic.sentinels | sed 's/P29460,Q9NPF7/P29460/' | grep -f - ${INF}/work/INF1.merge.prot | wc -l
 
 # --- signal overlap
 # all SomaLogic signals in Olink (51)
-join -j2 <(sort -k2,2 work/inf1.tmp | grep -v P23560) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2) | wc -l
-sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2 | grep -f work/INF1.uniprot - | wc -l
+join -j2 <(sort -k2,2 ${INF}/work/inf1.tmp | grep -v P23560) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2) | wc -l
+sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2 | grep -f ${INF}/work/INF1.uniprot - | wc -l
 
 # all SomaLogic signals from overlapping proteins (45)
-sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2 | grep -f work/INF1.merge.uniprot - | wc -l
-join -j2 <(sort -k2,2 work/INF1.merge.prot) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2) > SomaLogic.INF1.all
+sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2 | grep -f ${INF}/work/INF1.merge.uniprot - | wc -l
+join -j2 <(sort -k2,2 ${INF}/work/INF1.merge.prot) <(sed '1d;s/,Q9NPF7//' SomaLogic.sentinels | sort -k2,2) > SomaLogic.INF1.all
 (
 cut -d' ' -f1-3,5,7,8 SomaLogic.INF1.all | \
 parallel -C' ' '
@@ -234,12 +234,12 @@ awk '$12<-9.30103' INF1.SomaLogic.all | wc -l
 
 # identical signals (10)
 cat SomaLogic.INF1.all | \
-parallel -C' ' 'awk -v prot={2} -v MarkerName={3} "\$5==prot && \$6==MarkerName" work/INF1.merge'
-join <(awk '{print $2"-"$3,$0}' SomaLogic.INF1.all | sort -k1,1) <(awk '{print $5"-"$6,$0}' work/INF1.merge | sort -k1,1)
+parallel -C' ' 'awk -v prot={2} -v MarkerName={3} "\$5==prot && \$6==MarkerName" ${INF}/work/INF1.merge'
+join <(awk '{print $2"-"$3,$0}' SomaLogic.INF1.all | sort -k1,1) <(awk '{print $5"-"$6,$0}' ${INF}/work/INF1.merge | sort -k1,1)
 
 # Olink overlapping proteins
-cut -d' ' -f2 SomaLogic.sentinels | sed 's/P29460,Q9NPF7/P29460/' | grep -f - work/INF1.merge.prot | \
-cut -f1 | grep -f - work/INF1.merge | \
+cut -d' ' -f2 SomaLogic.sentinels | sed 's/P29460,Q9NPF7/P29460/' | grep -f - ${INF}/work/INF1.merge.prot | \
+cut -f1 | grep -f - ${INF}/work/INF1.merge | \
 cut -f5 | sort | uniq | wc -l
 
 # --- SomaLogic --> Olink lookup --- NOTE these were not necessary Olink sentinels
@@ -315,7 +315,7 @@ epic_fenland <- function()
     panel <- cbind(SomaLogic160410,prot,id)
     INF <- Sys.getenv("INF")
     sentinels <- read.table(file.path(INF,"epic-fenland","sentinels.txt"),header=TRUE)
-    test <- merge(merge(panel,sentinels,by.x="id",by.y="Somamer"),gap::inf1[c("uniprot","prot","target.short")], by="uniprot")
+    test <- merge(merge(panel,sentinels,by.x="id",by.y="Somamer"),gap.datasets::inf1[c("uniprot","prot","target.short")], by="uniprot")
     subset(test[c("MarkerName","chr.x","chr.y","target.short","prot.y","id","Pvalue")],chr.x==chr.y & Pvalue<5e-8)
   END
 }
