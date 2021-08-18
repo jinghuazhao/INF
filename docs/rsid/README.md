@@ -113,6 +113,7 @@ gdigt.R | GDI and gene-trials
 gsmr.sh | GSMR processing
 GTEx.R | cis-pQTL GTEx eQTL lookup (PhenoScanner)
 GTEx.sh | cis-pQTL GTEx eQTL lookup (GTEx v8)
+GTEx-jma.sh | cis-pQTL from jma as above
 gwasvcf.sh | GWAS to VCF conversion
 gwas2vcf.sb | gwas2vcf + VCF operations
 hyprcoloc.sh | hyprcoloc analysis
