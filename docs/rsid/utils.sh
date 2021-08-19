@@ -112,9 +112,6 @@ sed '1d' work/INF1.merge.cis.vs.trans | \
 cut -d, -f10 | \
 uniq > work/INF1.gene
 
-# phenoscanner -t T -c eQTL -x EUR -p 5e-8 -r 0.8 -i work/INF1.gene -o INF1
-# additionally from pqtlxQTL.R
-
 function ms()
 {
   gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz | \

@@ -111,9 +111,11 @@ fusion_twas.sb | FUSION TWAS experiment
 garfield.sh | GARFIELD analysis
 gdigt.R | GDI and gene-trials
 gsmr.sh | GSMR processing
-GTEx.R | cis-pQTL GTEx eQTL lookup (PhenoScanner)
-GTEx.sh | cis-pQTL GTEx eQTL lookup (GTEx v8)
-GTEx-jma.sh | cis-pQTL from jma as above
+GTEx-ps.sh | cis-pQTL GTEx eQTL lookup with PhenoScanner CLI
+GTEx-ps.R | cis-pQTL GTEx eQTL lookup (PhenoScanner)
+GTEx-ps-jma.R | cis-pQTL from jma as above
+GTEx-cs.sh | cis-pQTL GTEx credible set lookup (GTEx v8)
+GTEx-cs-jma.sh | cis-pQTL from jma as above
 gwasvcf.sh | GWAS to VCF conversion
 gwas2vcf.sb | gwas2vcf + VCF operations
 hyprcoloc.sh | hyprcoloc analysis
