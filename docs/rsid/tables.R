@@ -127,7 +127,7 @@ pqtldisease <- subset(read.sheet("short",1:51,1:220),Keep==1) %>%
 coloc <- merge(read.delim(file.path(INF,"coloc","GTEx-all.tsv")),gap_inf1,by="prot") %>%
          mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
          rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
-cs95 <- read.delim(file.path(INF,"coloc.1M","cis-eQTL_table.tsv"))
+cs95 <- read.delim(file.path(INF,"coloc-jma","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=str_replace(rownames(cs95),"[.]","-"),cs95)
 HOME <- Sys.getenv("HOME")
 load(file.path(HOME,"software-notes","docs","files","pi_database.rda"))
