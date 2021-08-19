@@ -35,7 +35,7 @@ export ext=.v8.EUR.signif_pairs.txt.gz
 export col_gene=1
 export col_variant=2
 export M=1e6
-export nlines=60
+export nlines=100
 parallel -C' ' --env GTEx_v8 --env ext --env col --env M '
     read SNP hgnc ensGene pos chrpos < <(awk -v row={1} "NR==row{print \$4,\$7,\$8,\$13,\$11\"_\"\$13}" ${INF}/coloc-jma/cis-pQTL.dat)
     zgrep ${ensGene} ${GTEx_v8}/{2}${ext} | \
@@ -98,11 +98,11 @@ do
 done
 ls *.ld | xargs -I {} basename {} .ld | parallel -C' ' 'grep {} ${INF}/coloc-jma/{}.ld'
 
-# 95%CS
+# 95%CS -- SNP already in rsid so no need to copy from INTERVAL.rsid
 export DAPG=~/rds/public_databases/GTEx/GTEx_v8_finemapping_DAPG/GTEx_v8_finemapping_DAPG.CS95.txt.gz
 export cs95=${INF}/coloc-jma/cis-eQTL_cs95.tsv
 export cs95tissue=${INF}/coloc-jma/cs95tissue.dat
-echo tissue> ${cs95tissue}
+echo tissue > ${cs95tissue}
 (
   sed '1d' ${INF}/coloc-jma/cis-pQTL.dat | cut -f4,6,8,11,13 | awk '{print $1,$2,$3,$4"_"$5}' | \
   parallel -C' ' --env DAPG --env cs95tissue '
@@ -119,11 +119,11 @@ echo tissue> ${cs95tissue}
       printf \"\n\"
     }"
   '
-) | sort -k1,1 | join -t$'\t' <(cat ${INF}/work/INTERVAL.rsid | tr ' ' '\t') - > ${cs95}
+) > ${cs95}
 R --no-save <<END
   library(dplyr)
   eqtl_file <- Sys.getenv("cs95")
-  eqtls <- read.table(eqtl_file,sep="\t", col.names=c("SNPid","rsid","prot","ensGene","chrpos","GTExSNP","tissue_p")) %>%
+  eqtls <- read.table(eqtl_file,sep="\t", col.names=c("rsid","prot","ensGene","chrpos","GTExSNP","tissue_p")) %>%
            left_join(gap.datasets::inf1[c("prot","target.short")]) %>%
            mutate(rsidProt=paste0(rsid," (",target.short,")"),tissue_p=sub("^ ","",tissue_p)) %>%
            arrange(target.short)
