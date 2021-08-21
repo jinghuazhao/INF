@@ -1,5 +1,9 @@
-export eQTLGen=~/rds/public_databases/eQTLgen
+#!/usr/bin/bash
 
+export eQTLGen=~/rds/public_databases/eQTLGen
+
+function INF1()
+{
 function cistrans_python()
 {
 python3 <<END
@@ -45,3 +49,44 @@ R --no-save <<END
                             height=12, width=12, units="cm", resolution=500,
                             fill=c("yellow","purple"), cat.pos=c(-30,30), rotation.degree = 0)
 END
+}
+
+function jma()
+{
+if [ ! -d ${INF}/eQTLGen ]; then mkdir ${INF}/eQTLGen; fi
+
+module load ceuadmin/stata 
+stata -b do ${INF}/csd3/eQTLGen.do
+
+for cistrans in cis trans
+do
+  export cistrans_rsid=${INF}/eQTLGen/INF1.${cistrans}-rsid
+# cistrans_stata
+  sort -k2,2 ${INF}/eQTLGen/uniprot-rsid-gene | \
+  join -12 - <(sort -k1,1 ${cistrans_rsid}) | \
+  sort -k1,1 | \
+  join -11 -22 - <(cut -d' ' -f2 ${cistrans_rsid} | zgrep -f - -w ${eQTLGen}/${cistrans}.txt.gz | cut -f1,2,5,6,9 | sort -k2,2) | \
+  awk '$3==$7' > ${INF}/eQTLGen/eQTLGen.${cistrans}
+# all from eQTLGen but with LD
+  sort -k3,3 ${INF}/eQTLGen/uniprot-rsid-gene | \
+  join -13 -25 - <(gunzip -c ${eQTLGen}/${cistrans}.txt.gz | cut -f1,2,5,6,9 | sort -k5,5) > ${INF}/eQTLGen/eQTLGen.${cistrans}-all
+done
+
+R --no-save -q <<END
+  ys1 <- c(paste0("Yes-",1:37),paste0("No1-",1:81931))
+  ys2 <- c(paste0("Yes-",1:37),paste0("No2-",1:62))
+  ys <- list(ys1,ys2)
+  names(ys) <- c("eQTL","pQTL")
+  INF <- Sys.getenv("INF")
+  VennDiagram::venn.diagram(x = ys, filename=file.path(INF,"eQTLGen","eQTLGen-cis.png"), imagetype="png", output=TRUE,
+                            height=12, width=12, units="cm", resolution=500,
+                            fill=c("yellow","purple"), cat.pos=c(-30,30), rotation.degree = 0)
+  ys1 <- c(paste0("Yes-",1:14),paste0("No1-",1:1462))
+  ys2 <- c(paste0("Yes-",1:14),paste0("No2-",1:114))
+  ys <- list(ys1,ys2)
+  names(ys) <- c("eQTL","pQTL")
+  VennDiagram::venn.diagram(x = ys, filename=file.path(INF,"eQTLGen","eQTLGen-trans.png"), imagetype="png", output=TRUE,
+                            height=12, width=12, units="cm", resolution=500,
+                            fill=c("yellow","purple"), cat.pos=c(-30,30), rotation.degree = 0)
+END
+}
