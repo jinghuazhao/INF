@@ -2,13 +2,13 @@
 
 **NOTE**: now merge.sh and INTERVAL-rsid.ini works directly to the original INTERVAL bgen files. The alphabetical list is as follows.
 
-## Annotation
-
-[annotate.sh](annotate.sh) involves ANNOVAR, PolyPhen 2, VEP and some R packages.
-
 ## 3d scatter plot
 
 Furnished with [js.R](js.R), the JSON output could be used as data in the Supplementary Figure 1 of Sun et al. (2018).
+
+## Annotation
+
+[annotate.sh](annotate.sh) involves ANNOVAR, PolyPhen 2, VEP and some R packages.
 
 ## Known variants
 
