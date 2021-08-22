@@ -1,47 +1,5 @@
 # Notes
 
-## UniProt IDs
-
-The list of proteins on inflammation is within one of the [Olink](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](../doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [Olink.R](../doc/Olink.R), which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.
-
-BDNF has recently been removed from the assay and replaced with CD8A, [https://www.olink.com/bdnf-info/](https://www.olink.com/bdnf-info/), and there are also changes on TNF and IFN.gamma, [https://www.olink.com/inflammation-upgrade/](https://www.olink.com/inflammation-upgrade/).
-
-A [UniProt](https://www.uniprot.org/) ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While [inf1.csv](../doc/inf1.csv) 
-edits Q4ACW9, [inf2.csv](../doc/inf2.csv) is inline with UCSC with respect to P12034 and P30203.
-
-The use of uniprot IDs is noted in two aspects,
-
-1. The protein list in [inf1.csv](../doc/inf1.csv) notes both O43508 and Q4ACW9.
-
-2. Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
-point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.tsv](../doc/hgTables.tsv) is based on UCSC, checked over
-UniProt IDs as follows,
-```bash
-grep inf1 doc/olink.prot.list.txt | \
-sed 's/inf1_//g;s/___/\t/g' > inf1.list
-join -t$'\t' -12 -24 \
-     <(sort -k2,2 inf1.list) \
-     <(awk '{split($4,f,"-"); $4=f[1]; if(!index($1,"_")) print}' OFS='\t' doc/hgTables.tsv | sort -k4,4) \
-     > 12
-# 90 lines
-wc -l 12
-# Q8NF90 (FGF.5), Q8WWJ7 (CD6) are missing
-join -v2 -22 12 <(sort -k2,2 inf1.list)
-rm 12
-```
-Likewise, [olink.inf.panel.annot.tsv](../doc/olink.inf.panel.annot.tsv) from [olink.annotation.R](../doc/olink.annotation.R) also has the following two entries
-
-"target" | "target.short" | "uniprot" | "panel" | "prot.on.multiple.panel" | "panels.with.prot" | "hgnc_symbol" | ...
----------|----------------|-----------|---------|--------------------------|--------------------|---------------|----
-"Fibroblast growth factor 5 (FGF-5)" | "FGF-5" | "Q8NF90" | "inf" | FALSE | NA | NA
-"T-cell surface glycoprotein CD6 isoform (CD6)" | "CD6" | "Q8WWJ7" | "inf" | FALSE | NA | NA
-
-whose hgnc_symbol can be amended.
-
-<img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
-
-The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
-
 ## Joint/conditional analysis and fine-mapping
 
 The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the dilemma that the reference data, possibly like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsids is undesirable so SNPID, i.e., chr:pos_A1_A2, (A1<=A2) is necessary.
@@ -104,6 +62,7 @@ coloc.sb | coloc analysis -- clumsy verion
 coloc.R | coloc analysis via pQTLtools
 efo.R | experimental factor ontology
 eQTL.R | cis-pQTL eQTL lookup (PhenoScanner)
+eQTLGen.* | eQTLGen lookup
 epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
 epigraphdb-ppi.R | PPI using EpiGraphDB
 fastenloc.sb | fastenloc analysis
@@ -182,4 +141,46 @@ $z_{PWAS} = \frac{w^T_{P}z_P}{\sqrt{w^T_{P}Vw_{P}}}$
 
 where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively.
 
-*Date last changed:* **24/7/2021**
+## UniProt IDs
+
+The list of proteins on inflammation is within one of the [Olink](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](../doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [Olink.R](../doc/Olink.R), which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.
+
+BDNF has recently been removed from the assay and replaced with CD8A, [https://www.olink.com/bdnf-info/](https://www.olink.com/bdnf-info/), and there are also changes on TNF and IFN.gamma, [https://www.olink.com/inflammation-upgrade/](https://www.olink.com/inflammation-upgrade/).
+
+A [UniProt](https://www.uniprot.org/) ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While [inf1.csv](../doc/inf1.csv) 
+edits Q4ACW9, [inf2.csv](../doc/inf2.csv) is inline with UCSC with respect to P12034 and P30203.
+
+The use of uniprot IDs is noted in two aspects,
+
+1. The protein list in [inf1.csv](../doc/inf1.csv) notes both O43508 and Q4ACW9.
+
+2. Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
+point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). [hgTables.tsv](../doc/hgTables.tsv) is based on UCSC, checked over
+UniProt IDs as follows,
+```bash
+grep inf1 doc/olink.prot.list.txt | \
+sed 's/inf1_//g;s/___/\t/g' > inf1.list
+join -t$'\t' -12 -24 \
+     <(sort -k2,2 inf1.list) \
+     <(awk '{split($4,f,"-"); $4=f[1]; if(!index($1,"_")) print}' OFS='\t' doc/hgTables.tsv | sort -k4,4) \
+     > 12
+# 90 lines
+wc -l 12
+# Q8NF90 (FGF.5), Q8WWJ7 (CD6) are missing
+join -v2 -22 12 <(sort -k2,2 inf1.list)
+rm 12
+```
+Likewise, [olink.inf.panel.annot.tsv](../doc/olink.inf.panel.annot.tsv) from [olink.annotation.R](../doc/olink.annotation.R) also has the following two entries
+
+"target" | "target.short" | "uniprot" | "panel" | "prot.on.multiple.panel" | "panels.with.prot" | "hgnc_symbol" | ...
+---------|----------------|-----------|---------|--------------------------|--------------------|---------------|----
+"Fibroblast growth factor 5 (FGF-5)" | "FGF-5" | "Q8NF90" | "inf" | FALSE | NA | NA
+"T-cell surface glycoprotein CD6 isoform (CD6)" | "CD6" | "Q8WWJ7" | "inf" | FALSE | NA | NA
+
+whose hgnc_symbol can be amended.
+
+<img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
+
+The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
+
+*Date last changed:* **22/8/2021**

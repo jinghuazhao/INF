@@ -1,53 +1,20 @@
 # CSD3
 
-**NOTE**: now merge.sh and INTERVAL-rsid.ini works directly to the original INTERVAL bgen files.
+**NOTE**: now merge.sh and INTERVAL-rsid.ini works directly to the original INTERVAL bgen files. The alphabetical list is as follows.
 
-## QQ and Manhattan plots
+## Annotation
 
-The version for meta-analysis was part of `analysis.sh` at tryggve/. [qqman.sh](qqman.sh) calls turboqq and turboman by Bram Prins.
-
-## Sentinel identification
-
-This is now furnished with [merge.sh](merge.sh).
-
-Clumping by fixed distance by `sentinels_nold.sh` is superseded with its failure to handle long LD regions.
-
-There are scripts for heritability analysis and proportion of variance explained.
+[annotate.sh](annotate.sh) involves ANNOVAR, PolyPhen 2, VEP and some R packages.
 
 ## 3d scatter plot
 
 Furnished with [js.R](js.R), the JSON output could be used as data in the Supplementary Figure 1 of Sun et al. (2018).
 
-## PGS
+## Known variants
 
-These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).
+[lookup.sh](lookup.sh), which uses PhenoScanner output from [pqtl.R](pqtl.R), can be used to check if pQTLs were known.
 
-## Trans-pQTL hotspots and proteins as polygenic targets
-
-This is illustrated with circos plots and by default this works on `work/INF1.merge.cis.vs.trans` and requires [glist-hg19](glist-hg19).
-Because circos plots are gene-centric, in both cases, the protein-coding gene is handled in mind.
-
-Try
-```bash
-./hotspot.sh chr1:159175354_A_G
-./hotspot.sh chr12:111884608_C_T
-```
-giving results linking *ACKR1* and *SH2B3*, respectively, while
-```bash
-./polygene.sh IL12B
-./polygene.sh TNFSF10
-```
-linking IL.12B and TRAIL, respectively.
-
-To generate all possible plots, wo do
-```bash
-for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; hotspot.sh $h; done
-for g in $(cat work/INF1.merge.gene); do echo $g; polygene.sh $g; done
-```
-
-## Annotation
-
-[annotate.sh](annotate.sh) involves ANNOVAR, PolyPhen 2, VEP and some R packages.
+File [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.
 
 ## LD reference panels
 
@@ -107,14 +74,47 @@ The environmental variable `LDREF` provides an option to use either INTERVAL or 
 
 This is down with [qc.sh](qc.sh).
 
+## PGS
+
+These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).
+
+## Trans-pQTL hotspots and proteins as polygenic targets
+
+This is illustrated with circos plots and by default this works on `work/INF1.merge.cis.vs.trans` and requires [glist-hg19](glist-hg19).
+Because circos plots are gene-centric, in both cases, the protein-coding gene is handled in mind.
+
+Try
+```bash
+./hotspot.sh chr1:159175354_A_G
+./hotspot.sh chr12:111884608_C_T
+```
+giving results linking *ACKR1* and *SH2B3*, respectively, while
+```bash
+./polygene.sh IL12B
+./polygene.sh TNFSF10
+```
+linking IL.12B and TRAIL, respectively.
+
+To generate all possible plots, wo do
+```bash
+for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; hotspot.sh $h; done
+for g in $(cat work/INF1.merge.gene); do echo $g; polygene.sh $g; done
+```
+
 ## PhenoScanner
 
 This is furnished with [ps.sh](ps.sh).
 
-## Known variants
+## QQ and Manhattan plots
 
-[lookup.sh](lookup.sh), which uses PhenoScanner output from [pqtl.R](pqtl.R), can be used to check if pQTLs were known.
+The version for meta-analysis was part of `analysis.sh` at tryggve/. [qqman.sh](qqman.sh) calls turboqq and turboman by Bram Prins.
 
-File [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.
+## Sentinel identification
 
-*Date laste changed:* **17/6/2021**
+This is now furnished with [merge.sh](merge.sh).
+
+Clumping by fixed distance by `sentinels_nold.sh` is superseded with its failure to handle long LD regions.
+
+There are scripts for heritability analysis and proportion of variance explained.
+
+*Date laste changed:* **22/8/2021**
