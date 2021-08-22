@@ -78,6 +78,22 @@ This is down with [qc.sh](qc.sh).
 
 These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).
 
+## PhenoScanner
+
+This is furnished with [ps.sh](ps.sh).
+
+## QQ and Manhattan plots
+
+The version for meta-analysis was part of `analysis.sh` at tryggve/. [qqman.sh](qqman.sh) calls turboqq and turboman by Bram Prins.
+
+## Sentinel identification
+
+This is now furnished with [merge.sh](merge.sh).
+
+Clumping by fixed distance by `sentinels_nold.sh` is superseded with its failure to handle long LD regions.
+
+There are scripts for heritability analysis and proportion of variance explained.
+
 ## Trans-pQTL hotspots and proteins as polygenic targets
 
 This is illustrated with circos plots and by default this works on `work/INF1.merge.cis.vs.trans` and requires [glist-hg19](glist-hg19).
@@ -100,21 +116,5 @@ To generate all possible plots, wo do
 for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; hotspot.sh $h; done
 for g in $(cat work/INF1.merge.gene); do echo $g; polygene.sh $g; done
 ```
-
-## PhenoScanner
-
-This is furnished with [ps.sh](ps.sh).
-
-## QQ and Manhattan plots
-
-The version for meta-analysis was part of `analysis.sh` at tryggve/. [qqman.sh](qqman.sh) calls turboqq and turboman by Bram Prins.
-
-## Sentinel identification
-
-This is now furnished with [merge.sh](merge.sh).
-
-Clumping by fixed distance by `sentinels_nold.sh` is superseded with its failure to handle long LD regions.
-
-There are scripts for heritability analysis and proportion of variance explained.
 
 *Date laste changed:* **22/8/2021**
