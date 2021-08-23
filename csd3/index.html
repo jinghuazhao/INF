@@ -139,40 +139,40 @@
 </div></div>
 <div class="col-md-9" role="main">
 <h1 id="csd3">CSD3</h1>
-<p><strong>NOTE</strong>: now merge.sh and INTERVAL-fm.ini works directly to the original INTERVAL bgen files. The alphabetical list is as follows.</p>
+<p><strong>NOTE</strong>: <a href="merge.sh">merge.sh</a> and <a href="INTERVAL-fm.ini">INTERVAL-fm.ini</a> now work directly with the original INTERVAL bgen files. The alphabetical list is as follows.</p>
 <h2 id="3d-scatter-plot">3d scatter plot</h2>
 <p>Furnished with <a href="js.R">js.R</a>, the JSON output could be used as data in the Supplementary Figure 1 of Sun et al. (2018).</p>
 <h2 id="annotation">Annotation</h2>
-<p><a href="annotate.sh">annotate.sh</a> involves ANNOVAR, PolyPhen 2, VEP and some R packages.</p>
+<p><a href="annotate.sh">annotate.sh</a> involves <strong>ANNOVAR</strong>, <strong>PolyPhen 2</strong>, <strong>VEP</strong> and some R packages.</p>
 <h2 id="known-variants">Known variants</h2>
 <p><a href="lookup.sh">lookup.sh</a>, which uses PhenoScanner output from <a href="pqtl.R">pqtl.R</a>, can be used to check if pQTLs were known.</p>
 <p>File <a href="cvd1.sh">cvd1.sh</a> gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.</p>
 <h2 id="ld-reference-panels">LD reference panels</h2>
-<p>The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to generate <code>binary_ped</code> with SNPIDs (bgen/*map)
-* by qctool -- it also creates <code>bgen</code> with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
-* by PLINK -- it has a <code>_snpid</code> tag.</p>
+<p>The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to generate <code>binary_ped</code> with SNPIDs (bgen/<em>map)
+* by </em><em>qctool</em><em> -- it also creates <code>bgen</code> with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
+* by </em><em>PLINK</em>* -- it has a <code>_snpid</code> tag.</p>
 <p>In both cases duplicates (bgen/*rmdup.list) are excluded.</p>
 <ol>
-<li>INTERVAL.sh (INTERVAL.sb). The utility <code>INTERVAL.sh</code> extracts data from  </li>
+<li>The utility <a href="INTERVAL.sh">INTERVAL.sh</a> extracts data from  </li>
 </ol>
 <pre><code>/DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 /DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_imputed_info_0.4_phwe_1e-4_filtered/per_chr
 </code></pre>
 <p>on Cardio into region-specific data in <code>bgen</code> format according to work/INF1.merge.</p>
 <ol>
-<li>ukb (ukb.sh). The utility <code>ukb.sh</code> extracts data from ukb_imp_chr[x-xx]_v3.bgen as in</li>
+<li>The utility <a href="ukb.sh">ukb.sh</a> extracts data from ukb_imp_chr[x-xx]_v3.bgen as in</li>
 </ol>
 <pre><code>/DO-NOT-MODIFY-SCRATCH/uk_biobank/500k/imputed_v3
 /DO-NOT-MODIFY-SCRATCH/curated_genetic_data/uk_biobank/reference_files/full_release
 </code></pre>
 <p>on Cardio into region-specific data in <code>bgen</code> format (ukb/bgen) according to work/INF1.merge.</p>
 <h2 id="snpid-rsid-mappings-conditional-analysis-and-finemapping">SNPID-rsid mappings, conditional analysis and finemapping</h2>
-<p>This is furnished with <code>snpid_rsid.sb</code>, whose results will be attached to GCTA/finemap results via <code>finemap.R</code>, <code>slct.R</code> and <code>jam.R</code>.
-After snpid-rsid.sb is called, it is ready to use script <code>slct.sb</code> followed by <code>slct.sh</code>. Optionally, the results are fed into <code>finemap.sb</code> via <code>--n-causal-snps</code>.</p>
+<p>This is furnished with <a href="snpid_rsid.sb">snpid_rsid.sb</a>, whose results will be attached to <strong>GCTA</strong>/<strong>finemap</strong> results via <code>finemap.R</code>, <code>slct.R</code> and <code>jam.R</code>.
+After that, it is ready to use script <code>slct.sb</code> followed by <code>slct.sh</code>. Optionally, the results are fed into <code>finemap.sb</code> via <code>--n-causal-snps</code>.</p>
 <ul>
-<li><code>finemap.sb</code> uses the unpruned version.</li>
-<li><code>fm.sb</code> and <code>INTERVAL-fm.sb</code> use pruned variants to compromise <code>JAM</code>. The <code>.z</code> file is also appropriate for both <code>finemap</code> and <code>JAM</code>.</li>
-<li><code>INTERVAL-fm.sh</code> and <code>INTERVAL-fm.ini</code> works on INTERVAL data.</li>
+<li><a href="finemap.sb">finemap.sb</a> uses the unpruned version.</li>
+<li><a href="fm.sb">fm.sb</a> and <a href="INTERVAL-fm.sb">INTERVAL-fm.sb</a> use pruned variants to compromise <code>JAM</code>. The <code>.z</code> file is also appropriate for both <code>finemap</code> and <code>JAM</code>.</li>
+<li><a href="INTERVAL-fm.sb">INTERVAL-fm.sh</a> and <a href="INTERVAL-fm.ini">INTERVAL-fm.ini</a> works on INTERVAL data.</li>
 </ul>
 <pre><code class="language-bash"># ldstore v1.1
 
@@ -203,7 +203,7 @@ IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.b
 <p>The version for meta-analysis was part of <code>analysis.sh</code> at tryggve/. <a href="qqman.sh">qqman.sh</a> calls turboqq and turboman by Bram Prins.</p>
 <h2 id="sentinel-identification">Sentinel identification</h2>
 <p>This is now furnished with <a href="merge.sh">merge.sh</a>.</p>
-<p>Clumping by fixed distance by <code>sentinels_nold.sh</code> is superseded with its failure to handle long LD regions.</p>
+<p>Clumping by fixed distance is superseded with its failure to handle long LD regions.</p>
 <p>There are scripts for heritability analysis and proportion of variance explained.</p>
 <h2 id="trans-pqtl-hotspots-and-proteins-as-polygenic-targets">Trans-pQTL hotspots and proteins as polygenic targets</h2>
 <p>This is illustrated with circos plots and by default this works on <code>work/INF1.merge.cis.vs.trans</code> and requires <a href="glist-hg19">glist-hg19</a>.
@@ -221,7 +221,7 @@ Because circos plots are gene-centric, in both cases, the protein-coding gene is
 <pre><code class="language-bash">for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; hotspot.sh $h; done
 for g in $(cat work/INF1.merge.gene); do echo $g; polygene.sh $g; done
 </code></pre>
-<p><em>Date laste changed:</em> <strong>22/8/2021</strong></p></div>
+<p><em>Date laste changed:</em> <strong>23/8/2021</strong></p></div>
 </div>
 </div>
 <footer class="col-md-12">
