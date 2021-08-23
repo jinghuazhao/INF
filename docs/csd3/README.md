@@ -1,6 +1,6 @@
 # CSD3
 
-**NOTE**: now merge.sh and INTERVAL-rsid.ini works directly to the original INTERVAL bgen files. The alphabetical list is as follows.
+**NOTE**: now merge.sh and INTERVAL-fm.ini works directly to the original INTERVAL bgen files. The alphabetical list is as follows.
 
 ## 3d scatter plot
 
