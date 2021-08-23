@@ -26,19 +26,19 @@ location: /scratch/jhz22/INF/METAL
 
 location, /scratch/jhz22/INF/aild
 
-* cojo/, GCTA --cojo-slct results for all (INF1*) and individual proteins
-  * ps/, PhenoScanner v2 results. coded as in /scratch/jhz22/INF/cardio/ps.sh
-* clump/, PLINK --clump results for all (INF1*) and individual proteins
+* cojo/, **GCTA** --cojo-slct results for all (INF1*) and individual proteins
+  * ps/, **PhenoScanner** v2 results. coded as in /scratch/jhz22/INF/cardio/ps.sh
+* clump/, **PLINK** --clump results for all (INF1*) and individual proteins
 
 ## SNPs only
 
 location, /scratch/jhz22/INF/snps
 
-* cojo/, GCTA --cojo-slct results for all (INF1*) and individual proteins
-  * ps/, PhenoScanner v2 results.
-  * lz/, LocusZoom plots
-* clump/, PLINK --clump results for all (INF1*) and individual proteins
-* clump0/ PLINK --clump-r2 0 for independent signals
+* cojo/, **GCTA** --cojo-slct results for all (INF1*) and individual proteins
+  * ps/, **PhenoScanner** v2 results.
+  * lz/, **LocusZoom** plots
+* clump/, **PLINK** --clump results for all (INF1*) and individual proteins
+* clump0/ **PLINK** --clump-r2 0 for independent signals
 
 ---
 
@@ -138,3 +138,6 @@ A few observations can be made,
 * Unpruned results are likely to give more cis signals but this is subject to scrutiny perhaps on individual cases.
 
 It can be concluded that it is desirable to employ approximately independent LD blocks for both GCTA (1) and PLINK (4), and also that reference such as UK10K+1KG would be desirable with respect to both sample size and variant number.
+
+*Date last changed:* **23/8/2021**
+

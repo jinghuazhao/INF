@@ -1,6 +1,6 @@
 # CSD3
 
-**NOTE**: now merge.sh and INTERVAL-fm.ini works directly to the original INTERVAL bgen files. The alphabetical list is as follows.
+**NOTE**: [merge.sh](merge.sh) and [INTERVAL-fm.ini](INTERVAL-fm.ini) now work directly with the original INTERVAL bgen files. The alphabetical list is as follows.
 
 ## 3d scatter plot
 
@@ -8,7 +8,7 @@ Furnished with [js.R](js.R), the JSON output could be used as data in the Supple
 
 ## Annotation
 
-[annotate.sh](annotate.sh) involves ANNOVAR, PolyPhen 2, VEP and some R packages.
+[annotate.sh](annotate.sh) involves **ANNOVAR**, **PolyPhen 2**, **VEP** and some R packages.
 
 ## Known variants
 
@@ -19,19 +19,19 @@ File [cvd1.sh](cvd1.sh) gives sentinels overlapped with CVD I as well as LD info
 ## LD reference panels
 
 The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to generate `binary_ped` with SNPIDs (bgen/*map)
-* by qctool -- it also creates `bgen` with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
-* by PLINK -- it has a `_snpid` tag.
+* by **qctool** -- it also creates `bgen` with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
+* by **PLINK** -- it has a `_snpid` tag.
 
 In both cases duplicates (bgen/*rmdup.list) are excluded.
 
-1. INTERVAL.sh (INTERVAL.sb). The utility `INTERVAL.sh` extracts data from  
+1. The utility [INTERVAL.sh](INTERVAL.sh) extracts data from  
 ```
 /DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_typed_only
 /DO-NOT-MODIFY-SCRATCH/bp406/data_sets/interval_subset_olink/genotype_files/unrelated_4994_pihat_0.1875_autosomal_imputed_info_0.4_phwe_1e-4_filtered/per_chr
 ```
 on Cardio into region-specific data in `bgen` format according to work/INF1.merge.
 
-2. ukb (ukb.sh). The utility `ukb.sh` extracts data from ukb_imp_chr[x-xx]_v3.bgen as in
+2. The utility [ukb.sh](ukb.sh) extracts data from ukb_imp_chr[x-xx]_v3.bgen as in
 ```
 /DO-NOT-MODIFY-SCRATCH/uk_biobank/500k/imputed_v3
 /DO-NOT-MODIFY-SCRATCH/curated_genetic_data/uk_biobank/reference_files/full_release
@@ -40,12 +40,12 @@ on Cardio into region-specific data in `bgen` format (ukb/bgen) according to wor
 
 ## SNPID-rsid mappings, conditional analysis and finemapping
 
-This is furnished with `snpid_rsid.sb`, whose results will be attached to GCTA/finemap results via `finemap.R`, `slct.R` and `jam.R`.
-After snpid-rsid.sb is called, it is ready to use script `slct.sb` followed by `slct.sh`. Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
+This is furnished with [snpid_rsid.sb](snpid_rsid.sb), whose results will be attached to **GCTA**/**finemap** results via `finemap.R`, `slct.R` and `jam.R`.
+After that, it is ready to use script `slct.sb` followed by `slct.sh`. Optionally, the results are fed into `finemap.sb` via `--n-causal-snps`.
 
-* `finemap.sb` uses the unpruned version.
-* `fm.sb` and `INTERVAL-fm.sb` use pruned variants to compromise `JAM`. The `.z` file is also appropriate for both `finemap` and `JAM`.
-* `INTERVAL-fm.sh` and `INTERVAL-fm.ini` works on INTERVAL data.
+* [finemap.sb](finemap.sb) uses the unpruned version.
+* [fm.sb](fm.sb) and [INTERVAL-fm.sb](INTERVAL-fm.sb) use pruned variants to compromise `JAM`. The `.z` file is also appropriate for both `finemap` and `JAM`.
+* [INTERVAL-fm.sh](INTERVAL-fm.sb) and [INTERVAL-fm.ini](INTERVAL-fm.ini) works on INTERVAL data.
 
 ```bash
 # ldstore v1.1
@@ -90,7 +90,7 @@ The version for meta-analysis was part of `analysis.sh` at tryggve/. [qqman.sh](
 
 This is now furnished with [merge.sh](merge.sh).
 
-Clumping by fixed distance by `sentinels_nold.sh` is superseded with its failure to handle long LD regions.
+Clumping by fixed distance is superseded with its failure to handle long LD regions.
 
 There are scripts for heritability analysis and proportion of variance explained.
 
@@ -117,4 +117,4 @@ for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; 
 for g in $(cat work/INF1.merge.gene); do echo $g; polygene.sh $g; done
 ```
 
-*Date laste changed:* **22/8/2021**
+*Date laste changed:* **23/8/2021**
