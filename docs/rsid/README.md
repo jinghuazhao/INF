@@ -69,6 +69,7 @@ fastenloc.sb | fastenloc analysis
 fusion_twas.sb | FUSION TWAS experiment
 garfield.sh | GARFIELD analysis
 gdigt.R | GDI and gene-trials
+GREP.sh | GREP script
 gsmr.sh | GSMR processing
 GTEx-ps.sh | cis-pQTL GTEx eQTL lookup with PhenoScanner CLI
 GTEx-ps.R | cis-pQTL GTEx eQTL lookup (PhenoScanner)
