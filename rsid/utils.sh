@@ -230,3 +230,71 @@ function tbi_INTERVAL()
   mv INTERVAL.* INTERVAL
   ls INTERVAL/ | sed 's/INTERVAL.//;s/.gz//' | parallel -j15 -C' ' 'tabix -f -S1 -s2 -b3 -e3 INTERVAL/INTERVAL.{}.gz'
 }
+
+R --no-save -q <<END
+  INF <- Sys.getenv("INF")
+  load(file.path(INF,"ds","latest","fp","INF1.rda"))
+  drop <- names(tbl)[c(6:9,12:17)]
+  library(dplyr)
+  tbl_ord <- tbl %>%
+             select(-any_of(drop)) %>%
+             filter(!(prot=="CCL25" & MarkerName=="chr19:49206145_C_G")) %>%
+             arrange(prot,Chromosome,Position)
+  library(gap)
+# 180 forest plots
+  pdf(file.path(INF,"ds","latest","fp.pdf"),width=8.75,height=5)
+  METAL_forestplot(tbl_ord,all,rsid)
+  dev.off()
+END
+
+function pdf()
+{
+  cd ${INF}/ds/latest
+  if [ ! -d work ]; then mkdir work; fi
+  source ~/COVID-19/py37/bin/activate
+# pip install img2pdf
+# First (prot-snpid) pages
+  qpdf --empty --pages $(ls lz/*.pdf | grep -v CCL25-chr19:49206145_C_G.lz.pdf) -- lz2.pdf
+  qpdf -show-npages lz2.pdf
+  qpdf --pages . 1-360:odd -- lz2.pdf lz.pdf
+  qpdf --empty -collate --pages fp.pdf lz.pdf -- fp-lz.pdf
+  rm lz2.pdf
+# side-by-side via png seems better
+  rm -f work/*pdf
+  for pages in {1..180}
+  do
+    export suffix=$(printf "%06d\n" ${pages})
+    if [ ! -f work/fp-${suffix}.png ]; then pdftopng -r 300 -f ${pages} -l ${pages} fp.pdf work/fp; fi
+    if [ ! -f work/lz-${suffix}.png ]; then pdftopng -r 300 -f ${pages} -l ${pages} lz.pdf work/lz; fi
+    convert work/fp-${suffix}.png work/lz-${suffix}.png -density 300 +append work/fp-lz-${suffix}.png
+    convert work/fp-lz-${suffix}.png -quality 0 work/fp-lz-${suffix}.jp2
+    img2pdf -o work/fp-lz-${suffix}.pdf work/fp-lz-${suffix}.jp2
+    rm work/fp-${suffix}.png work/lz-${suffix}.png work/fp-lz-${suffix}.jp2
+  done
+  qpdf --empty --pages $(ls work/*.pdf) -- fp_lz.pdf
+# qml/
+# 91 Q-Q/Mahattan (left+right collation dropping cis-locuszoom)
+  rm -f work/*pdf
+  ls qml/*qq*png | xargs -l basename -s .qq.png | grep -v BDNF | \
+  parallel -C' ' '
+    convert qml/{}.manhattan.png qml/{}.qq.png -density 300 +append work/{}.png
+    convert work/{}.png -quality 0 work/{}.jp2
+    img2pdf -o work/{}.pdf work/{}.jp2
+    rm work/{}.jp2
+  '
+  qpdf --empty --pages $(ls work/*.pdf) -- qq_manhattan.pdf
+}
+
+function pdf_test()
+{
+# OCR/resolution is poor (though layout is nice) with the following:
+  qpdf fp-lz.pdf --pages . 1-1 -- 1.pdf
+  qpdf fp-lz.pdf --pages . 2-2 -- 2.pdf
+  convert 1.pdf 2.pdf -density 300 +append 12.pdf
+  rm 1.pdf 2.pdf
+  convert $(ls work/*pdf) -density 300 -append qq_manhattan.pdf
+# 91 cis-regions
+# pdfunite *.pdf ~/lz.pdf
+# Add background under Ubuntu
+# pdftk in.pdf background stamp.pdf output out.pdf
+}
