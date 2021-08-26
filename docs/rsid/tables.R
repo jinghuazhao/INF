@@ -142,7 +142,7 @@ outsheets <- c("summary","studies","inf1",
                "gsmr_efo","hgi","drug",
                "reactome","great","efo","gdb",
                "interval","os","cvd1","aristotl","pqtlstudies",
-               "great3","mr_immun","smr","cis_mr","trans_mr","pan_mr","mr_misc","gsmr",
+               "great3","mr_immun","smr","cis_mr","mr_misc","gsmr",
                "protein_correlation", "protein_dgi", "pqtl_impact")
 titles <- c("summary","study information","panel information",
             "pQTLs","conditional analysis","known pQTLs","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
@@ -150,7 +150,7 @@ titles <- c("summary","study information","panel information",
             "GSMR results","HGI r6","PI drug",
             "Reactome","GREAT","EFO","geneDrugbank",
             "INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study","previous pQTL studies",
-            "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","cis-MR results","trans-MR results","pan-MR results","pQTL-misc-MR","GSMR-FEV1CVD",
+            "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","cis-MR results","pQTL-misc-MR","GSMR-FEV1CVD",
             "Protein correlation","DGI membership", "pQTL impact")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
