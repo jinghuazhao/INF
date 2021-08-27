@@ -311,7 +311,7 @@ function pdf()
   cd work; fp; cd -
   qpdf --empty --pages $(ls work/*pdf) -- fp.pdf
   qpdf --empty -collate --pages fp.pdf lz.pdf -- fp-lz.pdf
-# forest/locuszoom side-by-side format, OCR via PDF-viewer and compressed by iLovePDF.com
+# forest/locuszoom side-by-side format, OCR via PDF-viewer and compressed by iLovePDF.com/https://tools.pdf24.org/
   source ~/COVID-19/py37/bin/activate
 # pip install img2pdf
   awk -vFS="\t" 'NR>1 {print $5,$6}' ${INF}/work/INF1.merge | \
