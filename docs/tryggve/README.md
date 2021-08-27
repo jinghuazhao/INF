@@ -1,6 +1,8 @@
 # Tryggve
 
-The repository covers various aspects such as software and data.
+Tryggve is the server used for SCALLOP and also SCALLOP-INF at earlier stage of the analysis.
+
+The document covers various aspects such as software and data.
 
 ## Modules
 

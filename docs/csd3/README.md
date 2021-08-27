@@ -1,5 +1,7 @@
 # CSD3
 
+CSD3 is the HPC Linux clusters used at the University of Cambridge, with which this document is associated.
+
 **NOTE**: [merge.sh](merge.sh) and [INTERVAL-fm.ini](INTERVAL-fm.ini) now work directly with the original INTERVAL bgen files. The alphabetical list is as follows.
 
 ## 3d scatter plot

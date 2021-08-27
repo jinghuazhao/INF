@@ -1,5 +1,7 @@
 # Cardio
 
+Cardio is the Linux clusters once used by the Cardiovascular Epidemiology Unit at University of Camrbridge.
+
 ## INTERVAL reference
 
 /scratch/jhz22/data/INTERVAL
