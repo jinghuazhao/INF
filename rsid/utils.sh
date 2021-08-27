@@ -272,6 +272,7 @@ function pdf()
     rm work/fp-${suffix}.png work/lz-${suffix}.png work/fp-lz-${suffix}.jp2
   done
   qpdf --empty --pages $(ls work/*.pdf) -- fp_lz.pdf
+  convert fp_lz.pdf -density 300 tiff64:fp_lz.tiff
 # qml/
 # 91 Q-Q/Mahattan (left+right collation dropping cis-locuszoom)
   rm -f work/*pdf
@@ -283,6 +284,9 @@ function pdf()
     rm work/{}.jp2
   '
   qpdf --empty --pages $(ls work/*.pdf) -- qq_manhattan.pdf
+  convert -density 300 -resize 130% work/fp-lz-000126.png OPG.png
+  convert work/OPG.png OPG.png -append -density 300 ~/INF/doc/OPG.png
+  rm OPG.png
 }
 
 function pdf_test()
