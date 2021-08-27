@@ -231,7 +231,60 @@ function tbi_INTERVAL()
   ls INTERVAL/ | sed 's/INTERVAL.//;s/.gz//' | parallel -j15 -C' ' 'tabix -f -S1 -s2 -b3 -e3 INTERVAL/INTERVAL.{}.gz'
 }
 
+function fp()
+{
 R --no-save -q <<END
+  METAL_forestplot <- function(tbl,all,rsid,package="meta",split=FALSE,...)
+  {
+  prot <- MarkerName <- NA
+  requireNamespace("dplyr")
+  dplyr_rsid <- function(df,rsid)
+  {
+  # d <- dplyr::nest_join(df,rsid)
+    d <- dplyr::left_join(df,rsid)
+  # dy <- d["y"]
+    m <- within(d, {
+  #   rsid <- ifelse(length(lapply(dy,"[[",1)) == 1, unlist(d[["y"]]), unlist(lapply(lapply(dy,"[[",1),"[",1)))
+  #   rsid <- unlist(d[["y"]])
+      isna <- is.na(rsid)
+      rsid[isna] <- MarkerName[isna]
+    })
+  }
+  t <- dplyr_rsid(tbl,rsid)
+  a <- dplyr_rsid(all,rsid)
+  for(i in 1:nrow(tbl))
+  {
+     p <- tbl[i,"prot"]
+     target <- dplyr::filter(gap.datasets::inf1,prot==p) %>% select(target.short)
+     m <- tbl[i,"MarkerName"]
+     A1 <- toupper(tbl[i,"Allele1"])
+     A2 <- toupper(tbl[i,"Allele2"])
+     print(paste0(i,"-",p,":",m))
+     with(subset(all,prot==p & MarkerName==m), {
+       print(subset(all,prot==p & MarkerName==m))
+       e <- toupper(EFFECT_ALLELE)
+       r <- toupper(REFERENCE_ALLELE)
+       a1 <- e
+       a2 <- r
+       c <- rep(1,length(e))
+       j <- sapply(a1,'!=',A1)
+       a1[j] <- r[j]
+       a2[j] <- e[j]
+       c[j] <- -1
+       print(cbind(A1,A2,EFFECT_ALLELE,REFERENCE_ALLELE,a1,a2,format(BETA,digits=3),format(BETA*c,digits=3)))
+       BETA <- BETA * c
+       title <- sprintf("%s [%s (%s) (%s/%s) N=%.0f]",target,m,t[i,"rsid"],A1,A2,tbl[i,"N"])
+       if (split) pdf(paste0(p,"-",m,".pdf"),...)
+       requireNamespace("meta")
+       mg <- meta::metagen(BETA,SE,sprintf("%s (%.0f)",study,N),title=title)
+       meta::forest(mg,colgap.forest.left = "1cm")
+       requireNamespace("grid")
+       grid::grid.text(title,0.5,0.9)
+       with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q, "I2 =", I2, "lower.I2 =", lower.I2, "upper.I2 =", upper.I2, "\n"))
+       if (split) dev.off()
+     })
+  }
+  }
   INF <- Sys.getenv("INF")
   load(file.path(INF,"ds","latest","fp","INF1.rda"))
   drop <- names(tbl)[c(6:9,12:17)]
@@ -240,41 +293,41 @@ R --no-save -q <<END
              select(-any_of(drop)) %>%
              filter(!(prot=="CCL25" & MarkerName=="chr19:49206145_C_G")) %>%
              arrange(prot,Chromosome,Position)
-  library(gap)
 # 180 forest plots
-  pdf(file.path(INF,"ds","latest","fp.pdf"),width=8.75,height=5)
-  METAL_forestplot(tbl_ord,all,rsid)
-  dev.off()
+  METAL_forestplot(tbl_ord,all,rsid,split=TRUE,width=8.75,height=5)
 END
+}
 
 function pdf()
 {
   cd ${INF}/ds/latest
   if [ ! -d work ]; then mkdir work; fi
-  source ~/COVID-19/py37/bin/activate
-# pip install img2pdf
-# First (prot-snpid) pages
+# forest/locuszoom top-down format
   qpdf --empty --pages $(ls lz/*.pdf | grep -v CCL25-chr19:49206145_C_G.lz.pdf) -- lz2.pdf
   qpdf -show-npages lz2.pdf
   qpdf --pages . 1-360:odd -- lz2.pdf lz.pdf
-  qpdf --empty -collate --pages fp.pdf lz.pdf -- fp-lz.pdf
   rm lz2.pdf
-# side-by-side via png seems better
   rm -f work/*pdf
-  for pages in {1..180}
-  do
-    export suffix=$(printf "%06d\n" ${pages})
-    if [ ! -f work/fp-${suffix}.png ]; then pdftopng -r 300 -f ${pages} -l ${pages} fp.pdf work/fp; fi
-    if [ ! -f work/lz-${suffix}.png ]; then pdftopng -r 300 -f ${pages} -l ${pages} lz.pdf work/lz; fi
-    convert work/fp-${suffix}.png work/lz-${suffix}.png -density 300 +append work/fp-lz-${suffix}.png
-    convert work/fp-lz-${suffix}.png -quality 0 work/fp-lz-${suffix}.jp2
-    img2pdf -o work/fp-lz-${suffix}.pdf work/fp-lz-${suffix}.jp2
-    rm work/fp-${suffix}.png work/lz-${suffix}.png work/fp-lz-${suffix}.jp2
-  done
-  qpdf --empty --pages $(ls work/*.pdf) -- fp_lz.pdf
-  convert fp_lz.pdf -density 300 tiff64:fp_lz.tiff
+  cd work; fp; cd -
+  qpdf --empty --pages $(ls work/*pdf) -- fp.pdf
+  qpdf --empty -collate --pages fp.pdf lz.pdf -- fp-lz.pdf
+# forest/locuszoom side-by-side format, OCR via PDF-viewer and compressed by iLovePDF.com
+  source ~/COVID-19/py37/bin/activate
+# pip install img2pdf
+  awk -vFS="\t" 'NR>1 {print $5,$6}' ${INF}/work/INF1.merge | \
+  parallel -C' ' '
+    export rt={1}-{2}
+    export suffix=$(printf "%06d\n" 1)
+    if [ ! -f work/fp-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 work/${rt}.pdf work/fp-${rt}; fi
+    if [ ! -f work/lz-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 lz/${rt}.lz.pdf work/lz-${rt}; fi
+    convert work/fp-${rt}-${suffix}.png work/lz-${rt}-${suffix}.png -density 300 +append work/fp-lz-${rt}.png
+    convert work/fp-lz-${rt}.png -quality 0 work/fp-lz-${rt}.jp2
+    img2pdf -o work/fp-lz-${rt}.pdf work/fp-lz-${rt}.jp2
+    rm work/fp-${rt}-${suffix}.png work/lz-${rt}-${suffix}.png work/fp-lz-${rt}.jp2
+  '
+  qpdf --empty --pages $(ls work/fp-lz-*.pdf) -- fp_lz.pdf
 # qml/
-# 91 Q-Q/Mahattan (left+right collation dropping cis-locuszoom)
+# 91 Q-Q/Manhattan (left+right collation dropping cis-locuszoom) and tif via PDF-viewer
   rm -f work/*pdf
   ls qml/*qq*png | xargs -l basename -s .qq.png | grep -v BDNF | \
   parallel -C' ' '
@@ -284,10 +337,10 @@ function pdf()
     rm work/{}.jp2
   '
   qpdf --empty --pages $(ls work/*.pdf) -- qq_manhattan.pdf
+# Images for the GitHub page
   convert -density 300 -resize 130% work/fp-lz-000126.png OPG.png
   convert work/OPG.png OPG.png -append -density 300 ~/INF/doc/OPG.png
   rm OPG.png
-
   cd ~/EWAS-fusion/IL.12B.tmp
   pdftopng -r 300 ewas-plot.pdf ewas-plot
   export rt=ewas-plot-00000
@@ -302,9 +355,11 @@ function pdf_test()
   convert 1.pdf 2.pdf -density 300 +append 12.pdf
   rm 1.pdf 2.pdf
   convert $(ls work/*pdf) -density 300 -append qq_manhattan.pdf
-# 91 cis-regions
+# The .tiff format is possible with the tiff64 tag but too large
+# convert fp_lz.pdf -density 300 tiff64:fp_lz.tiff
+# convert qq_manhattan.pdf -density 300 tiff64:qq_manhattan.tiff
+# locuszoom plots for 91 cis-regions are possible with pdfunite but got complaints from qpdf
 # pdfunite *.pdf ~/lz.pdf
 # Add background under Ubuntu
 # pdftk in.pdf background stamp.pdf output out.pdf
 }
-
