@@ -2,9 +2,10 @@ site_name: SCALLOP-INF
 nav:
   - Home: README.md
   - doc/SCALLOP_INF1_analysis_plan.md
-  - tryggve/README.md
-  - cardio/README.md
-  - csd3/README.md
+  - Implementation:
+    - tryggve/README.md
+    - cardio/README.md
+    - csd3/README.md
   - rsid/README.md
 theme:
     name: mkdocs
