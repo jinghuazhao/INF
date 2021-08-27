@@ -338,7 +338,7 @@ function pdf()
   '
   qpdf --empty --pages $(ls work/*.pdf) -- qq_manhattan.pdf
 # Images for the GitHub page
-  convert -density 300 -resize 130% work/fp-lz-000126.png OPG.png
+  convert -density 300 -resize 130% work/fp-lz-OPG-chr17:26694861_A_G.png OPG.png
   convert work/OPG.png OPG.png -append -density 300 ~/INF/doc/OPG.png
   rm OPG.png
   cd ~/EWAS-fusion/IL.12B.tmp
