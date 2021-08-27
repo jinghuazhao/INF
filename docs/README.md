@@ -50,9 +50,9 @@ graph TD;
 
 ## The OPG example
 
-This proves to be a positive control. The stacked image below shows Q-Q, Manhattan, LocusZoom and forest plots.
+This proves to be a positive control. The stacked image below shows Q-Q, Manhattan, forest and LocusZoom plots.
 
-<p align="center"><img src="doc/OPG-qmlf.png"></p>
+<p align="center"><img src="doc/OPG.png"></p>
 
 ## EWAS with IL-12B
 
