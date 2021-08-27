@@ -287,6 +287,11 @@ function pdf()
   convert -density 300 -resize 130% work/fp-lz-000126.png OPG.png
   convert work/OPG.png OPG.png -append -density 300 ~/INF/doc/OPG.png
   rm OPG.png
+
+  cd ~/EWAS-fusion/IL.12B.tmp
+  pdftopng -r 300 ewas-plot.pdf ewas-plot
+  export rt=ewas-plot-00000
+  convert \( ${rt}1.png ${rt}2.png +append \) \( ${rt}3.png ${rt}4.png +append \) -append ewas-plot.png
 }
 
 function pdf_test()
@@ -302,3 +307,4 @@ function pdf_test()
 # Add background under Ubuntu
 # pdftk in.pdf background stamp.pdf output out.pdf
 }
+
