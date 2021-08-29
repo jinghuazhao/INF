@@ -31,12 +31,9 @@ function install()
 mkdocs build
 mkdocs gh-deploy
 
-git add .gitignore
-git commit -m ".gitignore"
-git add README.md
-git commit -m "README"
-git add docs
-git commit -m "docs"
-git add mkdocs.yml
-git commit -m "mkdocs.yml"
+for f in .gitignore README.md docs mkdocs.yml
+do
+  git add ${f}
+  git commit -m "${f}"
+done
 git push
