@@ -87,6 +87,7 @@ neale.sh | signal selection for Neale UKB data (HbA1c)
 pqtlGWAS.R | pQTL-GWAS lookup
 pQTL.R | pQTL lookup
 pqtlMR.sh | pQTL MR analysis
+qqman.sb | Q-Q/Manhattan plots under CSD3
 rentrez.sh | reuse of rentrez
 rGREAT.R | GREAT analysis
 Somascan-Olink.* | Somascan/Olink overlap
