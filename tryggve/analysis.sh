@@ -24,9 +24,9 @@ function qml()
     awk -vFS="\t" -vOFS="\t" '{print $5,$6,$7,$4,$2}' | \
     sort -k1,1n -k2,2n
   ) > st.bed
-  ls METAL/*-1.tbl.gz | \
-  sed 's|METAL/||g;s/-1.tbl.gz//g' | \
-  parallel -j4 --env rt -C' ' 'export protein={}; R --no-save -q < $rt/tryggve/qqman.R'
+  cut -f1 ${INF}/work/inf1.tmp | \
+  grep -v BDNF | \
+  parallel -j8 --env INF -C' ' 'export protein={}; export file=${INF}/METAL/{}-1.tbl.gz; R --no-save -q < ${INF}/tryggve/qqman.R'
   ls METAL/*-1.tbl.gz | \
   sed 's|METAL/||g;s/-1.tbl.gz//g' | \
   parallel -j4 -C' ' '

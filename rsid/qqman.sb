@@ -1,0 +1,37 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=_qqman
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1-91
+#SBATCH --mem=40800
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_qqman_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_qqman_%A_%a.err
+#SBATCH --export ALL
+
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+
+export prot=$(grep -v BDNF ${INF}/work/inf1.tmp | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}')
+export file=${INF}/METAL/${prot}-1.tbl.gz
+
+R --no-save -q <<END
+  require(dplyr)
+  INF <- Sys.getenv("INF")
+  protein <- Sys.getenv("prot")
+  print(protein)
+  file <- Sys.getenv("file")
+  prot <- filter(gap.datasets::inf1,prot==protein)[["target.short"]]
+  gz <- gzfile(file)
+  require(qqman)
+  tbl <- read.delim(gz,as.is=TRUE) %>%
+         mutate(SNP=MarkerName, CHR=as.numeric(Chromosome), BP=Position, P=10^log.P.) %>%
+         filter(!is.na(CHR)&!is.na(BP)&!is.na(P))
+  qqman <- file.path(INF,"plots",paste0(prot,"-qqman.png"))
+  png(qqman,width=12,height=10,units="in",pointsize=4,res=300)
+  par(mfrow=c(1,2))
+  qq(with(tbl,P),main=prot,cex.axis=2.5,cex.lab=2.5)
+  manhattan(tbl,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25),cex.axis=2.5,cex.lab=2.5)
+  dev.off()
+END
