@@ -30,7 +30,7 @@ R --no-save -q <<END
          filter(!is.na(CHR)&!is.na(BP)&!is.na(P))
   qqman <- file.path(INF,"plots",paste0(prot,"-qqman.png"))
   png(qqman,width=20,height=10,units="in",pointsize=4,res=300)
-  par(mfrow=c(1,2),mar=c(8,8,6,2),bty="n",xpd=TRUE)
+  par(mfrow=c(1,2),mar=c(8,8,6,2),bty="n",mgp=c(5,1,0),xpd=TRUE)
   qq(with(tbl,P),main=prot,cex.lab=3,cex.axis=3)
   manhattan(tbl,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25),cex.axis=3,cex.lab=3,srt=45)
   dev.off()
