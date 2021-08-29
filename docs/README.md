@@ -29,7 +29,7 @@ The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are a
 
 4. The `cis.vs.trans.classification`, `circos.cis.vs.trans.plot` as with `cs`, `log10p`, `logp`, `gc.lambda`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d`, `pvalue` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) and updates such as `pqtl2dplot/pqtl2dplotly/pqtl3dplotly` are made at [GitHub](https://github.com/jinghuazhao/R/).
 
-5. Downstream analyses links colocalisation and Mendelian randomisation with CAD, FEV1 and the meta-analysis summary statistics are now described in [gap vignette](https://jinghuazhao.github.io/R/vignettes/gap.html) and [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
+5. Some aspects of the downstream analyses links colocalisation and Mendelian randomisation are also available from [gap vignette](https://jinghuazhao.github.io/R/vignettes/gap.html) and [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
 
 6. A nested predictive model based on genotype data G, which link with proteins P1, P2, ..., Pn as predictors for outcome y. Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
 ```mermaid
