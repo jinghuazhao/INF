@@ -28,10 +28,11 @@ R --no-save -q <<END
   tbl <- read.delim(gz,as.is=TRUE) %>%
          mutate(SNP=MarkerName, CHR=as.numeric(Chromosome), BP=Position, P=10^log.P.) %>%
          filter(!is.na(CHR)&!is.na(BP)&!is.na(P))
-  qqman <- file.path(INF,"plots",paste0(prot,"-qqman.png"))
-  png(qqman,width=12,height=10,units="in",pointsize=4,res=300)
-  par(mfrow=c(1,2))
+  qq <- file.path(INF,"plots",paste0(prot,"-qq.png"))
+  png(qq,width=12,height=10,units="in",pointsize=4,res=300)
   qq(with(tbl,P),main=prot,cex.axis=2.5,cex.lab=2.5)
+  dev.off()
+  manhattan <- file.path(INF,"plots",paste0(prot,"-manhattan.png"))
   manhattan(tbl,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25),cex.axis=2.5,cex.lab=2.5)
   dev.off()
 END
