@@ -1,6 +1,6 @@
 # SCALLOP-INF meta-analysis
 
-<p align="center"><img src="doc/circlize.png"></p>
+<p align="center"><img src="doc/circos.svg"></p>
 
 ## Flow of analysis
 
