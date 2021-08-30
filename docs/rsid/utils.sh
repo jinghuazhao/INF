@@ -336,7 +336,7 @@ function pdf_test()
   rm 1.pdf 2.pdf
   convert $(ls work/*pdf) -density 300 -append qq_manhattan.pdf
 # The .tiff format is possible with the tiff64 tag but too large
-  qpdf --empty -collate --pages fp.pdf lz.pdf -- fp-lz.pdf
+  qpdf --empty -collate --pages fp.pdf lz.pdf -- fp+lz.pdf
 # forest/locuszoom side-by-side format, OCR via PDF-viewer and compressed by Adobe
   rm -f temp-*-*.pdf
   source ~/COVID-19/py37/bin/activate
@@ -352,8 +352,8 @@ function pdf_test()
     img2pdf -o work/fp-lz-${rt}.pdf work/fp-lz-${rt}.jp2
     rm work/fp-${rt}-${suffix}.png work/lz-${rt}-${suffix}.png work/fp-lz-${rt}.jp2
   '
-  qpdf --empty --pages $(ls work/fp-lz-*.pdf) -- fp_lz.pdf
-# convert fp_lz.pdf -density 300 tiff64:fp_lz.tiff
+  qpdf --empty --pages $(ls work/fp-lz-*.pdf) -- fp+lz.pdf
+# convert fp+lz.pdf -density 300 tiff64:fp+lz.tiff
 # qml/
 # 91 Q-Q/Manhattan (left+right collation dropping cis-locuszoom) and tif via PDF-viewer
   rm -f work/*pdf
@@ -364,8 +364,8 @@ function pdf_test()
     img2pdf -o work/{}.pdf work/{}.jp2
     rm work/{}.jp2
   '
-  qpdf --empty --pages $(ls work/*.pdf) -- qq_manhattan.pdf
-# convert qq_manhattan.pdf -density 300 tiff64:qq_manhattan.tiff
+  qpdf --empty --pages $(ls work/*.pdf) -- qq+manhattan.pdf
+# convert qq_manhattan.pdf -density 300 tiff64:qq+manhattan.tiff
 # locuszoom plots for 91 cis-regions are possible with pdfunite but got complaints from qpdf
 # pdfunite *.pdf ~/lz.pdf
 # Add background under Ubuntu
