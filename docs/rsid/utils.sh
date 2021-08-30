@@ -310,8 +310,6 @@ function pdf()
   rm -f work/*pdf
   cd work; fp; cd -
   qpdf --empty --pages $(ls work/*pdf) -- fp.pdf
-  qpdf --empty -collate --pages fp.pdf lz.pdf -- fp-lz.pdf
-# forest/locuszoom side-by-side format, OCR via PDF-viewer and compressed by Adobe -- better cropped
 # left-right with very small file size
 # Split files, note the naming scheme
   pdfseparate fp.pdf temp-%04d-fp.pdf
@@ -319,32 +317,6 @@ function pdf()
 # Combine the final pdf
   pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile fp+lz.pdf
 # Clean up
-  rm -f temp-*-*.pdf
-  source ~/COVID-19/py37/bin/activate
-# pip install img2pdf
-  awk -vFS="\t" 'NR>1 {print $5,$6}' ${INF}/work/INF1.merge | \
-  parallel -C' ' '
-    export rt={1}-{2}
-    export suffix=$(printf "%06d\n" 1)
-    if [ ! -f work/fp-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 work/${rt}.pdf work/fp-${rt}; fi
-    if [ ! -f work/lz-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 lz/${rt}.lz.pdf work/lz-${rt}; fi
-    convert work/fp-${rt}-${suffix}.png work/lz-${rt}-${suffix}.png -density 300 +append work/fp-lz-${rt}.png
-    convert work/fp-lz-${rt}.png -quality 0 work/fp-lz-${rt}.jp2
-    img2pdf -o work/fp-lz-${rt}.pdf work/fp-lz-${rt}.jp2
-    rm work/fp-${rt}-${suffix}.png work/lz-${rt}-${suffix}.png work/fp-lz-${rt}.jp2
-  '
-  qpdf --empty --pages $(ls work/fp-lz-*.pdf) -- fp_lz.pdf
-# qml/
-# 91 Q-Q/Manhattan (left+right collation dropping cis-locuszoom) and tif via PDF-viewer
-  rm -f work/*pdf
-  ls qml/*qq*png | xargs -l basename -s .qq.png | grep -v BDNF | \
-  parallel -C' ' '
-    convert qml/{}.manhattan.png qml/{}.qq.png -density 300 +append work/{}.png
-    convert work/{}.png -quality 0 work/{}.jp2
-    img2pdf -o work/{}.pdf work/{}.jp2
-    rm work/{}.jp2
-  '
-  qpdf --empty --pages $(ls work/*.pdf) -- qq_manhattan.pdf
 # Images for the GitHub page using output from qqman.sb (no border for Q-Q plot)
   convert -density 300 -resize 110% work/fp-lz-OPG-chr17:26694861_A_G.png OPG.png
   convert ${INF}/plots/work/OPG-qqman.png OPG.png -append -density 300 ~/INF/doc/OPG.png
@@ -364,7 +336,35 @@ function pdf_test()
   rm 1.pdf 2.pdf
   convert $(ls work/*pdf) -density 300 -append qq_manhattan.pdf
 # The .tiff format is possible with the tiff64 tag but too large
+  qpdf --empty -collate --pages fp.pdf lz.pdf -- fp-lz.pdf
+# forest/locuszoom side-by-side format, OCR via PDF-viewer and compressed by Adobe
+  rm -f temp-*-*.pdf
+  source ~/COVID-19/py37/bin/activate
+# pip install img2pdf
+  awk -vFS="\t" 'NR>1 {print $5,$6}' ${INF}/work/INF1.merge | \
+  parallel -C' ' '
+    export rt={1}-{2}
+    export suffix=$(printf "%06d\n" 1)
+    if [ ! -f work/fp-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 work/${rt}.pdf work/fp-${rt}; fi
+    if [ ! -f work/lz-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 lz/${rt}.lz.pdf work/lz-${rt}; fi
+    convert work/fp-${rt}-${suffix}.png work/lz-${rt}-${suffix}.png -density 300 +append work/fp-lz-${rt}.png
+    convert work/fp-lz-${rt}.png -quality 0 work/fp-lz-${rt}.jp2
+    img2pdf -o work/fp-lz-${rt}.pdf work/fp-lz-${rt}.jp2
+    rm work/fp-${rt}-${suffix}.png work/lz-${rt}-${suffix}.png work/fp-lz-${rt}.jp2
+  '
+  qpdf --empty --pages $(ls work/fp-lz-*.pdf) -- fp_lz.pdf
 # convert fp_lz.pdf -density 300 tiff64:fp_lz.tiff
+# qml/
+# 91 Q-Q/Manhattan (left+right collation dropping cis-locuszoom) and tif via PDF-viewer
+  rm -f work/*pdf
+  ls qml/*qq*png | xargs -l basename -s .qq.png | grep -v BDNF | \
+  parallel -C' ' '
+    convert qml/{}.manhattan.png qml/{}.qq.png -density 300 +append work/{}.png
+    convert work/{}.png -quality 0 work/{}.jp2
+    img2pdf -o work/{}.pdf work/{}.jp2
+    rm work/{}.jp2
+  '
+  qpdf --empty --pages $(ls work/*.pdf) -- qq_manhattan.pdf
 # convert qq_manhattan.pdf -density 300 tiff64:qq_manhattan.tiff
 # locuszoom plots for 91 cis-regions are possible with pdfunite but got complaints from qpdf
 # pdfunite *.pdf ~/lz.pdf
