@@ -63,5 +63,5 @@ function all_singles()
     img2pdf -o ${dir}/{}-qqman.pdf ${dir}/{}.jp2
     rm "${dir}/{}.jp2"
   '
-  qpdf --empty --pages $(ls ${dir}/*-qqman.pdf) -- qq_manhattan.pdf
+  qpdf --empty --pages $(ls ${dir}/*-qqman.pdf) -- qq+manhattan.pdf
 }
