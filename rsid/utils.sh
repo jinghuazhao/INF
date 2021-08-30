@@ -338,7 +338,9 @@ function pdf()
   '
   qpdf --empty --pages $(ls work/*.pdf) -- qq_manhattan.pdf
 # Images for the GitHub page
-  convert ${INF}/plots/work/OPG-qqman.png work/fp-lz-OPG-chr17:26694861_A_G.png -append -density 300 ~/INF/doc/OPG.png
+  convert -density 300 -resize 110% work/fp-lz-OPG-chr17:26694861_A_G.png OPG.png
+  convert ${INF}/plots/work/OPG-qqman.png OPG.png -append -density 300 ~/INF/doc/OPG.png
+  rm OPG.png
   cd ~/EWAS-fusion/IL.12B.tmp
   pdftopng -r 300 ewas-plot.pdf ewas-plot
   export rt=ewas-plot-00000
