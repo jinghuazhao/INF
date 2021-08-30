@@ -28,10 +28,41 @@ R --no-save -q <<END
   tbl <- read.delim(gz,as.is=TRUE) %>%
          mutate(SNP=MarkerName, CHR=as.numeric(Chromosome), BP=Position, P=10^log.P.) %>%
          filter(!is.na(CHR)&!is.na(BP)&!is.na(P))
-  qqman <- file.path(INF,"plots",paste0(prot,"-qqman.png"))
-  png(qqman,width=20,height=10,units="in",pointsize=4,res=300)
-  par(mfrow=c(1,2),mar=c(8,8,6,2),bty="n",mgp=c(5,1,0),xpd=TRUE)
-  qq(with(tbl,P),main=prot,cex.lab=3,cex.axis=3)
-  manhattan(tbl,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25),cex.axis=3,cex.lab=3,srt=45)
-  dev.off()
+  output_pdf <- function()
+  {
+    qqman <- file.path(INF,"plots","work",paste0(protein,"-qqman.pdf"))
+    pdf(qqman,width=20,height=10)
+    par(mfrow=c(1,2),mar=c(8,8,6,2),bty="n",mgp=c(5,1,0),xpd=TRUE)
+    qq(with(tbl,P),main=prot,cex.lab=3,cex.axis=3)
+    manhattan(tbl,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25),cex.axis=3,cex.lab=3,srt=45)
+    dev.off()
+  }
+  output_pdf()
+  output_png <- function()
+  {
+    qq <- file.path(INF,"plots",paste0(protein,"-qq.png"))
+    png(qq,width=20,height=10,units="in",pointsize=4,res=300)
+    par(mar=c(8,8,6,2),mgp=c(5,1,0),xpd=TRUE)
+    qq(with(tbl,P),main=prot,cex.lab=3,cex.axis=3)
+    dev.off()
+    par(mar=c(8,8,6,2),mgp=c(5,1,0),xpd=TRUE)
+    manhattan <- file.path(INF,"plots",paste0(protein,"-manhattan.png"))
+    png(manhattan,width=20,height=10,units="in",pointsize=4,res=300)
+    manhattan(tbl,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25),cex.axis=3,cex.lab=3,srt=45)
+    dev.off()
+  }
+  output_png()
 END
+
+function pdf()
+{
+  export dir=${INF}/plots/work
+  source ~/COVID-19/py37/bin/activate
+  ls ${dir}/*qqman*png | xargs -l basename -s -qqman.png | \
+  parallel -C' ' --env dir '
+    convert ${dir}/{}-qqman.png -quality 0 ${dir}/{}.jp2
+    img2pdf -o ${dir}/{}-qqman.pdf ${dir}/{}.jp2
+    rm "${dir}/{}.jp2"
+  '
+  qpdf --empty --pages $(ls ${dir}/*-qqman.pdf) -- qq_manhattan.pdf
+}
