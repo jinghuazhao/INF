@@ -311,7 +311,15 @@ function pdf()
   cd work; fp; cd -
   qpdf --empty --pages $(ls work/*pdf) -- fp.pdf
   qpdf --empty -collate --pages fp.pdf lz.pdf -- fp-lz.pdf
-# forest/locuszoom side-by-side format, OCR via PDF-viewer and compressed by iLovePDF.com/https://tools.pdf24.org/
+# forest/locuszoom side-by-side format, OCR via PDF-viewer and compressed by Adobe -- better cropped
+# left-right with very small file size
+# Split files, note the naming scheme
+  pdfseparate fp.pdf temp-%04d-fp.pdf
+  pdfseparate lz.pdf temp-%04d-lz.pdf
+# Combine the final pdf
+  pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile fp+lz.pdf
+# Clean up
+  rm -f temp-*-*.pdf
   source ~/COVID-19/py37/bin/activate
 # pip install img2pdf
   awk -vFS="\t" 'NR>1 {print $5,$6}' ${INF}/work/INF1.merge | \
@@ -337,7 +345,7 @@ function pdf()
     rm work/{}.jp2
   '
   qpdf --empty --pages $(ls work/*.pdf) -- qq_manhattan.pdf
-# Images for the GitHub page
+# Images for the GitHub page using output from qqman.sb (no border for Q-Q plot)
   convert -density 300 -resize 110% work/fp-lz-OPG-chr17:26694861_A_G.png OPG.png
   convert ${INF}/plots/work/OPG-qqman.png OPG.png -append -density 300 ~/INF/doc/OPG.png
   rm OPG.png
