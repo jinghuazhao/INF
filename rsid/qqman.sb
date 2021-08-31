@@ -46,8 +46,9 @@ R --no-save -q <<END
     qqman <- file.path(INF,"plots","work",paste0(protein,"-qqman.png"))
     png(qqman,width=20,height=10,units="in",pointsize=4,res=300)
     par(mfrow=c(1,2),mar=c(8,8,6,2),bty="n",mgp=c(5,1,0),xpd=TRUE)
-    qq(with(tbl,P),main=prot,cex.lab=3,cex.axis=3)
+    qq(with(tbl,P),cex.lab=3,cex.axis=3)
     manhattan(tbl,genomewideline=-log10(5e-10),suggestiveline=FALSE,ylim=c(0,25),cex.axis=3,cex.lab=3,srt=45)
+    title(prot,cex=4)
     dev.off()
   }
   single_png()
@@ -65,3 +66,6 @@ function all_singles()
   '
   qpdf --empty --pages $(ls ${dir}/*-qqman.pdf) -- qq+manhattan.pdf
 }
+
+# select only files today, e.g., mv $(find . -maxdepth 1 -mtime -1 | sort) ..
+# find . -maxdepth 1 -mtime -1 | sort
