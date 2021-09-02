@@ -3,8 +3,8 @@
 function INTERVAL()
 {
 # init
-  export rnaseq=tensorqtl_allSNPs_MAF0.005_merged_annotated.csv
   export rnaseq=tensorqtl_trans_MAF0.005_age_sex_rin_batch_readDepth_PC10_PEER20_merged_annotated.csv
+  export rnaseq=tensorqtl_allSNPs_MAF0.005_merged_annotated.csv
   grep -w ${rsid} ${rnaseq}
   zgrep ENSG00000256433 ${INF}/work/ensGtp.txt.gz | \
   cut -f2 | \
@@ -79,6 +79,8 @@ export b2=6700000
 export bracket=${b1}-${b2}
 
 tabix ${INF}/METAL/gwas2vcf/TNFB.tsv.gz ${chr}:${bracket} > TNFB.tbx
+
+module load python/2.7
 
 INTERVAL
 eQTLGen
