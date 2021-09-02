@@ -133,7 +133,7 @@ R --no-save -q <<END
                 mrbaseid=gsub("id:","",mrbaseid)
                ) %>%
          left_join(efo,by=c("mrbaseid"="MRBASEID")) %>%
-         left_join(gap::inf1[c("prot","target.short")],by=c("exposure"="prot")) %>%
+         left_join(gap.datasets::inf1[c("prot","target.short")],by=c("exposure"="prot")) %>%
          mutate(outcome=paste0(id," (",trait,")"),
                 exposure=target.short,
                 group=as.numeric(cut(b,breaks=quantile(b,seq(0,1,0.125)))),
@@ -159,7 +159,7 @@ R --no-save -q <<END
    subset(mr,fdr<=0.05)
    library(pheatmap)
    png(file.path(INF,"mr","efo-cis.png"),res=300,width=30,height=15,units="in")
-   pheatmap(mr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=18,fontsize_col=18)
+   pheatmap(mr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="270",fontsize_row=24,fontsize_col=24)
    dev.off()
 END
 

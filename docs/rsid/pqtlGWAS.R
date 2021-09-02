@@ -8,7 +8,7 @@ INF <- Sys.getenv("INF")
 INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
                     hg19_coordinates=paste0("chr",Chromosome,":",Position)}) %>%
                     rename(INF1_rsid=rsid, Total=N) %>%
-                    left_join(gap::inf1[c("prot","gene")])
+                    left_join(gap.datasets::inf1[c("prot","gene")])
 INF1_aggr <- INF1_metal %>%
   select(Chromosome,Position,prot,gene,hg19_coordinates,MarkerName,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans,INF1_rsid) %>%
   group_by(Chromosome,Position,MarkerName,INF1_rsid,hg19_coordinates) %>% summarise(nprots=n(),
@@ -194,13 +194,14 @@ pheatmap(rxc,
          main = "",
          angle_col = "315",
          filename = "INF1_pQTL_immune_qtl.png",
-         width = 16,
-         height = 10,
+         width = 17,
+         height = 11,
          treeheight_row = 100,
          treeheigh_col = 100,
          cellheight = 20,
          cellwidth = 20,
-         fontsize = 14)
+         fontsize_row = 14,
+         fontsize = 13)
 
 library(highcharter)
 fntltp <- JS("function(){
