@@ -186,7 +186,7 @@ pheatmap(rxc,
          cluster_cols = FALSE,
          cellheight = 20,
          cellwidth = 20,
-         fontsize = 11)
+         fontsize = 14)
 
 pheatmap(rxc,
          color = col,
@@ -200,7 +200,7 @@ pheatmap(rxc,
          treeheigh_col = 100,
          cellheight = 20,
          cellwidth = 20,
-         fontsize = 11)
+         fontsize = 14)
 
 library(highcharter)
 fntltp <- JS("function(){

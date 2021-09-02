@@ -51,12 +51,18 @@ cut -f1 work/rs12075.gassoc > work/rs12075.snpid
 plink --bfile INTERVAL/cardio/INTERVAL --extract work/rs12075.snpid --r square --out work/rs12075
 
 R --no-save -q <<END
+# This is supposed to be an interactive session.
   library(gassocplot)
   d <- read.table("work/rs12075.gassoc",col.names=c("snpid","marker","chr","pos","MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"))
   markers <- d[c("marker","chr","pos")]
-  z <- d[c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count")]
-  rownames(z) <- with(d,marker)
   ld <- read.table("work/rs12075.ld",col.names=with(d,marker),row.names=with(d,marker))
-  sap <- stack_assoc_plot(markers, z, ld, traits = c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"), ylab = "-log10(P)", legend=TRUE)
-  stack_assoc_plot_save(sap, "work/rs12075.png", 5, width=8, height=13, dpi=300)
+  z <- d[c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count")]
+  names(z) <- names(d)[5:9] <- c(paste0("MCP-",1:4),""Monocyte count)
+  rownames(z) <- with(d,marker)
+  sap <- stack_assoc_plot(markers, z, ld, traits = c("MCP-1","MCP-2","MCP-3","MCP-4","Monocyte count"), ylab = "-log10(P)", legend=TRUE)
+  INF <- Sys.getenv("INF")
+  pdf(file.path(INF,"plots","rs12075.pdf"),width=8,height=13)
+  grid::grid.draw(sap)
+  dev.off()
+# stack_assoc_plot_save(sap, "rs12075.png", 5, width=8, height=13, dpi=300)
 END
