@@ -52,6 +52,8 @@ library(cowplot)
 library(ggplot2)
 library(gap)
 
+source("gsmr.inc")
+
 INF <- Sys.getenv("INF")
 
 CAD_FEV1 <- cad_fev1()

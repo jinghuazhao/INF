@@ -370,4 +370,7 @@ function pdf_test()
 # pdfunite *.pdf ~/lz.pdf
 # Add background under Ubuntu
 # pdftk in.pdf background stamp.pdf output out.pdf
+# Extract and add bookmarks
+# pdftk a.pdf dump_data output a.txt
+# pdftk c.pdf update_info a.txt output d.pdf
 }
