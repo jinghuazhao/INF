@@ -3,8 +3,8 @@
 function INTERVAL()
 {
 # init
-  export rnaseq=tensorqtl_trans_MAF0.005_age_sex_rin_batch_readDepth_PC10_PEER20_merged_annotated.csv
   export rnaseq=tensorqtl_allSNPs_MAF0.005_merged_annotated.csv
+  export rnaseq=tensorqtl_trans_MAF0.005_age_sex_rin_batch_readDepth_PC10_PEER20_merged_annotated.csv
   grep -w ${rsid} ${rnaseq}
   zgrep ENSG00000256433 ${INF}/work/ensGtp.txt.gz | \
   cut -f2 | \
