@@ -443,18 +443,20 @@ function exposure()
 if [ ! -d ${INF}/mr/RA ]; then mkdir ${INF}/mr/RA; fi
 export M=1e6
 cut -f3 ${INF}/work/INF1.METAL | sed '1d' | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
-parallel -C' ' --env M '
+parallel -C' ' --env INF --env M '
 (
   echo SNP A1 A2 freq b se p N
-  gunzip -c OpenGWAS/Ha_et_al_2020_RA_Trans.txt.gz | \
+  gunzip -c ${INF}/OpenGWAS/Ha_et_al_2020_RA_Trans.txt.gz | \
   awk -v chr={3} -v start={4} -v end={5} -v M=${M} "
   {
     if (NR>1)
     {
-      split(\$1,a,\":\");
-      if(\$2<\$3) snpid=\"chr\" chr \":\" a[2] \"_\" \$2 \"_\" \$3;
-      else snpid=\"chr\" chr \":\" a[2] \"_\" \$3 \"_\" \$2;
-      if(a[1]==chr && a[2] >= start-M && a[2] < end+M) print a[1], a[2], snpid, \$2, \$3, \$5, \$6, \$7, \$8
+      split(toupper(\$1),a,\":\");
+      a1=toupper(\$2)
+      a2=toupper(\$3)
+      if(a1<a2) snpid=\"chr\" chr \":\" a[2] \"_\" a1 \"_\" a2;
+      else snpid=\"chr\" chr \":\" a[2] \"_\" a2 \"_\" a1;
+      if(a[1]==chr && a[2] >= start-M && a[2] < end+M) print a[1], a[2], snpid, a1, a2, \$4, \$5, \$6, \$7, \$8
     }
   }" | sort -k1,1n -k2,2n | cut -d" " -f1-2 --complement
 ) | gzip -f > ${INF}/mr/RA/{2}.gz
@@ -462,3 +464,34 @@ parallel -C' ' --env M '
 # Q9P0M4 IL.17C 16 88704999 88706881
 # MarkerName      Allele1 Allele2 Freq1   Effect  StdErr  P-value TotalSampleSize
 # 5:29439275      t       c       0.4862  -0.0085 0.0145  0.5596  291180
+if [ ! -d ${INF}/mr/RA/out ]; then mkdir ${INF}/mr/RA/out; fi
+for i in {1..70}; do
+    export trait=RA
+    export i=${i}
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk 'NR==ENVIRON["i"]{print $2}' | \
+    while read prot; do
+      export prot=${prot}
+      echo ${trait} ${INF}/mr/RA/${prot}.gz > ${INF}/mr/RA/gsmr_${prot}
+      gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_${prot} \
+               --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/RA/gsmr_${prot} \
+               --gsmr-direction 0 \
+               --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 15 --effect-plot \
+               --out ${INF}/mr/RA/out/${prot}
+
+      R --no-save -q <<\ \ \ \ \ \ END
+        INF <- Sys.getenv("INF")
+        trait <- Sys.getenv("trait")
+        p <- Sys.getenv("prot")
+        source(file.path(INF,"csd3","gsmr_plot.r"))
+        gsmr_data <- read_gsmr_data(paste0(INF,"/mr/RA/out/",p,".eff_plot.gz"))
+        gsmr_summary(gsmr_data)
+        pdf(paste0(INF,"/mr/RA/out/",p,".eff_plot.pdf"))
+        plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
+        dev.off()
+      END
+    done
+done
+# done previously
+# echo ${INF}/mr/gsmr/ref/${prot} > ${INF}/mr/gsmr/ref/gsmr_${prot}
+# echo ${prot} ${INF}/mr/gsmr/prot/${prot}.gz > ${INF}/mr/gsmr/prot/gsmr_${prot}
