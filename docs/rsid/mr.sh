@@ -437,3 +437,28 @@ function exposure()
     ) | gzip -f > ${INF}/mr/gsmr/prot/{2}-${suffix}.gz
   '
 }
+
+--- specific runs ---
+
+if [ ! -d ${INF}/mr/RA ]; then mkdir ${INF}/mr/RA; fi
+export M=1e6
+cut -f3 ${INF}/work/INF1.METAL | sed '1d' | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+parallel -C' ' --env M '
+(
+  echo SNP A1 A2 freq b se p N
+  gunzip -c OpenGWAS/Ha_et_al_2020_RA_Trans.txt.gz | \
+  awk -v chr={3} -v start={4} -v end={5} -v M=${M} "
+  {
+    if (NR>1)
+    {
+      split(\$1,a,\":\");
+      if(\$2<\$3) snpid=\"chr\" chr \":\" a[2] \"_\" \$2 \"_\" \$3;
+      else snpid=\"chr\" chr \":\" a[2] \"_\" \$3 \"_\" \$2;
+      if(a[1]==chr && a[2] >= start-M && a[2] < end+M) print a[1], a[2], snpid, \$2, \$3, \$5, \$6, \$7, \$8
+    }
+  }" | sort -k1,1n -k2,2n | cut -d" " -f1-2 --complement
+) | gzip -f > ${INF}/mr/RA/{2}.gz
+'
+# Q9P0M4 IL.17C 16 88704999 88706881
+# MarkerName      Allele1 Allele2 Freq1   Effect  StdErr  P-value TotalSampleSize
+# 5:29439275      t       c       0.4862  -0.0085 0.0145  0.5596  291180
