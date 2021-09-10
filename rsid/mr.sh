@@ -282,7 +282,7 @@ function ref_prot_outcome_gsmr()
     ) | gzip -f > ${INF}/mr/gsmr/prot/{2}.gz
   '
   if [ ! -d ${INF}/mr/gsmr/trait ]; then mkdir -p ${INF}/mr/gsmr/trait; fi
-  awk -vFS="\t" 'NR>1 {print $4,$5+$6}' ${INF}/rsid/efo.txt | \
+  awk -vFS="\t" 'NR>1 {print $4,2/(1/$5+1/$6)}' ${INF}/rsid/efo.txt | \
   while read efo N
   do
     export efo=${efo}
@@ -296,7 +296,7 @@ function ref_prot_outcome_gsmr()
         awk "{
           if(\$4<\$5) snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$5;
                  else snpid=\"chr\"\$1\":\"\$2\"_\"\$5\"_\"\$4
-          \$7=10^-\$7
+          \$9=10^-\$9
           print snpid, \$4, \$5, \$6, \$7, \$8, \$9, \$10
         }"
       ) | \
@@ -477,15 +477,17 @@ function ukb_b_9125()
         awk "{
           if(\$4<\$5) snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$5;
                  else snpid=\"chr\"\$1\":\"\$2\"_\"\$5\"_\"\$4
-          \$7=10^-\$7
+          \$9=10^-\$9
           print snpid, \$4, \$5, \$6, \$7, \$8, \$9, \$10
         }"
       ) | \
       gzip -f> ${INF}/mr/GWAS/trait/${trait}-{2}.gz
     '
 }
+# bcftools query -r
+# 6 42738749 rs9381218 C T 0.455975 9.15774e-05 0.000226441 0.161151 10285.1
 export trait=ukb-b-9125
-export N=462933
+export N=$(awk 'BEGIN{print 2/(1/457732+1/5201)}')
 ukb_b_9125
 # Q9P0M4 IL.17C 16 88704999 88706881
 # MarkerName      Allele1 Allele2 Freq1   Effect  StdErr  P-value TotalSampleSize
