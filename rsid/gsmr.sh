@@ -83,3 +83,21 @@ do
   convert ${INF}/gsmr/INF1_CAD-FEV1.pdf ${INF}/gsmr/INF1_CAD-FEV1.${ext}
   convert ${INF}/HGI/INF1_A2-B2-C2.pdf ${INF}/HGI/INF1_A2-B2-C2.${ext}
 done
+
+# IL-12B ~ IBD
+export root=${INF}/mr/gsmr/out/ieu-a-31-IL.12B
+(
+  echo SNP A1 A2 AF b.IL.12B SE.IL.12B b.IBD SE.IBD
+  gunzip -c ${INF}/mr/gsmr/out/10/ieu-a-31-IL.12B.eff_plot.gz | awk '/effect_begin/,/effect_end/' | grep -v effect
+) > ${root}.dat
+
+R --no-save -q <<END
+  INF <- Sys.getenv("INF")
+  root <- Sys.getenv("root")
+  eff_dat <- paste0(root,".dat")
+  d <- read.table(eff_dat,header=TRUE)
+  source(file.path(INF,"rsid","gsmr.inc"))
+  png(paste0(root,".png"),res=300,height=12,width=15,units="in")
+  gsmr(d,"IL.12B","IBD")
+  dev.off()
+END
