@@ -513,7 +513,7 @@ for i in {1..70}; do
         gsmr_data <- read_gsmr_data(paste0(INF,"/mr/GWAS/out/",trait,"-",p,".eff_plot.gz"))
         gsmr_summary(gsmr_data)
         pdf(paste0(INF,"/mr/GWAS/out/",trait,"-",p,".eff_plot.pdf"))
-        par(mar=c(8,8,6,2),mgp=c(5,1,0),xpd=TRUE)
+        par(mar=c(6,6,5,1),mgp=c(4,1,0),xpd=TRUE)
         plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
         dev.off()
       END
