@@ -97,7 +97,7 @@ R --no-save -q <<END
   eff_dat <- paste0(root,".dat")
   d <- read.table(eff_dat,header=TRUE)
   source(file.path(INF,"rsid","gsmr.inc"))
-  png(paste0(root,".png"),res=300,height=12,width=15,units="in")
+  pdf(paste0(root,".pdf"))
   gsmr(d,"IL.12B","IBD")
   dev.off()
 END
