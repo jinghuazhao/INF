@@ -73,23 +73,21 @@ function gsmr()
                --gsmr-direction 0 \
                --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 10 --effect-plot \
                --out ${INF}/mr/gsmr/out/${trait}-${prot}
-
+      if [ -f ${INF}/mr/gsmr/out/${trait}-${prot}.eff_plot.gz ]; then
       R --no-save -q <<\ \ \ \ \ \ END
         INF <- Sys.getenv("INF")
         trait <- Sys.getenv("trait")
         p <- Sys.getenv("prot")
         source(file.path(INF,"csd3","gsmr_plot.r"))
         eff_dat <- paste0(INF,"/mr/gsmr/out/",trait,"-",p,".eff_plot.gz")
-        if (file.exists(eff_dat))
-        {
-          gsmr_data <- read_gsmr_data(eff_dat)
-          gsmr_summary(gsmr_data)
-          pdf(paste0(INF,"/mr/gsmr/out/",trait,"-",p,".eff_plot.pdf"))
-          par(mar=c(7,7,5,1),mgp=c(5,1,0),xpd=TRUE)
-          plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
-          dev.off()
-        }
+        gsmr_data <- read_gsmr_data(eff_dat)
+        gsmr_summary(gsmr_data)
+        pdf(paste0(INF,"/mr/gsmr/out/",trait,"-",p,".eff_plot.pdf"))
+        par(mar=c(6,6,5,1),mgp=c(4,1,0),xpd=TRUE)
+        plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
+        dev.off()
       END
+      fi
     done
   done
 }
