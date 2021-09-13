@@ -39,11 +39,11 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 
 ## Mendelian Randomization (MR) analysis
 
-There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in `mr.sh` and `mr.sb`. To get around the mishap with rsids we switched back to SNPids; we found the options `--clump-r2 0.1 --gsmr-snp-min 1` make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.
+There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in `mr.sh` and `mr.sb`. To get around the mishap with rsids we switched back to SNPids; we found the options `--clump-r2 0.1 --gsmr-snp-min 10` make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.
 
 It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.
 
-The original implementation is kept as pQTLMR/MR (`HGI.sh`, `HGI.R`), GSMR (`gsmr.sh`, `gsmr.R`) and +/- 1MB (`rs635634.sh`) whereas `gsmr_HGI.sb` and `gsmr_HGI.sh` are the genomewide counterparts.
+The original implementation for HGI data is kept as pQTLMR/MR (`HGI.sh`, `HGI.R`), GSMR (`gsmr.sh`, `gsmr.R`) and +/- 1MB (`rs635634.sh`) whereas `gsmr_HGI.sb` and `gsmr_HGI.sh` are the genomewide counterparts.
 
 ## Other analyses / utilities
 
@@ -181,4 +181,4 @@ whose hgnc_symbol can be amended.
 
 The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
-*Date last changed:* **9/9/2021**
+*Date last changed:* **13/9/2021**
