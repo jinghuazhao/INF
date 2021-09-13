@@ -366,26 +366,6 @@ function hgi()
 {
   if [ ! -d ${INF}/mr/gsmr/hgi ]; then mkdir -p ${INF}/mr/gsmr/hgi; fi
   export suffix=cis
-  awk '$21==ENVIRON["suffix"] {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
-  awk -vM=1e6 '{print $2, $3, $4-M, $5+M}' | \
-  while read prot chr start end
-  do
-    export prot=${prot}
-    export chr=${chr}
-    export start=${start}
-    export end=${end}
-    echo ${chr} ${start} ${end} > ${INF}/mr/gsmr/hgi/${prot}.bed1
-    plink2 --bfile ${INF}/work/INTERVAL --extract bed1 ${INF}/mr/gsmr/hgi/${prot}.bed1 \
-           --make-bed --rm-dup force-first list --out ${INF}/mr/gsmr/hgi/${prot}
-  done
-  awk '$21==ENVIRON["suffix"] {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
-  parallel -j15 --env INF --env suffix -C' ' '
-    (
-      echo -e "SNP A1 A2 freq b se p N"
-      cut -f1,2 --complement ${INF}/mr/gsmr/mrx/{2}-${suffix}.mri | \
-      awk "{\$2=toupper(\$2);\$3=toupper(\$3);\$7=10^\$7;print}"
-    ) | gzip -f > ${INF}/mr/gsmr/hgi/{2}.gz
-  '
   export HGI=~/rds/results/public/gwas/covid19/hgi/covid19-hg-public/20210415/results/20210607
   for trait in A2 B1 B2 C2
   do
@@ -400,7 +380,7 @@ function hgi()
         NR>1{
                if (\$4<\$3) snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$3;
                else snpid=\"chr\"\$1\":\"\$2\"_\"\$3\"_\"\$4
-               print snpid,\$4,\$3,\$14,\$7,\$8,\$9,\$10+\$11
+               print snpid,\$4,\$3,\$14,\$7,\$8,\$9,2/(1/\$10+1/\$11)
             }"
       ) | \
       gzip -f> ${INF}/mr/gsmr/trait/${trait}-{2}.gz
