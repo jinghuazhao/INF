@@ -443,6 +443,7 @@ function exposure()
 for dir in out trait; do if [ ! -d ${INF}/mr/GWAS/${dir} ]; then mkdir -p ${INF}/mr/GWAS/${dir}; fi; done
 export M=1e6
 function RA()
+# No gain from this data so remove the sumstats
 {
   cut -f3 ${INF}/work/INF1.METAL | sed '1d' | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
   parallel -C' ' --env INF --env M '
