@@ -16,7 +16,7 @@ do
       a2=$3
       if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
       else snpid="chr" CHR ":" POS "_" a1 "_" a2
-      if (NR>1) print snpid, a1, a2, $14, $7, $8, $9, $10+$11
+      if (NR>1) print snpid, a1, a2, $14, $7, $8, $9, 2/(1/$10+1/$11)
     }'
   ) | \
   awk 'a[$1]++==0' | \
@@ -32,7 +32,7 @@ R --no-save -q <<END
   gsmr[recolor,"col"] <- "red"
   n.prot <- nrow(gsmr)
   xtick <- seq(1,n.prot)
- png(file.path(INF,"HGI","A2-B2-C2.gsmr.png"), res=300, units="cm", width=40, height=20)
+  png(file.path(INF,"HGI","A2-B2-C2.gsmr.png"), res=300, units="cm", width=40, height=20)
   with(gsmr, {
       par(mfrow=c(3,1))
       plot(-log10(p_A2), col=col, cex=2, pch=16, axes=FALSE, main="Critical illness (A2)", xlab="", ylab="", cex.lab=1)

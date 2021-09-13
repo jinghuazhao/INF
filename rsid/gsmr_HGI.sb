@@ -24,9 +24,9 @@ function gsmr()
 
   gcta-1.9 --mbfile ${INF}/HGI/gsmr_ref_data --gsmr-file HGI/gsmr_$p ${INF}/HGI/gsmr_${trait} \
            --gsmr-direction 0 \
-           --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
+           --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 10 --effect-plot \
            --out ${INF}/HGI/gsmr_${trait}_$p
-
+  if [ ! -f ${INF}/HGI/gsmr_${trait}_${prot}.eff_plot.gz ]; then continue; fi
   R --no-save -q <<\ \ END
     INF <- Sys.getenv("INF")
     trait <- Sys.getenv("trait")
@@ -35,6 +35,7 @@ function gsmr()
     gsmr_data <- read_gsmr_data(paste0(INF,"/HGI/gsmr_",trait,"_",p,".eff_plot.gz"))
     gsmr_summary(gsmr_data)
     pdf(paste0(INF,"/HGI/gsmr_",trait,"_",p,".eff_plot.pdf"))
+    par(mar=c(6,6,5,1),mgp=c(4,1,0),xpd=TRUE)
     plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
     dev.off()
   END

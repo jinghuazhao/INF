@@ -73,7 +73,7 @@ function gsmr()
                --gsmr-direction 0 \
                --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 10 --effect-plot \
                --out ${INF}/mr/gsmr/out/${trait}-${prot}
-      if [ -f ${INF}/mr/gsmr/out/${trait}-${prot}.eff_plot.gz ]; then
+      if [ ! -f ${INF}/mr/gsmr/out/${trait}-${prot}.eff_plot.gz ]; then continue; fi
       R --no-save -q <<\ \ \ \ \ \ END
         INF <- Sys.getenv("INF")
         trait <- Sys.getenv("trait")
@@ -87,7 +87,6 @@ function gsmr()
         plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
         dev.off()
       END
-      fi
     done
   done
 }
@@ -111,17 +110,18 @@ function gsmr_hgi()
   fi
   gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_ref_${p} \
            --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${p} ${INF}/mr/gsmr/trait/gsmr_${trait}_${p} --gsmr-direction 0 \
-           --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
+           --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 10 --effect-plot \
            --out ${INF}/mr/gsmr/hgi//gsmr_${trait}_${p}
+  if [ ! -f ${INF}/mr/gsmr/hgi/${trait}-${prot}.eff_plot.gz ]; then continue; fi
   R --no-save -q <<\ \ END
     INF <- Sys.getenv("INF")
     trait <- Sys.getenv("trait")
     p <- Sys.getenv("p")
     source(file.path(INF,"csd3","gsmr_plot.r"))
-#   source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
     gsmr_data <- read_gsmr_data(paste0(INF,"/mr/gsmr/hgi/gsmr_",trait,"_",p,".eff_plot.gz"))
     gsmr_summary(gsmr_data)
     pdf(paste0(INF,"/mr/gsmr/hgi/gsmr_",trait,"_",p,".eff_plot.pdf"))
+    par(mar=c(6,6,5,1),mgp=c(4,1,0),xpd=TRUE)
     plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
     dev.off()
   END
