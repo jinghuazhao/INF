@@ -68,16 +68,30 @@ done
 
 (
   awk -vOFS="\t" 'BEGIN{print "Method","Batch","Trait","Protein","pQTL","b","se","p"}'
-  awk -vOFS="\t" '/Inverse/ && $NF<0.05/180 {print FILENAME,$9,$10,$11}' ${INF}/HGI/mr/MR*r6*result*
-  awk -vOFS="\t" '$NF<0.05/180 {print FILENAME,$8,$9,$10}' ${INF}/HGI/mr/pqtl*r6*result*
+  awk -vOFS="\t" '/Inverse/ {print FILENAME,$9,$10,$11}' ${INF}/HGI/mr/MR*r6*result*
+  awk -vOFS="\t" '!/pval/{print FILENAME,$8,$9,$10}' ${INF}/HGI/mr/pqtl*r6*result*
 ) | \
 sed 's|/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/HGI/mr/||;s|-result.txt||' | \
 awk -vOFS="\t" '{gsub(/-/,"\t",$1)};1' > ${INF}/HGI/mr.tsv
 
-cut -f3-5 --output-delimiter=" " ${INF}/HGI/mr.tsv | \
-parallel -C' ' 'awk -vtrait={1} -vprot={2} -vrsid={3} "\$2==rsid && \$3==prot {print trait,prot,rsid,\$4,\$5,\$21}" work/INF1.METAL' | \
-sort -k1,1 -k4,4n | \
-uniq
+R --no-save -q <<END
+  options(width=200)
+  library(dplyr)
+  INF <- Sys.getenv("INF")
+  METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+           select(prot,rsid,cis.trans,Chromosome,Position) %>%
+           rename(pQTL=rsid)
+  tsv <- read.delim(file.path(INF,"HGI","mr.tsv")) %>%
+         filter(Method=="pqtlMR") %>%
+         mutate(fdr=p.adjust(p,method="fdr")) %>%
+         left_join(METAL)
+  txt <- left_join(tsv,gap.datasets::inf1[c("prot","target.short")],by=c("Protein"="prot")) %>%
+         mutate(Protein=target.short) %>%
+         select(-c(Method,Batch,prot,target.short)) %>%
+         arrange(desc(fdr))
+  subset(txt,fdr<=0.05)
+  write.table(txt,file=file.path(INF,"HGI","pqtlMR.txt"),quote=FALSE,row.names=FALSE,sep="\t")
+END
 
 R --no-save -q <<END
   regions <- data.frame(chr="chr19",start=49206145,end=49206674)

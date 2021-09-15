@@ -133,13 +133,14 @@ HOME <- Sys.getenv("HOME")
 load(file.path(HOME,"software-notes","docs","files","pi_database.rda"))
 drug <- subset(pi_drug,target%in%with(gap.datasets::inf1,gene)) %>% left_join(pi_trait)
 efo <- read.delim(file.path(INF,"rsid","efo.txt"))
-hgi <- read.delim(file.path(INF,"mr","gsmr","hgi","5e-8","5e-8.tsv"))
+hgi_gsmr <- read.delim(file.path(INF,"mr","gsmr","hgi","5e-8","5e-8.tsv"))
+hgi_pqtlmr <- read.delim(file.path(INF,"HGI","pqtlMR.txt"))
 pqtls <- select(pqtls,-prots)
 
 outsheets <- c("summary","studies","inf1",
                "pqtls","cojo","knownpqtls","coloc","cs95","pqtldisease",
                "vep","garfield",
-               "gsmr_efo","hgi","drug",
+               "gsmr_efo","hgi_gsmr","hgi_pqtlmr","drug",
                "reactome","great","efo","gdb",
                "interval","os","cvd1","aristotl","pqtlstudies",
                "great3","mr_immun","smr","cis_mr","mr_misc","gsmr",
@@ -147,7 +148,7 @@ outsheets <- c("summary","studies","inf1",
 titles <- c("summary","study information","panel information",
             "pQTLs","conditional analysis","known pQTLs","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
             "VEP annotation","GARFIELD outputs",
-            "GSMR results","HGI r6","PI drug",
+            "GSMR results","HGI-GSMR r6","HGI-pQTLMR","PI drug",
             "Reactome","GREAT","EFO","geneDrugbank",
             "INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study","previous pQTL studies",
             "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","cis-MR results","pQTL-misc-MR","GSMR-FEV1CVD",
@@ -156,13 +157,13 @@ description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
 n0 <- 3
-n1 <- 11
+n1 <- 12
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
             paste0("ST",1:n1),
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
           )
 summary <- data.frame(Sheetnames=prefix,Description=description)
-xlsx <- file.path(INF,"NG","SCALLOP-INF.xlsx")
+xlsx <- file.path(INF,"NG","SCALLOP-INF-ST.xlsx")
 wb <- createWorkbook(xlsx)
 for (i in 1:length(outsheets))
 {

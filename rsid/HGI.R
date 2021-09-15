@@ -1,14 +1,15 @@
 pqtlMR <- function(r2=0.001)
 {
   cat(id3,"\n")
-  y <- within(read.delim(file.path(INF,"HGI","mr",paste0(id3,".gz"))),{outcome=prot})
+  y <- read.delim(file.path(INF,"HGI","mr",paste0(id3,".gz"))) %>%
+       mutate(outcome=prot, N=2/(1/all_inv_var_meta_cases+1/all_inv_var_meta_controls))
   o <- format_data(y, type="outcome", header = TRUE, phenotype_col = "outcome", snp_col = "rsid",
                    effect_allele_col = "ALT", other_allele_col = "REF",
                    eaf_col = "all_meta_AF", 
                    beta_col = "all_inv_var_meta_beta",
                    se_col = "all_inv_var_meta_sebeta",
                    pval_col = "all_inv_var_meta_p", log_pval = FALSE,
-                   samplesize_col = "all_meta_sample_N")
+                   samplesize_col = "N")
   Allele1 <- Sys.getenv("Allele1")
   Allele2 <- Sys.getenv("Allele2")
   EAF <- as.numeric(Sys.getenv("EAF"))
@@ -39,7 +40,8 @@ pqtlMR <- function(r2=0.001)
 
 MR <- function(clumping=TRUE, r2=0.001)
 {
-  y <- within(read.delim(file.path(INF,"HGI","mr",paste0(id3,".gz"))), {outcome=prot})
+  y <- read.delim(file.path(INF,"HGI","mr",paste0(id3,".gz"))) %>%
+       mutate(outcome=prot, N=2/(1/all_inv_var_meta_cases+1/all_inv_var_meta_controls))
   if (nrow(y)<=1) return (-1)
   o <- format_data(y, type="outcome", header = TRUE, phenotype_col = "outcome", snp_col = "rsid",
                    effect_allele_col = "ALT", other_allele_col = "REF",
@@ -47,7 +49,7 @@ MR <- function(clumping=TRUE, r2=0.001)
                    beta_col = "all_inv_var_meta_beta",
                    se_col = "all_inv_var_meta_sebeta",
                    pval_col = "all_inv_var_meta_p", log_pval = FALSE,
-                   samplesize_col = "all_meta_sample_N")
+                   samplesize_col = "N")
   x <- read.delim(file.path(INF,"HGI","mr","tsv",paste0(id3,".tsv.gz")))
   e <- format_data(x, type="exposure", phenotype_col="prot", header = TRUE, snp_col = "rsid",
                    effect_allele_col = "Allele1", other_allele_col = "Allele2",
@@ -84,7 +86,9 @@ library(pQTLtools)
 library(TwoSampleMR)
 
 INF <- Sys.getenv("INF")
-trait <- Sys.getenv("trait"); prot <- Sys.getenv("prot"); rsid <- Sys.getenv("rsid");
+trait <- Sys.getenv("trait")
+prot <- Sys.getenv("prot")
+rsid <- Sys.getenv("rsid")
 id3 <- paste("r6",trait,prot,rsid,sep="-")
 cat(id3,"\n",sep="")
 
