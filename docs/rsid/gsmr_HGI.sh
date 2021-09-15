@@ -25,6 +25,32 @@ done
 
 grep -v se ${INF}/HGI/INF1_?2.gsmr | sort -k5,5gr | tail -17 | sed 's/:/\t/' | cut -f1 --complement
 
+for trait in A2 B2 C2
+do
+  gunzip -c ${INF}/HGI/gsmr_${trait}_LIF.R.eff_plot.gz | \
+  awk '/effect_begin/,/effect_end/' | \
+  grep -v effect > ${INF}/HGI/gsmr_${trait}_LIF.R.dat
+done
+
+R --no-save -q <<END
+  options(width=200)
+  INF <- Sys.getenv("INF")
+  A2 <- read.table(file.path(INF,"HGI","gsmr_A2_LIF.R.dat"),col.names=c("snpid","A2.a1","A2.a2",paste0("x",1:5)))
+  B2 <- read.table(file.path(INF,"HGI","gsmr_B2_LIF.R.dat"),col.names=c("snpid","B2.a1","B2.a2",paste0("y",1:5)))
+  C2 <- read.table(file.path(INF,"HGI","gsmr_C2_LIF.R.dat"),col.names=c("snpid","C2.a1","C2.a2",paste0("z",1:5)))
+  A2_B2_C2 <- merge(merge(A2,B2,by="snpid",all=TRUE),C2,by="snpid",all=TRUE)
+  vars <- c("snpid",paste0("x",1:5),paste0("y",4:5),paste0("z",4:5))
+  snp_effects <- A2_B2_C2[vars]
+  names(snp_effects) <- c("SNP", "MAF.LIF.R", "b.LIF.R", "SE.LIF.R", "b.A2", "SE.A2", "b.B2", "SE.B2", "b.C2", "SE.C2")
+  write.table(snp_effects,file=file.path(INF,"HGI","INF1_A2-B2-C2.gsmr"),row.names=FALSE,quote=FALSE)
+  source(file.path(INF,"rsid","gsmr.inc"))
+  pdf(file.path(INF,"HGI","INF1_A2-B2-C2.pdf"))
+  mr <- gsmr(snp_effects, "LIF.R", c("A2","B2","C2"))
+  dev.off()
+END
+
+# --- legacy code ---
+
 R --no-save -q <<END
   INF <- Sys.getenv("INF")
   gsmr <- within(read.table(file.path(INF,"HGI","A2-B2-C2.txt"),header=TRUE),{col="black"})
@@ -49,7 +75,7 @@ R --no-save -q <<END
   })
   dev.off()
 # source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
-  source(file.path(INF,"csd3","gsmr_plot.r"))
+  source(file.path(INF,"rsid","gsmr_plot.r"))
   read_gsmr_by_trait_p <- function(trait,p)
   {
       gsmr_data <- read_gsmr_data(file.path(INF,"HGI",paste0("gsmr_",trait,"_",p,".eff_plot.gz")))

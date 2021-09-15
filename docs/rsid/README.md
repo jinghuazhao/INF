@@ -43,7 +43,7 @@ There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving 
 
 It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.
 
-The original implementation for HGI data is kept as pQTLMR/MR (`HGI.sh`, `HGI.R`), GSMR (`gsmr.sh`, `gsmr.R`) and +/- 1MB (`rs635634.sh`) whereas `gsmr_HGI.sb` and `gsmr_HGI.sh` are the genomewide counterparts.
+The GSMR implementation started with CAD/FEV1 as in `gsmr_CAD.*` and `gsmr_FEV1.*` leading to the original implementation for HGI data `gsmr_HGI.*` and then pQTLMR/MR (`HGI.sh`, `HGI.R`), GSMR (`gsmr.sh`, `gsmr.R`) and +/- 1MB (`rs635634.sh`).
 
 ## Other analyses / utilities
 
@@ -181,4 +181,4 @@ whose hgnc_symbol can be amended.
 
 The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
-*Date last changed:* **13/9/2021**
+*Date last changed:* **15/9/2021**

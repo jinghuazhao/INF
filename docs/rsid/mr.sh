@@ -490,7 +490,7 @@ for i in {1..70}; do
         INF <- Sys.getenv("INF")
         trait <- Sys.getenv("trait")
         p <- Sys.getenv("prot")
-        source(file.path(INF,"csd3","gsmr_plot.r"))
+        source(file.path(INF,"rsid","gsmr_plot.r"))
         gsmr_data <- read_gsmr_data(paste0(INF,"/mr/GWAS/out/",trait,"-",p,".eff_plot.gz"))
         gsmr_summary(gsmr_data)
         pdf(paste0(INF,"/mr/GWAS/out/",trait,"-",p,".eff_plot.pdf"))
