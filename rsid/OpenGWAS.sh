@@ -2,7 +2,8 @@
 
 if [ ! -d ${INF}/OpenGWAS ]; then mkdir ${INF}/OpenGWAS; fi
 cd ${INF}/OpenGWAS
-export CADFEV1=(ebi-a-GCST005195 ebi-a-GCST007432)
+export CADFEV1=(ebi-a-GCST005195 ebi-a-GCST007432) # CAD does not contain AF
+export CADFEV1=(ebi-a-GCST003116 ebi-a-GCST007432)
 for id in $(echo $(cut -f4 ${INF}/rsid/efo.txt | sed '1d') ${CADFEV1[*]})
 do
   export f=https://gwas.mrcieu.ac.uk/files/${id}/${id}.vcf.gz

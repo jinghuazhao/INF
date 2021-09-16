@@ -1,5 +1,31 @@
 #!/usr/bin/bash
 
+# --- extraction from OpenGWAS---
+
+function CAD_FEV1()
+{
+  for id in ebi-a-GCST003116 ebi-a-GCST007432
+  do
+    export N=$(awk -v id=${id} '$1==id' ${INF}/OpenGWAS/ieu.N | \
+               awk '{if ($1=="ebi-a-GCST005195") print 2/(1/$3+1/$4); else print $2}')
+      (
+        echo -e "SNP A1 A2 freq b se p N"
+        bcftools query -f "%CHROM %POS %ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [$N]\n" ${INF}/OpenGWAS/${id}.vcf.gz | \
+        awk '{
+          if($4<$5) snpid="chr"$1":"$2"_"$4"_"$5;
+               else snpid="chr"$1":"$2"_"$5"_"$4
+          $9=10^-$9
+          print snpid, $4, $5, $6, $7, $8, $9, $10
+        }'
+      ) | \
+      gzip -f > ${INF}/gsmr/${id}.gz
+  done
+  ln -sf ${INF}/gsmr/ebi-a-GCST003116.gz ${INF}/gsmr/gsmr_CAD.gz
+  ln -sf ${INF}/gsmr/ebi-a-GCST007432.gz ${INF}/gsmr/gsmr_FEV1.gz
+}
+
+# --- miscellaneous utilities ---
+
 for trait in CAD FEV1
 do
   echo ${trait}
@@ -101,3 +127,81 @@ R --no-save -q <<END
   gsmr(d,"IL.12B","IBD")
   dev.off()
 END
+
+# --- legacy code ---
+
+function nikpay()
+{
+(
+  echo "SNP A1 A2 freq b se p N"
+  unzip -p -c cad.additive.Oct2015.pub.zip | \
+  awk '
+  {
+    CHR=$2
+    POS=$3
+    a1=$4
+    a2=$5
+    if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+    else snpid="chr" CHR ":" POS "_" a1 "_" a2
+    if (substr($1,1,2)=="rs"||substr($1,1,3)=="chr"||substr($1,1,3)=="MER")
+       print snpid, a1, a2, $6, $9, $10, $11, 185000
+  }'
+) > gsmr_CAD.txt
+
+# unzip -p -c CAD/cad.additive.Oct2015.pub.zip | head -1 | sed 's/\t/\n/g' | awk '{print "#" NR, $1}'
+#1 markername
+#2 chr
+#3 bp_hg19
+#4 effect_allele
+#5 noneffect_allele
+#6 effect_allele_freq
+#7 median_info
+#8 model
+#9 beta
+#10 se_dgc
+#11 p_dgc
+#12 het_pvalue
+#13 n_studies
+}
+
+function FEV1()
+{
+(
+  echo "SNP A1 A2 freq b se p N"
+  gunzip -c UKB_FEV1_results.txt.gz | awk '
+  {
+    CHR=$2
+    POS=$3
+    a1=$4
+    a2=$5
+    if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+    else snpid="chr" CHR ":" POS "_" a1 "_" a2
+    if (NR>1) print snpid, a1, a2, $7, $8, $9, $10, 321047
+  }'
+) > gsmr_FEV1.txt
+
+# gunzip -c UKB_FEV1_results.txt.gz | head -1 | sed 's/\t/\n/g' | awk '{print "#" NR, $1}'
+#1 #SNP
+#2 Chromosome
+#3 Position_b37
+#4 Coded
+#5 Non_coded
+#6 INFO
+#7 Coded_freq
+#8 beta
+#9 SE_GC
+#10 P_GC
+
+# gunzip -c SpiroMeta_FEV1_results.txt.gz | head -1 | sed 's/\t/\n/g' | awk '{print "#" NR, $1}'
+#1 #SNP
+#2 Chromosome
+#3 Position_b37
+#4 Coded
+#5 Non_coded
+#6 N
+#7 Neff
+#8 Coded_freq
+#9 beta
+#10 SE
+#11 P
+}
