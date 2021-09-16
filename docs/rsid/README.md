@@ -43,7 +43,7 @@ There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving 
 
 It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.
 
-The GSMR implementation started with CAD/FEV1 as in `gsmr_CAD.*` and `gsmr_FEV1.*` leading to the original implementation for HGI data `gsmr_HGI.*` and then pQTLMR/MR (`HGI.sh`, `HGI.R`), GSMR (`gsmr.sh`, `gsmr.R`) and +/- 1MB (`rs635634.sh`).
+The GSMR implementation started with CAD/FEV1 (now with `gsmr.sh`, `gsmr.R`, `gsmr.sb`) and then HGI as `gsmr_HGI.*` and then pQTLMR/MR (`HGI.sh`, `HGI.R`), and +/- 1MB (`rs635634.sh`).
 
 ## Other analyses / utilities
 
@@ -65,7 +65,6 @@ fusion_twas.sb | FUSION TWAS experiment
 garfield.sh | GARFIELD analysis
 gdigt.R | GDI and gene-trials
 GREP.sh | GREP script
-gsmr.sh | GSMR processing
 GTEx-ps.sh | cis-pQTL GTEx eQTL lookup with PhenoScanner CLI
 GTEx-ps.R | cis-pQTL GTEx eQTL lookup (PhenoScanner)
 GTEx-ps-jma.R | cis-pQTL from jma as above

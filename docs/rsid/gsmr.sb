@@ -1,0 +1,43 @@
+#!/bin/bash
+
+#SBATCH --account=PETERS-SL3-CPU
+#SBATCH --job-name=_gsmr_cad_fev1
+#SBATCH --time=12:00:00
+#SBATCH --partition=cclake
+#SBATCH --array=48
+#SBATCH --mem=128800
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_gsmr-cad_fev1_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_gsmr-cad_fev1_%A_%a.err
+#SBATCH --export ALL
+
+export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' inf1.tmp)
+
+cd ${INF}/gsmr
+for trait in CAD FEV1
+do
+  export trait=${trait}
+  if [ ! -f gsmr_${trait} ]; then echo ${trait} ${INF}/gsmr/gsmr_${trait}.gz > gsmr_${trait}; fi
+  if [ ! -f gsmr_ref_data ]; then echo $INF/work/INTERVAL > gsmr_ref_data; fi
+  if [ ! -f gsmr_$p ]; then echo $p $INF/work/$p.ma > gsmr_$p; fi
+
+  gcta-1.9 --mbfile gsmr_ref_data --gsmr-file gsmr_$p gsmr_${trait} \
+           --gsmr-direction 0 \
+           --clump-r2 0.1 --gwas-thresh 5e-8 --heidi-thresh 0.05 --gsmr-snp-min 10 --effect-plot \
+           --out gsmr_${trait}_$p
+
+  R --no-save -q <<\ \ END
+    p <- Sys.getenv("p")
+    INF <- Sys.getenv("INF")
+    trait <- Sys.getenv("trait")
+    source(file.path(INF,"rsid","gsmr_plot.r"))
+    gsmr_data <- read_gsmr_data(paste0("gsmr_",trait,"_",p,".eff_plot.gz"))
+    gsmr_summary(gsmr_data)
+    pdf(paste0("gsmr_",trait,"_",p,".eff_plot.pdf"))
+    par(mar=c(6,6,5,1),mgp=c(4,1,0),xpd=TRUE)
+    plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
+    dev.off()
+  END
+}
+cd -
