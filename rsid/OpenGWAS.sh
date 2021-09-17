@@ -18,7 +18,7 @@ R --no-save -q <<END
   INF <- Sys.getenv("INF")
   HPC_WORK <- Sys.getenv("HPC_WORK")
   efo <- read.delim(file.path(INF,"rsid","efo.txt"))
-  cadfev1 <- c("ebi-a-GCST005195", "ebi-a-GCST007432")
+  cadfev1 <- c("ebi-a-GCST003116", "ebi-a-GCST007432")
   opengwas_ids <- efo[["MRBASEID"]] %>%
                   c(cadfev1)
   opengwas_info <- ieugwasr::gwasinfo(opengwas_ids)

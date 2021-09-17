@@ -7,7 +7,7 @@ function CAD_FEV1()
   for id in ebi-a-GCST003116 ebi-a-GCST007432
   do
     export N=$(awk -v id=${id} '$1==id' ${INF}/OpenGWAS/ieu.N | \
-               awk '{if ($1=="ebi-a-GCST005195") print 2/(1/$3+1/$4); else print $2}')
+               awk '{if ($1=="ebi-a-GCST003116") print 2/(1/60801+1/123504); else print $2}')
       (
         echo -e "SNP A1 A2 freq b se p N"
         bcftools query -f "%CHROM %POS %ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [$N]\n" ${INF}/OpenGWAS/${id}.vcf.gz | \
@@ -18,6 +18,7 @@ function CAD_FEV1()
           print snpid, $4, $5, $6, $7, $8, $9, $10
         }'
       ) | \
+      awk 'a[$1]++==0' | \
       gzip -f > ${INF}/gsmr/${id}.gz
   done
   ln -sf ${INF}/gsmr/ebi-a-GCST003116.gz ${INF}/gsmr/gsmr_CAD.gz

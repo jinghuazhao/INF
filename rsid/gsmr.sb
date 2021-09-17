@@ -12,15 +12,15 @@
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export TMPDIR=/rds/user/jhz22/hpc-work/work
-export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' inf1.tmp)
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' ${INF}/work/inf1.tmp)
 
 cd ${INF}/gsmr
 for trait in CAD FEV1
 do
   export trait=${trait}
-  if [ ! -f gsmr_${trait} ]; then echo ${trait} ${INF}/gsmr/gsmr_${trait}.gz > gsmr_${trait}; fi
-  if [ ! -f gsmr_ref_data ]; then echo $INF/work/INTERVAL > gsmr_ref_data; fi
-  if [ ! -f gsmr_$p ]; then echo $p $INF/work/$p.ma > gsmr_$p; fi
+  echo ${trait} ${INF}/gsmr/gsmr_${trait}.gz > gsmr_${trait}
+  echo $INF/work/INTERVAL > gsmr_ref_data
+  echo $p $INF/work/$p.ma > gsmr_$p
 
   gcta-1.9 --mbfile gsmr_ref_data --gsmr-file gsmr_$p gsmr_${trait} \
            --gsmr-direction 0 \
@@ -39,5 +39,5 @@ do
     plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
     dev.off()
   END
-}
+done
 cd -

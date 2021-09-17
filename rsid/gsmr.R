@@ -52,9 +52,9 @@ library(cowplot)
 library(ggplot2)
 library(gap)
 
-source("gsmr.inc")
-
 INF <- Sys.getenv("INF")
+
+source(file.path(INF,"rsid","gsmr.inc"))
 
 CAD_FEV1 <- cad_fev1()
 HGI <- abc()
