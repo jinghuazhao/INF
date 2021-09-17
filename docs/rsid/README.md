@@ -74,7 +74,6 @@ gwasvcf.sh | GWAS to VCF conversion
 gwas2vcf.sb | gwas2vcf + VCF operations
 hyprcoloc.sh | hyprcoloc analysis
 h2pve.R | h2/pve contrast
-HGI.sh | HGI data analysis
 LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
