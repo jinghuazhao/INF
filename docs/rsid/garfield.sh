@@ -12,7 +12,7 @@ function HLA()
   ls sentinels/*.p | \
   xargs -l sed '1d;s/chr//' | \
   sort -k1,1n -k3,3n | \
-  cut -f2 --complement > work/garfield.dat
+  cut -f2 --complement > ${INF}/garfield/garfield.dat
 }
 
 function all_snps()
@@ -22,7 +22,7 @@ function all_snps()
   ls ${INF}/METAL/*-1.tbl.gz | \
   xargs -l basename -s -1.tbl.gz* | \
   parallel -j3 -C' ' 'zcat METAL/{}-1.tbl.gz | awk " NR>1 && \$12<-5"'
-) | sort -k1,1n -k2,2n > ${INF}/work/garfield.dat
+) | sort -k1,1n -k2,2n > ${INF}/garfield/garfield.dat
 }
 
 function garfield_input()
@@ -37,10 +37,10 @@ function garfield_input()
   poscol=2
   pvalcol=12
   TRAITNAME=INF1
-  GWASFILENAME=$INF/work/garfield.dat
+  GWASFILENAME=${INF}/garfield/garfield.dat
 
 # output directory to be used as input for GARFIELD analysis
-  OUTDIR=garfield-data/pval/$TRAITNAME
+  OUTDIR=${INF}/garfield-data/pval/$TRAITNAME
   mkdir -p $OUTDIR
 
   for CHR in {1..22}
