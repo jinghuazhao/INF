@@ -29,6 +29,7 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
 reactome <- read.sheet("Reactome", 1:19, 2:589)
 garfield <- read.sheet("GARFIELD", 1:18, 2:3017) %>%
             select(ID,PThresh,Pvalue,Annotation,Celltype,Tissue,Type,Category,OR,Beta,SE,CI95_lower,CI95_upper,NAnnotThesh,NAnnot,NThresh,N,linkID)
+   magma <- read.delim(file.path(INF,"work","All.dat"))
   fusion <- read.sheet("FUSION", 1:26, 2:117)
      smr <- merge(read.sheet("SMR", 1:27, 2:83),gap_inf1,by="prot") %>%
             mutate(prot=target.short) %>% rename(Protein=prot) %>% select(-target.short)
@@ -139,17 +140,17 @@ pqtls <- select(pqtls,-prots)
 
 outsheets <- c("summary","studies","inf1",
                "pqtls","cojo","knownpqtls","coloc","cs95","pqtldisease",
-               "vep","garfield",
+               "vep","magma",
                "gsmr_efo","hgi_gsmr","hgi_pqtlmr","drug",
-               "reactome","great","efo","gdb",
+               "reactome","great","garfield","efo","gdb",
                "interval","os","cvd1","aristotl","pqtlstudies",
                "great3","mr_immun","smr","cis_mr","mr_misc",
                "protein_correlation", "protein_dgi", "pqtl_impact")
 titles <- c("summary","study information","panel information",
             "pQTLs","conditional analysis","known pQTLs","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
-            "VEP annotation","GARFIELD outputs",
+            "VEP annotation","MAGMA outputs",
             "GSMR results","HGI-GSMR r6","HGI-pQTLMR","PI drug",
-            "Reactome","GREAT","EFO","geneDrugbank",
+            "Reactome","GREAT","GARFIELD outputs","EFO","geneDrugbank",
             "INTERVAL study","Other studies","SCALLOP-CVD1","ARISTOTLE study","previous pQTL studies",
             "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","cis-MR results","pQTL-misc-MR",
             "Protein correlation","DGI membership", "pQTL impact")

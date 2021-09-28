@@ -2,19 +2,34 @@
 
 export MAGMA=${HPC_WORK}/MAGMA
 export MSigDB=${HPC_WORK}/MSigDB
-export trait=IL.12B
 
-cd work
-(
-  awk -v OFS="\t" 'BEGIN {print "SNP", "P", "NOBS"}'
-  zcat ${INF}/METAL/${trait}-1.tbl.gz | \
-  cut -f3,12,18 | \
-  sed '1d' | \
-  sort -k1,1 | \
-  join INTERVAL.rsid - | \
-  awk -vOFS="\t" '{print $2,10^$3,int($4+0.5)}'
-) > ${trait}.pval
+function IL.12B()
+{
+  (
+    awk -v OFS="\t" 'BEGIN {print "SNP", "P", "NOBS"}'
+    zcat ${INF}/METAL/${trait}-1.tbl.gz | \
+    cut -f3,12,18 | \
+    sed '1d' | \
+    sort -k1,1 | \
+    join INTERVAL.rsid - | \
+    awk -vOFS="\t" '{print $2,10^$3,int($4+0.5)}'
+  ) > ${trait}.pval
+}
 
+function All()
+{
+  (
+    awk -v OFS="\t" 'BEGIN {print "SNP", "P", "NOBS"}'
+    cut -f3,12,18 ${INF}/garfield/garfield.dat | \
+    sed '1d' | \
+    sort -k1,1 | \
+    join INTERVAL.rsid - | \
+    awk -vOFS="\t" '{print $2,10^$3,int($4+0.5)}'
+  ) > ${trait}.pval
+}
+
+function run_magma()
+{
 # Annotation
 awk -vOFS="\t" '{print $2,$1,$4}' ${MAGMA}/g1000_eur.bim > g1000_eur.snploc
 magma --annotate window=50,50 --snp-loc g1000_eur.snploc --gene-loc ${MAGMA}/NCBI37.3.gene.loc --out ${trait}
@@ -47,12 +62,17 @@ R --no-save -q <<END
   magma <- sets(db)
   ord <- with(magma,order(P))
   set <- magma[ord,]
+  set <- within(set,{fdr <- p.adjust(P,"fdr")})
   save(set,file=paste0(db,".rda"))
-
-  n <- nrow(set)
-  set <- within(set,{fdr <- p.adjust(P,"fdr",n)})
-  write.table(set[c("FULL_NAME","P","fdr")],file=paste0(db,".dat"),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+  write.table(subset(set[c("FULL_NAME","NGENES","BETA","SE","P","fdr")],fdr<=0.05),file=paste0(db,".dat"),row.names=FALSE,quote=FALSE,sep="\t")
 
 END
+}
+cd work
 
+# export trait=IL.12B
+# IL.12B 
+export trait=All
+All
+run_magma
 cd -
