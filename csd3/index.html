@@ -202,7 +202,7 @@ IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.b
 <h2 id="low-abundance-check">Low abundance check</h2>
 <p>This is down with <a href="qc.sh">qc.sh</a>.</p>
 <h2 id="pgs">PGS</h2>
-<p>These are <a href="prsice.sh">prsice.sh</a> and <a href="pgs.sh">pgs.sh</a>.</p>
+<p>These are <a href="prsice.sh">prsice.sh</a> and <a href="pgs.sh">pgs.sh</a> for the CRP example.</p>
 <h2 id="phenoscanner">PhenoScanner</h2>
 <p>This is furnished with <a href="ps.sh">ps.sh</a>.</p>
 <h2 id="qq-and-manhattan-plots">QQ and Manhattan plots</h2>
@@ -227,7 +227,7 @@ Because circos plots are gene-centric, in both cases, the protein-coding gene is
 <pre><code class="language-bash">for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; hotspot.sh $h; done
 for g in $(cat work/INF1.merge.gene); do echo $g; polygene.sh $g; done
 </code></pre>
-<p><em>Date laste changed:</em> <strong>23/8/2021</strong></p></div>
+<p><em>Date laste changed:</em> <strong>7/10/2021</strong></p></div>
 </div>
 </div>
 <footer class="col-md-12">
