@@ -78,7 +78,7 @@ This is down with [qc.sh](qc.sh).
 
 ## PGS
 
-These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh).
+These are [prsice.sh](prsice.sh) and [pgs.sh](pgs.sh) for the CRP example.
 
 ## PhenoScanner
 
@@ -119,4 +119,4 @@ for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; 
 for g in $(cat work/INF1.merge.gene); do echo $g; polygene.sh $g; done
 ```
 
-*Date laste changed:* **23/8/2021**
+*Date laste changed:* **7/10/2021**

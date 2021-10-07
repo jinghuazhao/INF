@@ -78,6 +78,7 @@ LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
 OpenGWAS.sh | OpenGWAS download
+pheweb.Rmd | Data extraction from pheweb.jp
 pqtlGWAS.R | pQTL-GWAS lookup
 pQTL.R | pQTL lookup
 pqtlMR.sh | pQTL MR analysis
