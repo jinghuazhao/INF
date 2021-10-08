@@ -1,10 +1,13 @@
-# 7-10-2021 JHZ
+# 8-10-2021 JHZ
 
-# irnt for CRP
-export suffix=irnt
-# Base data, CRP in mg/L
-export suffix=raw
-export SUMSTATS=${INF}/ukb/30710_${suffix}.gwas.imputed_v3.both_sexes.tsv.bgz
+function setup()
+# irnt, raw for base data, CRP in mg/L
+{
+  export suffix=$1
+  export SUMSTATS=${INF}/ukb/30710_${suffix}.gwas.imputed_v3.both_sexes.tsv.bgz
+}
+
+setup raw
 (
   gunzip -c ${SUMSTATS} | \
   head -1 | \
@@ -91,3 +94,66 @@ foreach v in "chd" "cv" {
   stcox sex PRS if `v'!=.
 }
 END
+
+setup irnt
+(
+  gunzip -c ${SUMSTATS} | \
+  head -1 | \
+  awk -vOFS="\t" '{$1="snpid\tchr\tpos\tA1\tA2\tvariant"};1'
+  gunzip -c ${SUMSTATS} | \
+  awk '{
+     OFS="\t"
+     if (NR>1)
+     {
+       split($1,a,":")
+       CHR=a[1]
+       POS=a[2]
+       a1=a[4]
+       a2=a[3]
+       if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+       else snpid="chr" CHR ":" POS "_" a1 "_" a2
+       $1=snpid "\t" a[1] "\t" a[2] "\t" a[4] "\t" a[3] "\t" $1
+     }
+     print
+  }' | \
+  sort -k1,1 | \
+  join -t$'\t' - <(sed '1d' work/INF1.merge | cut -f6 | sort -k1,1 | uniq)
+) > ${INF}/crp/crp-ext.${suffix}
+
+(
+  join -14 -21 <(head -1 ${INF}/crp/crp-ext.${suffix} | sort -k6,6 | cut -f1,4-6,13-16) \
+               <(gunzip -c ${INF}/ukb/variants.tsv.bgz | \
+                 cut -f1-10 | \
+                 head -1 | \
+                 sort -k1,1)
+  join -14 -21 <(sed '1d' ${INF}/crp/crp-ext.${suffix} | sort -k6,6 | cut -f1,4-6,13-16) \
+               <(gunzip -c ${INF}/ukb/variants.tsv.bgz | \
+                 cut -f1-10 | \
+                 sed '1d' | \
+                 sort -k1,1)
+) > ${INF}/crp/crp-ext-ann.${suffix}
+
+module load gcc/6
+R --no-save -q <<END
+  INF <- Sys.getenv("INF")
+  suffix <- Sys.getenv("suffix")
+  f <- file.path(INF,"crp",paste0("crp-ext-ann.",suffix))
+  m <- read.table(f,header=TRUE,as.is=TRUE)
+  options(width=200)
+  library(dplyr)
+  t <- m %>% group_by(snpid) %>% slice(which.min(pval))
+  m <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+       select(MarkerName,prot,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans) %>%
+       mutate(Allele1=toupper(Allele1),Allele2=toupper(Allele2)) %>%
+       group_by(MarkerName) %>%
+       slice(which.min(log.P.)) %>%
+       left_join(m, by=c('MarkerName'='snpid')) %>%
+       mutate(beta=if_else(Allele1==alt,beta,-beta)) %>%
+       select(prot,MarkerName,rsid,Effect,StdErr,log.P.,beta,se,pval,cis.trans,consequence,consequence_category,info)
+  write.table(m,file=file.path(INF,"crp","crp-ext-ann.txt"),row.names=FALSE,quote=FALSE,sep="\t")
+  with(filter(m,!is.na(beta)),cor(Effect,beta,use="everything"))
+  with(filter(m,!is.na(beta)&cis.trans=="cis"),cor(Effect,beta,use="everything"))
+  filter(m,consequence_category=="ptv")
+  with(m,plot(Effect,beta))
+END
+
