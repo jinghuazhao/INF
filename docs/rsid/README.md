@@ -125,7 +125,7 @@ The prior probability for i out of m variants is causal, is obtained as a binomi
 
 $p_i={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
 
-The posterior number of causal signals in the genomic region is obtained as the expectation $\sum_i P(i|data) \times i$. The search of total number of configurations
+The posterior number of causal signals in the genomic region is obtained as the expectation $\sum_i P_{i|data} \times i$. The search of total number of configurations
 
 $\sum_{i=1}^k{m\choose{i}}$
 
