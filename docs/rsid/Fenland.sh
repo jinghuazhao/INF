@@ -16,6 +16,7 @@ R --no-save -q <<END
 END
 }
 
+function replication()
 (
   gunzip -c ${all} | \
   head -1
@@ -26,6 +27,9 @@ END
   '
 ) > ${INF}/Fenland/replication.tsv
 
+function fenland()
+(
+echo -e "Protein\tSentinels\tUniProt\tSNPid\tcis/trans\tProxies\tr2\tp\tTarget Full Name\tSource\tPMID\tComment"
 join -12 -21 <(awk 'NR>1 && $14<=5e-8' ${INF}/Fenland/replication.tsv | cut -f4,11,14 | sort -k2,2) \
              <(cut -f1,3,5,6 --complement --output-delimiter=' ' ~/INF/Fenland/${v4} | sed 's/-/_/' | sort -k1,1) | \
 awk '{print $4"-"$2,$0}' | \
@@ -37,4 +41,12 @@ sort -k4,4 | \
 tr ' ' '\t'| \
 join -24 <(Rscript -e 'write.table(pQTLtools::inf1[c("prot","target.short")],col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")' | \
            sort -t$'\t' -k1,1) - | \
-awk -vOFS='\t' '{print $2,$6,$5,$3,$7,"as sentinel",1,$4}'
+awk -vOFS='\t' '{print $2,$6,$5,$3,$7,"as sentinels",1,$4}' | \
+sort -t$'\t' -k1,1 | \
+join -t$'\t' - \
+             <(Rscript -e 'write.table(data.frame(pQTLtools::inf1[c("target.short","target")],Source="Pietzner et al. (2021)",PMID="",Comment=""),
+                                       col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")' | \
+               sort -t$'\t' -k1,1)
+)
+
+fenland > ${INF}/Fenland/Fenland.tsv
