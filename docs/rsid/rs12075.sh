@@ -58,10 +58,11 @@ R --no-save -q <<END
   z <- d[c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count")]
   names(z) <- names(d)[5:9] <- c(paste0("MCP-",1:4),"Monocyte count")
   rownames(z) <- with(d,marker)
-  sap <- stack_assoc_plot(markers, z, ld, traits = c("MCP-1","MCP-2","MCP-3","MCP-4","Monocyte count"), ylab = "-log10(P)", legend=TRUE)
+  sap <- stack_assoc_plot(markers, z, ld, traits = c("MCP-1","MCP-2","MCP-3","MCP-4","Monocyte count"), ylab = "-log10(P)",
+                          x.min=159000000,x.max=159600000,legend=TRUE)
   INF <- Sys.getenv("INF")
   pdf(file.path(INF,"plots","rs12075.pdf"),width=8,height=13)
   grid::grid.draw(sap)
   dev.off()
-  stack_assoc_plot_save(sap, "rs12075.png", 5, width=8, height=13, dpi=300)
+# stack_assoc_plot_save(sap, "rs12075.png", 5, width=8, height=13, dpi=300)
 END

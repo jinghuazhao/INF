@@ -134,6 +134,29 @@ function lz()
   qpdf {}_chr${chr}_${start}-${end}.pdf --pages . 1 -- {}-lz.pdf
   '
   qpdf --empty --pages *lz.pdf -- blood-cell-traits.pdf
+  export v3=~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz
+  (
+    echo -e "SNPid\tSNP\tchr\tpos\ta1\ta2\tb\tse\tp"
+    Rscript -e 'require(dplyr)
+                write.table(read.table(Sys.getenv("v3"),header=TRUE) %>%
+                            mutate(A1=toupper(A1),A2=toupper(A2),
+                                   SNP=paste0("chr",CHR,":",BP,"_",if_else(A1>A2,paste0(A2,"_",A1),paste0(A1,"_",A2))),
+                                   b=log(OR),se=TwoSampleMR::get_se(b,P)) %>%
+                            filter(CHR==as.integer(Sys.getenv("chr")) & BP>=as.integer(Sys.getenv("start")) & BP < as.integer(Sys.getenv("end"))) %>%
+                            filter(!is.na(b) & !is.na(se) & b!=0 & se!=0) %>%
+                            arrange(BP) %>%
+                            select(CHR,BP,SNP,A1,A2,b,se,P),
+                            col.names=FALSE,row.names=FALSE,quote=FALSE)' | \
+    sort -k1,1 | \
+    join -23 ${INF}/work/INTERVAL.rsid - | \
+    tr ' ' '\t'
+  ) > ${INF}/MS/v3.lz
+  module load python/2.7
+  rm -rf ld_cache.db
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/v3.lz --delim tab title="MS" \
+            --markercol SNP --pvalcol p --chr ${chr} --start ${start} --end ${end} \
+            --no-date --plotonly --prefix="v3" --rundir .
+  qpdf v3_chr${chr}_${start}-${end}.pdf --pages . 1 -- v3-lz.pdf
 }
 
 lz

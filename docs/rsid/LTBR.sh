@@ -86,29 +86,20 @@ cd -
 
 function hyprcoloc()
 {
-  join -a2 -e "NA" -o 1.1,1.2,1.3,1.4,1.5,2.1,2.2,2.3,2.4,2.5,2.6,2.7 \
-       <(sed '1d' ${INF}/MS/ieu-a-1025.assoc | \
-         awk '{
-                 chr=$2;pos=$4;A1=toupper($9);A2=toupper($10);
-                 if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
-                 print snpid,$3/$6,A1,A2,$8
-              }' | \
-         sort -k1,1 \
-        ) \
+  join <(sed '1d' ${INF}/MS/v3.lz | awk '{print $1,$7/$8,$5,$6,$2}' | sort -k1,1) \
        <(sed '1d' ${INF}/work/eQTLGen.lz | \
          awk '{
                  chr=$3;pos=$4;A1=toupper($5);A2=toupper($6);
                  if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
-                 print snpid,$7,$3,$4,A1,A2,$2
+                 print snpid,$7,A1,A2,$2,$3,$4
               }' | \
          sort -k1,1 \
          ) | \
-  join -16 \
-       - <(sed '1d' ${INF}/work/TNFB.lz | \
+  join - <(sed '1d' ${INF}/work/TNFB.lz | \
            awk '{
                    chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
                    if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
-                   print snpid,$10/$11,A1,A2,$1
+                   print snpid,$10,$11,A1,A2,$1
                 }' | \
            sort -k1,1 \
           ) | \
@@ -133,11 +124,11 @@ R --no-save -q <<END
   ld <- read.table(file.path(INF,"work","LTBR.ld"),col.names=with(d,marker),row.names=with(d,marker))
   z <- d[c("MS","LTBR","TNFB")]
   rownames(z) <- with(d,marker)
-  sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", legend=TRUE)
+  sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs1800693",legend=TRUE)
   pdf(file.path(INF,"plots","LTBR.pdf"),width=8,height=13)
   grid::grid.draw(sap)
   dev.off()
-  stack_assoc_plot_save(sap, "LTBR.png", 5, width=8, height=13, dpi=300)
+# stack_assoc_plot_save(sap, "LTBR.png", 5, width=8, height=13, dpi=300)
 END
 
 # ieu-a-1025.assoc
