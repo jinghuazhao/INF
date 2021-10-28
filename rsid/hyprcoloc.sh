@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+function rs12075()
+{
 export chr=1
 export start=159175353
 export end=159525679
@@ -81,3 +83,17 @@ R --no-save -q <<END
    g <- within(subset(grex::grex(wb),!is.na(uniprot_id)),{uniprot=trimws(uniprot_id)})
    m <- merge(gap::inf1,g,by="uniprot",all.x=TRUE)
 END
+}
+
+function LTBR()
+{
+export chr=12
+export pos=6514963
+export gene=LTBR
+export rsid=rs2364485
+export flank_kb=1000
+export b1=6300000
+export b2=6700000
+export bracket=${b1}-${b2}
+
+}
