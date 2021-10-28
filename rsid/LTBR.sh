@@ -99,15 +99,15 @@ function hyprcoloc()
            awk '{
                    chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
                    if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
-                   print snpid,$10,$11,A1,A2,$1
+                   print snpid,$10/$11,A1,A2,$1
                 }' | \
            sort -k1,1 \
           ) | \
   awk -vOFS="\t" '
   {
-    if($4!=$10) $7=-$7
-    if($4!=$13) $13=-$13
-    print $1,$6,$8,$9,$4,$5,$3,$7,$13
+    if($3!=$7) $6=-$6
+    if($3!=$13) $12=-$12
+    print $1,$5,$10,$11,$3,$4,$2,$6,$12
   }' | \
   awk 'a[$1]++==0' | \
   awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/work/LTBR.gassoc
