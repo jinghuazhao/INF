@@ -7,6 +7,8 @@ export start=159175353
 export end=159525679
 export M=1e6
 export r=$(awk -vOFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} 'BEGIN{print chr":"start-M"-"end-M}')
+
+if [ ! -d ${INF}/hyprcoloc ]; then mkdir ${INF}/hyprcoloc; fi
 # Monoocyte count
 # VARIANT ID_dbSNP49      CHR     BP      REF     ALT     EFFECT_INT      SE_INT  MLOG10P_INT     ALT_FREQ_INT    INFO_INT
 export trait=mono
@@ -22,20 +24,21 @@ module load gatk
 module load python/3.7
 cd ${HPC_WORK}/gwas2vcf
 source env/bin/activate
-if [ ! -f ${INF}/METAL/gwas2vcf/${prot}.vcf.gz ]; then
+if [ ! -f ${INF}/${trait}.vcf.gz ]; then
    python main.py --out ${INF}/${trait}.vcf.gz --data ${INF}/${trait}.tsv.gz \
                   --id ${trait} --ref human_g1k_v37.fasta --json ${INF}/rsid/gwas2vcf.json
-   tabix -f ${INF}/${trait}.vcf.gz
+   tabix -f ${INF}/hyprcoloc/${trait}.vcf.gz
 fi
 deactivate
 cd -
 
+cd ${INF}/hyprcoloc
 bcftools merge -r ${r} -O z -o MCP-rs12075.vcf.gz \
          METAL/gwas2vcf/MCP.1.vcf.gz METAL/gwas2vcf/MCP.2.vcf.gz METAL/gwas2vcf/MCP.3.vcf.gz METAL/gwas2vcf/MCP.4.vcf.gz ${trait}.vcf.gz
-bcftools query -f "%CHROM:%POS\_%REF\_%ALT[\t%ES][\t%SE]\n" MCP-rs12075.vcf.gz > MCP-rs12075.txt
+bcftools query -f "%CHROM:%POS\_%REF\_%ALT[\t%ES][\t%SE]\n" hyprcoloc/MCP-rs12075.vcf.gz > MCP-rs12075.txt
 
 R --no-save -q <<END
-  function <- hyprcoloc_test()
+  hyprcoloc_test <- function()
   {
   # Regression coefficients and standard errors from ten GWAS studies (Traits 1-5, 6-8 & 9-10 colocalize)
     betas <- hyprcoloc::test.betas
@@ -46,12 +49,12 @@ R --no-save -q <<END
     traits <- paste0("T", 1:10)
     rsid <- rownames(betas)
   # Colocalisation analyses
-    results <- hyprcoloc(betas, ses, trait.names=traits, snp.id=rsid)
+    hyprcoloc(betas, ses, trait.names=traits, snp.id=rsid)
   }
   require(hyprcoloc)
   hyprcoloc_test()
   n.traits <- 5
-  rs12075 <- within(read.table("MCP-rs12075.txt",col.names=c("rsid",paste0("v",1:(2*n.traits)))),
+  rs12075 <- within(read.table("hyprcoloc/MCP-rs12075.txt",col.names=c("rsid",paste0("v",1:(2*n.traits)))),
              {
                  v1 <- as.numeric(v1); v2 <- as.numeric(v2)
                  v3 <- as.numeric(v3); v4 <- as.numeric(v4)
@@ -67,15 +70,22 @@ R --no-save -q <<END
   colnames(betas) <- colnames(ses) <- traits <- paste0("T",1:n.traits)
   rownames(betas) <- rownames(ses) <- rsid
   hyprcoloc(betas, ses, trait.names=traits, snp.id=rsid)
-  d <- read.table("work/rs12075-beta.gassoc",col.names=c("snpid","marker","chr","pos","MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"))
+  d <- read.table("rs12075-beta.gassoc",col.names=c("snpid","marker","chr","pos","MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"))
   markers <- d[c("marker","chr","pos")]
   betas <- as.matrix(d[c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count")])
   rownames(betas) <- with(d,marker)
-  d <- read.table("work/rs12075-se.gassoc",col.names=c("snpid","marker","chr","pos","MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"))
+  d <- read.table("rs12075-se.gassoc",col.names=c("snpid","marker","chr","pos","MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"))
   ses <- as.matrix(d[c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count")])
   rownames(ses) <- with(d,marker)
   hyprcoloc(betas, ses, trait.names=colnames(ses), snp.id=with(markers,marker))
 END
+cd -
+
+#Results:
+#  iteration                                     traits posterior_prob
+#1         1 MCP.1, MCP.2, MCP.3, MCP.4, Monocyte_count          0.978
+#  regional_prob candidate_snp posterior_explained_by_snp dropped_trait
+#1        0.9964       rs12075                          1            NA
 
 zcat Whole_Blood.allpairs.txt.gz | cut -f1 | awk 'NR>1{print substr($1,1,15)}' | sort | uniq > work/wb
 R --no-save -q <<END
