@@ -72,7 +72,6 @@ GTEx-cs.sh | cis-pQTL GTEx credible set lookup (GTEx v8)
 GTEx-cs-jma.sh | cis-pQTL from jma as above
 gwasvcf.sh | GWAS to VCF conversion
 gwas2vcf.sb | gwas2vcf + VCF operations
-hyprcoloc.sh | hyprcoloc analysis
 h2pve.R | h2/pve contrast
 inbio-discover.R | gene lists
 LTBR.sh | LTBR LocusZoom plots
@@ -128,6 +127,13 @@ $p_i={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
 The posterior number of causal signals in the genomic region is obtained as the expectation $\sum_i p_{i|\mbox{data}} \times i$. The search of total number of configurations
 
 $\sum_{i=1}^k{m\choose{i}}$
+
+To recover the effect size (b) and its standard error (se) from allele frequency (f), sample size (n) and z-statistic (z) as in cis eQTLGen data, we have
+
+\begin{eqnarray*}
+b &=& z/\sqrt{2*f*(1-f)*(n+z^2)} \cr
+se &=& 1/\sqrt{2*f*(1-f)*(n+z^2)}
+\end{eqnarray*}
 
 The GREAT Binomial test is
 

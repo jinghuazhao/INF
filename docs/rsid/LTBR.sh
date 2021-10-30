@@ -24,10 +24,12 @@ function eQTLGen()
 # https://www.eqtlgen.org/trans-eqtls.html
 # https://www.eqtlgen.org/cis-eqtls.html
 {
+  export AF=2018-07-18_SNP_AF_for_AlleleB_combined_allele_counts_and_MAF_pos_added.txt.gz
   export cis=2019-12-11-cis-eQTLsFDR-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz
   export trans=2018-09-04-trans-eQTLsFDR-CohortInfoRemoved-BonferroniAdded.txt.gz
   read chr start end < st.tmp
   (
+    gunzip -c ${INF}/work/${AF} | awk -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1||($2==chr && $3>=start && $3<=end)' > eQTLGen.AF
     gunzip -c ${cis} | \
     head -1
     gunzip -c ${cis} | \
@@ -84,7 +86,7 @@ eQTLGen
 SCALLOP
 cd -
 
-function hyprcoloc()
+function stack_assoc_plot()
 {
   join <(sed '1d' ${INF}/MS/v3.lz | awk '{print $1,$7/$8,$5,$6,$2}' | sort -k1,1) \
        <(sed '1d' ${INF}/work/eQTLGen.lz | \
@@ -114,7 +116,6 @@ function hyprcoloc()
 
   cut -d' ' -f1 ${INF}/work/LTBR.gassoc > ${INF}/work/LTBR.snpid
   plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/work/LTBR.snpid --r square --out ${INF}/work/LTBR
-}
 
 R --no-save -q <<END
   INF <- Sys.getenv("INF")
@@ -130,10 +131,56 @@ R --no-save -q <<END
   dev.off()
 # stack_assoc_plot_save(sap, "LTBR.png", 5, width=8, height=13, dpi=300)
 END
+}
 
-# ieu-a-1025.assoc
-# p	chr	beta	position	n	se	id	rsid	ea	nea	eaf	trait
+function hyprcoloc()
+{
+  join <(sed '1d' ${INF}/MS/v3.lz | awk '{print $1,$7/$8,$5,$6,$2}' | sort -k1,1) \
+       <(sed '1d' ${INF}/work/eQTLGen.lz | \
+         awk '{
+                 chr=$3;pos=$4;A1=toupper($5);A2=toupper($6);
+                 if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                 print snpid,$7,A1,A2,$2,$3,$4
+              }' | \
+         sort -k1,1 \
+         ) | \
+  join - <(sed '1d' ${INF}/work/TNFB.lz | \
+           awk '{
+                   chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                   if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                   print snpid,$10/$11,A1,A2,$1
+                }' | \
+           sort -k1,1 \
+          ) | \
+  awk -vOFS="\t" '
+  {
+    if($3!=$7) $6=-$6
+    if($3!=$13) $12=-$12
+    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+  }' | \
+  awk 'a[$1]++==0' | \
+  awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/work/LTBR.gassoc
+}
+
+# MS v3.lz
+# CHR BP SNP A1 A2 N P OR
 # eQTLGen.lz
 # Pvalue	SNP	SNPChr	SNPPos	AssessedAllele	OtherAllele	Zscore	Gene	GeneSymbol	GeneChr	GenePos	NrCohorts	NrSamples	FDR	BonferroniP
 # TNFB.lz
 # MarkerName	Chromosome	Position	Allele1	Allele2	Freq1	FreqSE	MinFreq	MaxFreq	Effect	StdErr	P	Direction	HetISq	HetChiSq	HetDf	logHetP	N
+
+  (
+    Rscript -e 'INF <- Sys.getenv("INF")
+                require(dplyr)
+                write.table(read.table(file.path(INF,"work","eQTLGen.lz")) %>%
+                            mutate(A1=toupper(AssessedAllele),A2=toupper(OtherAllele),
+                                   SNP=paste0("chr",SNPChr,":",SNPPos,"_",if_else(A1>A2,paste0(A2,"_",A1),paste0(A1,"_",A2))),
+                                   b=log(OR),se=) %>%
+                            filter(SNPChr==as.integer(Sys.getenv("chr")) & SNPPos>=as.integer(Sys.getenv("start")) & SNPPos < as.integer(Sys.getenv("end"))) %>%
+                            filter(!is.na(b) & !is.na(se) & b!=0 & se!=0) %>%
+                            arrange(SNPPos) %>%
+                            select(SNPChr,SNPPos,SNP,A1,A2,b,se,Pvalue),
+                            col.names=FALSE,row.names=FALSE,quote=FALSE)' | \
+    sort -k1,1 | \
+  )
+
