@@ -192,24 +192,9 @@ bcftools merge -r ${r} -O z -o MCP-rs12075.vcf.gz \
          METAL/gwas2vcf/MCP.1.vcf.gz METAL/gwas2vcf/MCP.2.vcf.gz METAL/gwas2vcf/MCP.3.vcf.gz METAL/gwas2vcf/MCP.4.vcf.gz ${trait}.vcf.gz
 bcftools query -f "%CHROM:%POS\_%REF\_%ALT[\t%ES][\t%SE]\n" hyprcoloc/MCP-rs12075.vcf.gz > MCP-rs12075.txt
 
-R --no-save -q <<END
-  hyprcoloc_test <- function()
-  {
-  # Regression coefficients and standard errors from ten GWAS studies (Traits 1-5, 6-8 & 9-10 colocalize)
-    betas <- hyprcoloc::test.betas
-    head(betas)
-    ses <- hyprcoloc::test.ses
-    head(ses)
-  # Trait names and SNP IDs
-    traits <- paste0("T", 1:10)
-    rsid <- rownames(betas)
-  # Colocalisation analyses
-    hyprcoloc(betas, ses, trait.names=traits, snp.id=rsid)
-  }
-  require(hyprcoloc)
-  hyprcoloc_test()
+  Rscript -e '
   n.traits <- 5
-  rs12075 <- within(read.table("hyprcoloc/MCP-rs12075.txt",col.names=c("rsid",paste0("v",1:(2*n.traits)))),
+  rs12075 <- within(read.table("MCP-rs12075.txt",col.names=c("rsid",paste0("v",1:(2*n.traits)))),
              {
                  v1 <- as.numeric(v1); v2 <- as.numeric(v2)
                  v3 <- as.numeric(v3); v4 <- as.numeric(v4)
@@ -224,17 +209,18 @@ R --no-save -q <<END
   ses <- as.matrix(rs12075[paste0("v",(n.traits+1):(2*n.traits))])
   colnames(betas) <- colnames(ses) <- traits <- paste0("T",1:n.traits)
   rownames(betas) <- rownames(ses) <- rsid
-  hyprcoloc(betas, ses, trait.names=traits, snp.id=rsid)
-  d <- read.table("rs12075-beta.gassoc",col.names=c("snpid","marker","chr","pos","MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"))
+  hyprcoloc::hyprcoloc(betas, ses, trait.names=traits, snp.id=rsid)
+  traits <- c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count")
+  d <- read.table("rs12075-beta.gassoc",col.names=c("snpid","marker","chr","pos",traits))
   markers <- d[c("marker","chr","pos")]
-  betas <- as.matrix(d[c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count")])
+  betas <- as.matrix(d[traits])
   rownames(betas) <- with(d,marker)
-  d <- read.table("rs12075-se.gassoc",col.names=c("snpid","marker","chr","pos","MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count"))
-  ses <- as.matrix(d[c("MCP.1","MCP.2","MCP.3","MCP.4","Monocyte_count")])
+  d <- read.table("rs12075-se.gassoc",col.names=c("snpid","marker","chr","pos",traits))
+  ses <- as.matrix(d[traits])
   rownames(ses) <- with(d,marker)
-  hyprcoloc(betas, ses, trait.names=colnames(ses), snp.id=with(markers,marker))
-END
-cd -
+  hyprcoloc::hyprcoloc(betas, ses, trait.names=colnames(ses), snp.id=with(markers,marker))
+  '
+  cd -
 }
 
 #Results:
