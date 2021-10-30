@@ -131,8 +131,8 @@ $\sum_{i=1}^k{m\choose{i}}$
 To recover the effect size (b) and its standard error (se) from allele frequency (f), sample size (n) and z-statistic (z) as in cis eQTLGen data, we have
 
 \begin{eqnarray*}
-b &=& z/\sqrt{2*f*(1-f)*(n+z^2)} \cr
-se &=& 1/\sqrt{2*f*(1-f)*(n+z^2)}
+b &=& z/\sqrt{2f(1-f)(n+z^2)} \cr
+se &=& 1/\sqrt{2f(1-f)(n+z^2)}
 \end{eqnarray*}
 
 The GREAT Binomial test is
