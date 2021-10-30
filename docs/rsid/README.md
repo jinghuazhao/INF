@@ -122,9 +122,9 @@ $SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}$
 
 The prior probability for i out of m variants is causal, is obtained as a binomial probability
 
-$p_i={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
+$p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
 
-The posterior number of causal signals in the genomic region is obtained as the expectation $\sum_i p_{i|\mbox{data}} \times i$. The search of total number of configurations
+The posterior number of causal signals in the genomic region is obtained as the expectation $\sum_i p(i|\mbox{data}) \times i$. The search of total number of configurations
 
 $\sum_{i=1}^k{m\choose{i}}$
 
