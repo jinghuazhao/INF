@@ -298,10 +298,6 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <td>gwas2vcf + VCF operations</td>
 </tr>
 <tr>
-<td>hyprcoloc.sh</td>
-<td>hyprcoloc analysis</td>
-</tr>
-<tr>
 <td>h2pve.R</td>
 <td>h2/pve contrast</td>
 </tr>
@@ -405,6 +401,11 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p><span class="arithmatex">\(p_i={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}\)</span></p>
 <p>The posterior number of causal signals in the genomic region is obtained as the expectation <span class="arithmatex">\(\sum_i p_{i|\mbox{data}} \times i\)</span>. The search of total number of configurations</p>
 <p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
+<p>To recover the effect size (b) and its standard error (se) from allele frequency (f), sample size (n) and z-statistic (z) as in cis eQTLGen data, we have</p>
+<div class="arithmatex">\[\begin{eqnarray*}
+b &amp;=&amp; z/\sqrt{2*f*(1-f)*(n+z^2)} \cr
+se &amp;=&amp; 1/\sqrt{2*f*(1-f)*(n+z^2)}
+\end{eqnarray*}\]</div>
 <p>The GREAT Binomial test is</p>
 <p><span class="arithmatex">\(\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}\)</span></p>
 <p>An analogy is made here for protein with Transcriptome (Proteome)wide association statistic <span class="arithmatex">\(z_{PWAS}\)</span>  originally proposed for gene expression data. For a given Protein of interest <strong>P</strong> for which GWAS summary statistics <span class="arithmatex">\(z_P\)</span> is available, the corresponding Wald statistic for PWAS is defined such that</p>
