@@ -403,8 +403,8 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
 <p>To recover the effect size (b) and its standard error (se) from allele frequency (f), sample size (n) and z-statistic (z) as in cis eQTLGen data, we have</p>
 <div class="arithmatex">\[\begin{eqnarray*}
-b &amp;=&amp; z/\sqrt{2*f*(1-f)*(n+z^2)} \cr
-se &amp;=&amp; 1/\sqrt{2*f*(1-f)*(n+z^2)}
+b &amp;=&amp; z/\sqrt{2f(1-f)(n+z^2)} \cr
+se &amp;=&amp; 1/\sqrt{2f(1-f)(n+z^2)}
 \end{eqnarray*}\]</div>
 <p>The GREAT Binomial test is</p>
 <p><span class="arithmatex">\(\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}\)</span></p>
