@@ -132,7 +132,7 @@ The posterior number of causal signals in the genomic region is obtained as the 
 
 $\sum_{i=1}^k{m\choose{i}}$
 
-To recover the effect size (b) and its standard error (se) from allele frequency (f), sample size (n) and z-statistic (z) as in cis eQTLGen data, we have
+To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and z-statistic ($z$) as in cis eQTLGen data, we have
 
 \begin{eqnarray*}
 b &=& z/\sqrt{2f(1-f)(n+z^2)} \cr
