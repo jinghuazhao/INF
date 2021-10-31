@@ -1,6 +1,6 @@
 site_name: SCALLOP-INF
 nav:
-  - Overview: README.md
+  - "": README.md
   - doc/SCALLOP_INF1_analysis_plan.md
   - Implementation:
     - tryggve/README.md
