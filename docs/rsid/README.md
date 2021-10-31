@@ -116,7 +116,7 @@ which also be  obtained from RStudio for somewhat larger size.
 
 ## Mathematical expressions
 
-The proportion of variants explained (PVE) by $T$ pQTLs for a protein from meta-analytic statistics with
+The proportion of variants explained (PVE) by $T$ pQTLs for a protein from meta-analytic statistics is
 
 PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
 
