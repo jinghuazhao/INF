@@ -116,11 +116,15 @@ which also be  obtained from RStudio for somewhat larger size.
 
 ## Mathematical expressions
 
+The proportion of variants explained (PVE) by $T$ pQTLs for a protein from meta-analytic statistics with
+
 PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
+
+with standard error
 
 $SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}$
 
-The prior probability for i out of m variants is causal, is obtained as a binomial probability
+The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
 
 $p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
 
@@ -187,4 +191,4 @@ whose hgnc_symbol can be amended.
 
 The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
-*Date last changed:* **17/9/2021**
+*Date last changed:* **31/10/2021**
