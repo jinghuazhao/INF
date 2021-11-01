@@ -69,6 +69,9 @@ function ma()
   ) > ${INF}/MS/EUR-{}.ma
   sed "1d" ${INF}/MS/EUR-{}.lz | \
   cut -f1 > ${INF}/MS/EUR-{}.snpid
+  sed "1d" ${INF}/MS/EUR-{}.lz | \
+  sort -k10,10g | \
+  awk "NR==1{print \$1}" > ${INF}/MS/EUR-{}.top
   '
   (
     echo SNP A1 A2 freq b se p N
@@ -77,12 +80,14 @@ function ma()
     awk -v N=115803 '
     {
       if($1==$7) freq=$9; else freq=1-$9
-      print $1,$2,$3,freq,$5,$6,$7,$8,N
+      print $1,$2,$3,freq,$4,$5,$6,N
     }'
   ) > ${INF}/MS/EUR-v3.ma
   sed "1d" ${INF}/MS/EUR-v3.ma | \
   cut -d" " -f1 > ${INF}/MS/EUR-v3.snpid
-}
+  sed "1d" ${INF}/MS/EUR-v3.ma | \
+  sort -k7,7g | \
+  awk "NR==1{print \$1}" > ${INF}/MS/EUR-v3.top}
 
 function cojo()
 {
@@ -141,7 +146,7 @@ function blood_cell_traits()
       if (\$3<\$4) snpid=\"chr\"\$1\":\"\$2\"_\"\$3\"_\"\$4;
       else snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$3;
       print \$1, \$2, snpid, \$3, \$4, \$5, \$6, \$7, \$8
-    }" 
+    }"
   ) | \
   bgzip -f > ${dir}/tsv/EUR-{}.gz
   tabix -f -S1 -s1 -b2 -e2 ${dir}/tsv/EUR-{}.gz
@@ -158,8 +163,8 @@ function coloc()
 
 function gsmr()
 {
-# MS 
-  gzip -f ${INF}/MS/EUR-v3.ma > ${INF}/MS/gsmr_MS.ma.gz
+# MS
+  cat ${INF}/MS/EUR-v3.ma | gzip -f > ${INF}/MS/gsmr_MS.ma.gz
 # prot
   (
     echo SNP A1 A2 freq b se p N
@@ -173,7 +178,7 @@ function gsmr()
 
   gcta-1.9 --mbfile ${INF}/MS/gsmr_ref_data --gsmr-file ${INF}/MS/gsmr_MS ${INF}/MS/gsmr_${prot} \
            --gsmr-direction 0 \
-           --clump-r2 0.05 --gwas-thresh 1e-5 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
+           --clump-r2 0.05 --gwas-thresh 1e-5 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 10 --effect-plot \
            --out ${INF}/MS/gsmr_${prot}-MS
 
   Rscript -e '
@@ -422,8 +427,6 @@ function ieu_id_ma()
 
 function MS2013()
 {
-#!/usr/bin/bash
-
 export chr=12
 export start=6400000
 export end=6520000

@@ -93,7 +93,7 @@ utils.sh | utilties
 vep.sh | VEP annotation
 wgcna.sh | experiment on modules
 
-## Stacked association plots and coloc
+## Stacked association and related analysis
 
 1. rs12075.sh
 2. MS.sh (+cojo, two-sample MRs)
