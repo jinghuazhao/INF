@@ -57,7 +57,7 @@ coloc.sb | coloc analysis -- clumsy verion
 coloc.R | coloc analysis via pQTLtools
 efo.R | experimental factor ontology
 eQTL.R | cis-pQTL eQTL lookup (PhenoScanner)
-eQTLGen.* | eQTLGen lookup
+eQTLGen.sh | eQTLGen lookup
 epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
 epigraphdb-ppi.R | PPI using EpiGraphDB
 fastenloc.sb | fastenloc analysis

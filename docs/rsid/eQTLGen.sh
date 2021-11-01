@@ -55,8 +55,16 @@ function jma()
 {
 if [ ! -d ${INF}/eQTLGen ]; then mkdir ${INF}/eQTLGen; fi
 
+cd ${INF}
 module load ceuadmin/stata 
-stata -b do ${INF}/csd3/eQTLGen.do
+stata <<END
+  insheet using "sentinels/INF1.jma-rsid.cis.vs.trans.", case clear delim(" ")
+  l uniprot SNP pgene
+  outsheet uniprot SNP pgene using "eQTLGen/uniprot-rsid-gene.", delim(" ") noquote noname replace
+  outsheet SNP using "eQTLGen/INF1.cis-rsid" if cistrans=="cis", noname noquote replace
+  outsheet SNP using "eQTLGen/INF1.trans-rsid" if cistrans=="trans", noname noquote replace
+END
+cd -
 
 for cistrans in cis trans
 do
