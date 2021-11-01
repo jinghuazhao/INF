@@ -110,6 +110,23 @@ function cojo()
       fi
       sort ${INF}/MS/EUR-${cell}.prune.in > ${INF}/MS/EUR-${cell}.prune
       export P_threshold=5e-8
+    # drop the --extract option with v3
+      if [ "${cell}" == "v3" ]; then
+      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+               --cojo-file ${INF}/MS/EUR-${cell}.ma \
+               --cojo-slct \
+               --cojo-p ${P_threshold} \
+               --maf 0.005 \
+               --cojo-collinear 0.9 \
+               --out ${INF}/MS/EUR-${cell}
+      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+               --cojo-file ${INF}/MS/EUR-${cell}.ma \
+               --cojo-cond ${INF}/MS/EUR-${cell}.top \
+               --cojo-p ${P_threshold} \
+               --maf 0.005 \
+               --cojo-collinear 0.9 \
+               --out ${INF}/MS/EUR-${cell}
+      else
       gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
                --cojo-file ${INF}/MS/EUR-${cell}.ma \
                --extract ${INF}/MS/EUR-${cell}.prune \
@@ -126,6 +143,7 @@ function cojo()
                --maf 0.005 \
                --cojo-collinear 0.9 \
                --out ${INF}/MS/EUR-${cell}
+      fi
   done
 }
 
