@@ -95,6 +95,7 @@ function stack_assoc_plot()
 
   cut -d' ' -f1 ${INF}/work/LTBR.gassoc > ${INF}/work/LTBR.snpid
   plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/work/LTBR.snpid --r square --out ${INF}/work/LTBR
+  plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/work/LTBR.snpid --freq --out ${INF}/work/LTBR
 
   Rscript -e '
   INF <- Sys.getenv("INF")
@@ -211,8 +212,9 @@ stack_assoc_plot
 hyprcoloc
 cd -
 
-# MS v3.lz
+# MS v3/v3.lz
 # CHR BP SNP A1 A2 N P OR
+# SNPid   SNP     chr     pos     a1      a2      b       se      p
 # eQTLGen.lz
 # Pvalue	SNP	SNPChr	SNPPos	AssessedAllele	OtherAllele	Zscore	Gene	GeneSymbol	GeneChr	GenePos	NrCohorts	NrSamples	FDR	BonferroniP
 # TNFB.lz

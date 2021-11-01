@@ -7,17 +7,87 @@ export end=6700000
 export region=${chr}:${start}-${end}
 export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
 export TMPDIR=/rds/user/jhz22/hpc-work/work
+export v3=~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz
 
-function coloc()
+function lz()
 {
-  bcftools query -r 12:6514963-6514963 -f '%ID\t%ALT\t%REF\t%AF\t[%ES]\t[%SE]\t[%LP]\t[%SS]\t%CHROM\t%POS\n' ${INF}/METAL/gwas2vcf/TNFB.vcf.gz | \
-  awk -vOFS="\t" '{$7=10^-$7};1'> ${INF}/MS/TNFB.tsv
+# gunzip -c discovery_metav3.0.meta.gz | grep rs1800693
+# CHR BP SNP A1 A2 N P OR
+# 12 6440009 rs1800693 T C 14 1.017e-13 0.8808
+# gunzip -c Final-metaanalysis-echip.txt.gz | grep 1800693
+#  CHR         BP            SNP  A1  A2   N           P        P(R)      OR   OR(R)       Q       I
+#  12     6440009  exm-rs1800693   T   C  13   1.003e-26    2.11e-09  1.0332  1.0300  0.0351   46.00
+  module load python/2.7
+  ls ${dir}/tsv/*gz | xargs -I{} basename {} .gz | \
+  grep -e wbc -e mono -e neut -e lymph -e eo -e baso | \
+  parallel -C' ' --env INF --env dir --env region --env chr --env start --env end  '
+  (
+    echo snpid rsid chromosome base_pair_location effect_allele other_allele effect_allele_frequency beta standard_error p_value
+    join -23 ${INF}/work/INTERVAL.rsid <(tabix ${dir}/tsv/{}.gz ${region}) | \
+    sort -k3,3n -k4,4n
+  ) | \
+  awk "!index(\$2,\":\")" | \
+  tr " " "\t" > ${INF}/MS/{}.lz
+  rm -rf ld_cache.db
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/{}.lz --delim tab title="{}" \
+            --markercol rsid --pvalcol p_value --chr ${chr} --start ${start} --end ${end} \
+            --no-date --plotonly --prefix="{}" --rundir .
+  qpdf {}_chr${chr}_${start}-${end}.pdf --pages . 1 -- {}-lz.pdf
+  '
+  qpdf --empty --pages *lz.pdf -- blood-cell-traits.pdf
+  (
+    echo -e "SNPid\tSNP\tchr\tpos\ta1\ta2\tb\tse\tp"
+    Rscript -e 'require(dplyr)
+                write.table(read.table(Sys.getenv("v3"),header=TRUE) %>%
+                            mutate(A1=toupper(A1),A2=toupper(A2),
+                                   SNP=paste0("chr",CHR,":",BP,"_",if_else(A1>A2,paste0(A2,"_",A1),paste0(A1,"_",A2))),
+                                   b=log(OR),se=TwoSampleMR::get_se(b,P)) %>%
+                            filter(CHR==as.integer(Sys.getenv("chr")) & BP>=as.integer(Sys.getenv("start")) & BP < as.integer(Sys.getenv("end"))) %>%
+                            filter(!is.na(b) & !is.na(se) & b!=0 & se!=0) %>%
+                            arrange(BP) %>%
+                            select(CHR,BP,SNP,A1,A2,b,se,P),
+                            col.names=FALSE,row.names=FALSE,quote=FALSE)' | \
+    sort -k1,1 | \
+    join -23 ${INF}/work/INTERVAL.rsid - | \
+    tr ' ' '\t'
+  ) > ${INF}/MS/v3.lz
+  rm -rf ld_cache.db
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/v3.lz --delim tab title="MS" \
+            --markercol SNP --pvalcol p --chr ${chr} --start ${start} --end ${end} \
+            --no-date --plotonly --prefix="v3" --rundir .
+  qpdf v3_chr${chr}_${start}-${end}.pdf --pages . 1 -- v3-lz.pdf
+}
+
+function ma()
+{
+  echo wbc mono neut lymph eo baso | \
+  tr ' ' '\n' | \
+  parallel -C' ' --env INF '
+  (
+    echo SNP A1 A2 ref b se p N
+    awk -vN=562132 "NR>1 && \$10 <= 5e-8 {print \$1,\$5,\$6,\$7,\$8,\$9,\$10,N}" ${INF}/MS/EUR-{}.lz
+  ) > ${INF}/MS/EUR-{}.ma
+  sed "1d" ${INF}/MS/EUR-{}.lz | \
+  cut -f1 > ${INF}/MS/EUR-{}.snpid
+  '
+  (
+    echo SNP A1 A2 freq b se p N
+    awk 'NR>1{print $1,$5,$6,$7,$8,$9}' ${INF}/MS/v3.lz | \
+    join - <(awk 'NR>1{print $2,$3,$4,$5}' ${INF}/work/LTBR.frq) | \
+    awk -v N=115803 '
+    {
+      if($1==$7) freq=$9; else freq=1-$9
+      print $1,$2,$3,freq,$5,$6,$7,$8,N
+    }'
+  ) > ${INF}/MS/EUR-v3.ma
+  sed "1d" ${INF}/MS/EUR-v3.ma | \
+  cut -d" " -f1 > ${INF}/MS/EUR-v3.snpid
 }
 
 function cojo()
 {
   module load plink/2.00-alpha
-  for cell in wbc mono neut lymph eo baso ieu-a-1025
+  for cell in wbc mono neut lymph eo baso v3
   do
       plink2 --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/MS/EUR-${cell}.snpid \
              --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.1 --out ${INF}/MS/EUR-${cell}
@@ -34,7 +104,7 @@ function cojo()
          sed -i 's/'"$i"'/'"$top"'/g' ${INF}/MS/EUR-${cell}.prune.in
       fi
       sort ${INF}/MS/EUR-${cell}.prune.in > ${INF}/MS/EUR-${cell}.prune
-      if [ ${cell} != "ieu-a-1025" ]; then export P_threshold=5e-8; else export P_threshold=1e-5; fi
+      export P_threshold=5e-8
       gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
                --cojo-file ${INF}/MS/EUR-${cell}.ma \
                --extract ${INF}/MS/EUR-${cell}.prune \
@@ -55,111 +125,6 @@ function cojo()
 }
 
 cojo
-
-function ma()
-{
-  echo wbc mono neut lymph eo baso | \
-  tr ' ' '\n' | \
-  parallel -C' ' --env INF '
-  (
-    echo SNP A1 A2 ref b se p N
-    awk -vN=562132 "NR>1 && \$10 <= 5e-8 {print \$1,\$5,\$6,\$7,\$8,\$9,\$10,N}" ${INF}/MS/EUR-{}.lz
-  ) > ${INF}/MS/EUR-{}.ma
-  sed "1d" ${INF}/MS/EUR-{}.lz | \
-  cut -f1 > ${INF}/MS/EUR-{}.snpid
-  sed "1d" ${INF}/MS/EUR-{}.lz | \
-  sort -k10,10g | \
-  awk "NR==1{print \$1}" > ${INF}/MS/EUR-{}.top
-  '
-  export ieu_id=ieu-a-1025
-  (
-    echo SNP A1 A2 freq b se p N
-    bcftools query -f "%CHROM %POS %ALT %REF %AF [%ES] [%SE] [%LP] [%SS]\n" -r ${region} \
-                   ~/rds/results/public/gwas/multiple_sclerosis/${ieu_id}.vcf.gz | \
-    awk '{if ($3<$4) snpid="chr"$1":"$2"_"$3"_"$4;else snpid="chr"$1":"$2"_"$4"_"$3;print snpid, $3, $4, $5, $6, $7, $8, $9}' | \
-    awk 'a[$1]++==0 && $8<5 {$7=10^-$7};1'
-  ) > ${INF}/MS/EUR-${ieu_id}.ma
-  sed "1d" ${INF}/MS/EUR-${ieu_id}.ma | \
-  cut -d" " -f1 > ${INF}/MS/EUR-${ieu_id}.snpid
-  sed "1d" ${INF}/MS/EUR-${ieu_id}.ma | \
-  sort -k7,7g | \
-  awk "NR==1{print \$1}" > ${INF}/MS/EUR-${ieu_id}.top
-}
-
-ma
-
-function lz()
-{
-  R --no-save -q <<\ \ END
-    INF <- Sys.getenv("INF")
-  # chr position beta se p n id rsid ea nea eaf
-    ieu_b_18 <- ieugwasr::associations("12:6300000-6700000",id="ieu-b-18")
-    ieu_a_1025 <- ieugwasr::associations("12:6300000-6700000",id="ieu-a-1025")
-    write.table(ieu_b_18,file=file.path(INF,"MS","ieu-b-18.assoc"),quote=FALSE,row.names=FALSE,sep="\t")
-    write.table(ieu_a_1025,file=file.path(INF,"MS","ieu-a-1025.assoc"),quote=FALSE,row.names=FALSE,sep="\t")
-  END
-  (
-    echo rsid p | tr ' ' '\t'
-    gunzip -c ~/rds/results/public/gwas/multiple_sclerosis/Final-metaanalysis-echip.txt.gz | \
-    awk -vstart=${start} -vend=${end} -vOFS="\t" '$1==12 && $2>=start && $2 <=end {gsub(/exm-/,"",$3);print $3,$7}'
-  ) > ${INF}/MS/ieu-b-18-echip.assoc
-# gunzip -c discovery_metav3.0.meta.gz | grep rs1800693
-# CHR BP SNP A1 A2 N P OR
-# 12 6440009 rs1800693 T C 14 1.017e-13 0.8808
-# gunzip -c Final-metaanalysis-echip.txt.gz | grep 1800693
-#  CHR         BP            SNP  A1  A2   N           P        P(R)      OR   OR(R)       Q       I
-#  12     6440009  exm-rs1800693   T   C  13   1.003e-26    2.11e-09  1.0332  1.0300  0.0351   46.00
-  for trait in ieu-b-18 ieu-b-18-echip ieu-a-1025
-  do
-    rm -rf ld_cache.db
-    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/${trait}.assoc --delim tab title="${trait}" \
-              --markercol rsid --pvalcol p --chr ${chr} --start ${start} --end ${end} \
-              --no-date --plotonly --prefix="${trait}" --rundir .
-    qpdf ${trait}_chr${chr}_${start}-${end}.pdf --pages . 1 -- ${trait}-lz.pdf
-  done
-  ls ${dir}/tsv/*gz | xargs -I{} basename {} .gz | \
-  grep -e wbc -e mono -e neut -e lymph -e eo -e baso | \
-  parallel -C' ' --env INF --env dir --env region --env chr --env start --env end  '
-  (
-    echo snpid rsid chromosome base_pair_location effect_allele other_allele effect_allele_frequency beta standard_error p_value
-    join -23 ${INF}/work/INTERVAL.rsid <(tabix ${dir}/tsv/{}.gz ${region}) | \
-    sort -k3,3n -k4,4n
-  ) | \
-  awk "!index(\$2,\":\")" | \
-  tr " " "\t" > ${INF}/MS/{}.lz
-  rm -rf ld_cache.db
-  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/{}.lz --delim tab title="{}" \
-            --markercol rsid --pvalcol p_value --chr ${chr} --start ${start} --end ${end} \
-            --no-date --plotonly --prefix="{}" --rundir .
-  qpdf {}_chr${chr}_${start}-${end}.pdf --pages . 1 -- {}-lz.pdf
-  '
-  qpdf --empty --pages *lz.pdf -- blood-cell-traits.pdf
-  export v3=~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz
-  (
-    echo -e "SNPid\tSNP\tchr\tpos\ta1\ta2\tb\tse\tp"
-    Rscript -e 'require(dplyr)
-                write.table(read.table(Sys.getenv("v3"),header=TRUE) %>%
-                            mutate(A1=toupper(A1),A2=toupper(A2),
-                                   SNP=paste0("chr",CHR,":",BP,"_",if_else(A1>A2,paste0(A2,"_",A1),paste0(A1,"_",A2))),
-                                   b=log(OR),se=TwoSampleMR::get_se(b,P)) %>%
-                            filter(CHR==as.integer(Sys.getenv("chr")) & BP>=as.integer(Sys.getenv("start")) & BP < as.integer(Sys.getenv("end"))) %>%
-                            filter(!is.na(b) & !is.na(se) & b!=0 & se!=0) %>%
-                            arrange(BP) %>%
-                            select(CHR,BP,SNP,A1,A2,b,se,P),
-                            col.names=FALSE,row.names=FALSE,quote=FALSE)' | \
-    sort -k1,1 | \
-    join -23 ${INF}/work/INTERVAL.rsid - | \
-    tr ' ' '\t'
-  ) > ${INF}/MS/v3.lz
-  module load python/2.7
-  rm -rf ld_cache.db
-  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/v3.lz --delim tab title="MS" \
-            --markercol SNP --pvalcol p --chr ${chr} --start ${start} --end ${end} \
-            --no-date --plotonly --prefix="v3" --rundir .
-  qpdf v3_chr${chr}_${start}-${end}.pdf --pages . 1 -- v3-lz.pdf
-}
-
-lz
 
 function blood_cell_traits()
 {
@@ -185,30 +150,21 @@ function blood_cell_traits()
 
 blood_cell_traits
 
+function coloc()
+{
+  bcftools query -r 12:6514963-6514963 -f '%ID\t%ALT\t%REF\t%AF\t[%ES]\t[%SE]\t[%LP]\t[%SS]\t%CHROM\t%POS\n' ${INF}/METAL/gwas2vcf/TNFB.vcf.gz | \
+  awk -vOFS="\t" '{$7=10^-$7};1'> ${INF}/MS/TNFB.tsv
+}
+
 function gsmr()
 {
 # MS 
-  export ieu_id=ieu-a-1025
-  (
-    echo SNP A1 A2 freq b se p N
-    bcftools query -f "%CHROM %POS %ALT %REF %AF [%ES] [%SE] [%LP] [%SS]\n" ~/rds/results/public/gwas/multiple_sclerosis/${ieu_id}.vcf.gz | \
-    awk '{if ($3<$4) snpid="chr"$1":"$2"_"$3"_"$4;else snpid="chr"$1":"$2"_"$4"_"$3;print snpid, $3, $4, $5, $6, $7, $8, $9}' | \
-    awk 'a[$1]++==0'
-  ) | gzip -f > ${INF}/MS/gsmr_MS-${ieu_id}.gz
-  R --no-save -q <<\ \ END
-    INF <- Sys.getenv("INF")
-    ieu_id <- Sys.getenv("ieu_id")
-    ma <- file.path(INF,"MS",paste0("gsmr_MS-",ieu_id,".gz"))
-    ms <- within(read.table(ma,header=TRUE),{p <- 10^-p})
-    f <- gzfile(file.path(INF,"MS","gsmr_MS.ma.gz"))
-    write.table(ms,file=f,quote=FALSE,row.names=FALSE)
-    unlink(ma)
-  END
+  gzip -f ${INF}/MS/EUR-v3.ma > ${INF}/MS/gsmr_MS.ma.gz
 # prot
   (
     echo SNP A1 A2 freq b se p N
     zcat ${INF}/METAL/${prot}-1.tbl.gz | \
-    awk 'NR>1 {print $3,toupper($4),toupper($5),$6,$10,$11,10^$12,$18}'
+    awk -vchr=${chr} -vstart=${start} -vend=${end} 'NR>1 && $1==chr && $2 >= start && $2 < end {print $3,toupper($4),toupper($5),$6,$10,$11,10^$12,$18}'
   ) | gzip -f > ${INF}/MS/gsmr_${prot}.ma.gz
 # control files
   if [ ! -f ${INF}/MS/gsmr_ref_data ]; then echo ${INF}/work/INTERVAL > ${INF}/MS/gsmr_ref_data; fi
@@ -220,7 +176,7 @@ function gsmr()
            --clump-r2 0.05 --gwas-thresh 1e-5 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 5 --effect-plot \
            --out ${INF}/MS/gsmr_${prot}-MS
 
-  R --no-save -q <<\ \ END
+  Rscript -e '
     prot <- Sys.getenv("prot")
     source("http://cnsgenomics.com/software/gcta/res/gsmr_plot.r")
     gsmr_data <- read_gsmr_data(paste0("MS/gsmr_",prot,"-MS.eff_plot.gz"))
@@ -228,7 +184,7 @@ function gsmr()
     pdf(paste0("MS/gsmr_",prot,"-MS.eff_plot.pdf"))
     plot_gsmr_effect(gsmr_data, prot, "MS", colors()[75])
     dev.off()
-  END
+  '
 }
 
 function wgs()
@@ -281,7 +237,7 @@ function wgs()
          id_col = "rsid",
          log_pval = TRUE)
     pdf(file.path(INF,"MS","MS-forestplot.pdf"))
-    for(id in c("ieu-b-18","ieu-a-1025","ukb-b-17670","finn-a-G6_MS"))
+    for(id in c("ieu-b-18","ukb-b-17670","finn-a-G6_MS"))
     {
       cat("--",pQTL,"-",id,"--\n")
       y <- extract_outcome_data(with(x,SNP), id, proxies = TRUE, rsq = 0.8)
@@ -334,7 +290,7 @@ function pqtl_qtl_rsid()
                 samplesize_col = "N",
                 id_col = "rsid",
                 log_pval = TRUE), pval<1e-5)
-    for(id in c("ieu-b-18","ieu-a-1025","ukb-b-17670","finn-a-G6_MS"))
+    for(id in c("ieu-b-18","ukb-b-17670","finn-a-G6_MS"))
     {
       cat("##",pQTL,"-",id,"##\n")
       y <- extract_outcome_data(with(x,SNP), id, proxies = TRUE, rsq = 0.8)
@@ -364,7 +320,7 @@ function pqtl()
     pqtl <- file.path(INF,"MS",paste0(prot,"-pQTL.dat"))
     ivs <- read.table(pqtl,as.is=TRUE,header=TRUE)
     setwd(file.path(INF,"MS"))
-    for(id in c("ieu-b-18","ieu-a-1025","ukb-b-17670","finn-a-G6_MS"))
+    for(id in c("ieu-b-18","ukb-b-17670","finn-a-G6_MS"))
     {
       pqtlMR(subset(ivs,SNP%in%"rs2364485"),id,prefix=paste0(prot,"-",id,"-rs2364485"))
       pqtlMR(subset(ivs,SNP%in%"rs1800693"),id,prefix=paste0(prot,"-",id,"-rs1800693"))
@@ -452,3 +408,15 @@ export ichip=~/rds/results/public/gwas/multiple_sclerosis/ImmunoChip_Results/Imm
 awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr&&$3>=start&&$3<=end {print $4,$5,$6,$7,log($10),$11,$9}' ${ichip}
 # CHR BPHG18 BPHG19 ImmunochipID Risk_Allele Ref_Allele Risk_Allele_Freq N P OR SE Q I Region
 # 1 1108138 1118275 vh_1_1108138 G A 0.9586 11 7.62E-01 1.012 0.0404 0.085 39.51 none
+
+# --- legacy ---
+
+function ieu_id_ma()
+  (
+    echo SNP A1 A2 freq b se p N
+    bcftools query -f "%CHROM %POS %ALT %REF %AF [%ES] [%SE] [%LP] [%SS]\n" -r ${region} \
+                   ~/rds/results/public/gwas/multiple_sclerosis/${ieu_id}.vcf.gz | \
+    awk '{if ($3<$4) snpid="chr"$1":"$2"_"$3"_"$4;else snpid="chr"$1":"$2"_"$4"_"$3;print snpid, $3, $4, $5, $6, $7, $8, $9}' | \
+    awk 'a[$1]++==0 && $8<5 {$7=10^-$7};1'
+  ) > ${INF}/MS/EUR-${ieu_id}.ma
+
