@@ -119,13 +119,22 @@ function cojo()
                --maf 0.005 \
                --cojo-collinear 0.9 \
                --out ${INF}/MS/EUR-${cell}
+      echo chr12:6440009_C_T ${INF}/MS/rs1800693/EUR-v3.top
       gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
                --cojo-file ${INF}/MS/EUR-${cell}.ma \
-               --cojo-cond ${INF}/MS/EUR-${cell}.top \
+               --cojo-cond ${INF}/MS/rs1800693/EUR-${cell}.top \
                --cojo-p ${P_threshold} \
                --maf 0.005 \
                --cojo-collinear 0.9 \
-               --out ${INF}/MS/EUR-${cell}
+               --out ${INF}/MS/rs1800693/EUR-${cell}
+      echo chr12:6514963_A_C ${INF}/MS/rs2354485/EUR-v3.top
+      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+               --cojo-file ${INF}/MS/EUR-${cell}.ma \
+               --cojo-cond ${INF}/MS/rs2364485/EUR-${cell}.top \
+               --cojo-p ${P_threshold} \
+               --maf 0.005 \
+               --cojo-collinear 0.9 \
+               --out ${INF}/MS/rs2364485/EUR-${cell}
       else
       gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
                --cojo-file ${INF}/MS/EUR-${cell}.ma \
