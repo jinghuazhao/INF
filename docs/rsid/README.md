@@ -93,13 +93,14 @@ utils.sh | utilties
 vep.sh | VEP annotation
 wgcna.sh | experiment on modules
 
-## Stacked association plots
+## Stacked association plots and coloc
 
-1. IL.18-rs385076.sh
-2. rs12075.sh
-3. TNFB-rs2364485.sh
-4. MS.sh (two-sample MRs)
-5. OPG-TRANCE.sh
+1. rs12075.sh
+2. MS.sh (+cojo, two-sample MRs)
+3. IL.18-rs385076.sh
+4. OPG-TRANCE.sh
+
+and `MS.sh` contains a routine to generate tabix-indexed blood cell traits.
 
 ## Nested PGS model
 
@@ -191,4 +192,4 @@ whose hgnc_symbol can be amended.
 
 The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
-*Date last changed:* **31/10/2021**
+*Date last changed:* **1/11/2021**
