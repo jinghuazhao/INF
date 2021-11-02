@@ -229,7 +229,7 @@ function PWCoCo()
   ld <- read.table(file.path(INF,"MS","rs1800693","LTBR.ld"),col.names=with(d,marker),row.names=with(d,marker))
   z <- d[c("MS","LTBR","TNFB")]
   rownames(z) <- with(d,marker)
-  sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs1800693",legend=TRUE)
+  sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs2364485",legend=TRUE)
   pdf(file.path(INF,"MS","rs1800693","LTBR.pdf"),width=8,height=13)
   grid::grid.draw(sap)
   dev.off()
