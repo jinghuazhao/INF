@@ -187,7 +187,250 @@ function hyprcoloc()
     rownames(ses) <- with(d,marker)
     hyprcoloc::hyprcoloc(betas, ses, trait.names=traits, snp.id=with(markers,marker))
   '
-END
+}
+
+function PWCoCo()
+{
+  join <(sed '1d' ${INF}/MS/rs1800693/EUR-v3.cma.cojo | awk '{if($12!="NA") print $2,$11/$12,$4,$4,$2}' | sort -k1,1) \
+       <(sed '1d' ${INF}/work/eQTLGen.lz | \
+         awk '{
+                 chr=$3;pos=$4;A1=toupper($5);A2=toupper($6);
+                 if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                 print snpid,$7,A1,A2,$2,$3,$4
+              }' | \
+         sort -k1,1 \
+         ) | \
+  join - <(sed '1d' ${INF}/work/TNFB.lz | \
+           awk '{
+                   chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                   if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                   print snpid,$10/$11,A1,A2,$1
+                }' | \
+           sort -k1,1 \
+          ) | \
+  awk -vOFS="\t" '
+  {
+    if($3!=$7) $6=-$6
+    if($3!=$13) $12=-$12
+    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+  }' | \
+  awk 'a[$1]++==0' | \
+  awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs1800693/LTBR.gassoc
+
+  cut -d' ' -f1 ${INF}/MS/rs1800693/LTBR.gassoc > ${INF}/MS/rs1800693/LTBR.snpid
+  plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/MS/rs1800693/LTBR.snpid --r square --out ${INF}/MS/rs1800693/LTBR
+  plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/MS/rs1800693/LTBR.snpid --freq --out ${INF}/MS/rs1800693/LTBR
+
+  Rscript -e '
+  INF <- Sys.getenv("INF")
+  library(gassocplot)
+  d <- read.table(file.path(INF,"MS","rs1800693","LTBR.gassoc"),col.names=c("snpid","marker","chr","pos","A1","A2","MS","LTBR","TNFB"))
+  markers <- d[c("marker","chr","pos")]
+  ld <- read.table(file.path(INF,"MS","rs1800693","LTBR.ld"),col.names=with(d,marker),row.names=with(d,marker))
+  z <- d[c("MS","LTBR","TNFB")]
+  rownames(z) <- with(d,marker)
+  sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs1800693",legend=TRUE)
+  pdf(file.path(INF,"MS","rs1800693","LTBR.pdf"),width=8,height=13)
+  grid::grid.draw(sap)
+  dev.off()
+  '
+  join <(sed '1d' ${INF}/MS/rs1800693/EUR-v3.cma.cojo | awk '{if($12!="NA") print $2,$11,$4,$4,$2}' | sort -k1,1) \
+       <(Rscript -e '
+              INF <- Sys.getenv("INF")
+              suppressMessages(library(dplyr))
+              cis_pQTL <- merge(read.delim(file.path(INF,"work","eQTLGen.lz")) %>%
+                          filter(GeneSymbol=="LTBR"),read.delim(file.path(INF,"work","eQTLGen.AF")),by="SNP") %>%
+                          mutate(data.frame(gap::get_b_se(AlleleB_all,NrSamples,Zscore)))
+              write.table(cis_pQTL[c("SNP","SNPChr","SNPPos","AssessedAllele","OtherAllele","b")], sep = "\t",
+                          row.names = FALSE, col.names = TRUE, quote=FALSE)
+             ' | \
+         awk '{
+                 chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                 if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                 print snpid,$6,A1,A2,$1,$2,$3
+              }' | \
+         sort -k1,1 \
+         ) | \
+  join - <(sed '1d' ${INF}/work/TNFB.lz | \
+           awk '{
+                   chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                   if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                   print snpid,$10,A1,A2,$1
+                }' | \
+           sort -k1,1 \
+          ) | \
+  awk -vOFS="\t" '
+  {
+    if($3!=$7) $6=-$6
+    if($3!=$13) $12=-$12
+    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+  }' | \
+  awk 'a[$1]++==0' | \
+  awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs1800693/LTBR.beta
+  join <(sed '1d' ${INF}/MS/rs1800693/EUR-v3.cma.cojo | awk '{if($12!="NA") print $2,$12,$4,$4,$2}' | sort -k1,1) \
+       <(Rscript -e '
+              INF <- Sys.getenv("INF")
+              suppressMessages(library(dplyr))
+              cis_pQTL <- merge(read.delim(file.path(INF,"work","eQTLGen.lz")) %>%
+                          filter(GeneSymbol=="LTBR"),read.delim(file.path(INF,"work","eQTLGen.AF")),by="SNP") %>%
+                          mutate(data.frame(gap::get_b_se(AlleleB_all,NrSamples,Zscore)))
+              write.table(cis_pQTL[c("SNP","SNPChr","SNPPos","AssessedAllele","OtherAllele","se")], sep = "\t",
+                          row.names = FALSE, col.names = TRUE, quote=FALSE)
+             ' | \
+         awk '{
+                 chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                 if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                 print snpid,$6,A1,A2,$1,$2,$3
+              }' | \
+         sort -k1,1 \
+         ) | \
+  join - <(sed '1d' ${INF}/work/TNFB.lz | \
+           awk '{
+                   chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                   if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                   print snpid,$11,A1,A2,$1
+                }' | \
+           sort -k1,1 \
+          ) | \
+  awk -vOFS="\t" '
+  {
+    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+  }' | \
+  awk 'a[$1]++==0' | \
+  awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs1800693/LTBR.se
+  Rscript -e '
+    INF <- Sys.getenv("INF")
+    id <- c("marker","chr","pos")
+    traits <- c("MS","LTBR","TNFB")
+    d <- read.table(file.path(INF,"MS/rs1800693","LTBR.beta"),col.names=c("snpid",id,"A1","A2",traits))
+    markers <- d[id]
+    betas <- as.matrix(d[traits])
+    rownames(betas) <- with(d,marker)
+    d <- read.table(file.path(INF,"MS/rs1800693","LTBR.se"),col.names=c("snpid",id,"A1","A2",traits))
+    ses <- as.matrix(d[traits])
+    rownames(ses) <- with(d,marker)
+    hyprcoloc::hyprcoloc(betas, ses, trait.names=traits, snp.id=with(markers,marker))
+  '
+# --- rs2364485
+  join <(sed '1d' ${INF}/MS/rs2364485/EUR-v3.cma.cojo | awk '{if($12!="NA") print $2,$11/$12,$4,$4,$2}' | sort -k1,1) \
+       <(sed '1d' ${INF}/work/eQTLGen.lz | \
+         awk '{
+                 chr=$3;pos=$4;A1=toupper($5);A2=toupper($6);
+                 if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                 print snpid,$7,A1,A2,$2,$3,$4
+              }' | \
+         sort -k1,1 \
+         ) | \
+  join - <(sed '1d' ${INF}/work/TNFB.lz | \
+           awk '{
+                   chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                   if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                   print snpid,$10/$11,A1,A2,$1
+                }' | \
+           sort -k1,1 \
+          ) | \
+  awk -vOFS="\t" '
+  {
+    if($3!=$7) $6=-$6
+    if($3!=$13) $12=-$12
+    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+  }' | \
+  awk 'a[$1]++==0' | \
+  awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs2364485/LTBR.gassoc
+
+  cut -d' ' -f1 ${INF}/MS/rs2364485/LTBR.gassoc > ${INF}/MS/rs2364485/LTBR.snpid
+  plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/MS/rs2364485/LTBR.snpid --r square --out ${INF}/MS/rs2364485/LTBR
+  plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/MS/rs2364485/LTBR.snpid --freq --out ${INF}/MS/rs2364485/LTBR
+  Rscript -e '
+  INF <- Sys.getenv("INF")
+  library(gassocplot)
+  d <- read.table(file.path(INF,"MS","rs2364485","LTBR.gassoc"),col.names=c("snpid","marker","chr","pos","A1","A2","MS","LTBR","TNFB"))
+  markers <- d[c("marker","chr","pos")]
+  ld <- read.table(file.path(INF,"MS","rs2364485","LTBR.ld"),col.names=with(d,marker),row.names=with(d,marker))
+  z <- d[c("MS","LTBR","TNFB")]
+  rownames(z) <- with(d,marker)
+  sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs1800693",legend=TRUE)
+  pdf(file.path(INF,"MS","rs2364485","LTBR.pdf"),width=8,height=13)
+  grid::grid.draw(sap)
+  dev.off()
+  '
+  join <(sed '1d' ${INF}/MS/rs2364485/EUR-v3.cma.cojo | awk '{if($12!="NA") print $2,$11,$4,$4,$2}' | sort -k1,1) \
+       <(Rscript -e '
+              INF <- Sys.getenv("INF")
+              suppressMessages(library(dplyr))
+              cis_pQTL <- merge(read.delim(file.path(INF,"work","eQTLGen.lz")) %>%
+                          filter(GeneSymbol=="LTBR"),read.delim(file.path(INF,"work","eQTLGen.AF")),by="SNP") %>%
+                          mutate(data.frame(gap::get_b_se(AlleleB_all,NrSamples,Zscore)))
+              write.table(cis_pQTL[c("SNP","SNPChr","SNPPos","AssessedAllele","OtherAllele","b")], sep = "\t",
+                          row.names = FALSE, col.names = TRUE, quote=FALSE)
+             ' | \
+         awk '{
+                 chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                 if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                 print snpid,$6,A1,A2,$1,$2,$3
+              }' | \
+         sort -k1,1 \
+         ) | \
+  join - <(sed '1d' ${INF}/work/TNFB.lz | \
+           awk '{
+                   chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                   if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                   print snpid,$10,A1,A2,$1
+                }' | \
+           sort -k1,1 \
+          ) | \
+  awk -vOFS="\t" '
+  {
+    if($3!=$7) $6=-$6
+    if($3!=$13) $12=-$12
+    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+  }' | \
+  awk 'a[$1]++==0' | \
+  awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs2364485/LTBR.beta
+  join <(sed '1d' ${INF}/MS/rs2364485/EUR-v3.cma.cojo | awk '{if($12!="NA") print $2,$12,$4,$4,$2}' | sort -k1,1) \
+       <(Rscript -e '
+              INF <- Sys.getenv("INF")
+              suppressMessages(library(dplyr))
+              cis_pQTL <- merge(read.delim(file.path(INF,"work","eQTLGen.lz")) %>%
+                          filter(GeneSymbol=="LTBR"),read.delim(file.path(INF,"work","eQTLGen.AF")),by="SNP") %>%
+                          mutate(data.frame(gap::get_b_se(AlleleB_all,NrSamples,Zscore)))
+              write.table(cis_pQTL[c("SNP","SNPChr","SNPPos","AssessedAllele","OtherAllele","se")], sep = "\t",
+                          row.names = FALSE, col.names = TRUE, quote=FALSE)
+             ' | \
+         awk '{
+                 chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                 if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                 print snpid,$6,A1,A2,$1,$2,$3
+              }' | \
+         sort -k1,1 \
+         ) | \
+  join - <(sed '1d' ${INF}/work/TNFB.lz | \
+           awk '{
+                   chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                   if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                   print snpid,$11,A1,A2,$1
+                }' | \
+           sort -k1,1 \
+          ) | \
+  awk -vOFS="\t" '
+  {
+    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+  }' | \
+  awk 'a[$1]++==0' | \
+  awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs2364485/LTBR.se
+  Rscript -e '
+    INF <- Sys.getenv("INF")
+    id <- c("marker","chr","pos")
+    traits <- c("MS","LTBR","TNFB")
+    d <- read.table(file.path(INF,"MS/rs2364485","LTBR.beta"),col.names=c("snpid",id,"A1","A2",traits))
+    markers <- d[id]
+    betas <- as.matrix(d[traits])
+    rownames(betas) <- with(d,marker)
+    d <- read.table(file.path(INF,"MS/rs2364485","LTBR.se"),col.names=c("snpid",id,"A1","A2",traits))
+    ses <- as.matrix(d[traits])
+    rownames(ses) <- with(d,marker)
+    hyprcoloc::hyprcoloc(betas, ses, trait.names=traits, snp.id=with(markers,marker))
+  '
 }
 
 cd work
@@ -210,6 +453,7 @@ eQTLGen
 SCALLOP
 stack_assoc_plot
 hyprcoloc
+PWCoCo
 cd -
 
 # MS v3/v3.lz
