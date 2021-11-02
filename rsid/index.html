@@ -400,10 +400,11 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>The posterior number of causal signals in the genomic region is obtained as the expectation <span class="arithmatex">\(\sum_i p(i|\mbox{data}) \times i\)</span>. The search of total number of configurations</p>
 <p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
 <p>To recover the effect size (<span class="arithmatex">\(b\)</span>) and its standard error (<span class="arithmatex">\(se\)</span>) from allele frequency (<span class="arithmatex">\(f\)</span>), sample size (<span class="arithmatex">\(n\)</span>) and z-statistic (<span class="arithmatex">\(z\)</span>) as in cis eQTLGen data, we have</p>
-<div class="arithmatex">\[\begin{eqnarray*}
+<p>\setlength{\mathindent}{0pt}
+\begin{eqnarray<em>}
 b &amp;=&amp; z/d \cr
 se &amp;=&amp; 1/d
-\end{eqnarray*}\]</div>
+\end{eqnarray</em>}</p>
 <p>where <span class="arithmatex">\(d = \sqrt{2f(1-f)(n+z^2)}\)</span>.</p>
 <p>The GREAT Binomial test is</p>
 <p><span class="arithmatex">\(\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}\)</span></p>
