@@ -138,7 +138,8 @@ To recover the effect size ($b$) and its standard error ($se$) from allele frequ
 b &=& z/d \cr
 se &=& 1/d
 \end{eqnarray*}
-where "d = \sqrt{2f(1-f)(n+z^2)}$
+
+where $d = \sqrt{2f(1-f)(n+z^2)}$.
 
 The GREAT Binomial test is
 
