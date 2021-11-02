@@ -134,11 +134,12 @@ $\sum_{i=1}^k{m\choose{i}}$
 
 To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and z-statistic ($z$) as in cis eQTLGen data, we have
 
-\setlength{\mathindent}{0pt}
-\begin{eqnarray*}
-b &=& z/d \cr
-se &=& 1/d
-\end{eqnarray*}
+
+$\setlength{\mathindent}{0pt}
+\begin{aligned}
+b &= z/d \\
+se &= 1/d
+\end{aligned}
 
 where $d = \sqrt{2f(1-f)(n+z^2)}$.
 
