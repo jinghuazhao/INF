@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-function INTERVAL()
+function INTERVAL_eQTLGen_SCALLOP()
 {
 # init -- actually two versions of RNASeq results below gives the same LTBR.lz
   export rnaseq=tensorqtl_trans_MAF0.005_age_sex_rin_batch_readDepth_PC10_PEER20_merged_annotated.csv
@@ -18,9 +18,6 @@ function INTERVAL()
             --markercol variant_id --pvalcol pval --chr ${chr} --start ${b1} --end ${b2} \
             --no-date --plotonly --prefix=INTERVAL --rundir .
   mv INTERVAL_chr${chr}_${bracket}.pdf INTERVAL-LTBR-cis.pdf
-}
-
-function eQTLGen()
 # https://www.eqtlgen.org/trans-eqtls.html
 # https://www.eqtlgen.org/cis-eqtls.html
 {
@@ -40,10 +37,6 @@ function eQTLGen()
             --markercol SNP --pvalcol Pvalue --chr ${chr} --start ${b1} --end ${b2} \
             --no-date --plotonly --prefix=eQTLGen --rundir .
   mv eQTLGen_chr${chr}_${bracket}.pdf eQTLGen-LTBR-cis.pdf
-}
-
-function SCALLOP()
-{
   read chr start end < st.tmp
   (
     gunzip -c ${INF}/METAL/TNFB-1.tbl.gz | \
@@ -65,7 +58,7 @@ function SCALLOP()
   mv TNFB_chr${chr}_${bracket}.pdf SCALLOP-TNFB-cis.pdf
 }
 
-function stack_assoc_plot()
+function stack_assoc_plot_hyprcoloc()
 {
   join <(sed '1d' ${INF}/MS/v3.lz | awk '{print $1,$7/$8,$5,$6,$2}' | sort -k1,1) \
        <(sed '1d' ${INF}/work/eQTLGen.lz | \
@@ -105,16 +98,13 @@ function stack_assoc_plot()
   ld <- read.table(file.path(INF,"work","LTBR.ld"),col.names=with(d,marker),row.names=with(d,marker))
   z <- d[c("MS","LTBR","TNFB")]
   rownames(z) <- with(d,marker)
+  print(cor(z))
   sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs1800693",legend=TRUE)
   pdf(file.path(INF,"plots","LTBR.pdf"),width=8,height=13)
   grid::grid.draw(sap)
   dev.off()
 # stack_assoc_plot_save(sap, "LTBR.png", 5, width=8, height=13, dpi=300)
   '
-}
-
-function hyprcoloc()
-{
   join <(sed '1d' ${INF}/MS/v3.lz | awk '{print $1,$7,$5,$6,$2}' | sort -k1,1) \
        <(Rscript -e '
               suppressMessages(library(dplyr))
@@ -176,6 +166,7 @@ function hyprcoloc()
   awk 'a[$1]++==0' | \
   awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/work/LTBR.se
   Rscript -e '
+    options(width=200)
     id <- c("marker","chr","pos")
     traits <- c("MS","LTBR","TNFB")
     d <- read.table("LTBR.beta",col.names=c("snpid",id,"A1","A2",traits))
@@ -223,12 +214,15 @@ function PWCoCo()
 
   Rscript -e '
   INF <- Sys.getenv("INF")
+  source(file.path(INF,"rsid","LTBR.R"))
   library(gassocplot)
   d <- read.table(file.path(INF,"MS","rs1800693","LTBR.gassoc"),col.names=c("snpid","marker","chr","pos","A1","A2","MS","LTBR","TNFB"))
   markers <- d[c("marker","chr","pos")]
   ld <- read.table(file.path(INF,"MS","rs1800693","LTBR.ld"),col.names=with(d,marker),row.names=with(d,marker))
   z <- d[c("MS","LTBR","TNFB")]
   rownames(z) <- with(d,marker)
+  print(cor(z))
+  LTBR(d[c("pos","MS","LTBR","TNFB")],file.path(INF,"MS","rs1800693","LTBR.png"))
   sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs2364485",legend=TRUE)
   pdf(file.path(INF,"MS","rs1800693","LTBR.pdf"),width=8,height=13)
   grid::grid.draw(sap)
@@ -299,6 +293,7 @@ function PWCoCo()
   awk 'a[$1]++==0' | \
   awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs1800693/LTBR.se
   Rscript -e '
+    options(width=200)
     INF <- Sys.getenv("INF")
     id <- c("marker","chr","pos")
     traits <- c("MS","LTBR","TNFB")
@@ -343,12 +338,15 @@ function PWCoCo()
   plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/MS/rs2364485/LTBR.snpid --freq --out ${INF}/MS/rs2364485/LTBR
   Rscript -e '
   INF <- Sys.getenv("INF")
+  source(file.path(INF,"rsid","LTBR.R"))
   library(gassocplot)
   d <- read.table(file.path(INF,"MS","rs2364485","LTBR.gassoc"),col.names=c("snpid","marker","chr","pos","A1","A2","MS","LTBR","TNFB"))
   markers <- d[c("marker","chr","pos")]
   ld <- read.table(file.path(INF,"MS","rs2364485","LTBR.ld"),col.names=with(d,marker),row.names=with(d,marker))
   z <- d[c("MS","LTBR","TNFB")]
   rownames(z) <- with(d,marker)
+  print(cor(z))
+  LTBR(d[c("pos","MS","LTBR","TNFB")],file.path(INF,"MS","rs2364485","LTBR.png"))
   sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs1800693",legend=TRUE)
   pdf(file.path(INF,"MS","rs2364485","LTBR.pdf"),width=8,height=13)
   grid::grid.draw(sap)
@@ -419,6 +417,7 @@ function PWCoCo()
   awk 'a[$1]++==0' | \
   awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs2364485/LTBR.se
   Rscript -e '
+    options(width=200)
     INF <- Sys.getenv("INF")
     id <- c("marker","chr","pos")
     traits <- c("MS","LTBR","TNFB")
@@ -448,11 +447,8 @@ tabix ${INF}/METAL/gwas2vcf/TNFB.tsv.gz ${chr}:${bracket} > TNFB.tbx
 module load python/2.7
 awk -vchr=${chr} -vpos=${pos} -vd=$((${flank_kb}*1000)) 'BEGIN{print chr,pos-d,pos+d}' > st.tmp
 
-INTERVAL
-eQTLGen
-SCALLOP
-stack_assoc_plot
-hyprcoloc
+INTERVAL_eQTLGen_SCALLOP
+stack_assoc_plot_hyprcoloc
 PWCoCo
 cd -
 
