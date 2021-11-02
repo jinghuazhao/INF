@@ -74,7 +74,6 @@ gwasvcf.sh | GWAS to VCF conversion
 gwas2vcf.sb | gwas2vcf + VCF operations
 h2pve.R | h2/pve contrast
 inbio-discover.R | gene lists
-LTBR.sh | LTBR LocusZoom plots
 magma.sh | MAGMA for IL.12B
 neale.sh | signal selection for Neale UKB data (HbA1c)
 OpenGWAS.sh | OpenGWAS download
@@ -96,7 +95,7 @@ wgcna.sh | experiment on modules
 ## Stacked association and related analysis
 
 1. rs12075.sh
-2. MS.sh (+cojo, two-sample MRs)
+2. MS.sh (+cojo, two-sample MRs)+LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)
 3. IL.18-rs385076.sh
 4. OPG-TRANCE.sh
 
@@ -192,4 +191,4 @@ whose hgnc_symbol can be amended.
 
 The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
-*Date last changed:* **1/11/2021**
+*Date last changed:* **2/11/2021**
