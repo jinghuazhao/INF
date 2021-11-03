@@ -134,12 +134,12 @@ which also be  obtained from RStudio for somewhat larger size.
 
 3. To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and z-statistic ($z$) as in cis eQTLGen data, we have
 
-$$
-\begin{align}
-b & = z/d \hspace{100cm} \\ 
-se & = 1/d
-\end{align}
-$$
+    $$
+    \begin{align}
+    b & = z/d \hspace{100cm} \\ 
+    se & = 1/d
+    \end{align}
+    $$
 
     where $d = \sqrt{2f(1-f)(n+z^2)}$.
 
