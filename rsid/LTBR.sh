@@ -98,7 +98,6 @@ function stack_assoc_plot_hyprcoloc()
   ld <- read.table(file.path(INF,"work","LTBR.ld"),col.names=with(d,marker),row.names=with(d,marker))
   z <- d[c("MS","LTBR","TNFB")]
   rownames(z) <- with(d,marker)
-  print(cor(z))
   sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs1800693",legend=TRUE)
   pdf(file.path(INF,"plots","LTBR.pdf"),width=8,height=13)
   grid::grid.draw(sap)
@@ -214,15 +213,12 @@ function PWCoCo()
 
   Rscript -e '
   INF <- Sys.getenv("INF")
-  source(file.path(INF,"rsid","LTBR.R"))
   library(gassocplot)
   d <- read.table(file.path(INF,"MS","rs1800693","LTBR.gassoc"),col.names=c("snpid","marker","chr","pos","A1","A2","MS","LTBR","TNFB"))
   markers <- d[c("marker","chr","pos")]
   ld <- read.table(file.path(INF,"MS","rs1800693","LTBR.ld"),col.names=with(d,marker),row.names=with(d,marker))
   z <- d[c("MS","LTBR","TNFB")]
   rownames(z) <- with(d,marker)
-  print(cor(z))
-  LTBR(d[c("pos","MS","LTBR","TNFB")],file.path(INF,"MS","rs1800693","LTBR.png"))
   sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs2364485",legend=TRUE)
   pdf(file.path(INF,"MS","rs1800693","LTBR.pdf"),width=8,height=13)
   grid::grid.draw(sap)
@@ -257,7 +253,7 @@ function PWCoCo()
   {
     if($3!=$7) $6=-$6
     if($3!=$13) $12=-$12
-    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+    print $1,$9,$10,$11,$3,$4,$2,$6,$12
   }' | \
   awk 'a[$1]++==0' | \
   awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs1800693/LTBR.beta
@@ -288,17 +284,20 @@ function PWCoCo()
           ) | \
   awk -vOFS="\t" '
   {
-    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+    print $1,$9,$10,$11,$3,$4,$2,$6,$12
   }' | \
   awk 'a[$1]++==0' | \
   awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs1800693/LTBR.se
   Rscript -e '
     options(width=200)
     INF <- Sys.getenv("INF")
+    source(file.path(INF,"rsid","LTBR.R"))
     id <- c("marker","chr","pos")
     traits <- c("MS","LTBR","TNFB")
     d <- read.table(file.path(INF,"MS/rs1800693","LTBR.beta"),col.names=c("snpid",id,"A1","A2",traits))
     markers <- d[id]
+    print(cor(d[traits]))
+    LTBR(d[c("pos","MS","LTBR","TNFB")],file.path(INF,"MS","rs1800693","LTBR.png"))
     betas <- as.matrix(d[traits])
     rownames(betas) <- with(d,marker)
     d <- read.table(file.path(INF,"MS/rs1800693","LTBR.se"),col.names=c("snpid",id,"A1","A2",traits))
@@ -338,15 +337,12 @@ function PWCoCo()
   plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/MS/rs2364485/LTBR.snpid --freq --out ${INF}/MS/rs2364485/LTBR
   Rscript -e '
   INF <- Sys.getenv("INF")
-  source(file.path(INF,"rsid","LTBR.R"))
   library(gassocplot)
   d <- read.table(file.path(INF,"MS","rs2364485","LTBR.gassoc"),col.names=c("snpid","marker","chr","pos","A1","A2","MS","LTBR","TNFB"))
   markers <- d[c("marker","chr","pos")]
   ld <- read.table(file.path(INF,"MS","rs2364485","LTBR.ld"),col.names=with(d,marker),row.names=with(d,marker))
   z <- d[c("MS","LTBR","TNFB")]
   rownames(z) <- with(d,marker)
-  print(cor(z))
-  LTBR(d[c("pos","MS","LTBR","TNFB")],file.path(INF,"MS","rs2364485","LTBR.png"))
   sap <- stack_assoc_plot(markers, z, ld, traits = c("MS","LTBR","TNFB"), ylab = "-log10(P)", top.marker="rs1800693",legend=TRUE)
   pdf(file.path(INF,"MS","rs2364485","LTBR.pdf"),width=8,height=13)
   grid::grid.draw(sap)
@@ -381,7 +377,7 @@ function PWCoCo()
   {
     if($3!=$7) $6=-$6
     if($3!=$13) $12=-$12
-    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+    print $1,$9,$10,$11,$3,$4,$2,$6,$12
   }' | \
   awk 'a[$1]++==0' | \
   awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs2364485/LTBR.beta
@@ -412,17 +408,20 @@ function PWCoCo()
           ) | \
   awk -vOFS="\t" '
   {
-    print $1,$5,$10,$11,$3,$4,$2,$6,$12
+    print $1,$9,$10,$11,$3,$4,$2,$6,$12
   }' | \
   awk 'a[$1]++==0' | \
   awk 'a[$2]++==0' | awk '$2!="NA"' > ${INF}/MS/rs2364485/LTBR.se
   Rscript -e '
     options(width=200)
     INF <- Sys.getenv("INF")
+    source(file.path(INF,"rsid","LTBR.R"))
     id <- c("marker","chr","pos")
     traits <- c("MS","LTBR","TNFB")
     d <- read.table(file.path(INF,"MS/rs2364485","LTBR.beta"),col.names=c("snpid",id,"A1","A2",traits))
     markers <- d[id]
+    print(cor(d[traits]))
+    LTBR(d[c("pos","MS","LTBR","TNFB")],file.path(INF,"MS","rs2364485","LTBR.png"))
     betas <- as.matrix(d[traits])
     rownames(betas) <- with(d,marker)
     d <- read.table(file.path(INF,"MS/rs2364485","LTBR.se"),col.names=c("snpid",id,"A1","A2",traits))

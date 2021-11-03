@@ -399,8 +399,14 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p><span class="arithmatex">\(p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}\)</span></p>
 <p>The posterior number of causal signals in the genomic region is obtained as the expectation <span class="arithmatex">\(\sum_i p(i|\mbox{data}) \times i\)</span>. The search of total number of configurations</p>
 <p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
-<p>To recover the effect size (<span class="arithmatex">\(b\)</span>) and its standard error (<span class="arithmatex">\(se\)</span>) from allele frequency (<span class="arithmatex">\(f\)</span>), sample size (<span class="arithmatex">\(n\)</span>) and z-statistic (<span class="arithmatex">\(z\)</span>) as in cis eQTLGen data, we have
-<span class="arithmatex">\(b = z/d\)</span>, <span class="arithmatex">\(se = 1/d\)</span>, where <span class="arithmatex">\(d = \sqrt{2f(1-f)(n+z^2)}\)</span>.</p>
+<p>To recover the effect size (<span class="arithmatex">\(b\)</span>) and its standard error (<span class="arithmatex">\(se\)</span>) from allele frequency (<span class="arithmatex">\(f\)</span>), sample size (<span class="arithmatex">\(n\)</span>) and z-statistic (<span class="arithmatex">\(z\)</span>) as in cis eQTLGen data, we have</p>
+<div class="arithmatex">\[
+\begin{align}
+b &amp; = z/d \\ 
+se &amp; = 1/d
+\end{align}
+\]</div>
+<p>where <span class="arithmatex">\(d = \sqrt{2f(1-f)(n+z^2)}\)</span>.</p>
 <p>The GREAT Binomial test is</p>
 <p><span class="arithmatex">\(\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}\)</span></p>
 <p>An analogy is made here for protein with Transcriptome (Proteome)wide association statistic <span class="arithmatex">\(z_{PWAS}\)</span>  originally proposed for gene expression data. For a given Protein of interest <strong>P</strong> for which GWAS summary statistics <span class="arithmatex">\(z_P\)</span> is available, the corresponding Wald statistic for PWAS is defined such that</p>
