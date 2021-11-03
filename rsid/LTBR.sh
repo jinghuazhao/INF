@@ -294,16 +294,16 @@ function PWCoCo()
     source(file.path(INF,"rsid","LTBR.R"))
     id <- c("marker","chr","pos")
     traits <- c("MS","LTBR","TNFB")
-    d <- read.table(file.path(INF,"MS/rs1800693","LTBR.beta"),col.names=c("snpid",id,"A1","A2",traits))
-    markers <- d[id]
-    print(cor(d[traits]))
-    LTBR(d[c("pos","MS","LTBR","TNFB")],file.path(INF,"MS","rs1800693","LTBR.png"))
-    betas <- as.matrix(d[traits])
-    rownames(betas) <- with(d,marker)
-    d <- read.table(file.path(INF,"MS/rs1800693","LTBR.se"),col.names=c("snpid",id,"A1","A2",traits))
-    ses <- as.matrix(d[traits])
-    rownames(ses) <- with(d,marker)
+    b <- read.table(file.path(INF,"MS/rs1800693","LTBR.beta"),col.names=c("snpid",id,"A1","A2",traits))
+    markers <- b[id]
+    print(cor(b[traits]))
+    betas <- as.matrix(b[traits])
+    rownames(betas) <- with(b,marker)
+    se <- read.table(file.path(INF,"MS/rs1800693","LTBR.se"),col.names=c("snpid",id,"A1","A2",traits))
+    ses <- as.matrix(se[traits])
+    rownames(ses) <- with(se,marker)
     hyprcoloc::hyprcoloc(betas, ses, trait.names=traits, snp.id=with(markers,marker))
+    LTBR(b[c("pos","MS","LTBR","TNFB")],se[c("pos","MS","LTBR","TNFB")],file.path(INF,"MS","rs1800693","LTBR.png"))
   '
 # --- rs2364485
   join <(sed '1d' ${INF}/MS/rs2364485/EUR-v3.cma.cojo | awk '{if($12!="NA") print $2,$11/$12,$4,$4,$2}' | sort -k1,1) \
@@ -418,16 +418,16 @@ function PWCoCo()
     source(file.path(INF,"rsid","LTBR.R"))
     id <- c("marker","chr","pos")
     traits <- c("MS","LTBR","TNFB")
-    d <- read.table(file.path(INF,"MS/rs2364485","LTBR.beta"),col.names=c("snpid",id,"A1","A2",traits))
-    markers <- d[id]
-    print(cor(d[traits]))
-    LTBR(d[c("pos","MS","LTBR","TNFB")],file.path(INF,"MS","rs2364485","LTBR.png"))
-    betas <- as.matrix(d[traits])
+    b <- read.table(file.path(INF,"MS/rs2364485","LTBR.beta"),col.names=c("snpid",id,"A1","A2",traits))
+    markers <- b[id]
+    print(cor(b[traits]))
+    betas <- as.matrix(b[traits])
     rownames(betas) <- with(d,marker)
-    d <- read.table(file.path(INF,"MS/rs2364485","LTBR.se"),col.names=c("snpid",id,"A1","A2",traits))
-    ses <- as.matrix(d[traits])
-    rownames(ses) <- with(d,marker)
+    se <- read.table(file.path(INF,"MS/rs2364485","LTBR.se"),col.names=c("snpid",id,"A1","A2",traits))
+    ses <- as.matrix(se[traits])
+    rownames(ses) <- with(se,marker)
     hyprcoloc::hyprcoloc(betas, ses, trait.names=traits, snp.id=with(markers,marker))
+    LTBR(b[c("pos","MS","LTBR","TNFB")],se[c("pos","MS","LTBR","TNFB")],file.path(INF,"MS","rs2364485","LTBR.png"))
   '
 }
 
