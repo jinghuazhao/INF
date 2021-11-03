@@ -136,7 +136,7 @@ To recover the effect size ($b$) and its standard error ($se$) from allele frequ
 
 $$
 \begin{align}
-b & = z/d \\ 
+b & = z/d \hspace{100cm} \\ 
 se & = 1/d
 \end{align}
 $$
