@@ -4,10 +4,16 @@ LTBR <- function(b,se,out="p2d.png")
   par(mfrow=c(2,1))
   data <- data.frame(b)
   x <- data[[1]]
-  plot(data[[2]]~x,ylim=c(-0.5,0.5),col="blue",xlab="Position",ylab="Effect size",pch=15,axes=FALSE)
+  plot(data[[2]]~x,ylim=c(-0.5,0.5),col="blue",xlab="",ylab="Effect size",pch=15,axes=FALSE)
   points(data[[3]]~x,col="orange",pch=17)
   points(data[[4]]~x,col="red",pch=19)
   title("MS-LTBR-TNFB")
+  axis(2)
+  data <- data.frame(se)
+  x <- data[[1]]
+  plot(data[[2]]~x,ylim=c(0,0.5),col="blue",xlab="Position",ylab="Standard error",pch=15,axes=FALSE)
+  points(data[[3]]~x,col="orange",pch=17)
+  points(data[[4]]~x,col="red",pch=19)
   legend("topleft",
          legend = c("MS","LTBR","TNFB"),
          col = c("blue","orange","red"),
@@ -18,12 +24,6 @@ LTBR <- function(b,se,out="p2d.png")
          text.col = "black",
          horiz = FALSE,
          inset = c(0.1, 0.1))
-  axis(2)
-  data <- data.frame(se)
-  x <- data[[1]]
-  plot(data[[2]]~x,ylim=c(0,0.5),col="blue",xlab="Position",ylab="Standard error",pch=15,axes=FALSE)
-  points(data[[3]]~x,col="orange",pch=17)
-  points(data[[4]]~x,col="red",pch=19)
   axis(1,at=x,tick=TRUE)
   axis(2)
   dev.off()
