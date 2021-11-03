@@ -118,19 +118,19 @@ which also be  obtained from RStudio for somewhat larger size.
 
 1. The proportion of variants explained (PVE) by $T$ pQTLs for a protein from meta-analytic statistics is
 
-PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
+    PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
 
-with standard error
+    with standard error
 
-$SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}$
+    $SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}$
 
 2. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
 
-$p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
+    $p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
 
-The posterior number of causal signals in the genomic region is obtained as the expectation $\sum_i p(i|\mbox{data}) \times i$. The search of total number of configurations
+    The posterior number of causal signals in the genomic region is obtained as the expectation $\sum_i p(i|\mbox{data}) \times i$. The search of total number of configurations
 
-$\sum_{i=1}^k{m\choose{i}}$
+    $\sum_{i=1}^k{m\choose{i}}$
 
 3. To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and z-statistic ($z$) as in cis eQTLGen data, we have
 
@@ -141,17 +141,17 @@ se & = 1/d
 \end{align}
 $$
 
-where $d = \sqrt{2f(1-f)(n+z^2)}$.
+    where $d = \sqrt{2f(1-f)(n+z^2)}$.
 
 4. The GREAT Binomial test is
 
-$\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}$
+    $\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}$
 
 5. A proteome-wide analogy $z_{PWAS}$ is made to (transcriptome)wide association statistic originally proposed for gene expression data. For a given Protein of interest **P** for which GWAS summary statistics $z_P$ is available, the corresponding Wald statistic for PWAS is defined such that
 
-$z_{PWAS} = \frac{w^T_{P}z_P}{\sqrt{w^T_{P}Vw_{P}}}$
+    $z_{PWAS} = \frac{w^T_{P}z_P}{\sqrt{w^T_{P}Vw_{P}}}$
 
-where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively.
+    where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively.
 
 ## UniProt IDs
 
