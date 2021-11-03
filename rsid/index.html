@@ -406,17 +406,14 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 </li>
 <li>
 <p>To recover the effect size (<span class="arithmatex">\(b\)</span>) and its standard error (<span class="arithmatex">\(se\)</span>) from allele frequency (<span class="arithmatex">\(f\)</span>), sample size (<span class="arithmatex">\(n\)</span>) and z-statistic (<span class="arithmatex">\(z\)</span>) as in cis eQTLGen data, we have</p>
-</li>
-</ol>
 <div class="arithmatex">\[
 \begin{align}
 b &amp; = z/d \hspace{100cm} \\ 
 se &amp; = 1/d
 \end{align}
 \]</div>
-<pre><code>where $d = \sqrt{2f(1-f)(n+z^2)}$.
-</code></pre>
-<ol>
+<p>where <span class="arithmatex">\(d = \sqrt{2f(1-f)(n+z^2)}\)</span>.</p>
+</li>
 <li>
 <p>The GREAT Binomial test is</p>
 <p><span class="arithmatex">\(\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}\)</span></p>
