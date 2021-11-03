@@ -392,19 +392,21 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>which also be  obtained from RStudio for somewhat larger size.</p>
 <h2 id="mathematical-expressions">Mathematical expressions</h2>
 <ol>
-<li>The proportion of variants explained (PVE) by <span class="arithmatex">\(T\)</span> pQTLs for a protein from meta-analytic statistics is</li>
-</ol>
+<li>
+<p>The proportion of variants explained (PVE) by <span class="arithmatex">\(T\)</span> pQTLs for a protein from meta-analytic statistics is</p>
 <p>PVE=<span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}\)</span></p>
 <p>with standard error</p>
 <p><span class="arithmatex">\(SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}\)</span></p>
-<ol>
-<li>The prior probability for <span class="arithmatex">\(i\)</span> out of <span class="arithmatex">\(m\)</span> variants is causal, is obtained as a binomial probability</li>
-</ol>
+</li>
+<li>
+<p>The prior probability for <span class="arithmatex">\(i\)</span> out of <span class="arithmatex">\(m\)</span> variants is causal, is obtained as a binomial probability</p>
 <p><span class="arithmatex">\(p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}\)</span></p>
 <p>The posterior number of causal signals in the genomic region is obtained as the expectation <span class="arithmatex">\(\sum_i p(i|\mbox{data}) \times i\)</span>. The search of total number of configurations</p>
 <p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
-<ol>
-<li>To recover the effect size (<span class="arithmatex">\(b\)</span>) and its standard error (<span class="arithmatex">\(se\)</span>) from allele frequency (<span class="arithmatex">\(f\)</span>), sample size (<span class="arithmatex">\(n\)</span>) and z-statistic (<span class="arithmatex">\(z\)</span>) as in cis eQTLGen data, we have</li>
+</li>
+<li>
+<p>To recover the effect size (<span class="arithmatex">\(b\)</span>) and its standard error (<span class="arithmatex">\(se\)</span>) from allele frequency (<span class="arithmatex">\(f\)</span>), sample size (<span class="arithmatex">\(n\)</span>) and z-statistic (<span class="arithmatex">\(z\)</span>) as in cis eQTLGen data, we have</p>
+</li>
 </ol>
 <div class="arithmatex">\[
 \begin{align}
@@ -412,16 +414,19 @@ b &amp; = z/d \hspace{100cm} \\
 se &amp; = 1/d
 \end{align}
 \]</div>
-<p>where <span class="arithmatex">\(d = \sqrt{2f(1-f)(n+z^2)}\)</span>.</p>
+<pre><code>where $d = \sqrt{2f(1-f)(n+z^2)}$.
+</code></pre>
 <ol>
-<li>The GREAT Binomial test is</li>
-</ol>
+<li>
+<p>The GREAT Binomial test is</p>
 <p><span class="arithmatex">\(\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}\)</span></p>
-<ol>
-<li>A proteome-wide analogy <span class="arithmatex">\(z_{PWAS}\)</span> is made to (transcriptome)wide association statistic originally proposed for gene expression data. For a given Protein of interest <strong>P</strong> for which GWAS summary statistics <span class="arithmatex">\(z_P\)</span> is available, the corresponding Wald statistic for PWAS is defined such that</li>
-</ol>
+</li>
+<li>
+<p>A proteome-wide analogy <span class="arithmatex">\(z_{PWAS}\)</span> is made to (transcriptome)wide association statistic originally proposed for gene expression data. For a given Protein of interest <strong>P</strong> for which GWAS summary statistics <span class="arithmatex">\(z_P\)</span> is available, the corresponding Wald statistic for PWAS is defined such that</p>
 <p><span class="arithmatex">\(z_{PWAS} = \frac{w^T_{P}z_P}{\sqrt{w^T_{P}Vw_{P}}}\)</span></p>
 <p>where <span class="arithmatex">\(w_{P}\)</span> is a weight associated with protein abundance level and <strong>V</strong> covariance matrix for <span class="arithmatex">\(z_P\)</span>, respectively.</p>
+</li>
+</ol>
 <h2 id="uniprot-ids">UniProt IDs</h2>
 <p>The list of proteins on inflammation is within one of the <a href="https://www.olink.com/products/">Olink</a> panels (as in <a href="../doc/Olink%20validation%20data%20all%20panels.xlsx">Olink validation data all panels.xlsx</a>) each containing 92 proteins. Information contained in these panels can be retrieved into R via <a href="../doc/Olink.R">Olink.R</a>, which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.</p>
 <p>BDNF has recently been removed from the assay and replaced with CD8A, <a href="https://www.olink.com/bdnf-info/">https://www.olink.com/bdnf-info/</a>, and there are also changes on TNF and IFN.gamma, <a href="https://www.olink.com/inflammation-upgrade/">https://www.olink.com/inflammation-upgrade/</a>.</p>
