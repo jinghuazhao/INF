@@ -422,7 +422,7 @@ function PWCoCo()
     markers <- b[id]
     print(cor(b[traits]))
     betas <- as.matrix(b[traits])
-    rownames(betas) <- with(d,marker)
+    rownames(betas) <- with(b,marker)
     se <- read.table(file.path(INF,"MS/rs2364485","LTBR.se"),col.names=c("snpid",id,"A1","A2",traits))
     ses <- as.matrix(se[traits])
     rownames(ses) <- with(se,marker)

@@ -21,7 +21,7 @@ LTBR <- function(b,se,out="p2d.png")
   axis(2)
   data <- data.frame(se)
   x <- data[[1]]
-  plot(data[[2]]~x,ylim=c(-0.5,0.5),col="blue",xlab="Position",ylab="Standard error",pch=15,axes=FALSE)
+  plot(data[[2]]~x,ylim=c(0,0.5),col="blue",xlab="Position",ylab="Standard error",pch=15,axes=FALSE)
   points(data[[3]]~x,col="orange",pch=17)
   points(data[[4]]~x,col="red",pch=19)
   axis(1,at=x,tick=TRUE)
