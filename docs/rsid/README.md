@@ -45,6 +45,26 @@ It turned to be more efficient in cis-pQTL analyses to extract the relevant vari
 
 The GSMR implementation started with CAD/FEV1 (now with `gsmr.sh`, `gsmr.sb`, `gsmr.R`) and then HGI as `gsmr_HGI.*` and pQTLMR/MR (`HGI.sh`, `HGI.R`), and +/- 1MB (`rs635634.sh`).
 
+Earlier on, a pQTL-based MR analysis is furnished with `pqtlMR.sh`.
+
+## Variant annotation
+
+This is exemplified with `vep.sh`. GARFIELD analysis is furnsihed with `garfield.sh`. Specific and collective enrichment can be found in `magma.sh` and `rGREAT.R`.
+
+## Colocalization analysis
+
+eQTL lookup is done with PhenoScanner via `eQTL.R`, `eQTLGen.sh` and GTEx via `GTEx-ps.R`, `GTEx-ps.sh` and `GTEx-ps-jma.sh`.
+
+Credible set lookup from GTEx v8 is furnished with `GTEx-cs.sh` and `GTEx-cs-jma.sh`.
+
+Eearlier experiments were done with `coloc.sb` (clumsy) and `coloc.R` (with pQTLtools) as well as `fastenloc.sb`.
+
+Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LTBR.sh`.
+
+## Generation of summary statistics
+
+This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
+
 ## Mathematical expressions
 
 1. The proportion of variants explained (PVE) by $T$ pQTLs for a protein from meta-analytic statistics is
@@ -107,43 +127,26 @@ chembl.sh | toy CHEMBL queries
 CRP.sh | an inflammation score
 cvd1.sh | SCALLOP-CVDI supplementary tables
 circos.* | circos/circlize scripts
-coloc.sb | coloc analysis -- clumsy verion
-coloc.R | coloc analysis via pQTLtools
 efo.R | experimental factor ontology
-eQTL.R | cis-pQTL eQTL lookup (PhenoScanner)
-eQTLGen.sh | eQTLGen lookup
 epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
 epigraphdb-ppi.R | PPI using EpiGraphDB
-fastenloc.sb | fastenloc analysis
 fusion_twas.sb | FUSION TWAS experiment
-garfield.sh | GARFIELD analysis
 gdigt.R | GDI and gene-trials
 GREP.sh | GREP script
-GTEx-ps.sh | cis-pQTL GTEx eQTL lookup with PhenoScanner CLI
-GTEx-ps.R | cis-pQTL GTEx eQTL lookup (PhenoScanner)
-GTEx-ps-jma.R | cis-pQTL from jma as above
-GTEx-cs.sh | cis-pQTL GTEx credible set lookup (GTEx v8)
-GTEx-cs-jma.sh | cis-pQTL from jma as above
-gwasvcf.sh | GWAS to VCF conversion
-gwas2vcf.sb | gwas2vcf + VCF operations
 h2pve.R | h2/pve contrast
 inbio-discover.R | gene lists
-magma.sh | MAGMA for IL.12B/All signals
 neale.sh | signal selection for Neale UKB data (HbA1c)
 OpenGWAS.sh | OpenGWAS download
 pheweb.Rmd | Data extraction from pheweb.jp
 pqtlGWAS.R | pQTL-GWAS lookup
 pQTL.R | pQTL lookup
-pqtlMR.sh | pQTL MR analysis
 qqman.sb | Q-Q/Manhattan plots under CSD3
 rentrez.sh | reuse of rentrez
-rGREAT.R | GREAT analysis
 Somascan-Olink.* | Somascan/Olink overlap
 stringdb.sh | STRINGdb
 tables.R | code to create Excel Tables
 uniprot.R | UniProt IDs to others
 utils.sh | utilties
-vep.sh | VEP annotation
 wgcna.sh | experiment on modules
 
 ### Stacked association and related analysis
