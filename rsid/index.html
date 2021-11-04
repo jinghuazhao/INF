@@ -101,6 +101,18 @@
 <ul class="nav flex-column">
 </ul>
 </li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#variant-annotation">Variant annotation</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#colocalization-analysis">Colocalization analysis</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#generation-of-summary-statistics">Generation of summary statistics</a>
+<ul class="nav flex-column">
+</ul>
+</li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#mathematical-expressions">Mathematical expressions</a>
 <ul class="nav flex-column">
 </ul>
@@ -188,6 +200,16 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in <code>mr.sh</code> and <code>mr.sb</code>. To get around the mishap with rsids we switched back to SNPids; we found the options <code>--clump-r2 0.1 --gsmr-snp-min 10</code> make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.</p>
 <p>It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.</p>
 <p>The GSMR implementation started with CAD/FEV1 (now with <code>gsmr.sh</code>, <code>gsmr.sb</code>, <code>gsmr.R</code>) and then HGI as <code>gsmr_HGI.*</code> and pQTLMR/MR (<code>HGI.sh</code>, <code>HGI.R</code>), and +/- 1MB (<code>rs635634.sh</code>).</p>
+<p>Earlier on, a pQTL-based MR analysis is furnished with <code>pqtlMR.sh</code>.</p>
+<h2 id="variant-annotation">Variant annotation</h2>
+<p>This is exemplified with <code>vep.sh</code>. GARFIELD analysis is furnsihed with <code>garfield.sh</code>. Specific and collective enrichment can be found in <code>magma.sh</code> and <code>rGREAT.R</code>.</p>
+<h2 id="colocalization-analysis">Colocalization analysis</h2>
+<p>eQTL lookup is done with PhenoScanner via <code>eQTL.R</code>, <code>eQTLGen.sh</code> and GTEx via <code>GTEx-ps.R</code>, <code>GTEx-ps.sh</code> and <code>GTEx-ps-jma.sh</code>.</p>
+<p>Credible set lookup from GTEx v8 is furnished with <code>GTEx-cs.sh</code> and <code>GTEx-cs-jma.sh</code>.</p>
+<p>Eearlier experiments were done with <code>coloc.sb</code> (clumsy) and <code>coloc.R</code> (with pQTLtools) as well as <code>fastenloc.sb</code>.</p>
+<p>Multitrait counterparts were also done with HyPrColoc as in <code>rs12075.sh</code> and <code>LTBR.sh</code>.</p>
+<h2 id="generation-of-summary-statistics">Generation of summary statistics</h2>
+<p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
 <h2 id="mathematical-expressions">Mathematical expressions</h2>
 <ol>
 <li>
@@ -256,24 +278,8 @@ se &amp; = 1/d
 <td>circos/circlize scripts</td>
 </tr>
 <tr>
-<td>coloc.sb</td>
-<td>coloc analysis -- clumsy verion</td>
-</tr>
-<tr>
-<td>coloc.R</td>
-<td>coloc analysis via pQTLtools</td>
-</tr>
-<tr>
 <td>efo.R</td>
 <td>experimental factor ontology</td>
-</tr>
-<tr>
-<td>eQTL.R</td>
-<td>cis-pQTL eQTL lookup (PhenoScanner)</td>
-</tr>
-<tr>
-<td>eQTLGen.sh</td>
-<td>eQTLGen lookup</td>
 </tr>
 <tr>
 <td>epigraphdb-pleiotropy.R</td>
@@ -284,16 +290,8 @@ se &amp; = 1/d
 <td>PPI using EpiGraphDB</td>
 </tr>
 <tr>
-<td>fastenloc.sb</td>
-<td>fastenloc analysis</td>
-</tr>
-<tr>
 <td>fusion_twas.sb</td>
 <td>FUSION TWAS experiment</td>
-</tr>
-<tr>
-<td>garfield.sh</td>
-<td>GARFIELD analysis</td>
 </tr>
 <tr>
 <td>gdigt.R</td>
@@ -304,44 +302,12 @@ se &amp; = 1/d
 <td>GREP script</td>
 </tr>
 <tr>
-<td>GTEx-ps.sh</td>
-<td>cis-pQTL GTEx eQTL lookup with PhenoScanner CLI</td>
-</tr>
-<tr>
-<td>GTEx-ps.R</td>
-<td>cis-pQTL GTEx eQTL lookup (PhenoScanner)</td>
-</tr>
-<tr>
-<td>GTEx-ps-jma.R</td>
-<td>cis-pQTL from jma as above</td>
-</tr>
-<tr>
-<td>GTEx-cs.sh</td>
-<td>cis-pQTL GTEx credible set lookup (GTEx v8)</td>
-</tr>
-<tr>
-<td>GTEx-cs-jma.sh</td>
-<td>cis-pQTL from jma as above</td>
-</tr>
-<tr>
-<td>gwasvcf.sh</td>
-<td>GWAS to VCF conversion</td>
-</tr>
-<tr>
-<td>gwas2vcf.sb</td>
-<td>gwas2vcf + VCF operations</td>
-</tr>
-<tr>
 <td>h2pve.R</td>
 <td>h2/pve contrast</td>
 </tr>
 <tr>
 <td>inbio-discover.R</td>
 <td>gene lists</td>
-</tr>
-<tr>
-<td>magma.sh</td>
-<td>MAGMA for IL.12B/All signals</td>
 </tr>
 <tr>
 <td>neale.sh</td>
@@ -364,20 +330,12 @@ se &amp; = 1/d
 <td>pQTL lookup</td>
 </tr>
 <tr>
-<td>pqtlMR.sh</td>
-<td>pQTL MR analysis</td>
-</tr>
-<tr>
 <td>qqman.sb</td>
 <td>Q-Q/Manhattan plots under CSD3</td>
 </tr>
 <tr>
 <td>rentrez.sh</td>
 <td>reuse of rentrez</td>
-</tr>
-<tr>
-<td>rGREAT.R</td>
-<td>GREAT analysis</td>
 </tr>
 <tr>
 <td>Somascan-Olink.*</td>
@@ -398,10 +356,6 @@ se &amp; = 1/d
 <tr>
 <td>utils.sh</td>
 <td>utilties</td>
-</tr>
-<tr>
-<td>vep.sh</td>
-<td>VEP annotation</td>
 </tr>
 <tr>
 <td>wgcna.sh</td>
