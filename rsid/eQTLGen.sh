@@ -2,9 +2,8 @@
 
 export eQTLGen=~/rds/public_databases/eQTLGen
 
-function INF1()
-{
 function cistrans_python()
+# select named columns from .csv
 {
 python3 <<END
 #!/usr/bin/python3
@@ -49,7 +48,6 @@ R --no-save <<END
                             height=12, width=12, units="cm", resolution=500,
                             fill=c("yellow","purple"), cat.pos=c(-30,30), rotation.degree = 0)
 END
-}
 
 function jma()
 {
