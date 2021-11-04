@@ -5,13 +5,14 @@ function INTERVAL_eQTLGen_SCALLOP()
 # init -- actually two versions of RNASeq results below gives the same LTBR.lz
   export rnaseq=tensorqtl_trans_MAF0.005_age_sex_rin_batch_readDepth_PC10_PEER20_merged_annotated.csv
   export rnaseq=tensorqtl_allSNPs_MAF0.005_merged_annotated.csv
-  grep -w ${rsid} ${rnaseq}
+  grep -w -e ${rsid1} -e ${rsid2} ${rnaseq}
   zgrep ENSG00000256433 ${INF}/work/ensGtp.txt.gz | \
   cut -f2 | \
   zgrep -f - ${INF}/work/ensemblToGeneName.txt.gz
 # LocusZoom plot
   read chr start end < st.tmp
-  awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end && index($0,gene)>0)' ${rnaseq} | \
+  awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end)' ${rnaseq} | \
+  grep -e LTBR -w | \
   tr "," "\t" > LTBR.lz
   rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal LTBR.lz --delim tab title="INTERVAL-LTBR" \
@@ -20,7 +21,6 @@ function INTERVAL_eQTLGen_SCALLOP()
   mv INTERVAL_chr${chr}_${bracket}.pdf INTERVAL-LTBR-cis.pdf
 # https://www.eqtlgen.org/trans-eqtls.html
 # https://www.eqtlgen.org/cis-eqtls.html
-{
   export AF=2018-07-18_SNP_AF_for_AlleleB_combined_allele_counts_and_MAF_pos_added.txt.gz
   export cis=2019-12-11-cis-eQTLsFDR-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz
   read chr start end < st.tmp
@@ -107,7 +107,8 @@ function stack_assoc_plot_hyprcoloc()
   join <(sed '1d' ${INF}/MS/v3.lz | awk '{print $1,$7,$5,$6,$2}' | sort -k1,1) \
        <(Rscript -e '
               suppressMessages(library(dplyr))
-              cis_pQTL <- merge(read.delim("eQTLGen.lz") %>% filter(GeneSymbol=="LTBR"),read.delim("eQTLGen.AF"),by="SNP") %>%
+              cis_pQTL <- merge(read.delim("eQTLGen.lz") %>% filter(GeneSymbol=="LTBR"),
+                                read.delim("eQTLGen.AF"),by="SNP") %>%
               mutate(data.frame(gap::get_b_se(AlleleB_all,NrSamples,Zscore)))
               write.table(cis_pQTL[c("SNP","SNPChr","SNPPos","AssessedAllele","OtherAllele","b")], sep = "\t",
                           row.names = FALSE, col.names = TRUE, quote=FALSE)
@@ -434,9 +435,8 @@ function PWCoCo()
 cd work
 export chr=12
 export pos=6514963
-export gene=LTBR
-export rsid=rs2364485
-export flank_kb=1000
+export rsid1=rs1800693
+export rsid2=rs2364485
 export b1=6300000
 export b2=6700000
 export bracket=${b1}-${b2}
@@ -444,7 +444,7 @@ export bracket=${b1}-${b2}
 tabix ${INF}/METAL/gwas2vcf/TNFB.tsv.gz ${chr}:${bracket} > TNFB.tbx
 
 module load python/2.7
-awk -vchr=${chr} -vpos=${pos} -vd=$((${flank_kb}*1000)) 'BEGIN{print chr,pos-d,pos+d}' > st.tmp
+awk -vchr=${chr} -vb1=${b1} -vb2=${b2} 'BEGIN{print chr,b1,b2}' > st.tmp
 
 INTERVAL_eQTLGen_SCALLOP
 stack_assoc_plot_hyprcoloc

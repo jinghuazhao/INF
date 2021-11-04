@@ -184,8 +184,56 @@ blood_cell_traits
 
 function coloc()
 {
-  bcftools query -r 12:6514963-6514963 -f '%ID\t%ALT\t%REF\t%AF\t[%ES]\t[%SE]\t[%LP]\t[%SS]\t%CHROM\t%POS\n' ${INF}/METAL/gwas2vcf/TNFB.vcf.gz | \
-  awk -vOFS="\t" '{$7=10^-$7};1'> ${INF}/MS/TNFB.tsv
+  join <(sed '1d' ${INF}/MS/EUR-v3.ma | awk '{print $1,$2,$3,$4,$5,$6,$8}' | sort -k1,1) \
+       <(Rscript -e '
+              suppressMessages(library(dplyr))
+              cis_pQTL <- merge(read.delim("eQTLGen.lz") %>% filter(GeneSymbol=="LTBR"),read.delim("eQTLGen.AF"),by="SNP") %>%
+              mutate(data.frame(gap::get_b_se(AlleleB_all,NrSamples,Zscore)))
+              write.table(cis_pQTL[c("SNP","SNPChr","SNPPos","AssessedAllele","OtherAllele","AlleleB_all","b","se","NrSamples")], sep = "\t",
+                          row.names = FALSE, col.names = TRUE, quote=FALSE)
+             ' | \
+         awk '{
+                 chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                 if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                 print snpid,A1,A2,$6,$7,$8,$9
+              }' | \
+         sort -k1,1 \
+         ) | \
+  join - <(sed '1d' ${INF}/work/TNFB.lz | \
+           awk '{
+                   chr=$2;pos=$3;A1=toupper($4);A2=toupper($5);
+                   if(A1<A2) snpid="chr"chr":"pos"_"A1"_"A2;else snpid="chr"chr":"pos"_"A2"_"A1;
+                   print snpid,A1,A2,$6,$10,$11,$18,$1
+                }' | \
+           sort -k1,1 \
+          ) | \
+  awk -vOFS="\t" '
+  {
+    if($2!=$8) $11=-$11
+    if($2!=$14) $17=-$17
+    print
+  }' | \
+  awk 'a[$1]++==0' | \
+  awk 'a[$20]++==0' > ${INF}/work/LTBR.coloc
+  Rscript -e '
+    options(width=200)
+    INF <- Sys.getenv("INF")
+    MS_LTBR_TNFB <- read.table(file.path(INF,"work","LTBR.coloc"))
+    MS <- MS_LTBR_TNFB[c(1:7,20)]
+    LTBR <- MS_LTBR_TNFB[c(1,8:13,20)]
+    TNFB <- MS_LTBR_TNFB[c(1,14:20)]
+    names(MS) <- names(LTBR) <- names(TNFB) <- c("snpid","A1","A2","MAF","beta","se","N","rsid")
+    MS <- within(MS,{varbeta=se^2})
+    LTBR <- within(LTBR,{varbeta=se^2})
+    TNFB <- within(TNFB,{varbeta=se^2})
+    MS <- c(as.list(MS),type="quant")
+    LTBR <- c(as.list(LTBR),type="quant")
+    TNFB <- c(as.list(TNFB),type="quant")
+    require(coloc)
+    abf12 <- coloc.abf(MS,LTBR)
+    abf13 <- coloc.abf(MS,TNFB)
+    abf23 <- coloc.abf(LTBR,TNFB)
+  '
 }
 
 function gsmr()
