@@ -45,75 +45,6 @@ It turned to be more efficient in cis-pQTL analyses to extract the relevant vari
 
 The GSMR implementation started with CAD/FEV1 (now with `gsmr.sh`, `gsmr.sb`, `gsmr.R`) and then HGI as `gsmr_HGI.*` and pQTLMR/MR (`HGI.sh`, `HGI.R`), and +/- 1MB (`rs635634.sh`).
 
-## Other analyses / utilities
-
-File | Description
------|---------------------------
-chembl.sh | toy CHEMBL queries
-CRP.sh | an inflammation score
-cvd1.sh | SCALLOP-CVDI supplementary tables
-circos.* | circos/circlize scripts
-coloc.sb | coloc analysis -- clumsy verion
-coloc.R | coloc analysis via pQTLtools
-efo.R | experimental factor ontology
-eQTL.R | cis-pQTL eQTL lookup (PhenoScanner)
-eQTLGen.sh | eQTLGen lookup
-epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
-epigraphdb-ppi.R | PPI using EpiGraphDB
-fastenloc.sb | fastenloc analysis
-fusion_twas.sb | FUSION TWAS experiment
-garfield.sh | GARFIELD analysis
-gdigt.R | GDI and gene-trials
-GREP.sh | GREP script
-GTEx-ps.sh | cis-pQTL GTEx eQTL lookup with PhenoScanner CLI
-GTEx-ps.R | cis-pQTL GTEx eQTL lookup (PhenoScanner)
-GTEx-ps-jma.R | cis-pQTL from jma as above
-GTEx-cs.sh | cis-pQTL GTEx credible set lookup (GTEx v8)
-GTEx-cs-jma.sh | cis-pQTL from jma as above
-gwasvcf.sh | GWAS to VCF conversion
-gwas2vcf.sb | gwas2vcf + VCF operations
-h2pve.R | h2/pve contrast
-inbio-discover.R | gene lists
-magma.sh | MAGMA for IL.12B
-neale.sh | signal selection for Neale UKB data (HbA1c)
-OpenGWAS.sh | OpenGWAS download
-pheweb.Rmd | Data extraction from pheweb.jp
-pqtlGWAS.R | pQTL-GWAS lookup
-pQTL.R | pQTL lookup
-pqtlMR.sh | pQTL MR analysis
-qqman.sb | Q-Q/Manhattan plots under CSD3
-rentrez.sh | reuse of rentrez
-rGREAT.R | GREAT analysis
-Somascan-Olink.* | Somascan/Olink overlap
-stringdb.sh | STRINGdb
-tables.R | code to create Excel Tables
-uniprot.R | UniProt IDs to others
-utils.sh | utilties
-vep.sh | VEP annotation
-wgcna.sh | experiment on modules
-
-## Stacked association and related analysis
-
-1. rs12075.sh
-2. MS.sh (+cojo, two-sample MRs)+LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)
-3. IL.18-rs385076.sh
-4. OPG-TRANCE.sh
-
-and `MS.sh` contains a routine to generate tabix-indexed blood cell traits.
-
-## Nested PGS model
-
-<p align="center"><img src="grViz.png"></p>
-
-Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
-
-The figure is obtained with
-
-```bash
-dot -Tpng grViz.gv -ogrViz.png
-```
-which also be  obtained from RStudio for somewhat larger size.
-
 ## Mathematical expressions
 
 1. The proportion of variants explained (PVE) by $T$ pQTLs for a protein from meta-analytic statistics is
@@ -153,7 +84,78 @@ which also be  obtained from RStudio for somewhat larger size.
 
     where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively.
 
-## UniProt IDs
+## Nested PGS model
+
+<p align="center"><img src="grViz.png"></p>
+
+Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
+
+The figure is obtained with
+
+```bash
+dot -Tpng grViz.gv -ogrViz.png
+```
+which also be  obtained from RStudio for somewhat larger size.
+
+---
+
+## Auxiliary files
+
+File | Description
+-----|---------------------------
+chembl.sh | toy CHEMBL queries
+CRP.sh | an inflammation score
+cvd1.sh | SCALLOP-CVDI supplementary tables
+circos.* | circos/circlize scripts
+coloc.sb | coloc analysis -- clumsy verion
+coloc.R | coloc analysis via pQTLtools
+efo.R | experimental factor ontology
+eQTL.R | cis-pQTL eQTL lookup (PhenoScanner)
+eQTLGen.sh | eQTLGen lookup
+epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
+epigraphdb-ppi.R | PPI using EpiGraphDB
+fastenloc.sb | fastenloc analysis
+fusion_twas.sb | FUSION TWAS experiment
+garfield.sh | GARFIELD analysis
+gdigt.R | GDI and gene-trials
+GREP.sh | GREP script
+GTEx-ps.sh | cis-pQTL GTEx eQTL lookup with PhenoScanner CLI
+GTEx-ps.R | cis-pQTL GTEx eQTL lookup (PhenoScanner)
+GTEx-ps-jma.R | cis-pQTL from jma as above
+GTEx-cs.sh | cis-pQTL GTEx credible set lookup (GTEx v8)
+GTEx-cs-jma.sh | cis-pQTL from jma as above
+gwasvcf.sh | GWAS to VCF conversion
+gwas2vcf.sb | gwas2vcf + VCF operations
+h2pve.R | h2/pve contrast
+inbio-discover.R | gene lists
+magma.sh | MAGMA for IL.12B/All signals
+neale.sh | signal selection for Neale UKB data (HbA1c)
+OpenGWAS.sh | OpenGWAS download
+pheweb.Rmd | Data extraction from pheweb.jp
+pqtlGWAS.R | pQTL-GWAS lookup
+pQTL.R | pQTL lookup
+pqtlMR.sh | pQTL MR analysis
+qqman.sb | Q-Q/Manhattan plots under CSD3
+rentrez.sh | reuse of rentrez
+rGREAT.R | GREAT analysis
+Somascan-Olink.* | Somascan/Olink overlap
+stringdb.sh | STRINGdb
+tables.R | code to create Excel Tables
+uniprot.R | UniProt IDs to others
+utils.sh | utilties
+vep.sh | VEP annotation
+wgcna.sh | experiment on modules
+
+### Stacked association and related analysis
+
+1. rs12075.sh
+2. MS.sh (+cojo, two-sample MRs)+LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)
+3. IL.18-rs385076.sh
+4. OPG-TRANCE.sh
+
+and `MS.sh` contains a routine to generate tabix-indexed blood cell traits.
+
+### UniProt IDs
 
 The list of proteins on inflammation is within one of the [Olink](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](../doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [Olink.R](../doc/Olink.R), which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.
 
@@ -195,4 +197,4 @@ whose hgnc_symbol can be amended.
 
 The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
-*Date last changed:* **2/11/2021**
+*Date last changed:* **4/11/2021**
