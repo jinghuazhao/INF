@@ -11,8 +11,7 @@ function INTERVAL_eQTLGen_SCALLOP()
   zgrep -f - ${INF}/work/ensemblToGeneName.txt.gz
 # LocusZoom plot
   read chr start end < st.tmp
-  awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end)' ${rnaseq} | \
-  grep -e LTBR -w | \
+  awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end && index($0,"LTBR")>0)' ${rnaseq} | \
   tr "," "\t" > LTBR.lz
   rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal LTBR.lz --delim tab title="INTERVAL-LTBR" \
@@ -434,18 +433,14 @@ function PWCoCo()
 
 cd work
 export chr=12
-export pos=6514963
 export rsid1=rs1800693
 export rsid2=rs2364485
 export b1=6300000
 export b2=6700000
 export bracket=${b1}-${b2}
-
-tabix ${INF}/METAL/gwas2vcf/TNFB.tsv.gz ${chr}:${bracket} > TNFB.tbx
-
-module load python/2.7
 awk -vchr=${chr} -vb1=${b1} -vb2=${b2} 'BEGIN{print chr,b1,b2}' > st.tmp
 
+module load python/2.7
 INTERVAL_eQTLGen_SCALLOP
 stack_assoc_plot_hyprcoloc
 PWCoCo
