@@ -3,15 +3,15 @@
 function INTERVAL_eQTLGen_SCALLOP()
 {
 # init -- actually two versions of RNASeq results below gives the same LTBR.lz
+  zgrep ENSG00000111321 ${INF}/work/ensGtp.txt.gz | \
+  cut -f2 | \
+  zgrep -f - ${INF}/work/ensemblToGeneName.txt.gz
   export rnaseq=tensorqtl_trans_MAF0.005_age_sex_rin_batch_readDepth_PC10_PEER20_merged_annotated.csv
   export rnaseq=tensorqtl_allSNPs_MAF0.005_merged_annotated.csv
   grep -w -e ${rsid1} -e ${rsid2} ${rnaseq}
-  zgrep ENSG00000256433 ${INF}/work/ensGtp.txt.gz | \
-  cut -f2 | \
-  zgrep -f - ${INF}/work/ensemblToGeneName.txt.gz
 # LocusZoom plot
   read chr start end < st.tmp
-  awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end && index($0,"LTBR")>0)' ${rnaseq} | \
+  awk -vFS="," -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1 || ($5==chr && $6>=start && $6<=end && index($0,gene)>0)' ${rnaseq} | \
   tr "," "\t" > LTBR.lz
   rm -f ld_cache.db
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal LTBR.lz --delim tab title="INTERVAL-LTBR" \
@@ -432,6 +432,7 @@ function PWCoCo()
 }
 
 cd work
+export gene=ENSG00000111321
 export chr=12
 export rsid1=rs1800693
 export rsid2=rs2364485
