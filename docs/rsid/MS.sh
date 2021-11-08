@@ -223,9 +223,19 @@ function coloc()
     LTBR <- MS_LTBR_TNFB[c(1,8:13,20)]
     TNFB <- MS_LTBR_TNFB[c(1,14:20)]
     names(MS) <- names(LTBR) <- names(TNFB) <- c("snpid","A1","A2","MAF","beta","se","N","rsid")
-    MS <- within(MS,{sdY=mean(sqrt(2*MAF*(1-MAF)*(beta^2+se^2*N)));varbeta=se^2})
-    LTBR <- within(LTBR,{sdY=gap::get_sdy(MAF,N,beta,se);varbeta=se^2})
-    TNFB <- within(TNFB,{sdY=gap::get_sdy(MAF,N,beta,se);varbeta=se^2})
+    beta_se <- function()
+    # unreasonable results from here:
+    {
+      MS <- within(MS,{sdY=gap::get_sdy(MAF,N,beta,se);varbeta=se^2})
+      LTBR <- within(LTBR,{sdY=gap::get_sdy(MAF,N,beta,se);varbeta=se^2})
+      TNFB <- within(TNFB,{sdY=gap::get_sdy(MAF,N,beta,se);varbeta=se^2})
+    }
+    # the following is inline with above:
+    {
+      MS <- within(MS,{pvalues=as.numeric(gap::pvalue(beta/se))})
+      LTBR <- within(LTBR,{pvalues=as.numeric(gap::pvalue(beta/se))})
+      TNFB <- within(TNFB,{pvalues=as.numeric(gap::pvalue(beta/se))})
+    }
     require(coloc)
     MS <- c(as.list(MS),type="quant")
     LTBR <- c(as.list(LTBR),type="quant")
