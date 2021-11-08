@@ -12,12 +12,6 @@ export v3=~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.g
 
 function lz()
 {
-# gunzip -c discovery_metav3.0.meta.gz | grep rs1800693
-# CHR BP SNP A1 A2 N P OR
-# 12 6440009 rs1800693 T C 14 1.017e-13 0.8808
-# gunzip -c Final-metaanalysis-echip.txt.gz | grep 1800693
-#  CHR         BP            SNP  A1  A2   N           P        P(R)      OR   OR(R)       Q       I
-#  12     6440009  exm-rs1800693   T   C  13   1.003e-26    2.11e-09  1.0332  1.0300  0.0351   46.00
   module load python/2.7
   ls ${dir}/tsv/*gz | xargs -I{} basename {} .gz | \
   grep -e wbc -e mono -e neut -e lymph -e eo -e baso | \
@@ -36,6 +30,12 @@ function lz()
   qpdf {}_chr${chr}_${start}-${end}.pdf --pages . 1 -- {}-lz.pdf
   '
   qpdf --empty --pages *lz.pdf -- blood-cell-traits.pdf
+# gunzip -c discovery_metav3.0.meta.gz | grep rs1800693
+# CHR BP SNP A1 A2 N P OR
+# 12 6440009 rs1800693 T C 14 1.017e-13 0.8808
+# gunzip -c Final-metaanalysis-echip.txt.gz | grep 1800693
+#  CHR         BP            SNP  A1  A2   N           P        P(R)      OR   OR(R)       Q       I
+#  12     6440009  exm-rs1800693   T   C  13   1.003e-26    2.11e-09  1.0332  1.0300  0.0351   46.00
   (
     echo -e "SNPid\tSNP\tchr\tpos\ta1\ta2\tb\tse\tp"
     Rscript -e 'require(dplyr)
@@ -88,14 +88,14 @@ function ma()
   cut -d" " -f1 > ${INF}/MS/EUR-v3.snpid
   sed "1d" ${INF}/MS/EUR-v3.ma | \
   sort -k7,7g | \
-  awk "NR==1{print \$1}" > ${INF}/MS/EUR-v3.top}
+  awk "NR==1{print \$1}" > ${INF}/MS/EUR-v3.top
 
 function cojo()
 {
   module load plink/2.00-alpha
-  for cell in wbc mono neut lymph eo baso v3
+  for cell in v3 # wbc mono neut lymph eo baso
   do
-      plink2 --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/MS/EUR-${cell}.snpid \
+      plink2 --bfile ${INF}/INTERVAL/cardio/INTERVAL --chr 12 --extract ${INF}/MS/EUR-${cell}.snpid \
              --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.1 --out ${INF}/MS/EUR-${cell}
       if [ $(grep -w -f ${INF}/MS/EUR-${cell}.top ${INF}/MS/EUR-${cell}.prune.in | wc -l) -eq 0 ]; then
          export top=$(cat ${INF}/MS/EUR-${cell}.top)
@@ -113,7 +113,7 @@ function cojo()
       export P_threshold=5e-8
     # drop the --extract option with v3
       if [ "${cell}" == "v3" ]; then
-      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL --chr 12 \
                --cojo-file ${INF}/MS/EUR-${cell}.ma \
                --cojo-slct \
                --cojo-p ${P_threshold} \
@@ -121,7 +121,7 @@ function cojo()
                --cojo-collinear 0.9 \
                --out ${INF}/MS/EUR-${cell}
       echo chr12:6440009_C_T ${INF}/MS/rs1800693/EUR-v3.top
-      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL --chr 12 \
                --cojo-file ${INF}/MS/EUR-${cell}.ma \
                --cojo-cond ${INF}/MS/rs1800693/EUR-${cell}.top \
                --cojo-p ${P_threshold} \
@@ -129,7 +129,7 @@ function cojo()
                --cojo-collinear 0.9 \
                --out ${INF}/MS/rs1800693/EUR-${cell}
       echo chr12:6514963_A_C ${INF}/MS/rs2354485/EUR-v3.top
-      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL --chr 12\
                --cojo-file ${INF}/MS/EUR-${cell}.ma \
                --cojo-cond ${INF}/MS/rs2364485/EUR-${cell}.top \
                --cojo-p ${P_threshold} \
@@ -137,7 +137,7 @@ function cojo()
                --cojo-collinear 0.9 \
                --out ${INF}/MS/rs2364485/EUR-${cell}
       else
-      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+      gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL --chr 12 \
                --cojo-file ${INF}/MS/EUR-${cell}.ma \
                --extract ${INF}/MS/EUR-${cell}.prune \
                --cojo-slct \
