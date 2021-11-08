@@ -2,8 +2,9 @@
 
 export prot=TNFB
 export chr=12
-export start=6300000
-export end=6700000
+export pos=6514963
+export start=$(expr ${pos} - 100000)
+export end=$(expr ${pos} + 100000)
 export region=${chr}:${start}-${end}
 export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
 export TMPDIR=/rds/user/jhz22/hpc-work/work

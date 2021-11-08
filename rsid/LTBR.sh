@@ -435,8 +435,9 @@ cd work
 export chr=12
 export rsid1=rs1800693
 export rsid2=rs2364485
-export b1=6300000
-export b2=6700000
+export pos=6514963
+export b1=$(expr ${pos} - 100000)
+export b2=$(expr ${pos} + 100000)
 export bracket=${b1}-${b2}
 awk -vchr=${chr} -vb1=${b1} -vb2=${b2} 'BEGIN{print chr,b1,b2}' > st.tmp
 
