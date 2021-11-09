@@ -99,7 +99,7 @@ We now state our results.
 
 1.  The proportion of variants explained (PVE).
 
-    From above $PVE = {\mbox{Var}(b\mbox{x})}/{\mbox{Var}(\mbox{y})} = {b^22f(1-f)}/{(2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b))}$. In fact, let $z = {b}/{SE(b)}$, $PVE = {\mbox{z}^2}/{(\mbox{z}^2+N)}$.
+    From above $PVE = {\mbox{Var}(b\mbox{x})}/{\mbox{Var}(\mbox{y})} = {b^22f(1-f)}/{[2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)]}$. In fact, let $z = {b}/{SE(b)}$, $PVE = {\mbox{z}^2}/{(\mbox{z}^2+N)}$.
 
     On the other hand, also better known as `the coefficient of determination` for a simple linear regression is also the square of Pearson correlation coefficient ($r$), which is readily from the $t$-statistic of the regression slope, i.e., $r={t}/{\sqrt{t^2+N-2}}$. so assuming $t \equiv \ z \sim \chi_1^2$
 
