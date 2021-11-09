@@ -75,7 +75,30 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
     $SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}$
 
-    This is according to t-statistic; an alternative form also uses regression theory. Let $x=SNP$. From $Y=a + bx + e$ we have $Var(Y) = b^2Var(x) + Var(e)$. Since $Var(x)=2f(1-f)$, by symmetry $f=MAF$ or $1-MAF$. According to linear regression $Var(b)=Var(e)/Sxx$, we have $Var(e) = Var(b)Sxx = N Var(b) Var(x)$ and therefore $PVE=Var(bx)=b^22f(1-f)/(b^22f(1-f)+2NSE(b)^2f(1-f)}$. In fact, let $z=\chi$, $z=b/SE(b)$, $z^2\equiv x^2$, $PVE=z^2/(z^2+N)=x^2/(x^2+N)$
+    This is according to t-statistic; an alternative form also uses regression theory. Let $x = SNP dosage$. From $\mbox{y}=a + b\mbox{x} + e$ we have $Var(\mbox(y)) = b^2Var(\mbox{x}) + Var(e)$. Note that $Var(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry. In a linear regression $Var(b)=Var(e)/S_\mbox{xx}$, we have $Var(e) = Var(b)S_\mbox{xx} = N Var(b) Var(\mbox{x})$ and therefore $PVE=Var(b\mbox{x})=b^22f(1-f)/(b^22f(1-f)+2NVar(b)f(1-f)}$. In fact, let $z=b/SE(b)$, $PVE=\mbox{z}^2/(\mbox{z}^2+N)$.
+
+    The standard errors of both forms can be obtained via variance for a ratio (R/S).
+    $$
+    \begin{align}
+    E(R/S) \equiv E(f(R,S))
+           \approx \frac{\mu_R}{\mu_S}-\frac{\Cov(R,S)}{(\mu_S)^2}+\frac{\Var(S)\mu_R}{(\mu_S)^3} \hspace{100cm}
+    \end{align}
+    $$
+    and variance
+    $$
+    \begin{align}
+    \Var(R/S) &\approx& \frac{1}{(\mu_S)^2}\Var(R)
+                +2\frac{-\mu_R}{(\mu_S)^3}\Cov(R,S)+\frac{(\mu_R)^2}{(\mu_S)^4}\Var(S)  \hspace{100cm} \\
+             &=& \frac{(\mu_R)^2}{(\mu_S)^2} \left[
+                 \frac{\Var(R)}{(\mu_R)^2}-2\frac{\Cov(R,S)}{\mu_R \; \mu_S}
+                +\frac{\Var(S)}{(\mu_S)^2} \right] \\
+             &=& \frac{(\mu_R)^2}{(\mu_S)^2} \left[
+                 \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\Cov(R,S)}{\mu_R\;\mu_S}
+                +\frac{\sigma_S^2}{(\mu_S)^2} \right]
+    \end{align}
+    $$
+
+    In addition, $E(\chi_1^2)=1$ and $Var(\chi_1^2)=2$, the variances are $\frac{2}{(N-1)^2}$ and $\frac{2}{(N+1)^2}$, respectively by ignoring a high-order term.
 
 2. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
 
