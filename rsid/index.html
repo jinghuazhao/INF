@@ -211,24 +211,26 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <h2 id="generation-of-summary-statistics">Generation of summary statistics</h2>
 <p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
 <h2 id="mathematical-expressions">Mathematical expressions</h2>
+<p>We first make some preparations.</p>
 <p>Let <span class="arithmatex">\(\mbox{x} = SNP\ dosage\)</span>. Note that <span class="arithmatex">\(\mbox{Var}(\mbox{x})=2f(1-f)\)</span>, <span class="arithmatex">\(f=MAF\)</span> or <span class="arithmatex">\(1-MAF\)</span> by symmetry.</p>
 <p>Our linear regression model is <span class="arithmatex">\(\mbox{y}=a + b\mbox{x} + e\)</span>. We have <span class="arithmatex">\(\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)\)</span>. Moreover, <span class="arithmatex">\(\mbox{Var}(b)=Var(e)/S_\mbox{xx}\)</span>, we have <span class="arithmatex">\(\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})\)</span>.</p>
 <p>We also need some established results of a ratio (R/S), i.e., the mean</p>
 <div class="arithmatex">\[
 \begin{align}
-E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox{Var}(S)\mu_R}{(\mu_S)^3} \hspace{100cm} 
+E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\mbox{Var}(S)\mu_R}{\mu_S^3} \hspace{100cm} 
 \end{align}
 \]</div>
-<p>and more importantly variance</p>
+<p>and more importantly the variance</p>
 <div class="arithmatex">\[
 \begin{align}
-\mbox{Var}(R/S) \approx \frac{(\mu_R)^2}{(\mu_S)^2} \left[
-                        \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
-                       +\frac{\sigma_S^2}{(\mu_S)^2} \right] \hspace{100cm}
+\mbox{Var}(R/S) \approx \frac{\mu_R^2}{\mu_S^2} \left[
+                        \frac{\sigma_R^2}{\mu_R^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
+                       +\frac{\sigma_S^2}{\mu_S^2} \right] \hspace{100cm}
 \end{align}
 \]</div>
 <p>where <span class="arithmatex">\(\mu_R\)</span>, <span class="arithmatex">\(\mu_S\)</span>, <span class="arithmatex">\(\sigma_R^2\)</span>, <span class="arithmatex">\(\sigma_S^2\)</span> are the means and variances, respectively.</p>
 <p>Finally, we need expectation and variance of <span class="arithmatex">\(\chi^2\)</span> distribution of one degree of freedom which is 1 and 2, respectively.</p>
+<p>We now state our results.</p>
 <ol>
 <li>
 <p>The proportion of variants explained (PVE).</p>
@@ -266,16 +268,10 @@ E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox
 </tr>
 </tbody>
 </table>
-<p>the variances are <span class="arithmatex">\(\frac{2}{(N-1)^2}\)</span> and <span class="arithmatex">\(\frac{2}{(N+1)^2}\)</span>, respectively.</p>
+<p>the variances are <span class="arithmatex">\(\frac{2}{(N+1)^2}\)</span> and <span class="arithmatex">\(\frac{2}{(N-1)^2}\)</span>, respectively.</p>
 </li>
 <li>
-<p>The prior probability for <span class="arithmatex">\(i\)</span> out of <span class="arithmatex">\(m\)</span> variants is causal, is obtained as a binomial probability</p>
-<p><span class="arithmatex">\(p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}\)</span></p>
-<p>The posterior number of causal signals in the genomic region is obtained as the expectation <span class="arithmatex">\(\sum_i p(i|\mbox{data}) \times i\)</span>. The search of total number of configurations</p>
-<p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
-</li>
-<li>
-<p><code>gap::get_b_se</code>: To recover the effect size (<span class="arithmatex">\(b\)</span>) and its standard error (<span class="arithmatex">\(se\)</span>) from allele frequency (<span class="arithmatex">\(f\)</span>), sample size (<span class="arithmatex">\(n\)</span>) and z-statistic (<span class="arithmatex">\(z\)</span>) as in cis eQTLGen data, we have</p>
+<p>To recover the effect size (<span class="arithmatex">\(b\)</span>) and its standard error (<span class="arithmatex">\(se\)</span>) from allele frequency (<span class="arithmatex">\(f\)</span>), sample size (<span class="arithmatex">\(n\)</span>) and <span class="arithmatex">\(z\)</span>-statistic (<span class="arithmatex">\(z\)</span>) as in cis eQTLGen data, we have</p>
 <div class="arithmatex">\[
 \begin{align}
 b &amp; = z/d \hspace{100cm} \\ 
@@ -283,6 +279,12 @@ se &amp; = 1/d
 \end{align}
 \]</div>
 <p>where <span class="arithmatex">\(d = \sqrt{2f(1-f)(n+z^2)}\)</span>.</p>
+</li>
+<li>
+<p>The prior probability for <span class="arithmatex">\(i\)</span> out of <span class="arithmatex">\(m\)</span> variants is causal, is obtained as a binomial probability</p>
+<p><span class="arithmatex">\(p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}\)</span></p>
+<p>The posterior number of causal signals in the genomic region is obtained as the expectation <span class="arithmatex">\(\sum_i p(i|\mbox{data}) \times i\)</span>. The search of total number of configurations</p>
+<p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
 </li>
 <li>
 <p>The GREAT Binomial test is</p>
