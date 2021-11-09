@@ -67,11 +67,15 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
 ## Mathematical expressions
 
-1.  The proportion of variants explained (PVE) in a simple linear regression is also the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r=\frac{t}{\sqrt{t^2+N-2}}$. For $T$ independent pQTLs for a protein from meta-analytic statistics is approximated with
+Let $\mbox{x} = SNP\ dosage$. Our simple linear regression model is $\mbox{y}=a + b\mbox{x} + e$.
+
+1.  The proportion of variants explained (PVE).
+
+    First, we have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry. In a linear regression $\mbox{Var}(b)=Var(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$ and therefore $PVE = \frac{\mbox{Var}(b\mbox{x})}{\mbox{\mbox{y}}} = \frac{b^22f(1-f)}{(2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b))}$. In fact, let $z=b/SE(b)$, $PVE=\frac{\mbox{z}^2}{\mbox{z}^2+N}$.
+
+    On the other hand, PVE is also the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r=\frac{t}{\sqrt{t^2+N-2}}$. For $T$ independent pQTLs for a protein from meta-analytic statistics PVE is approximated with
 
     PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
-
-    An alternative form also readily follows. Let $\mbox{x} = SNP\ dosage$. From $\mbox{y}=a + b\mbox{x} + e$ we have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry. In a linear regression $\mbox{Var}(b)=Var(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$ and therefore $PVE = \mbox{Var}(b\mbox{x}) = \frac{b^22f(1-f)}{(2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b))}$. In fact, let $z=b/SE(b)$, $PVE=\frac{\mbox{z}^2}{\mbox{z}^2+N}$.
 
     The standard errors of both forms can be obtained via variance for a ratio (R/S). First, we state some established results:
 
@@ -93,7 +97,17 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
     where $\mu_R$, $\mu_S$, $\sigma_R^2$, $\sigma_S^2$ are the means and variances, respectively.
 
-    In addition, $E(\chi_1^2)=1$ and $Var(\chi_1^2)=2$, the variances are $\frac{2}{(N-1)^2}$ and $\frac{2}{(N+1)^2}$, respectively by ignoring a high-order term.
+    In addition, $E(\chi_1^2)=1$ and $Var(\chi_1^2)=2$, all the elements are listed in the following table
+
+    Linear regression | $t$-statistic
+    ------------------|--------------
+    $\mu_R=1$         | $\mu_R=1$
+    $\sigma_R^2=2$    | $\sigma_R^2=2$
+    $\mu_S=N+1$       | $\mu_S=N-1$
+    $\sigma_S=N+2$    | $\sigma_S=N$
+    $\mbox{Cov}(R,S)=2$ | $\mbox{Cov}(R,S)=2$
+
+    the variances are $\frac{2}{(N-1)^2}$ and $\frac{2}{(N+1)^2}$, respectively.
 
 2. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
 
