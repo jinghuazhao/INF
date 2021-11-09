@@ -217,27 +217,27 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>PVE=<span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}\)</span></p>
 <p>with standard error</p>
 <p><span class="arithmatex">\(SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}\)</span></p>
-<p>This is according to t-statistic; an alternative form also uses regression theory. Let <span class="arithmatex">\(x = SNP dosage\)</span>. From <span class="arithmatex">\(\mbox{y}=a + b\mbox{x} + e\)</span> we have <span class="arithmatex">\(Var(\mbox(y)) = b^2Var(\mbox{x}) + Var(e)\)</span>. Note that <span class="arithmatex">\(Var(\mbox{x})=2f(1-f)\)</span>, <span class="arithmatex">\(f=MAF\)</span> or <span class="arithmatex">\(1-MAF\)</span> by symmetry. In a linear regression <span class="arithmatex">\(Var(b)=Var(e)/S_\mbox{xx}\)</span>, we have <span class="arithmatex">\(Var(e) = Var(b)S_\mbox{xx} = N Var(b) Var(\mbox{x})\)</span> and therefore <span class="arithmatex">\(PVE=Var(b\mbox{x})=b^22f(1-f)/(b^22f(1-f)+2NVar(b)f(1-f)}\)</span>. In fact, let <span class="arithmatex">\(z=b/SE(b)\)</span>, <span class="arithmatex">\(PVE=\mbox{z}^2/(\mbox{z}^2+N)\)</span>.</p>
-<p>The standard errors of both forms can be obtained via variance for a ratio (R/S).
-$$
+<p>This is according to t-statistic; an alternative form also uses regression theory. Let <span class="arithmatex">\(\mbox{x} = SNP\ dosage\)</span>. From <span class="arithmatex">\(\mbox{y}=a + b\mbox{x} + e\)</span> we have <span class="arithmatex">\(Var(\mbox{y}) = b^2Var(\mbox{x}) + Var(e)\)</span>. Note that <span class="arithmatex">\(Var(\mbox{x})=2f(1-f)\)</span>, <span class="arithmatex">\(f=MAF\)</span> or <span class="arithmatex">\(1-MAF\)</span> by symmetry. In a linear regression <span class="arithmatex">\(Var(b)=Var(e)/S_\mbox{xx}\)</span>, we have <span class="arithmatex">\(Var(e) = Var(b)S_\mbox{xx} = N Var(b) Var(\mbox{x})\)</span> and therefore <span class="arithmatex">\(PVE = Var(b\mbox{x}) = b^22f(1-f)/(b^22f(1-f)+2NVar(b)f(1-f)}\)</span>. In fact, let <span class="arithmatex">\(z=b/SE(b)\)</span>, <span class="arithmatex">\(PVE=\mbox{z}^2/(\mbox{z}^2+N)\)</span>.</p>
+<p>The standard errors of both forms can be obtained via variance for a ratio (R/S). First, we state some established results:</p>
+<div class="arithmatex">\[
 \begin{align}
 E(R/S) \equiv E(f(R,S))
        \approx \frac{\mu_R}{\mu_S}-\frac{\Cov(R,S)}{(\mu_S)^2}+\frac{\Var(S)\mu_R}{(\mu_S)^3} \hspace{100cm}
 \end{align}
-$$
-and variance
-$$
+\]</div>
+<p>and variance</p>
+<div class="arithmatex">\[
 \begin{align}
 \Var(R/S) &amp;\approx&amp; \frac{1}{(\mu_S)^2}\Var(R)
-            +2\frac{-\mu_R}{(\mu_S)^3}\Cov(R,S)+\frac{(\mu_R)^2}{(\mu_S)^4}\Var(S)  \hspace{100cm} \
+            +2\frac{-\mu_R}{(\mu_S)^3}\Cov(R,S)+\frac{(\mu_R)^2}{(\mu_S)^4}\Var(S)  \hspace{100cm} \\
          &amp;=&amp; \frac{(\mu_R)^2}{(\mu_S)^2} \left[
              \frac{\Var(R)}{(\mu_R)^2}-2\frac{\Cov(R,S)}{\mu_R \; \mu_S}
-            +\frac{\Var(S)}{(\mu_S)^2} \right] \
+            +\frac{\Var(S)}{(\mu_S)^2} \right] \\
          &amp;=&amp; \frac{(\mu_R)^2}{(\mu_S)^2} \left[
              \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\Cov(R,S)}{\mu_R\;\mu_S}
             +\frac{\sigma_S^2}{(\mu_S)^2} \right]
 \end{align}
-$$</p>
+\]</div>
 <p>In addition, <span class="arithmatex">\(E(\chi_1^2)=1\)</span> and <span class="arithmatex">\(Var(\chi_1^2)=2\)</span>, the variances are <span class="arithmatex">\(\frac{2}{(N-1)^2}\)</span> and <span class="arithmatex">\(\frac{2}{(N+1)^2}\)</span>, respectively by ignoring a high-order term.</p>
 </li>
 <li>
