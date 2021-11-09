@@ -99,13 +99,13 @@ We now state our results.
 
 1.  The proportion of variants explained (PVE).
 
-    From above $PVE = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} = \frac{b^22f(1-f)}{2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)}$. In fact, let $z = \frac{b}{SE(b)}$, $PVE = \frac{\mbox{z}^2}{\mbox{z}^2+N}$.
+    From above $PVE = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} = \frac{b^22f(1-f)}{2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)}$. In fact, let $z \equiv t = \frac{b}{SE(b)}$, $PVE = \frac{\mbox{z}^2}{\mbox{z}^2+N}$ assuming $z\sim \chi_1^2$.
 
     On the other hand, also better known as `the coefficient of determination` for a simple linear regression is also the square of Pearson correlation coefficient ($r$), which is readily from the $t$-statistic of the regression slope, i.e., $r=\frac{t}{\sqrt{t^2+N-2}}$. so
 
-    PVE = $\frac{\chi^2}{N-2+\chi^2}$
+    PVE = $\frac{\chi^2}{\chi^2+N-2}$
 
-    The standard errors of both forms can be obtained via variance of a ratio (R/S). By $z\sim \chi_1^2$, all the elements are listed in a table below.
+    The standard errors of both forms can be obtained via variance of a ratio (R/S). All the elements are listed in a table below.
 
     Linear regression | $t$-statistic
     ------------------|--------------
@@ -119,7 +119,7 @@ We now state our results.
 
     For $T$ independent pQTLs of a protein from meta-analytic statistics PVE is approximated with
 
-    PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{N_i+\chi_i^2}}$ or $\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
+    PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}$ or $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}$
 
     and their standard errors are obtained similarly.
 
@@ -132,7 +132,7 @@ We now state our results.
     \end{align}
     $$
 
-    where $d = \sqrt{2f(1-f)(N+z^2)}$.
+    where $d = \sqrt{2f(1-f)(z^2+N)}$.
 
 3. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
 
