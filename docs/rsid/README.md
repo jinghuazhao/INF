@@ -99,9 +99,9 @@ We now state our results.
 
 1.  The proportion of variants explained (PVE).
 
-    From above $PVE = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} = \frac{b^22f(1-f)}{2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)}$. In fact, let $z = \frac{b}{SE(b)}$, $PVE = \frac{\mbox{z}^2}{\mbox{z}^2+N}$.
+    From above $PVE = {\mbox{Var}(b\mbox{x})}/{\mbox{Var}(\mbox{y})} = {b^22f(1-f)}/{(2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b))}$. In fact, let $z = {b}/{SE(b)}$, $PVE = {\mbox{z}^2}/{(\mbox{z}^2+N)}$.
 
-    On the other hand, also better known as `the coefficient of determination` for a simple linear regression is also the square of Pearson correlation coefficient ($r$), which is readily from the $t$-statistic of the regression slope, i.e., $r=\frac{t}{\sqrt{t^2+N-2}}$. so assuming $t \equiv \ z \sim \chi_1^2$
+    On the other hand, also better known as `the coefficient of determination` for a simple linear regression is also the square of Pearson correlation coefficient ($r$), which is readily from the $t$-statistic of the regression slope, i.e., $r={t}/{\sqrt{t^2+N-2}}$. so assuming $t \equiv \ z \sim \chi_1^2$
 
     PVE = $\frac{\chi^2}{\chi^2+N-2}$
 
@@ -115,7 +115,7 @@ We now state our results.
     $\sigma_S^2=N+2$    | $\sigma_S^2=N$
     $\mbox{Cov}(R,S)=2$ | $\mbox{Cov}(R,S)=2$
 
-    the variances are approximately $\frac{2}{(N+1)^2}$ and $\frac{2}{(N-1)^2}$, respectively.
+    the variances are approximately ${2}/{(N+1)^2}$ and ${2}/{(N-1)^2}$, respectively.
 
     For $T$ independent pQTLs of a protein from meta-analytic statistics PVE is approximated with
 
