@@ -123,7 +123,7 @@ We now state our results.
 
     and their standard errors are obtained similarly.
 
-2.  To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and $z$-statistic ($z$) as in cis eQTLGen data, we have
+2.  The effect size ($b$) and its standard error ($se$) based on allele frequency ($f$), sample size ($N$) and $z$-statistic ($z$) as in cis eQTLGen data, take forms
 
     $$
     \begin{align}
@@ -132,7 +132,7 @@ We now state our results.
     \end{align}
     $$
 
-    where $d = \sqrt{2f(1-f)(n+z^2)}$.
+    where $d = \sqrt{2f(1-f)(N+z^2)}$.
 
 3. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
 
