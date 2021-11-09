@@ -119,9 +119,9 @@ We now state our results.
 
     For $T$ independent pQTLs for a protein from meta-analytic statistics PVE is approximated with
 
-    PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
+    PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$ or $\sum_{i=1}^T{\frac{\chi_i^2}{N_i+\chi_i^2}}$
 
-    and its standard error is obtained similarly.
+    and their standard errors are obtained similarly.
 
 2.  To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and $z$-statistic ($z$) as in cis eQTLGen data, we have
 
