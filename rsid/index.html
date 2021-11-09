@@ -213,10 +213,11 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <h2 id="mathematical-expressions">Mathematical expressions</h2>
 <ol>
 <li>
-<p>The proportion of variants explained (PVE) by <span class="arithmatex">\(T\)</span> pQTLs for a protein from meta-analytic statistics is</p>
+<p><code>gap::get_pve_se</code>: The proportion of variants explained (PVE) by <span class="arithmatex">\(T\)</span> pQTLs for a protein from meta-analytic statistics is</p>
 <p>PVE=<span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}\)</span></p>
 <p>with standard error</p>
 <p><span class="arithmatex">\(SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}\)</span></p>
+<p>This is according to t-statistic; an alternative form also uses regression theory. Let <span class="arithmatex">\(x=SNP\)</span>. From <span class="arithmatex">\(Y=a + bx + e\)</span> we have <span class="arithmatex">\(Var(Y) = b^2Var(x) + Var(e)\)</span>. Since <span class="arithmatex">\(Var(x)=2f(1-f)\)</span>, by symmetry <span class="arithmatex">\(f=MAF\)</span> or <span class="arithmatex">\(1-MAF\)</span>. According to linear regression <span class="arithmatex">\(Var(b)=Var(e)/Sxx\)</span>, we have <span class="arithmatex">\(Var(e) = Var(b)Sxx = N Var(b) Var(x)\)</span> and therefore <span class="arithmatex">\(PVE=Var(bx)=b^22f(1-f)/(b^22f(1-f)+2NSE(b)^2f(1-f)}\)</span>. In fact, let <span class="arithmatex">\(z=\chi\)</span>, <span class="arithmatex">\(z=b/SE(b)\)</span>, <span class="arithmatex">\(z^2\equiv x^2\)</span>, <span class="arithmatex">\(PVE=z^2/(z^2+N)=x^2/(x^2+N)\)</span></p>
 </li>
 <li>
 <p>The prior probability for <span class="arithmatex">\(i\)</span> out of <span class="arithmatex">\(m\)</span> variants is causal, is obtained as a binomial probability</p>
@@ -225,7 +226,7 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
 </li>
 <li>
-<p>To recover the effect size (<span class="arithmatex">\(b\)</span>) and its standard error (<span class="arithmatex">\(se\)</span>) from allele frequency (<span class="arithmatex">\(f\)</span>), sample size (<span class="arithmatex">\(n\)</span>) and z-statistic (<span class="arithmatex">\(z\)</span>) as in cis eQTLGen data, we have</p>
+<p><code>gap::get_b_se</code>: To recover the effect size (<span class="arithmatex">\(b\)</span>) and its standard error (<span class="arithmatex">\(se\)</span>) from allele frequency (<span class="arithmatex">\(f\)</span>), sample size (<span class="arithmatex">\(n\)</span>) and z-statistic (<span class="arithmatex">\(z\)</span>) as in cis eQTLGen data, we have</p>
 <div class="arithmatex">\[
 \begin{align}
 b &amp; = z/d \hspace{100cm} \\ 
