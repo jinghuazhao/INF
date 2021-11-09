@@ -67,13 +67,15 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
 ## Mathematical expressions
 
-1. The proportion of variants explained (PVE) by $T$ pQTLs for a protein from meta-analytic statistics is
+1. `gap::get_pve_se`: The proportion of variants explained (PVE) by $T$ pQTLs for a protein from meta-analytic statistics is
 
     PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
 
     with standard error
 
     $SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}$
+
+    This is according to t-statistic; an alternative form also uses regression theory. Let $x=SNP$. From $Y=a + bx + e$ we have $Var(Y) = b^2Var(x) + Var(e)$. Since $Var(x)=2f(1-f)$, by symmetry $f=MAF$ or $1-MAF$. According to linear regression $Var(b)=Var(e)/Sxx$, we have $Var(e) = Var(b)Sxx = N Var(b) Var(x)$ and therefore $PVE=Var(bx)=b^22f(1-f)/(b^22f(1-f)+2NSE(b)^2f(1-f)}$. In fact, let $z=\chi$, $z=b/SE(b)$, $z^2\equiv x^2$, $PVE=z^2/(z^2+N)=x^2/(x^2+N)$
 
 2. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
 
@@ -83,7 +85,7 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
     $\sum_{i=1}^k{m\choose{i}}$
 
-3. To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and z-statistic ($z$) as in cis eQTLGen data, we have
+3. `gap::get_b_se`: To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and z-statistic ($z$) as in cis eQTLGen data, we have
 
     $$
     \begin{align}
