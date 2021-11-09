@@ -93,7 +93,7 @@ $$
 
 where $\mu_R$, $\mu_S$, $\sigma_R^2$, $\sigma_S^2$ are the means and variances, respectively.
 
-Finally, we need expectation and variance of $\chi_1^2$, $\chi^2$ distribution of one degree of freedom, which is 1 and 2, respectively.
+Finally, we need expectation and variance of $\chi_1^2$, $\chi^2$ distribution of one degree of freedom, which are 1 and 2, respectively.
 
 We now state our results.
 
