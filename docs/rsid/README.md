@@ -95,15 +95,13 @@ Finally, we need expectation and variance of $\chi^2$ distribution of one degree
 
 1.  The proportion of variants explained (PVE).
 
-    From above $PVE = \frac{\mbox{Var}(b\mbox{x})}{\mbox{\mbox{y}}} = \frac{b^22f(1-f)}{(2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b))}$. In fact, let $z = \frac{b}{SE(b)}$, $PVE=\frac{\mbox{z}^2}{\mbox{z}^2+N}$.
+    From above $PVE = \frac{\mbox{Var}(b\mbox{x})}{\mbox{y}} = \frac{b^22f(1-f)}{(2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b))}$. In fact, let $z = \frac{b}{SE(b)}$, $PVE=\frac{\mbox{z}^2}{\mbox{z}^2+N}$.
 
-    On the other hand, the coefficient of determination for a simple linear regression is also the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r=\frac{t}{\sqrt{t^2+N-2}}$. For $T$ independent pQTLs for a protein from meta-analytic statistics PVE is approximated with
+    On the other hand, also better known as `the coefficient of determination` for a simple linear regression is also the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r=\frac{t}{\sqrt{t^2+N-2}}$. For $T$ independent pQTLs for a protein from meta-analytic statistics PVE is approximated with
 
     PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
 
-    The standard errors of both forms can be obtained via variance of a ratio (R/S). 
-
-    In addition, by $z\approx \chi_1^2$, all the elements are listed in a table below
+    The standard errors of both forms can be obtained via variance of a ratio (R/S). By $z\approx \chi_1^2$, all the elements are listed in a table below
 
     Linear regression | $t$-statistic
     ------------------|--------------
