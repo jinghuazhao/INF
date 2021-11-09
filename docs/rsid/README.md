@@ -115,7 +115,7 @@ We now state our results.
     $\sigma_S^2=N+2$    | $\sigma_S^2=N$
     $\mbox{Cov}(R,S)=2$ | $\mbox{Cov}(R,S)=2$
 
-    the variances are $\frac{2}{(N+1)^2}$ and $\frac{2}{(N-1)^2}$, respectively.
+    the variances are approximately $\frac{2}{(N+1)^2}$ and $\frac{2}{(N-1)^2}$, respectively.
 
 2.  To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and $z$-statistic ($z$) as in cis eQTLGen data, we have
 
