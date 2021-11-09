@@ -67,6 +67,8 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
 ## Mathematical expressions
 
+We first make some preparations.
+
 Let $\mbox{x} = SNP\ dosage$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry.
 
 Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Moreover, $\mbox{Var}(b)=Var(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$.
@@ -75,23 +77,25 @@ We also need some established results of a ratio (R/S), i.e., the mean
 
 $$
 \begin{align}
-E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox{Var}(S)\mu_R}{(\mu_S)^3} \hspace{100cm} 
+E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\mbox{Var}(S)\mu_R}{\mu_S^3} \hspace{100cm} 
 \end{align}
 $$
 
-and more importantly variance
+and more importantly the variance
 
 $$
 \begin{align}
-\mbox{Var}(R/S) \approx \frac{(\mu_R)^2}{(\mu_S)^2} \left[
-                        \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
-                       +\frac{\sigma_S^2}{(\mu_S)^2} \right] \hspace{100cm}
+\mbox{Var}(R/S) \approx \frac{\mu_R^2}{\mu_S^2} \left[
+                        \frac{\sigma_R^2}{\mu_R^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
+                       +\frac{\sigma_S^2}{\mu_S^2} \right] \hspace{100cm}
 \end{align}
 $$
 
 where $\mu_R$, $\mu_S$, $\sigma_R^2$, $\sigma_S^2$ are the means and variances, respectively.
 
 Finally, we need expectation and variance of $\chi^2$ distribution of one degree of freedom which is 1 and 2, respectively.
+
+We now state our results.
 
 1.  The proportion of variants explained (PVE).
 
@@ -111,17 +115,9 @@ Finally, we need expectation and variance of $\chi^2$ distribution of one degree
     $\sigma_S^2=N+2$    | $\sigma_S^2=N$
     $\mbox{Cov}(R,S)=2$ | $\mbox{Cov}(R,S)=2$
 
-    the variances are $\frac{2}{(N-1)^2}$ and $\frac{2}{(N+1)^2}$, respectively.
+    the variances are $\frac{2}{(N+1)^2}$ and $\frac{2}{(N-1)^2}$, respectively.
 
-2. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
-
-    $p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
-
-    The posterior number of causal signals in the genomic region is obtained as the expectation $\sum_i p(i|\mbox{data}) \times i$. The search of total number of configurations
-
-    $\sum_{i=1}^k{m\choose{i}}$
-
-3. `gap::get_b_se`: To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and z-statistic ($z$) as in cis eQTLGen data, we have
+2.  To recover the effect size ($b$) and its standard error ($se$) from allele frequency ($f$), sample size ($n$) and $z$-statistic ($z$) as in cis eQTLGen data, we have
 
     $$
     \begin{align}
@@ -131,6 +127,14 @@ Finally, we need expectation and variance of $\chi^2$ distribution of one degree
     $$
 
     where $d = \sqrt{2f(1-f)(n+z^2)}$.
+
+3. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
+
+    $p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
+
+    The posterior number of causal signals in the genomic region is obtained as the expectation $\sum_i p(i|\mbox{data}) \times i$. The search of total number of configurations
+
+    $\sum_{i=1}^k{m\choose{i}}$
 
 4. The GREAT Binomial test is
 
