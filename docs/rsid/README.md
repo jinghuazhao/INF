@@ -123,7 +123,7 @@ We now state our results.
 
     and their standard errors are obtained similarly.
 
-2.  Seeing that $\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{b})$ The effect size ($b$) and its standard error ($se$) based on allele frequency ($f$), sample size ($N$) and $z$-statistic ($z$) as in cis eQTLGen data, take forms
+2.  Seeing that $\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))$, the effect size ($b$) and its standard error ($se$) based on allele frequency ($f$), sample size ($N$) and $z$-statistic ($z$) as in cis eQTLGen data, take forms
 
     $$
     \begin{align}
