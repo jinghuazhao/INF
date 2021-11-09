@@ -67,9 +67,11 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
 ## Mathematical expressions
 
-Let $\mbox{x} = SNP\ dosage$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry. Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Moreover, $\mbox{Var}(b)=Var(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$.
+Let $\mbox{x} = SNP\ dosage$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry.
 
-We also need some established results:
+Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Moreover, $\mbox{Var}(b)=Var(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$.
+
+We also need some established results on variance of a ratio (R/S):
 
 $$
 \begin{align}
@@ -89,6 +91,8 @@ $$
 
 where $\mu_R$, $\mu_S$, $\sigma_R^2$, $\sigma_S^2$ are the means and variances, respectively.
 
+Finally, we need expectation and variance of $\chi^2$ distribution of one degree of freedom which is 1 and 2, respectively.
+
 1.  The proportion of variants explained (PVE).
 
     From above $PVE = \frac{\mbox{Var}(b\mbox{x})}{\mbox{\mbox{y}}} = \frac{b^22f(1-f)}{(2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b))}$. In fact, let $z = \frac{b}{SE(b)}$, $PVE=\frac{\mbox{z}^2}{\mbox{z}^2+N}$.
@@ -99,7 +103,7 @@ where $\mu_R$, $\mu_S$, $\sigma_R^2$, $\sigma_S^2$ are the means and variances, 
 
     The standard errors of both forms can be obtained via variance of a ratio (R/S). 
 
-    In addition, $E(\chi_1^2)=1$ and $Var(\chi_1^2)=2$, all the elements are listed in the following table
+    In addition, by $z\approx \chi_1^2$, all the elements are listed in a table below
 
     Linear regression | $t$-statistic
     ------------------|--------------
