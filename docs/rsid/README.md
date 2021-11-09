@@ -67,7 +67,7 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
 ## Mathematical expressions
 
-1. `gap::get_pve_se`: The proportion of variants explained (PVE) by $T$ pQTLs for a protein from meta-analytic statistics is
+1. `gap::get_pve_se`: The proportion of variants explained (PVE) according to $t$-statistic in a simple linear regression for $T$ pQTLs for a protein from meta-analytic statistics is
 
     PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
 
@@ -75,14 +75,14 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
     $SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}$
 
-    This is according to t-statistic; an alternative form also uses regression theory. Let $\mbox{x} = SNP\ dosage$. From $\mbox{y}=a + b\mbox{x} + e$ we have $Var(\mbox{y}) = b^2Var(\mbox{x}) + Var(e)$. Note that $Var(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry. In a linear regression $Var(b)=Var(e)/S_\mbox{xx}$, we have $Var(e) = Var(b)S_\mbox{xx} = N Var(b) Var(\mbox{x})$ and therefore $PVE = Var(b\mbox{x}) = b^22f(1-f)/(b^22f(1-f)+2NVar(b)f(1-f)}$. In fact, let $z=b/SE(b)$, $PVE=\mbox{z}^2/(\mbox{z}^2+N)$.
+    An alternative form also follows. Let $\mbox{x} = SNP\ dosage$. From $\mbox{y}=a + b\mbox{x} + e$ we have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry. In a linear regression $\mbox{Var}(b)=Var(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$ and therefore $PVE = \mbox{Var}(b\mbox{x}) = \frac{b^22f(1-f)}/{(b^22f(1-f)+2NVar(b)f(1-f))}$. In fact, let $z=b/SE(b)$, $PVE=\mbox{z}^2/(\mbox{z}^2+N)$.
 
     The standard errors of both forms can be obtained via variance for a ratio (R/S). First, we state some established results:
 
     $$
     \begin{align}
     E(R/S) \equiv E(f(R,S))
-           \approx \frac{\mu_R}{\mu_S}-\frac{\Cov(R,S)}{(\mu_S)^2}+\frac{\Var(S)\mu_R}{(\mu_S)^3} \hspace{100cm}
+           \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox{Var}(S)\mu_R}{(\mu_S)^3}
     \end{align}
     $$
 
@@ -90,16 +90,13 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
     $$
     \begin{align}
-    \Var(R/S) &\approx& \frac{1}{(\mu_S)^2}\Var(R)
-                +2\frac{-\mu_R}{(\mu_S)^3}\Cov(R,S)+\frac{(\mu_R)^2}{(\mu_S)^4}\Var(S)  \hspace{100cm} \\
-             &=& \frac{(\mu_R)^2}{(\mu_S)^2} \left[
-                 \frac{\Var(R)}{(\mu_R)^2}-2\frac{\Cov(R,S)}{\mu_R \; \mu_S}
-                +\frac{\Var(S)}{(\mu_S)^2} \right] \\
-             &=& \frac{(\mu_R)^2}{(\mu_S)^2} \left[
-                 \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\Cov(R,S)}{\mu_R\;\mu_S}
+    \Var(R/S) & \approx & \frac{(\mu_R)^2}{(\mu_S)^2} \left[
+                 \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
                 +\frac{\sigma_S^2}{(\mu_S)^2} \right]
     \end{align}
     $$
+
+    where $\mu_R$, $\mu_S$, $\sigma_R^2$, $\sigma_S^2$ are the means and variances, respectively.
 
     In addition, $E(\chi_1^2)=1$ and $Var(\chi_1^2)=2$, the variances are $\frac{2}{(N-1)^2}$ and $\frac{2}{(N+1)^2}$, respectively by ignoring a high-order term.
 
