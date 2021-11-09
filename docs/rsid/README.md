@@ -105,7 +105,7 @@ We now state our results.
 
     PVE = $\frac{\chi^2}{N-2+\chi^2}$
 
-    The standard errors of both forms can be obtained via variance of a ratio (R/S). By $z\approx \chi_1^2$, all the elements are listed in a table below.
+    The standard errors of both forms can be obtained via variance of a ratio (R/S). By $z\sim \chi_1^2$, all the elements are listed in a table below.
 
     Linear regression | $t$-statistic
     ------------------|--------------
