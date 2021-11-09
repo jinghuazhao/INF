@@ -99,7 +99,7 @@ We now state our results.
 
 1.  The proportion of variants explained (PVE).
 
-    From above $PVE = \frac{\mbox{Var}(b\mbox{x})}{\mbox{y}} = \frac{b^22f(1-f)}{(2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b))}$. In fact, let $z = \frac{b}{SE(b)}$, $PVE=\frac{\mbox{z}^2}{\mbox{z}^2+N}$.
+    From above $PVE = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} = \frac{b^22f(1-f)}{(2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b))}$. In fact, let $z = \frac{b}{SE(b)}$, $PVE = \frac{\mbox{z}^2}{\mbox{z}^2+N}$.
 
     On the other hand, also better known as `the coefficient of determination` for a simple linear regression is also the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r=\frac{t}{\sqrt{t^2+N-2}}$. For $T$ independent pQTLs for a protein from meta-analytic statistics PVE is approximated with
 
