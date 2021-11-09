@@ -67,22 +67,22 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
 ## Mathematical expressions
 
-1. `gap::get_pve_se`: The proportion of variants explained (PVE) according to $t$-statistic in a simple linear regression for $T$ pQTLs for a protein from meta-analytic statistics is
+1. `gap::get_pve_se`: The proportion of variants explained (PVE) in a simple linear regression is also the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r=\frac{t^2}{(t^2+N-2)}$. For $T$ independent pQTLs for a protein from meta-analytic statistics is approximated with
 
     PVE=$\sum_{i=1}^T{\frac{\chi_i^2}{N_i-2+\chi_i^2}}$
 
     with standard error
 
-    $SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}$
+    $SE_{PVE} \approx \sum_{i=1}^T{\frac{1-r_i^2}{N_i}} \approx \frac{1}{N_i}$
 
-    An alternative form also follows. Let $\mbox{x} = SNP\ dosage$. From $\mbox{y}=a + b\mbox{x} + e$ we have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry. In a linear regression $\mbox{Var}(b)=Var(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$ and therefore $PVE = \mbox{Var}(b\mbox{x}) = \frac{b^22f(1-f)}/{(b^22f(1-f)+2NVar(b)f(1-f))}$. In fact, let $z=b/SE(b)$, $PVE=\mbox{z}^2/(\mbox{z}^2+N)$.
+    An alternative form also readily follows. Let $\mbox{x} = SNP\ dosage$. From $\mbox{y}=a + b\mbox{x} + e$ we have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry. In a linear regression $\mbox{Var}(b)=Var(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$ and therefore $PVE = \mbox{Var}(b\mbox{x}) = \frac{b^22f(1-f)}/{(b^22f(1-f)+2NVar(b)f(1-f))}$. In fact, let $z=b/SE(b)$, $PVE=\mbox{z}^2/(\mbox{z}^2+N)$.
 
     The standard errors of both forms can be obtained via variance for a ratio (R/S). First, we state some established results:
 
     $$
     \begin{align}
     E(R/S) \equiv E(f(R,S))
-           \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox{Var}(S)\mu_R}{(\mu_S)^3}
+           \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox{Var}(S)\mu_R}{(\mu_S)^3} \hspace{100cm} 
     \end{align}
     $$
 
@@ -90,9 +90,9 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
     $$
     \begin{align}
-    \Var(R/S) & \approx & \frac{(\mu_R)^2}{(\mu_S)^2} \left[
-                 \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
-                +\frac{\sigma_S^2}{(\mu_S)^2} \right]
+    \mbox{Var}(R/S) & \approx & \frac{(\mu_R)^2}{(\mu_S)^2} \left[
+                                \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
+                               +\frac{\sigma_S^2}{(\mu_S)^2} \right] \hspace{100cm}
     \end{align}
     $$
 
