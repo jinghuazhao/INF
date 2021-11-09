@@ -219,16 +219,15 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>The standard errors of both forms can be obtained via variance for a ratio (R/S). First, we state some established results:</p>
 <div class="arithmatex">\[
 \begin{align}
-E(R/S) \equiv E(f(R,S))
-       \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox{Var}(S)\mu_R}{(\mu_S)^3} \hspace{100cm} 
+E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox{Var}(S)\mu_R}{(\mu_S)^3} \hspace{100cm} 
 \end{align}
 \]</div>
 <p>and variance</p>
 <div class="arithmatex">\[
 \begin{align}
-\mbox{Var}(R/S) &amp; \approx &amp; \frac{(\mu_R)^2}{(\mu_S)^2} \left[
-                            \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
-                           +\frac{\sigma_S^2}{(\mu_S)^2} \right] \hspace{100cm}
+\mbox{Var}(R/S) \approx \frac{(\mu_R)^2}{(\mu_S)^2} \left[
+                        \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
+                       +\frac{\sigma_S^2}{(\mu_S)^2} \right] \hspace{100cm}
 \end{align}
 \]</div>
 <p>where <span class="arithmatex">\(\mu_R\)</span>, <span class="arithmatex">\(\mu_S\)</span>, <span class="arithmatex">\(\sigma_R^2\)</span>, <span class="arithmatex">\(\sigma_S^2\)</span> are the means and variances, respectively.</p>
