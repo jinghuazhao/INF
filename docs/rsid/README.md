@@ -77,8 +77,7 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
     $$
     \begin{align}
-    E(R/S) \equiv E(f(R,S))
-           \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox{Var}(S)\mu_R}{(\mu_S)^3} \hspace{100cm} 
+    E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox{Var}(S)\mu_R}{(\mu_S)^3} \hspace{100cm} 
     \end{align}
     $$
 
@@ -86,9 +85,9 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
     $$
     \begin{align}
-    \mbox{Var}(R/S) & \approx & \frac{(\mu_R)^2}{(\mu_S)^2} \left[
-                                \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
-                               +\frac{\sigma_S^2}{(\mu_S)^2} \right] \hspace{100cm}
+    \mbox{Var}(R/S) \approx \frac{(\mu_R)^2}{(\mu_S)^2} \left[
+                            \frac{\sigma_R^2}{(\mu_R)^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
+                           +\frac{\sigma_S^2}{(\mu_S)^2} \right] \hspace{100cm}
     \end{align}
     $$
 
