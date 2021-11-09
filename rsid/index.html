@@ -213,13 +213,13 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <h2 id="mathematical-expressions">Mathematical expressions</h2>
 <p>Let <span class="arithmatex">\(\mbox{x} = SNP\ dosage\)</span>. Note that <span class="arithmatex">\(\mbox{Var}(\mbox{x})=2f(1-f)\)</span>, <span class="arithmatex">\(f=MAF\)</span> or <span class="arithmatex">\(1-MAF\)</span> by symmetry.</p>
 <p>Our linear regression model is <span class="arithmatex">\(\mbox{y}=a + b\mbox{x} + e\)</span>. We have <span class="arithmatex">\(\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)\)</span>. Moreover, <span class="arithmatex">\(\mbox{Var}(b)=Var(e)/S_\mbox{xx}\)</span>, we have <span class="arithmatex">\(\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})\)</span>.</p>
-<p>We also need some established results on variance of a ratio (R/S):</p>
+<p>We also need some established results of a ratio (R/S), i.e., the mean</p>
 <div class="arithmatex">\[
 \begin{align}
 E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{(\mu_S)^2}+\frac{\mbox{Var}(S)\mu_R}{(\mu_S)^3} \hspace{100cm} 
 \end{align}
 \]</div>
-<p>and variance</p>
+<p>and more importantly variance</p>
 <div class="arithmatex">\[
 \begin{align}
 \mbox{Var}(R/S) \approx \frac{(\mu_R)^2}{(\mu_S)^2} \left[
