@@ -75,16 +75,19 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
     $SE_{PVE}=\sum_{i=1}^T{\frac{1}{N_i-1}}$
 
-    This is according to t-statistic; an alternative form also uses regression theory. Let $x = SNP dosage$. From $\mbox{y}=a + b\mbox{x} + e$ we have $Var(\mbox(y)) = b^2Var(\mbox{x}) + Var(e)$. Note that $Var(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry. In a linear regression $Var(b)=Var(e)/S_\mbox{xx}$, we have $Var(e) = Var(b)S_\mbox{xx} = N Var(b) Var(\mbox{x})$ and therefore $PVE=Var(b\mbox{x})=b^22f(1-f)/(b^22f(1-f)+2NVar(b)f(1-f)}$. In fact, let $z=b/SE(b)$, $PVE=\mbox{z}^2/(\mbox{z}^2+N)$.
+    This is according to t-statistic; an alternative form also uses regression theory. Let $\mbox{x} = SNP\ dosage$. From $\mbox{y}=a + b\mbox{x} + e$ we have $Var(\mbox{y}) = b^2Var(\mbox{x}) + Var(e)$. Note that $Var(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry. In a linear regression $Var(b)=Var(e)/S_\mbox{xx}$, we have $Var(e) = Var(b)S_\mbox{xx} = N Var(b) Var(\mbox{x})$ and therefore $PVE = Var(b\mbox{x}) = b^22f(1-f)/(b^22f(1-f)+2NVar(b)f(1-f)}$. In fact, let $z=b/SE(b)$, $PVE=\mbox{z}^2/(\mbox{z}^2+N)$.
 
-    The standard errors of both forms can be obtained via variance for a ratio (R/S).
+    The standard errors of both forms can be obtained via variance for a ratio (R/S). First, we state some established results:
+
     $$
     \begin{align}
     E(R/S) \equiv E(f(R,S))
            \approx \frac{\mu_R}{\mu_S}-\frac{\Cov(R,S)}{(\mu_S)^2}+\frac{\Var(S)\mu_R}{(\mu_S)^3} \hspace{100cm}
     \end{align}
     $$
+
     and variance
+
     $$
     \begin{align}
     \Var(R/S) &\approx& \frac{1}{(\mu_S)^2}\Var(R)
