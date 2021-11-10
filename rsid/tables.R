@@ -24,7 +24,7 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
             mutate(Protein=target.short) %>% select(-target.short)
     cojo <- merge(read.sheet("cojo", 1:19, 2:229),gap_inf1[c("prot","target.short")],by="prot") %>%
             mutate(prot=target.short) %>% rename(Protein=prot) %>% select(-target.short)
-   h2pve <- read.sheet("h2pve", 1:10, 2:93)
+   h2pve <- read.csv(file.path(INF,"ldak","h2-ldak-pve.csv"))
      vep <- merge(read.sheet("VEP", 1:27, 2:182),gap_inf1,by.x="Protein",by.y="prot") %>%
             mutate(Protein=target.short) %>% select(-target.short)
    eqtls <- read.sheet("eQTLs", 1:24, 2:24)
