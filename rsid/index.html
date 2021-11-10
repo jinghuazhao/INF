@@ -93,11 +93,19 @@
 <ul class="nav flex-column">
 <li class="nav-item" data-level="1"><a class="nav-link" href="#notes">Notes</a>
 <ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#signal-selection">Signal selection</a>
+<ul class="nav flex-column">
+</ul>
+</li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#conditional-analysis-and-fine-mapping">Conditional analysis and fine-mapping</a>
 <ul class="nav flex-column">
 </ul>
 </li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#variant-annotation">Variant annotation</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#known-pqtls">Known pQTLs</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -144,6 +152,8 @@
 </div></div>
 <div class="col-md-9" role="main">
 <h1 id="notes">Notes</h1>
+<h2 id="signal-selection">Signal selection</h2>
+<p>This is illustrated with <code>neale.sh</code> for Neale UKB data (HbA1c).</p>
 <h2 id="conditional-analysis-and-fine-mapping">Conditional analysis and fine-mapping</h2>
 <p>The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the dilemma that the reference data, possibly like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsids is undesirable so SNPID, i.e., chr:pos_A1_A2, (A1&lt;=A2) is necessary.</p>
 <p>After a rather long and laborious process involving many software, it turned out a simple way out is to obtain sentinels using SNPID but return to rsids at this stage and forward. The implementation here reflects this. The file INTERVAL.rsid contains SNPID-rsid mapping and could be generated from programs such as <code>qctool/bgenix/plink</code>. A related file is <code>snp_pos</code> containing rsid -- chr:pos mappings; for instance this could be built from dbSNP.</p>
@@ -210,6 +220,8 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>Note that the <code>GCTA</code> .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to <code>finemap</code>.</p>
 <h2 id="variant-annotation">Variant annotation</h2>
 <p>This is exemplified with <code>vep.sh</code>. GARFIELD analysis is furnsihed with <code>garfield.sh</code>. Specific and collective enrichment can be found in <code>magma.sh</code> and <code>rGREAT.sh</code>.</p>
+<h2 id="known-pqtls">Known pQTLs</h2>
+<p>Program <code>cvd1.sh</code> was used to obtain SCALLOP-CVD1 summary statistics. <code>pQTL.R</code> was used for QTL lookup.</p>
 <h2 id="colocalization-analysis">Colocalization analysis</h2>
 <p>eQTL lookup is done with PhenoScanner via <code>eQTL.R</code>, <code>eQTLGen.sh</code> and GTEx via <code>GTEx-ps.R</code>, <code>GTEx-ps.sh</code> and <code>GTEx-ps-jma.sh</code>.</p>
 <p>Credible set lookup from GTEx v8 is furnished with <code>GTEx-cs.sh</code> and <code>GTEx-cs-jma.sh</code>.</p>
@@ -220,6 +232,7 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.</p>
 <p>The GSMR implementation started with CAD/FEV1 (now with <code>gsmr.sh</code>, <code>gsmr.sb</code>, <code>gsmr.R</code>) and then HGI as <code>gsmr_HGI.*</code> and pQTLMR/MR (<code>HGI.sh</code>, <code>HGI.R</code>), and +/- 1MB (<code>rs635634.sh</code>).</p>
 <p>Earlier on, a pQTL-based MR analysis is furnished with <code>pqtlMR.sh</code>.</p>
+<p>Immune-mediatd traits from OpenGWAS is obtained via <code>OpenGWAS.sh</code>. <code>pqtlGWAS.R</code> was used for pQTL-GWAS lookup.</p>
 <h2 id="nested-pgs-model">Nested PGS model</h2>
 <p align="center"><img src="grViz.png"/></p>
 <p>Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.</p>
@@ -413,10 +426,6 @@ rm 12
 <td>an inflammation score</td>
 </tr>
 <tr>
-<td>cvd1.sh</td>
-<td>SCALLOP-CVDI supplementary tables</td>
-</tr>
-<tr>
 <td>circos.*</td>
 <td>circos/circlize scripts</td>
 </tr>
@@ -453,24 +462,8 @@ rm 12
 <td>gene lists</td>
 </tr>
 <tr>
-<td>neale.sh</td>
-<td>signal selection for Neale UKB data (HbA1c)</td>
-</tr>
-<tr>
-<td>OpenGWAS.sh</td>
-<td>OpenGWAS download</td>
-</tr>
-<tr>
 <td>pheweb.Rmd</td>
 <td>Data extraction from pheweb.jp</td>
-</tr>
-<tr>
-<td>pqtlGWAS.R</td>
-<td>pQTL-GWAS lookup</td>
-</tr>
-<tr>
-<td>pQTL.R</td>
-<td>pQTL lookup</td>
 </tr>
 <tr>
 <td>qqman.sb</td>
