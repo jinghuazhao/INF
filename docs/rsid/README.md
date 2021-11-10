@@ -174,6 +174,12 @@ and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits.
 
 This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
 
+## Overlap with SomaLogic panel
+
+<img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
+
+The overlap is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
+
 ## UniProt IDs
 
 The list of proteins on inflammation is within one of the [Olink](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](../doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [Olink.R](../doc/Olink.R), which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.
@@ -211,10 +217,6 @@ Likewise, [olink.inf.panel.annot.tsv](../doc/olink.inf.panel.annot.tsv) from [ol
 "T-cell surface glycoprotein CD6 isoform (CD6)" | "CD6" | "Q8WWJ7" | "inf" | FALSE | NA | NA
 
 whose hgnc_symbol can be amended.
-
-<img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
-
-The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
 ## Auxiliary files
 
