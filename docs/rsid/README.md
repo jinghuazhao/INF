@@ -59,7 +59,10 @@ Credible set lookup from GTEx v8 is furnished with `GTEx-cs.sh` and `GTEx-cs-jma
 
 Eearlier experiments were done with `coloc.sb` (clumsy) and `coloc.R` (with pQTLtools) as well as `fastenloc.sb`.
 
-Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LTBR.sh`.
+Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LTBR.sh` (stack_assoc_plot + HyPrColoc/PWCoCo). Stacked association plots were done with `IL.18-rs385076.sh` and `OPG-TRANCE.sh`.
+
+and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits.
+
 
 ## Mendelian Randomization
 
@@ -176,15 +179,6 @@ We now have results 1 and 2 below followed by others.
     $z_{PWAS} = \frac{w^T_{P}z_P}{\sqrt{w^T_{P}Vw_{P}}}$
 
     where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively.
-
-## Stacked association
-
-1. rs12075.sh
-2. LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)
-3. IL.18-rs385076.sh
-4. OPG-TRANCE.sh
-
-and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits.
 
 ## SomaLogic overlap
 
