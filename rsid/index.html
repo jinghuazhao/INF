@@ -237,6 +237,7 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <pre><code class="language-bash">dot -Tpng grViz.gv -ogrViz.png
 </code></pre>
 <p>which also be obtained from RStudio for somewhat larger size.</p>
+<p>File <code>fusion_twas.sb</code> initiated a FUSION TWAS experiment.</p>
 <h2 id="summary-statistics">Summary statistics</h2>
 <p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
 <h2 id="mathematical-expressions">Mathematical expressions</h2>
@@ -398,7 +399,7 @@ rm 12
 </table>
 <p>whose hgnc_symbol can be amended.</p>
 <h2 id="auxiliary-files">Auxiliary files</h2>
-<p>The following table lists various other aspects not documented above.</p>
+<p>The following table lists various other aspects not documented above; many can be seen as a skeleton for further work.</p>
 <table>
 <thead>
 <tr>
@@ -430,10 +431,6 @@ rm 12
 <tr>
 <td>epigraphdb-ppi.R</td>
 <td>PPI using EpiGraphDB</td>
-</tr>
-<tr>
-<td>fusion_twas.sb</td>
-<td>FUSION TWAS experiment</td>
 </tr>
 <tr>
 <td>gdigt.R</td>
