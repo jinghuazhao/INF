@@ -37,16 +37,6 @@ utils.sh  --> |"--n-causal-snps k"| finemap.sh
 
 Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to `finemap`.
 
-## Mendelian Randomization (MR) analysis
-
-There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in `mr.sh` and `mr.sb`. To get around the mishap with rsids we switched back to SNPids; we found the options `--clump-r2 0.1 --gsmr-snp-min 10` make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.
-
-It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.
-
-The GSMR implementation started with CAD/FEV1 (now with `gsmr.sh`, `gsmr.sb`, `gsmr.R`) and then HGI as `gsmr_HGI.*` and pQTLMR/MR (`HGI.sh`, `HGI.R`), and +/- 1MB (`rs635634.sh`).
-
-Earlier on, a pQTL-based MR analysis is furnished with `pqtlMR.sh`.
-
 ## Variant annotation
 
 This is exemplified with `vep.sh`. GARFIELD analysis is furnsihed with `garfield.sh`. Specific and collective enrichment can be found in `magma.sh` and `rGREAT.sh`.
@@ -61,9 +51,28 @@ Eearlier experiments were done with `coloc.sb` (clumsy) and `coloc.R` (with pQTL
 
 Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LTBR.sh`.
 
-## Generation of summary statistics
+## Mendelian Randomization (MR) analysis
 
-This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
+There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in `mr.sh` and `mr.sb`. To get around the mishap with rsids we switched back to SNPids; we found the options `--clump-r2 0.1 --gsmr-snp-min 10` make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.
+
+It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.
+
+The GSMR implementation started with CAD/FEV1 (now with `gsmr.sh`, `gsmr.sb`, `gsmr.R`) and then HGI as `gsmr_HGI.*` and pQTLMR/MR (`HGI.sh`, `HGI.R`), and +/- 1MB (`rs635634.sh`).
+
+Earlier on, a pQTL-based MR analysis is furnished with `pqtlMR.sh`.
+
+## Nested PGS model
+
+<p align="center"><img src="grViz.png"></p>
+
+Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
+
+The figure is obtained with
+
+```bash
+dot -Tpng grViz.gv -ogrViz.png
+```
+which also be obtained from RStudio for somewhat larger size.
 
 ## Mathematical expressions
 
@@ -152,60 +161,6 @@ We now state our results.
 
     where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively.
 
-## Nested PGS model
-
-<p align="center"><img src="grViz.png"></p>
-
-Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
-
-The figure is obtained with
-
-```bash
-dot -Tpng grViz.gv -ogrViz.png
-```
-which also be  obtained from RStudio for somewhat larger size.
-
----
-
-## Auxiliary files
-
-File | Description
------|---------------------------
-chembl.sh | toy CHEMBL queries
-CRP.sh | an inflammation score
-cvd1.sh | SCALLOP-CVDI supplementary tables
-circos.* | circos/circlize scripts
-efo.R | experimental factor ontology
-epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
-epigraphdb-ppi.R | PPI using EpiGraphDB
-fusion_twas.sb | FUSION TWAS experiment
-gdigt.R | GDI and gene-trials
-GREP.sh | GREP script
-h2pve.R | h2/pve contrast
-inbio-discover.R | gene lists
-neale.sh | signal selection for Neale UKB data (HbA1c)
-OpenGWAS.sh | OpenGWAS download
-pheweb.Rmd | Data extraction from pheweb.jp
-pqtlGWAS.R | pQTL-GWAS lookup
-pQTL.R | pQTL lookup
-qqman.sb | Q-Q/Manhattan plots under CSD3
-rentrez.sh | reuse of rentrez
-Somascan-Olink.* | Somascan/Olink overlap
-stringdb.sh | STRINGdb
-tables.R | code to create Excel Tables
-uniprot.R | UniProt IDs to others
-utils.sh | utilties
-wgcna.sh | experiment on modules
-
-### Stacked association and related analysis
-
-1. rs12075.sh
-2. MS.sh (+cojo, two-sample MRs)+LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)
-3. IL.18-rs385076.sh
-4. OPG-TRANCE.sh
-
-and `MS.sh` contains a routine to generate tabix-indexed blood cell traits.
-
 ### UniProt IDs
 
 The list of proteins on inflammation is within one of the [Olink](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](../doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [Olink.R](../doc/Olink.R), which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.
@@ -247,5 +202,50 @@ whose hgnc_symbol can be amended.
 <img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
 
 The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
+
+## Generation of summary statistics
+
+This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
+
+---
+
+## Auxiliary files
+
+File | Description
+-----|---------------------------
+chembl.sh | toy CHEMBL queries
+CRP.sh | an inflammation score
+cvd1.sh | SCALLOP-CVDI supplementary tables
+circos.* | circos/circlize scripts
+efo.R | experimental factor ontology
+epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
+epigraphdb-ppi.R | PPI using EpiGraphDB
+fusion_twas.sb | FUSION TWAS experiment
+gdigt.R | GDI and gene-trials
+GREP.sh | GREP script
+h2pve.R | h2/pve contrast
+inbio-discover.R | gene lists
+neale.sh | signal selection for Neale UKB data (HbA1c)
+OpenGWAS.sh | OpenGWAS download
+pheweb.Rmd | Data extraction from pheweb.jp
+pqtlGWAS.R | pQTL-GWAS lookup
+pQTL.R | pQTL lookup
+qqman.sb | Q-Q/Manhattan plots under CSD3
+rentrez.sh | reuse of rentrez
+Somascan-Olink.* | Somascan/Olink overlap
+stringdb.sh | STRINGdb
+tables.R | code to create Excel Tables
+uniprot.R | UniProt IDs to others
+utils.sh | utilties
+wgcna.sh | experiment on modules
+
+### Stacked association and related analysis
+
+1. rs12075.sh
+2. LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)
+3. IL.18-rs385076.sh
+4. OPG-TRANCE.sh
+
+and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits.
 
 *Date last changed:* **10/11/2021**

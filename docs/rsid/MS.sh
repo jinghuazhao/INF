@@ -386,10 +386,8 @@ function mr()
     export chr=6
     export rsid=rs2229092
     export pos=31540757
-    pqtl_qtl_rsid
     export rsid=rs9263621
     export pos=31073047
-    pqtl_qtl_rsid
   # trans pQTL
   # chr12:6514963_A_C rs2364485
   # chr12:111865049_C_G rs7310615; MS:chr12:6440009_C_T rs1800693
@@ -397,15 +395,14 @@ function mr()
     export chr=12
     export rsid=rs2364485
     export pos=6514963
-    pqtl_qtl_rsid
     export rsid=rs1800693
     export pos=6440009
-    pqtl_qtl_rsid
     export rsid=rs7310615
     export pos=111865049
-    pqtl_qtl_rsid
   ) >> ${INF}/MS/${prot}-MS-MR.log
 }
+
+# --- legacy ---
 
 function info()
 {
@@ -440,16 +437,7 @@ function info()
       names(mr_summary)[c(2,3,5,6,7)] <- c("exposure","outcome","b","se","pval")
       tryx::volcano_plot(mr_summary)
   '
-
-# https://www.gtexportal.org/home/gene/RP1-102E24.8
-# no sample size (N)!!!
-  export ichip=~/rds/results/public/gwas/multiple_sclerosis/ImmunoChip_Results/Immunochip_FinalResults_LimitedDiscovery.txt
-  awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr&&$3>=start&&$3<=end {print $4,$5,$6,$7,log($10),$11,$9}' ${ichip}
-# CHR BPHG18 BPHG19 ImmunochipID Risk_Allele Ref_Allele Risk_Allele_Freq N P OR SE Q I Region
-# 1 1108138 1118275 vh_1_1108138 G A 0.9586 11 7.62E-01 1.012 0.0404 0.085 39.51 none
 }
-
-# --- legacy ---
 
 function ieu_id_ma()
   (
@@ -590,16 +578,20 @@ Rscript -e '
 '
 }
 
-# Multiple_sclerosis
-
-# 2018
-# CHR BP SNP A1 A2 N P OR
-# 1 11154 chr1:11154 C A 4 0.7911 0.9818
-
-# 2013
-# chrom	pos	rsid	other_allele	effect_allele	p	beta	se	OR	OR_lower	OR_upper
-# 12      6440009 rs1800693       A       G       6.92e-16        0.13453089295760606     0.01666652509712173     1.144   1.1072334356041962      1.1819874273267836
-
 cd work
 coloc
 cd -
+
+# Multiple_sclerosis
+# 2018
+# CHR BP SNP A1 A2 N P OR
+# 1 11154 chr1:11154 C A 4 0.7911 0.9818
+# 2013
+# chrom	pos	rsid	other_allele	effect_allele	p	beta	se	OR	OR_lower	OR_upper
+# 12      6440009 rs1800693       A       G       6.92e-16        0.13453089295760606     0.01666652509712173     1.144   1.1072334356041962      1.1819874273267836
+# https://www.gtexportal.org/home/gene/RP1-102E24.8
+# no sample size (N)!!!
+# export ichip=~/rds/results/public/gwas/multiple_sclerosis/ImmunoChip_Results/Immunochip_FinalResults_LimitedDiscovery.txt
+# awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr&&$3>=start&&$3<=end {print $4,$5,$6,$7,log($10),$11,$9}' ${ichip}
+# CHR BPHG18 BPHG19 ImmunochipID Risk_Allele Ref_Allele Risk_Allele_Freq N P OR SE Q I Region
+# 1 1108138 1118275 vh_1_1108138 G A 0.9586 11 7.62E-01 1.012 0.0404 0.085 39.51 none
