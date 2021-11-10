@@ -178,9 +178,9 @@ We now have results 1 and 2 below followed by others.
 
     where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively.
 
-## SomaLogic overlap
-
 <img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
+
+## SomaLogic overlap
 
 The overlap is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
