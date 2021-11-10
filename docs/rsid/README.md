@@ -224,6 +224,8 @@ whose hgnc_symbol can be amended.
 
 ## Auxiliary files
 
+The following table lists various other aspects not documented above.
+
 File | Description
 -----|---------------------------
 chembl.sh | toy CHEMBL queries
