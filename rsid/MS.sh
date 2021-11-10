@@ -8,9 +8,12 @@ export end=$(expr ${pos} + 100000)
 export region=${chr}:${start}-${end}
 export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
 export TMPDIR=/rds/user/jhz22/hpc-work/work
+export M=60000
+export get_data=no
 
 function blood_cell_traits()
 {
+# tabix
   export ext=_EUR_buildGRCh37.tsv.gz
   ls ${dir}/*EUR* | xargs -I{} basename {} ${ext} | \
   parallel -C' ' --env dir --env ext '
@@ -29,6 +32,7 @@ function blood_cell_traits()
   bgzip -f > ${dir}/tsv/EUR-{}.gz
   tabix -f -S1 -s1 -b2 -e2 ${dir}/tsv/EUR-{}.gz
   '
+# LocusZoom
   module load python/2.7
   ls ${dir}/tsv/*gz | xargs -I{} basename {} .gz | \
   grep -e wbc -e mono -e neut -e lymph -e eo -e baso | \
@@ -47,10 +51,7 @@ function blood_cell_traits()
   qpdf {}_chr${chr}_${start}-${end}.pdf --pages . 1 -- {}-lz.pdf
   '
   qpdf --empty --pages *lz.pdf -- blood-cell-traits.pdf
-}
-
-function ma()
-{
+# MA
   echo wbc mono neut lymph eo baso | \
   tr ' ' '\n' | \
   parallel -C' ' --env INF '
@@ -64,6 +65,11 @@ function ma()
   sort -k10,10g | \
   awk "NR==1{print \$1}" > ${INF}/MS/EUR-{}.top
   '
+}
+
+function cojo()
+{
+# MS
   (
     echo SNP A1 A2 freq b se p N
     awk 'NR>1{print $1,$5,$6,$7,$8,$9}' ${INF}/MS/v3.lz | \
@@ -79,9 +85,7 @@ function ma()
   sed "1d" ${INF}/MS/EUR-v3.ma | \
   sort -k7,7g | \
   awk "NR==1{print \$1}" > ${INF}/MS/EUR-v3.top
-
-function cojo()
-{
+# pruning
   module load plink/2.00-alpha
   for cell in v3 # wbc mono neut lymph eo baso
   do
@@ -242,7 +246,7 @@ function gsmr()
   '
 }
 
-function wgs()
+function mr()
 {
 # all significant SNPs
   (
@@ -270,7 +274,7 @@ function wgs()
     awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' | \
     sort -k3,3n -k4,4n
   ) > ${INF}/MS/${prot}-pQTL.dat
-  R --no-save -q <<\ \ END
+  Rscript -e '
     options(echo=FALSE,width=200)
     INF <- Sys.getenv("INF")
     prot <- Sys.getenv("prot")
@@ -301,13 +305,8 @@ function wgs()
       print(xy)
     }
     dev.off()
-  END
-}
-
-# wgs > ${INF}/MS/${prot}-MS-MR.log
-
-function pqtl_qtl_rsid()
-{
+  '
+# alternative form
   export start=$(expr ${pos} - ${M})
   export end=$(expr ${pos} + ${M})
   if [ ${get_data} == "yes" ]; then
@@ -324,7 +323,7 @@ function pqtl_qtl_rsid()
       sort -k3,3n -k4,4n
     ) > ${INF}/MS/${prot}-pQTL-${rsid}.dat
   fi
-  R --no-save -q <<\ \ END
+  Rscript -e '
     options(echo=FALSE,width=200)
     INF <- Sys.getenv("INF")
     prot <- Sys.getenv("prot")
@@ -352,12 +351,8 @@ function pqtl_qtl_rsid()
       xy <- mr(harmonise_data(x, y))
       print(xy)
     }
-  END
-}
-
-function pqtl()
+  '
 # pQTLs
-{
   (
      awk -vOFS="\t" 'BEGIN{print "Phenotype", "SNP", "chr", "pos", "beta", "se", "snpid", "effect_allele", "other_allele", "eaf", "pval", "N"}'
      zgrep -e chr12:6514963_A_C -e chr12:6440009_C_T -e chr6:31540757_A_C -e chr6:31073047_A_G ${INF}/METAL/${prot}-1.tbl.gz | \
@@ -368,7 +363,7 @@ function pqtl()
      awk -vprot=${prot} -vOFS="\t" '{print prot, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12}' | \
      sort -k3,3n -k4,4n
   ) > ${INF}/MS/${prot}-pQTL.dat
-  R --no-save -q <<\ \ END
+  Rscript -e '
     library(pQTLtools)
     INF <- Sys.getenv("INF")
     prot <- Sys.getenv("prot")
@@ -382,12 +377,8 @@ function pqtl()
       pqtlMR(subset(ivs,SNP%in%"rs9263621"),id,prefix=paste0(prot,"-",id,"-rs9263621"))
       pqtlMR(subset(ivs,SNP%in%"rs2229092"),id,prefix=paste0(prot,"-",id,"-rs2229092"))
     }
-  END
-}
-
-function pqtl_flanking()
+  '
 # +/- 0.5Mb
-{
   (
   # cis pQTLs
   # chr6:31540757_A_C rs2229092
@@ -415,9 +406,6 @@ function pqtl_flanking()
     pqtl_qtl_rsid
   ) >> ${INF}/MS/${prot}-MS-MR.log
 }
-
-export M=60000
-export get_data=no
 
 function info()
 {
@@ -472,7 +460,7 @@ function ieu_id_ma()
     awk 'a[$1]++==0 && $8<5 {$7=10^-$7};1'
   ) > ${INF}/MS/EUR-${ieu_id}.ma
 
-function MS2013()
+function misc()
 {
 export chr=12
 export start=6400000
@@ -532,20 +520,20 @@ awk -vFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} '
   }
 }' | \
 sort -k1,1 | \
-join -12 -21 work/snp_pos - | \
+join -12 -21 ${INF}/work/snp_pos - | \
 awk 'a[$6]++==0' | \
-awk -vOFS="\t" '{print $2, $3, $4, $5, $6, $7, $8}' > work/${prot}-pQTL.lz
+awk -vOFS="\t" '{print $2, $3, $4, $5, $6, $7, $8}' > ${INF}/work/${prot}-pQTL.lz
 
 cut -f5 work/${prot}-pQTL.lz > work/${prot}-pQTL.snpid
-plink --bfile INTERVAL/cardio/INTERVAL --extract work/${prot}-pQTL.snpid \
-      --r2 inter-chr yes-really --ld-snps chr12:6514963_A_C --ld-window-r2 0 --out work/${prot}-pQTL
+plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract work/${prot}-pQTL.snpid \
+      --r2 inter-chr yes-really --ld-snps chr12:6514963_A_C --ld-window-r2 0 --out ${INF}/work/${prot}-pQTL
 (
   awk -vOFS="\t" 'BEGIN{print "snpid","rsid","chr","pos","z","A1","A2","r2"}'
-  join -15 -t$'\t' work/${prot}-pQTL.lz <(awk -vOFS="\t" 'NR>1 {print $6,$7}' work/${prot}-pQTL.ld | sort -k1,1)
+  join -15 -t$'\t' ${INF}/work/${prot}-pQTL.lz <(awk -vOFS="\t" 'NR>1 {print $6,$7}' ${INF}/work/${prot}-pQTL.ld | sort -k1,1)
 ) > work/${prot}-pQTL.txt
 
 echo eQTLGen
-zgrep -w ${gene} data/eQTLGen/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
+zgrep -w ${gene} ${INF}/eQTLGen/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
 awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
 {
   if ($5<$6) snpid="chr" $3 ":" $4 "_" $5 "_" $6;
@@ -568,11 +556,11 @@ awk 'a[$1]++==0' | \
 awk 'a[$2]++==0' | \
 sort -k3,3n -k4,4n > work/${prot}.z
 
-cut -f1 work/${prot}.z > work/${prot}.snpid
-plink --bfile INTERVAL/cardio/INTERVAL --extract work/${prot}.snpid --make-bed --out work/${prot}
-cut -f2 work/${prot}.bim > work/${prot}.snpid
-plink --bfile work/${prot} --extract work/${prot}.snpid --r square --out work/${prot}
-grep -f work/${prot}.snpid work/${prot}.z > work/${prot}.gassoc
+cut -f1 ${INF}/work/${prot}.z > ${INF}/work/${prot}.snpid
+plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/work/${prot}.snpid --make-bed --out ${INF}/work/${prot}
+cut -f2 ${INF}/work/${prot}.bim > ${INF}/work/${prot}.snpid
+plink --bfile work/${prot} --extract ${INF}/work/${prot}.snpid --r square --out ${INF}/work/${prot}
+grep -f ${INF}/work/${prot}.snpid ${INF}/work/${prot}.z > work/${prot}.gassoc
 
 Rscript -e '
   prot <- Sys.getenv("prot")
@@ -612,4 +600,6 @@ Rscript -e '
 # chrom	pos	rsid	other_allele	effect_allele	p	beta	se	OR	OR_lower	OR_upper
 # 12      6440009 rs1800693       A       G       6.92e-16        0.13453089295760606     0.01666652509712173     1.144   1.1072334356041962      1.1819874273267836
 
+cd work
 coloc
+cd -
