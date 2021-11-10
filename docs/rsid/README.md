@@ -1,5 +1,7 @@
 # Notes
 
+This page was initated with conditional analysis and fine-mapping and later expanded with information on many aspects of the analysis.
+
 ## Signal selection
 
 This is illustrated with `neale.sh` for Neale UKB data (HbA1c).
