@@ -1,4 +1,4 @@
-# Notes
+# Supplementary notes
 
 This page was initated with conditional analysis and fine-mapping, and later expanded with information on many aspects of the analysis.
 
