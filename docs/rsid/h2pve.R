@@ -51,7 +51,7 @@ p <- ggplot(isp,aes(y = x, x = h2))+
      ylab("")
 ggsave(p,filename=file.path(INF,"h2","h2-pve-ggplot2.png"),device="png",dpi = 300, units="in", width=12, height=20)
 
-function test()
+test <- function()
 {
 p <- ggplot(isp,aes(x=x, y=h2))+
      theme_bw()+

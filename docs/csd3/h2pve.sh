@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-R --no-save <<END
+Rscript -e '
   INF <- Sys.getenv("INF")
   require(gap)
   t <- read.delim(file.path(INF,"work","INF1.tbl"),as.is=TRUE)
@@ -13,12 +13,7 @@ R --no-save <<END
   {
     x2 <- (Effect/StdErr)^2
     r2 <- x2 / (N - 2 + x2)
-    v <- 1 / (N - 1)
-# r
-# r <- sqrt(r2)
-# vr <- (1 - r2)^2/ N
-# Taylor expansion
-# v2 <- 2 * r2^2 * (1 + 1/ (N + 1)^2)
+    v <- 2 / (N - 1)
   })
   s <- with(tbl, aggregate(r2,list(prot),sum))
   names(s) <- c("prot", "pve")
@@ -32,16 +27,16 @@ R --no-save <<END
   print(pve[ord, c("prot","pve","se","m")], row.names=FALSE)
   sink()
   write.csv(tbl,file=file.path(INF,"h2","INF1.csv"),quote=FALSE,row.names=FALSE)
-END
+'
 
 join <(sort -k1,1 ${INF}/h2/h2.tsv) <(sed '1d' ${INF}/h2/pve.dat | sort -k1,1) > ${INF}/h2/h2pve.dat
 
-R --no-save -q <<END
+Rscript -e '
   INF <- Sys.getenv("INF")
   png(file.path(INF,"h2","h2pve.png"), res=300, units="cm", width=40, height=20)
   par(mfrow=c(1,2))
-  t.test(Effect~as.factor(cis.trans),data=INF1_METAL)
   INF1_METAL <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE)
+  t.test(Effect~as.factor(cis.trans),data=INF1_METAL)
   summary(lm(Effect~as.factor(cis.trans),data=INF1_METAL))
 # boxplot(Effect~as.factor(cis.trans),data=INF1_METAL)
   with(INF1_METAL,
@@ -72,12 +67,12 @@ R --no-save -q <<END
 # lines(lowess(h2,pve), col="blue")
   detach(h2pve)
   dev.off()
-END
+'
 
-function obsolete()
+function merge()
 {
-R --no-save -q <<END
-# This part needs to be run inside R but currently not in use
+Rscript -e '
+# This part needs to be run inside R
   options(width=200)
   INF <- Sys.getenv("INF")
   png(file.path(INF,"h2","h2-pve.png"), res=300, units="cm", width=40, height=40)
@@ -138,5 +133,5 @@ R --no-save -q <<END
   names(pve) <- c("prot","pve","SE_pve","m")
   h2_ldak_pve <- merge(merge(h2,ldak,by="prot"),pve,by="prot",all=TRUE)
   write.csv(h2_ldak_pve,file=file.path(INF,"ldak","h2-ldak-pve.csv"),quote=FALSE,row.names=FALSE)
-END
+'
 }
