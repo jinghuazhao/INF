@@ -59,9 +59,7 @@ Credible set lookup from GTEx v8 is furnished with `GTEx-cs.sh` and `GTEx-cs-jma
 
 Eearlier experiments were done with `coloc.sb` (clumsy) and `coloc.R` (with pQTLtools) as well as `fastenloc.sb`.
 
-Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LTBR.sh` (stack_assoc_plot + HyPrColoc/PWCoCo). Stacked association plots were done with `IL.18-rs385076.sh` and `OPG-TRANCE.sh`.
-
-and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits.
+Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LTBR.sh` (stack_assoc_plot + HyPrColoc/PWCoCo) and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits. Stacked association plots were done with `IL.18-rs385076.sh` and `OPG-TRANCE.sh`.
 
 
 ## Mendelian Randomization
