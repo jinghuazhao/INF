@@ -5,7 +5,7 @@
 # Adapted from counterparts for multiple traits (proteins) with a trait variable in the output as a historical hallmark
 
 export pval=5e-8
-export src=ukb/30750_raw.gwas.imputed_v3.both_sexes.tsv.bgz
+export src=${INF}/ukb/30750_raw.gwas.imputed_v3.both_sexes.tsv.bgz
 export tag=_nold
 
 if [ ! -d ${pval} ]; then mkdir ${pval}; fi

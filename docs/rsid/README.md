@@ -1,5 +1,9 @@
 # Notes
 
+## Signal selection
+
+This is illustrated with `neale.sh` for Neale UKB data (HbA1c).
+
 ## Conditional analysis and fine-mapping
 
 The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the dilemma that the reference data, possibly like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsids is undesirable so SNPID, i.e., chr:pos_A1_A2, (A1<=A2) is necessary.
@@ -41,6 +45,10 @@ Note that the `GCTA` .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -
 
 This is exemplified with `vep.sh`. GARFIELD analysis is furnsihed with `garfield.sh`. Specific and collective enrichment can be found in `magma.sh` and `rGREAT.sh`.
 
+## Known pQTLs
+
+Program `cvd1.sh` was used to obtain SCALLOP-CVD1 summary statistics. `pQTL.R` was used for QTL lookup.
+
 ## Colocalization analysis
 
 eQTL lookup is done with PhenoScanner via `eQTL.R`, `eQTLGen.sh` and GTEx via `GTEx-ps.R`, `GTEx-ps.sh` and `GTEx-ps-jma.sh`.
@@ -60,6 +68,8 @@ It turned to be more efficient in cis-pQTL analyses to extract the relevant vari
 The GSMR implementation started with CAD/FEV1 (now with `gsmr.sh`, `gsmr.sb`, `gsmr.R`) and then HGI as `gsmr_HGI.*` and pQTLMR/MR (`HGI.sh`, `HGI.R`), and +/- 1MB (`rs635634.sh`).
 
 Earlier on, a pQTL-based MR analysis is furnished with `pqtlMR.sh`.
+
+Immune-mediatd traits from OpenGWAS is obtained via `OpenGWAS.sh`. `pqtlGWAS.R` was used for pQTL-GWAS lookup.
 
 ## Nested PGS model
 
@@ -224,7 +234,6 @@ File | Description
 -----|---------------------------
 chembl.sh | toy CHEMBL queries
 CRP.sh | an inflammation score
-cvd1.sh | SCALLOP-CVDI supplementary tables
 circos.* | circos/circlize scripts
 efo.R | experimental factor ontology
 epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
@@ -234,11 +243,7 @@ gdigt.R | GDI and gene-trials
 GREP.sh | GREP script
 h2pve.R | h2/pve contrast
 inbio-discover.R | gene lists
-neale.sh | signal selection for Neale UKB data (HbA1c)
-OpenGWAS.sh | OpenGWAS download
 pheweb.Rmd | Data extraction from pheweb.jp
-pqtlGWAS.R | pQTL-GWAS lookup
-pQTL.R | pQTL lookup
 qqman.sb | Q-Q/Manhattan plots under CSD3
 rentrez.sh | reuse of rentrez
 Somascan-Olink.* | Somascan/Olink overlap
