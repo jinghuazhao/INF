@@ -49,7 +49,7 @@ Earlier on, a pQTL-based MR analysis is furnished with `pqtlMR.sh`.
 
 ## Variant annotation
 
-This is exemplified with `vep.sh`. GARFIELD analysis is furnsihed with `garfield.sh`. Specific and collective enrichment can be found in `magma.sh` and `rGREAT.R`.
+This is exemplified with `vep.sh`. GARFIELD analysis is furnsihed with `garfield.sh`. Specific and collective enrichment can be found in `magma.sh` and `rGREAT.sh`.
 
 ## Colocalization analysis
 
@@ -248,4 +248,4 @@ whose hgnc_symbol can be amended.
 
 The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
-*Date last changed:* **4/11/2021**
+*Date last changed:* **10/11/2021**
