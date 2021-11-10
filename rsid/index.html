@@ -105,7 +105,7 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#mendelian-randomization-mr-analysis">Mendelian Randomization (MR) analysis</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#mendelian-randomization-mr">Mendelian Randomization (MR)</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -117,7 +117,11 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#generation-of-summary-statistics">Generation of summary statistics</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#stacked-association">Stacked association</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#summary-statistics">Summary statistics</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -203,7 +207,7 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>Credible set lookup from GTEx v8 is furnished with <code>GTEx-cs.sh</code> and <code>GTEx-cs-jma.sh</code>.</p>
 <p>Eearlier experiments were done with <code>coloc.sb</code> (clumsy) and <code>coloc.R</code> (with pQTLtools) as well as <code>fastenloc.sb</code>.</p>
 <p>Multitrait counterparts were also done with HyPrColoc as in <code>rs12075.sh</code> and <code>LTBR.sh</code>.</p>
-<h2 id="mendelian-randomization-mr-analysis">Mendelian Randomization (MR) analysis</h2>
+<h2 id="mendelian-randomization-mr">Mendelian Randomization (MR)</h2>
 <p>There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in <code>mr.sh</code> and <code>mr.sb</code>. To get around the mishap with rsids we switched back to SNPids; we found the options <code>--clump-r2 0.1 --gsmr-snp-min 10</code> make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.</p>
 <p>It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.</p>
 <p>The GSMR implementation started with CAD/FEV1 (now with <code>gsmr.sh</code>, <code>gsmr.sb</code>, <code>gsmr.R</code>) and then HGI as <code>gsmr_HGI.*</code> and pQTLMR/MR (<code>HGI.sh</code>, <code>HGI.R</code>), and +/- 1MB (<code>rs635634.sh</code>).</p>
@@ -304,7 +308,7 @@ se &amp; = 1/d
 <p>where <span class="arithmatex">\(w_{P}\)</span> is a weight associated with protein abundance level and <strong>V</strong> covariance matrix for <span class="arithmatex">\(z_P\)</span>, respectively.</p>
 </li>
 </ol>
-<h3 id="stacked-association">Stacked association</h3>
+<h2 id="stacked-association">Stacked association</h2>
 <ol>
 <li>rs12075.sh</li>
 <li>LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)</li>
@@ -312,7 +316,7 @@ se &amp; = 1/d
 <li>OPG-TRANCE.sh</li>
 </ol>
 <p>and <code>LTBR.sh</code> contains a routine to generate tabix-indexed blood cell traits.</p>
-<h2 id="generation-of-summary-statistics">Generation of summary statistics</h2>
+<h2 id="summary-statistics">Summary statistics</h2>
 <p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
 <h3 id="uniprot-ids">UniProt IDs</h3>
 <p>The list of proteins on inflammation is within one of the <a href="https://www.olink.com/products/">Olink</a> panels (as in <a href="../doc/Olink%20validation%20data%20all%20panels.xlsx">Olink validation data all panels.xlsx</a>) each containing 92 proteins. Information contained in these panels can be retrieved into R via <a href="../doc/Olink.R">Olink.R</a>, which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.</p>
