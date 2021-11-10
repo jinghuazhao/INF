@@ -51,7 +51,7 @@ Eearlier experiments were done with `coloc.sb` (clumsy) and `coloc.R` (with pQTL
 
 Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LTBR.sh`.
 
-## Mendelian Randomization (MR) analysis
+## Mendelian Randomization (MR)
 
 There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in `mr.sh` and `mr.sb`. To get around the mishap with rsids we switched back to SNPids; we found the options `--clump-r2 0.1 --gsmr-snp-min 10` make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.
 
@@ -161,7 +161,7 @@ We now state our results.
 
     where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively.
 
-### Stacked association
+## Stacked association
 
 1. rs12075.sh
 2. LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)
@@ -170,7 +170,7 @@ We now state our results.
 
 and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits.
 
-## Generation of summary statistics
+## Summary statistics
 
 This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
 
