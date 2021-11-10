@@ -87,6 +87,8 @@ dot -Tpng grViz.gv -ogrViz.png
 ```
 which also be obtained from RStudio for somewhat larger size.
 
+File `fusion_twas.sb` initiated a FUSION TWAS experiment.
+
 ## Summary statistics
 
 This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
@@ -224,7 +226,7 @@ whose hgnc_symbol can be amended.
 
 ## Auxiliary files
 
-The following table lists various other aspects not documented above.
+The following table lists various other aspects not documented above; many can be seen as a skeleton for further work.
 
 File | Description
 -----|---------------------------
@@ -234,7 +236,6 @@ circos.* | circos/circlize scripts
 efo.R | experimental factor ontology
 epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
 epigraphdb-ppi.R | PPI using EpiGraphDB
-fusion_twas.sb | FUSION TWAS experiment
 gdigt.R | GDI and gene-trials
 GREP.sh | GREP script
 h2pve.R | h2/pve contrast
