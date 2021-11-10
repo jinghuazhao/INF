@@ -174,7 +174,7 @@ and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits.
 
 This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
 
-## Overlap with SomaLogic panel
+## SomaLogic overlap
 
 <img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
 
