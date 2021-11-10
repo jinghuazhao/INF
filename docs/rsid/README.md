@@ -1,6 +1,6 @@
 # Notes
 
-## Joint/conditional analysis and fine-mapping
+## Conditional analysis and fine-mapping
 
 The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the dilemma that the reference data, possibly like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsids is undesirable so SNPID, i.e., chr:pos_A1_A2, (A1<=A2) is necessary.
 
