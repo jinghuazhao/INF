@@ -51,7 +51,7 @@ Eearlier experiments were done with `coloc.sb` (clumsy) and `coloc.R` (with pQTL
 
 Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LTBR.sh`.
 
-## Mendelian Randomization (MR)
+## Mendelian Randomization
 
 There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in `mr.sh` and `mr.sb`. To get around the mishap with rsids we switched back to SNPids; we found the options `--clump-r2 0.1 --gsmr-snp-min 10` make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.
 
@@ -73,6 +73,10 @@ The figure is obtained with
 dot -Tpng grViz.gv -ogrViz.png
 ```
 which also be obtained from RStudio for somewhat larger size.
+
+## Summary statistics
+
+This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
 
 ## Mathematical expressions
 
@@ -104,7 +108,7 @@ where $\mu_R$, $\mu_S$, $\sigma_R^2$, $\sigma_S^2$ are the means and the varianc
 
 Finally, we need expectation and variance of $\chi_1^2$, $\chi^2$ distribution of one degree of freedom, which are 1 and 2, respectively.
 
-We now state our results.
+We now have results 1 and 2 below followed by others.
 
 1.  The proportion of variants explained (PVE).
 
@@ -169,10 +173,6 @@ We now state our results.
 4. OPG-TRANCE.sh
 
 and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits.
-
-## Summary statistics
-
-This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
 
 ## SomaLogic overlap
 
