@@ -161,6 +161,19 @@ We now state our results.
 
     where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively.
 
+### Stacked association
+
+1. rs12075.sh
+2. LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)
+3. IL.18-rs385076.sh
+4. OPG-TRANCE.sh
+
+and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits.
+
+## Generation of summary statistics
+
+This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
+
 ### UniProt IDs
 
 The list of proteins on inflammation is within one of the [Olink](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](../doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [Olink.R](../doc/Olink.R), which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.
@@ -203,12 +216,6 @@ whose hgnc_symbol can be amended.
 
 The overlap with SomaLogic panel is characterised with [Olink.R](../doc/Olink.R) which also gives a Venn diagram.
 
-## Generation of summary statistics
-
-This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
-
----
-
 ## Auxiliary files
 
 File | Description
@@ -238,14 +245,5 @@ tables.R | code to create Excel Tables
 uniprot.R | UniProt IDs to others
 utils.sh | utilties
 wgcna.sh | experiment on modules
-
-### Stacked association and related analysis
-
-1. rs12075.sh
-2. LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)
-3. IL.18-rs385076.sh
-4. OPG-TRANCE.sh
-
-and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits.
 
 *Date last changed:* **10/11/2021**
