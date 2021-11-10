@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-function INTERVAL_eQTLGen_SCALLOP()
+function MS_eQTLGen_SCALLOP()
 {
 # init -- actually two versions of RNASeq results below gives the same LTBR.lz
   zgrep ENSG00000111321 ${INF}/work/ensGtp.txt.gz | \
@@ -18,6 +18,33 @@ function INTERVAL_eQTLGen_SCALLOP()
             --markercol variant_id --pvalcol pval --chr ${chr} --start ${b1} --end ${b2} \
             --no-date --plotonly --prefix=INTERVAL --rundir .
   mv INTERVAL_chr${chr}_${bracket}.pdf INTERVAL-LTBR-cis.pdf
+# gunzip -c discovery_metav3.0.meta.gz | grep rs1800693
+# CHR BP SNP A1 A2 N P OR
+# 12 6440009 rs1800693 T C 14 1.017e-13 0.8808
+# gunzip -c Final-metaanalysis-echip.txt.gz | grep 1800693
+#  CHR         BP            SNP  A1  A2   N           P        P(R)      OR   OR(R)       Q       I
+#  12     6440009  exm-rs1800693   T   C  13   1.003e-26    2.11e-09  1.0332  1.0300  0.0351   46.00
+  (
+    echo -e "SNPid\tSNP\tchr\tpos\ta1\ta2\tb\tse\tp"
+    Rscript -e 'require(dplyr)
+                write.table(read.table(Sys.getenv("v3"),header=TRUE) %>%
+                            mutate(A1=toupper(A1),A2=toupper(A2),
+                                   SNP=paste0("chr",CHR,":",BP,"_",if_else(A1>A2,paste0(A2,"_",A1),paste0(A1,"_",A2))),
+                                   b=log(OR),se=TwoSampleMR::get_se(b,P)) %>%
+                            filter(CHR==as.integer(Sys.getenv("chr")) & BP>=as.integer(Sys.getenv("b1")) & BP < as.integer(Sys.getenv("b2"))) %>%
+                            filter(!is.na(b) & !is.na(se) & b!=0 & se!=0) %>%
+                            arrange(BP) %>%
+                            select(CHR,BP,SNP,A1,A2,b,se,P),
+                            col.names=FALSE,row.names=FALSE,quote=FALSE)' | \
+    sort -k1,1 | \
+    join -23 ${INF}/work/INTERVAL.rsid - | \
+    tr ' ' '\t'
+  ) > ${INF}/MS/v3.lz
+  rm -rf ld_cache.db
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/v3.lz --delim tab title="MS" \
+            --markercol SNP --pvalcol p --chr ${chr} --start ${b1} --end ${b2} \
+            --no-date --plotonly --prefix="v3" --rundir .
+  qpdf v3_chr${chr}_${b1}-${b2}.pdf --pages . 1 -- v3-lz.pdf
 # https://www.eqtlgen.org/trans-eqtls.html
 # https://www.eqtlgen.org/cis-eqtls.html
   export AF=2018-07-18_SNP_AF_for_AlleleB_combined_allele_counts_and_MAF_pos_added.txt.gz
@@ -441,9 +468,10 @@ export b1=$(expr ${pos} - 100000)
 export b2=$(expr ${pos} + 100000)
 export bracket=${b1}-${b2}
 awk -vchr=${chr} -vb1=${b1} -vb2=${b2} 'BEGIN{print chr,b1,b2}' > st.tmp
+export v3=~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz
 
 module load python/2.7
-INTERVAL_eQTLGen_SCALLOP
+MS_eQTLGen_SCALLOP
 stack_assoc_plot_hyprcoloc
 PWCoCo
 cd -

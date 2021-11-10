@@ -8,10 +8,27 @@ export end=$(expr ${pos} + 100000)
 export region=${chr}:${start}-${end}
 export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
 export TMPDIR=/rds/user/jhz22/hpc-work/work
-export v3=~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz
 
-function lz()
+function blood_cell_traits()
 {
+  export ext=_EUR_buildGRCh37.tsv.gz
+  ls ${dir}/*EUR* | xargs -I{} basename {} ${ext} | \
+  parallel -C' ' --env dir --env ext '
+  (
+    echo chromosome base_pair_location snpid effect_allele other_allele effect_allele_frequency beta standard_error p_value | \
+    tr " " "\t"
+    gunzip -c ${dir}/{}${ext} | \
+    sed "1d" | \
+    sort -k1,1n -k2,2n | \
+    awk -vOFS="\t" "{
+      if (\$3<\$4) snpid=\"chr\"\$1\":\"\$2\"_\"\$3\"_\"\$4;
+      else snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$3;
+      print \$1, \$2, snpid, \$3, \$4, \$5, \$6, \$7, \$8
+    }"
+  ) | \
+  bgzip -f > ${dir}/tsv/EUR-{}.gz
+  tabix -f -S1 -s1 -b2 -e2 ${dir}/tsv/EUR-{}.gz
+  '
   module load python/2.7
   ls ${dir}/tsv/*gz | xargs -I{} basename {} .gz | \
   grep -e wbc -e mono -e neut -e lymph -e eo -e baso | \
@@ -30,33 +47,6 @@ function lz()
   qpdf {}_chr${chr}_${start}-${end}.pdf --pages . 1 -- {}-lz.pdf
   '
   qpdf --empty --pages *lz.pdf -- blood-cell-traits.pdf
-# gunzip -c discovery_metav3.0.meta.gz | grep rs1800693
-# CHR BP SNP A1 A2 N P OR
-# 12 6440009 rs1800693 T C 14 1.017e-13 0.8808
-# gunzip -c Final-metaanalysis-echip.txt.gz | grep 1800693
-#  CHR         BP            SNP  A1  A2   N           P        P(R)      OR   OR(R)       Q       I
-#  12     6440009  exm-rs1800693   T   C  13   1.003e-26    2.11e-09  1.0332  1.0300  0.0351   46.00
-  (
-    echo -e "SNPid\tSNP\tchr\tpos\ta1\ta2\tb\tse\tp"
-    Rscript -e 'require(dplyr)
-                write.table(read.table(Sys.getenv("v3"),header=TRUE) %>%
-                            mutate(A1=toupper(A1),A2=toupper(A2),
-                                   SNP=paste0("chr",CHR,":",BP,"_",if_else(A1>A2,paste0(A2,"_",A1),paste0(A1,"_",A2))),
-                                   b=log(OR),se=TwoSampleMR::get_se(b,P)) %>%
-                            filter(CHR==as.integer(Sys.getenv("chr")) & BP>=as.integer(Sys.getenv("start")) & BP < as.integer(Sys.getenv("end"))) %>%
-                            filter(!is.na(b) & !is.na(se) & b!=0 & se!=0) %>%
-                            arrange(BP) %>%
-                            select(CHR,BP,SNP,A1,A2,b,se,P),
-                            col.names=FALSE,row.names=FALSE,quote=FALSE)' | \
-    sort -k1,1 | \
-    join -23 ${INF}/work/INTERVAL.rsid - | \
-    tr ' ' '\t'
-  ) > ${INF}/MS/v3.lz
-  rm -rf ld_cache.db
-  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/MS/v3.lz --delim tab title="MS" \
-            --markercol SNP --pvalcol p --chr ${chr} --start ${start} --end ${end} \
-            --no-date --plotonly --prefix="v3" --rundir .
-  qpdf v3_chr${chr}_${start}-${end}.pdf --pages . 1 -- v3-lz.pdf
 }
 
 function ma()
@@ -110,7 +100,7 @@ function cojo()
          sed -i 's/'"$i"'/'"$top"'/g' ${INF}/MS/EUR-${cell}.prune.in
       fi
       sort ${INF}/MS/EUR-${cell}.prune.in > ${INF}/MS/EUR-${cell}.prune
-      export P_threshold=5e-8
+      export P_threshold=1e-5
     # drop the --extract option with v3
       if [ "${cell}" == "v3" ]; then
       gcta-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL --chr 12 \
@@ -156,32 +146,6 @@ function cojo()
       fi
   done
 }
-
-cojo
-
-function blood_cell_traits()
-{
-  export ext=_EUR_buildGRCh37.tsv.gz
-  ls ${dir}/*EUR* | xargs -I{} basename {} ${ext} | \
-  parallel -C' ' --env dir --env ext '
-  (
-    echo chromosome base_pair_location snpid effect_allele other_allele effect_allele_frequency beta standard_error p_value | \
-    tr " " "\t"
-    gunzip -c ${dir}/{}${ext} | \
-    sed "1d" | \
-    sort -k1,1n -k2,2n | \
-    awk -vOFS="\t" "{
-      if (\$3<\$4) snpid=\"chr\"\$1\":\"\$2\"_\"\$3\"_\"\$4;
-      else snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$3;
-      print \$1, \$2, snpid, \$3, \$4, \$5, \$6, \$7, \$8
-    }"
-  ) | \
-  bgzip -f > ${dir}/tsv/EUR-{}.gz
-  tabix -f -S1 -s1 -b2 -e2 ${dir}/tsv/EUR-{}.gz
-  '
-}
-
-blood_cell_traits
 
 function coloc()
 {
@@ -340,7 +304,7 @@ function wgs()
   END
 }
 
-wgs > ${INF}/MS/${prot}-MS-MR.log
+# wgs > ${INF}/MS/${prot}-MS-MR.log
 
 function pqtl_qtl_rsid()
 {
@@ -455,12 +419,9 @@ function pqtl_flanking()
 export M=60000
 export get_data=no
 
-pqtl_flanking
-pqtl
-
-R --no-save -q <<END
-  info <- function()
-  {
+function info()
+{
+  Rscript -e '
     # https://gwas.mrcieu.ac.uk/datasets/?trait__icontains=multiple%20sclerosis
       ms_ids <- c("ukb-b-17670","ieu-b-18","ieu-a-1025","ebi-a-GCST005531","ieu-a-1024","ebi-a-GCST001198","ieu-a-820","ieu-a-821","finn-a-G6_MS")
       ms_gwasinfo <- ieugwasr::gwasinfo(ms_ids)
@@ -490,15 +451,15 @@ R --no-save -q <<END
       mr_summary <- epigraphdb::mr(outcome_trait="Multiple sclerosis")
       names(mr_summary)[c(2,3,5,6,7)] <- c("exposure","outcome","b","se","pval")
       tryx::volcano_plot(mr_summary)
-  }
-END
+  '
 
 # https://www.gtexportal.org/home/gene/RP1-102E24.8
 # no sample size (N)!!!
-export ichip=~/rds/results/public/gwas/multiple_sclerosis/ImmunoChip_Results/Immunochip_FinalResults_LimitedDiscovery.txt
-awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr&&$3>=start&&$3<=end {print $4,$5,$6,$7,log($10),$11,$9}' ${ichip}
+  export ichip=~/rds/results/public/gwas/multiple_sclerosis/ImmunoChip_Results/Immunochip_FinalResults_LimitedDiscovery.txt
+  awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr&&$3>=start&&$3<=end {print $4,$5,$6,$7,log($10),$11,$9}' ${ichip}
 # CHR BPHG18 BPHG19 ImmunochipID Risk_Allele Ref_Allele Risk_Allele_Freq N P OR SE Q I Region
 # 1 1108138 1118275 vh_1_1108138 G A 0.9586 11 7.62E-01 1.012 0.0404 0.085 39.51 none
+}
 
 # --- legacy ---
 
@@ -613,7 +574,7 @@ cut -f2 work/${prot}.bim > work/${prot}.snpid
 plink --bfile work/${prot} --extract work/${prot}.snpid --r square --out work/${prot}
 grep -f work/${prot}.snpid work/${prot}.z > work/${prot}.gassoc
 
-R --no-save -q <<END
+Rscript -e '
   prot <- Sys.getenv("prot")
   d <- read.table(paste0(file.path("work",prot),".gassoc"),
                          col.names=c("snpid","marker","chr","pos","Multiple_sclerosis","pQTL","eQTL"))
@@ -638,7 +599,8 @@ R --no-save -q <<END
   rsid <- "rs2364485"
   sap <- stack_assoc_plot(markers, z, ld, top.marker=rsid, traits = c("Multiple_sclerosis","pQTL","eQTL"), ylab = "-log10(P)", legend=TRUE)
   stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-",rsid,"-fixed.png"), 3, width=8, height=13, dpi=300)
-END
+'
+}
 
 # Multiple_sclerosis
 
@@ -649,4 +611,5 @@ END
 # 2013
 # chrom	pos	rsid	other_allele	effect_allele	p	beta	se	OR	OR_lower	OR_upper
 # 12      6440009 rs1800693       A       G       6.92e-16        0.13453089295760606     0.01666652509712173     1.144   1.1072334356041962      1.1819874273267836
-}
+
+coloc
