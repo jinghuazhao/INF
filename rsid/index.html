@@ -97,10 +97,6 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#mendelian-randomization-mr-analysis">Mendelian Randomization (MR) analysis</a>
-<ul class="nav flex-column">
-</ul>
-</li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#variant-annotation">Variant annotation</a>
 <ul class="nav flex-column">
 </ul>
@@ -109,7 +105,11 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#generation-of-summary-statistics">Generation of summary statistics</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#mendelian-randomization-mr-analysis">Mendelian Randomization (MR) analysis</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#nested-pgs-model">Nested PGS model</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -117,7 +117,7 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#nested-pgs-model">Nested PGS model</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#generation-of-summary-statistics">Generation of summary statistics</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -196,11 +196,6 @@ utils.sh --&gt; |"internal prune" | jam.sh
 utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 </div>
 <p>Note that the <code>GCTA</code> .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to <code>finemap</code>.</p>
-<h2 id="mendelian-randomization-mr-analysis">Mendelian Randomization (MR) analysis</h2>
-<p>There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in <code>mr.sh</code> and <code>mr.sb</code>. To get around the mishap with rsids we switched back to SNPids; we found the options <code>--clump-r2 0.1 --gsmr-snp-min 10</code> make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.</p>
-<p>It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.</p>
-<p>The GSMR implementation started with CAD/FEV1 (now with <code>gsmr.sh</code>, <code>gsmr.sb</code>, <code>gsmr.R</code>) and then HGI as <code>gsmr_HGI.*</code> and pQTLMR/MR (<code>HGI.sh</code>, <code>HGI.R</code>), and +/- 1MB (<code>rs635634.sh</code>).</p>
-<p>Earlier on, a pQTL-based MR analysis is furnished with <code>pqtlMR.sh</code>.</p>
 <h2 id="variant-annotation">Variant annotation</h2>
 <p>This is exemplified with <code>vep.sh</code>. GARFIELD analysis is furnsihed with <code>garfield.sh</code>. Specific and collective enrichment can be found in <code>magma.sh</code> and <code>rGREAT.sh</code>.</p>
 <h2 id="colocalization-analysis">Colocalization analysis</h2>
@@ -208,8 +203,18 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>Credible set lookup from GTEx v8 is furnished with <code>GTEx-cs.sh</code> and <code>GTEx-cs-jma.sh</code>.</p>
 <p>Eearlier experiments were done with <code>coloc.sb</code> (clumsy) and <code>coloc.R</code> (with pQTLtools) as well as <code>fastenloc.sb</code>.</p>
 <p>Multitrait counterparts were also done with HyPrColoc as in <code>rs12075.sh</code> and <code>LTBR.sh</code>.</p>
-<h2 id="generation-of-summary-statistics">Generation of summary statistics</h2>
-<p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
+<h2 id="mendelian-randomization-mr-analysis">Mendelian Randomization (MR) analysis</h2>
+<p>There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in <code>mr.sh</code> and <code>mr.sb</code>. To get around the mishap with rsids we switched back to SNPids; we found the options <code>--clump-r2 0.1 --gsmr-snp-min 10</code> make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.</p>
+<p>It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.</p>
+<p>The GSMR implementation started with CAD/FEV1 (now with <code>gsmr.sh</code>, <code>gsmr.sb</code>, <code>gsmr.R</code>) and then HGI as <code>gsmr_HGI.*</code> and pQTLMR/MR (<code>HGI.sh</code>, <code>HGI.R</code>), and +/- 1MB (<code>rs635634.sh</code>).</p>
+<p>Earlier on, a pQTL-based MR analysis is furnished with <code>pqtlMR.sh</code>.</p>
+<h2 id="nested-pgs-model">Nested PGS model</h2>
+<p align="center"><img src="grViz.png"/></p>
+<p>Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.</p>
+<p>The figure is obtained with</p>
+<pre><code class="language-bash">dot -Tpng grViz.gv -ogrViz.png
+</code></pre>
+<p>which also be obtained from RStudio for somewhat larger size.</p>
 <h2 id="mathematical-expressions">Mathematical expressions</h2>
 <p>We first make some preparations.</p>
 <p>Let <span class="arithmatex">\(\mbox{x} = SNP\ dosage\)</span>. Note that <span class="arithmatex">\(\mbox{Var}(\mbox{x})=2f(1-f)\)</span>, <span class="arithmatex">\(f=MAF\)</span> or <span class="arithmatex">\(1-MAF\)</span> by symmetry.</p>
@@ -299,13 +304,76 @@ se &amp; = 1/d
 <p>where <span class="arithmatex">\(w_{P}\)</span> is a weight associated with protein abundance level and <strong>V</strong> covariance matrix for <span class="arithmatex">\(z_P\)</span>, respectively.</p>
 </li>
 </ol>
-<h2 id="nested-pgs-model">Nested PGS model</h2>
-<p align="center"><img src="grViz.png"/></p>
-<p>Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.</p>
-<p>The figure is obtained with</p>
-<pre><code class="language-bash">dot -Tpng grViz.gv -ogrViz.png
+<h3 id="uniprot-ids">UniProt IDs</h3>
+<p>The list of proteins on inflammation is within one of the <a href="https://www.olink.com/products/">Olink</a> panels (as in <a href="../doc/Olink%20validation%20data%20all%20panels.xlsx">Olink validation data all panels.xlsx</a>) each containing 92 proteins. Information contained in these panels can be retrieved into R via <a href="../doc/Olink.R">Olink.R</a>, which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.</p>
+<p>BDNF has recently been removed from the assay and replaced with CD8A, <a href="https://www.olink.com/bdnf-info/">https://www.olink.com/bdnf-info/</a>, and there are also changes on TNF and IFN.gamma, <a href="https://www.olink.com/inflammation-upgrade/">https://www.olink.com/inflammation-upgrade/</a>.</p>
+<p>A <a href="https://www.uniprot.org/">UniProt</a> ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While <a href="../doc/inf1.csv">inf1.csv</a> 
+edits Q4ACW9, <a href="../doc/inf2.csv">inf2.csv</a> is inline with UCSC with respect to P12034 and P30203.</p>
+<p>The use of uniprot IDs is noted in two aspects,</p>
+<ol>
+<li>
+<p>The protein list in <a href="../doc/inf1.csv">inf1.csv</a> notes both O43508 and Q4ACW9.</p>
+</li>
+<li>
+<p>Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
+point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). <a href="../doc/hgTables.tsv">hgTables.tsv</a> is based on UCSC, checked over
+UniProt IDs as follows,</p>
+</li>
+</ol>
+<pre><code class="language-bash">grep inf1 doc/olink.prot.list.txt | \
+sed 's/inf1_//g;s/___/\t/g' &gt; inf1.list
+join -t$'\t' -12 -24 \
+     &lt;(sort -k2,2 inf1.list) \
+     &lt;(awk '{split($4,f,"-"); $4=f[1]; if(!index($1,"_")) print}' OFS='\t' doc/hgTables.tsv | sort -k4,4) \
+     &gt; 12
+# 90 lines
+wc -l 12
+# Q8NF90 (FGF.5), Q8WWJ7 (CD6) are missing
+join -v2 -22 12 &lt;(sort -k2,2 inf1.list)
+rm 12
 </code></pre>
-<p>which also be  obtained from RStudio for somewhat larger size.</p>
+<p>Likewise, <a href="../doc/olink.inf.panel.annot.tsv">olink.inf.panel.annot.tsv</a> from <a href="../doc/olink.annotation.R">olink.annotation.R</a> also has the following two entries</p>
+<table>
+<thead>
+<tr>
+<th>"target"</th>
+<th>"target.short"</th>
+<th>"uniprot"</th>
+<th>"panel"</th>
+<th>"prot.on.multiple.panel"</th>
+<th>"panels.with.prot"</th>
+<th>"hgnc_symbol"</th>
+<th>...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Fibroblast growth factor 5 (FGF-5)"</td>
+<td>"FGF-5"</td>
+<td>"Q8NF90"</td>
+<td>"inf"</td>
+<td>FALSE</td>
+<td>NA</td>
+<td>NA</td>
+<td></td>
+</tr>
+<tr>
+<td>"T-cell surface glycoprotein CD6 isoform (CD6)"</td>
+<td>"CD6"</td>
+<td>"Q8WWJ7"</td>
+<td>"inf"</td>
+<td>FALSE</td>
+<td>NA</td>
+<td>NA</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>whose hgnc_symbol can be amended.</p>
+<p><img align="right" height="300" src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300"/></p>
+<p>The overlap with SomaLogic panel is characterised with <a href="../doc/Olink.R">Olink.R</a> which also gives a Venn diagram.</p>
+<h2 id="generation-of-summary-statistics">Generation of summary statistics</h2>
+<p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
 <hr/>
 <h2 id="auxiliary-files">Auxiliary files</h2>
 <table>
@@ -421,79 +489,11 @@ se &amp; = 1/d
 <h3 id="stacked-association-and-related-analysis">Stacked association and related analysis</h3>
 <ol>
 <li>rs12075.sh</li>
-<li>MS.sh (+cojo, two-sample MRs)+LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)</li>
+<li>LTBR.sh (stack_assoc_plot + HyPrColoc/PWCoCo)</li>
 <li>IL.18-rs385076.sh</li>
 <li>OPG-TRANCE.sh</li>
 </ol>
-<p>and <code>MS.sh</code> contains a routine to generate tabix-indexed blood cell traits.</p>
-<h3 id="uniprot-ids">UniProt IDs</h3>
-<p>The list of proteins on inflammation is within one of the <a href="https://www.olink.com/products/">Olink</a> panels (as in <a href="../doc/Olink%20validation%20data%20all%20panels.xlsx">Olink validation data all panels.xlsx</a>) each containing 92 proteins. Information contained in these panels can be retrieved into R via <a href="../doc/Olink.R">Olink.R</a>, which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.</p>
-<p>BDNF has recently been removed from the assay and replaced with CD8A, <a href="https://www.olink.com/bdnf-info/">https://www.olink.com/bdnf-info/</a>, and there are also changes on TNF and IFN.gamma, <a href="https://www.olink.com/inflammation-upgrade/">https://www.olink.com/inflammation-upgrade/</a>.</p>
-<p>A <a href="https://www.uniprot.org/">UniProt</a> ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While <a href="../doc/inf1.csv">inf1.csv</a> 
-edits Q4ACW9, <a href="../doc/inf2.csv">inf2.csv</a> is inline with UCSC with respect to P12034 and P30203.</p>
-<p>The use of uniprot IDs is noted in two aspects,</p>
-<ol>
-<li>
-<p>The protein list in <a href="../doc/inf1.csv">inf1.csv</a> notes both O43508 and Q4ACW9.</p>
-</li>
-<li>
-<p>Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
-point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). <a href="../doc/hgTables.tsv">hgTables.tsv</a> is based on UCSC, checked over
-UniProt IDs as follows,</p>
-</li>
-</ol>
-<pre><code class="language-bash">grep inf1 doc/olink.prot.list.txt | \
-sed 's/inf1_//g;s/___/\t/g' &gt; inf1.list
-join -t$'\t' -12 -24 \
-     &lt;(sort -k2,2 inf1.list) \
-     &lt;(awk '{split($4,f,"-"); $4=f[1]; if(!index($1,"_")) print}' OFS='\t' doc/hgTables.tsv | sort -k4,4) \
-     &gt; 12
-# 90 lines
-wc -l 12
-# Q8NF90 (FGF.5), Q8WWJ7 (CD6) are missing
-join -v2 -22 12 &lt;(sort -k2,2 inf1.list)
-rm 12
-</code></pre>
-<p>Likewise, <a href="../doc/olink.inf.panel.annot.tsv">olink.inf.panel.annot.tsv</a> from <a href="../doc/olink.annotation.R">olink.annotation.R</a> also has the following two entries</p>
-<table>
-<thead>
-<tr>
-<th>"target"</th>
-<th>"target.short"</th>
-<th>"uniprot"</th>
-<th>"panel"</th>
-<th>"prot.on.multiple.panel"</th>
-<th>"panels.with.prot"</th>
-<th>"hgnc_symbol"</th>
-<th>...</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>"Fibroblast growth factor 5 (FGF-5)"</td>
-<td>"FGF-5"</td>
-<td>"Q8NF90"</td>
-<td>"inf"</td>
-<td>FALSE</td>
-<td>NA</td>
-<td>NA</td>
-<td></td>
-</tr>
-<tr>
-<td>"T-cell surface glycoprotein CD6 isoform (CD6)"</td>
-<td>"CD6"</td>
-<td>"Q8WWJ7"</td>
-<td>"inf"</td>
-<td>FALSE</td>
-<td>NA</td>
-<td>NA</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>whose hgnc_symbol can be amended.</p>
-<p><img align="right" height="300" src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300"/></p>
-<p>The overlap with SomaLogic panel is characterised with <a href="../doc/Olink.R">Olink.R</a> which also gives a Venn diagram.</p>
+<p>and <code>LTBR.sh</code> contains a routine to generate tabix-indexed blood cell traits.</p>
 <p><em>Date last changed:</em> <strong>10/11/2021</strong></p></div>
 </div>
 </div>
