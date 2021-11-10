@@ -238,7 +238,7 @@ epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
 epigraphdb-ppi.R | PPI using EpiGraphDB
 gdigt.R | GDI and gene-trials
 GREP.sh | GREP script
-h2pve.R | h2/pve contrast
+h2pve.* | h2/pve summary
 inbio-discover.R | gene lists
 pheweb.Rmd | Data extraction from pheweb.jp
 qqman.sb | Q-Q/Manhattan plots under CSD3
