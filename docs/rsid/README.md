@@ -148,7 +148,7 @@ We now have results 1 and 2 below followed by others.
     then 
 
     * the means are $$\frac{1}{N+1}-\frac{2}{(N+1)^2}+\frac{2}{(N+1)^3}$$ and $$\frac{1}{N-1}-\frac{2}{(N-1)^2}+\frac{2}{(N-1)^3}$$
-    * the variances are $$\frac{2}{(N+1)^2}\left[1-\frac{1}{(N+1)}\right]^2$$ and $$\frac{2}{(N-1)^2}\left[1-\frac{1}{(N-1)}\right^2$, respectively.
+    * the variances are $$\frac{2}{(N+1)^2}\left[1-\frac{1}{(N+1)}\right]^2$$ and $$\frac{2}{(N-1)^2}\left[1-\frac{1}{(N-1)}\right]^2$, respectively.
 
     For $T$ independent pQTLs of a protein from meta-analytic statistics PVE is approximated with
 
