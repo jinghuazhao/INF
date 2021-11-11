@@ -13,7 +13,7 @@ Rscript -e '
   {
     x2 <- (Effect/StdErr)^2
     r2 <- x2 / (N - 2 + x2)
-    v <- 2 / (N - 1)
+    v <- 2 / (N - 1)^2
   })
   s <- with(tbl, aggregate(r2,list(prot),sum))
   names(s) <- c("prot", "pve")
