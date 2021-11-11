@@ -101,30 +101,6 @@ Let $\mbox{x} = SNP\ dosage$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ 
 
 Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Moreover, $\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$.
 
-We also need some established results of a ratio (R/S), i.e., the mean
-
-$$
-\begin{align}
-E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\mbox{Var}(S)\mu_R}{\mu_S^3} \hspace{100cm} 
-\end{align}
-$$
-
-and more importantly the variance
-
-$$
-\begin{align}
-\mbox{Var}(R/S) \approx \frac{\mu_R^2}{\mu_S^2} \left[
-                        \frac{\sigma_R^2}{\mu_R^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
-                       +\frac{\sigma_S^2}{\mu_S^2} \right] \hspace{100cm}
-\end{align}
-$$
-
-where $\mu_R$, $\mu_S$, $\sigma_R^2$, $\sigma_S^2$ are the means and the variances for R and S, respectively.
-
-Finally, we need expectation and variance of $\chi_1^2$, $\chi^2$ distribution of one degree of freedom, which are 1 and 2, respectively.
-
-We now have results 1 and 2 below followed by others.
-
 1.  The proportion of variants explained (PVE).
 
     From above $PVE = {\mbox{Var}(b\mbox{x})}/{\mbox{Var}(\mbox{y})} = {2f(1-f)b^2}/{[2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)]}$. In fact, let $z = {b}/{SE(b)}$, $PVE = {\mbox{z}^2}/{(\mbox{z}^2+N)}$.
@@ -133,23 +109,9 @@ We now have results 1 and 2 below followed by others.
 
     PVE = $\frac{\chi^2}{\chi^2+N-2}$
 
-    The standard errors of both forms can be obtained via variance of a ratio (R/S). All the required elements are listed in a table below.
-
-    Linear regression | $t$-statistic
-    ------------------|--------------
-    $\mu_R=1$         | $\mu_R=1$
-    $\sigma_R^2=2$    | $\sigma_R^2=2$
-    $\mu_S=N+1$       | $\mu_S=N-1$
-    $\sigma_S^2=N+2$    | $\sigma_S^2=N$
-    $\mbox{Cov}(R,S)=2$ | $\mbox{Cov}(R,S)=2$
-
-    then the variances are approximately ${2}/{(N+1)^2}$ and ${2}/{(N-1)^2}$, respectively.
-
     For $T$ independent pQTLs of a protein from meta-analytic statistics PVE is approximated with
 
-    PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}$ or $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}$
-
-    and their variances are $\sum_{i=1}^T\frac{2}{(N_i+1)^2}$ and $\sum_{i=1}^T\frac{2}{(N_i-1)^2}$, respectively..
+    PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}$ or $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}$, respectively.
 
 2.  Seeing that $\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))=\mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N)=2f(1-f)(z^2+N)\mbox{Var}(b)$. When $\mbox{Var}(\mbox{y})=1$, as in cis eQTLGen data, we have $b$ and its standard error (se) as follows,
 
