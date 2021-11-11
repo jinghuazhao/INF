@@ -149,7 +149,7 @@ We now have results 1 and 2 below followed by others.
 
     Characteristics          | Linear regression | $t$-statistic
     -------------------------|-------------------|----------------------------------------------------------------
-    mean  | $\frac{1}{N+1}-\frac{2}{(N+1)^2}+\frac{2}{(N+1)^3}$ | $\frac{1}{N-1}-\frac{2}{(N-1)^2}+\frac{2}{(N-1)^3}$
+    mean  | $\frac{1}{N+1}\left[1-\frac{2}{N+1}+\frac{2}{(N+1)^2}\right]$ | $\frac{1}{N-1}\left[1-\frac{2}{N-1}+\frac{2}{(N-1)^2}\right]$
     variance | $\frac{2}{(N+1)^2}\left[1-\frac{1}{N+1}\right]^2$ | $\frac{2}{(N-1)^2}\left[1-\frac{1}{N-1}\right]^2$
 
     For $T$ independent pQTLs of a protein from meta-analytic statistics PVE is approximated with
