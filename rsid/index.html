@@ -252,6 +252,7 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>PVE = <span class="arithmatex">\(\frac{\chi^2}{\chi^2+N-2}\)</span></p>
 <p>For <span class="arithmatex">\(T\)</span> independent pQTLs of a protein from meta-analytic statistics PVE is approximated with</p>
 <p>PVE = <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}\)</span> or <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}\)</span>, respectively.</p>
+<p>Furthermore, the mean and variance of <span class="arithmatex">\(r^2\)</span> is known to be <span class="arithmatex">\({1}/{(N-1)}\)</span> and ${2(N-2)}/{[(N-1)^2(N+1)]}, respectively.</p>
 </li>
 <li>
 <p>Seeing that <span class="arithmatex">\(\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))=\mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N)=2f(1-f)(z^2+N)\mbox{Var}(b)\)</span>. When <span class="arithmatex">\(\mbox{Var}(\mbox{y})=1\)</span>, as in cis eQTLGen data, we have <span class="arithmatex">\(b\)</span> and its standard error (se) as follows,</p>
