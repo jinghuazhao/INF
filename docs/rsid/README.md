@@ -101,6 +101,8 @@ Let $\mbox{x} = SNP\ dosage$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ 
 
 Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Moreover, $\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$.
 
+Moreover, the mean and variance of the multiple coefficient or the coefficient of determination ($R^2$) are known to be $\frac{1}{(N-1)}$ and $\frac{2(N-2)}{(N-1)^2(N+1)}$, respectively.
+
 We also need some established results of a ratio (R/S), i.e., the mean
 
 $$
@@ -129,11 +131,9 @@ We now have results 1 and 2 below followed by others.
 
     From above $PVE = {\mbox{Var}(b\mbox{x})}/{\mbox{Var}(\mbox{y})} = {2f(1-f)b^2}/{[2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)]}$. In fact, let $z = {b}/{SE(b)}$, $PVE = {\mbox{z}^2}/{(\mbox{z}^2+N)}$.
 
-    On the other hand, also better known as `the coefficient of determination` ($R^2$) for a simple linear regression is also the square of Pearson correlation coefficient ($r$), which is readily from the $t$-statistic of the regression slope, i.e., $r={t}/{\sqrt{t^2+N-2}}$. so assuming $t \equiv \ z \sim \chi_1^2$
+    On the other hand, for a simple linear regression $R^2\equive r^2$ where $r$ is the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r={t}/{\sqrt{t^2+N-2}}$. so assuming $t \equiv \ z \sim \chi_1^2$
 
     PVE = $\frac{\chi^2}{\chi^2+N-2}$
-
-    Moreover, the mean and variance of $R^2$ are known to be ${1}/{(N-1)}$ and ${2(N-2)}/{[(N-1)^2(N+1)]}$, respectively.
 
     To obtain a coherent estimates of the asymptotic means and variances of both forms we resort to variance of a ratio (R/S). All the required elements are listed in a table below.
 
