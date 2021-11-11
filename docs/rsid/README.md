@@ -133,7 +133,7 @@ We now have results 1 and 2 below followed by others.
 
     PVE = $\frac{\chi^2}{\chi^2+N-2}$
 
-    The standard errors of both forms can be obtained via variance of a ratio (R/S). All the elements are listed in a table below.
+    The standard errors of both forms can be obtained via variance of a ratio (R/S). All the required elements are listed in a table below.
 
     Linear regression | $t$-statistic
     ------------------|--------------
@@ -143,7 +143,7 @@ We now have results 1 and 2 below followed by others.
     $\sigma_S^2=N+2$    | $\sigma_S^2=N$
     $\mbox{Cov}(R,S)=2$ | $\mbox{Cov}(R,S)=2$
 
-    the variances are approximately ${2}/{(N+1)^2}$ and ${2}/{(N-1)^2}$, respectively.
+    then the variances are approximately ${2}/{(N+1)^2}$ and ${2}/{(N-1)^2}$, respectively.
 
     For $T$ independent pQTLs of a protein from meta-analytic statistics PVE is approximated with
 
