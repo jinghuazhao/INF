@@ -267,7 +267,7 @@ E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\mbox{V
 <p>From above <span class="arithmatex">\(PVE = {\mbox{Var}(b\mbox{x})}/{\mbox{Var}(\mbox{y})} = {2f(1-f)b^2}/{[2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)]}\)</span>. In fact, let <span class="arithmatex">\(z = {b}/{SE(b)}\)</span>, <span class="arithmatex">\(PVE = {\mbox{z}^2}/{(\mbox{z}^2+N)}\)</span>.</p>
 <p>On the other hand, also better known as <code>the coefficient of determination</code> (<span class="arithmatex">\(R^2\)</span>) for a simple linear regression is also the square of Pearson correlation coefficient (<span class="arithmatex">\(r\)</span>), which is readily from the <span class="arithmatex">\(t\)</span>-statistic of the regression slope, i.e., <span class="arithmatex">\(r={t}/{\sqrt{t^2+N-2}}\)</span>. so assuming <span class="arithmatex">\(t \equiv \ z \sim \chi_1^2\)</span></p>
 <p>PVE = <span class="arithmatex">\(\frac{\chi^2}{\chi^2+N-2}\)</span></p>
-<p>The standard errors of both forms can be obtained via variance of a ratio (R/S). All the elements are listed in a table below.</p>
+<p>The standard errors of both forms can be obtained via variance of a ratio (R/S). All the required elements are listed in a table below.</p>
 <table>
 <thead>
 <tr>
@@ -298,7 +298,7 @@ E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\mbox{V
 </tr>
 </tbody>
 </table>
-<p>the variances are approximately <span class="arithmatex">\({2}/{(N+1)^2}\)</span> and <span class="arithmatex">\({2}/{(N-1)^2}\)</span>, respectively.</p>
+<p>then the variances are approximately <span class="arithmatex">\({2}/{(N+1)^2}\)</span> and <span class="arithmatex">\({2}/{(N-1)^2}\)</span>, respectively.</p>
 <p>For <span class="arithmatex">\(T\)</span> independent pQTLs of a protein from meta-analytic statistics PVE is approximated with</p>
 <p>PVE = <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}\)</span> or <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}\)</span></p>
 <p>and their standard errors are obtained similarly.</p>
