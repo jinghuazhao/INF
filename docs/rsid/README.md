@@ -1,6 +1,6 @@
 # Supplementary notes
 
-This page was initiated with conditional analysis and fine-mapping, and later expanded with information on many aspects of the analysis.
+This page was initiated with conditional analysis and fine-mapping, and now expanded with many other threads of the analysis.
 
 ## Signal selection
 
@@ -250,4 +250,4 @@ uniprot.R | UniProt IDs to others
 utils.sh | utilties
 wgcna.sh | experiment on modules
 
-*Date last changed:* **10/11/2021**
+*Date last changed:* **11/11/2021**
