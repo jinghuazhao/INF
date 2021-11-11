@@ -52,10 +52,11 @@ function MS_eQTLGen_SCALLOP()
   export cis=2019-12-11-cis-eQTLsFDR-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz
   read chr start end < st.tmp
   (
-    gunzip -c ${INF}/work/${AF} | awk -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1||($2==chr && $3>=start && $3<=end)' > eQTLGen.AF
-    gunzip -c ${cis} | \
+    gunzip -c ~/rds/public_databases/eQTLGen/${AF} | \
+    awk -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} 'NR==1||($2==chr && $3>=start && $3<=end)' > eQTLGen.AF
+    gunzip -c ~/rds/public_databases/eQTLGen/${cis} | \
     head -1
-    gunzip -c ${cis} | \
+    gunzip -c ~/rds/public_databases/eQTLGen/${cis} | \
     awk -vchr=${chr} -vstart=${start} -vend=${end} -vgene=${gene} '$3==chr && $4>=start && $4<=end && index($0,gene)>0' | \
     sort -k3,3n -k4,4n
   ) > eQTLGen.lz
@@ -888,6 +889,7 @@ function info()
 }
 
 function ieu_id_ma()
+# ieu-b-18
   (
     echo SNP A1 A2 freq b se p N
     bcftools query -f "%CHROM %POS %ALT %REF %AF [%ES] [%SE] [%LP] [%SS]\n" -r ${region} \
@@ -898,21 +900,18 @@ function ieu_id_ma()
 
 function misc()
 {
-export chr=12
 export start=6400000
 export end=6520000
 export M=0
-export gene=LTBR
-export prot=TNFB
 
 echo Multiple sclerosis
 # rs1800693 chr12:6440009
 # rs2364485 chr12:6514963
 # 2018, the rsid is incomplete
-zgrep -w -e 6440009 -e 6514963 data/discovery_metav3.0.meta.gz
+zgrep -w -e 6440009 -e 6514963 ${v3}
 # 12 6440009 rs1800693 T C 14 1.017e-13 0.8808
 # 12 6514963 rs2364485 C A 15 5.778e-06 0.9041
-gunzip -c data/discovery_metav3.0.meta.gz | \
+gunzip -c ${v3} | \
 sed '1d' | \
 awk '!/^$/' | \
 awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
@@ -925,8 +924,8 @@ awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
   }
 }' | \
 sort -k1,1 | \
-join -12 -21 work/snp_pos - | \
-awk -vOFS="\t" '{print $2,$3,$4,$5,$6,$7,$8}' > work/${prot}-QTL.lz
+join -12 -21 ${INF}/work/snp_pos - | \
+awk -vOFS="\t" '{print $2,$3,$4,$5,$6,$7,$8}' > ${INF}/work/${prot}-QTL.lz
 
 echo 2013
 zgrep -w -e rs1800693 -e rs2364485 data/imsgc_2013_24076602_ms_efo0003885_1_ichip.sumstats.tsv.gz
@@ -945,7 +944,7 @@ awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
 
 echo SCALLOP/INF
 # chr12:6514963_A_C
-gunzip -c METAL/${prot}-1.tbl.gz | \
+gunzip -c ${INF}/METAL/${prot}-1.tbl.gz | \
 sed '1d' | \
 awk -vFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} '
 {
@@ -960,27 +959,27 @@ join -12 -21 ${INF}/work/snp_pos - | \
 awk 'a[$6]++==0' | \
 awk -vOFS="\t" '{print $2, $3, $4, $5, $6, $7, $8}' > ${INF}/work/${prot}-pQTL.lz
 
-cut -f5 work/${prot}-pQTL.lz > work/${prot}-pQTL.snpid
+cut -f5 ${INF}/work/${prot}-pQTL.lz > ${INF}/work/${prot}-pQTL.snpid
 plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract work/${prot}-pQTL.snpid \
       --r2 inter-chr yes-really --ld-snps chr12:6514963_A_C --ld-window-r2 0 --out ${INF}/work/${prot}-pQTL
 (
   awk -vOFS="\t" 'BEGIN{print "snpid","rsid","chr","pos","z","A1","A2","r2"}'
   join -15 -t$'\t' ${INF}/work/${prot}-pQTL.lz <(awk -vOFS="\t" 'NR>1 {print $6,$7}' ${INF}/work/${prot}-pQTL.ld | sort -k1,1)
-) > work/${prot}-pQTL.txt
+) > ${INF}/work/${prot}-pQTL.txt
 
 echo eQTLGen
-zgrep -w ${gene} ${INF}/eQTLGen/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
+zgrep -w ${gene} ~/rds/public_databases/eQTLGen/2019-12-11-cis-eQTLsFDR-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
 awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
 {
   if ($5<$6) snpid="chr" $3 ":" $4 "_" $5 "_" $6;
   else snpid="chr" $3 ":" $4 "_" $6 "_" $5
   if($3==chr && $4>=start-M && $4 <=end+M) print $2,$3,$4,$7,snpid,$5,$6
-}' > work/${prot}-eQTL.lz
+}' > ${INF}/work/${prot}-eQTL.lz
 
 join -a2 -e "NA" -o2.5,2.1,2.2,2.3,1.4,1.6,1.7,2.1,2.2,2.3,2.4,2.6,2.7 \
-     -j5 <(sort -k5,5 work/${prot}-QTL.lz) <(sort -k5,5 work/${prot}-pQTL.lz) | \
+     -j5 <(sort -k5,5 ${INF}/work/${prot}-QTL.lz) <(sort -k5,5 ${INF}/work/${prot}-pQTL.lz) | \
 join -a1 -e "NA" -25 -o1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,1.10,1.11,1.12,1.13,2.1,2.2,2.3,2.4,2.6,2.7 \
-     - <(sort -k5,5 work/${prot}-eQTL.lz) | \
+     - <(sort -k5,5 ${INF}/work/${prot}-eQTL.lz) | \
 awk -vOFS="\t" '
 {
 # 2013 with beta/se
@@ -990,7 +989,7 @@ awk -vOFS="\t" '
 }' | \
 awk 'a[$1]++==0' | \
 awk 'a[$2]++==0' | \
-sort -k3,3n -k4,4n > work/${prot}.z
+sort -k3,3n -k4,4n > ${INF}/work/${prot}.z
 
 cut -f1 ${INF}/work/${prot}.z > ${INF}/work/${prot}.snpid
 plink --bfile ${INF}/INTERVAL/cardio/INTERVAL --extract ${INF}/work/${prot}.snpid --make-bed --out ${INF}/work/${prot}
@@ -999,19 +998,20 @@ plink --bfile work/${prot} --extract ${INF}/work/${prot}.snpid --r square --out 
 grep -f ${INF}/work/${prot}.snpid ${INF}/work/${prot}.z > work/${prot}.gassoc
 
 Rscript -e '
+  INF <- Sys.getenv("INF")
   prot <- Sys.getenv("prot")
-  d <- read.table(paste0(file.path("work",prot),".gassoc"),
+  d <- read.table(paste0(file.path(INF,"work",prot),".gassoc"),
                          col.names=c("snpid","marker","chr","pos","Multiple_sclerosis","pQTL","eQTL"))
   d <- within(d,{Multiple_sclerosis <- qnorm(Multiple_sclerosis/2)})
   markers <- d[c("marker","chr","pos")]
   z <- d[c("Multiple_sclerosis","pQTL","eQTL")]
   rownames(z) <- with(d,marker)
-  ld <- read.table(paste0(file.path("work",prot),".ld"),col.names=with(d,marker),row.names=with(d,marker))
+  ld <- read.table(paste0(file.path(INF,"work",prot),".ld"),col.names=with(d,marker),row.names=with(d,marker))
   library(gassocplot)
   for (rsid in c("rs1800693","rs2364485"))
   {
     sap <- stack_assoc_plot(markers, z, ld, top.marker=rsid, traits = c("Multiple_sclerosis","pQTL","eQTL"), ylab = "-log10(P)", legend=TRUE)
-    stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-",rsid,".png"), 3, width=8, height=13, dpi=300)
+    stack_assoc_plot_save(sap, paste0(file.path(INF,"work",prot),"-",rsid,".png"), 3, width=8, height=13, dpi=300)
   }
   z <- within(z,{Multiple_sclerosis <- NA})
 # rs1800693: P 2e-47 Z -14.46555
@@ -1022,46 +1022,8 @@ Rscript -e '
   z[pos2,"Multiple_sclerosis"] <- -9.26234
   rsid <- "rs2364485"
   sap <- stack_assoc_plot(markers, z, ld, top.marker=rsid, traits = c("Multiple_sclerosis","pQTL","eQTL"), ylab = "-log10(P)", legend=TRUE)
-  stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-",rsid,"-fixed.png"), 3, width=8, height=13, dpi=300)
+  stack_assoc_plot_save(sap, paste0(file.path(INF,"work",prot),"-",rsid,"-fixed.png"), 3, width=8, height=13, dpi=300)
 '
-}
-
-function LTBR()
-{
-export gene=ENSG00000111321
-export chr=12
-export rsid1=rs1800693
-export rsid2=rs2364485
-export pos=6514963
-export b1=$(expr ${pos} - 100000)
-export b2=$(expr ${pos} + 100000)
-export bracket=${b1}-${b2}
-export v3=~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz
-
-cd work
-awk -vchr=${chr} -vb1=${b1} -vb2=${b2} 'BEGIN{print chr,b1,b2}' > st.tmp
-MS_eQTLGen_SCALLOP
-stack_assoc_plot_hyprcoloc
-PWCoCo
-cd -
-}
-
-function MS()
-{
-export prot=TNFB
-export chr=12
-export pos=6514963
-export start=$(expr ${pos} - 100000)
-export end=$(expr ${pos} + 100000)
-export region=${chr}:${start}-${end}
-export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
-export TMPDIR=/rds/user/jhz22/hpc-work/work
-export M=60000
-export get_data=no
-
-cd work
-coloc
-cd -
 }
 
 # MS v3/v3.lz
@@ -1084,3 +1046,30 @@ cd -
 # awk -vchr=${chr} -vstart=${start} -vend=${end} '$1==chr&&$3>=start&&$3<=end {print $4,$5,$6,$7,log($10),$11,$9}' ${ichip}
 # CHR BPHG18 BPHG19 ImmunochipID Risk_Allele Ref_Allele Risk_Allele_Freq N P OR SE Q I Region
 # 1 1108138 1118275 vh_1_1108138 G A 0.9586 11 7.62E-01 1.012 0.0404 0.085 39.51 none
+
+export gene=ENSG00000111321
+export chr=12
+export rsid1=rs1800693
+export rsid2=rs2364485
+export pos=6514963
+export b1=$(expr ${pos} - 100000)
+export b2=$(expr ${pos} + 100000)
+export bracket=${b1}-${b2}
+export v3=~/rds/results/public/gwas/multiple_sclerosis/discovery_metav3.0.meta.gz
+export prot=TNFB
+export start=${b1}
+export end=${b2}
+export region=${chr}:${start}-${end}
+export dir=~/rds/results/public/gwas/blood_cell_traits/chen_2020
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export M=60000
+export get_data=no
+awk -vchr=${chr} -vb1=${b1} -vb2=${b2} 'BEGIN{print chr,b1,b2}' > ${INF}/work/st.tmp
+
+# uncoment a named function to invoke
+cd work
+# MS_eQTLGen_SCALLOP
+# stack_assoc_plot_hyprcoloc
+# PWCoCo
+# coloc
+cd -
