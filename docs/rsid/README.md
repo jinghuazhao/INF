@@ -131,7 +131,7 @@ We now have results 1 and 2 below followed by others.
 
     From above $PVE = {\mbox{Var}(b\mbox{x})}/{\mbox{Var}(\mbox{y})} = {2f(1-f)b^2}/{[2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)]}$. In fact, let $z = {b}/{SE(b)}$, $PVE = {\mbox{z}^2}/{(\mbox{z}^2+N)}$.
 
-    On the other hand, for a simple linear regression $R^2\equive r^2$ where $r$ is the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r={t}/{\sqrt{t^2+N-2}}$. so assuming $t \equiv \ z \sim \chi_1^2$
+    On the other hand, for a simple linear regression $R^2\equiv r^2$ where $r$ is the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r={t}/{\sqrt{t^2+N-2}}$. so assuming $t \equiv \ z \sim \chi_1^2$
 
     PVE = $\frac{\chi^2}{\chi^2+N-2}$
 
