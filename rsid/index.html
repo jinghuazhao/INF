@@ -244,64 +244,14 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>We first make some preparations.</p>
 <p>Let <span class="arithmatex">\(\mbox{x} = SNP\ dosage\)</span>. Note that <span class="arithmatex">\(\mbox{Var}(\mbox{x})=2f(1-f)\)</span>, <span class="arithmatex">\(f=MAF\)</span> or <span class="arithmatex">\(1-MAF\)</span> by symmetry.</p>
 <p>Our linear regression model is <span class="arithmatex">\(\mbox{y}=a + b\mbox{x} + e\)</span>. We have <span class="arithmatex">\(\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)\)</span>. Moreover, <span class="arithmatex">\(\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}\)</span>, we have <span class="arithmatex">\(\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})\)</span>.</p>
-<p>We also need some established results of a ratio (R/S), i.e., the mean</p>
-<div class="arithmatex">\[
-\begin{align}
-E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\mbox{Var}(S)\mu_R}{\mu_S^3} \hspace{100cm} 
-\end{align}
-\]</div>
-<p>and more importantly the variance</p>
-<div class="arithmatex">\[
-\begin{align}
-\mbox{Var}(R/S) \approx \frac{\mu_R^2}{\mu_S^2} \left[
-                        \frac{\sigma_R^2}{\mu_R^2} -2\frac{\mbox{Cov}(R,S)}{\mu_R\;\mu_S}
-                       +\frac{\sigma_S^2}{\mu_S^2} \right] \hspace{100cm}
-\end{align}
-\]</div>
-<p>where <span class="arithmatex">\(\mu_R\)</span>, <span class="arithmatex">\(\mu_S\)</span>, <span class="arithmatex">\(\sigma_R^2\)</span>, <span class="arithmatex">\(\sigma_S^2\)</span> are the means and the variances for R and S, respectively.</p>
-<p>Finally, we need expectation and variance of <span class="arithmatex">\(\chi_1^2\)</span>, <span class="arithmatex">\(\chi^2\)</span> distribution of one degree of freedom, which are 1 and 2, respectively.</p>
-<p>We now have results 1 and 2 below followed by others.</p>
 <ol>
 <li>
 <p>The proportion of variants explained (PVE).</p>
 <p>From above <span class="arithmatex">\(PVE = {\mbox{Var}(b\mbox{x})}/{\mbox{Var}(\mbox{y})} = {2f(1-f)b^2}/{[2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)]}\)</span>. In fact, let <span class="arithmatex">\(z = {b}/{SE(b)}\)</span>, <span class="arithmatex">\(PVE = {\mbox{z}^2}/{(\mbox{z}^2+N)}\)</span>.</p>
 <p>On the other hand, also better known as <code>the coefficient of determination</code> (<span class="arithmatex">\(R^2\)</span>) for a simple linear regression is also the square of Pearson correlation coefficient (<span class="arithmatex">\(r\)</span>), which is readily from the <span class="arithmatex">\(t\)</span>-statistic of the regression slope, i.e., <span class="arithmatex">\(r={t}/{\sqrt{t^2+N-2}}\)</span>. so assuming <span class="arithmatex">\(t \equiv \ z \sim \chi_1^2\)</span></p>
 <p>PVE = <span class="arithmatex">\(\frac{\chi^2}{\chi^2+N-2}\)</span></p>
-<p>The standard errors of both forms can be obtained via variance of a ratio (R/S). All the required elements are listed in a table below.</p>
-<table>
-<thead>
-<tr>
-<th>Linear regression</th>
-<th><span class="arithmatex">\(t\)</span>-statistic</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><span class="arithmatex">\(\mu_R=1\)</span></td>
-<td><span class="arithmatex">\(\mu_R=1\)</span></td>
-</tr>
-<tr>
-<td><span class="arithmatex">\(\sigma_R^2=2\)</span></td>
-<td><span class="arithmatex">\(\sigma_R^2=2\)</span></td>
-</tr>
-<tr>
-<td><span class="arithmatex">\(\mu_S=N+1\)</span></td>
-<td><span class="arithmatex">\(\mu_S=N-1\)</span></td>
-</tr>
-<tr>
-<td><span class="arithmatex">\(\sigma_S^2=N+2\)</span></td>
-<td><span class="arithmatex">\(\sigma_S^2=N\)</span></td>
-</tr>
-<tr>
-<td><span class="arithmatex">\(\mbox{Cov}(R,S)=2\)</span></td>
-<td><span class="arithmatex">\(\mbox{Cov}(R,S)=2\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>then the variances are approximately <span class="arithmatex">\({2}/{(N+1)^2}\)</span> and <span class="arithmatex">\({2}/{(N-1)^2}\)</span>, respectively.</p>
 <p>For <span class="arithmatex">\(T\)</span> independent pQTLs of a protein from meta-analytic statistics PVE is approximated with</p>
-<p>PVE = <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}\)</span> or <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}\)</span></p>
-<p>and their variances are <span class="arithmatex">\(\sum_{i=1}^T\frac{2}{(N_i+1)^2}\)</span> and <span class="arithmatex">\(\sum_{i=1}^T\frac{2}{(N_i-1)^2}\)</span>, respectively..</p>
+<p>PVE = <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}\)</span> or <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}\)</span>, respectively.</p>
 </li>
 <li>
 <p>Seeing that <span class="arithmatex">\(\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))=\mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N)=2f(1-f)(z^2+N)\mbox{Var}(b)\)</span>. When <span class="arithmatex">\(\mbox{Var}(\mbox{y})=1\)</span>, as in cis eQTLGen data, we have <span class="arithmatex">\(b\)</span> and its standard error (se) as follows,</p>
