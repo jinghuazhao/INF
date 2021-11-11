@@ -113,6 +113,8 @@ Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}
 
     PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}$ or $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}$, respectively.
 
+    Furthermore, the mean and variance of $r^2$ is known to be ${1}/{(N-1)}$ and ${2(N-2)}/{[(N-1)^2(N+1)]}, respectively.
+
 2.  Seeing that $\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))=\mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N)=2f(1-f)(z^2+N)\mbox{Var}(b)$. When $\mbox{Var}(\mbox{y})=1$, as in cis eQTLGen data, we have $b$ and its standard error (se) as follows,
 
     $$
