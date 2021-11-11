@@ -135,7 +135,7 @@ We now have results 1 and 2 below followed by others.
 
     Moreover, the mean and variance of $R^2$ are known to be ${1}/{(N-1)}$ and ${2(N-2)}/{[(N-1)^2(N+1)]}$, respectively.
 
-    To obtain a coherent estimates of the variances of both forms we resort to variance of a ratio (R/S). All the required elements are listed in a table below.
+    To obtain a coherent estimates of the asymptotic means and variances of both forms we resort to variance of a ratio (R/S). All the required elements are listed in a table below.
 
     Linear regression | $t$-statistic
     ------------------|--------------
@@ -145,7 +145,10 @@ We now have results 1 and 2 below followed by others.
     $\sigma_S^2=2$    | $\sigma_S^2=2$
     $\mbox{Cov}(R,S)=2$ | $\mbox{Cov}(R,S)=2$
 
-    then the variances are approximately ${2}/{(N+1)^2}[1-{1}/{(N+1)}]^2$ and ${2}/{(N-1)^2}[1-{1}/{(N-1)}]^2$, respectively.
+    then 
+
+    * the means are $$\frac{1}{N+1}-\frac{2}{(N+1)^2}+\frac{2}{(N+1)^3}$$ and $$\frac{1}{N-1}-\frac{2}{(N-1)^2}+\frac{2}{(N-1)^3}$$
+    * the variances are $$\frac{2}{(N+1)^2}\left[1-\frac{1}{(N+1)}\right]^2$$ and $$\frac{2}{(N-1)^2}\left[1-\frac{1}{(N-1)}\right^2$, respectively.
 
     For $T$ independent pQTLs of a protein from meta-analytic statistics PVE is approximated with
 
