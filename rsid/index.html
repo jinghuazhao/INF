@@ -299,11 +299,28 @@ E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\mbox{V
 </tr>
 </tbody>
 </table>
-<p>then </p>
-<ul>
-<li>the means are <span class="arithmatex">\(\frac{1}{N+1}-\frac{2}{(N+1)^2}+\frac{2}{(N+1)^3}\)</span> and <span class="arithmatex">\(\frac{1}{N-1}-\frac{2}{(N-1)^2}+\frac{2}{(N-1)^3}\)</span>, respectively</li>
-<li>the variances are <span class="arithmatex">\(\frac{2}{(N+1)^2}\left[1-\frac{1}{N+1}\right]^2\)</span> and <span class="arithmatex">\(\frac{2}{(N-1)^2}\left[1-\frac{1}{N-1}\right]^2\)</span>, respectively.</li>
-</ul>
+<p>then we have</p>
+<table>
+<thead>
+<tr>
+<th>Characteristics</th>
+<th>Linear regression</th>
+<th><span class="arithmatex">\(t\)</span>-statistic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mean</td>
+<td><span class="arithmatex">\(\frac{1}{N+1}-\frac{2}{(N+1)^2}+\frac{2}{(N+1)^3}\)</span></td>
+<td><span class="arithmatex">\(\frac{1}{N-1}-\frac{2}{(N-1)^2}+\frac{2}{(N-1)^3}\)</span></td>
+</tr>
+<tr>
+<td>variance</td>
+<td><span class="arithmatex">\(\frac{2}{(N+1)^2}\left[1-\frac{1}{N+1}\right]^2\)</span></td>
+<td><span class="arithmatex">\(\frac{2}{(N-1)^2}\left[1-\frac{1}{N-1}\right]^2\)</span></td>
+</tr>
+</tbody>
+</table>
 <p>For <span class="arithmatex">\(T\)</span> independent pQTLs of a protein from meta-analytic statistics PVE is approximated with</p>
 <p>PVE = <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}\)</span> or <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}\)</span></p>
 <p>and their variances are approximately <span class="arithmatex">\(\sum_{i=1}^T\frac{2}{(N_i+1)^2}\)</span> and <span class="arithmatex">\(\sum_{i=1}^T\frac{2}{(N_i-1)^2}\)</span>, respectively.</p>
