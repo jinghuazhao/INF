@@ -145,10 +145,12 @@ We now have results 1 and 2 below followed by others.
     $\sigma_S^2=2$    | $\sigma_S^2=2$
     $\mbox{Cov}(R,S)=2$ | $\mbox{Cov}(R,S)=2$
 
-    then 
+    then we have
 
-    * the means are $\frac{1}{N+1}-\frac{2}{(N+1)^2}+\frac{2}{(N+1)^3}$ and $\frac{1}{N-1}-\frac{2}{(N-1)^2}+\frac{2}{(N-1)^3}$, respectively
-    * the variances are $\frac{2}{(N+1)^2}\left[1-\frac{1}{N+1}\right]^2$ and $\frac{2}{(N-1)^2}\left[1-\frac{1}{N-1}\right]^2$, respectively.
+    Characteristics          | Linear regression | $t$-statistic
+    -------------------------|-------------------|----------------------------------------------------------------
+    mean  | $\frac{1}{N+1}-\frac{2}{(N+1)^2}+\frac{2}{(N+1)^3}$ | $\frac{1}{N-1}-\frac{2}{(N-1)^2}+\frac{2}{(N-1)^3}$
+    variance | $\frac{2}{(N+1)^2}\left[1-\frac{1}{N+1}\right]^2$ | $\frac{2}{(N-1)^2}\left[1-\frac{1}{N-1}\right]^2$
 
     For $T$ independent pQTLs of a protein from meta-analytic statistics PVE is approximated with
 
