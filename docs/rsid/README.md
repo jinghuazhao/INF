@@ -149,7 +149,7 @@ We now have results 1 and 2 below followed by others.
 
     PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}$ or $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}$
 
-    and their standard errors are obtained similarly.
+    and their variances are $\sum_{i=1}^T\frac{2}{(N_i+1)^2}$ and $\sum_{i=1}^T\frac{2}{(N_i-1)^2}$, respectively..
 
 2.  Seeing that $\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))=\mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N)=2f(1-f)(z^2+N)\mbox{Var}(b)$. When $\mbox{Var}(\mbox{y})=1$, as in cis eQTLGen data, we have $b$ and its standard error (se) as follows,
 
