@@ -105,15 +105,15 @@ Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}
 
     From above $PVE = {\mbox{Var}(b\mbox{x})}/{\mbox{Var}(\mbox{y})} = {2f(1-f)b^2}/{[2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)]}$. In fact, let $z = {b}/{SE(b)}$, $PVE = {\mbox{z}^2}/{(\mbox{z}^2+N)}$.
 
-    On the other hand, also better known as `the coefficient of determination` ($R^2$) for a simple linear regression is also the square of Pearson correlation coefficient ($r$), which is readily from the $t$-statistic of the regression slope, i.e., $r={t}/{\sqrt{t^2+N-2}}$. so assuming $t \equiv \ z \sim \chi_1^2$
+    On the other hand, also better known as `the coefficient of determination` ($R^2$) for a simple linear regression is also the square of Pearson correlation coefficient ($r$), which is readily from the $t$-statistic of the regression slope, i.e., $r={t}/{\sqrt{t^2+N-2}}$, so assuming $t \equiv \ z \sim \chi_1^2$
 
     PVE = $\frac{\chi^2}{\chi^2+N-2}$
+
+    Moreover, the mean and variance of $R^2$ are known to be ${1}/{(N-1)}$ and ${2(N-2)}/{[(N-1)^2(N+1)]}$, respectively.
 
     For $T$ independent pQTLs of a protein from meta-analytic statistics PVE is approximated with
 
     PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}$ or $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}$, respectively.
-
-    Furthermore, the mean and variance of $r^2$ is known to be ${1}/{(N-1)}$ and ${2(N-2)}/{[(N-1)^2(N+1)]}, respectively.
 
 2.  Seeing that $\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))=\mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N)=2f(1-f)(z^2+N)\mbox{Var}(b)$. When $\mbox{Var}(\mbox{y})=1$, as in cis eQTLGen data, we have $b$ and its standard error (se) as follows,
 
