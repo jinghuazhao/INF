@@ -299,7 +299,7 @@ E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\sigma_
 </tr>
 </tbody>
 </table>
-<p>then we have</p>
+<p>then we have the means and the variances as well as approximation for a protein with <span class="arithmatex">\(T\)</span> independent pQTLs from meta-analysis.</p>
 <table>
 <thead>
 <tr>
@@ -319,11 +319,18 @@ E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\sigma_
 <td><span class="arithmatex">\(\frac{2}{(N+1)^2}\left[1-\frac{1}{N+1}\right]^2\)</span></td>
 <td><span class="arithmatex">\(\frac{2}{(N-1)^2}\left[1-\frac{1}{N-1}\right]^2\)</span></td>
 </tr>
+<tr>
+<td>PVE</td>
+<td><span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}\)</span></td>
+<td><span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\mbox{Var}(\mbox{PVE})\)</span></td>
+<td><span class="arithmatex">\(\sum_{i=1}^T\frac{2}{(N_i+1)^2}\)</span></td>
+<td><span class="arithmatex">\(\sum_{i=1}^T\frac{2}{(N_i-1)^2}\)</span></td>
+</tr>
 </tbody>
 </table>
-<p>For <span class="arithmatex">\(T\)</span> independent pQTLs of a protein from meta-analytic statistics PVE is approximated with</p>
-<p>PVE = <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}\)</span> or <span class="arithmatex">\(\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}\)</span></p>
-<p>and their variances are approximately <span class="arithmatex">\(\sum_{i=1}^T\frac{2}{(N_i+1)^2}\)</span> and <span class="arithmatex">\(\sum_{i=1}^T\frac{2}{(N_i-1)^2}\)</span>, respectively.</p>
 </li>
 <li>
 <p>Seeing that <span class="arithmatex">\(\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))=\mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N)=2f(1-f)(z^2+N)\mbox{Var}(b)\)</span>. When <span class="arithmatex">\(\mbox{Var}(\mbox{y})=1\)</span>, as in cis eQTLGen data, we have <span class="arithmatex">\(b\)</span> and its standard error (se) as follows,</p>
