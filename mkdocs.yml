@@ -26,6 +26,7 @@ plugins:
     - mermaid2
 markdown_extensions:
   - attr_list
+  - footnotes
   - meta
   - pymdownx.arithmatex:
       generic: true
