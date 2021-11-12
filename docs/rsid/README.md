@@ -103,7 +103,7 @@ Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}
 
 Moreover, the mean and variance of the multiple correlation coefficient or the coefficient of determination ($R^2$) are known[^1] to be $\frac{1}{N-1}$ and $\frac{2(N-2)}{(N-1)^2(N+1)}$, respectively.
 
-We also need some established results of a ratio (R/S), i.e., the mean
+We also need some established results of a ratio (R/S)[^2], i.e., the mean
 
 $$
 \begin{align}
@@ -257,3 +257,5 @@ wgcna.sh | experiment on modules
 *Date last changed:* **12/11/2021**
 
 [^1]: Kotz, S., Read, C.B., Balakrishnan, N., Vidakovic, B. & Johnson, N.L. Encyclopedia of Statistical Sciences. 2nd edn (John Wiley & Sons, Inc., Hoboken, New Jersey, 2006).
+
+[^2]: https://www.stat.cmu.edu/~hseltman/files/ratio.pdf
