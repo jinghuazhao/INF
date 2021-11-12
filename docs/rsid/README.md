@@ -135,7 +135,7 @@ We now have results 1 and 2 below followed by others.
 
     PVE = $\frac{\chi^2}{\chi^2+N-2}$
 
-    To obtain a coherent estimates of the asymptotic means and variances of both forms we resort to variance of a ratio (R/S). All the required elements are listed in a table below.
+    To obtain coherent estimates of the asymptotic means and variances of both forms we resort to variance of a ratio (R/S). All the required elements are listed in a table below.
 
     Linear regression | $t$-statistic
     ------------------|--------------
