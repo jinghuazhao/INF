@@ -101,7 +101,7 @@ Let $\mbox{x} = SNP\ dosage$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ 
 
 Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Moreover, $\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$.
 
-Moreover, the mean and variance of the multiple correlation coefficient or the coefficient of determination ($R^2$) are known[^1] to be $\frac{1}{N-1}$ and $\frac{2(N-2)}{(N-1)^2(N+1)}$, respectively.
+Moreover, the mean and the variance of the multiple correlation coefficient or the coefficient of determination ($R^2$) are known[^1] to be $\frac{1}{N-1}$ and $\frac{2(N-2)}{(N-1)^2(N+1)}$, respectively.
 
 We also need some established results of a ratio (R/S)[^2], i.e., the mean
 
