@@ -107,7 +107,7 @@ We also need some established results of a ratio (R/S), i.e., the mean
 
 $$
 \begin{align}
-E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\mbox{Var}(S)\mu_R}{\mu_S^3} \hspace{100cm} 
+E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\mu_R\sigma_S^2}{\mu_S^3} \hspace{100cm} 
 \end{align}
 $$
 
@@ -123,7 +123,7 @@ $$
 
 where $\mu_R$, $\mu_S$, $\sigma_R^2$, $\sigma_S^2$ are the means and the variances for R and S, respectively.
 
-Finally, we need expectation and variance of $\chi_1^2$, $\chi^2$ distribution of one degree of freedom, which are 1 and 2, respectively.
+Finally, we need some facts about $\chi_1^2$, $\chi^2$ distribution of one degree of freedom. For $z \sim N(0,1)$, $z^2\sim \chi_1^2$, whose mean and variance are 1 and 2, respectively.
 
 We now have results 1 and 2 below followed by others.
 
