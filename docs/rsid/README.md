@@ -145,18 +145,14 @@ We now have results 1 and 2 below followed by others.
     $\sigma_S^2=2$    | $\sigma_S^2=2$
     $\mbox{Cov}(R,S)=2$ | $\mbox{Cov}(R,S)=2$
 
-    then we have
+    then we have the means and the variances as well as approximation for a protein with $T$ independent pQTLs from meta-analysis.
 
     Characteristics          | Linear regression | $t$-statistic
     -------------------------|-------------------|----------------------------------------------------------------
     mean  | $\frac{1}{N+1}\left[1-\frac{2}{N+1}+\frac{2}{(N+1)^2}\right]$ | $\frac{1}{N-1}\left[1-\frac{2}{N-1}+\frac{2}{(N-1)^2}\right]$
     variance | $\frac{2}{(N+1)^2}\left[1-\frac{1}{N+1}\right]^2$ | $\frac{2}{(N-1)^2}\left[1-\frac{1}{N-1}\right]^2$
-
-    For $T$ independent pQTLs of a protein from meta-analytic statistics PVE is approximated with
-
-    PVE = $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}$ or $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}$
-
-    and their variances are approximately $\sum_{i=1}^T\frac{2}{(N_i+1)^2}$ and $\sum_{i=1}^T\frac{2}{(N_i-1)^2}$, respectively.
+    PVE | $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}$ | $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}$
+    $\mbox{Var}(\mbox{PVE})$ |$\sum_{i=1}^T\frac{2}{(N_i+1)^2}$ | $\sum_{i=1}^T\frac{2}{(N_i-1)^2}$
 
 2.  Seeing that $\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))=\mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N)=2f(1-f)(z^2+N)\mbox{Var}(b)$. When $\mbox{Var}(\mbox{y})=1$, as in cis eQTLGen data, we have $b$ and its standard error (se) as follows,
 
