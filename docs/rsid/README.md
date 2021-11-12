@@ -151,7 +151,7 @@ We now have results 1 and 2 below followed by others.
     -------------------------|-------------------|----------------------------------------------------------------
     mean  | $\frac{1}{N+1}\left[1-\frac{2}{N+1}+\frac{2}{(N+1)^2}\right]$ | $\frac{1}{N-1}\left[1-\frac{2}{N-1}+\frac{2}{(N-1)^2}\right]$
     variance | $\frac{2}{(N+1)^2}\left[1-\frac{1}{N+1}\right]^2$ | $\frac{2}{(N-1)^2}\left[1-\frac{1}{N-1}\right]^2$
-    PVE \
+    PVE
     estimate | $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}$ | $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}$
     variance |$\sum_{i=1}^T\frac{2}{(N_i+1)^2}$ | $\sum_{i=1}^T\frac{2}{(N_i-1)^2}$
 
