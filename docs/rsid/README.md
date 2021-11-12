@@ -107,7 +107,7 @@ We also need some established results of a ratio (R/S), i.e., the mean
 
 $$
 \begin{align}
-E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\mu_R\sigma_S^2}{\mu_S^3} \hspace{100cm} 
+E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\sigma_S^2\mu_R}{\mu_S^3} \hspace{100cm} 
 \end{align}
 $$
 
