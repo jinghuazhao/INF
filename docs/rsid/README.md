@@ -257,5 +257,4 @@ wgcna.sh | experiment on modules
 *Date last changed:* **12/11/2021**
 
 [^1]: Kotz, S., Read, C.B., Balakrishnan, N., Vidakovic, B. & Johnson, N.L. Encyclopedia of Statistical Sciences. 2nd edn (John Wiley & Sons, Inc., Hoboken, New Jersey, 2006).
-
-[^2]: https://www.stat.cmu.edu/~hseltman/files/ratio.pdf
+[^2]: [https://www.stat.cmu.edu/~hseltman/files/ratio.pdf](https://www.stat.cmu.edu/~hseltman/files/ratio.pdf)
