@@ -244,7 +244,7 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>We first make some preparations.</p>
 <p>Let <span class="arithmatex">\(\mbox{x} = SNP\ dosage\)</span>. Note that <span class="arithmatex">\(\mbox{Var}(\mbox{x})=2f(1-f)\)</span>, <span class="arithmatex">\(f=MAF\)</span> or <span class="arithmatex">\(1-MAF\)</span> by symmetry.</p>
 <p>Our linear regression model is <span class="arithmatex">\(\mbox{y}=a + b\mbox{x} + e\)</span>. We have <span class="arithmatex">\(\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)\)</span>. Moreover, <span class="arithmatex">\(\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}\)</span>, we have <span class="arithmatex">\(\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})\)</span>.</p>
-<p>Moreover, the mean and variance of the multiple correlation coefficient or the coefficient of determination (<span class="arithmatex">\(R^2\)</span>) are known to be <span class="arithmatex">\(\frac{1}{N-1}\)</span> and <span class="arithmatex">\(\frac{2(N-2)}{(N-1)^2(N+1)}\)</span>, respectively.</p>
+<p>Moreover, the mean and variance of the multiple correlation coefficient or the coefficient of determination (<span class="arithmatex">\(R^2\)</span>) are known[^kots] to be <span class="arithmatex">\(\frac{1}{N-1}\)</span> and <span class="arithmatex">\(\frac{2(N-2)}{(N-1)^2(N+1)}\)</span>, respectively.</p>
 <p>We also need some established results of a ratio (R/S), i.e., the mean</p>
 <div class="arithmatex">\[
 \begin{align}
@@ -520,7 +520,8 @@ rm 12
 </tr>
 </tbody>
 </table>
-<p><em>Date last changed:</em> <strong>11/11/2021</strong></p></div>
+<p><em>Date last changed:</em> <strong>12/11/2021</strong></p>
+<p>[^kots]: Kotz, S., Read, C.B., Balakrishnan, N., Vidakovic, B. &amp; Johnson, N.L. Encyclopedia of Statistical Sciences. 2nd edn (John Wiley &amp; Sons, Inc., Hoboken, New Jersey, 2006).</p></div>
 </div>
 </div>
 <footer class="col-md-12">
