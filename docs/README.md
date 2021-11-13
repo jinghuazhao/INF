@@ -64,14 +64,17 @@ The link will be added here when available.
 
 * [OlinkAnalyze](https://github.com/Olink-Proteomics/OlinkRPackage)
 * [Olink Insights Stat Analysis](https://tinyurl.com/shj46ukj)
-* [SCALLOP consortium](http://www.scallop-consortium.com/).
 * [Olink location](https://www.olink.com/scallop/), [What is NPX](https://www.olink.com/question/what-is-npx/), [F2F London meeting](https://www.olink.com/scallop-f2f-2019/), [Data Science Workshop 2019](https://www.olink.com/data-science-workshop-2019/).
-* [GitHub repository](https://github.com/lassefolkersen/scallop) for the 2017 *PLoS Genetics* paper above.
-* [securecloud](https://secureremote.dtu.dk/vpn/index.html).
 * [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
-* [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
+* [GitHub repository](https://github.com/lassefolkersen/scallop) for the 2017 *PLoS Genetics* paper.
+* [SCALLOP consortium](http://www.scallop-consortium.com/) ([securecloud](https://secureremote.dtu.dk/vpn/index.html)).
+
+---
+
 * [Aging Plasma Proteome](https://twc-stanford.shinyapps.io/aging_plasma_proteome/) ([DEswan](https://github.com/lehallib/DEswan)).
+* [Computed structures of core eukaryotic protein complexes](https://modelarchive.org/doi/10.5452/ma-bak-cepc)
 * [ImmunoBase](https://genetics.opentargets.org/immunobase).
+* [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
 * [Worldwide PDB](http://www.wwpdb.org/)
 
 ## References

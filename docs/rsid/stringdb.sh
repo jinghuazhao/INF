@@ -1,14 +1,14 @@
 #!/usr/bin/bash
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
-export dir=${INF}
 
-R --no-save <<END
+Rscript -e '
 # https://www.bioconductor.org/packages/release/bioc/vignettes/STRINGdb/inst/doc/STRINGdb.pdf11
-  libary(STRINGdb)
+  INF <- Sys.getenv("INF")
+  library(STRINGdb)
   STRINGdb$methods()
   STRINGdb$help("plot_network")
-  INF1_merge_trans <- read.delim("work/INF1.merge.trans.vepoutput",skip=91,as.is=TRUE)
+  INF1_merge_trans <- read.delim(file.path(INF,"ds","latest","annotate","INF1.merge.proxy.vepoutput"),skip=91,as.is=TRUE)
   string_db <- STRINGdb$new(version="11", species=9606)
   mapped <- string_db$map(INF1_merge_trans, "Gene", removeUnmappedRows=TRUE)
   hits <- with(mapped, STRING_id)
@@ -26,4 +26,4 @@ R --no-save <<END
   TNFSF10 <- string_db$mp("TNFSF10")
   string_db$get_neighbors(c(IL12B,KITLG,TNFSF10))
   string_db$get_interactions(c(IL12B,KITLG,TNFSF10))
-END
+'
