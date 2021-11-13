@@ -2,7 +2,7 @@
 
 source ~/COVID-19/py37/bin/activate
 
-cut -d, -f10,14 ~/INF/work/INF1.merge.cis.vs.trans | \
+cut -d, -f10,14 ${INF}/work/INF1.merge.cis.vs.trans | \
 grep -v trans | \
 cut -d, -f1 > inf1.genes
 
