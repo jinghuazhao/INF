@@ -1,21 +1,12 @@
-## ---- include = FALSE---------------------------------------------------------
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-
-## -----------------------------------------------------------------------------
 library("magrittr")
 library("dplyr")
 library("purrr")
 library("glue")
 library("epigraphdb")
 
-## -----------------------------------------------------------------------------
 GENE_NAME <- "IL12B"
 OUTCOME_TRAIT <- "Inflammatory bowel disease"
 
-## -----------------------------------------------------------------------------
 get_drug_targets_ppi <- function(gene_name) {
   endpoint <- "/gene/druggability/ppi"
   params <- list(gene_name = gene_name)
@@ -26,7 +17,6 @@ get_drug_targets_ppi <- function(gene_name) {
 ppi_df <- get_drug_targets_ppi(gene_name = GENE_NAME)
 ppi_df
 
-## -----------------------------------------------------------------------------
 get_gene_list <- function(ppi_df, include_primary_gene = TRUE) {
   if (include_primary_gene) {
     gene_list <- c(
@@ -44,7 +34,6 @@ get_gene_list <- function(ppi_df, include_primary_gene = TRUE) {
 gene_list <- get_gene_list(ppi_df)
 gene_list
 
-## -----------------------------------------------------------------------------
 extract_mr <- function(outcome_trait, gene_list, qtl_type) {
   endpoint <- "/xqtl/single-snp-mr"
   per_gene <- function(gene_name) {
@@ -71,7 +60,6 @@ xqtl_df <- c("pQTL", "eQTL") %>% map_df(function(qtl_type) {
 })
 xqtl_df
 
-## -----------------------------------------------------------------------------
 extract_literature <- function(outcome_trait, gene_list) {
   per_gene <- function(gene_name) {
     endpoint <- "/gene/literature"
@@ -92,7 +80,3 @@ literature_df <- extract_literature(
   gene_list = gene_list
 )
 literature_df
-
-## -----------------------------------------------------------------------------
-sessionInfo()
-
