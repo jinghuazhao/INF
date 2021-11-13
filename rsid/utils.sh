@@ -374,3 +374,22 @@ function pdf_test()
 # pdftk a.pdf dump_data output a.txt
 # pdftk c.pdf update_info a.txt output d.pdf
 }
+
+function ppi()
+{
+Rscript -e '
+  options(width=200)
+  INF <- Sys.getenv("INF")
+  library(dplyr)
+  inf1 <- pQTLtools::inf1
+  head(inf1)
+  write.table(inf1,file=file.path(INF,"ppi","inf1.txt"),quote=FALSE,row.names=FALSE,sep="\t")
+  library(openxlsx)
+  sheet1 <- read.xlsx(file.path(INF,"ppi","humphreys21.xlsx")) %>%
+            select(-c("ourID","pdbmono1","pdbmono2","KEGGpath1","KEGGpath2","Phob1","Phob2","UniFun1","UniFun2","Uniloc1","Uniloc2","UniPubsInt"))
+  write.table(sheet1,file=file.path(INF,"ppi","ppi.txt"),quote=FALSE,row.names=FALSE,sep="\t")
+  head(sheet1)
+  filter(sheet1,Uniprot1 %in% inf1$uniprot | Uniprot2 %in% inf1$uniprot)
+  '
+  sed '1d' ${INF}/ppi/inf1.txt | cut -f5 | grep -f - -w ${INF}/ppi/ppi.txt
+}
