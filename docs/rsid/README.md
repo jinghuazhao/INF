@@ -137,13 +137,13 @@ We now have results 1 and 2 below followed by others.
 
     To obtain coherent estimates of the asymptotic means and variances of both forms we resort to variance of a ratio (R/S). All the required elements are listed in a table below.
 
-    Linear regression | $t$-statistic
-    ------------------|--------------
-    $\mu_R=1$         | $\mu_R=1$
-    $\sigma_R^2=2$    | $\sigma_R^2=2$
-    $\mu_S=N+1$       | $\mu_S=N-1$
-    $\sigma_S^2=2$    | $\sigma_S^2=2$
-    $\mbox{Cov}(R,S)=2$ | $\mbox{Cov}(R,S)=2$
+    Characteristics   | Linear regression | $t$-statistic
+    ------------------|-------------------|--------------
+    $\mu_R$           |  1    | 1
+    $\sigma_R^2$      |  2    | 2
+    $\mu_S$           | $N+1$ | $N-1$
+    $\sigma_S^2$      |  2    | 2
+    $\mbox{Cov}(R,S)$ |  2    | 2
 
     then we have the means and the variances.
 
