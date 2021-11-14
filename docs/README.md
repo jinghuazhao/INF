@@ -77,6 +77,7 @@ The link will be added here when available.
 * [ImmunoBase](https://genetics.opentargets.org/immunobase).
 * [IntAct](https://www.ebi.ac.uk/intact/home).
 * [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
+* [The human protein atlas](https://www.proteinatlas.org/)
 * [Worldwide PDB](http://www.wwpdb.org/)
 
 ## References
