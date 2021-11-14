@@ -75,6 +75,7 @@ The link will be added here when available.
 * [Bgee](https://bgee.org/).
 * [Computed structures of core eukaryotic protein complexes](https://modelarchive.org/doi/10.5452/ma-bak-cepc)
 * [ImmunoBase](https://genetics.opentargets.org/immunobase).
+* [IntAct](https://www.ebi.ac.uk/intact/home).
 * [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
 * [Worldwide PDB](http://www.wwpdb.org/)
 
