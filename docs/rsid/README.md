@@ -178,15 +178,11 @@ We now have results 1 and 2 below followed by others.
 
     $\sum_{i=1}^k{m\choose{i}}$
 
-4. The GREAT Binomial test is
-
-    $\sum_{i=k_\pi}^n{n\choose{i}}p_\pi^i(1-p_\pi)^{n-i}$
-
-5. A proteome-wide analogy $z_{PWAS}$ is made to (transcriptome)wide association statistic originally proposed for gene expression data. For a given Protein of interest **P** for which GWAS summary statistics $z_P$ is available, the corresponding Wald statistic for PWAS is defined such that
+4. A proteome-wide analogy $z_{PWAS}$ is made to (transcriptome)wide association statistic originally proposed for gene expression data. For a given Protein of interest **P** for which GWAS summary statistics $z_P$ is available, the corresponding Wald statistic for PWAS is defined such that
 
     $z_{PWAS} = \frac{w^T_{P}z_P}{\sqrt{w^T_{P}Vw_{P}}}$
 
-    where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively.
+    where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively. This also mirrors the EWAS-fusion software for methylation data using epigenomewide association statistics.
 
 <img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
 
@@ -258,7 +254,7 @@ uniprot.R | UniProt IDs to others
 utils.sh | utilties
 wgcna.sh | experiment on modules
 
-*Date last changed:* **13/11/2021**
+*Date last changed:* **14/11/2021**
 
 [^1]: Kotz, S., Read, C.B., Balakrishnan, N., Vidakovic, B. & Johnson, N.L. Encyclopedia of Statistical Sciences. 2nd edn (John Wiley & Sons, Inc., Hoboken, New Jersey, 2006).
 [^2]: [https://www.stat.cmu.edu/~hseltman/files/ratio.pdf](https://www.stat.cmu.edu/~hseltman/files/ratio.pdf)
