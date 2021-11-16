@@ -115,8 +115,36 @@ linking IL.12B and TRAIL, respectively.
 
 To generate all possible plots, wo do
 ```bash
-for h in $(cut -f6 work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; hotspot.sh $h; done
-for g in $(cat work/INF1.merge.gene); do echo $g; polygene.sh $g; done
+for h in $(cut -f6 ${INF}/work/INF1.merge | sed '1d' | sort -k1,1 | uniq); do echo $h; hotspot.sh $h; done
+for g in $(cat ${INF}/work/INF1.merge.gene); do echo $g; polygene.sh $g; done
 ```
 
-*Date laste changed:* **7/10/2021**
+A brick-and-tile operation is illustrated with the following code,
+
+```bash
+# long format
+
+bedtools intersect -a <(cut -d, -f3,4,5,7 ${INF}/work/INF1.merge.cis.vs.trans | awk -vFS="," -vOFS="\t" 'NR>1{print "chr" $1,$2-1, $2, $3, $4}') \
+                   -b <(sort -k1,1n -k2,2n ${INF}/csd3/glist-hg19 | grep -v -w -e X -e Y -e XY | awk '{$1="chr" $1;print}' | tr ' ' '\t') \
+                   -wa -wb -loj > sentinel-glist.long
+
+# compact format
+Rscript -e '
+  options(width=1000)
+  d <- read.table("sentinel-glist.long",as.is=TRUE)
+  a <- aggregate(d,by=list(with(d,V1),with(d,V2),with(d,V3)),FUN="c")
+  sink("sentinel-glist.wide")
+  a
+  sink()
+  for (v in c(1:4,6:9))
+  {
+      s <- lapply(a[,3+v],unique,"[[")
+      a[,3+v] <- unlist(lapply(s,paste,collapse=","))
+  }
+  sink("sentinel-glist.short")
+  a[paste0("V",1:9)]
+  sink()
+'
+```
+
+*Date laste changed:* **16/11/2021**
