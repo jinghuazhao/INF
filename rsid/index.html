@@ -268,13 +268,17 @@ E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\sigma_
 <p>From above In fact, let <span class="arithmatex">\(z = {b}/{SE(b)}\)</span>, we have.</p>
 <div class="arithmatex">\[
 \begin{align}
-\mbox{PVE_{\mbox{linear regression}}} &amp; = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} \hspace{100cm} \\
+\mbox{PVE}_{\mbox{linear regression}} &amp; = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} \hspace{100cm} \\
            &amp; = \frac{2f(1-f)b^2}{2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)} \\
            &amp; = \frac{\mbox{z}^2}{\mbox{z}^2+N}
 \end{align}
 \]</div>
 <p>On the other hand, for a simple linear regression <span class="arithmatex">\(R^2\equiv r^2\)</span> where <span class="arithmatex">\(r\)</span> is the Pearson correlation coefficient, which is readily from the <span class="arithmatex">\(t\)</span>-statistic of the regression slope, i.e., <span class="arithmatex">\(r={t}/{\sqrt{t^2+N-2}}\)</span>. so assuming <span class="arithmatex">\(t \equiv \ z \sim \chi_1^2\)</span></p>
-<p>PVE<span class="arithmatex">\(_{\mbox{t-\mbox{statistic}}}\)</span> = <span class="arithmatex">\(\frac{\chi^2}{\chi^2+N-2}\)</span></p>
+<div class="arithmatex">\[
+\begin{align}
+\mbox{PVE}_{\mbox{t-\mbox{statistic}}} &amp; = $\frac{\chi^2}{\chi^2+N-2} \hspace{100cm}
+\end{align}
+\]</div>
 <p>To obtain coherent estimates of the asymptotic means and variances of both forms we resort to variance of a ratio (R/S). All the required elements are listed in a table below.</p>
 <table>
 <thead>
