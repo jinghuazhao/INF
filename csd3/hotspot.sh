@@ -1,4 +1,4 @@
-# 16-11-2021 JHZ
+# 17-11-2021 JHZ
 
 export HOTSPOT=$1
 export cvt=${INF}/work/INF1.merge.cis.vs.trans
@@ -9,7 +9,7 @@ bedtools intersect -a <(grep -w ${HOTSPOT} ${cvt} | awk -v FS="," -v OFS="\t" '{
 cut -f1-3,7 > hotspot.txt
 
 Rscript -e '
-  library(dplyr)
+  suppressMessages(library(dplyr))
   INF <- Sys.getenv("INF")
   HOTSPOT <- Sys.getenv("HOTSPOT")
   b <- read.csv(Sys.getenv("cvt"),as.is=TRUE) %>% filter(SNP==HOTSPOT) %>%

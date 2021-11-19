@@ -1,4 +1,4 @@
-# 16-11-2021 JHZ
+# 17-11-2021 JHZ
 
 export POLYGENE=$1
 export cvt=${INF}/work/INF1.merge.cis.vs.trans
@@ -12,7 +12,7 @@ bedtools intersect -a <(cut -d, -f3,4,10,14 ${cvt} | \
                         awk '{$1="chr" $1;print}' | \
                         tr ' ' '\t') -wa -wb -loj | cut -f1-3,7 > polygene.txt
 Rscript -e '
-  library(dplyr)
+  suppressMessages(library(dplyr))
   INF <- Sys.getenv("INF")
   POLYGENE <- Sys.getenv("POLYGENE")
   cvt <- read.csv(Sys.getenv("cvt"),as.is=TRUE) %>% filter(p.gene==POLYGENE) %>% mutate(p.chr=paste0("chr",p.chr))
