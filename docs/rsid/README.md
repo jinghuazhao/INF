@@ -133,7 +133,7 @@ We now have results 1 and 2 below followed by others.
 
     $$
     \begin{align}
-    \mbox{PVE_\mbox{linear regression}} & = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} \hspace{100cm} \\
+    \mbox{PVE_{\mbox{linear regression}}} & = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} \hspace{100cm} \\
                & = \frac{2f(1-f)b^2}{2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)} \\
                & = \frac{\mbox{z}^2}{\mbox{z}^2+N}
     \end{align}
@@ -141,7 +141,7 @@ We now have results 1 and 2 below followed by others.
 
     On the other hand, for a simple linear regression $R^2\equiv r^2$ where $r$ is the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r={t}/{\sqrt{t^2+N-2}}$. so assuming $t \equiv \ z \sim \chi_1^2$
 
-    PVE$_\mbox{t-\mbox{statistic}}$ = $\frac{\chi^2}{\chi^2+N-2}$
+    PVE$_{\mbox{t-\mbox{statistic}}}$ = $\frac{\chi^2}{\chi^2+N-2}$
 
     To obtain coherent estimates of the asymptotic means and variances of both forms we resort to variance of a ratio (R/S). All the required elements are listed in a table below.
 
