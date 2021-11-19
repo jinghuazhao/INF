@@ -129,7 +129,15 @@ We now have results 1 and 2 below followed by others.
 
 1.  The proportion of variants explained (PVE).
 
-    From above $PVE = {\mbox{Var}(b\mbox{x})}/{\mbox{Var}(\mbox{y})} = {2f(1-f)b^2}/{[2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)]}$. In fact, let $z = {b}/{SE(b)}$, $PVE = {\mbox{z}^2}/{(\mbox{z}^2+N)}$.
+    From above In fact, let $z = {b}/{SE(b)}$, we have.
+
+    $$
+    \begin{align}
+    PVE & = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} \hspace{100cm} \\
+        & = \frac{2f(1-f)b^2}{[2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)] \\
+        & = \frac{\mbox{z}^2}{(\mbox{z}^2+N)}
+    \end{align}
+    $$
 
     On the other hand, for a simple linear regression $R^2\equiv r^2$ where $r$ is the Pearson correlation coefficient, which is readily from the $t$-statistic of the regression slope, i.e., $r={t}/{\sqrt{t^2+N-2}}$. so assuming $t \equiv \ z \sim \chi_1^2$
 
@@ -152,7 +160,7 @@ We now have results 1 and 2 below followed by others.
     mean  | $\frac{1}{N+1}\left[1-\frac{2}{N+1}+\frac{2}{(N+1)^2}\right]$ | $\frac{1}{N-1}\left[1-\frac{2}{N-1}+\frac{2}{(N-1)^2}\right]$
     variance | $\frac{2}{(N+1)^2}\left[1-\frac{1}{N+1}\right]^2$ | $\frac{2}{(N-1)^2}\left[1-\frac{1}{N-1}\right]^2$
 
-    Finally, our approximation of PVE for a protein with $T$ independent pQTLs from meta-analysis
+    Finally, our approximation of PVE for a protein with $T$ independent pQTLs from the meta-analysis
 
     Characteristics          | Linear regression | $t$-statistic
     -------------------------|-------------------|------------------------------------------------------------
