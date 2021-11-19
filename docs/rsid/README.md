@@ -143,7 +143,7 @@ We now have results 1 and 2 below followed by others.
 
     $$
     \begin{align}
-    \mbox{PVE}_{\mbox{t-\mbox{statistic}}} & = $\frac{\chi^2}{\chi^2+N-2} \hspace{100cm}
+    \mbox{PVE}_{t-\mbox{statistic}} & = $\frac{\chi^2}{\chi^2+N-2} \hspace{100cm}
     \end{align}
     $$
 
