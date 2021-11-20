@@ -99,7 +99,13 @@ We first make some preparations.
 
 Let $\mbox{x} = SNP\ dosage$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry.
 
-Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Moreover, $\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$.
+Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Moreover, $\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$. Consequently, 
+
+\begin{eqnarray*}
+\mbox{Var}(\mbox{y}) &=& \mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))  \hspace{100cm} \cr
+                     &=& \mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N) \cr
+                     &=& 2f(1-f)(z^2+N)\mbox{Var}(b)
+\end{eqnarray*} 
 
 Moreover, the mean and the variance of the multiple correlation coefficient or the coefficient of determination ($R^2$) are known[^1] to be ${1}/{(N-1)}$ and ${2(N-2)}/{\left[(N-1)^2(N+1)\right]}$, respectively.
 
@@ -171,7 +177,7 @@ We now have results 1 and 2 below followed by others.
     estimate | $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i}}$ | $\sum_{i=1}^T{\frac{\chi_i^2}{\chi_i^2+N_i-2}}$
     variance |$\sum_{i=1}^T\frac{2}{(N_i+1)^2}$ | $\sum_{i=1}^T\frac{2}{(N_i-1)^2}$
 
-2.  Seeing that $\mbox{Var}(\mbox{y})=\mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))=\mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N)=2f(1-f)(z^2+N)\mbox{Var}(b)$. When $\mbox{Var}(\mbox{y})=1$, as in cis eQTLGen data, we have $b$ and its standard error (se) as follows,
+2.  When $\mbox{Var}(\mbox{y})=1$, as in cis eQTLGen data, we have $b$ and its standard error (se) as follows,
 
     $$
     \begin{align}
