@@ -99,10 +99,10 @@ We first make some preparations.
 
 Let $\mbox{x} = SNP\ dosage$. Note that $\mbox{Var}(\mbox{x})=2f(1-f)$, $f=MAF$ or $1-MAF$ by symmetry.
 
-Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Moreover, $\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$. Consequently, 
+Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)$. Moreover, $\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}$, we have $\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})$. Consequently, let $z = {b}/{SE(b)}$, we have
 
 \begin{eqnarray*}
-\mbox{Var}(\mbox{y}) &=& \mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))  \hspace{100cm} \cr
+\mbox{Var}(\mbox{y}) &=& \mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b)) \hspace{100cm} \cr
                      &=& \mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N) \cr
                      &=& 2f(1-f)(z^2+N)\mbox{Var}(b)
 \end{eqnarray*} 
@@ -135,7 +135,7 @@ We now have results 1 and 2 below followed by others.
 
 1.  The proportion of variants explained (PVE).
 
-    From above In fact, let $z = {b}/{SE(b)}$, we have.
+    From above we have.
 
     $$
     \begin{align}
