@@ -140,7 +140,7 @@ We now have results 1 and 2 below followed by others.
     $$
     \begin{align}
     \mbox{PVE}_{\mbox{linear regression}} & = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} \hspace{100cm} \\
-               & = \frac{2f(1-f)b^2}{2f(1-f)b^2+2Nf(1-f)\mbox{Var}(b)} \\
+               & = \frac{2f(1-f)b^2}{2f(1-f)(b^2+N\mbox{Var}(b))} \\
                & = \frac{\mbox{z}^2}{\mbox{z}^2+N}
     \end{align}
     $$
