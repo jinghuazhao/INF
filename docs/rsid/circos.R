@@ -1,5 +1,3 @@
-circos <- function()
-{
 f <- file.path(INF,"work","INF1.merge")
 INF1_merge <- read.delim(f)[c("Chrom","Start","End","prot","MarkerName")]
 
@@ -28,7 +26,7 @@ write.table(pQTLs,file="pQTLs.txt",col.names=FALSE,row.names=FALSE,quote=FALSE)
 pQTL_labels <- filter(INF1_merge_cvt,gene!=".") %>%
                mutate(gene=paste0(gene,"/",target.short)) %>%
                select(chrom,start,end,gene,fcolor)
-write.table(pQTL_labels,file="pQTL_labels.txt",col.names=FALSE,row.names=FALSE,quote=TRUE)
+write.table(pQTL_labels,file="pQTL_labels.txt",col.names=FALSE,row.names=FALSE,quote=TRUE,sep="\t")
 pQTL_links <- filter(INF1_merge_cvt,!cis) %>%
               select(p.chrom,p.start,p.end,chrom,start,end,lcolor)
 write.table(pQTL_links,file="pQTL_links.txt",col.names=FALSE,row.names=FALSE,quote=FALSE)
@@ -47,7 +45,6 @@ pQTL_genes <- rbind(pQTL_source_genes,pQTL_target_genes) %>%
               select(-chr) %>%
               distinct()
 write.table(pQTL_genes,file="pQTL_genes.txt",col.names=FALSE,row.names=FALSE,quote=FALSE)
-}
 
 ## circlize
 
@@ -95,5 +92,5 @@ INF <- Sys.getenv("INF")
 library(dplyr)
 
 # target.short --> prot and quote=FALSE for circos
-circos()
+
 circlize()
