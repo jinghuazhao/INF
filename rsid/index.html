@@ -243,9 +243,9 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <h2 id="mathematical-expressions">Mathematical expressions</h2>
 <p>We first make some preparations.</p>
 <p>Let <span class="arithmatex">\(\mbox{x} = SNP\ dosage\)</span>. Note that <span class="arithmatex">\(\mbox{Var}(\mbox{x})=2f(1-f)\)</span>, <span class="arithmatex">\(f=MAF\)</span> or <span class="arithmatex">\(1-MAF\)</span> by symmetry.</p>
-<p>Our linear regression model is <span class="arithmatex">\(\mbox{y}=a + b\mbox{x} + e\)</span>. We have <span class="arithmatex">\(\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)\)</span>. Moreover, <span class="arithmatex">\(\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}\)</span>, we have <span class="arithmatex">\(\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})\)</span>. Consequently, </p>
+<p>Our linear regression model is <span class="arithmatex">\(\mbox{y}=a + b\mbox{x} + e\)</span>. We have <span class="arithmatex">\(\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)\)</span>. Moreover, <span class="arithmatex">\(\mbox{Var}(b)=\mbox{Var}(e)/S_\mbox{xx}\)</span>, we have <span class="arithmatex">\(\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})\)</span>. Consequently, let <span class="arithmatex">\(z = {b}/{SE(b)}\)</span>, we have</p>
 <div class="arithmatex">\[\begin{eqnarray*}
-\mbox{Var}(\mbox{y}) &amp;=&amp; \mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b))  \hspace{100cm} \cr
+\mbox{Var}(\mbox{y}) &amp;=&amp; \mbox{Var}(\mbox{x})(b^2+N\mbox{Var}(b)) \hspace{100cm} \cr
                      &amp;=&amp; \mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N) \cr
                      &amp;=&amp; 2f(1-f)(z^2+N)\mbox{Var}(b)
 \end{eqnarray*}\]</div>
@@ -270,7 +270,7 @@ E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\sigma_
 <ol>
 <li>
 <p>The proportion of variants explained (PVE).</p>
-<p>From above In fact, let <span class="arithmatex">\(z = {b}/{SE(b)}\)</span>, we have.</p>
+<p>From above we have.</p>
 <div class="arithmatex">\[
 \begin{align}
 \mbox{PVE}_{\mbox{linear regression}} &amp; = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} \hspace{100cm} \\
