@@ -189,7 +189,7 @@ We now have the following results.
 
 ## Other mathematical expressions
 
-3. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
+A. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
 
     $p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
 
@@ -197,7 +197,7 @@ We now have the following results.
 
     $\sum_{i=1}^k{m\choose{i}}$
 
-4. A proteome-wide analogy $z_{PWAS}$ is made to (transcriptome)wide association statistic originally proposed for gene expression data. For a given Protein of interest **P** for which GWAS summary statistics $z_P$ is available, the corresponding Wald statistic for PWAS is defined such that
+B. A proteome-wide analogy $z_{PWAS}$ is made to (transcriptome)wide association statistic originally proposed for gene expression data. For a given Protein of interest **P** for which GWAS summary statistics $z_P$ is available, the corresponding Wald statistic for PWAS is defined such that
 
     $z_{PWAS} = \frac{w^T_{P}z_P}{\sqrt{w^T_{P}Vw_{P}}}$
 
