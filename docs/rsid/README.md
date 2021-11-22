@@ -61,7 +61,6 @@ Eearlier experiments were done with `coloc.sb` (clumsy) and `coloc.R` (with pQTL
 
 Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LTBR.sh` (stack_assoc_plot + HyPrColoc/PWCoCo) and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits. Stacked association plots were done with `IL.18-rs385076.sh` and `OPG-TRANCE.sh`.
 
-
 ## Mendelian Randomization
 
 There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in `mr.sh` and `mr.sb`. To get around the mishap with rsids we switched back to SNPids; we found the options `--clump-r2 0.1 --gsmr-snp-min 10` make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.
@@ -93,7 +92,7 @@ File `fusion_twas.sb` initiated a FUSION TWAS experiment.
 
 This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
 
-## Mathematical expressions
+## Linear regression
 
 We first make some preparations.
 
@@ -131,11 +130,11 @@ where $\mu_R$, $\mu_S$, $\sigma_R^2$, $\sigma_S^2$ are the means and the varianc
 
 Finally, we need some facts about $\chi_1^2$, $\chi^2$ distribution of one degree of freedom. For $z \sim N(0,1)$, $z^2\sim \chi_1^2$, whose mean and variance are 1 and 2, respectively.
 
-We now have results 1 and 2 below followed by others.
+We now have the following results.
 
 1.  The proportion of variants explained (PVE).
 
-    From above we have.
+    From above we have
 
     $$
     \begin{align}
@@ -187,6 +186,8 @@ We now have results 1 and 2 below followed by others.
     $$
 
     where $d = \sqrt{2f(1-f)(z^2+N)}$.
+
+## Other mathematical expressions
 
 3. The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
 
