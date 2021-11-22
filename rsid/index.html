@@ -125,7 +125,11 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#mathematical-expressions">Mathematical expressions</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#linear-regression">Linear regression</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#other-mathematical-expressions">Other mathematical expressions</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -240,7 +244,7 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>File <code>fusion_twas.sb</code> initiated a FUSION TWAS experiment.</p>
 <h2 id="summary-statistics">Summary statistics</h2>
 <p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
-<h2 id="mathematical-expressions">Mathematical expressions</h2>
+<h2 id="linear-regression">Linear regression</h2>
 <p>We first make some preparations.</p>
 <p>Let <span class="arithmatex">\(\mbox{x} = SNP\ dosage\)</span>. Note that <span class="arithmatex">\(\mbox{Var}(\mbox{x})=2f(1-f)\)</span>, <span class="arithmatex">\(f=MAF\)</span> or <span class="arithmatex">\(1-MAF\)</span> by symmetry.</p>
 <p>Our linear regression model is <span class="arithmatex">\(\mbox{y}=a + b\mbox{x} + e\)</span>. We have <span class="arithmatex">\(\mbox{Var}(\mbox{y}) = b^2\mbox{Var}(\mbox{x}) + \mbox{Var}(e)\)</span>. Moreover, <span class="arithmatex">\(\mbox{Var}(b)=\mbox{Var}(e)(\mbox{x}'\mbox{x})^{-1}=\mbox{Var}(e)/S_\mbox{xx}\)</span>, we have <span class="arithmatex">\(\mbox{Var}(e) = \mbox{Var}(b)S_\mbox{xx} = N \mbox{Var}(b) \mbox{Var}(\mbox{x})\)</span>. Consequently, let <span class="arithmatex">\(z = {b}/{SE(b)}\)</span>, we have</p>
@@ -266,11 +270,11 @@ E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\sigma_
 \]</div>
 <p>where <span class="arithmatex">\(\mu_R\)</span>, <span class="arithmatex">\(\mu_S\)</span>, <span class="arithmatex">\(\sigma_R^2\)</span>, <span class="arithmatex">\(\sigma_S^2\)</span> are the means and the variances for R and S, respectively.</p>
 <p>Finally, we need some facts about <span class="arithmatex">\(\chi_1^2\)</span>, <span class="arithmatex">\(\chi^2\)</span> distribution of one degree of freedom. For <span class="arithmatex">\(z \sim N(0,1)\)</span>, <span class="arithmatex">\(z^2\sim \chi_1^2\)</span>, whose mean and variance are 1 and 2, respectively.</p>
-<p>We now have results 1 and 2 below followed by others.</p>
+<p>We now have the following results.</p>
 <ol>
 <li>
 <p>The proportion of variants explained (PVE).</p>
-<p>From above we have.</p>
+<p>From above we have</p>
 <div class="arithmatex">\[
 \begin{align}
 \mbox{PVE}_{\mbox{linear regression}} &amp; = \frac{\mbox{Var}(b\mbox{x})}{\mbox{Var}(\mbox{y})} \hspace{100cm} \\
@@ -376,6 +380,9 @@ se &amp; = 1/d
 \]</div>
 <p>where <span class="arithmatex">\(d = \sqrt{2f(1-f)(z^2+N)}\)</span>.</p>
 </li>
+</ol>
+<h2 id="other-mathematical-expressions">Other mathematical expressions</h2>
+<ol>
 <li>
 <p>The prior probability for <span class="arithmatex">\(i\)</span> out of <span class="arithmatex">\(m\)</span> variants is causal, is obtained as a binomial probability</p>
 <p><span class="arithmatex">\(p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}\)</span></p>
