@@ -104,6 +104,7 @@ File `fusion_twas.sb` initiated a FUSION TWAS experiment.
 Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
 
 ```mermaid
+graph TD;
   SNP["LD reference panel (bed,bim,fam)"] --> |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
   Methylation --> Protein;
   SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
