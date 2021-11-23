@@ -88,16 +88,9 @@ graph TD;
   Pn --> y
 ```
 
-Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
+Without loss of generality, we have a more explicit figure[^1] genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
 
 <p align="left"><img src="grViz.png"></p>
-
-The figure is obtained with
-
-```bash
-dot -Tpng grViz.gv -ogrViz.png
-```
-which also be obtained from RStudio for somewhat larger size.
 
 File `fusion_twas.sb` initiated a FUSION TWAS experiment.
 
@@ -132,9 +125,9 @@ Our linear regression model is $\mbox{y}=a + b\mbox{x} + e$. We have $\mbox{Var}
                      &=& 2f(1-f)(z^2+N)\mbox{Var}(b)
 \end{eqnarray*} 
 
-Moreover, the mean and the variance of the multiple correlation coefficient or the coefficient of determination ($R^2$) are known[^1] to be ${1}/{(N-1)}$ and ${2(N-2)}/{\left[(N-1)^2(N+1)\right]}$, respectively.
+Moreover, the mean and the variance of the multiple correlation coefficient or the coefficient of determination ($R^2$) are known[^2] to be ${1}/{(N-1)}$ and ${2(N-2)}/{\left[(N-1)^2(N+1)\right]}$, respectively.
 
-We also need some established results of a ratio (R/S)[^2], i.e., the mean
+We also need some established results of a ratio (R/S)[^3], i.e., the mean
 
 $$
 \begin{align}
@@ -299,7 +292,8 @@ uniprot.R | UniProt IDs to others
 utils.sh | utilties
 wgcna.sh | experiment on modules
 
-*Date last changed:* **14/11/2021**
+*Date last changed:* **23/11/2021**
 
-[^1]: Kotz, S., Read, C.B., Balakrishnan, N., Vidakovic, B. & Johnson, N.L. Encyclopedia of Statistical Sciences. 2nd edn (John Wiley & Sons, Inc., Hoboken, New Jersey, 2006).
-[^2]: [https://www.stat.cmu.edu/~hseltman/files/ratio.pdf](https://www.stat.cmu.edu/~hseltman/files/ratio.pdf)
+[^1]: The figure is obtained with `dot -Tpng grViz.gv -ogrViz.png` which also be obtained from RStudio for somewhat larger size.
+[^2]: Kotz, S., Read, C.B., Balakrishnan, N., Vidakovic, B. & Johnson, N.L. Encyclopedia of Statistical Sciences. 2nd edn (John Wiley & Sons, Inc., Hoboken, New Jersey, 2006).
+[^3]: [https://www.stat.cmu.edu/~hseltman/files/ratio.pdf](https://www.stat.cmu.edu/~hseltman/files/ratio.pdf)
