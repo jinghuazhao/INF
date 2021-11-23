@@ -88,7 +88,7 @@ graph TD;
   Pn --> y
 ```
 
-Without loss of generality, we have a more explicit figure[^1] genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
+Without loss of generality, we have a more explicit figure[^1] linking genotype data G, proteins P1, P2, P3 and outcome y.
 
 <p align="left"><img src="grViz.png"></p>
 
