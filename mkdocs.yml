@@ -1,4 +1,5 @@
 site_name: SCALLOP-INF
+site_url: https://github.com/jinghuazhao/INF
 nav:
   - "": README.md
   - doc/SCALLOP_INF1_analysis_plan.md
@@ -25,6 +26,8 @@ plugins:
     - search
     - mermaid2
 markdown_extensions:
+  - toc:
+      permalink: '#'
   - attr_list
   - footnotes
   - meta
