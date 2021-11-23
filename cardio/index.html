@@ -5,6 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://github.com/jinghuazhao/INF/cardio/" rel="canonical"/>
 <link href="../img/favicon.ico" rel="shortcut icon"/>
 <title>Cardio - SCALLOP-INF</title>
 <link href="../css/bootstrap.min.css" rel="stylesheet"/>
@@ -151,27 +152,27 @@
 </div>
 </div></div>
 <div class="col-md-9" role="main">
-<h1 id="cardio">Cardio</h1>
+<h1 id="cardio">Cardio<a class="headerlink" href="#cardio" title="Permanent link">#</a></h1>
 <p>Cardio is the Linux clusters once used by the Cardiovascular Epidemiology Unit at University of Camrbridge.</p>
-<h2 id="interval-reference">INTERVAL reference</h2>
+<h2 id="interval-reference">INTERVAL reference<a class="headerlink" href="#interval-reference" title="Permanent link">#</a></h2>
 <p>/scratch/jhz22/data/INTERVAL</p>
-<h2 id="interval-sumstats">INTERVAL sumstats</h2>
+<h2 id="interval-sumstats">INTERVAL sumstats<a class="headerlink" href="#interval-sumstats" title="Permanent link">#</a></h2>
 <p>location: /scratch/jhz22/INF/sumstats/INTERVAL</p>
-<h2 id="manhattan-plots-by-cohort">Manhattan plots by cohort</h2>
+<h2 id="manhattan-plots-by-cohort">Manhattan plots by cohort<a class="headerlink" href="#manhattan-plots-by-cohort" title="Permanent link">#</a></h2>
 <p>location: /scratch/jhz22/INF/plots</p>
-<h2 id="meta-analysis-sumstats-manhattanq-qlocuszoom-plots">Meta-analysis sumstats + Manhattan/Q-Q/LocusZoom plots</h2>
+<h2 id="meta-analysis-sumstats-manhattanq-qlocuszoom-plots">Meta-analysis sumstats + Manhattan/Q-Q/LocusZoom plots<a class="headerlink" href="#meta-analysis-sumstats-manhattanq-qlocuszoom-plots" title="Permanent link">#</a></h2>
 <p>location: /scratch/jhz22/INF/METAL</p>
 <hr/>
-<h1 id="results-based-on-aproximately-independent-ld-blocks-aild">Results based on aproximately independent LD blocks (AILD)</h1>
+<h1 id="results-based-on-aproximately-independent-ld-blocks-aild">Results based on aproximately independent LD blocks (AILD)<a class="headerlink" href="#results-based-on-aproximately-independent-ld-blocks-aild" title="Permanent link">#</a></h1>
 <p><em>See https://bitbucket.org/nygcresearch/ldetect-data</em></p>
-<h2 id="snpsindels">SNPs+indels</h2>
+<h2 id="snpsindels">SNPs+indels<a class="headerlink" href="#snpsindels" title="Permanent link">#</a></h2>
 <p>location, /scratch/jhz22/INF/aild</p>
 <ul>
 <li>cojo/, <strong>GCTA</strong> --cojo-slct results for all (INF1*) and individual proteins</li>
 <li>ps/, <strong>PhenoScanner</strong> v2 results. coded as in /scratch/jhz22/INF/cardio/ps.sh</li>
 <li>clump/, <strong>PLINK</strong> --clump results for all (INF1*) and individual proteins</li>
 </ul>
-<h2 id="snps-only">SNPs only</h2>
+<h2 id="snps-only">SNPs only<a class="headerlink" href="#snps-only" title="Permanent link">#</a></h2>
 <p>location, /scratch/jhz22/INF/snps</p>
 <ul>
 <li>cojo/, <strong>GCTA</strong> --cojo-slct results for all (INF1*) and individual proteins</li>
@@ -181,13 +182,13 @@
 <li>clump0/ <strong>PLINK</strong> --clump-r2 0 for independent signals</li>
 </ul>
 <hr/>
-<h1 id="genomewide-results-based-on-slide-windows">Genomewide results based on slide windows</h1>
-<h2 id="clumping-results">Clumping results</h2>
+<h1 id="genomewide-results-based-on-slide-windows">Genomewide results based on slide windows<a class="headerlink" href="#genomewide-results-based-on-slide-windows" title="Permanent link">#</a></h1>
+<h2 id="clumping-results">Clumping results<a class="headerlink" href="#clumping-results" title="Permanent link">#</a></h2>
 <p>location: /scratch/jhz22/INF/clumping</p>
 <p>Files: study.reference.LD-cutoff.clumped_reults, e.g., INTERVAL.UK10K+1KG.r2-0.1.clumped</p>
-<h2 id="conditionaljoint-analysis">Conditional/joint analysis</h2>
+<h2 id="conditionaljoint-analysis">Conditional/joint analysis<a class="headerlink" href="#conditionaljoint-analysis" title="Permanent link">#</a></h2>
 <p>location: /scratch/jhz22/INF/cojo</p>
-<h2 id="conditionaljoint-analysis-with-regions-in-high-ld">Conditional/joint analysis with regions in high LD</h2>
+<h2 id="conditionaljoint-analysis-with-regions-in-high-ld">Conditional/joint analysis with regions in high LD<a class="headerlink" href="#conditionaljoint-analysis-with-regions-in-high-ld" title="Permanent link">#</a></h2>
 <p>location: /scratch/jhz22/INF/aild-ld</p>
 <ul>
 <li>aild-indel/, all variants</li>
@@ -217,7 +218,7 @@ phenoscanner -c All -l No -p 0.0000001 -i INF1.ps -o INF1r
   save(r1,r2,r3,r4,file="INF1r.rda",version=2)
 END
 </code></pre>
-<h2 id="approximately-independent-ld-blocks">Approximately independent LD blocks:</h2>
+<h2 id="approximately-independent-ld-blocks">Approximately independent LD blocks:<a class="headerlink" href="#approximately-independent-ld-blocks" title="Permanent link">#</a></h2>
 <ol>
 <li>Set up 1703 autosomal regions as defined in <a href="../tryggve/EURLD.bed">EURLD.bed</a>.</li>
 <li>Extract variants outside the <a href="../tryggve/high-LD-regions-hg19.txt">regions in high LD</a> to <a href="../tryggve/EURLD-no-high-LD-regions-hg19.bed">1672 regions</a> by <a href="../tryggve/EURLD.sh">EURLD.sh</a>.</li>
@@ -232,7 +233,7 @@ END
 <p>The regions are predefined. As shown in <a href="../tryggve/EURLD.tsv">EURLD.tsv</a> by <a href="../tryggve/EURLD.R">EURLD.R</a>, the LD patterns across the genome are more variable than the norm in a typical genomewide association analysis therefore slide windows such as 250kb (36), 500kb (300), or even 10Mb (1071), seeing that the sentinel variant may not necessarily lie right in the middle of a window. The number of signals in our case were close to GCTA but overestimated (53 by PLINK) as in the following table. For instance, it is often seen from the PLINK --clump-range outputs that sliding windows can give results in two neighbouring LD blocks.</p>
 <p>Note that pairing regions of interest would reduce the burden of genomewide analysis, and also that region-specific reference will not affect results from steps 4 and 5 regarding use of variants from GWAS sumstats.</p>
 <p>Steps 4 and 5 both use <code>INF1.aild</code>, which contains all the protein-region pairs. The results are classified as in <a href="../tryggve/analysis.sh">analysis.sh</a>. In particular, for step 5 this is done with <a href="aild.sh">aild.sh</a>.</p>
-<h2 id="near-independent-signals-from-cojo-and-clumping">Near-independent signals from cojo and clumping</h2>
+<h2 id="near-independent-signals-from-cojo-and-clumping">Near-independent signals from cojo and clumping<a class="headerlink" href="#near-independent-signals-from-cojo-and-clumping" title="Permanent link">#</a></h2>
 <table>
 <thead>
 <tr>
