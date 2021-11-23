@@ -24,6 +24,7 @@ source ~/COVID-19/py37/bin/activate
 function install()
 {
   pip install mkdocs-mermaid2-plugin
+  pip install mkdocs-section-index
 }
 
 setup
