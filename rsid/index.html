@@ -249,12 +249,8 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
   ... --&gt; y
   Pn --&gt; y
 </div>
-<p>Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.</p>
+<p>Without loss of generality, we have a more explicit figure<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.</p>
 <p align="left"><img src="grViz.png"/></p>
-<p>The figure is obtained with</p>
-<pre><code class="language-bash">dot -Tpng grViz.gv -ogrViz.png
-</code></pre>
-<p>which also be obtained from RStudio for somewhat larger size.</p>
 <p>File <code>fusion_twas.sb</code> initiated a FUSION TWAS experiment.</p>
 <p>Alternative routes are T(P)WAS with <a href="http://gusevlab.org/projects/fusion/">fusion_twas</a> and EWAS with <a href="https://jinghuazhao.github.io/EWAS-fusion/">EWAS-fusion</a>.</p>
 <div class="mermaid">graph TD;
@@ -275,8 +271,8 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
                      &amp;=&amp; \mbox{Var}(\mbox{x})\mbox{Var}(\mbox{b})(z^2+N) \cr
                      &amp;=&amp; 2f(1-f)(z^2+N)\mbox{Var}(b)
 \end{eqnarray*}\]</div>
-<p>Moreover, the mean and the variance of the multiple correlation coefficient or the coefficient of determination (<span class="arithmatex">\(R^2\)</span>) are known<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> to be <span class="arithmatex">\({1}/{(N-1)}\)</span> and <span class="arithmatex">\({2(N-2)}/{\left[(N-1)^2(N+1)\right]}\)</span>, respectively.</p>
-<p>We also need some established results of a ratio (R/S)<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>, i.e., the mean</p>
+<p>Moreover, the mean and the variance of the multiple correlation coefficient or the coefficient of determination (<span class="arithmatex">\(R^2\)</span>) are known<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> to be <span class="arithmatex">\({1}/{(N-1)}\)</span> and <span class="arithmatex">\({2(N-2)}/{\left[(N-1)^2(N+1)\right]}\)</span>, respectively.</p>
+<p>We also need some established results of a ratio (R/S)<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>, i.e., the mean</p>
 <div class="arithmatex">\[
 \begin{align}
 E(R/S) \approx \frac{\mu_R}{\mu_S}-\frac{\mbox{Cov}(R,S)}{\mu_S^2}+\frac{\sigma_S^2\mu_R}{\mu_S^3} \hspace{100cm} 
@@ -568,15 +564,18 @@ rm 12
 </tr>
 </tbody>
 </table>
-<p><em>Date last changed:</em> <strong>14/11/2021</strong></p>
+<p><em>Date last changed:</em> <strong>23/11/2021</strong></p>
 <div class="footnote">
 <hr/>
 <ol>
 <li id="fn:1">
-<p>Kotz, S., Read, C.B., Balakrishnan, N., Vidakovic, B. &amp; Johnson, N.L. Encyclopedia of Statistical Sciences. 2nd edn (John Wiley &amp; Sons, Inc., Hoboken, New Jersey, 2006). <a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
+<p>The figure is obtained with <code>dot -Tpng grViz.gv -ogrViz.png</code> which also be obtained from RStudio for somewhat larger size. <a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.stat.cmu.edu/~hseltman/files/ratio.pdf">https://www.stat.cmu.edu/~hseltman/files/ratio.pdf</a> <a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">↩</a></p>
+<p>Kotz, S., Read, C.B., Balakrishnan, N., Vidakovic, B. &amp; Johnson, N.L. Encyclopedia of Statistical Sciences. 2nd edn (John Wiley &amp; Sons, Inc., Hoboken, New Jersey, 2006). <a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">↩</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://www.stat.cmu.edu/~hseltman/files/ratio.pdf">https://www.stat.cmu.edu/~hseltman/files/ratio.pdf</a> <a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">↩</a></p>
 </li>
 </ol>
 </div></div>
