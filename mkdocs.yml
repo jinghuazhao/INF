@@ -28,10 +28,7 @@ markdown_extensions:
   - attr_list
   - footnotes
   - meta
-  - toc:
-      permalink: "#"
-      baselevel: 2
-      separator: "_"
+  - permalink: true
   - pymdownx.arithmatex:
       generic: true
 extra_javascript:
