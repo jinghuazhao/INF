@@ -100,23 +100,23 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#parallel-computing">Parallel computing</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#parallel_computing">Parallel computing</a>
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#software-issues">SOFTWARE ISSUES</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#software_issues">SOFTWARE ISSUES</a>
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#code-extraction">Code extraction</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#code_extraction">Code extraction</a>
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#a-summary-of-files">A SUMMARY OF FILES</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#a_summary_of_files">A SUMMARY OF FILES</a>
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#notes-on-results">NOTEs on results</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#notes_on_results">NOTEs on results</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -154,7 +154,7 @@ export threads=1
 soffice tryggve.docx
 xterm -fa arial -fs 12 -bg black -fg white
 </code></pre>
-<h2 id="parallel-computing">Parallel computing<a class="headerlink" href="#parallel-computing" title="Permanent link">¶</a></h2>
+<h2 id="parallel_computing">Parallel computing<a class="headerlink" href="#parallel_computing" title="Permanent link">¶</a></h2>
 <p><a href="METAL.qsub">METAL.qsub</a> was intended to run batch jobs under <a href="https://en.wikipedia.org/wiki/TORQUE">Terascale Open-source
 Resource and QUEue Manager (TORQUE)</a> controls batch jobs and
 distributed compute nodes, enabling integration with <a href="https://en.wikipedia.org/wiki/Moab_Cluster_Suite">Moab cluster
@@ -168,8 +168,8 @@ parallel instead, e.g,</p>
 ls METAL/*.run | parallel --dry-run --env HOME -j8 -C' ' 'metal $HOME/INF/{}'
 </code></pre>
 <p>NB METAL add -1 to the filenames.</p>
-<h2 id="software-issues">SOFTWARE ISSUES<a class="headerlink" href="#software-issues" title="Permanent link">¶</a></h2>
-<h3 id="bash-functions">Bash functions<a class="headerlink" href="#bash-functions" title="Permanent link">¶</a></h3>
+<h2 id="software_issues">SOFTWARE ISSUES<a class="headerlink" href="#software_issues" title="Permanent link">¶</a></h2>
+<h3 id="bash_functions">Bash functions<a class="headerlink" href="#bash_functions" title="Permanent link">¶</a></h3>
 <p>There might be problems with R/3.5.3-ICC-MKL so functions are defined in <code>.bashrc</code> which can be invoked at the start of a session,
 then one invokes R.3.5.3 when necessary. </p>
 <pre><code class="language-bash"># This could be very slow
@@ -187,9 +187,9 @@ function R.3.3.1()
 }
 </code></pre>
 <p>We also use R 3.3.x below.</p>
-<h2 id="code-extraction">Code extraction<a class="headerlink" href="#code-extraction" title="Permanent link">¶</a></h2>
+<h2 id="code_extraction">Code extraction<a class="headerlink" href="#code_extraction" title="Permanent link">¶</a></h2>
 <p>This is possible with codedown, as noted <a href="https://github.com/jinghuazhao/physalia/blob/master/NOTES.md">here</a>.</p>
-<h3 id="locuszoom-14">LocusZoom 1.4<a class="headerlink" href="#locuszoom-14" title="Permanent link">¶</a></h3>
+<h3 id="locuszoom_14">LocusZoom 1.4<a class="headerlink" href="#locuszoom_14" title="Permanent link">¶</a></h3>
 <p>To use LocusZoom 1.4, one only needs to start with</p>
 <pre><code class="language-bash">module load gcc/5.4.0
 module load R/3.2.5
@@ -273,7 +273,7 @@ END
 <p>The <code>fp()</code> function in <code>analysis.sh</code> requires <code>R.3.3.1</code> to be called.</p>
 <p><strong>QCGWAS</strong></p>
 <p>The version contains fix to the use of HapMap reference as in software-notes above. The HapMap data as with code from the packages's quick guide is /data/jinhua/data/QCGWAS.</p>
-<h2 id="a-summary-of-files">A SUMMARY OF FILES<a class="headerlink" href="#a-summary-of-files" title="Permanent link">¶</a></h2>
+<h2 id="a_summary_of_files">A SUMMARY OF FILES<a class="headerlink" href="#a_summary_of_files" title="Permanent link">¶</a></h2>
 <table>
 <thead>
 <tr>
@@ -386,7 +386,7 @@ END
 <li><strong>STABILITY</strong>. 90 (no BDNF, IL.2) protein.</li>
 <li><strong>STANLEY</strong>. 91 (no BDNF) largely complete protein results for lah1 and swe6</li>
 </ul>
-<h2 id="notes-on-results">NOTEs on results<a class="headerlink" href="#notes-on-results" title="Permanent link">¶</a></h2>
+<h2 id="notes_on_results">NOTEs on results<a class="headerlink" href="#notes_on_results" title="Permanent link">¶</a></h2>
 <p>The directory contains several versions of results,</p>
 <table>
 <thead>
