@@ -258,7 +258,8 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>which also be obtained from RStudio for somewhat larger size.</p>
 <p>File <code>fusion_twas.sb</code> initiated a FUSION TWAS experiment.</p>
 <p>Alternative routes are T(P)WAS with <a href="http://gusevlab.org/projects/fusion/">fusion_twas</a> and EWAS with <a href="https://jinghuazhao.github.io/EWAS-fusion/">EWAS-fusion</a>.</p>
-<div class="mermaid">  SNP["LD reference panel (bed,bim,fam)"] --&gt; |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
+<div class="mermaid">graph TD;
+  SNP["LD reference panel (bed,bim,fam)"] --&gt; |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
   Methylation --&gt; Protein;
   SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 </div>
