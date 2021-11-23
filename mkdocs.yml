@@ -1,5 +1,6 @@
 site_name: SCALLOP-INF
 repo_url: https://github.com/jinghuazhao/INF
+edit_uri: ""
 nav:
   - "": README.md
   - doc/SCALLOP_INF1_analysis_plan.md
