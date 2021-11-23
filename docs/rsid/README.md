@@ -86,10 +86,6 @@ graph TD;
   P2 --> y
   ... --> y
   Pn --> y
-
-  SNP["LD reference panel (bed,bim,fam)"] --> |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
-  Methylation --> Protein;
-  SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 ```
 
 Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
@@ -106,6 +102,12 @@ which also be obtained from RStudio for somewhat larger size.
 File `fusion_twas.sb` initiated a FUSION TWAS experiment.
 
 Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
+
+```mermaid
+  SNP["LD reference panel (bed,bim,fam)"] --> |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
+  Methylation --> Protein;
+  SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
+```
 
 ## EWAS with IL-12B
 
