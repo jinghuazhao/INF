@@ -110,7 +110,7 @@ graph TD;
   SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 ```
 
-An example for IL-12B, (EWAS, joint/conditional) Q-Q and Manhattan plots from `ewas-plot.R`.
+Shown below is an example for IL-12B, (EWAS, joint/conditional) Q-Q and Manhattan plots from `ewas-plot.R`.
 
 <p align="center"><img src="ewas-plot.png"></p>
 
