@@ -28,7 +28,7 @@ plugins:
     - mermaid2
 markdown_extensions:
   - toc:
-    permalink: True
+      permalink: True
   - attr_list
   - footnotes
   - meta
