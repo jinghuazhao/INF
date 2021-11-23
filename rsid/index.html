@@ -251,14 +251,13 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 </div>
 <p>Without loss of generality, we have a more explicit figure<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> linking genotype data G, proteins P1, P2, P3 and outcome y.</p>
 <p align="left"><img src="grViz.png"/></p>
-<p>File <code>fusion_twas.sb</code> initiated a FUSION TWAS experiment.</p>
 <p>Alternative routes are T(P)WAS with <a href="http://gusevlab.org/projects/fusion/">fusion_twas</a> and EWAS with <a href="https://jinghuazhao.github.io/EWAS-fusion/">EWAS-fusion</a>.</p>
 <div class="mermaid">graph TD;
   SNP["LD reference panel (bed,bim,fam)"] --&gt; |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
   Methylation --&gt; Protein;
   SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 </div>
-<p>Shown below is an example for IL-12B, (EWAS, joint/conditional) Q-Q and Manhattan plots from <code>ewas-plot.R</code>.</p>
+<p>File <code>fusion_twas.sb</code> initiated a FUSION TWAS experiment. Shown below is an example for IL-12B, (EWAS, joint/conditional) Q-Q and Manhattan plots from <code>ewas-plot.R</code>.</p>
 <p align="center"><img src="ewas-plot.png"/></p>
 <h2 id="summary-statistics">Summary statistics</h2>
 <p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
