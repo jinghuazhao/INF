@@ -134,7 +134,7 @@
 </div>
 </div></div>
 <div class="col-md-9" role="main">
-<h1 id="analysis-plan">Analysis plan</h1>
+<h1 id="analysis-plan">Analysis plan<a class="headerlink" href="#analysis-plan" title="Permanent link">¶</a></h1>
 <p>SCALLOP consortium analysis plan (also <a href="../SCALLOP_INF1_analysis_plan.docx">SCALLOP_INF1_analysis_plan.docx</a>) for Olink/INFlammation panel proteins</p>
 <p><strong><em>Adapted from SCALLOP/CVD1 analysis plan, last updated 27/2/2019</em></strong></p>
 <hr/>
@@ -143,7 +143,7 @@
 </p>
 <p ,="" align="center" style="color:red;font-size:30px"><b>31 December 2018</b></p>
 <hr/>
-<h2 id="1-overview">1. Overview</h2>
+<h2 id="1-overview">1. Overview<a class="headerlink" href="#1-overview" title="Permanent link">¶</a></h2>
 <p>The SCAndinavian coLLaboration for Olink plasma Protein genetics (SCALLOP) consortium, https://www.olink.com/scallop/, is a collaborative framework for discovery and 
 follow-up of genetic associations with proteins on the Olink Proteomics platform. A meta-analysis has been conducted on Olink CVD1 panel data from participating cohorts; 
 consequent requests were sent and contributions made on the Olink INF panel. This document follows closely the SCALLOP/CVD1 analysis plan for the analysis, and in 
@@ -157,16 +157,16 @@ particular highlights relevant information required to facilitate the meta-analy
 <li>Evaluation over the causal role of INF proteins disease outcomes such as CHD and stroke</li>
 <li>Other downstream analysis</li>
 </ul>
-<h2 id="2-data-and-analysis">2. Data and analysis</h2>
-<h3 id="proteins">Proteins</h3>
+<h2 id="2-data-and-analysis">2. Data and analysis<a class="headerlink" href="#2-data-and-analysis" title="Permanent link">¶</a></h2>
+<h3 id="proteins">Proteins<a class="headerlink" href="#proteins" title="Permanent link">¶</a></h3>
 <p>The Olink INFlammation panel of 92 proteins, e.g, https://github.com/jinghuazhao/INF/blob/master/doc/olink.inf.panel.annot.tsv.</p>
-<h3 id="snps">SNPs</h3>
+<h3 id="snps">SNPs<a class="headerlink" href="#snps" title="Permanent link">¶</a></h3>
 <ul>
 <li>1000 genomes imputation, build 37 (hg19) positions.</li>
 <li>SNPs filtering on imputation quality at time of meta-analysis.</li>
 <li>Quality control on aspects such as SNP/sample call rates, gender mismatch, abnormal inbreeding coefficient, failed cryptic relatedness test, ancestry outlier, heterozygosity and Hardy-Weinberg equilibrium test.</li>
 </ul>
-<h3 id="association-analysis">Association analysis</h3>
+<h3 id="association-analysis">Association analysis<a class="headerlink" href="#association-analysis" title="Permanent link">¶</a></h3>
 <ul>
 <li>Rank-based inverse normal transformation on the raw measurement of proteins including those below lower limit of detection, e.g., via <code>invnormal</code> function,</li>
 </ul>
@@ -177,14 +177,14 @@ particular highlights relevant information required to facilitate the meta-analy
 <li>Additive genetic model</li>
 <li>For case-control data, cases and controls are analysed separately – results will be merged at meta-analysis stage</li>
 </ul>
-<h3 id="software">Software</h3>
+<h3 id="software">Software<a class="headerlink" href="#software" title="Permanent link">¶</a></h3>
 <p>It is preferable to use software which account for genotype uncertainty, such as SNPTEST, QUICKTEST, and BOLT-LMM.</p>
-<h2 id="3-descriptive-statistics">3. Descriptive statistics</h2>
+<h2 id="3-descriptive-statistics">3. Descriptive statistics<a class="headerlink" href="#3-descriptive-statistics" title="Permanent link">¶</a></h2>
 <p>A Google sheet has been set up for filling up the information online:</p>
 <p><a href="https://tinyurl.com/y9sw8b5u">https://tinyurl.com/y9sw8b5u</a></p>
 <p>Alternatively, you can use the <a href="../SCALLOP-INF1.xlsx">Excel spreadsheet</a> from this repository. </p>
-<h2 id="4-file-formats-for-gwas-results">4. File formats for GWAS results</h2>
-<h3 id="snp-table-for-gwas-results">SNP table for GWAS results</h3>
+<h2 id="4-file-formats-for-gwas-results">4. File formats for GWAS results<a class="headerlink" href="#4-file-formats-for-gwas-results" title="Permanent link">¶</a></h2>
+<h3 id="snp-table-for-gwas-results">SNP table for GWAS results<a class="headerlink" href="#snp-table-for-gwas-results" title="Permanent link">¶</a></h3>
 <p>Please include the following columns. Missing values are coded as “NA”.</p>
 <table>
 <thead>
@@ -267,9 +267,9 @@ particular highlights relevant information required to facilitate the meta-analy
 </tr>
 </tbody>
 </table>
-<h3 id="file-naming-convention">File-naming convention</h3>
+<h3 id="file-naming-convention">File-naming convention<a class="headerlink" href="#file-naming-convention" title="Permanent link">¶</a></h3>
 <p>It is recommended to use format STUDY_analyst_inf1_protein_UniProtID_date.gz, see https://www.uniprot.org/ for additional information on UniProt IDs.</p>
-<h3 id="notes-on-plink">Notes on PLINK</h3>
+<h3 id="notes-on-plink">Notes on PLINK<a class="headerlink" href="#notes-on-plink" title="Permanent link">¶</a></h3>
 <p>Due possibly to the large number of proteins for GWAS, some cohorts employed PLINK to expedite analysis with which one may see the following information: </p>
 <table>
 <thead>
@@ -357,7 +357,7 @@ statistics can be greatly facilitated with software qctool, http://www.well.ox.a
 </code></pre>
 <p>See also the full SLURM sbatch script in the Appendix.</p>
 <p>When a dosage format is used, PLINK also gives an INFO measure; see http://zzz.bwh.harvard.edu/plink/dosage.shtml. However, per-SNP sample size is not given, which again could be obtained from qctool as described above.</p>
-<h2 id="5-meta-analysis">5. Meta-analysis</h2>
+<h2 id="5-meta-analysis">5. Meta-analysis<a class="headerlink" href="#5-meta-analysis" title="Permanent link">¶</a></h2>
 <p>Meta-analysis will be performed centrally using the inverse-N weighted analysis of regression betas and standard errors, as implemented in the software METAL 
 (https://github.com/statgen/METAL).</p>
 <p>Genomic control and appropriate marker filters will be applied at this stage.</p>
@@ -366,12 +366,12 @@ statistics can be greatly facilitated with software qctool, http://www.well.ox.a
 <li><strong>Genomic control (GC)</strong>: genomic control will be applied at the meta-analysis stage (single GC), so GC-correction is not needed for each cohort. </li>
 <li><strong>Significance</strong>: the Bonferroni threshold for the genome-wide analyses will be set at 5 x 10<sup>-10</sup>. The results will be replicated in independent cohorts.</li>
 </ul>
-<h2 id="6-uploading-of-results">6. Uploading of results</h2>
+<h2 id="6-uploading-of-results">6. Uploading of results<a class="headerlink" href="#6-uploading-of-results" title="Permanent link">¶</a></h2>
 <p>See the CVD1 analysis plan.</p>
-<h2 id="7-contact-information">7. Contact information</h2>
+<h2 id="7-contact-information">7. Contact information<a class="headerlink" href="#7-contact-information" title="Permanent link">¶</a></h2>
 <p>For general questions about SCALLOP, please contact Anders Malarstig (anders.malarstig@ki.se). For technical issues about TRYGGVE, please contact Lasse Folkersen (lasfol@cbs.dtu.dk).</p>
 <p>For questions regarding SCALLOP/INF, please contact Jing Hua Zhao (jhz22@medschl.cam.ac.uk) and James Peters (jp549@medschl.cam.ac.uk).</p>
-<h2 id="appendix">Appendix</h2>
+<h2 id="appendix">Appendix<a class="headerlink" href="#appendix" title="Permanent link">¶</a></h2>
 <p><strong>SLURM script for qctool 2.0.1</strong></p>
 <p>This is called with <code>sbatch qctool.sb</code>, where <code>qctool.sb</code> contains the following lines:</p>
 <pre><code class="language-bash">#!/bin/bash --login
