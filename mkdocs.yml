@@ -29,6 +29,7 @@ plugins:
 markdown_extensions:
   - toc:
       permalink: True
+      separator: "_"
   - attr_list
   - footnotes
   - meta
