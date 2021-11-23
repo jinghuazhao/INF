@@ -6,7 +6,7 @@
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="../img/favicon.ico" rel="shortcut icon"/>
-<title>supplementary notes - SCALLOP-INF</title>
+<title>Supplementary notes - SCALLOP-INF</title>
 <link href="../css/bootstrap.min.css" rel="stylesheet"/>
 <link href="../css/font-awesome.min.css" rel="stylesheet"/>
 <link href="../css/base.css" rel="stylesheet"/>
@@ -56,7 +56,7 @@
 <a class="dropdown-item" href="../csd3/">CSD3</a>
 </li>
 <li>
-<a class="dropdown-item active" href="./">supplementary notes</a>
+<a class="dropdown-item active" href="./">Supplementary notes</a>
 </li>
 </ul>
 </li>
@@ -118,6 +118,10 @@
 </ul>
 </li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#nested-pgs-model">Nested PGS model</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#ewas-with-il-12b">EWAS with IL-12B</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -235,13 +239,31 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>Earlier on, a pQTL-based MR analysis is furnished with <code>pqtlMR.sh</code>.</p>
 <p>Immune-mediatd traits from OpenGWAS is obtained via <code>OpenGWAS.sh</code>. <code>pqtlGWAS.R</code> was used for pQTL-GWAS lookup.</p>
 <h2 id="nested-pgs-model">Nested PGS model</h2>
+<p>A nested predictive model based on genotype data G, which link with proteins P1, P2, ..., Pn as predictors for outcome y.</p>
+<div class="mermaid">graph TD;
+  G --&gt; P1
+  G --&gt; P2
+  G --&gt; ...
+  G --&gt; Pn
+  P1 --&gt; y
+  P2 --&gt; y
+  ... --&gt; y
+  Pn --&gt; y
+
+  SNP["LD reference panel (bed,bim,fam)"] --&gt; |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
+  Methylation --&gt; Protein;
+  SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
+</div>
 <p align="center"><img src="grViz.png"/></p>
-<p>Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.</p>
+<p>Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y. Alternative routes are T(P)WAS with <a href="http://gusevlab.org/projects/fusion/">fusion_twas</a> and EWAS with <a href="https://jinghuazhao.github.io/EWAS-fusion/">EWAS-fusion</a>.</p>
 <p>The figure is obtained with</p>
 <pre><code class="language-bash">dot -Tpng grViz.gv -ogrViz.png
 </code></pre>
 <p>which also be obtained from RStudio for somewhat larger size.</p>
 <p>File <code>fusion_twas.sb</code> initiated a FUSION TWAS experiment.</p>
+<h2 id="ewas-with-il-12b">EWAS with IL-12B</h2>
+<p>(EWAS, joint/conditional) Q-Q and Manhattan plots from <code>ewas-plot.R</code>.</p>
+<p align="center"><img src="ewas-plot.png"/></p>
 <h2 id="summary-statistics">Summary statistics</h2>
 <p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
 <h2 id="linear-regression">Linear regression</h2>
