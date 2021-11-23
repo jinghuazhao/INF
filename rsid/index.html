@@ -249,10 +249,6 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
   P2 --&gt; y
   ... --&gt; y
   Pn --&gt; y
-
-  SNP["LD reference panel (bed,bim,fam)"] --&gt; |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
-  Methylation --&gt; Protein;
-  SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 </div>
 <p>Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.</p>
 <p align="center"><img src="grViz.png"/></p>
@@ -262,6 +258,10 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>which also be obtained from RStudio for somewhat larger size.</p>
 <p>File <code>fusion_twas.sb</code> initiated a FUSION TWAS experiment.</p>
 <p>Alternative routes are T(P)WAS with <a href="http://gusevlab.org/projects/fusion/">fusion_twas</a> and EWAS with <a href="https://jinghuazhao.github.io/EWAS-fusion/">EWAS-fusion</a>.</p>
+<div class="mermaid">  SNP["LD reference panel (bed,bim,fam)"] --&gt; |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
+  Methylation --&gt; Protein;
+  SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
+</div>
 <h2 id="ewas-with-il-12b">EWAS with IL-12B</h2>
 <p>(EWAS, joint/conditional) Q-Q and Manhattan plots from <code>ewas-plot.R</code>.</p>
 <p align="center"><img src="ewas-plot.png"/></p>
