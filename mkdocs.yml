@@ -25,7 +25,6 @@ theme:
         - yaml
 plugins:
     - search
-    - section-index
     - mermaid2
 markdown_extensions:
   - toc:
