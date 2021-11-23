@@ -92,9 +92,9 @@ graph TD;
   SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 ```
 
-<p align="center"><img src="grViz.png"></p>
-
 Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y. Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
+
+<p align="center"><img src="grViz.png"></p>
 
 The figure is obtained with
 
