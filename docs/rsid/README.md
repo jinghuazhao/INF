@@ -75,9 +75,26 @@ Immune-mediatd traits from OpenGWAS is obtained via `OpenGWAS.sh`. `pqtlGWAS.R` 
 
 ## Nested PGS model
 
+A nested predictive model based on genotype data G, which link with proteins P1, P2, ..., Pn as predictors for outcome y.
+```mermaid
+graph TD;
+  G --> P1
+  G --> P2
+  G --> ...
+  G --> Pn
+  P1 --> y
+  P2 --> y
+  ... --> y
+  Pn --> y
+
+  SNP["LD reference panel (bed,bim,fam)"] --> |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
+  Methylation --> Protein;
+  SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
+```
+
 <p align="center"><img src="grViz.png"></p>
 
-Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
+Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y. Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
 
 The figure is obtained with
 
@@ -87,6 +104,12 @@ dot -Tpng grViz.gv -ogrViz.png
 which also be obtained from RStudio for somewhat larger size.
 
 File `fusion_twas.sb` initiated a FUSION TWAS experiment.
+
+## EWAS with IL-12B
+
+(EWAS, joint/conditional) Q-Q and Manhattan plots from `ewas-plot.R`.
+
+<p align="center"><img src="ewas-plot.png"></p>
 
 ## Summary statistics
 
