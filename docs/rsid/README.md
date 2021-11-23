@@ -90,7 +90,7 @@ graph TD;
 
 Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
 
-<p align="center"><img src="grViz.png"></p>
+<p align="left"><img src="grViz.png"></p>
 
 The figure is obtained with
 
