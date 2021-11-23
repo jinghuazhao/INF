@@ -121,10 +121,6 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#ewas-with-il-12b">EWAS with IL-12B</a>
-<ul class="nav flex-column">
-</ul>
-</li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#summary-statistics">Summary statistics</a>
 <ul class="nav flex-column">
 </ul>
@@ -263,8 +259,7 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
   Methylation --&gt; Protein;
   SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 </div>
-<h2 id="ewas-with-il-12b">EWAS with IL-12B</h2>
-<p>(EWAS, joint/conditional) Q-Q and Manhattan plots from <code>ewas-plot.R</code>.</p>
+<p>An example for IL-12B, (EWAS, joint/conditional) Q-Q and Manhattan plots from <code>ewas-plot.R</code>.</p>
 <p align="center"><img src="ewas-plot.png"/></p>
 <h2 id="summary-statistics">Summary statistics</h2>
 <p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
