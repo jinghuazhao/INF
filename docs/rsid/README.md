@@ -204,7 +204,7 @@ We now have the following results.
 
     where $d = \sqrt{2f(1-f)(z^2+N)}$.
 
-## Other mathematical expressions
+## Other math expressions
 
 The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
 
