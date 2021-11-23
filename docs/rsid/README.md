@@ -92,7 +92,7 @@ graph TD;
   SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 ```
 
-Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y. Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
+Without loss of generality, we have genotype data G, which link with proteins P1, P2, P3 as predictors for outcome y.
 
 <p align="center"><img src="grViz.png"></p>
 
@@ -104,6 +104,8 @@ dot -Tpng grViz.gv -ogrViz.png
 which also be obtained from RStudio for somewhat larger size.
 
 File `fusion_twas.sb` initiated a FUSION TWAS experiment.
+
+Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
 
 ## EWAS with IL-12B
 
