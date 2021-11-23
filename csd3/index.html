@@ -91,25 +91,69 @@
 </div>
 <div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
 <ul class="nav flex-column">
-<li class="nav-item" data-level="2"><a class="nav-link" href="#csd3">CSD3</a>
+<li class="nav-item" data-level="1"><a class="nav-link" href="#csd3">CSD3</a>
 <ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#3d-scatter-plot">3d scatter plot</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#annotation">Annotation</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#known-variants">Known variants</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#ld-reference-panels">LD reference panels</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#snpid-rsid-mappings-conditional-analysis-and-finemapping">SNPID-rsid mappings, conditional analysis and finemapping</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#low-abundance-check">Low abundance check</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#pgs">PGS</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#phenoscanner">PhenoScanner</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#qq-and-manhattan-plots">QQ and Manhattan plots</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#sentinel-identification">Sentinel identification</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#trans-pqtl-hotspots-and-proteins-as-polygenic-targets">Trans-pQTL hotspots and proteins as polygenic targets</a>
+<ul class="nav flex-column">
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
 </div></div>
 <div class="col-md-9" role="main">
-<h2 id="csd3">CSD3<a class="headerlink" href="#csd3" title="Permanent link">#</a></h2>
+<h1 id="csd3">CSD3</h1>
 <p>CSD3 is the HPC Linux clusters used at the University of Cambridge, with which this document is associated.</p>
 <p><strong>NOTE</strong>: <a href="merge.sh">merge.sh</a> and <a href="INTERVAL-fm.ini">INTERVAL-fm.ini</a> now work directly with the original INTERVAL bgen files. The alphabetical list is as follows.</p>
-<h3 id="3d_scatter_plot">3d scatter plot<a class="headerlink" href="#3d_scatter_plot" title="Permanent link">#</a></h3>
+<h2 id="3d-scatter-plot">3d scatter plot</h2>
 <p>Furnished with <a href="js.R">js.R</a>, the JSON output could be used as data in the Supplementary Figure 1 of Sun et al. (2018).</p>
-<h3 id="annotation">Annotation<a class="headerlink" href="#annotation" title="Permanent link">#</a></h3>
+<h2 id="annotation">Annotation</h2>
 <p><a href="annotate.sh">annotate.sh</a> involves <strong>ANNOVAR</strong>, <strong>PolyPhen 2</strong>, <strong>VEP</strong> and some R packages.</p>
-<h3 id="known_variants">Known variants<a class="headerlink" href="#known_variants" title="Permanent link">#</a></h3>
+<h2 id="known-variants">Known variants</h2>
 <p><a href="lookup.sh">lookup.sh</a>, which uses PhenoScanner output from <a href="pqtl.R">pqtl.R</a>, can be used to check if pQTLs were known.</p>
 <p>File <a href="cvd1.sh">cvd1.sh</a> gives sentinels overlapped with CVD I as well as LD information corresponding to each protein.</p>
-<h3 id="ld_reference_panels">LD reference panels<a class="headerlink" href="#ld_reference_panels" title="Permanent link">#</a></h3>
+<h2 id="ld-reference-panels">LD reference panels</h2>
 <p>The .sh versions below extract data from INTERVAL and ukb, each calling a .sb to generate <code>binary_ped</code> with SNPIDs (bgen/<em>map)
 * by </em><em>qctool</em><em> -- it also creates <code>bgen</code> with SNPIDs (ukb/nodup) to avoid hard-called genotypes.
 * by </em><em>PLINK</em>* -- it has a <code>_snpid</code> tag.</p>
@@ -128,7 +172,7 @@
 /DO-NOT-MODIFY-SCRATCH/curated_genetic_data/uk_biobank/reference_files/full_release
 </code></pre>
 <p>on Cardio into region-specific data in <code>bgen</code> format (ukb/bgen) according to work/INF1.merge.</p>
-<h3 id="snpid-rsid_mappings_conditional_analysis_and_finemapping">SNPID-rsid mappings, conditional analysis and finemapping<a class="headerlink" href="#snpid-rsid_mappings_conditional_analysis_and_finemapping" title="Permanent link">#</a></h3>
+<h2 id="snpid-rsid-mappings-conditional-analysis-and-finemapping">SNPID-rsid mappings, conditional analysis and finemapping</h2>
 <p>This is furnished with <a href="snpid_rsid.sb">snpid_rsid.sb</a>, whose results will be attached to <strong>GCTA</strong>/<strong>finemap</strong> results via <code>finemap.R</code>, <code>slct.R</code> and <code>jam.R</code>.
 After that, it is ready to use script <code>slct.sb</code> followed by <code>slct.sh</code>. Optionally, the results are fed into <code>finemap.sb</code> via <code>--n-causal-snps</code>.</p>
 <ul>
@@ -155,19 +199,19 @@ finemap --sss --in-files ${pr}.master2 --n-causal-snps 10
 IL.6-chr1:154426970_A_C.z;IL.6-chr1:154426970_A_C.bgen;IL.6-chr1:154426970_A_C.bgi;IL.6-chr1:154426970_A_C.bcor;IL.6-chr1:154426970_A_C.bdose;IL.6-chr1:154426970_A_C.snp;IL.6-chr1:154426970_A_C.config;IL.6-chr1:154426970_A_C.cred;IL.6-chr1:154426970_A_C.log;4994
 </code></pre>
 <p>The environmental variable <code>LDREF</code> provides an option to use either INTERVAL or UKB data.</p>
-<h3 id="low_abundance_check">Low abundance check<a class="headerlink" href="#low_abundance_check" title="Permanent link">#</a></h3>
+<h2 id="low-abundance-check">Low abundance check</h2>
 <p>This is down with <a href="qc.sh">qc.sh</a>.</p>
-<h3 id="pgs">PGS<a class="headerlink" href="#pgs" title="Permanent link">#</a></h3>
+<h2 id="pgs">PGS</h2>
 <p>These are <a href="prsice.sh">prsice.sh</a> and <a href="pgs.sh">pgs.sh</a> for the CRP example.</p>
-<h3 id="phenoscanner">PhenoScanner<a class="headerlink" href="#phenoscanner" title="Permanent link">#</a></h3>
+<h2 id="phenoscanner">PhenoScanner</h2>
 <p>This is furnished with <a href="ps.sh">ps.sh</a>.</p>
-<h3 id="qq_and_manhattan_plots">QQ and Manhattan plots<a class="headerlink" href="#qq_and_manhattan_plots" title="Permanent link">#</a></h3>
+<h2 id="qq-and-manhattan-plots">QQ and Manhattan plots</h2>
 <p>The version for meta-analysis was part of <code>analysis.sh</code> at tryggve/. <a href="qqman.sh">qqman.sh</a> calls turboqq and turboman by Bram Prins.</p>
-<h3 id="sentinel_identification">Sentinel identification<a class="headerlink" href="#sentinel_identification" title="Permanent link">#</a></h3>
+<h2 id="sentinel-identification">Sentinel identification</h2>
 <p>This is now furnished with <a href="merge.sh">merge.sh</a>.</p>
 <p>Clumping by fixed distance is superseded with its failure to handle long LD regions.</p>
 <p>There are scripts for heritability analysis and proportion of variance explained.</p>
-<h3 id="trans-pqtl_hotspots_and_proteins_as_polygenic_targets">Trans-pQTL hotspots and proteins as polygenic targets<a class="headerlink" href="#trans-pqtl_hotspots_and_proteins_as_polygenic_targets" title="Permanent link">#</a></h3>
+<h2 id="trans-pqtl-hotspots-and-proteins-as-polygenic-targets">Trans-pQTL hotspots and proteins as polygenic targets</h2>
 <p>This is illustrated with circos plots and by default this works on <code>work/INF1.merge.cis.vs.trans</code> and requires <a href="glist-hg19">glist-hg19</a>.
 Because circos plots are gene-centric, in both cases, the protein-coding gene is handled in mind.</p>
 <p>Try</p>
