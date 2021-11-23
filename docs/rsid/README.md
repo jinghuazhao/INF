@@ -92,8 +92,6 @@ Without loss of generality, we have a more explicit figure[^1] linking genotype 
 
 <p align="left"><img src="grViz.png"></p>
 
-File `fusion_twas.sb` initiated a FUSION TWAS experiment.
-
 Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
 
 ```mermaid
@@ -103,7 +101,7 @@ graph TD;
   SNP --> |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
 ```
 
-Shown below is an example for IL-12B, (EWAS, joint/conditional) Q-Q and Manhattan plots from `ewas-plot.R`.
+File `fusion_twas.sb` initiated a FUSION TWAS experiment. Shown below is an example for IL-12B, (EWAS, joint/conditional) Q-Q and Manhattan plots from `ewas-plot.R`.
 
 <p align="center"><img src="ewas-plot.png"></p>
 
