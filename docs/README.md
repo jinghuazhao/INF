@@ -55,6 +55,7 @@ The link will be added here when made available.
 * [Computed structures of core eukaryotic protein complexes](https://modelarchive.org/doi/10.5452/ma-bak-cepc)
 * [ImmunoBase](https://genetics.opentargets.org/immunobase).
 * [IntAct](https://www.ebi.ac.uk/intact/home).
+* [ShinyGO](http://bioinformatics.sdstate.edu/go/).
 * [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
 * [The human protein atlas](https://www.proteinatlas.org/)
 * [Worldwide PDB](http://www.wwpdb.org/)

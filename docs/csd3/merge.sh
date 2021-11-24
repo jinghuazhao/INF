@@ -168,9 +168,6 @@ sed '1d' work/INF1.merge | cut -f5 | sort -k1,1 | uniq | join -t$'\t' - work/inf
   sort -t$'\t' -k2,2 | \
   join -j2 -t$'\t' work/INF1.merge.prot -
 ) > work/INF1.merge.id
-sed '1d' work/INF1.merge.id | \
-awk '!/NA/' | \
-cut -f4 > work/INF1.merge.gene
 
 export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
 (
@@ -324,3 +321,7 @@ xsel -i
 
 # trans pQTL hotspots
 cut -f1,2,21 work/INF1.METAL|sed '1d' | uniq -c -d
+
+# cis-gene
+
+grep -f work/INF1.merge.cis  work/INF1.merge.cis.vs.trans| cut -d, -f10 | xsel -i
