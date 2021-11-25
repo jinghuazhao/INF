@@ -8,7 +8,7 @@ nav:
     - tryggve/README.md
     - cardio/README.md
     - csd3/README.md
-    - "Supplementary notes"/README.md
+    - Supplementary notes/README.md
 theme:
     name: mkdocs
     nav_style: dark
