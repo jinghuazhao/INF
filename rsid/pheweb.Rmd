@@ -1,0 +1,59 @@
+---
+title: Information on pheweb.jp
+output:
+  html_document:
+    mathjax:  default
+    fig_caption:  true
+    toc: true
+    section_numbering: true
+---
+
+## R
+
+```{r}
+options(width=200)
+require(openxlsx)
+library(dplyr)
+
+INF <- Sys.getenv("INF")
+setwd(file.path(INF,"pheweb"))
+bbj <- read.xlsx("pheweb.xlsx",sheet=1,colNames=TRUE,skipEmptyRows=TRUE)
+ukb_fg <- read.xlsx("pheweb.xlsx",sheet=2,colNames=TRUE,skipEmptyRows=TRUE)
+bbj_ukb_fg <- read.xlsx("pheweb.xlsx",sheet=3,colNames=TRUE,skipEmptyRows=TRUE)
+names(bbj) <- c("Category","Phenotype", "Cohort", "N_samples", "N_cases", "N_controls", "link")
+names(ukb_fg) <- names(bbj_ukb_fg) <- c("Category", "Phenotype", "Cohort", "UKB.phecode", "FG.endpoint", "N_samples", "N_cases", "N_controls", "link")
+
+name <- readLines("pheweb.name")
+extract <- function(sheet)
+{
+  ss <- data.frame()
+  for(i in name)
+  {
+     s <- subset(sheet,grepl(i,sheet$Phenotype))
+     if(nrow(s)>0) ss <- rbind(ss,s)
+  }
+  ss <- ss %>%
+        mutate(N_cases=as.numeric(N_cases),N_controls=as.numeric(N_controls),N=2/(1/N_cases+1/N_controls)) %>%
+        select(Phenotype,N_samples,N,link)
+  invisible(list(table=ss,id=sort(as.numeric(rownames(ss)))))
+}
+print(extract(sheet=bbj))
+print(extract(sheet=ukb_fg))
+print(extract(sheet=bbj_ukb_fg))
+```
+
+## URLs
+
+**PheWeb**
+
+[https://pheweb.jp/downloads](https://pheweb.jp/downloads)
+
+[https://pheweb.jp/static/txt/sakaue-kanai-2020-meta.wget.txt](https://pheweb.jp/static/txt/sakaue-kanai-2020-meta.wget.txt)
+
+**EBI**
+
+[https://www.ebi.ac.uk/gwas/studies/GCST90019001](https://www.ebi.ac.uk/gwas/studies/GCST90019001)
+
+[http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90018001-GCST90019000/](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90018001-GCST90019000/)
+
+[http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90019001-GCST90020000/](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90019001-GCST90020000/)
