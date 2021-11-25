@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#SBATCH --ntasks=1
+#SBATCH --job-name=INF
+#SBATCH --time=4:00:00
+#SBATCH --cpus-per-task=1
+#SBATCH --partition=short
+#SBATCH --array=1-1936
+#SBATCH --output=KORA/snptest_%A_%a.out
+#SBATCH --error=KORA/snptest_%A_%a.err
+#SBATCH --export ALL
+
+. /etc/profile.d/modules.sh
+module load default-cardio
+module load slurm
+module load use.own
+
+export TMPDIR=/scratch/jhz22/tmp
+export ID=$SLURM_ARRAY_TASK_ID
+
+qctool -g KORA/KORA$ID.vcf.gz -snp-stats -osnp KORA/KORA$ID.snp-stats
+
+export prot=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' cardio/KORA.list | cut -d' ' -f1)
+export chr=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' cardio/KORA.list | cut -d' ' -f2)
+
+echo ${prot}-${chr}
+cardio/KORA.subs ${prot} ${chr}

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#SBATCH --ntasks=1
+#SBATCH --job-name=_cojo
+#SBATCH --time=12:00:00
+#SBATCH --partition=medium
+#SBATCH --array=1-120%5
+#SBATCH --mem=128800
+#SBATCH --output=INTERVAL/_cojo_%A_%a.out
+#SBATCH --error=INTERVAL/_cojo_%A_%a.err
+#SBATCH --export ALL
+
+. /etc/profile.d/modules.sh
+module load default-cardio
+module load slurm
+module load use.own
+
+export TMPDIR=/scratch/jhz22/tmp
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' INTERVAL/INTERVAL.aild)
+export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $2}' INTERVAL/INTERVAL.aild)
+if [ -f INTERVAL/${p}-${r}.jma.cojo ]; then
+   rm INTERVAL/${p}-${r}.jma.cojo INTERVAL/${p}-${r}.ldr.cojo
+fi
+gcta-1.9 --bfile /scratch/jhz22/data/INTERVAL/INTERVAL \
+         --extract snps/AILD.${r}.snplist \
+         --cojo-file INTERVAL/${p}.ma \
+         --cojo-slct \
+         --cojo-p 5e-10 \
+         --cojo-wind 30000 \
+         --cojo-collinear 0.9 \
+         --maf 0.01 \
+         --out INTERVAL/${p}-${r}

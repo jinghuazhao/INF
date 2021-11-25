@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#SBATCH --ntasks=1
+#SBATCH --job-name=_indels
+#SBATCH --time=12:00:00
+#SBATCH --partition=medium
+#SBATCH --array=1-228%5
+#SBATCH --mem=128800
+#SBATCH --output=dist/indels/_indels_%A_%a.out
+#SBATCH --error=dist/indels/_indels_%A_%a.err
+#SBATCH --export ALL
+
+. /etc/profile.d/modules.sh
+module load default-cardio
+module load slurm
+module load use.own
+
+export TMPDIR=/scratch/jhz22/tmp
+export p=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $1}' sentinels/INF1_nold.sentinels)
+export c=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $2}' sentinels/INF1_nold.sentinels)
+export r=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $3}' sentinels/INF1_nold.sentinels)
+export m=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]+1{print $4}' sentinels/INF1_nold.sentinels)
+cat /scratch/jhz22/data/INTERVAL/INTERVAL.bim | \
+awk -vchr=${c} -vpos=${r} '($1==chr && $4>=pos-1e6 && $4<pos+1e6){if (length($5)>1||length($6)>1) print $2}' > dist/indels/${p}-${m}.indels
