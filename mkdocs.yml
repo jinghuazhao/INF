@@ -11,7 +11,7 @@ nav:
     - Supplementary notes: rsid/README.md
 theme:
     name: mkdocs
-    docs_dir: "../"
+    docs_dir: "./"
     nav_style: dark
     highlightjs: true
     hljs_languages:
