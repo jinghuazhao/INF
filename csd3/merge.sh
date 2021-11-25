@@ -351,7 +351,6 @@ function cis.vs.trans()
     anova b np cis
     anova b np cis [aweight=aweight]
     saveold ab, replace
-    exit, clear
   END
 
   Rscript -e '
