@@ -1,0 +1,23 @@
+!/bin/bash
+### Account information (-W assigns attribute, -X allows for X forwarding)
+#PBS -W group_list=tryggve -A jinhua -X
+### Job name
+#PBS -N INF1
+### Job logs
+#PBS -e $HOME/INF/METAL.err
+#PBS -o $HOME/INF/METAL.log
+### Notify via mail for aborted or abnormally terminated jobs
+#PBS -m n
+### Array jobs
+#PBS -t 1-4
+
+module load metal/20110325 parallel/20170822
+
+function metal_parallel()
+{
+   cd $PBS_O_WORKDIR
+   parallel -j1 -C' ' 'metal /home/jinhua/METAL/{}.run'
+}
+
+export step=23
+cut -f1 inf1.list | awk -vv=PBS_ARRAYID -vstep= $step '(NR==(v-1)*step+1, NR==v*step)' | metal_parallel
