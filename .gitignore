@@ -62,8 +62,8 @@ cvd1/
 ds/
 eQTLGen/
 merge/
-csd3/
-cardio/
-tryggve/
-rsid/
-doc/
+docs/csd3/
+docs/cardio/
+docs/tryggve/
+docs/rsid/
+docs/doc/
