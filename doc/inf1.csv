@@ -1,0 +1,93 @@
+UniProt,prot,Target,alias
+O00300,OPG,Osteoprotegerin (OPG),NA
+O14625,CXCL11,C-X-C motif chemokine 11 (CXCL11),NA
+O14788,TRANCE,TNF-related activation cytokine (TRANCE),NA
+O15169,AXIN1,Axin-1 (AXIN1),NA
+O15444,CCL25,C-C motif chemokine 25 (CCL25),NA
+O43508,TWEAK,Tumor necrosis factor (Ligand) superfamily member 12 (TWEAK),Q4ACW9
+O43557,TNFSF14,Tumor necrosis factor ligand superfamily member 14 (TNFSF14),NA
+O95630,STAMPB,STAM-binding protein (STAMPB),NA
+O95750,FGF.19,Fibroblast growth factor 19 (FGF-19),NA
+O95760,IL.33,Interleukin-33 (IL-33),NA
+P00749,uPA,Urokinase-type plasminogen activator (uPA),NA
+P00813,ADA,Adenosine Deaminase (ADA),NA
+P01135,TGF.alpha,Transforming growth factor alpha (TGF-alpha),NA
+P01137,LAP.TGF.beta.1,Latency-associated peptide transforming growth factor beta 1 (LAP TGF-beta-1),NA
+P01138,Beta.NGF,Beta-nerve growth factor (Beta-NGF),NA
+P01374,TNFB,TNF-beta (TNFB),NA
+P01375,TNF,Tumor necrosis factor (TNF),NA
+P01579,IFN.gamma,Interferon gamma (IFN-gamma),NA
+P01583,IL.1.alpha,Interleukin-1 alpha (IL-1 alpha),NA
+P02778,CXCL10,C-X-C motif chemokine 10 (CXCL10),NA
+P03956,MMP.1,Matrix metalloproteinase-1 (MMP-1),NA
+P05112,IL.4,Interleukin-4 (IL-4),NA
+P05113,IL.5,Interleukin-5 (IL-5),NA
+P05231,IL.6,Interleukin-6 (IL-6),NA
+P06127,CD5,T-cell surface glycoprotein CD5 (CD5),NA
+P09238,MMP.10,Matrix metalloproteinase-10 (MMP-10),NA
+P09341,CXCL1,C-X-C motif chemokine 1 (CXCL1),NA
+P09603,CSF.1,Macrophage colony-stimulating factor 1 (CSF-1),NA
+P10145,IL.8,Interleukin-8 (IL-8),NA
+P10147,MIP.1.alpha,Macrophage inflammatory protein 1-alpha (MIP-1 alpha),NA
+P13232,IL.7,Interleukin-7 (IL-7),NA
+P13236,CCL4,C-C motif chemokine 4 (CCL4),NA
+P13500,MCP.1,Monocyte chemotactic protein 1 (MCP-1),NA
+P13725,OSM,Oncostatin-M (OSM),NA
+P14210,HGF,Hepatocyte growth factor (HGF),NA
+P14784,IL.2RB,Interleukin-2 receptor subunit beta (IL-2RB),NA
+P15018,LIF,Leukemia inhibitory factor (LIF),NA
+P15692,VEGF.A,Vascular endothelial growth factor A (VEGF_A),NA
+P20783,NT.3,Neurotrophin-3 (NT-3),NA
+P21583,SCF,Stem cell factor (SCF),NA
+P22301,IL.10,Interleukin-10 (IL-10),NA
+P23560,BDNF,Brain-derived neutrophic factor (BDNF),NA
+P25942,CD40,CD40L receptor (CD40),NA
+P28325,CST5,Cystatin D (CST5),NA
+P29460,IL.12B,Interleukin-12 subunit beta (IL-12B),NA
+P35225,IL.13,Interleukin-13 (IL-13),NA
+P39905,GDNF,Glial cell line-derived neutrophic factor (hGDNF),NA
+P42702,LIF.R,Leukemia inhibitory factor receptor (LIF-R),NA
+P42830,CXCL5,C-X-C motif chemokine 5 (CXCL5),NA
+P49771,Flt3L,Fms-related tyrosine kinase 3 ligand (FIt3L),NA
+P50225,ST1A1,Sulfotransferase 1A1 (ST1A1),NA
+P50591,TRAIL,TNF-related apoptosis ligand (TRAIL),NA
+P51671,CCL11,Eotaxin-1 (CCL11),NA
+P55773,CCL23,C-C motif chemokine 23 (CCL23),NA
+P60568,IL.2,Interleukin-2 (IL-2),NA
+P78423,CX3CL1,Fractalkine (CX3CL1),NA
+P78556,CCL20,C-C motif chemokine 20 (CCL20),NA
+P80075,MCP.2,Monocyte chemotactic protein 2 (MCP-2),NA
+P80098,MCP.3,Monocyte chemotactic protein 3 (MCP-3),NA
+P80162,CXCL6,C-X-C motif chemokine 6 (CXCL6),NA
+P80511,EN.RAGE,Protein S100-A12 (EN-RAGE),NA
+Q07011,TNFRSF9,Tumor necrosis factor receptor superfamily member 9 (TNFRSF9),NA
+Q07325,CXCL9,C-X-C motif chemokine 9 (CXCL9),NA
+Q08334,IL.10RB,Interleukin-10 receptor subunit beta (IL10RB),NA
+Q13007,IL.24,Interleukin-24 (IL-24),NA
+Q13261,IL.15RA,Interleukin-15 receptor subunit alpha (IL-15RA),NA
+Q13291,SLAMF1,Signaling lymphocytic activation molecule (SLAMF1),NA
+Q13478,IL.18R1,Interleukin-18 receptor 1 (IL-18R1),NA
+Q13541,4E.BP1,Eukaryotic translation initiation factor 4E-binding protein 1 (4EBP1),NA
+Q13651,IL.10RA,Interleukin-10 receptor subunit alpha (IL-10RA),NA
+Q14116,IL.18,Interleukin-18 (IL-18),NA
+Q14790,CASP.8,Caspase 8 (CASP-8),NA
+Q16552,IL.17A,Interleukin-17A (IL-17A),NA
+Q5T4W7,ARTN,Artemin (ARTN),NA
+Q8IXJ6,SIRT2,SIR2-like protein 2 (SIRT2),NA
+Q8N6P7,IL.22.RA1,Interleukin-22 receptor subunit alpha-1 (IL-22RA1),NA
+Q8NF90,FGF.5,Fibroblast growth factor 5 (FGF-5),P12034
+Q8NFT8,DNER,Delta and Notch-like epidermal growth factor related receptor (DNER),NA
+Q8WWJ7,CD6,T-cell surface glycoprotein CD6 isoform (CD6),P30203
+Q969D9,TSLP,Thymic stromal lymphopoietin (TSLP),NA
+Q99616,MCP.4,Monocyte chemotactic protein 4 (MCP-4),NA
+Q99731,CCL19,C-C motif chemokine 19 (CCL19),NA
+Q99748,NRTN,Neurturin (NRTN),NA
+Q9BZW8,CD244,Natural killer cell receptor 2B4 (CD244),NA
+Q9GZV9,FGF.23,Fibroblast growth factor 23 (FGF-23),NA
+Q9H5V8,CDCP1,CUB domain-containing protein 1 (CDCP1),NA
+Q9NRJ3,CCL28,C-C motif chemokine 28 (CCL28),NA
+Q9NSA1,FGF.21,Fibroblast growth factor 21 (FGF-21),NA
+Q9NYY1,IL.20,Interleukin-20 (IL-20),NA
+Q9NZQ7,PD.L1,Programmed cell death 1 ligand 1 (PD-L1),NA
+Q9P0M4,IL.17C,Interleukin-17C (IL-17C),NA
+Q9UHF4,IL.20RA,Interleukin-20 receptor subunit alpha (IL-2oRA),NA

@@ -1,0 +1,100 @@
+#!/bin/bash
+
+#SBATCH --account=PETERS-SL3-CPU
+#SBATCH --ntasks=1
+#SBATCH --job-name=_INTERVAL
+#SBATCH --time=12:00:00
+#SBATCH --partition=skylake
+#SBATCH --array=1-180
+#SBATCH --mem=128800
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_INTERVAL_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_INTERVAL_%A_%a.err
+#SBATCH --export ALL
+
+export job=${SLURM_ARRAY_TASK_ID}
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
+export intervaldir=${INF}/INTERVAL
+export sample=${intervaldir}/o5000-inf1-outlier_in-r2.sample
+export list=${INF}/work/INF1.merge
+export p=$(awk -v job=${job} 'NR==job+1{print $5}' ${list})
+export r=$(awk -v job=${job} 'NR==job+1{print $6}' ${list})
+export pr=${p}-${r}
+export N=4994
+
+function INTERVAL_qctool()
+{
+  if [ ! -f bgen/${pr}.bgen.bgi ]; then bgenix -g bgen/${pr}.bgen -index -clobber; fi
+  (
+    cat ${INF}/csd3/INTERVAL.hdr
+    bgenix -g bgen/${pr}.bgen -list 2>&1 | awk 'NR>9 && NF==7' | awk -f ${INF}/csd3/INTERVAL.awk
+  ) > bgen/${pr}.map
+  qctool -g bgen/${pr}.bgen -excl-rsids bgen/${pr}.rmdup.list -map-id-data bgen/${pr}.map -og bgen/${pr}_2.bgen
+  if [ ! -f bgen/${pr}_2.rmdup.list ]; then
+     plink2 --bgen bgen/${pr}_2.bgen --sample ${sample} --rm-dup force-first list --out bgen/${pr}_2
+  fi
+  qctool -g bgen/${pr}_2.bgen -excl-rsids bgen/${pr}_2.rmdup.list -og nodup/${pr}.bgen
+  bgenix -g nodup/${pr}.bgen -index -clobber
+  qctool -g nodup/${pr}.bgen -s ${sample} -ofiletype binary_ped -og nodup/${pr}
+}
+
+function INTERVAL_dosage()
+{
+  if [ ! -f nodup/${pr}.gen.gz ]; then qctool -g nodup/${pr}.bgen -og nodup/${pr}.gen.gz; fi
+
+  gunzip -c nodup/${pr}.gen.gz | \
+  awk -v sample=${sample} '
+  {
+     N=(NF-6)/3
+     for(i=1;i<=N;i++) dosage[NR,i]=$((i-1)*3+8)+2*$((i-1)*3+9)
+  } END {
+     i=0;
+     while (getline gf < sample) {
+       split(gf,a);
+       i++
+       id[i]=a[1]
+     }
+     close(sample)
+     for(i=1;i<=N;i++)
+     {
+       printf id[i+2] " ML_DOSE"; for(j=1;j<=NR;j++) printf " " dosage[j,i]; printf "\n"
+     }
+  }' | \
+  gzip -f > nodup/${pr}.dosage.gz
+  (
+    echo SNP Al1 Al2 Freq1 MAF Quality Rsq
+    qctool -g ${pr}.bgen -snp-stats -osnp - | \
+    sed '1,9d' | \
+    cut -f2,5,6,12,14,17,18 | \
+    sed 's/\t/ /g;s/NA/0/g'
+  ) | \
+  grep -v Completed | \
+  gzip -f > nodup/${pr}.info.gz
+}
+
+# gcta-1.9 --dosage-mach-gz nodup/$pr.dosage.gz nodup/$pr.info.gz --make-grm-bin --out nodup/${pr}
+
+function INTERVAL_plink()
+{
+  plink2 --bgen bgen/${pr}.bgen --sample ${sample} --exclude bgen/${pr}.rmdup.list --make-bed --out nodup/${pr}_nodup
+  awk '
+  {
+     CHR=$1
+     POS=$4
+     a1=$5
+     a2=$6
+     if (a1>a2) snpid="chr" CHR ":" POS "_" a2 "_" a1;
+     else snpid="chr" CHR ":" POS "_" a1 "_" a2
+     print snpid, $2
+  }' nodup/${pr}_nodup.bim > nodup/${pr}.id
+  plink --bfile nodup/${pr}_nodup --update-name nodup/${pr}.id 1 2 --make-bed --out nodup/${pr}_snpid
+  rm nodup/${pr}_nodup.*
+}
+
+cd ${intervaldir}
+module load plink/2.00-alpha
+if [ ! -f bgen/${pr}.rmdup.list ]; then
+   plink2 --bgen bgen/${pr}.bgen --sample ${sample} --rm-dup force-first list --out bgen/${pr}
+fi
+INTERVAL_qctool
+cd -
