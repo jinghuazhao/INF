@@ -307,21 +307,65 @@ parallel -j5 -C' ' '
   gunzip -c METAL/{1}-1.tbl.gz | \
   awk -vchr={4} -vpos={5} "NR==1||(\$1==chr && \$2>=pos-1e6 && \$2<pos+1e6)" | \
   cut -f1-6,10-12 | \
-  gzip -f > work/INF1.merge.{2}-{1}-{3}.gz
+  gzip -f > ${INF}/work/INF1.merge.{2}-{1}-{3}.gz
 '
 
-# REACTOME
-cut -d, -f10,14 work/INF1.merge.cis.vs.trans | \
-sed '1d' | \
-grep cis | \
-cut -d, -f1 | \
-sort | \
-uniq | \
-xsel -i
+function reactome()
+# REACTOME, cis-gene
+{
+  cut -d, -f10,14 work/INF1.merge.cis.vs.trans | \
+  sed '1d' | \
+  grep cis | \
+  cut -d, -f1 | \
+  sort | \
+  uniq | \
+  xsel -i
+}
 
 # trans pQTL hotspots
 cut -f1,2,21 work/INF1.METAL|sed '1d' | uniq -c -d
 
-# cis-gene
+function cis.vs.trans()
+{
+  module load ceuadmin/stata
+  awk '{split($1,a,":");$1=a[1];print $1,$3,$10,$11}' ${INF}/work/INF1.tbl > ${INF}/a
+  cut -d, -f2,5,14 ${INF}/work/INF1.merge.cis.vs.trans > ${INF}/b
 
-grep -f work/INF1.merge.cis  work/INF1.merge.cis.vs.trans| cut -d, -f10 | xsel -i
+  stata <<\ \ END
+    local INF : env INF
+    insheet using a., delim(" ") case clear names
+    rename Chromosome prot
+    rename MarkerName SNP
+    sort prot SNP
+    save bse, replace
+    insheet using b., comma case clear names
+    sort prot SNP
+    merge prot SNP using bse
+    drop _merge
+    list
+    encode prot, gen(np)
+    encode cistrans, gen(cis)
+    gen aweight=1/StdErr^2
+    anova Effect np cis [aweight=aweight]
+    gen b=abs(Effect)
+    anova b np cis
+    anova b np cis [aweight=aweight]
+    saveold ab, replace
+    exit, clear
+  END
+
+  Rscript -e '
+    library(readstata13)
+    ab <- within(read.dta13("ab.dta"),{x=as.numeric(np)})
+    cis <- subset(ab,cistrans=="cis")[c("x","Effect")]
+    trans <- subset(ab,cistrans=="trans")[c("x","Effect")]
+    png("cistrans.png",res=300,height=8,width=10,units="in")
+    plot(cis,col="red",pch=17,xaxt="n")
+    points(trans,col="blue",pch=19)
+    axis(1,at=with(ab,np),labels=with(ab,prot),las=2,cex.axis=0.5)
+    dev.off()
+ '
+}
+
+cis.vs.trans
+rm a b bse.dta ab.dta
