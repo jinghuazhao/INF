@@ -257,12 +257,12 @@ rm 12
 ```
 Likewise, [olink.inf.panel.annot.tsv](../doc/olink.inf.panel.annot.tsv) from [olink.annotation.R](../doc/olink.annotation.R) also has the following two entries
 
-"target" | "target.short" | "uniprot" | "panel" | "prot.on.multiple.panel" | "panels.with.prot" | "hgnc_symbol" | ...
----------|----------------|-----------|---------|--------------------------|--------------------|---------------|----
-"Fibroblast growth factor 5 (FGF-5)" | "FGF-5" | "Q8NF90" | "inf" | FALSE | NA | NA
-"T-cell surface glycoprotein CD6 isoform (CD6)" | "CD6" | "Q8WWJ7" | "inf" | FALSE | NA | NA
+"target" | "target.short" | "uniprot" | "panel" | "prot.on.multiple.panel" | "panels.with.prot" | "hgnc_symbol" | UniProt
+---------|----------------|-----------|---------|--------------------------|--------------------|---------------|--------
+"Fibroblast growth factor 5 (FGF-5)" | "FGF-5" | "Q8NF90" | "inf" | FALSE | NA | FGF5 | P12034
+"T-cell surface glycoprotein CD6 isoform (CD6)" | "CD6" | "Q8WWJ7" | "inf" | FALSE | NA | CD6 | P30203
 
-whose hgnc_symbol can be amended.
+where the hgnc_symbol and UniProt ID are amended.
 
 ## Auxiliary files
 
