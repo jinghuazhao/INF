@@ -360,13 +360,14 @@ function cis.vs.trans()
     par(mfrow=c(2,1))
     cis <- subset(ab,cistrans=="cis")[c("x","Effect")]
     trans <- subset(ab,cistrans=="trans")[c("x","Effect")]
-    plot(cis,col="red",pch=19,xaxt="n")
+    plot(cis,col="red",pch=19,xaxt="n",xlab="")
     points(trans,col="blue",pch=17)
     cis <- subset(ab,cistrans=="cis")[c("x","v")]
     trans <- subset(ab,cistrans=="trans")[c("x","v")]
-    plot(cis,col="red",pch=19,xaxt="n",ylab="Variance")
+    plot(cis,col="red",pch=19,xaxt="n",xlab="",ylab="Variance")
     points(trans,col="blue",pch=17)
     axis(1,at=with(ab,np),labels=with(ab,prot),las=2,cex.axis=0.5)
+    title(xlab="Protein")
     dev.off()
  '
 }
