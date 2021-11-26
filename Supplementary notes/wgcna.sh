@@ -69,7 +69,7 @@ Rscript -e '
   colorDynamicHybridTOM <- labels2colors(cutreeDynamic(hierTOM,distM=dissTOM,cutHeight=0.998,
                                          deepSplit=2,pamRespectsDendro = FALSE))
   sizeGrWindow(10,5)
-  plotDendroAndColors(hierTOM,colors=data.frame(hierTOM$labels,colorStaticTOM,colorDynamicTOM,colorDynamicHybridTOM), 
+  plotDendroAndColors(hierTOM,colors=data.frame(hierTOM$labels,colorStaticTOM,colorDynamicTOM,colorDynamicHybridTOM),
                       dendroLabels=FALSE, marAll=c(1,8,3,1),
                       main="Gene dendrogram and module colors, TOM dissimilarity")
 '
