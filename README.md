@@ -52,6 +52,7 @@ The link will be added here when made available.
 
 * [Aging Plasma Proteome](https://twc-stanford.shinyapps.io/aging_plasma_proteome/) ([DEswan](https://github.com/lehallib/DEswan)).
 * [Bgee](https://bgee.org/).
+* [Enrichr](https://maayanlab.cloud/Enrichr/).
 * [Computed structures of core eukaryotic protein complexes](https://modelarchive.org/doi/10.5452/ma-bak-cepc)
 * [ImmunoBase](https://genetics.opentargets.org/immunobase).
 * [IntAct](https://www.ebi.ac.uk/intact/home).
