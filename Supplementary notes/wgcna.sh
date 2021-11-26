@@ -1,28 +1,34 @@
 #!/usr/bin/bash
 
-R --no-save -q <<END
-  outfile <- "INTERVAL/o5000-inf1-outlier_in-r2.sample"
+Rscript -e '
+# Weighted Correlation Network Analysis
+  library(dplyr)
+  INF <- Sys.getenv("INF")
+  outfile <- file.path(INF,"INTERVAL","o5000-inf1-outlier_in-r2.sample")
   header <- read.table(outfile, as.is=TRUE, header=TRUE, nrows=1)
-  allvars <- read.table(outfile,skip=2,as.is=TRUE,col.names=names(header))
+  d <- read.table(outfile,skip=2,as.is=TRUE,col.names=names(header))
+  prot <- d[grepl("__",names(d))]
+  prot <- filter(prot,!is.na(apply(prot,1,sum)))
+  names(prot) <- unlist(lapply(strsplit(names(prot),"___"),"[",1))
+  pqtl <- read.table(file.path("work","INF1.merge"),header=TRUE)
+  prot <- select(prot,gsub("4E","X4E",unique(pqtl[["prot"]])))
   require(WGCNA)
+  enableWGCNAThreads()
 # Ajacency matrix using soft thresholding with beta=6
-  covcols <- 1:28
-  misrows <- (1:nrow(allvars))[is.na(allvars["CSF.1___P09603"])]
-  prot <- allvars[-misrows,-covcols]
   ADJ <- abs(cor(prot, method="pearson"))^6
-# genes < 5000
-  k <- as.vector(apply(ADJ1,2,sum, na.rm=T))
-# genes > 5000
+# genes < 5,000
+  k <- as.vector(apply(ADJ,2,sum,na.rm=TRUE))
+# genes > 5,000
 # k <- softConnectivity(datE=out,power=6)
 # histogram of k and a scale free topology plot
   sizeGrWindow(10,5)
   par(mfrow=c(1,2))
   hist(k)
   scaleFreePlot(k, main="Check scale free topology\n")
-# network analysis on 80 most connected genes
-  datExpr=prot[, rank(-k,ties.method="first")<=80]
-# dissimilarity
-  dissADJ <- 1-ADJ
+# network analysis on 70 most connected genes
+  datExpr=prot[,rank(-k,ties.method="first") <= 70]
+# dissimilarity Topological Overlap Matrix
+  dissADJ <- 1 - ADJ
   dissTOM <- TOMdist(ADJ)
   collectGarbage()
 # partition around medoids (PAM) based on dissimilarity
@@ -66,4 +72,4 @@ R --no-save -q <<END
   plotDendroAndColors(hierTOM,colors=data.frame(hierTOM$labels,colorStaticTOM,colorDynamicTOM,colorDynamicHybridTOM), 
                       dendroLabels=FALSE, marAll=c(1,8,3,1),
                       main="Gene dendrogram and module colors, TOM dissimilarity")
-END
+'
