@@ -285,12 +285,12 @@ qqman.sb | Q-Q/Manhattan plots under CSD3
 rentrez.sh | reuse of rentrez
 Somascan-Olink.* | Somascan/Olink overlap
 stringdb.sh | STRINGdb
-tables.R | code to create Excel Tables
+tables.R | code to create Excel tables
 uniprot.R | UniProt IDs to others
 utils.sh | utilties
-wgcna.sh | experiment on modules
+wgcna.sh | Weighted Correlation Network Analysis
 
-*Date last changed:* **23/11/2021**
+*Date last changed:* **26/11/2021**
 
 [^1]: The figure is obtained with `dot -Tpng grViz.gv -ogrViz.png` which also be obtained from RStudio for somewhat larger size.
 [^2]: Kotz, S., Read, C.B., Balakrishnan, N., Vidakovic, B. & Johnson, N.L. Encyclopedia of Statistical Sciences. 2nd edn (John Wiley & Sons, Inc., Hoboken, New Jersey, 2006).
