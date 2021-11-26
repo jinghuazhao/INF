@@ -19,9 +19,7 @@ graph TB;
 
 ## Comments
 
-The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are associated with the named Linux cluster(s) used for the analysis over time. Most recent implementations are documented in `Supplementary notes`. 
-
-<p align="center", style="color:blue;font-size:30px"><b>To view the code inside the browser without downloading them, select the `GitHub` button from the menu.</b></p>
+The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are associated with the named Linux cluster(s) used for the analysis over time. Most recent implementations are documented in `Supplementary notes`. <p align="center", style="color:blue;font-size:15px"><b>To view the code inside the browser without downloading them, select the `GitHub` button from the menu.</b></p>
 
 1. Data pre-processing was done initially from tryggve with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh), followed by meta-analysis according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with additional investigation.
 
