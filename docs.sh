@@ -32,9 +32,11 @@ setup
 mkdocs build
 mkdocs gh-deploy
 
-for f in .gitignore README.md mkdocs.yml doc cardio csd3 tryggve rsid docs.sh javascripts
+for f in .gitignore README.md mkdocs.yml doc cardio csd3 tryggve docs.sh javascripts
 do
   git add ${f}
   git commit -m "${f}"
 done
+git add rsid
+git commit -m "Supplementary notes"
 git push
