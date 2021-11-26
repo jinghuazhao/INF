@@ -328,7 +328,7 @@ cut -f1,2,21 work/INF1.METAL|sed '1d' | uniq -c -d
 function cis.vs.trans()
 {
   module load ceuadmin/stata
-  awk '{split($1,a,":");$1=a[1];print $1,$3,$10,$11}' ${INF}/work/INF1.tbl > ${INF}/a
+  awk '{split($1,a,":");$1=a[1];print $1,$3,$6,$10,$11}' ${INF}/work/INF1.tbl > ${INF}/a
   cut -d, -f2,5,14 ${INF}/work/INF1.merge.cis.vs.trans > ${INF}/b
 
   stata <<\ \ END
@@ -355,12 +355,17 @@ function cis.vs.trans()
 
   Rscript -e '
     library(readstata13)
-    ab <- within(read.dta13("ab.dta"),{x=as.numeric(np)})
+    ab <- within(read.dta13("ab.dta"),{x <- as.numeric(np);v <- 2*Freq1*(1-Freq1)*Effect^2})
+    png("cistrans.png",res=300,height=8,width=10,units="in")
+    par(mfrow=c(2,1))
     cis <- subset(ab,cistrans=="cis")[c("x","Effect")]
     trans <- subset(ab,cistrans=="trans")[c("x","Effect")]
-    png("cistrans.png",res=300,height=8,width=10,units="in")
-    plot(cis,col="red",pch=17,xaxt="n")
-    points(trans,col="blue",pch=19)
+    plot(cis,col="red",pch=19,xaxt="n")
+    points(trans,col="blue",pch=17)
+    cis <- subset(ab,cistrans=="cis")[c("x","v")]
+    trans <- subset(ab,cistrans=="trans")[c("x","v")]
+    plot(cis,col="red",pch=19,xaxt="n",ylab="Variance")
+    points(trans,col="blue",pch=17)
     axis(1,at=with(ab,np),labels=with(ab,prot),las=2,cex.axis=0.5)
     dev.off()
  '
