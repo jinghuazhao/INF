@@ -19,7 +19,7 @@ graph TB;
 
 ## Comments
 
-The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are associated with the named Linux cluster(s) used for the analysis over time. Most recent implementations are documented in `Supplementary notes`. <font color="blue">To view the code inside the browser without downloading them, select the `GitHub` button from the menu.</font>
+The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are associated with the named Linux cluster(s) used for the analysis over time. Most recent implementations are documented in `Supplementary notes`. <font color="blue"><b>To view the code inside the browser without downloading them, select the `GitHub` button from the menu.</b></font>
 
 1. Data pre-processing was done initially from tryggve with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh), followed by meta-analysis according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with additional investigation.
 
@@ -38,37 +38,3 @@ This proves to be a positive control. The stacked image below shows Manhattan, Q
 ## Summary statistics
 
 The link will be added here when made available.
-
-## Related links
-
-* [OlinkAnalyze](https://github.com/Olink-Proteomics/OlinkRPackage)
-* [Olink Insights Stat Analysis](https://tinyurl.com/shj46ukj)
-* [Olink location](https://www.olink.com/scallop/), [What is NPX](https://www.olink.com/question/what-is-npx/), [F2F London meeting](https://www.olink.com/scallop-f2f-2019/), [Data Science Workshop 2019](https://www.olink.com/data-science-workshop-2019/).
-* [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
-* [GitHub repository](https://github.com/lassefolkersen/scallop) for the 2017 *PLoS Genetics* paper.
-* [SCALLOP consortium](http://www.scallop-consortium.com/) ([securecloud](https://secureremote.dtu.dk/vpn/index.html)).
-
----
-
-* [Aging Plasma Proteome](https://twc-stanford.shinyapps.io/aging_plasma_proteome/) ([DEswan](https://github.com/lehallib/DEswan)).
-* [Bgee](https://bgee.org/).
-* [Enrichr](https://maayanlab.cloud/Enrichr/).
-* [Computed structures of core eukaryotic protein complexes](https://modelarchive.org/doi/10.5452/ma-bak-cepc)
-* [ImmunoBase](https://genetics.opentargets.org/immunobase).
-* [IntAct](https://www.ebi.ac.uk/intact/home).
-* [ShinyGO](http://bioinformatics.sdstate.edu/go/).
-* [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
-* [The human protein atlas](https://www.proteinatlas.org/)
-* [Worldwide PDB](http://www.wwpdb.org/)
-
-## References
-
-Choi SW, Mak TS, O'Reilly PF Tutorial: a guide to performing polygenic risk score analyses. *Nat Protoc* 15, 2759-2772 (2020), [GitHub](https://github.com/choishingwan/PRSice) [documentation](https://choishingwan.github.io/PRS-Tutorial/).
-
-Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. *PLoS Genetics* 13(4), doi.org/10.1371/journal.pgen.1006706.
-
-Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. *Hum Mol Genet* 23(24): 6684–6693.
-
-Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. *Nat Med*. https://doi.org/10.1038/s41591-019-0415-5
-
-Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
