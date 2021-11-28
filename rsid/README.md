@@ -321,7 +321,7 @@ Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identi
 
 Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. *Nat Med*. https://doi.org/10.1038/s41591-019-0415-5
 
-Suhre K et al. (2017). Connecting genetic risk to disease endpoints through the human blood plasma proteome. *Natu Comm* doi:10.1038/ncomms14357. [Integrated web server](http://metabolomics.helmholtz-muenchen.de/pgwas/).
+Suhre K et al. (2017). Connecting genetic risk to disease endpoints through the human blood plasma proteome. *Nat Comm* doi:10.1038/ncomms14357. [Integrated web server](http://metabolomics.helmholtz-muenchen.de/pgwas/).
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
 
