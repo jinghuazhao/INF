@@ -288,7 +288,7 @@ stringdb.sh | STRINGdb
 tables.R | code to create Excel tables
 uniprot.R | UniProt IDs to others
 utils.sh | utilties
-wgcna.sh | Weighted Correlation Network Analysis
+wgcna.R | Weighted Correlation Network Analysis
 
 ## Related links
 

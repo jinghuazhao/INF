@@ -92,9 +92,6 @@ Rscript -e '
   createSubnetwork(subset(nodedata,group=="turquoise")$name,"name")
   exportImage("turquoise.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   saveSession("turquoise.cys")
-'
-
-Rscript -e '
 # PW-pipeline codes
   suppressMessages(require(Biobase))
   suppressMessages(library(GOstats))
