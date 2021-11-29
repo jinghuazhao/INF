@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 Rscript -e '
-# Data handling
+# Weighted Correlation Network Analysis
   library(dplyr)
   INF <- Sys.getenv("INF")
   outfile <- file.path(INF,"INTERVAL","o5000-inf1-outlier_in-r2.sample")
@@ -12,13 +12,19 @@ Rscript -e '
   names(prot) <- unlist(lapply(strsplit(names(prot),"___"),"[",1))
   pqtl <- read.table(file.path("work","INF1.merge"),header=TRUE)
   prot <- select(prot,gsub("4E","X4E",unique(pqtl[["prot"]])))
-# Weighted Correlation Network Analysis
-  suppressMessages(require(WGCNA))
+  library(Rtsne)
+  Rtsne(prot, dims=3, perplexity=15
+  require(WGCNA)
   enableWGCNAThreads()
 # Adjacency matrix using soft thresholding with beta=6
   ADJ <- abs(cor(prot, method="pearson"))^6
-# histogram of k and a scale free topology plot
+# genes < 5,000
   k <- as.vector(apply(ADJ,2,sum,na.rm=TRUE))
+# genes > 5,000
+# k <- softConnectivity(datE=prot,power=6)
+# network analysis on 70 most connected genes
+# prot[,rank(-k,ties.method="first") <= 70]
+# histogram of k and a scale free topology plot
   sizeGrWindow(10,5)
   par(mfrow=c(1,2))
   hist(k)
@@ -29,16 +35,15 @@ Rscript -e '
   collectGarbage()
 # partition around medoids (PAM) based on dissimilarity
   require(cluster)
-  for(j in 4:6)
-  {
-    pam_name <- paste0("pam",j)
-    pamTOM_name <- paste0("pamTOM",j)
-    assign(pam_name, pam(as.dist(dissADJ),j))
-    assign(pamTOM_name,pam(as.dist(dissTOM),j))
-    tc <- table(get(pam_name)$clustering,get(pamTOM_name)$clustering)
-    print(tc)
-    print(diag(tc))
-  }
+  pam4 <- pam(as.dist(dissADJ),4)
+  pam5 <- pam(as.dist(dissADJ),5)
+  pam6 <- pam(as.dist(dissADJ),6)
+  pamTOM4 <- pam(as.dist(dissTOM),4)
+  pamTOM5 <- pam(as.dist(dissTOM),5)
+  pamTOM6 <- pam(as.dist(dissTOM),6)
+  table(pam4$clustering,pamTOM4$clustering)
+  table(pam5$clustering,pamTOM5$clustering)
+  table(pam5$clustering,pamTOM6$clustering)
 # average linkage hierachical clusterin
 # ADJ
   hierADJ <- hclust(as.dist(dissADJ),method="average")
@@ -68,59 +73,4 @@ Rscript -e '
   colorADJTOM <- cbind(colorADJ,colorTOM)
   table(colorADJTOM$colorStaticADJ)
   for(col in c("blue","brown","grey","turquoise")) print(subset(colorADJTOM,colorStaticADJ==col))
-# Further correlations
-  corRaw <- cor(prot)
-  distance <- as.dist(1-abs(corRaw))
-  colnames(corRaw) <- rownames(corRaw) <- names(prot)
-  suppressMessages(require(reshape))
-  r <- melt(corRaw) %>% mutate(value=ifelse(X1!=X2 & value>=0.7,value,NA))
-  colorADJTOM_nogrey <- subset(colorADJTOM,colorStaticTOM!="grey")
-  r_nogrey <- melt(corRaw[rownames(colorADJTOM_nogrey),rownames(colorADJTOM_nogrey)]) %>% mutate(value=ifelse(X1!=X2 & value>=0.7,value,NA))
-  library(RCy3)
-  cytoscapePing()
-  cytoscapeVersionInfo ()
-  nodes <- data.frame(id=gsub("X4","4",rownames(colorADJTOM_nogrey)),
-           group=with(colorADJTOM_nogrey,colorStaticTOM),
-           stringsAsFactors=FALSE)
-  edges <- data.frame(source=with(r_nogrey,gsub("X4","4",X1)),
-           target=with(r_nogrey,gsub("X4","4",X2)),
-           weight=with(r_nogrey,value),
-           stringsAsFactors=FALSE) %>% filter(!is.na(weight))
-  createNetworkFromDataFrames(nodes,edges,title="protein network", collection="DataFrame")
-  nodedata <- getTableColumns("node")
-  selectNodes(subset(nodedata,group=="turquoise")$name, by='id', pre=FALSE)
-  createSubnetwork(subset(nodedata,group=="turquoise")$name,"name")
-  exportImage("turquoise.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
-  saveSession("turquoise.cys")
-'
-
-Rscript -e '
-# PW-pipeline codes
-  suppressMessages(require(Biobase))
-  suppressMessages(library(GOstats))
-  gData <- new("ExpressionSet", exprs=t(prot))
-  corrGraph = compCorrGraph(gData, k=6, tau=0.7)
-  edgemode(corrGraph) <- "undirected"
-  plot(corrGraph)
-  require(igraph)
-  m <- abs(corRaw)
-  diag(m) <- 0
-  g <- graph.adjacency(m)
-  plot(g)
-  write_graph(g,"igraph.el","edgelist")
-  require(network)
-  n <- network(m, directed=FALSE)
-  plot(n)
-  require(graph)
-  gmat <- new("graphAM", adjMat=m, edgemode='undirected')
-  glist <- as(gmat, 'graphNEL')
-  plot(glist)
-  require(Rgraphviz)
-# genes > 5,000
-# k <- softConnectivity(prot,power=6)
-# network analysis on 70 most connected genes
-# prot[,rank(-k,ties.method="first") <= 70]
-  library(Rtsne)
-  rtsne <- Rtsne(as.matrix(prot),dims=3,perplexity=15,theta=0.25,pc=FALSE)
-  plot*rtsne$Y,asp=1)
 '
