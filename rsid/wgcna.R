@@ -70,6 +70,7 @@ Rscript -e '
   for(col in c("blue","brown","grey","turquoise")) print(subset(colorADJTOM,colorStaticADJ==col))
 # Further correlations
   corRaw <- cor(prot)
+  diag(corRaw) <- 0
   distance <- as.dist(1-abs(corRaw))
   colnames(corRaw) <- rownames(corRaw) <- names(prot)
   suppressMessages(require(reshape))
@@ -92,19 +93,23 @@ Rscript -e '
   createSubnetwork(subset(nodedata,group=="turquoise")$name,"name")
   exportImage("turquoise.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   saveSession("turquoise.cys")
-# PW-pipeline codes
   suppressMessages(require(Biobase))
   suppressMessages(library(GOstats))
   gData <- new("ExpressionSet", exprs=t(prot))
-  corrGraph = compCorrGraph(gData, k=6, tau=0.7)
+  corrGraph = compCorrGraph(gData, k=6, tau=0.6)
   edgemode(corrGraph) <- "undirected"
   plot(corrGraph)
+  createNetworkFromGraph(corrGraph,"myGraph")
+  exportImage("corrGraph.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   require(igraph)
-  m <- abs(corRaw)
-  diag(m) <- 0
-  g <- graph.adjacency(m)
+  g <- graph_from_graphnel (corrGraph)
   plot(g)
   write_graph(g,"igraph.el","edgelist")
+# PW-pipeline codes
+  library(diagram)
+  sel <- with(nodedata,name)
+  colnames(corRaw) <- rownames(corRaw) <- gsub("X4E","4E",colnames(corRaw))
+  plotmat(round(corRaw[sel,sel],2))
   require(network)
   n <- network(m, directed=FALSE)
   plot(n)
@@ -119,5 +124,5 @@ Rscript -e '
 # prot[,rank(-k,ties.method="first") <= 70]
   library(Rtsne)
   rtsne <- Rtsne(as.matrix(prot),dims=3,perplexity=15,theta=0.25,pc=FALSE)
-  plot*rtsne$Y,asp=1)
+  plot(rtsne$Y,asp=1)
 '
