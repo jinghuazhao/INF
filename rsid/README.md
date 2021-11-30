@@ -280,6 +280,7 @@ gdigt.R | GDI and gene-trials
 GREP.sh | GREP script
 h2pve.* | h2/pve summary
 inbio-discover.R | gene lists
+network.R | Network Analysis
 pheweb.Rmd | Data extraction from pheweb.jp
 qqman.sb | Q-Q/Manhattan plots under CSD3
 rentrez.sh | reuse of rentrez
@@ -288,7 +289,6 @@ stringdb.sh | STRINGdb
 tables.R | code to create Excel tables
 uniprot.R | UniProt IDs to others
 utils.sh | utilties
-wgcna.R | Weighted Correlation Network Analysis
 
 ## Related links
 
