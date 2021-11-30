@@ -10,15 +10,13 @@ Rscript -e '
   prot <- d[grepl("__",names(d))]
   prot <- filter(prot,!is.na(apply(prot,1,sum)))
   names(prot) <- unlist(lapply(strsplit(names(prot),"___"),"[",1))
-  pqtl <- read.table(file.path("work","INF1.merge"),header=TRUE)
+  pqtl <- read.table(file.path(INF,"work","INF1.merge"),header=TRUE)
   prot <- select(prot,gsub("4E","X4E",unique(pqtl[["prot"]])))
   INF_METAL <- read.delim(file.path(INF,"work","INF1.METAL"))
+  rsid <- unique(INF_METAL[["rsid"]])
+  rsid_prot <- gsub("4E","X4E",with(INF_METAL,cbind(rsid,prot)))
   cis <- subset(INF_METAL,cis.trans=="cis")
-  cis_rsid <- unique(cis[["rsid"]])
-  cis_prot <- unique(cis[["prot"]])
   trans <- subset(INF_METAL,cis.trans=="trans")
-  trans_rsid <- unique(trans[["rsid"]])
-  trans_prot <- unique(trans[["prot"]])
 # Correlation graph
   library(RCy3)
   cytoscapePing()
@@ -26,16 +24,22 @@ Rscript -e '
   suppressMessages(require(Biobase))
   suppressMessages(library(GOstats))
   gData <- new("ExpressionSet", exprs=t(prot))
-  corrGraph = compCorrGraph(gData, k=6, tau=0.6)
+  corrGraph = compCorrGraph(gData, k=6, tau=0.7)
   edgemode(corrGraph) <- "undirected"
-  corrGraph <- add_vertices(corrGraph,rsid,color="green") %>%
-               
-              
   plot(corrGraph)
   createNetworkFromGraph(corrGraph,"myGraph")
-# addCyNodes(rsid)
-# addCyEdges(as.list(gsub("4E","X4E",with(INF_METAL,paste(rsid,prot)))))
+# Somehow these have all vertices lumped together
+  addCyNodes(rsid)
+  sapply(1:nrow(rsid_prot),function(x) addCyEdges(rsid_prot[x,]))
   exportImage("corrGraph.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  require(igraph)
+  g <- graph_from_graphnel(corrGraph) +
+       vertices(unique(cis[["rsid"]]),color="red") +
+       vertices(unique(trans[["rsid"]]),color="blue") + edges(as.vector(t(rsid_prot)))
+  plot(g)
+  write_graph(g,"igraph.el","edgelist")
+  createNetworkFromGraph(as_graphnel(g),"myGraph")
+  exportImage("corrpQTLGraph.png",type="PNG",resolution=300,height=10,width=12,units="in",overwriteFile=TRUE)
 # Weighted Correlation Network Analysis
   suppressMessages(require(WGCNA))
   enableWGCNAThreads()
@@ -114,10 +118,6 @@ Rscript -e '
   createSubnetwork(subset(nodedata,group=="turquoise")$name,"name")
   exportImage("turquoise.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   saveSession("turquoise.cys")
-  require(igraph)
-  g <- graph_from_graphnel (corrGraph)
-  plot(g)
-  write_graph(g,"igraph.el","edgelist")
   library(ndexr)
   ndexcon <- ndex_connect()
   networks <- ndex_find_networks(ndexcon, "Multiple Sclerosis")
