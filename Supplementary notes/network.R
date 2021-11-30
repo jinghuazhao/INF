@@ -12,6 +12,30 @@ Rscript -e '
   names(prot) <- unlist(lapply(strsplit(names(prot),"___"),"[",1))
   pqtl <- read.table(file.path("work","INF1.merge"),header=TRUE)
   prot <- select(prot,gsub("4E","X4E",unique(pqtl[["prot"]])))
+  INF_METAL <- read.delim(file.path(INF,"work","INF1.METAL"))
+  cis <- subset(INF_METAL,cis.trans=="cis")
+  cis_rsid <- unique(cis[["rsid"]])
+  cis_prot <- unique(cis[["prot"]])
+  trans <- subset(INF_METAL,cis.trans=="trans")
+  trans_rsid <- unique(trans[["rsid"]])
+  trans_prot <- unique(trans[["prot"]])
+# Correlation graph
+  library(RCy3)
+  cytoscapePing()
+  cytoscapeVersionInfo ()
+  suppressMessages(require(Biobase))
+  suppressMessages(library(GOstats))
+  gData <- new("ExpressionSet", exprs=t(prot))
+  corrGraph = compCorrGraph(gData, k=6, tau=0.6)
+  edgemode(corrGraph) <- "undirected"
+  corrGraph <- add_vertices(corrGraph,rsid,color="green") %>%
+               
+              
+  plot(corrGraph)
+  createNetworkFromGraph(corrGraph,"myGraph")
+# addCyNodes(rsid)
+# addCyEdges(as.list(gsub("4E","X4E",with(INF_METAL,paste(rsid,prot)))))
+  exportImage("corrGraph.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
 # Weighted Correlation Network Analysis
   suppressMessages(require(WGCNA))
   enableWGCNAThreads()
@@ -77,9 +101,6 @@ Rscript -e '
   r <- melt(corRaw) %>% mutate(value=ifelse(X1!=X2 & value>=0.7,value,NA))
   colorADJTOM_nogrey <- subset(colorADJTOM,colorStaticTOM!="grey")
   r_nogrey <- melt(corRaw[rownames(colorADJTOM_nogrey),rownames(colorADJTOM_nogrey)]) %>% mutate(value=ifelse(X1!=X2 & value>=0.7,value,NA))
-  library(RCy3)
-  cytoscapePing()
-  cytoscapeVersionInfo ()
   nodes <- data.frame(id=gsub("X4","4",rownames(colorADJTOM_nogrey)),
            group=with(colorADJTOM_nogrey,colorStaticTOM),
            stringsAsFactors=FALSE)
@@ -93,19 +114,20 @@ Rscript -e '
   createSubnetwork(subset(nodedata,group=="turquoise")$name,"name")
   exportImage("turquoise.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   saveSession("turquoise.cys")
-  suppressMessages(require(Biobase))
-  suppressMessages(library(GOstats))
-  gData <- new("ExpressionSet", exprs=t(prot))
-  corrGraph = compCorrGraph(gData, k=6, tau=0.6)
-  edgemode(corrGraph) <- "undirected"
-  plot(corrGraph)
-  createNetworkFromGraph(corrGraph,"myGraph")
-  exportImage("corrGraph.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   require(igraph)
   g <- graph_from_graphnel (corrGraph)
   plot(g)
   write_graph(g,"igraph.el","edgelist")
-# PW-pipeline codes
+  library(ndexr)
+  ndexcon <- ndex_connect()
+  networks <- ndex_find_networks(ndexcon, "Multiple Sclerosis")
+  print(networks[,c("name","externalId","nodeCount","edgeCount")])
+  networks <- ndex_find_networks(ndexcon, "Trastuzumab")
+  print(networks[,c("name","externalId","nodeCount","edgeCount")])
+  networkId = networks$externalId[1]
+  network = ndex_get_network(ndexcon, networkId)
+  print(network)
+  trastuzumab.net.suid <- importNetworkFromNDEx(networkId)
   library(diagram)
   sel <- with(nodedata,name)
   colnames(corRaw) <- rownames(corRaw) <- gsub("X4E","4E",colnames(corRaw))
@@ -113,6 +135,7 @@ Rscript -e '
   require(network)
   n <- network(m, directed=FALSE)
   plot(n)
+# PW-pipeline codes
   require(graph)
   gmat <- new("graphAM", adjMat=m, edgemode='undirected')
   glist <- as(gmat, 'graphNEL')
