@@ -22,6 +22,16 @@ function all_snps()
   ls ${INF}/METAL/*-1.tbl.gz | \
   xargs -l basename -s -1.tbl.gz* | \
   parallel -j3 -C' ' 'zcat METAL/{}-1.tbl.gz | awk " NR>1 && \$12<-5"'
+) | sort -k1,1n -k2,2n > ${INF}/garfield.dat
+}
+
+function cis_snps()
+{
+(
+  awk '$NF=="cis"' ${INF}/work/INF1.METAL | \
+  cut -f3-5  --output-delimiter=" " | \
+  parallel -j5 --env INF -C' ' '
+    zcat ${INF}/METAL/{1}-1.tbl.gz | awk "\$1=={2} && \$2>={3}-1e6 && \$2 <{3}+1e6 && \$12<-5"'
 ) | sort -k1,1n -k2,2n > ${INF}/garfield/garfield.dat
 }
 

@@ -28,9 +28,10 @@ Rscript -e '
   edgemode(corrGraph) <- "undirected"
   plot(corrGraph)
   createNetworkFromGraph(corrGraph,"corrGraph")
-# Somehow these have all vertices lumped together
+# All vertices lumped together are relaid into circles
   addCyNodes(rsid)
   sapply(1:nrow(rsid_prot),function(x) addCyEdges(rsid_prot[x,]))
+  layoutNetwork("attribute-circle")
   exportImage(file.path(INF,"Cytoscape","corrGraph.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   exportNetwork(file.path(INF,"Cytoscape","corrGraph.sif"))
   saveSession(file.path(INF,"Cytoscape","corrGraph.cys"))
@@ -138,19 +139,19 @@ Rscript -e '
   colnames(corRaw) <- rownames(corRaw) <- gsub("X4E","4E",colnames(corRaw))
   plotmat(round(corRaw[sel,sel],2))
   require(network)
-  n <- network(corRaw-diag(corRaw), directed=FALSE)
+  m <- abs(corRaw-diag(corRaw))
+  n <- network(m, directed=FALSE)
   plot(n)
 # PW-pipeline codes
   require(graph)
   gmat <- new("graphAM", adjMat=m, edgemode='undirected')
   glist <- as(gmat, 'graphNEL')
   plot(glist)
-  require(Rgraphviz)
 # genes > 5,000
 # k <- softConnectivity(prot,power=6)
 # network analysis on 70 most connected genes
 # prot[,rank(-k,ties.method="first") <= 70]
   library(Rtsne)
-  rtsne <- Rtsne(as.matrix(prot),dims=3,perplexity=15,theta=0.25,pc=FALSE)
+  rtsne <- Rtsne(as.matrix(prot),dims=3,perplexity=15,theta=0.25,pca=FALSE)
   plot(rtsne$Y,asp=1)
 '
