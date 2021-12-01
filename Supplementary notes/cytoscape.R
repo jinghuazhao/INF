@@ -27,19 +27,21 @@ Rscript -e '
   corrGraph = compCorrGraph(gData, k=6, tau=0.7)
   edgemode(corrGraph) <- "undirected"
   plot(corrGraph)
-  createNetworkFromGraph(corrGraph,"myGraph")
+  createNetworkFromGraph(corrGraph,"corrGraph")
 # Somehow these have all vertices lumped together
   addCyNodes(rsid)
   sapply(1:nrow(rsid_prot),function(x) addCyEdges(rsid_prot[x,]))
-  exportImage("corrGraph.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  exportImage(file.path(INF,"Cytoscape","corrGraph.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  saveSession(file.path(INF,"Cytoscape","corrGraph.cys"))
   require(igraph)
   g <- graph_from_graphnel(corrGraph) +
        vertices(unique(cis[["rsid"]]),color="red") +
        vertices(unique(trans[["rsid"]]),color="blue") + edges(as.vector(t(rsid_prot)))
   plot(g)
-  write_graph(g,"igraph.el","edgelist")
-  createNetworkFromGraph(as_graphnel(g),"myGraph")
-  exportImage("corrpQTLGraph.png",type="PNG",resolution=300,height=10,width=12,units="in",overwriteFile=TRUE)
+  write_graph(g,file.path(INF,"Cytoscape","igraph.el"),"edgelist")
+  createNetworkFromGraph(as_graphnel(g),"corrpQTLGraph")
+  exportImage(file.path(INF,"Cytoscape","corrpQTLGraph.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  saveSession(file.path(INF,"Cytoscape","corrpQTLGraph.cys"))
 # Weighted Correlation Network Analysis
   suppressMessages(require(WGCNA))
   enableWGCNAThreads()
@@ -116,8 +118,8 @@ Rscript -e '
   nodedata <- getTableColumns("node")
   selectNodes(subset(nodedata,group=="turquoise")$name, by='id', pre=FALSE)
   createSubnetwork(subset(nodedata,group=="turquoise")$name,"name")
-  exportImage("turquoise.png",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
-  saveSession("turquoise.cys")
+  exportImage(file.path(INF,"Cytoscape","turquoise.png)",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  saveSession(file.path(INF,"Cytoscape","turquoise.cys"))
   library(ndexr)
   ndexcon <- ndex_connect()
   networks <- ndex_find_networks(ndexcon, "Multiple Sclerosis")
