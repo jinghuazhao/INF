@@ -273,6 +273,7 @@ File | Description
 chembl.sh | toy CHEMBL queries
 CRP.sh | an inflammation score
 circos.* | circos/circlize scripts
+cytoscape.R | Cytoscape and Network Analysis
 efo.R | experimental factor ontology
 epigraphdb-pleiotropy.R | horizontal and vertical pleiotropy
 epigraphdb-ppi.R | PPI using EpiGraphDB
@@ -280,7 +281,6 @@ gdigt.R | GDI and gene-trials
 GREP.sh | GREP script
 h2pve.* | h2/pve summary
 inbio-discover.R | gene lists
-network.R | Network Analysis
 pheweb.Rmd | Data extraction from pheweb.jp
 qqman.sb | Q-Q/Manhattan plots under CSD3
 rentrez.sh | reuse of rentrez
