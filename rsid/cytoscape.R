@@ -32,6 +32,7 @@ Rscript -e '
   addCyNodes(rsid)
   sapply(1:nrow(rsid_prot),function(x) addCyEdges(rsid_prot[x,]))
   exportImage(file.path(INF,"Cytoscape","corrGraph.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  exportNetwork(file.path(INF,"Cytoscape","corrGraph.sif"))
   saveSession(file.path(INF,"Cytoscape","corrGraph.cys"))
   require(igraph)
   g <- graph_from_graphnel(corrGraph) +
@@ -41,6 +42,7 @@ Rscript -e '
   write_graph(g,file.path(INF,"Cytoscape","igraph.el"),"edgelist")
   createNetworkFromGraph(as_graphnel(g),"corrpQTLGraph")
   exportImage(file.path(INF,"Cytoscape","corrpQTLGraph.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  exportNetwork(file.path(INF,"Cytoscape","corrpQTLGraph.sif"))
   saveSession(file.path(INF,"Cytoscape","corrpQTLGraph.cys"))
 # Weighted Correlation Network Analysis
   suppressMessages(require(WGCNA))
@@ -118,7 +120,8 @@ Rscript -e '
   nodedata <- getTableColumns("node")
   selectNodes(subset(nodedata,group=="turquoise")$name, by='id', pre=FALSE)
   createSubnetwork(subset(nodedata,group=="turquoise")$name,"name")
-  exportImage(file.path(INF,"Cytoscape","turquoise.png)",type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  exportImage(file.path(INF,"Cytoscape","turquoise.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  exportNetwork(file.path(INF,"Cytoscape","turquoise.sif"))
   saveSession(file.path(INF,"Cytoscape","turquoise.cys"))
   library(ndexr)
   ndexcon <- ndex_connect()
@@ -135,7 +138,7 @@ Rscript -e '
   colnames(corRaw) <- rownames(corRaw) <- gsub("X4E","4E",colnames(corRaw))
   plotmat(round(corRaw[sel,sel],2))
   require(network)
-  n <- network(m, directed=FALSE)
+  n <- network(corRaw-diag(corRaw), directed=FALSE)
   plot(n)
 # PW-pipeline codes
   require(graph)
