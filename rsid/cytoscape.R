@@ -50,7 +50,7 @@
   saveSession(file.path(INF,"Cytoscape","corrpQTLGraph.cys"))
 
   library(RColorBrewer)
-  string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=5000'
+  string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=10000'
   commandsRun(string.cmd)
   getTableColumnNames('node')
   Nodes <- getAllNodes()
