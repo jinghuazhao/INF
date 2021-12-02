@@ -1,8 +1,10 @@
-#!/usr/bin/bash
+#!/rds/user/jhz22/hpc-work/bin/Rscript
 
-Rscript -e '
 # Data handling
   library(dplyr)
+  library(pQTLtools)
+  target <- inf1["target.short"]
+  rownames(target) <- inf1[["prot"]]
   INF <- Sys.getenv("INF")
   outfile <- file.path(INF,"INTERVAL","o5000-inf1-outlier_in-r2.sample")
   header <- read.table(outfile, as.is=TRUE, header=TRUE, nrows=1)
@@ -11,10 +13,11 @@ Rscript -e '
   prot <- filter(prot,!is.na(apply(prot,1,sum)))
   names(prot) <- unlist(lapply(strsplit(names(prot),"___"),"[",1))
   pqtl <- read.table(file.path(INF,"work","INF1.merge"),header=TRUE)
-  prot <- select(prot,gsub("4E","X4E",unique(pqtl[["prot"]])))
-  INF_METAL <- read.delim(file.path(INF,"work","INF1.METAL"))
+  names(prot) <- target[gsub("X4E","4E",names(prot)),1]
+  INF_METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+               left_join(inf1,by="prot")
   rsid <- unique(INF_METAL[["rsid"]])
-  rsid_prot <- gsub("4E","X4E",with(INF_METAL,cbind(rsid,prot)))
+  rsid_prot <- with(INF_METAL,cbind(rsid,target.short))
   cis <- subset(INF_METAL,cis.trans=="cis")
   trans <- subset(INF_METAL,cis.trans=="trans")
 # Correlation graph
@@ -27,25 +30,41 @@ Rscript -e '
   corrGraph = compCorrGraph(gData, k=6, tau=0.7)
   edgemode(corrGraph) <- "undirected"
   plot(corrGraph)
-  createNetworkFromGraph(corrGraph,"corrGraph")
-# All vertices lumped together are relaid into circles
+  corrGraph <- createNetworkFromGraph(corrGraph,"corrGraph")
   addCyNodes(rsid)
   sapply(1:nrow(rsid_prot),function(x) addCyEdges(rsid_prot[x,]))
   layoutNetwork("attribute-circle")
   exportImage(file.path(INF,"Cytoscape","corrGraph.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   exportNetwork(file.path(INF,"Cytoscape","corrGraph.sif"))
   saveSession(file.path(INF,"Cytoscape","corrGraph.cys"))
+
   require(igraph)
   g <- graph_from_graphnel(corrGraph) +
        vertices(unique(cis[["rsid"]]),color="red") +
        vertices(unique(trans[["rsid"]]),color="blue") + edges(as.vector(t(rsid_prot)))
   plot(g)
   write_graph(g,file.path(INF,"Cytoscape","igraph.el"),"edgelist")
-  createNetworkFromGraph(as_graphnel(g),"corrpQTLGraph")
+  corrpQTLGraph <- createNetworkFromGraph(as_graphnel(g),"corrpQTLGraph")
+  layoutNetwork("cose")
   exportImage(file.path(INF,"Cytoscape","corrpQTLGraph.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   exportNetwork(file.path(INF,"Cytoscape","corrpQTLGraph.sif"))
   saveSession(file.path(INF,"Cytoscape","corrpQTLGraph.cys"))
+
+  library(RColorBrewer)
+  string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=150'
+  commandsRun(string.cmd)
+  Nodes <- getAllNodes()
+  ENSP <- data.frame(ensp=gsub("9606.","",Nodes))
+  write.table(ENSP,file="nodes.txt",quote=FALSE,row.names=FALSE,col.names=FALSE)
+  ENS <- read.table(file.path(INF,"work","ensGtp.txt.gz"),col.names=c("ensg","enst","ensp"),sep="\t")
+  ENST <- read.table(file.path(INF,"work","ensemblToGeneName.txt.gz"),col.names=c("enst","symbol"))
+  d <- left_join(ENSP,ENS) %>% left_join(ENST) %>% left_join(inf1, by=c('ensg'='ensembl_gene_id')) %>% filter(symbol==gene)
+  inf1_nodes <- with(d,paste0("9606.",ensp))
+  createSubnetwork(inf1_nodes,subnetwork.name='INF1')
+
+wgcna_code <- function()
 # Weighted Correlation Network Analysis
+{
   suppressMessages(require(WGCNA))
   enableWGCNAThreads()
 # Adjacency matrix using soft thresholding with beta=6
@@ -142,7 +161,11 @@ Rscript -e '
   m <- abs(corRaw-diag(corRaw))
   n <- network(m, directed=FALSE)
   plot(n)
+}
+
+pw_code <- function()
 # PW-pipeline codes
+{
   require(graph)
   gmat <- new("graphAM", adjMat=m, edgemode='undirected')
   glist <- as(gmat, 'graphNEL')
@@ -154,4 +177,10 @@ Rscript -e '
   library(Rtsne)
   rtsne <- Rtsne(as.matrix(prot),dims=3,perplexity=15,theta=0.25,pca=FALSE)
   plot(rtsne$Y,asp=1)
-'
+}
+
+# ensGtp.txt.gz
+# ENSG00000215700	ENST00000400776	ENSP00000383587
+# ensemblToGeneName.txt.gz
+# ENST00000400776	PNRC2
+# ENST00000374457	SRSF10
