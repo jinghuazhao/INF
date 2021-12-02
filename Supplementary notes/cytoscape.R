@@ -50,7 +50,7 @@
   saveSession(file.path(INF,"Cytoscape","corrpQTLGraph.cys"))
 
   library(RColorBrewer)
-  string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=1500'
+  string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=2500'
   commandsRun(string.cmd)
   getTableColumnNames('node')
   Nodes <- getAllNodes()
@@ -59,6 +59,7 @@
   ENS <- read.table(file.path(INF,"work","ensGtp.txt.gz"),col.names=c("ensg","enst","ensp"),sep="\t")
   ENST <- read.table(file.path(INF,"work","ensemblToGeneName.txt.gz"),col.names=c("enst","symbol"))
   d <- left_join(ENSP,ENS) %>% left_join(ENST) %>% left_join(inf1, by=c('ensg'='ensembl_gene_id')) %>% filter(symbol==gene)
+  dim(d)
   inf1_nodes <- with(d,paste0("9606.",ensp))
   Names <- getTableColumns('node',"name") %>% filter(name %in% inf1_nodes) %>% rownames()
   uid_INF1 <- createSubnetwork(Names,subnetwork.name ='INF1')
@@ -67,6 +68,16 @@
   exportImage(file.path(INF,"Cytoscape","MS.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   exportNetwork(file.path(INF,"Cytoscape","MS.sif"))
   saveSession(file.path(INF,"Cytoscape","MS.cys"))
+  d <- left_join(ENSP,ENS) %>% left_join(ENST) %>% left_join(inf1, by=c('ensg'='ensembl_gene_id')) %>% filter(symbol==gene & prot %in% INF_METAL$prot)
+  dim(d)
+  inf1_nodes <- with(d,paste0("9606.",ensp))
+  Names <- getTableColumns('node',"name") %>% filter(name %in% inf1_nodes) %>% rownames()
+  uid_INF1 <- createSubnetwork(Names,subnetwork.name ='INF1-70')
+  uid_INF1connected <- createSubnetwork(edges='all',subnetwork.name='INF1 connected-70')
+  layoutNetwork("attribute-circle")
+  exportImage(file.path(INF,"Cytoscape","MS-70.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  exportNetwork(file.path(INF,"Cytoscape","MS-70.sif"))
+  saveSession(file.path(INF,"Cytoscape","MS-70.cys"))
 
 wgcna_code <- function()
 # Weighted Correlation Network Analysis
