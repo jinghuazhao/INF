@@ -1,6 +1,5 @@
 #!/rds/user/jhz22/hpc-work/bin/Rscript
 
-# Data handling
   library(dplyr)
   library(pQTLtools)
   target <- inf1["target.short"]
@@ -20,7 +19,7 @@
   rsid_prot <- with(INF_METAL,cbind(rsid,target.short))
   cis <- subset(INF_METAL,cis.trans=="cis")
   trans <- subset(INF_METAL,cis.trans=="trans")
-# Correlation graph
+
   library(RCy3)
   cytoscapePing()
   cytoscapeVersionInfo ()
@@ -30,7 +29,7 @@
   corrGraph = compCorrGraph(gData, k=6, tau=0.7)
   edgemode(corrGraph) <- "undirected"
   plot(corrGraph)
-  corrGraph <- createNetworkFromGraph(corrGraph,"corrGraph")
+  uid_corrGraph <- createNetworkFromGraph(corrGraph,"corrGraph")
   addCyNodes(rsid)
   sapply(1:nrow(rsid_prot),function(x) addCyEdges(rsid_prot[x,]))
   layoutNetwork("attribute-circle")
@@ -44,15 +43,16 @@
        vertices(unique(trans[["rsid"]]),color="blue") + edges(as.vector(t(rsid_prot)))
   plot(g)
   write_graph(g,file.path(INF,"Cytoscape","igraph.el"),"edgelist")
-  corrpQTLGraph <- createNetworkFromGraph(as_graphnel(g),"corrpQTLGraph")
+  uid_corrpQTLGraph <- createNetworkFromIgraph(g,"corrpQTLGraph")
   layoutNetwork("cose")
   exportImage(file.path(INF,"Cytoscape","corrpQTLGraph.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
   exportNetwork(file.path(INF,"Cytoscape","corrpQTLGraph.sif"))
   saveSession(file.path(INF,"Cytoscape","corrpQTLGraph.cys"))
 
   library(RColorBrewer)
-  string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=150'
+  string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=1500'
   commandsRun(string.cmd)
+  getTableColumnNames('node')
   Nodes <- getAllNodes()
   ENSP <- data.frame(ensp=gsub("9606.","",Nodes))
   write.table(ENSP,file="nodes.txt",quote=FALSE,row.names=FALSE,col.names=FALSE)
@@ -60,7 +60,13 @@
   ENST <- read.table(file.path(INF,"work","ensemblToGeneName.txt.gz"),col.names=c("enst","symbol"))
   d <- left_join(ENSP,ENS) %>% left_join(ENST) %>% left_join(inf1, by=c('ensg'='ensembl_gene_id')) %>% filter(symbol==gene)
   inf1_nodes <- with(d,paste0("9606.",ensp))
-  createSubnetwork(inf1_nodes,subnetwork.name='INF1')
+  Names <- getTableColumns('node',"name") %>% filter(name %in% inf1_nodes) %>% rownames()
+  uid_INF1 <- createSubnetwork(Names,subnetwork.name ='INF1')
+  uid_INF1connected <- createSubnetwork(edges='all',subnetwork.name='INF1 connected')
+  layoutNetwork("attribute-circle")
+  exportImage(file.path(INF,"Cytoscape","MS.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  exportNetwork(file.path(INF,"Cytoscape","MS.sif"))
+  saveSession(file.path(INF,"Cytoscape","MS.cys"))
 
 wgcna_code <- function()
 # Weighted Correlation Network Analysis
