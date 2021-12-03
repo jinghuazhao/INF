@@ -1,4 +1,4 @@
-#!/rds/user/jhz22/hpc-work/bin/Rscript
+#!/rds/user/jhz22/hpc-work/bin/Rscript --vanilla
 
 library(dplyr)
 library(pQTLtools)
@@ -30,53 +30,28 @@ gData <- new("ExpressionSet", exprs=t(prot))
 corrGraph = compCorrGraph(gData, k=6, tau=0.7)
 edgemode(corrGraph) <- "undirected"
 plot(corrGraph)
-uid_corrGraph <- createNetworkFromGraph(corrGraph,"corrGraph")
+suid_corrGraph <- createNetworkFromGraph(corrGraph,"corrGraph")
 addCyNodes(rsid)
 sapply(1:nrow(rsid_prot),function(x) addCyEdges(rsid_prot[x,]))
 layoutNetwork("attribute-circle")
 exportImage(file.path(INF,"Cytoscape","corrGraph.pdf"),type="PDF",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
 exportNetwork(file.path(INF,"Cytoscape","corrGraph.sif"))
 saveSession(file.path(INF,"Cytoscape","corrGraph.cys"),overwriteFile=TRUE)
-deleteNetwork(uid_corrGraph)
+deleteNetwork(suid_corrGraph)
 
 require(igraph)
 g <- graph_from_graphnel(corrGraph) +
      vertices(unique(cis[["rsid"]]),color="red") +
      vertices(unique(trans[["rsid"]]),color="blue") + edges(as.vector(t(rsid_prot)))
 plot(g)
-uid_corrIGraph <- createNetworkFromIgraph(g,"corrIGraph")
-layoutNetwork("cose")
+suid_corrIGraph <- createNetworkFromIgraph(g,"corrIGraph")
+layoutNetwork("attribute-circle")
 exportImage(file.path(INF,"Cytoscape","corrIGraph.pdf"),type="PDF",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
 exportNetwork(file.path(INF,"Cytoscape","corrIGraph.sif"))
 saveSession(file.path(INF,"Cytoscape","corrIGraph.cys"),overwriteFile=TRUE)
-deleteNetwork(uid_corrIGraph)
+deleteNetwork(suid_corrIGraph)
 
-library(RColorBrewer)
-string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=10000'
-commandsRun(string.cmd)
-getTableColumnNames('node')
-Nodes <- getAllNodes()
-ENSP <- data.frame(ensp=gsub("9606.","",Nodes))
-ENS <- read.table(file.path(INF,"work","ensGtp.txt.gz"),col.names=c("ensg","enst","ensp"),sep="\t")
-ENST <- read.table(file.path(INF,"work","ensemblToGeneName.txt.gz"),col.names=c("enst","symbol"))
-d <- left_join(ENSP,ENS) %>% left_join(ENST) %>% left_join(inf1, by=c('ensg'='ensembl_gene_id')) %>% filter(symbol==gene)
-
-ms <- function(d,filename)
-{
-  print(dim(d))
-  inf1_nodes <- with(d,paste0("9606.",ensp))
-  Names <- getTableColumns('node',"name") %>% filter(name %in% inf1_nodes) %>% rownames()
-  uid_INF1 <- createSubnetwork(Names,subnetwork.name=filename)
-  uid_INF1connected <- createSubnetwork(edges='all',subnetwork.name=paste0(filename,"connected"))
-  layoutNetwork("attribute-circle")
-  exportNetwork(file.path(INF,"Cytoscape",paste0(filename,".sif")))
-  saveSession(file.path(INF,"Cytoscape",paste0(filename,".cys")))
-}
-ms(d,"MS")
-d <- filter(d, prot %in% INF_METAL$prot)
-ms(d,"MS-70")
-
-wgcna_code <- function()
+wgcna_etc <- function()
 # Weighted Correlation Network Analysis
 {
   suppressMessages(require(WGCNA))
@@ -150,23 +125,59 @@ wgcna_code <- function()
            target=with(r_nogrey,gsub("X4","4",X2)),
            weight=with(r_nogrey,value),
            stringsAsFactors=FALSE) %>% filter(!is.na(weight))
-  createNetworkFromDataFrames(nodes,edges,title="protein network", collection="DataFrame")
+  suid_wgnca <- createNetworkFromDataFrames(nodes,edges,title="turquoise", collection="DataFrame")
+  layoutNetwork("attribute-circle")
   nodedata <- getTableColumns("node")
   selectNodes(subset(nodedata,group=="turquoise")$name, by='id', pre=FALSE)
   createSubnetwork(subset(nodedata,group=="turquoise")$name,"name")
-  exportImage(file.path(INF,"Cytoscape","turquoise.png"),type="PNG",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+  exportImage(file.path(INF,"Cytoscape","turquoise.pdf"),type="PDF",overwriteFile=TRUE)
   exportNetwork(file.path(INF,"Cytoscape","turquoise.sif"))
   saveSession(file.path(INF,"Cytoscape","turquoise.cys"))
-  library(ndexr)
-  ndexcon <- ndex_connect()
-  networks <- ndex_find_networks(ndexcon, "Multiple Sclerosis")
-  print(networks[,c("name","externalId","nodeCount","edgeCount")])
-  networks <- ndex_find_networks(ndexcon, "Trastuzumab")
-  print(networks[,c("name","externalId","nodeCount","edgeCount")])
-  networkId = networks$externalId[1]
-  network = ndex_get_network(ndexcon, networkId)
-  print(network)
-  trastuzumab.net.suid <- importNetworkFromNDEx(networkId)
+}
+
+wgcna_etc()
+
+library(RColorBrewer)
+string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=10000'
+commandsRun(string.cmd)
+getTableColumnNames('node')
+Nodes <- getAllNodes()
+ENSP <- data.frame(ensp=gsub("9606.","",Nodes))
+ENS <- read.table(file.path(INF,"work","ensGtp.txt.gz"),col.names=c("ensg","enst","ensp"),sep="\t")
+ENST <- read.table(file.path(INF,"work","ensemblToGeneName.txt.gz"),col.names=c("enst","symbol"))
+
+ms <- function(d,filename)
+{
+  print(dim(d))
+  inf1_nodes <- with(d,paste0("9606.",ensp))
+  Names <- getTableColumns('node',"name") %>% filter(name %in% inf1_nodes) %>% rownames()
+  suid_INF1 <- createSubnetwork(Names,subnetwork.name=filename)
+  suid_INF1connected <- createSubnetwork(edges='all',subnetwork.name=paste0(filename,"connected"))
+  layoutNetwork("attribute-circle")
+  exportNetwork(file.path(INF,"Cytoscape",paste0(filename,".sif")))
+  saveSession(file.path(INF,"Cytoscape",paste0(filename,".cys")))
+}
+d <- left_join(ENSP,ENS) %>% left_join(ENST) %>% left_join(inf1, by=c('ensg'='ensembl_gene_id')) %>% filter(symbol==gene)
+ms(d,"MS")
+d <- filter(d, prot %in% INF_METAL$prot)
+ms(d,"MS-70")
+library(ndexr)
+ndexcon <- ndex_connect()
+networks <- ndex_find_networks(ndexcon, "Multiple Sclerosis")
+print(networks[,c("name","nodeCount","edgeCount")])
+networks <- ndex_find_networks(ndexcon, "Trastuzumab")
+print(networks[,c("name","nodeCount","edgeCount")])
+networkId = networks$externalId[1]
+network = ndex_get_network(ndexcon, networkId)
+print(network)
+suid_trastuzumab <- importNetworkFromNDEx(networkId)
+
+# ensGtp.txt.gz
+# ENSG00000215700	ENST00000400776	ENSP00000383587
+# ensemblToGeneName.txt.gz
+# ENST00000400776	PNRC2
+
+misc <- function()
   library(diagram)
   sel <- with(nodedata,name)
   colnames(corRaw) <- rownames(corRaw) <- gsub("X4E","4E",colnames(corRaw))
@@ -175,11 +186,6 @@ wgcna_code <- function()
   m <- abs(corRaw-diag(corRaw))
   n <- network(m, directed=FALSE)
   plot(n)
-}
-
-pw_code <- function()
-# PW-pipeline codes
-{
   require(graph)
   gmat <- new("graphAM", adjMat=m, edgemode='undirected')
   glist <- as(gmat, 'graphNEL')
@@ -192,8 +198,3 @@ pw_code <- function()
   rtsne <- Rtsne(as.matrix(prot),dims=3,perplexity=15,theta=0.25,pca=FALSE)
   plot(rtsne$Y,asp=1)
 }
-
-# ensGtp.txt.gz
-# ENSG00000215700	ENST00000400776	ENSP00000383587
-# ensemblToGeneName.txt.gz
-# ENST00000400776	PNRC2
