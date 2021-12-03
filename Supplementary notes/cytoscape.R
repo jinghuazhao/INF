@@ -37,6 +37,7 @@ layoutNetwork("attribute-circle")
 exportImage(file.path(INF,"Cytoscape","corrGraph.pdf"),type="PDF",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
 exportNetwork(file.path(INF,"Cytoscape","corrGraph.sif"))
 saveSession(file.path(INF,"Cytoscape","corrGraph.cys"),overwriteFile=TRUE)
+deleteNetwork(uid_corrGraph)
 
 require(igraph)
 g <- graph_from_graphnel(corrGraph) +
@@ -48,6 +49,7 @@ layoutNetwork("cose")
 exportImage(file.path(INF,"Cytoscape","corrIGraph.pdf"),type="PDF",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
 exportNetwork(file.path(INF,"Cytoscape","corrIGraph.sif"))
 saveSession(file.path(INF,"Cytoscape","corrIGraph.cys"),overwriteFile=TRUE)
+deleteNetwork(uid_corrIGraph)
 
 library(RColorBrewer)
 string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=10000'
