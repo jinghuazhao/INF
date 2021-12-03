@@ -5,24 +5,25 @@ library(pQTLtools)
 target <- inf1["target.short"]
 rownames(target) <- inf1[["prot"]]
 INF <- Sys.getenv("INF")
-outfile <- file.path(INF,"INTERVAL","o5000-inf1-outlier_in-r2.sample")
-header <- read.table(outfile, as.is=TRUE, header=TRUE, nrows=1)
-d <- read.table(outfile,skip=2,as.is=TRUE,col.names=names(header))
-prot <- d[grepl("__",names(d))]
-prot <- filter(prot,!is.na(apply(prot,1,sum)))
-names(prot) <- unlist(lapply(strsplit(names(prot),"___"),"[",1))
-pqtl <- read.table(file.path(INF,"work","INF1.merge"),header=TRUE)
-names(prot) <- target[gsub("X4E","4E",names(prot)),1]
 INF_METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
              left_join(inf1,by="prot")
 rsid <- unique(INF_METAL[["rsid"]])
 rsid_prot <- with(INF_METAL,cbind(rsid,target.short))
 cis <- subset(INF_METAL,cis.trans=="cis")
 trans <- subset(INF_METAL,cis.trans=="trans")
+outfile <- file.path(INF,"INTERVAL","o5000-inf1-outlier_in-r2.sample")
+header <- read.table(outfile, as.is=TRUE, header=TRUE, nrows=1)
+d <- read.table(outfile,skip=2,as.is=TRUE,col.names=names(header))
+prot <- d[grepl("__",names(d))]
+prot <- filter(prot,!is.na(apply(prot,1,sum)))
+names(prot) <- unlist(lapply(strsplit(gsub("X4E","4E",names(prot)),"___"),"[",1))
+prot <- select(prot,INF_METAL[["prot"]])
+names(prot) <- target[names(prot),1]
 
 library(RCy3)
 cytoscapePing()
-cytoscapeVersionInfo ()
+cytoscapeVersionInfo()
+deleteAllNetworks()
 suppressMessages(require(Biobase))
 suppressMessages(library(GOstats))
 gData <- new("ExpressionSet", exprs=t(prot))
@@ -42,12 +43,11 @@ g <- graph_from_graphnel(corrGraph) +
      vertices(unique(cis[["rsid"]]),color="red") +
      vertices(unique(trans[["rsid"]]),color="blue") + edges(as.vector(t(rsid_prot)))
 plot(g)
-write_graph(g,file.path(INF,"Cytoscape","igraph.el"),"edgelist")
-uid_corrpQTLGraph <- createNetworkFromIgraph(g,"corrpQTLGraph")
+uid_corrIGraph <- createNetworkFromIgraph(g,"corrIGraph")
 layoutNetwork("cose")
-exportImage(file.path(INF,"Cytoscape","corrpQTLGraph.pdf"),type="PDF",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
-exportNetwork(file.path(INF,"Cytoscape","corrpQTLGraph.sif"))
-saveSession(file.path(INF,"Cytoscape","corrpQTLGraph.cys"))
+exportImage(file.path(INF,"Cytoscape","corrIGraph.pdf"),type="PDF",resolution=300,height=8,width=12,units="in",overwriteFile=TRUE)
+exportNetwork(file.path(INF,"Cytoscape","corrIGraph.sif"))
+saveSession(file.path(INF,"Cytoscape","corrIGraph.cys"),overwriteFile=TRUE)
 
 library(RColorBrewer)
 string.cmd = 'string disease query disease="multiple sclerosis" cutoff=0.9 species="Homo sapiens" limit=10000'
@@ -58,24 +58,21 @@ ENSP <- data.frame(ensp=gsub("9606.","",Nodes))
 ENS <- read.table(file.path(INF,"work","ensGtp.txt.gz"),col.names=c("ensg","enst","ensp"),sep="\t")
 ENST <- read.table(file.path(INF,"work","ensemblToGeneName.txt.gz"),col.names=c("enst","symbol"))
 d <- left_join(ENSP,ENS) %>% left_join(ENST) %>% left_join(inf1, by=c('ensg'='ensembl_gene_id')) %>% filter(symbol==gene)
-dim(d)
-inf1_nodes <- with(d,paste0("9606.",ensp))
-Names <- getTableColumns('node',"name") %>% filter(name %in% inf1_nodes) %>% rownames()
-uid_INF1 <- createSubnetwork(Names,subnetwork.name ='INF1')
-uid_INF1connected <- createSubnetwork(edges='all',subnetwork.name='INF1 connected')
-layoutNetwork("attribute-circle")
-exportNetwork(file.path(INF,"Cytoscape","MS.sif"))
-saveSession(file.path(INF,"Cytoscape","MS.cys"))
-d <- left_join(ENSP,ENS) %>% left_join(ENST) %>% left_join(inf1, by=c('ensg'='ensembl_gene_id')) %>%
-     filter(symbol==gene & prot %in% INF_METAL$prot)
-dim(d)
-inf1_nodes <- with(d,paste0("9606.",ensp))
-Names <- getTableColumns('node',"name") %>% filter(name %in% inf1_nodes) %>% rownames()
-uid_INF1 <- createSubnetwork(Names,subnetwork.name ='INF1-70')
-uid_INF1connected <- createSubnetwork(edges='all',subnetwork.name='INF1 connected-70')
-layoutNetwork("attribute-circle")
-exportNetwork(file.path(INF,"Cytoscape","MS-70.sif"))
-saveSession(file.path(INF,"Cytoscape","MS-70.cys"))
+
+ms <- function(d,filename)
+{
+  print(dim(d))
+  inf1_nodes <- with(d,paste0("9606.",ensp))
+  Names <- getTableColumns('node',"name") %>% filter(name %in% inf1_nodes) %>% rownames()
+  uid_INF1 <- createSubnetwork(Names,subnetwork.name ='INF1')
+  uid_INF1connected <- createSubnetwork(edges='all',subnetwork.name='INF1 connected')
+  layoutNetwork("attribute-circle")
+  exportNetwork(file.path(INF,"Cytoscape",paste0(filename,".sif")))
+  saveSession(file.path(INF,"Cytoscape",paste0(filename,".cys")))
+}
+ms(d,"MS")
+d <- filter(d, prot %in% INF_METAL$prot)
+ms(d,"MS-70")
 
 wgcna_code <- function()
 # Weighted Correlation Network Analysis
