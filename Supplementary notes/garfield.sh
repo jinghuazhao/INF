@@ -28,10 +28,9 @@ function all_snps()
 function cis_snps()
 {
 (
-  awk '$NF=="cis"' ${INF}/work/INF1.METAL | \
-  cut -f3-5  --output-delimiter=" " | \
+  cat ${INF}/work/INF1.merge.genes | \
   parallel -j5 --env INF -C' ' '
-    zcat ${INF}/METAL/{1}-1.tbl.gz | awk "\$1=={2} && \$2>={3}-1e6 && \$2 <{3}+1e6 && \$12<-5"'
+    zcat ${INF}/METAL/{2}-1.tbl.gz | awk -vM=1e6 "\$1=={3} && \$2>={4}-M && \$2 <{5}+M && \$12<-5"'
 ) | sort -k1,1n -k2,2n > ${INF}/garfield/garfield.dat
 }
 
@@ -111,6 +110,15 @@ function protein_snps()
   xargs -l basename -s -1.tbl.gz* | \
   parallel -j10 --env INF -C' ' 'zcat ${INF}/METAL/{}-1.tbl.gz | awk "NR>1 && \$12<-5" | \
                                  sort -k1,1n -k2,2n > ${INF}/garfield/garfield-{}.dat'
+}
+
+function protein_cis_snps()
+{
+(
+  cat ${INF}/work/INF1.merge.genes | \
+  parallel -j5 --env INF -C' ' '
+    zcat ${INF}/METAL/{2}-1.tbl.gz | awk -vM=1e6 "\$1=={3} && \$2>={4}-M && \$2 <{5}+M && \$12<-5"'
+) | sort -k1,1n -k2,2n > ${INF}/garfield/garfield-{2}.dat
 }
 
 function protein_input()
