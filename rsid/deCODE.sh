@@ -1,36 +1,38 @@
 #!/usr/bin/bash
 
-export proteomics_results=~/rds/results/public/proteomics/Fenland
-export all=${proteomics_results}/all.grch37.tabix.gz
+export proteomics_results=~/rds/results/public/proteomics/deCODE/full_downloads
 export v4=SomaLogicv4.tsv
 
-function panel()
-{
-if [ ! -d ${INF}/Fenland ]; then mkdir ${INF}/Fenland; fi
-R --no-save -q <<END
-  options(width=200)
-  f <- file.path(Sys.getenv("proteomics_results"),"bqc19_jgh_prt_soma_list.xlsx")
-  SomaLogicv4 <- openxlsx::read.xlsx(f,sheet=1,startRow=3)
-  out <- file.path(Sys.getenv("INF"),"Fenland",Sys.getenv("v4"))
-  write.table(SomaLogicv4,file=out,quote=FALSE,row.names=FALSE,sep="\t")
-END
-}
+if [ ! -d ${INF}/deCODE ]; then mkdir -p ${INF}/deCODE; fi
 
 function replication()
 (
-  gunzip -c ${all} | \
+  gunzip -c ${proteomics_results}/10000_28_CRYBB2_CRBB2.txt.gz | \
   head -1
   join -j2 <(cut -f1,3,6 --complement --output-delimiter=' ' ${INF}/Fenland/${v4} | sed 's/-/_/' | sort -k2,2) \
            <(cut -f2,4,5,20 --output-delimiter=' ' ${INF}/work/INF1.METAL | awk '{print $2":"$3,$4,$1}' | sort -k2,2) | \
   parallel -C' ' -j20 --env proteomics_results '
     tabix ${all} {4} | zgrep -w {2} | grep -w {5}
   '
-) > ${INF}/Fenland/replication.tsv
+) > ${INF}/deCODE/replication.tsv
 
-function fenland()
+
+function olink_inf_idx()
+{
+  module load tabix-2013-12-16-gcc-5.4.0-xn3xiv7
+  cd ${INF}/deCODE
+  ls ${proteomics_results}/full_downloads/*md5sum | xargs -l basename -s .md5sum | \
+  parallel -C' ' '
+    gunzip -c 
+    tabix -f -S1 -s1 -b2 -e2 {}.gz
+  '
+  cd -
+}
+
+function deCODE()
 (
 echo -e "Protein\tSentinels\tUniProt\tSNPid\tcis/trans\tProxies\tr2\tp\tTarget Full Name\tSource\tPMID\tComment"
-join -12 -21 <(awk 'NR>1 && $14<=5e-8' ${INF}/Fenland/replication.tsv | cut -f4,11,14 | sort -k2,2) \
+join -12 -21 <(awk 'NR>1 && $14<=5e-8' ${INF}/deCODE/replication.tsv | cut -f4,11,14 | sort -k2,2) \
              <(cut -f1,3,5,6 --complement --output-delimiter=' ' ${INF}/Fenland/${v4} | sed 's/-/_/' | sort -k1,1) | \
 awk '{print $4"-"$2,$0}' | \
 sort -k1,1 | \
@@ -44,9 +46,9 @@ join -24 <(Rscript -e 'write.table(pQTLtools::inf1[c("prot","target.short")],col
 awk -vOFS='\t' '{print $2,$6,$5,$3,$7,"as sentinels",1,$4}' | \
 sort -t$'\t' -k1,1 | \
 join -t$'\t' - \
-             <(Rscript -e 'write.table(data.frame(pQTLtools::inf1[c("target.short","target")],Source="Pietzner et al. (2021)",PMID="",Comment=""),
+             <(Rscript -e 'write.table(data.frame(pQTLtools::inf1[c("target.short","target")],Source="Ferkingstad et al. (2021)",PMID="",Comment=""),
                                        col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")' | \
                sort -t$'\t' -k1,1)
 )
 
-fenland > ${INF}/Fenland/Fenland.tsv
+deCODE > ${INF}/deCODE/deCODE.tsv

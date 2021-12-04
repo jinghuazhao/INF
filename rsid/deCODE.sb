@@ -1,0 +1,40 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=_deCODE
+#SBATCH --account=CARDIO-SL0-CPU
+#SBATCH --partition=cardio
+#SBATCH --cpus-per-task=8
+#SBATCH --qos=cardio
+#SBATCH --array=1-4128
+#SBATCH --mem=10000
+#SBATCH --time=3-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_deCODE_%A_%a.o
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_deCODE_%A_%a.e
+#SBATCH --export ALL
+
+export TMPDIR=${HPC_WORK}/work
+export dir=~/rds/results/public/proteomics/deCODE
+export job=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' ${dir}/pickup.txt)
+
+. /etc/profile.d/modules.sh
+module purge
+module load rhel7/default-peta4
+module load gcc/6
+module load aria2-1.33.1-gcc-5.4.0-r36jubs
+
+cd ${dir}/pickup
+echo ${job} | aria2c -c -j8 -i -
+cd -
+
+function setup()
+{
+  cd ${dir}/full_downloads
+  for f in $(ls ${dir}/sr827_full_download/*md5sum | xargs -l basename -s .md5sum)
+  do
+    ln -sf ../sr827_full_download/${f}.gz
+    ln -sf ../sr827_full_download/${f}.md5sum
+  done
+  cd ${dir}
+  ls sr827_full_download full_downloads/*md5sum | grep -v "@" | xargs -l basename -s .md5sum | grep -f - -v urls.txt > pickup.txt
+# aria2c -c -j15 -i pickup.txt
+}
