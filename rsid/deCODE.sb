@@ -3,9 +3,9 @@
 #SBATCH --job-name=_deCODE
 #SBATCH --account=CARDIO-SL0-CPU
 #SBATCH --partition=cardio
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=6
 #SBATCH --qos=cardio
-#SBATCH --array=1-4128
+#SBATCH --array=1-4907
 #SBATCH --mem=10000
 #SBATCH --time=3-00:00:00
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_deCODE_%A_%a.o
@@ -14,7 +14,9 @@
 
 export TMPDIR=${HPC_WORK}/work
 export dir=~/rds/results/public/proteomics/deCODE
+export job=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' ${dir}/urls.txt)
 export job=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' ${dir}/pickup.txt)
+export job=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]' ${dir}/protein.lst)
 
 . /etc/profile.d/modules.sh
 module purge
@@ -22,9 +24,11 @@ module load rhel7/default-peta4
 module load gcc/6
 module load aria2-1.33.1-gcc-5.4.0-r36jubs
 
-cd ${dir}/pickup
-echo ${job} | aria2c -c -j8 -i -
-cd -
+function downloads()
+{
+  echo ${job} | aria2c -c -j6 -i -
+# aria2c -c -j5 -i pickup.txt
+}
 
 function setup()
 {
@@ -34,7 +38,24 @@ function setup()
     ln -sf ../sr827_full_download/${f}.gz
     ln -sf ../sr827_full_download/${f}.md5sum
   done
-  cd ${dir}
-  ls sr827_full_download full_downloads/*md5sum | grep -v "@" | xargs -l basename -s .md5sum | grep -f - -v urls.txt > pickup.txt
-# aria2c -c -j15 -i pickup.txt
+  cd -
+
+# ls sr827_full_download full_downloads/*md5sum | grep -v "@" | xargs -l basename -s .md5sum | grep -f - -v urls.txt > pickup.txt
+# ls full_downloads/*gz | sed 's/@//' | xargs -l basename -s .gz | sort | uniq > protein.gz
+# ls md5sum/*md5sum | sed 's/@//' | xargs -l basename -s .md5sum | sort | uniq > protein.lst
+# diff protein.gz protein.lst
+# 3388_58_PAK7_PAK7.txt
+# rm protein.gz protein.lst
 }
+
+function checks()
+{
+  gunzip -c ${dir}/full_downloads/${job}.gz > ${dir}/assocs_filtered/${job}
+  md5sum assocs_filtered/${job} > assocs_filtered/${job}.md5sum
+  diff ${dir}/md5sum/${job}.md5sum ${dir}/assocs_filtered/${job}.md5sum
+  rm ${dir}/assocs_filtered/${job}
+}
+
+cd ${dir}
+checks
+cd -
