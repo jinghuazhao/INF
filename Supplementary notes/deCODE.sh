@@ -1,9 +1,20 @@
 #!/usr/bin/bash
 
-export proteomics_results=~/rds/results/public/proteomics/deCODE/full_downloads
+export proteomics_results=~/rds/results/public/proteomics/deCODE
 export v4=SomaLogicv4.tsv
 
 if [ ! -d ${INF}/deCODE ]; then mkdir -p ${INF}/deCODE; fi
+
+function panel()
+{
+R --no-save -q <<END
+  options(width=200)
+  f <- file.path(Sys.getenv("proteomics_results"),"ferkingstad21.xlsx")
+  SomaLogicv4 <- openxlsx::read.xlsx(f,sheet=1,startRow=3,colNames=TRUE,cols=1:12)
+  out <- file.path(Sys.getenv("INF"),"deCODE",Sys.getenv("v4"))
+  write.table(SomaLogicv4,file=out,quote=FALSE,row.names=FALSE,sep="\t")
+END
+}
 
 function replication()
 (
@@ -15,19 +26,6 @@ function replication()
     tabix ${all} {4} | zgrep -w {2} | grep -w {5}
   '
 ) > ${INF}/deCODE/replication.tsv
-
-
-function olink_inf_idx()
-{
-  module load tabix-2013-12-16-gcc-5.4.0-xn3xiv7
-  cd ${INF}/deCODE
-  ls ${proteomics_results}/full_downloads/*md5sum | xargs -l basename -s .md5sum | \
-  parallel -C' ' '
-    gunzip -c 
-    tabix -f -S1 -s1 -b2 -e2 {}.gz
-  '
-  cd -
-}
 
 function deCODE()
 (

@@ -4,7 +4,7 @@ export proteomics_results=~/rds/results/public/proteomics/Fenland
 export all=${proteomics_results}/all.grch37.tabix.gz
 export v4=SomaLogicv4.tsv
 
-function panel()
+function panel_bqc()
 {
 if [ ! -d ${INF}/Fenland ]; then mkdir ${INF}/Fenland; fi
 R --no-save -q <<END
@@ -16,12 +16,23 @@ R --no-save -q <<END
 END
 }
 
-function replication()
+function replication_bqc()
 (
   gunzip -c ${all} | \
   head -1
   join -j2 <(cut -f1,3,6 --complement --output-delimiter=' ' ${INF}/Fenland/${v4} | sed 's/-/_/' | sort -k2,2) \
            <(cut -f2,4,5,20 --output-delimiter=' ' ${INF}/work/INF1.METAL | awk '{print $2":"$3,$4,$1}' | sort -k2,2) | \
+  parallel -C' ' -j20 --env proteomics_results '
+    tabix ${all} {4} | zgrep -w {2} | grep -w {5}
+  '
+) > ${INF}/Fenland/replication_bqc.tsv
+
+function replication()
+(
+  gunzip -c ${all} | \
+  head -1
+  join -13 -22 <(cut -f1,4,7 --output-delimiter=' ' ${INF}/deCODE/${v4} | sort -k3,3) \
+               <(cut -f2,4,5,20 --output-delimiter=' ' ${INF}/work/INF1.METAL | awk '{print $2":"$3,$4,$1}' | sort -k2,2) | \
   parallel -C' ' -j20 --env proteomics_results '
     tabix ${all} {4} | zgrep -w {2} | grep -w {5}
   '

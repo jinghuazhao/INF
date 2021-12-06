@@ -114,11 +114,10 @@ function protein_snps()
 
 function protein_cis_snps()
 {
-(
   cat ${INF}/work/INF1.merge.genes | \
   parallel -j5 --env INF -C' ' '
-    zcat ${INF}/METAL/{2}-1.tbl.gz | awk -vM=1e6 "\$1=={3} && \$2>={4}-M && \$2 <{5}+M && \$12<-5"'
-) | sort -k1,1n -k2,2n > ${INF}/garfield/garfield-{2}.dat
+    zcat ${INF}/METAL/{2}-1.tbl.gz | awk -vM=1e6 "\$1=={3} && \$2>={4}-M && \$2 <{5}+M && \$12<-5" | \
+    sort -k1,1n -k2,2n > ${INF}/garfield/garfield-{2}.dat'
 }
 
 function protein_input()
@@ -159,15 +158,15 @@ function extract_v2()
   export prot={}
   export SCALLOP=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/
   if [ -f $SCALLOP/R/garfield-data/output/{}/garfield.test.{}.out ]; then
-R --no-save -q <<END
-  options(echo=FALSE,width=350)
-  SCALLOP <- Sys.getenv("SCALLOP")
-  prot <- Sys.getenv("prot")
-  f <- paste0("garfield.test.",prot,".out")
-  test <- read.table(file.path(SCALLOP,"R","garfield-data","output",prot,f),header=TRUE)
-  sset <- subset(test,!is.na(Pvalue)&Pvalue<1e-3)[,c(1:8,14:18)]
-  if (nrow(sset)>0) print(data.frame(prot,sset),row.names=FALSE)
-END
+  Rscript -e "
+    options(echo=FALSE,width=350)
+    SCALLOP <- Sys.getenv(\"SCALLOP\")
+    prot <- Sys.getenv(\"prot\")
+    f <- paste0(\"garfield.test.\",prot,\".out\")
+    test <- read.table(file.path(SCALLOP,\"R\",\"garfield-data\",\"output\",prot,f),header=TRUE)
+    sset <- subset(test,!is.na(Pvalue))[,c(1:8,14:18)]
+    if (nrow(sset)>0) print(data.frame(prot,sset),row.names=FALSE)
+  "
   fi
   '
 ) | grep -v options | awk 'NR==1 || (NR>1 && !/OR/)' > ${INF}/garfield/garfield-3.txt
