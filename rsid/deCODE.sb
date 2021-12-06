@@ -39,13 +39,18 @@ function setup()
     ln -sf ../sr827_full_download/${f}.md5sum
   done
   cd -
+}
 
-# ls sr827_full_download full_downloads/*md5sum | grep -v "@" | xargs -l basename -s .md5sum | grep -f - -v urls.txt > pickup.txt
-# ls full_downloads/*gz | sed 's/@//' | xargs -l basename -s .gz | sort | uniq > protein.gz
-# ls md5sum/*md5sum | sed 's/@//' | xargs -l basename -s .md5sum | sort | uniq > protein.lst
-# diff protein.gz protein.lst
+function list()
+{
+  ls sr827_full_download full_downloads/*md5sum | grep -v "@" | xargs -l basename -s .md5sum | grep -f - -v urls.txt > pickup.txt
+  ls full_downloads/*gz | sed 's/@//' | xargs -l basename -s .gz | sort | uniq > protein.gz
+  ls md5sum/*md5sum | sed 's/@//' | xargs -l basename -s .md5sum | sort | uniq > protein.lst
+  diff protein.gz protein.lst
 # 3388_58_PAK7_PAK7.txt
-# rm protein.gz protein.lst
+  join -13 -22 <(cut -f1,4,7 --output-delimiter=' ' ${INF}/deCODE/SomaLogicv4.tsv | sort -k3,3) \
+               <(cut -f2,4,5,20 --output-delimiter=' ' ${INF}/work/INF1.METAL | awk '{print $2":"$3,$4,$1}' | \
+  sort -k2,2) | cut -d' ' -f2 | uniq > ${INF}/deCODE/olink_inf.lst
 }
 
 function checks()
@@ -54,6 +59,17 @@ function checks()
   md5sum assocs_filtered/${job} > assocs_filtered/${job}.md5sum
   diff ${dir}/md5sum/${job}.md5sum ${dir}/assocs_filtered/${job}.md5sum
   rm ${dir}/assocs_filtered/${job}
+}
+
+function olink_inf_idx()
+{
+# module load tabix-2013-12-16-gcc-5.4.0-xn3xiv7
+  cd ${INF}/deCODE
+  gunzip -c ${proteomics_results}/full_downloads/${job}*.gz | \
+  awk "{if(NR>1) gsub(/chr/,\"\",\$1)};1" | \
+  bgzip -f > ${INF}/deCODE/${job}.gz
+  tabix -f -S1 -s1 -b2 -e2 ${INF}/deCODE/${job}.gz
+  cd -
 }
 
 cd ${dir}
