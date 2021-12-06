@@ -98,7 +98,7 @@ function v2()
 }
 
 # Celltypes
-cut -d' ' -f15 garfield.test.INF1.out | sort | grep -v -w -e Celltype -e NA | uniq | wc -l
+# cut -d' ' -f15 garfield.test.INF1.out | sort | grep -v -w -e Celltype -e NA | uniq | wc -l
 
 # --- by proteins
 
@@ -170,6 +170,7 @@ function extract_v2()
   fi
   '
 ) | grep -v options | awk 'NR==1 || (NR>1 && !/OR/)' > ${INF}/garfield/garfield-3.txt
+}
 
 R --no-save -q <<END
   testfun <- function()
@@ -204,14 +205,15 @@ R --no-save -q <<END
   library(ggforestplot)
   library(ggplot2)
   INF1 <- read.table(file.path(INF,"garfield-data","output","INF1","garfield.test.INF1.out"),header=TRUE) %>%
-          filter(Pvalue<=1e-6 & !is.na(Tissue)) %>%
+          filter(Pvalue<=1e-2 & !is.na(Tissue)) %>%
           mutate(ID=paste(Tissue,Celltype,sep=":",if_else(Category=="Hotspots","HS","HM")),
-                 logOR=log(OR),index=1:n(),prot="",src="meta-analysis",y=Beta) %>%
+                 logOR=log(OR),index=1:n(),prot="",src="Meta-analysis",y=Beta) %>%
           arrange(desc(Category))
   prot3 <- read.table(file.path(INF,"garfield","garfield-3.txt"),header=TRUE) %>%
+           filter(Pvalue<=1e-2 & !is.na(Tissue)) %>%
            mutate(prot=if_else(prot=="FGF.5","FGF-5",prot),
                   ID=paste(prot,sep=":",Tissue,Celltype,if_else(Category=="Hotspots","HS","HM")),
-                  logOR=log(OR),index=1:n(),src="protein-specific analysis",y=Beta)
+                  logOR=log(OR),index=1:n(),src="Per protein analysis",y=Beta)
 # p1 <- esplot(INF1,sep="",xlim=c(-0.1,1.5),breaks=seq(-0.1,0.85,0.2),title="All protein effects")
 # p2 <- esplot(prot3,sep="-",xlim=c(-0.5,6),breaks=seq(-0.5,5.5,by=2),title="Protein-specific effects")
 #
@@ -233,4 +235,3 @@ R --no-save -q <<END
   ylab("")
   ggsave(p,filename=file.path(INF,"garfield","garfield.png"),device="png",dpi=300,width=15,height=10)
 END
-}
