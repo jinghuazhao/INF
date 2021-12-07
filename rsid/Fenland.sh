@@ -23,7 +23,7 @@ function replication_bqc()
   join -j2 <(cut -f1,3,6 --complement --output-delimiter=' ' ${INF}/Fenland/${v4} | sed 's/-/_/' | sort -k2,2) \
            <(cut -f2,4,5,20 --output-delimiter=' ' ${INF}/work/INF1.METAL | awk '{print $2":"$3,$4,$1}' | sort -k2,2) | \
   parallel -C' ' -j20 --env proteomics_results '
-    tabix ${all} {4} | zgrep -w {2} | grep -w {5}
+    tabix ${all} {4} | grep -w {2} | grep -w {5}
   '
 ) > ${INF}/Fenland/replication_bqc.tsv
 
@@ -34,7 +34,7 @@ function replication()
   join -13 -22 <(cut -f1,4,7 --output-delimiter=' ' ${INF}/deCODE/${v4} | sort -k3,3) \
                <(cut -f2,4,5,20 --output-delimiter=' ' ${INF}/work/INF1.METAL | awk '{print $2":"$3,$4,$1}' | sort -k2,2) | \
   parallel -C' ' -j20 --env proteomics_results '
-    tabix ${all} {4} | zgrep -w {2} | grep -w {5}
+    tabix ${all} {4} | grep -w {2} | grep -w {5}
   '
 ) > ${INF}/Fenland/replication.tsv
 
