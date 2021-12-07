@@ -69,10 +69,11 @@ function olink_inf_idx()
     if [ -f ${dir}/full_downloads/${job}*gz ]; then
        gunzip -c ${dir}/full_downloads/${job}*.gz
     else
-       gunzip -c ${dir}/sr827_full_download/${job}
+       gunzip -c ${dir}/sr827_full_download/${job}*.gz
     fi
   ) | \
   awk "{if(NR>1) gsub(/chr/,\"\",\$1)};1" | \
+  tr ' ' '\t' | \
   bgzip -f > ${INF}/deCODE/${job}.gz
   tabix -f -S1 -s1 -b2 -e2 ${INF}/deCODE/${job}.gz
   cd -
