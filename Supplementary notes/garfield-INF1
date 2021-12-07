@@ -51,7 +51,7 @@ echo 'GARFIELD model selection complete'
 
 # Step to extract variants driving the enrichment signals
 echo 'Extracting variants driving enrichment analysis signals'
-PTHRESH=1e-5 ## GWAS threshold
+PTHRESH=5e-8 ## GWAS threshold
 PENRICH=$Padj ## Enrichment significance threshold - by default you might want to use $Padj
 GARFIELD_significant_annotations=$F2.significant.annotations.$PTHRESH.$PENRICH
 GARFIELD_VARS=${GARFIELD_significant_annotations}.variants
