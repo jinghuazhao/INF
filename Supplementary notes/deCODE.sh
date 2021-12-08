@@ -35,7 +35,7 @@ join -12 -21 <(awk 'NR>1 && $9<=5e-8 {
                     else snpid==a[1]":"a[2]"_"a[4]"_"a[3]
                     print snpid, $1, $9
                  }' ${INF}/deCODE/replication.tsv | sort -k2,2) \
-             <(cut -f1,7 --output-delimiter=' ' ${INF}/deCODE/${v4} | sed 's/-/_/' | sort -k1,1) | \
+             <(cut -f1,7 --output-delimiter=' ' ${INF}/deCODE/${v4} | sort -k1,1) | \
 awk '{print $4"-"$2,$0}' | \
 sort -k1,1 | \
 join - <(awk 'NR>1 {print $20"-"$1,$3,$2,$21}' ${INF}/work/INF1.METAL | sort -k1,1) | \

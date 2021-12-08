@@ -97,18 +97,19 @@ wgcna_etc <- function()
   hierTOM <- hclust(as.dist(dissTOM),method="average");
   colorStaticTOM <- as.character(cutreeStaticColor(hierTOM,cutHeight=.99,minSize=5))
   colorDynamicTOM <- labels2colors(cutreeDynamic(hierTOM,method="tree",minClusterSize=5))
-  colorDynamicHybridTOM <- labels2colors(cutreeDynamic(hierTOM,distM=dissTOM,cutHeight=0.998,
-                                         deepSplit=2,pamRespectsDendro=FALSE))
-  colorTOM <- data.frame(pamTOM5$clustering,colorStaticTOM,colorDynamicTOM,colorDynamicHybridTOM)
-  sizeGrWindow(10,5)
+  colorTOM <- data.frame(pamTOM5$clustering,colorStaticTOM,colorDynamicTOM)
+  pdf(file.path(INF,"Cytoscape","pamTOM.pdf"))
   plotDendroAndColors(hierTOM,colors=colorTOM,
                       dendroLabels=FALSE,
                       marAll=c(1,8,3,1),
                       main="Gene dendrogram and module colors, TOM dissimilarity")
+  dev.off()
   options(width=200)
   colorADJTOM <- cbind(colorADJ,colorTOM)
-  table(colorADJTOM$colorStaticADJ)
-  for(col in c("blue","brown","grey","turquoise")) print(subset(colorADJTOM,colorStaticADJ==col))
+  table(colorADJTOM$pamTOM5.clustering)
+  for(x in 1:5) print(subset(colorADJTOM,pamTOM5.clustering==x))
+  table(colorADJTOM$colorDynamicTOM)
+  for(col in c("blue","brown","grey","turquoise","yellow")) print(subset(colorADJTOM,colorDynamicTOM==col))
 # Further correlations
   corRaw <- cor(prot)
   diag(corRaw) <- 0
@@ -117,7 +118,8 @@ wgcna_etc <- function()
   suppressMessages(require(reshape))
   r <- melt(corRaw) %>% mutate(value=ifelse(X1!=X2 & value>=0.7,value,NA))
   colorADJTOM_nogrey <- subset(colorADJTOM,colorStaticTOM!="grey")
-  r_nogrey <- melt(corRaw[rownames(colorADJTOM_nogrey),rownames(colorADJTOM_nogrey)]) %>% mutate(value=ifelse(X1!=X2 & value>=0.7,value,NA))
+  r_nogrey <- melt(corRaw[rownames(colorADJTOM_nogrey),rownames(colorADJTOM_nogrey)]) %>%
+              mutate(value=ifelse(X1!=X2 & value>=0.7,value,NA))
   nodes <- data.frame(id=gsub("X4","4",rownames(colorADJTOM_nogrey)),
            group=with(colorADJTOM_nogrey,colorStaticTOM),
            stringsAsFactors=FALSE)
