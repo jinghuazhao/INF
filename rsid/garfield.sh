@@ -25,6 +25,22 @@ function all_snps()
 ) | sort -k1,1n -k2,2n > ${INF}/garfield.dat
 }
 
+function setup()
+{
+  if [ ! -f ${INF}/work/INF1.merge-cis.genes ]; then
+     grep -v BDNF ${INF}/doc/olink.inf.panel.annot.tsv | \
+     cut -f3,8,9,10 | \
+     sed 's/"//g' | \
+     sort -k1,1 | \
+     join -12 ${INF}/work/inf1.tmp - | \
+     sort -k2,2 | \
+     join -12 - -21 <(sed '1d' ${INF}/work/INF1.METAL | cut -f3,21 | sort -k1,1) | \
+     awk '!/trans/' | \
+     sort -k1,1 | \
+     uniq > ${INF}/work/INF1.merge-cis.genes
+  fi
+}
+
 function cis_snps()
 {
 (
