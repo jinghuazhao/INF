@@ -27,26 +27,24 @@ function all_snps()
 
 function setup()
 {
-  if [ ! -f ${INF}/work/INF1.merge-cis.genes ]; then
-     grep -v BDNF ${INF}/doc/olink.inf.panel.annot.tsv | \
-     cut -f3,8,9,10 | \
-     sed 's/"//g' | \
-     sort -k1,1 | \
-     join -12 ${INF}/work/inf1.tmp - | \
-     sort -k2,2 | \
-     join -12 - -21 <(sed '1d' ${INF}/work/INF1.METAL | cut -f3,21 | sort -k1,1) | \
-     awk '!/trans/' | \
-     sort -k1,1 | \
-     uniq > ${INF}/work/INF1.merge-cis.genes
-  fi
+  grep -v BDNF ${INF}/doc/olink.inf.panel.annot.tsv | \
+  cut -f3,8,9,10 | \
+  sed 's/"//g' | \
+  sort -k1,1 | \
+  join -12 ${INF}/work/inf1.tmp - | \
+  sort -k2,2 | \
+  join -12 - -21 <(sed '1d' ${INF}/work/INF1.METAL | cut -f3,21 | sort -k1,1) | \
+  awk '!/trans/' | \
+  sort -k1,1 | \
+  uniq > ${INF}/work/INF1.merge-cis.genes
 }
 
 function cis_snps()
 {
 (
-  cat ${INF}/work/INF1.merge.genes | \
+  cat ${INF}/work/INF1.merge-cis.genes | \
   parallel -j5 --env INF -C' ' '
-    zcat ${INF}/METAL/{2}-1.tbl.gz | awk -vM=1e6 "\$1=={3} && \$2>={4}-M && \$2 <{5}+M && \$12<-5"'
+    zcat ${INF}/METAL/{1}-1.tbl.gz | awk -vM=1e6 "\$1=={3} && \$2>={4}-M && \$2 <{5}+M && \$12<-5"'
 ) | sort -k1,1n -k2,2n > ${INF}/garfield/garfield.dat
 }
 
@@ -130,10 +128,10 @@ function protein_snps()
 
 function protein_cis_snps()
 {
-  cat ${INF}/work/INF1.merge.genes | \
+  cat ${INF}/work/INF1.merge-cis.genes | \
   parallel -j5 --env INF -C' ' '
-    zcat ${INF}/METAL/{2}-1.tbl.gz | awk -vM=1e6 "\$1=={3} && \$2>={4}-M && \$2 <{5}+M && \$12<-5" | \
-    sort -k1,1n -k2,2n > ${INF}/garfield/garfield-{2}.dat'
+    zcat ${INF}/METAL/{1}-1.tbl.gz | awk -vM=1e6 "\$1=={3} && \$2>={4}-M && \$2 <{5}+M && \$12<-5" | \
+    sort -k1,1n -k2,2n > ${INF}/garfield/garfield-{1}.dat'
 }
 
 function protein_input()
