@@ -136,8 +136,8 @@ function protein_cis_snps()
 
 function protein_input()
 {
-  ls ${INF}/METAL/*-1.tbl.gz | \
-  xargs -l basename -s -1.tbl.gz* | parallel -j10 --env INF -C' ' '
+  cut -d' ' -f1 ${INF}/work/INF1.merge-cis.genes | \
+  parallel -j10 --env INF -C' ' '
   export chrcol=1
   export poscol=2
   export pvalcol=12
