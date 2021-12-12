@@ -187,6 +187,44 @@ function extract_v2()
 }
 
 R --no-save -q <<END
+  suppressMessages(library(dplyr))
+  suppressMessages(library(ggforestplot))
+  suppressMessages(library(ggplot2))
+  INF <- Sys.getenv("INF")
+  INF1 <- read.table(file.path(INF,"garfield-data","output","INF1","garfield.test.INF1.out"),header=TRUE) %>%
+          filter(Pvalue<=1e-2 & !is.na(Tissue)) %>%
+          mutate(ID=paste(Tissue,Celltype,sep=":",if_else(Category=="Hotspots","HS","HM")),
+                 logOR=log(OR),index=1:n(),prot="",src="Meta-analysis",y=Beta) %>%
+          arrange(desc(Category))
+  p1 <- ggforestplot::forestplot(INF1, name = ID, estimate = Beta, se = SE)
+  ggsave(p1,filename=file.path(INF,"garfield","garfield-INF1.png"),device="png")
+  prot3 <- read.table(file.path(INF,"garfield","garfield-3.txt"),header=TRUE) %>%
+           left_join(pQTLtools::inf1[c("prot","target.short")]) %>%
+           filter(Pvalue<=1e-2) %>% mutate(Celltype=gsub("<NA>","-",Celltype),Tissue=gsub("<NA>","-",Tissue)) %>%
+           mutate(Category=gsub("Hotspots","HS",Category)) %>%
+           mutate(Category=gsub("Histone_Modifications","HM",Category)) %>%
+           mutate(ID=paste(target.short,sep=":",Tissue,Celltype,Category),
+                  logOR=log(OR),index=1:n(),src="Per protein analysis",y=Beta)
+  p2 <- ggforestplot::forestplot(prot3, name = ID, estimate = Beta, se = SE)
+  ggsave(p2,filename=file.path(INF,"garfield","garfield-prot.png"),device="png")
+  vars <- c("ID","PThresh","Beta","SE","Pvalue","src","y")
+  INF1_prot <- rbind(INF1[vars],prot3[vars])
+  p <- ggplot(INF1_prot,aes(y = ID, x = y))+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text.y = element_text(size=14),
+       text = element_text(size=15))+
+  geom_point()+
+  facet_wrap(~src,ncol=2,scales="free")+
+  geom_segment(aes(x = Beta-1.96*SE, xend = Beta+1.96*SE, yend = ID), show.legend=FALSE)+
+  geom_vline(lty=2, aes(xintercept=0), colour = "red")+
+  xlab("Effect size")+
+  ylab("")
+  ggsave(p,filename=file.path(INF,"garfield","garfield.png"),device="png",dpi=300,width=15,height=10)
+END
+
+# --- legacy code ---
+Rscript -e '
+  library(ggplot2)
   testfun <- function()
   {
   # clear but less elegant.
@@ -196,8 +234,6 @@ R --no-save -q <<END
     with(prot3,gap::ESplot(prot3[c("ID","logOR","CI95_lower","CI95_upper")],SE=FALSE,logscale=FALSE,xlim=c(-0.5,5.5),v=10))
     title("Protein specific effects")
   }
-#
-  library(ggplot2)
   esplot <- function(data,sep,xlim,breaks,title)
   {
   # Somehow there are extra empty lines.
@@ -214,38 +250,7 @@ R --no-save -q <<END
     theme(panel.spacing = unit(1, "lines"))
     p
   }
-  INF <- Sys.getenv("INF")
-  library(dplyr)
-  library(ggforestplot)
-  library(ggplot2)
-  INF1 <- read.table(file.path(INF,"garfield-data","output","INF1","garfield.test.INF1.out"),header=TRUE) %>%
-          filter(Pvalue<=1e-2 & !is.na(Tissue)) %>%
-          mutate(ID=paste(Tissue,Celltype,sep=":",if_else(Category=="Hotspots","HS","HM")),
-                 logOR=log(OR),index=1:n(),prot="",src="Meta-analysis",y=Beta) %>%
-          arrange(desc(Category))
-  prot3 <- read.table(file.path(INF,"garfield","garfield-3.txt"),header=TRUE) %>%
-           filter(Pvalue<=1e-2 & !is.na(Tissue)) %>%
-           mutate(prot=if_else(prot=="FGF.5","FGF-5",prot),
-                  ID=paste(prot,sep=":",Tissue,Celltype,if_else(Category=="Hotspots","HS","HM")),
-                  logOR=log(OR),index=1:n(),src="Per protein analysis",y=Beta)
-# p1 <- esplot(INF1,sep="",xlim=c(-0.1,1.5),breaks=seq(-0.1,0.85,0.2),title="All protein effects")
-# p2 <- esplot(prot3,sep="-",xlim=c(-0.5,6),breaks=seq(-0.5,5.5,by=2),title="Protein-specific effects")
+  p1 <- esplot(INF1,sep="",xlim=c(-0.1,1.5),breaks=seq(-0.1,0.85,0.2),title="All protein effects")
+  p2 <- esplot(prot3,sep="-",xlim=c(-0.5,6),breaks=seq(-0.5,5.5,by=2),title="Protein-specific effects")
 #
-  p1 <- ggforestplot::forestplot(INF1, name = ID, estimate = Beta, se = SE)
-  p2 <- ggforestplot::forestplot(prot3, name = ID, estimate = Beta, se = SE)
-  ggsave(p1,filename=file.path(INF,"garfield","garfield-INF1.png"),device="png")
-  ggsave(p2,filename=file.path(INF,"garfield","garfield-prot.png"),device="png")
-  vars <- c("ID","PThresh","Beta","SE","Pvalue","src","y")
-  INF1_prot <- rbind(INF1[vars],prot3[vars])
-  p <- ggplot(INF1_prot,aes(y = ID, x = y))+
-  theme_bw()+
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.text.y = element_text(size=14),
-       text = element_text(size=15))+
-  geom_point()+
-  facet_wrap(~src,ncol=2,scales="free")+
-  geom_segment(aes(x = Beta-1.96*SE, xend = Beta+1.96*SE, yend = ID), show.legend=FALSE)+
-  geom_vline(lty=2, aes(xintercept=0), colour = "red")+
-  xlab("Effect size")+
-  ylab("")
-  ggsave(p,filename=file.path(INF,"garfield","garfield.png"),device="png",dpi=300,width=15,height=10)
-END
+'
