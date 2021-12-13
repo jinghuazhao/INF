@@ -31,7 +31,7 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
             mutate(Protein=target.short) %>% select(-target.short)
    eqtls <- read.sheet("eQTLs", 1:24, 2:24)
 reactome <- read.sheet("Reactome", 1:19, 2:589)
-garfield <- read.sheet("GARFIELD", 1:18, 2:3017) %>%
+garfield <- read.table(file.path(INF,"garfield-data","output","INF1","garfield.test.INF1.out"),header=TRUE) %>%
             select(ID,PThresh,Pvalue,Annotation,Celltype,Tissue,Type,Category,OR,Beta,SE,CI95_lower,CI95_upper,NAnnotThesh,NAnnot,NThresh,N,linkID)
    magma <- read.delim(file.path(INF,"work","All.dat"))
   fusion <- read.sheet("FUSION", 1:26, 2:117)
