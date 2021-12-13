@@ -221,6 +221,8 @@ saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 #     mrc2 <- read.sheet("MRC2", 1:7, 2:8)
 #     mvmr <- read.sheet("MVMR", 1:9, 2:6)
 
+annotate <- read.table(file.path(INF,"circos","annotate.txt"),header=TRUE) %>%
+            mutate(gene=gsub("[.]"," ",gene))
 novelpqtls <- subset(within(pqtls,{
                                     chrpos=paste0(Chromosome,":",Position)
                                     a1a2=paste0(toupper(Allele1),"/",toupper(Allele2))
@@ -228,8 +230,12 @@ novelpqtls <- subset(within(pqtls,{
                                     log10p=-log.P.
                                   }),
                      !paste0(Protein,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),
-                     select=c(Protein,uniprot,chrpos,rsid,a1a2,bse,log10p,cis.trans)) %>%
-              arrange(Protein,chrpos)
+                     select=c(uniprot,MarkerName,chrpos,rsid,a1a2,bse,log10p,cis.trans)) %>%
+              left_join(annotate[c("uniprot","p.gene","gene","MarkerName")]) %>%
+              mutate(cis=if_else(cis.trans=="cis","T","F")) %>%
+              rename(g.target=p.gene,g.pQTL=gene) %>%
+              arrange(g.target,chrpos) %>%
+              select(g.target,chrpos,rsid,a1a2,bse,log10p,cis,g.pQTL)
 write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls), file=file.path(INF,"NG","novelpqtls.xlsx"), overwrite=TRUE,
            colNames=TRUE,
            borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
