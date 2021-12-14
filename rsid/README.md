@@ -285,8 +285,8 @@ pheweb.Rmd | Data extraction from pheweb.jp
 qqman.sb | Q-Q/Manhattan plots under CSD3
 rentrez.sh | reuse of rentrez
 Somascan-Olink.* | Somascan/Olink overlap
-stringdb.sh | STRINGdb
-tables.R | code to create Excel tables
+stringdb.R | STRINGdb exercise
+tables.R | Excel tables
 uniprot.R | UniProt IDs to others
 utils.sh | utilties
 
