@@ -1,8 +1,8 @@
 options(width=200)
 
-library(dplyr)
-library(gap)
-library(pQTLtools)
+suppressMessages(library(dplyr))
+suppressMessages(library(gap))
+suppressMessages(library(pQTLtools))
 
 INF <- Sys.getenv("INF")
 INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
@@ -49,7 +49,7 @@ long[with(long,efo)%in%infection_efo,"infection"] <- 1
 short[with(short,efo)%in%infection_efo,"infection"] <- 1
 
 require(openxlsx)
-xlsx <- "work/pqtl-immune_infection.xlsx"
+xlsx <- file.path(INF,"work","pqtl-immune_infection.xlsx")
 wb <- createWorkbook(xlsx)
 addWorksheet(wb, "METAL")
 writeDataTable(wb, "METAL", subset(INF1_metal,select=-c(INF1_rsid,hg19_coordinates)))
@@ -138,7 +138,7 @@ mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
   flag <- (HLA==1)
   prefix <- rsid
   prefix[flag] <- paste0(rsid[flag],"*")
-  rsidProts <- paste0(prefix," [",target.short,"](",hgnc,")")
+  rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-",prefix," [",target.short,"](",hgnc,")")
   trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
   trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
   trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
