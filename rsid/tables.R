@@ -149,7 +149,7 @@ hgi_pqtlmr <- read.delim(file.path(INF,"HGI","pqtlMR.txt"))
 pqtls <- select(pqtls,-prots)
 
 outsheets <- c("summary","studies","inf1",
-               "pqtls","cojo","knownpqtls","coloc","cs95","pqtldisease",
+               "pqtls","cojo","knownpqtls","coloc","pqtldisease",
                "vep","magma",
                "gsmr_efo","hgi_gsmr","hgi_pqtlmr","drug",
                "reactome","great","garfield","efo","gdb",
@@ -157,7 +157,7 @@ outsheets <- c("summary","studies","inf1",
                "great3","mr_immun","smr","cis_mr","mr_misc",
                "protein_correlation", "protein_dgi", "pqtl_impact")
 titles <- c("summary","study information","panel information",
-            "pQTLs","conditional analysis","known pQTLs","GTEx coloc","GTEx coloc 95%CS","Disease GWAS overlap",
+            "pQTLs","conditional analysis","known pQTLs","GTEx coloc","Disease GWAS overlap",
             "VEP annotation","MAGMA outputs",
             "GSMR results","HGI-GSMR r6","HGI-pQTLMR","PI drug",
             "Reactome","GREAT","GARFIELD outputs","EFO","geneDrugbank",
@@ -168,7 +168,7 @@ description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
 n0 <- 3
-n1 <- 12
+n1 <- 11
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
             paste0("ST",1:n1),
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
@@ -230,13 +230,13 @@ novelpqtls <- subset(within(pqtls,{
                                     log10p=-log.P.
                                   }),
                      !paste0(Protein,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),
-                     select=c(uniprot,MarkerName,chrpos,rsid,a1a2,bse,log10p,cis.trans)) %>%
+                     select=c(uniprot,Protein,MarkerName,chrpos,rsid,a1a2,bse,log10p,cis.trans)) %>%
               left_join(annotate[c("uniprot","p.gene","gene","MarkerName")]) %>%
               mutate(cis=if_else(cis.trans=="cis","T","F")) %>%
               rename(g.target=p.gene,g.pQTL=gene) %>%
               arrange(g.target,chrpos) %>%
-              select(g.target,chrpos,rsid,a1a2,bse,log10p,cis,g.pQTL)
-write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls), file=file.path(INF,"NG","novelpqtls.xlsx"), overwrite=TRUE,
+              select(Protein,g.target,chrpos,rsid,a1a2,bse,log10p,cis,g.pQTL)
+write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls[,-1]), file=file.path(INF,"NG","novelpqtls.xlsx"), overwrite=TRUE,
            colNames=TRUE,
            borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
 

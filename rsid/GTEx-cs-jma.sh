@@ -121,12 +121,13 @@ echo tissue > ${cs95tissue}
   '
 ) > ${cs95}
 R --no-save <<END
-  library(dplyr)
+  suppressMessages(library(dplyr))
   eqtl_file <- Sys.getenv("cs95")
   eqtls <- read.table(eqtl_file,sep="\t", col.names=c("rsid","prot","ensGene","chrpos","GTExSNP","tissue_p")) %>%
            left_join(gap.datasets::inf1[c("prot","target.short")]) %>%
-           mutate(rsidProt=paste0(rsid," (",target.short,")"),tissue_p=sub("^ ","",tissue_p)) %>%
-           arrange(target.short)
+           mutate(chr=stringr::str_pad(gsub("chr|_[0-9]*","",chrpos), width=2, side="left", pad="0"),
+                  rsidProt=paste0(chr,"-",rsid," (",target.short,")"),tissue_p=sub("^ ","",tissue_p)) %>%
+           arrange(rsidProt)
   tissue_file <- Sys.getenv("cs95tissue")
   tissues <- with(read.table(tissue_file,header=TRUE),sort(unique(tissue)))
   eqtl_table <- matrix("",nrow(eqtls),length(tissues))
