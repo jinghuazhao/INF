@@ -11,7 +11,7 @@ setup <- function()
   geneinfo <- gene <- vector("character")
   for(i in 1:180)
   {
-    geneinfo[i] <- with(ieugwasr::variants_chrpos(cvt$chrbp[i],1000000),geneinfo)
+    geneinfo[i] <- with(ieugwasr::variants_chrpos(cvt$chrbp[i],5000),geneinfo)
     gene[i]=gsub(":([0-9])*","",geneinfo[i])
   }
   annotate <- within(cvt,{gene=gene})
