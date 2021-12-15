@@ -21,19 +21,19 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 cd work
 R --no-save -q <<END
   alleles <- read.table("INF1.merge.alleles",as.is=TRUE,col.names=c("prot","SNP","chr","pos","alt","ref"))
-  cvt <- read.table("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
+  cvt <- read.csv("INF1.merge.cis.vs.trans",as.is=TRUE,header=TRUE)
   m <- merge(alleles,cvt,by=c("prot","SNP"))
   ord <- with(m,order(Chr,bp))
   all <- m[ord,]
   variant_list <- m[ord,c("chr","pos","alt","ref","uniprot","SNP")]
-  library(rfPred)
+  suppressMessages(library(rfPred))
   rfs <- rfPred_scores(variant_list=unique(variant_list[,1:4]),
                        data="http://www.sbim.fr/rfPred/all_chr_rfPred.txtz",
                        index="http://www.sbim.fr/rfPred/all_chr_rfPred.txtz.tbi",
                        file.export="rfPred.csv")
-  all <- with(ct,unique(gap::inv_chr_pos_a1_a2(SNP,prefix="")))
+  all <- with(cvt,unique(gap::inv_chr_pos_a1_a2(SNP,prefix="")))
   all <- within(all,{snp <- paste0(chr,":",pos,"_",a1,"_",a2); qual <- "."; filter <- "."; info <- "."})
-  trans <- with(subset(ct,cis.trans=="trans"),unique(gap::inv_chr_pos_a1_a2(SNP,prefix=""))) 
+  trans <- with(subset(cvt,cis.trans=="trans"),unique(gap::inv_chr_pos_a1_a2(SNP,prefix="")))
   trans <- within(trans,{snp <- paste0(chr,":",pos,"_",a1,"_",a2); qual <- "."; filter <- "."; info <- "."})
   writetable <- function(d,f,...) write.table(d,file=f,col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t",...)
   for (f in c("INF1.merge","INF1.merge.trans"))
@@ -86,11 +86,11 @@ do
      }
    END
    # VEP
-   vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --distance 500000 --force_overwrite --offline --everything --assembly GRCh37 \
+   vep -i ${s}.vepinput -o ${s}.vepoutput --pick --check_existing --force_overwrite --offline --everything --assembly GRCh37 \
        --nearest symbol --symbol --pubmed --uniprot --protein --sift b --polyphen b --tab
    #   --plugin NearestGene,limit=3,max_range=500000
    vep -i ${s}.vepinput -o ${s}.clinvar --species homo_sapiens \
-       --cache --distance 500000 --offline --force_overwrite \
+       --cache --offline --force_overwrite \
        --assembly GRCh37 --pick --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN,DBVARID,MC,RS \
        --fields Uploaded_variation,Gene,Consequence,ClinVar_CLNSIG,ClinVar_CLNREVSTAT,ClinVar_CLNDN,ClinVar_DBVARID,ClinVar_MC,ClinVar_RS --tab
    export dbNSFP_1=clinvar_id,clinvar_clnsig,clinvar_review,clinvar_trait,1000Gp3_EUR_AF,CADD_phred,Eigen-PC-phred_coding,ExAC_NFE_AF,LRT_pred,
