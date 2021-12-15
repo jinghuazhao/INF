@@ -14,10 +14,12 @@ setup <- function()
     geneinfo[i] <- with(ieugwasr::variants_chrpos(cvt$chrbp[i],5000),geneinfo)
     gene[i]=gsub(":([0-9])*","",geneinfo[i])
   }
+  vep <- read.delim(file.path(INF,"annotate","INF1.merge-annotate.tsv"))
+  gene <- with(vep,SYMBOL)
   annotate <- within(cvt,{gene=gene})
   write.table(annotate,file=file.path(INF,"circos","annotate.txt"),row.names=FALSE)
-  is.cis <- with(annotate,cis)
-  annotate[is.cis,"gene"] <- annotate[is.cis,"p.gene"]
+# is.cis <- with(annotate,cis)
+# annotate[is.cis,"gene"] <- annotate[is.cis,"p.gene"]
   INF1_merge_cvt <- merge(INF1_merge,annotate,by=c("prot","MarkerName")) %>%
                     left_join(gap.datasets::inf1[c("prot","target.short")]) %>%
                     arrange(Chr,bp)
