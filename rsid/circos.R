@@ -1,25 +1,41 @@
+rsid2gene <- function()
+{
+  geneinfo <- vector("character")
+  for(i in 1:180) geneinfo[i] <- with(ieugwasr::variants_chrpos(cvt$chrbp[i],300),geneinfo)
+  gene <- gsub(":([0-9])*","",geneinfo)
+  gene <- stringr::str_split(gene,"[|]",simplify=TRUE)[,1]
+}
+
 setup <- function()
 {
+# gene <- rsid2gene()
+  vep <- read.delim(file.path(INF,"annotate","INF1.merge-annotate.tsv")) %>%
+         select(Location,NEAREST) %>%
+         rename(gene=NEAREST) %>%
+         arrange(Location)
+  annotate <- read.csv(file.path(INF,"work","/INF1.merge.cis.vs.trans"),as.is=TRUE) %>%
+              select(-cis,-cis.end,-cis.start,-p.prot,-p.target,-uniprot) %>%
+              rename(MarkerName=SNP) %>%
+              mutate(Location=paste(Chr,bp,sep=":")) %>%
+              arrange(Location) %>%
+              mutate(chr=Chr,chrom=paste0("hs",Chr),start=bp,end=bp,p.chrom=paste0("hs",p.chr),value=if_else(-log10p>150,150,-log10p),
+                     fcolor=ifelse(cis.trans=="cis","color=vdred","color=vdblue"),
+                     lcolor=ifelse(cis.trans=="cis","color=lred","color=lblue"),
+                     chrbp=paste(Chr,bp,sep=":"),gene=vep[["gene"]])
+  collapse <- annotate %>%
+              group_by(gene,cis.trans) %>%
+              summarise(nprots=n(),chr=paste(chr,collapse=","),pos=paste(bp,collapse=","),
+                        chrpos=paste(chrbp,collapse=";"),
+                        prots=paste(p.target.short,collapse=";"),
+                        log10p=paste(value,collapse=";"),
+                        cistrans=paste(cis.trans,collapse=";")) %>%
+              mutate(CHR=unlist(lapply(lapply(strsplit(chr,","),as.integer),median)),POS=unlist(lapply(lapply(strsplit(pos,","),as.integer),median))) %>%
+              select(-chr,-pos) %>%
+              mutate(chr=paste0("chr",CHR),start=POS,end=POS,value1=paste0(gene," [",prots,"]"),value2=if_else(cistrans=="cis","red","blue"))
+  write.table(annotate,file=file.path(INF,"circos","annotate.txt"),row.names=FALSE)
+  write.table(collapse,file=file.path(INF,"circos","collapse.txt"),row.names=FALSE)
   f <- file.path(INF,"work","INF1.merge")
   INF1_merge <- read.delim(f)[c("Chrom","Start","End","prot","MarkerName")]
-  cvt <- read.csv(file.path(INF,"work","/INF1.merge.cis.vs.trans"),as.is=TRUE) %>%
-                  rename(MarkerName=SNP) %>% 
-                  mutate(chr=Chr,chrom=paste0("hs",Chr),start=bp,end=bp,p.chrom=paste0("hs",p.chr),value=-log10p,
-                         fcolor=ifelse(cis,"color=vdred","color=vdblue"),
-                         lcolor=ifelse(cis,"color=lred","color=lblue"),
-                         chrbp=paste(Chr,bp,sep=":"))
-  geneinfo <- gene <- vector("character")
-  for(i in 1:180)
-  {
-    geneinfo[i] <- with(ieugwasr::variants_chrpos(cvt$chrbp[i],5000),geneinfo)
-    gene[i]=gsub(":([0-9])*","",geneinfo[i])
-  }
-  vep <- read.delim(file.path(INF,"annotate","INF1.merge-annotate.tsv"))
-  gene <- with(vep,SYMBOL)
-  annotate <- within(cvt,{gene=gene})
-  write.table(annotate,file=file.path(INF,"circos","annotate.txt"),row.names=FALSE)
-# is.cis <- with(annotate,cis)
-# annotate[is.cis,"gene"] <- annotate[is.cis,"p.gene"]
   INF1_merge_cvt <- merge(INF1_merge,annotate,by=c("prot","MarkerName")) %>%
                     left_join(gap.datasets::inf1[c("prot","target.short")]) %>%
                     arrange(Chr,bp)
@@ -29,14 +45,14 @@ setup <- function()
                  mutate(gene=gene) %>%
                  select(chrom,start,end,gene,fcolor)
   write.table(pQTL_labels,file=file.path(INF,"circos","pQTL_labels.txt"),col.names=FALSE,row.names=FALSE,quote=TRUE,sep="\t")
-  pQTL_links <- filter(INF1_merge_cvt,!cis) %>%
+  pQTL_links <- filter(INF1_merge_cvt,cis.trans=="trans") %>%
                 select(p.chrom,p.start,p.end,chrom,start,end,lcolor)
   write.table(pQTL_links,file=file.path(INF,"circos","pQTL_links.txt"),col.names=FALSE,row.names=FALSE,quote=FALSE)
-  pQTL_source_genes <- filter(INF1_merge_cvt,cis) %>%
+  pQTL_source_genes <- filter(INF1_merge_cvt,cis.trans=="cis") %>%
                        select(p.chr,p.chrom,,p.start,p.end,p.gene) %>%
                        rename(chr=p.chr,chrom=p.chrom,start=p.start,end=p.end,gene=p.gene) %>%
                        distinct()
-  pQTL_target_genes <- filter(INF1_merge_cvt,!cis) %>%
+  pQTL_target_genes <- filter(INF1_merge_cvt,cis.trans=="trans") %>%
                        select(chr,chrom,start,end,gene)
   pQTL_genes <- rbind(pQTL_source_genes,pQTL_target_genes) %>%
                 filter(gene!=".") %>%
@@ -54,6 +70,8 @@ circlize <- function()
            mutate(chr=gsub("hs","chr",chr),value2=gsub("color=vd","",value2))
   pQTL_labels <- read.table(file.path(INF,"circos","pQTL_labels.txt"),col.names=c("chr","start","end","value1","value2")) %>%
            mutate(chr=gsub("hs","chr",chr),value2=gsub("color=vd","",value2))
+  pQTL_labels <- read.table(file.path(INF,"circos","collapse.txt"),header=TRUE) %>%
+                 select(chr,start,end,value1,value2)
   pQTL_links <- read.table(file.path(INF,"circos","pQTL_links.txt"),col.names=c("chr1","start1","end1","chr2","start2","end2","color")) %>%
                 mutate(chr1=gsub("hs","chr",chr1),chr2=gsub("hs","chr",chr2),color=gsub("color=l","",color))
   pQTL_genes <- read.table(file.path(INF,"circos","pQTL_genes.txt"),col.names=c("chr","start","end","gene")) %>%
@@ -85,12 +103,21 @@ circlize <- function()
                tick.length=0.5*(convert_x(1, "mm", get.cell.meta.data("sector.index"), get.cell.meta.data("track.index"))))
   circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col=pQTL_links[[7]], border=NA, directional=1, arr.length=0.05,
                      arr.width=0.03, arr.lwd=0.05)
+  legend("center", legend = c("cis- Gene [target protein]","trans- Gene [target protein]"), col = c("red","blue"),
+  pch=c(19,19),
+  bty="n",
+  pt.cex=1.5,
+  cex=1.2,
+  text.col="black",
+  horiz=FALSE,
+  inset=c(0.1, 0.1))
   dev.off()
   system("convert -density 300 ${INF}/circos/circlize.eps ${INF}/circos/circlize.png")
 }
 
 # https://www.rapidtables.com/web/color/RGB_Color.html
 
+options(width=200)
 INF <- Sys.getenv("INF")
 suppressMessages(library(dplyr))
 
