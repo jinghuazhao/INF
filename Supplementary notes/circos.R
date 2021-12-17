@@ -6,7 +6,7 @@ rsid2gene <- function()
   gene <- stringr::str_split(gene,"[|]",simplify=TRUE)[,1]
 }
 
-setup <- function()
+setup <- function(simplify=TRUE)
 {
 # gene <- rsid2gene()
   vep <- read.delim(file.path(INF,"annotate","INF1.merge-annotate.tsv")) %>%
@@ -22,18 +22,7 @@ setup <- function()
                      fcolor=ifelse(cis.trans=="cis","color=vdred","color=vdblue"),
                      lcolor=ifelse(cis.trans=="cis","color=lred","color=lblue"),
                      chrbp=paste(Chr,bp,sep=":"),gene=vep[["gene"]])
-  collapse <- annotate %>%
-              group_by(gene,cis.trans) %>%
-              summarise(nprots=n(),chr=paste(chr,collapse=","),pos=paste(bp,collapse=","),
-                        chrpos=paste(chrbp,collapse=";"),
-                        prots=paste(p.target.short,collapse=";"),
-                        log10p=paste(value,collapse=";"),
-                        cistrans=paste(cis.trans,collapse=";")) %>%
-              mutate(CHR=unlist(lapply(lapply(strsplit(chr,","),as.integer),median)),POS=unlist(lapply(lapply(strsplit(pos,","),as.integer),median))) %>%
-              select(-chr,-pos) %>%
-              mutate(chr=paste0("chr",CHR),start=POS,end=POS,value1=paste0(gene," [",prots,"]"),value2=if_else(cistrans=="cis","red","blue"))
   write.table(annotate,file=file.path(INF,"circos","annotate.txt"),row.names=FALSE)
-  write.table(collapse,file=file.path(INF,"circos","collapse.txt"),row.names=FALSE)
   f <- file.path(INF,"work","INF1.merge")
   INF1_merge <- read.delim(f)[c("Chrom","Start","End","prot","MarkerName")]
   INF1_merge_cvt <- merge(INF1_merge,annotate,by=c("prot","MarkerName")) %>%
@@ -41,10 +30,29 @@ setup <- function()
                     arrange(Chr,bp)
   pQTLs <- select(INF1_merge_cvt,chrom,start,end,value,fcolor)
   write.table(pQTLs,file=file.path(INF,"circos","pQTLs.txt"),col.names=FALSE,row.names=FALSE,quote=FALSE)
-  pQTL_labels <- filter(INF1_merge_cvt,gene!=".") %>%
-                 mutate(gene=gene) %>%
-                 select(chrom,start,end,gene,fcolor)
-  write.table(pQTL_labels,file=file.path(INF,"circos","pQTL_labels.txt"),col.names=FALSE,row.names=FALSE,quote=TRUE,sep="\t")
+  if (!simplify)
+  {
+    pQTL_labels <- filter(INF1_merge_cvt,gene!=".") %>%
+                   select(chrom,start,end,gene,fcolor)
+    write.table(pQTL_labels,file=file.path(INF,"circos","pQTL_labels.txt"),col.names=FALSE,row.names=FALSE,quote=TRUE,sep="\t")
+  } else {
+    collapse <- annotate %>%
+                group_by(gene,cis.trans) %>%
+                summarise(nprots=n(),chr=paste(chr,collapse=","),pos=paste(bp,collapse=","),
+                          chrpos=paste(chrbp,collapse=";"),
+                          prots=paste(p.target.short,collapse=";"),
+                          log10p=paste(value,collapse=";"),
+                          cistrans=paste(cis.trans,collapse=";")) %>%
+                mutate(CHR=unlist(lapply(lapply(strsplit(chr,","),as.integer),median)),
+                       POS=round(unlist(lapply(lapply(strsplit(pos,","),as.integer),median)))) %>%
+                arrange(CHR,POS) %>%
+                select(-chr,-pos) %>%
+                mutate(chr=paste0("hs",CHR),start=POS,end=POS,
+                       value1=paste0(gene," [",prots,"]"),
+                       value2=paste0("color=vd",if_else(cistrans=="cis","red","blue")))
+    write.table(collapse[c("chr","start","end","value1","value2")],file=file.path(INF,"circos","pQTL_labels.txt"),
+                col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+  }
   pQTL_links <- filter(INF1_merge_cvt,cis.trans=="trans") %>%
                 select(p.chrom,p.start,p.end,chrom,start,end,lcolor)
   write.table(pQTL_links,file=file.path(INF,"circos","pQTL_links.txt"),col.names=FALSE,row.names=FALSE,quote=FALSE)
@@ -66,19 +74,29 @@ setup <- function()
 
 circlize <- function()
 {
+  suppressMessages(library(ComplexHeatmap))
+  suppressMessages(library(gridBase))
+  suppressMessages(library("circlize"))
+  setEPS()
+  postscript(file=file.path(INF,"circos","circlize.eps"), width=7.08, height=7.08, horizontal=FALSE, paper="special", colormodel="rgb")
+  col_fun <- colorRamp2(c(-1, 1), c("red", "blue"))
+  circle_size <- unit(1, "snpc")
+  llabels <- Legend(at=c("cis","trans"), type="points", legend_gp=gpar(col=c("red","blue")), title_position="topleft",
+                    title="Labels: gene [target proteins]", nrow=1)
+  lpoints <- Legend(at=c("cis","trans"), type="points", legend_gp=gpar(col=c("red","blue")), title_position="topleft", title="Points", nrow=1)
+  llinks <- Legend(at=c("cis", "trans"), type="lines", legend_gp=gpar(col=c("red","blue"), lwd=2), title_position="topleft", title="Links", nrow=1)
+  llist_horizontal = packLegend(llabels, lpoints, llinks, direction = "horizontal")
+  plot.new()
+  pushViewport(viewport(x=0.5, y=1, width=circle_size, height=circle_size, just=c("center", "top")))
   pQTLs <- read.table(file.path(INF,"circos","pQTLs.txt"),col.names=c("chr","start","end","value1","value2")) %>%
            mutate(chr=gsub("hs","chr",chr),value2=gsub("color=vd","",value2))
-  pQTL_labels <- read.table(file.path(INF,"circos","pQTL_labels.txt"),col.names=c("chr","start","end","value1","value2")) %>%
+  pQTL_labels <- read.table(file.path(INF,"circos","pQTL_labels.txt"),col.names=c("chr","start","end","value1","value2"),sep="\t") %>%
            mutate(chr=gsub("hs","chr",chr),value2=gsub("color=vd","",value2))
-  pQTL_labels <- read.table(file.path(INF,"circos","collapse.txt"),header=TRUE) %>%
-                 select(chr,start,end,value1,value2)
   pQTL_links <- read.table(file.path(INF,"circos","pQTL_links.txt"),col.names=c("chr1","start1","end1","chr2","start2","end2","color")) %>%
                 mutate(chr1=gsub("hs","chr",chr1),chr2=gsub("hs","chr",chr2),color=gsub("color=l","",color))
   pQTL_genes <- read.table(file.path(INF,"circos","pQTL_genes.txt"),col.names=c("chr","start","end","gene")) %>%
                 mutate(chr=gsub("hs","chr",chr))
-  suppressMessages(library("circlize"))
-  setEPS()
-  postscript(file=file.path(INF,"circos","circlize.eps"), width=7.08, height=7.08, horizontal=FALSE, paper="special", colormodel="rgb")
+  par(omi=gridOMI(), new=TRUE)
   circos.clear()
   circos.par(start.degree=90, gap.degree=c(rep(c(0.7), 21), 8), track.margin=c(0.005, 0.005), cell.padding=c(0.001, 0.01, 0.01, 0.001))
   circos.initializeWithIdeogram(cytoband=file.path(INF,"circos","cytoband.txt"),plotType=NULL)
@@ -103,14 +121,8 @@ circlize <- function()
                tick.length=0.5*(convert_x(1, "mm", get.cell.meta.data("sector.index"), get.cell.meta.data("track.index"))))
   circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col=pQTL_links[[7]], border=NA, directional=1, arr.length=0.05,
                      arr.width=0.03, arr.lwd=0.05)
-  legend("center", legend = c("cis- Gene [target protein]","trans- Gene [target protein]"), col = c("red","blue"),
-  pch=c(19,19),
-  bty="n",
-  pt.cex=1.5,
-  cex=1.2,
-  text.col="black",
-  horiz=FALSE,
-  inset=c(0.1, 0.1))
+  upViewport()
+  draw(llist_horizontal, y=unit(1, "npc"), just="top")
   dev.off()
   system("convert -density 300 ${INF}/circos/circlize.eps ${INF}/circos/circlize.png")
 }
