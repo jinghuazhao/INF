@@ -156,7 +156,7 @@ function eQTLGen_tabix()
   export type=(cis trans cis.full)
   for i in {0..2}
   do
-    cat <(gunzip -c ${txt_gz[$i]} | head -1) <(gunzip -c ${txt_gz[$i]} | sort -k3,3n -k4,4n) | \
+    cat <(gunzip -c ${txt_gz[$i]} | head -1) <(gunzip -c ${txt_gz[$i]} | sed '1d' | sort -k3,3n -k4,4n) | \
     bgzip -f > ${eQTLGen_tabix}/${type[$i]}.txt.gz
     tabix -S1 -s3 -b4 -e4 -f ${eQTLGen_tabix}/${ttype[$i]}.txt.gz
     ln -sf ${eQTLGen_tabix}/${type[$i]} ${eQTLGen}/${type[$i]}.txt.gz
