@@ -153,7 +153,8 @@ mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
   qtl_direction[unit=="-"] <- 0.5*(runif(1)>0)
   qtl_direction[positiveEffects==-1] <- -qtl_direction[positiveEffects==-1]
   qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
-  efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
+# efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
+  efoTraits <- paste0(trait_shown)
 })
 # all beta's are NAs when unit=="-"
 subset(mat[c("study","pmid","unit","beta","Keep")],unit=="-")
@@ -173,20 +174,16 @@ for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
 }
 
 library(pheatmap)
-col <- colorRampPalette(c("#4287f5","grey","#ffffff","grey","#e32222"))(5)
-pheatmap(rxc,
-         color = col,
-         legend = TRUE,
-         main = "",
-         angle_col = "315",
-         filename = "INF1_pQTL_immune_qtl_unclustered.png",
-         width = 16,
-         height = 10,
-         cluster_rows = FALSE,
-         cluster_cols = FALSE,
-         cellheight = 20,
-         cellwidth = 20,
-         fontsize = 14)
+col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
+library(grid)
+png(file.path(INF,"INF1_pQTL_immune_qtl_unclustered.png"),res=300,width=18,height=13,units="in")
+setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
+pheatmap(rxc, legend=TRUE, legend_labels=c("-","","+"), angle_col="315", color=col, width=18, height=13, cellwidth=21,
+         cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
+setHook("grid.newpage", NULL, "replace")
+grid.text("pQTL [target proteins](gene)", y=-0.07, gp=gpar(fontsize=15))
+grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=15))
+dev.off()
 
 pheatmap(rxc,
          color = col,

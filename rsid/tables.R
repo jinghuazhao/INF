@@ -230,12 +230,12 @@ novelpqtls <- subset(within(pqtls,{
                                     log10p=-log.P.
                                   }),
                      !paste0(Protein,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),
-                     select=c(uniprot,Protein,MarkerName,chrpos,rsid,a1a2,bse,log10p,cis.trans)) %>%
+                     select=c(uniprot,Protein,MarkerName,chrpos,rsid,a1a2,bse,log10p,cis.trans,Chromosome,Position)) %>%
               left_join(annotate[c("uniprot","p.gene","gene","MarkerName")]) %>%
-              mutate(cis=if_else(cis.trans=="cis","T","F")) %>%
+              mutate(cis=if_else(cis.trans=="cis","cis","trans")) %>%
               rename(g.target=p.gene,g.pQTL=gene) %>%
-              arrange(g.target,chrpos) %>%
-              select(Protein,g.target,chrpos,rsid,a1a2,bse,log10p,cis,g.pQTL)
+              arrange(Chromosome,Position) %>%
+              select(Protein,chrpos,rsid,a1a2,bse,log10p,cis,g.target,g.pQTL)
 write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls[,-1]), file=file.path(INF,"NG","novelpqtls.xlsx"), overwrite=TRUE,
            colNames=TRUE,
            borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")

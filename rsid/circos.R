@@ -14,7 +14,7 @@ setup <- function(simplify=TRUE)
          rename(gene=NEAREST) %>%
          arrange(Location)
   annotate <- read.csv(file.path(INF,"work","/INF1.merge.cis.vs.trans"),as.is=TRUE) %>%
-              select(-cis,-cis.end,-cis.start,-p.prot,-p.target,-uniprot) %>%
+              select(-cis,-cis.end,-cis.start,-p.prot,-p.target) %>%
               rename(MarkerName=SNP) %>%
               mutate(Location=paste(Chr,bp,sep=":")) %>%
               arrange(Location) %>%
@@ -82,9 +82,11 @@ circlize <- function()
   col_fun <- colorRamp2(c(-1, 1), c("red", "blue"))
   circle_size <- unit(1, "snpc")
   llabels <- Legend(at=c("cis","trans"), type="points", legend_gp=gpar(col=c("red","blue")), title_position="topleft",
-                    title="Labels: gene [target proteins]", nrow=1)
-  lpoints <- Legend(at=c("cis","trans"), type="points", legend_gp=gpar(col=c("red","blue")), title_position="topleft", title="Points", nrow=1)
-  llinks <- Legend(at=c("cis", "trans"), type="lines", legend_gp=gpar(col=c("red","blue"), lwd=2), title_position="topleft", title="Links", nrow=1)
+                    title="1. Gene [target proteins]", nrow=1)
+  lpoints <- Legend(at=c("cis","trans"), type="points", legend_gp=gpar(col=c("red","blue")), title_position="topleft", 
+                    title="2. -log10(P) [ceiling=150]", nrow=1)
+  llinks <- Legend(at="trans", type="lines", legend_gp=gpar(col="blue", lwd=2), title_position="topleft",
+                    title="3. trans-pQTL connections", nrow=1)
   llist_horizontal = packLegend(llabels, lpoints, llinks, direction = "horizontal")
   plot.new()
   pushViewport(viewport(x=0.5, y=1, width=circle_size, height=circle_size, just=c("center", "top")))
@@ -122,7 +124,7 @@ circlize <- function()
   circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col=pQTL_links[[7]], border=NA, directional=1, arr.length=0.05,
                      arr.width=0.03, arr.lwd=0.05)
   upViewport()
-  draw(llist_horizontal, y=unit(1, "npc"), just="top")
+  draw(llist_horizontal, y=circle_size, just="top")
   dev.off()
   system("convert -density 300 ${INF}/circos/circlize.eps ${INF}/circos/circlize.png")
 }
