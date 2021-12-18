@@ -175,6 +175,10 @@ for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
 
 library(pheatmap)
 col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
+n1 <- round(nrow(rxc)/2)
+n2 <- nrow(rxc)-n1
+annotation_row <- data.frame(c(rep("cis", n1), rep("trans", n2)), row.names=rownames(rxc))
+colnames(annotation_row) <- c("Cell")
 library(grid)
 png(file.path(INF,"INF1_pQTL_immune_qtl_unclustered.png"),res=300,width=18,height=13,units="in")
 setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
