@@ -158,7 +158,7 @@ function eQTLGen_tabix()
   do
     cat <(gunzip -c ${txt_gz[$i]} | head -1) <(gunzip -c ${txt_gz[$i]} | sed '1d' | sort -k3,3n -k4,4n) | \
     bgzip -f > ${eQTLGen_tabix}/${type[$i]}.txt.gz
-    tabix -S1 -s3 -b4 -e4 -f ${eQTLGen_tabix}/${ttype[$i]}.txt.gz
+    tabix -S1 -s3 -b4 -e4 -f ${eQTLGen_tabix}/${type[$i]}.txt.gz
     ln -sf ${eQTLGen_tabix}/${type[$i]} ${eQTLGen}/${type[$i]}.txt.gz
     ln -sf ${eQTLGen_tabix}/${type[$i]}.txt.gz.tbi ${eQTLGen}/${type[$i]}.txt.gz.tbi
   done
