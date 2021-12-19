@@ -330,12 +330,12 @@ function ref_prot_outcome_gsmr()
 
 R --no-save -q <<END
    INF <- Sys.getenv("INF")
-   library(dplyr)
+   suppressMessages(library(dplyr))
    library(stringr)
    gsmr <- read.delim(file.path(INF,"mr","gsmr","out","5e-8","gsmr-efo.txt")) %>%
-           mutate(outcome=paste0(id," (",trait,")"),
+           mutate(outcome=paste0(trait),
                   exposure=protein,
-                  group=as.numeric(cut(bxy,breaks=quantile(bxy,seq(0,1,0.125))))) %>%
+                  group=as.numeric(cut(bxy,breaks=quantile(bxy,seq(0,1,0.33))))) %>%
            select(exposure,outcome,bxy,se,p,nsnp,fdr,group)
    exposure <- unique(with(gsmr,exposure))
    outcome <- unique(with(gsmr,outcome))
@@ -354,9 +354,14 @@ R --no-save -q <<END
    }
    options(width=200)
    subset(gsmr,fdr<=0.05)
+   library(grid)
    library(pheatmap)
-   png(file.path(INF,"mr","gsmr","out","gsmr-efo.png"),res=300,width=30,height=15,units="in")
-   pheatmap(gsmr_mat,cluster_rows=TRUE,cluster_cols=TRUE,angle_col="315",fontsize_row=24,fontsize_col=24)
+   png(file.path(INF,"mr","gsmr","out","gsmr-efo.png"),res=300,width=30,height=18,units="in")
+   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
+   pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30)
+   setHook("grid.newpage", NULL, "replace")
+   grid.text("Target proteins", y=-0.07, gp=gpar(fontsize=48))
+   grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
    dev.off()
 END
 
