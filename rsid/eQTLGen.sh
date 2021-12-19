@@ -101,8 +101,34 @@ function lookup_jma()
   '
 }
 
+function eQTLGen_tabix()
+{
+  export TMPDIR=${HPC_WORK}/work
+  export eQTLGen=~/rds/public_databases/eQTLGen
+  export eQTLGen_tabix=${eQTLGen}/tabix
+# MAF
+  gunzip -c ${eQTLGen}/2018-07-18_SNP_AF_for_AlleleB_combined_allele_counts_and_MAF_pos_added.txt.gz | \
+  bgzip -f > ${eQTLGen_tabix}/AF_AC_MAF_pos.txt.gz
+  tabix -S1 -s2 -b3 -e3 -f ${eQTLGen_tabix}/AF_AC_MAF_pos.txt.gz
+# cis/trans/cis.full
+  export cis=${eQTLGen}/2019-12-11-cis-eQTLsFDR-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz
+  export trans=${eQTLGen}/2018-09-04-trans-eQTLsFDR-CohortInfoRemoved-BonferroniAdded.txt.gz
+  export cis_full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
+  export txt_gz=($cis $trans $cis_full)
+  export type=(cis trans cis_full)
+  for i in {0..2}
+  do
+    cat <(gunzip -c ${txt_gz[$i]} | head -1) <(gunzip -c ${txt_gz[$i]} | sed '1d' | sort -k3,3n -k4,4n) | \
+    bgzip -f > ${eQTLGen_tabix}/${type[$i]}.txt.gz
+    tabix -S1 -s3 -b4 -e4 -f ${eQTLGen_tabix}/${type[$i]}.txt.gz
+    ln -sf ${eQTLGen_tabix}/${type[$i]} ${eQTLGen}/${type[$i]}.txt.gz
+    ln -sf ${eQTLGen_tabix}/${type[$i]}.txt.gz.tbi ${eQTLGen}/${type[$i]}.txt.gz.tbi
+  done
+}
+
 function run_coloc()
 {
+  export cis_eQTL=~/rds/public_databases/eQTLGen
   Rscript -e '
    options(width=200)
    INF <- Sys.getenv("INF")
@@ -128,40 +154,13 @@ function run_coloc()
    gwas_stats <- gwasvcf::query_gwas(vcf, chrompos = ensRegion)
    gwas_stats <- gwasvcf::vcf_to_granges(gwas_stats)
    # eQTLGen
-   safe_import <- purrr::safely(import_eQTLCatalogue)
-   summary_list <- purrr::map(ftp_path_list, ~safe_import(., region38, selected_gene_id = ensGene, column_names))
-   result_list <- purrr::map(summary_list, ~.$result)
-   result_list <- result_list[!unlist(purrr::map(result_list, is.null))]
+   fetch_table <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"cis_full.txt.gz"), tabixRange = ensRegion, stringsAsFactors = FALSE) %>%
+                  dplyr::as_tibble()
    result_filtered <- purrr::map(result_list[lapply(result_list,nrow)!=0], ~dplyr::filter(., !is.na(se)))
    purrr::map_df(result_filtered, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
    coloc.abf()
    # etc
  ' 
-}
-
-function eQTLGen_tabix()
-{
-  export TMPDIR=${HPC_WORK}/work
-  export eQTLGen=~/rds/public_databases/eQTLGen
-  export eQTLGen_tabix=${eQTLGen}/tabix
-# MAF
-  gunzip -c ${eQTLGen}/2018-07-18_SNP_AF_for_AlleleB_combined_allele_counts_and_MAF_pos_added.txt.gz | \
-  bgzip -f > ${eQTLGen_tabix}/AF_AC_MAF_pos.txt.gz
-  tabix -S1 -s2 -b3 -e3 -f ${eQTLGen_tabix}/AF_AC_MAF_pos.txt.gz
-# cis/trans/cis.full
-  export cis=${eQTLGen}/2019-12-11-cis-eQTLsFDR-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz
-  export trans=${eQTLGen}/2018-09-04-trans-eQTLsFDR-CohortInfoRemoved-BonferroniAdded.txt.gz
-  export cis.full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
-  export txt_gz=($cis $trans $cis.full)
-  export type=(cis trans cis.full)
-  for i in {0..2}
-  do
-    cat <(gunzip -c ${txt_gz[$i]} | head -1) <(gunzip -c ${txt_gz[$i]} | sed '1d' | sort -k3,3n -k4,4n) | \
-    bgzip -f > ${eQTLGen_tabix}/${type[$i]}.txt.gz
-    tabix -S1 -s3 -b4 -e4 -f ${eQTLGen_tabix}/${type[$i]}.txt.gz
-    ln -sf ${eQTLGen_tabix}/${type[$i]} ${eQTLGen}/${type[$i]}.txt.gz
-    ln -sf ${eQTLGen_tabix}/${type[$i]}.txt.gz.tbi ${eQTLGen}/${type[$i]}.txt.gz.tbi
-  done
 }
 
 function coloc()
