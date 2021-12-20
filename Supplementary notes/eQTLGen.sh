@@ -134,6 +134,7 @@ function run_coloc()
    INF <- Sys.getenv("INF")
    M <- 1e6
    r <- as.integer(Sys.getenv("r"))
+   prot <- Sys.getenv("prot")
    cvt <- Sys.getenv("cvt")
    pkgs <- c("dplyr", "ggplot2", "readr", "coloc", "GenomicRanges","seqminer")
    invisible(suppressMessages(lapply(pkgs, require, character.only=TRUE)))
@@ -178,7 +179,7 @@ function run_coloc()
      res_formatted <- dplyr::as_tibble(t(as.data.frame(coloc_res$summary)))
    }
    res <- run_coloc()
-#  write.table(res,file=file.path(INF,"eQTLGen",paste0(prot,"-",gene,".out")))
+   write.table(res,file=file.path(INF,"eQTLGen",paste0(r,"-",prot,"-",gene,".out")))
  ' 
 }
 
@@ -195,12 +196,12 @@ function coloc()
      export prot=${prot}
      export MarkerName=${MarkerName}
      run_coloc 2>&1 | \
-     tee ${prot}-${MarkerName}.log
+     tee ${INF}/eQTLGen/log/${r}-${prot}-${MarkerName}.log
   done
   cd -
 }
 
-if [ ! -d ${INF}/eQTLGen ]; then mkdir ${INF}/eQTLGen; fi
+if [ ! -d ${INF}/eQTLGen/log ]; then mkdir -p ${INF}/eQTLGen/log; fi
 
 # lookup_merge
 # lookup_jma
