@@ -1,7 +1,33 @@
 #!/usr/bin/bash
 
-if [ ! -d ${INF}/eQTLGen ]; then mkdir ${INF}/eQTLGen; fi
 export eQTLGen=~/rds/public_databases/eQTLGen
+
+function eQTLGen_tabix()
+{
+  export TMPDIR=${HPC_WORK}/work
+  export eQTLGen=~/rds/public_databases/eQTLGen
+  export eQTLGen_tabix=${eQTLGen}/tabix
+# MAF
+  gunzip -c ${eQTLGen}/2018-07-18_SNP_AF_for_AlleleB_combined_allele_counts_and_MAF_pos_added.txt.gz | \
+  bgzip -f > ${eQTLGen_tabix}/AF_AC_MAF_pos.txt.gz
+  tabix -S1 -s2 -b3 -e3 -f ${eQTLGen_tabix}/AF_AC_MAF_pos.txt.gz
+  ln -sf ${eQTLGen_tabix}/AF_AC_MAF_pos.txt.gz ${eQTLGen}/AF_AC_MAF_pos.txt.gz
+  ln -sf ${eQTLGen_tabix}/AF_AC_MAF_pos.txt.gz.tbi ${eQTLGen}/AF_AC_MAF_pos.txt.gz.tbi
+# cis/trans/cis.full
+  export cis=${eQTLGen}/2019-12-11-cis-eQTLsFDR-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz
+  export trans=${eQTLGen}/2018-09-04-trans-eQTLsFDR-CohortInfoRemoved-BonferroniAdded.txt.gz
+  export cis_full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
+  export txt_gz=($cis $trans $cis_full)
+  export type=(cis trans cis_full)
+  for i in {0..2}
+  do
+    cat <(gunzip -c ${txt_gz[$i]} | head -1) <(gunzip -c ${txt_gz[$i]} | sed '1d' | sort -k3,3n -k4,4n) | \
+    bgzip -f > ${eQTLGen_tabix}/${type[$i]}.txt.gz
+    tabix -S1 -s3 -b4 -e4 -f ${eQTLGen_tabix}/${type[$i]}.txt.gz
+    ln -sf ${eQTLGen_tabix}/${type[$i]} ${eQTLGen}/${type[$i]}.txt.gz
+    ln -sf ${eQTLGen_tabix}/${type[$i]}.txt.gz.tbi ${eQTLGen}/${type[$i]}.txt.gz.tbi
+  done
+}
 
 function cistrans_python()
 # select named columns from .csv
@@ -101,34 +127,8 @@ function lookup_jma()
   '
 }
 
-function eQTLGen_tabix()
-{
-  export TMPDIR=${HPC_WORK}/work
-  export eQTLGen=~/rds/public_databases/eQTLGen
-  export eQTLGen_tabix=${eQTLGen}/tabix
-# MAF
-  gunzip -c ${eQTLGen}/2018-07-18_SNP_AF_for_AlleleB_combined_allele_counts_and_MAF_pos_added.txt.gz | \
-  bgzip -f > ${eQTLGen_tabix}/AF_AC_MAF_pos.txt.gz
-  tabix -S1 -s2 -b3 -e3 -f ${eQTLGen_tabix}/AF_AC_MAF_pos.txt.gz
-# cis/trans/cis.full
-  export cis=${eQTLGen}/2019-12-11-cis-eQTLsFDR-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz
-  export trans=${eQTLGen}/2018-09-04-trans-eQTLsFDR-CohortInfoRemoved-BonferroniAdded.txt.gz
-  export cis_full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
-  export txt_gz=($cis $trans $cis_full)
-  export type=(cis trans cis_full)
-  for i in {0..2}
-  do
-    cat <(gunzip -c ${txt_gz[$i]} | head -1) <(gunzip -c ${txt_gz[$i]} | sed '1d' | sort -k3,3n -k4,4n) | \
-    bgzip -f > ${eQTLGen_tabix}/${type[$i]}.txt.gz
-    tabix -S1 -s3 -b4 -e4 -f ${eQTLGen_tabix}/${type[$i]}.txt.gz
-    ln -sf ${eQTLGen_tabix}/${type[$i]} ${eQTLGen}/${type[$i]}.txt.gz
-    ln -sf ${eQTLGen_tabix}/${type[$i]}.txt.gz.tbi ${eQTLGen}/${type[$i]}.txt.gz.tbi
-  done
-}
-
 function run_coloc()
 {
-  export cis_eQTL=~/rds/public_databases/eQTLGen
   Rscript -e '
    options(width=200)
    INF <- Sys.getenv("INF")
@@ -137,6 +137,8 @@ function run_coloc()
    cvt <- Sys.getenv("cvt")
    pkgs <- c("dplyr", "ggplot2", "readr", "coloc", "GenomicRanges","seqminer")
    invisible(suppressMessages(lapply(pkgs, require, character.only=TRUE)))
+   HPC_WORK <- Sys.getenv("HPC_WORK")
+   gwasvcf::set_bcftools(file.path(HPC_WORK,"bin","bcftools"))
    sentinels <- subset(read.csv(cvt),cis)
    sentinel <- sentinels[r,]
    ensRegion <- with(subset(pQTLtools::inf1,prot==sentinel[["prot"]]),
@@ -147,19 +149,41 @@ function run_coloc()
                        paste0(chr,":",start,"-",end)
                      })
    ensGene <- subset(pQTLtools::inf1,prot==sentinel[["prot"]])[["gene"]]
-   HPC_WORK <- Sys.getenv("HPC_WORK")
-   gwasvcf::set_bcftools(file.path(HPC_WORK,"bin","bcftools"))
-   cat("GWAS sumstats\n")
+   # "GWAS sumstats
    vcf <- file.path(INF,"METAL","gwas2vcf",paste0(sentinel[["prot"]],".vcf.gz"))
    gwas_stats <- gwasvcf::query_gwas(vcf, chrompos = ensRegion)
    gwas_stats <- gwasvcf::vcf_to_granges(gwas_stats)
    # eQTLGen
-   fetch_table <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"cis_full.txt.gz"), tabixRange = ensRegion, stringsAsFactors = FALSE) %>%
-                  dplyr::as_tibble()
-   result_filtered <- purrr::map(result_list[lapply(result_list,nrow)!=0], ~dplyr::filter(., !is.na(se)))
-   purrr::map_df(result_filtered, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
-   coloc.abf()
-   # etc
+   cis_eQTL <- Sys.getenv("cis_eQTL")
+   eqtl_info <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"AF_AC_MAF_pos.txt.gz"),tabixRange=ensRegion,stringsAsFactors=FALSE)
+   names(eqtl_info) <- c("SNP","chr","pos","AlleleA","AlleleB","allA_total","allAB_total","allB_total","f")
+   eqtl_stats <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"cis_full.txt.gz"),tabixRange=ensRegion,stringsAsFactors=FALSE) %>%
+                 dplyr::as_tibble()
+   names(eqtl_stats) <- c("Pvalue","SNP","chr","pos","z","AssessedAllele","OtherAllele",
+                          "Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR")
+   eqtl_stats <- left_join(select(eqtl_stats,SNP,chr,pos,z,GeneSymbol,N),select(eqtl_info,SNP,chr,pos,f)) %>%
+                 mutate(maf=if_else(f<0.5,f,1-f),d=sqrt(2*f*(1-f)*(z^2+N)),beta=z/d,se=1/d) %>%
+                 select(-d,-f) %>%
+                 filter(GeneSymbol==sentinel[["p.gene"]])
+   run_coloc <- function(eqtl_sumstats, gwas_sumstats)
+   {
+     eQTL_dataset = list(beta = eqtl_sumstats$beta,
+                         varbeta = eqtl_sumstats$se^2,
+                         N = eqtl_sumstats$N,
+                         MAF = eqtl_sumstats$maf,
+                         type = "quant",
+                         snp = eqtl_sumstats$SNP)
+     gwas_dataset = list(beta = gwas_sumstats$ES,
+                         varbeta = gwas_sumstats$SE^2,
+                         type = "quant",
+                         snp = gwas_sumstats$id,
+                         MAF = gwas_sumstats$MAF,
+                         N = gwas_sumstats$SS)
+     coloc_res = coloc::coloc.abf(dataset1 = eQTL_dataset, dataset2 = gwas_dataset,p1 = 1e-4, p2 = 1e-4, p12 = 1e-5)
+     res_formatted = dplyr::as_tibble(t(as.data.frame(coloc_res$summary)))
+     return(res_formatted)
+   }
+   purrr::map_df(eqtl_stats, ~run_coloc(., gwas_stats), .id = "qtl_id")
  ' 
 }
 
@@ -169,19 +193,23 @@ for r in {1..59}
 do
    export r=${r}
    export cvt=${INF}/work/INF1.merge.cis.vs.trans
+   export cis_eQTL=~/rds/public_databases/eQTLGen
    read prot MarkerName < \
                         <(awk -vFS="," '$14=="cis"' ${cvt} | \
                           awk -vFS="," -vr=${r} 'NR==r{print $2,$5}')
    echo ${r} - ${prot} - ${MarkerName}
    export prot=${prot}
    export MarkerName=${MarkerName}
-   if [ ! -f ${INF}/coloc/${prot}-${MarkerName}.pdf ] || \
-      [ ! -f ${INF}/coloc/${prot}-${MarkerName}.RDS ]; then
-     cd ${INF}/eQTLGen
-#    R --no-save < ${INF}/rsid/coloc.R 2>&1 | \
-#    tee ${prot}-${MarkerName}.log
-#    ls *tbi | xargs -I {} bash -c "rm {}"
-     cd -
-   fi
+   cd ${INF}/eQTLGen
+   run_coloc 2>&1 | \
+   tee ${prot}-${MarkerName}.log
+   cd -
 done
 }
+
+if [ ! -d ${INF}/eQTLGen ]; then mkdir ${INF}/eQTLGen; fi
+
+# lookup_merge
+# lookup_jma
+
+coloc
