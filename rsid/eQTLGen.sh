@@ -198,6 +198,8 @@ function coloc()
      run_coloc 2>&1 | \
      tee ${INF}/eQTLGen/log/${r}-${prot}-${MarkerName}.log
   done
+  cat <(cat *.out | head -1 | awk '{gsub(/\"/,"",$0);print "ID","prot","gene",$0}' ) \
+      <(grep -v PP.H *.out | awk '{gsub(/.out:"1"/,"",$1);split($1,a,"-");$1=a[1]" "a[2]" "a[3];print}' | sort -k1,1n) > coloc.txt
   cd -
 }
 
