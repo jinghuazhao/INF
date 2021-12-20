@@ -175,7 +175,7 @@ function run_coloc()
    {
      eQTL_dataset <- with(eqtl_sumstats, list(beta=beta,varbeta=se^2,N=N,MAF=maf,type="quant",snp=SNP))
      gwas_dataset <- with(gwas_sumstats, list(beta=ES,varbeta=SE^2,type="quant",snp=ID,MAF=MAF,N=SS))
-     coloc_res <- coloc::coloc.abf(dataset1=eQTL_dataset, dataset2=gwas_dataset, p1 = 1e-4, p2 = 1e-4, p12 = 1e-5)
+     coloc_res <- coloc::coloc.abf(dataset1=eQTL_dataset, dataset2=gwas_dataset, p1=1e-4, p2=1e-4, p12=1e-5)
      res_formatted <- dplyr::as_tibble(t(as.data.frame(coloc_res$summary)))
    }
    res <- run_coloc()
