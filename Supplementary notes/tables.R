@@ -31,7 +31,7 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
             mutate(Protein=target.short) %>% select(-target.short)
    eqtls <- read.sheet("eQTLs", 1:24, 2:24)
  eQTLGen <- read.table(file.path(INF,"eQTLGen","coloc.txt"),header=TRUE) %>%
-            rename(H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H2.abf) %>%
+            rename(H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf) %>%
             left_join(gap_inf1) %>%
             mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
             rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
