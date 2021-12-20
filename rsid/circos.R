@@ -21,7 +21,7 @@ setup <- function(simplify=TRUE)
               mutate(chr=Chr,chrom=paste0("hs",Chr),start=bp,end=bp,p.chrom=paste0("hs",p.chr),value=if_else(-log10p>150,150,-log10p),
                      fcolor=ifelse(cis.trans=="cis","color=vdred","color=vdblue"),
                      lcolor=ifelse(cis.trans=="cis","color=lred","color=lblue"),
-                     chrbp=paste(Chr,bp,sep=":"),gene=vep[["gene"]])
+                     chrbp=paste(Chr,bp,sep=":"),gene=if_else(cis.trans=="cis",p.gene,vep[["gene"]]))
   write.table(annotate,file=file.path(INF,"circos","annotate.txt"),row.names=FALSE)
   f <- file.path(INF,"work","INF1.merge")
   INF1_merge <- read.delim(f)[c("Chrom","Start","End","prot","MarkerName")]

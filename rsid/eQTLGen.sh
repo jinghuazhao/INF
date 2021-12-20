@@ -148,63 +148,56 @@ function run_coloc()
                        end <- end+M
                        paste0(chr,":",start,"-",end)
                      })
-   ensGene <- subset(pQTLtools::inf1,prot==sentinel[["prot"]])[["gene"]]
+   gene <- subset(pQTLtools::inf1,prot==sentinel[["prot"]])[["gene"]]
    # "GWAS sumstats
    vcf <- file.path(INF,"METAL","gwas2vcf",paste0(sentinel[["prot"]],".vcf.gz"))
-   gwas_stats <- gwasvcf::query_gwas(vcf, chrompos = ensRegion)
-   gwas_stats <- gwasvcf::vcf_to_granges(gwas_stats)
+   gs <- gwasvcf::query_gwas(vcf, chrompos = ensRegion)
+   gwas_stats <- gwasvcf::vcf_to_tibble(gs) %>%
+                 filter(!is.na(ES)) %>%
+                 mutate(SNP=ID,chr=as.integer(seqnames),pos=end,MAF=if_else(AF<0.5,AF,1-AF),sdY=1)
+   dup1 <- duplicated(with(gwas_stats,SNP))
    # eQTLGen
    cis_eQTL <- Sys.getenv("cis_eQTL")
    eqtl_info <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"AF_AC_MAF_pos.txt.gz"),tabixRange=ensRegion,stringsAsFactors=FALSE)
    names(eqtl_info) <- c("SNP","chr","pos","AlleleA","AlleleB","allA_total","allAB_total","allB_total","f")
-   eqtl_stats <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"cis_full.txt.gz"),tabixRange=ensRegion,stringsAsFactors=FALSE) %>%
-                 dplyr::as_tibble()
-   names(eqtl_stats) <- c("Pvalue","SNP","chr","pos","z","AssessedAllele","OtherAllele",
-                          "Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR")
-   eqtl_stats <- left_join(select(eqtl_stats,SNP,chr,pos,z,GeneSymbol,N),select(eqtl_info,SNP,chr,pos,f)) %>%
-                 mutate(maf=if_else(f<0.5,f,1-f),d=sqrt(2*f*(1-f)*(z^2+N)),beta=z/d,se=1/d) %>%
-                 select(-d,-f) %>%
-                 filter(GeneSymbol==sentinel[["p.gene"]])
-   run_coloc <- function(eqtl_sumstats, gwas_sumstats)
+   es <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"cis_full.txt.gz"),tabixRange=ensRegion,stringsAsFactors=FALSE)
+   names(es) <- c("Pvalue","SNP","chr","pos","z","A1","A2","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR")
+   es <- left_join(select(es,SNP,chr,pos,A1,A2,z,GeneSymbol,N),select(eqtl_info,SNP,chr,pos,f)) %>%
+         mutate(maf=if_else(f<0.5,f,1-f),d=sqrt(2*f*(1-f)*(z^2+N)),beta=z/d,se=1/d) %>%
+         select(-d,-f) %>%
+         left_join(select(gwas_stats,SNP,chr,pos,REF,ALT)) %>%
+         distinct() %>%
+         mutate(sign=if_else(A1==ALT,1,-1),beta=sign*beta,sdY=1)
+   eqtl_stats <- subset(es, GeneSymbol==gene & !is.na(beta) & !is.na(maf))
+   dup2 <- duplicated(with(eqtl_stats,SNP))
+   run_coloc <- function(eqtl_sumstats=eqtl_stats[!dup2,], gwas_sumstats=gwas_stats[!dup1,])
    {
-     eQTL_dataset = list(beta = eqtl_sumstats$beta,
-                         varbeta = eqtl_sumstats$se^2,
-                         N = eqtl_sumstats$N,
-                         MAF = eqtl_sumstats$maf,
-                         type = "quant",
-                         snp = eqtl_sumstats$SNP)
-     gwas_dataset = list(beta = gwas_sumstats$ES,
-                         varbeta = gwas_sumstats$SE^2,
-                         type = "quant",
-                         snp = gwas_sumstats$id,
-                         MAF = gwas_sumstats$MAF,
-                         N = gwas_sumstats$SS)
-     coloc_res = coloc::coloc.abf(dataset1 = eQTL_dataset, dataset2 = gwas_dataset,p1 = 1e-4, p2 = 1e-4, p12 = 1e-5)
-     res_formatted = dplyr::as_tibble(t(as.data.frame(coloc_res$summary)))
-     return(res_formatted)
+     eQTL_dataset <- with(eqtl_sumstats, list(beta=beta,varbeta=se^2,N=N,MAF=maf,type="quant",snp=SNP))
+     gwas_dataset <- with(gwas_sumstats, list(beta=ES,varbeta=SE^2,type="quant",snp=ID,MAF=MAF,N=SS))
+     coloc_res <- coloc::coloc.abf(dataset1=eQTL_dataset, dataset2=gwas_dataset, p1 = 1e-4, p2 = 1e-4, p12 = 1e-5)
+     res_formatted <- dplyr::as_tibble(t(as.data.frame(coloc_res$summary)))
    }
-   purrr::map_df(eqtl_stats, ~run_coloc(., gwas_stats), .id = "qtl_id")
+   res <- run_coloc()
+#  write.table(res,file=file.path(INF,"eQTLGen",paste0(prot,"-",gene,".out")))
  ' 
 }
 
 function coloc()
 {
-for r in {1..59}
-do
-   export r=${r}
-   export cvt=${INF}/work/INF1.merge.cis.vs.trans
-   export cis_eQTL=~/rds/public_databases/eQTLGen
-   read prot MarkerName < \
-                        <(awk -vFS="," '$14=="cis"' ${cvt} | \
-                          awk -vFS="," -vr=${r} 'NR==r{print $2,$5}')
-   echo ${r} - ${prot} - ${MarkerName}
-   export prot=${prot}
-   export MarkerName=${MarkerName}
-   cd ${INF}/eQTLGen
-   run_coloc 2>&1 | \
-   tee ${prot}-${MarkerName}.log
-   cd -
-done
+  cd ${INF}/eQTLGen
+  for r in {1..59}
+  do
+     export r=${r}
+     export cvt=${INF}/work/INF1.merge.cis.vs.trans
+     export cis_eQTL=~/rds/public_databases/eQTLGen
+     read prot MarkerName < <(awk -vFS="," '$14=="cis"' ${cvt} | awk -vFS="," -vr=${r} 'NR==r{print $2,$5}')
+     echo ${r} - ${prot} - ${MarkerName}
+     export prot=${prot}
+     export MarkerName=${MarkerName}
+     run_coloc 2>&1 | \
+     tee ${prot}-${MarkerName}.log
+  done
+  cd -
 }
 
 if [ ! -d ${INF}/eQTLGen ]; then mkdir ${INF}/eQTLGen; fi
