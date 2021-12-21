@@ -108,6 +108,18 @@ function lookup_jma()
     join -13 -25 - <(gunzip -c ${eQTLGen}/${cistrans}.txt.gz | cut -f1,2,5,6,9 | sort -k5,5) > ${INF}/eQTLGen/eQTLGen.${cistrans}-all
   done
 
+  # full details
+  export cis_full=~/rds/public_databases/eQTLGen/cis_full.txt.gz
+  export jma=${INF}/sentinels/INF1.jma-rsid.cis.vs.trans
+  cat ${INF}/eQTLGen/eQTLGen.cis | \
+  parallel -C' ' --env INF --env cis_full '
+    grep -w {1} <(Rscript -e "subset(read.table(Sys.getenv(\"jma\"),header=TRUE),select=c(uniprot,SNP,p.gene,Chr,bp))") | \
+    grep -w {2} | \
+    awk "{cmd=sprintf(\"tabix %s %d:%d-%d\", ENVIRON[\"cis_full\"], \$5,\$6,\$6);system(cmd)}" | \
+    awk -v gene={3} "gene==\$9"
+  ' | \
+  sort -k3,3n -k4,4n > ${INF}/eQTLGen/eQTLGen.cis-dedailed
+
   Rscripe -e '
     ys1 <- c(paste0("Yes-",1:37),paste0("No1-",1:81931))
     ys2 <- c(paste0("Yes-",1:37),paste0("No2-",1:62))
