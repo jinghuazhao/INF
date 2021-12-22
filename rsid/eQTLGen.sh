@@ -150,7 +150,8 @@ function lookup_jma()
          qtls[i,c("be","see")] <- with(d,signif(gap::get_b_se(f,N,z),2))
          qtls[i,"cis.trans"] <- cistrans
        }
-       qtls <- filter(qtls,A1==Allele1)
+       qtls <- filter(qtls,A1==Allele1) %>%
+               select(-A1,-A2,-Allele1,-Allele2)
        assign(paste0(cistrans,".pqtl"),qtls)
     }
     pqtls <- bind_rows(cis.pqtl,trans.pqtl) %>%
