@@ -109,59 +109,59 @@ function lookup_jma()
   # all from eQTLGen but with LD
     sort -k3,3 ${INF}/eQTLGen/uniprot-rsid-gene | \
     join -13 -25 - <(gunzip -c ${eQTLGen}/${cistrans}.txt.gz | cut -f1,2,5,6,9 | sort -k5,5) > ${INF}/eQTLGen/eQTLGen.${cistrans}-all
+  # full details
+    export f=~/rds/public_databases/eQTLGen/${cistrans}.txt.gz
+    cat ${INF}/eQTLGen/eQTLGen.${cistrans} | \
+    parallel -C' ' --env INF --env f '
+      grep -w {1} <(Rscript -e "subset(read.table(Sys.getenv(\"jma\"),header=TRUE),select=c(uniprot,SNP,p.gene,Chr,bp))") | \
+      grep -w {2} | \
+      awk "{cmd=sprintf(\"tabix %s %d:%d-%d\", ENVIRON[\"f\"], \$5,\$6,\$6);system(cmd)}" | \
+      awk -v gene={3} "gene==\$9"
+    ' | \
+    sort -k3,3n -k4,4n > ${INF}/eQTLGen/eQTLGen.${cistrans}-detailed
   done
 
-  # full details
-  export cis_full=~/rds/public_databases/eQTLGen/cis_full.txt.gz
-  cat ${INF}/eQTLGen/eQTLGen.cis | \
-  parallel -C' ' --env INF --env cis_full '
-    grep -w {1} <(Rscript -e "subset(read.table(Sys.getenv(\"jma\"),header=TRUE),select=c(uniprot,SNP,p.gene,Chr,bp))") | \
-    grep -w {2} | \
-    awk "{cmd=sprintf(\"tabix %s %d:%d-%d\", ENVIRON[\"cis_full\"], \$5,\$6,\$6);system(cmd)}" | \
-    awk -v gene={3} "gene==\$9"
-  ' | \
-  sort -k3,3n -k4,4n > ${INF}/eQTLGen/eQTLGen.cis-detailed
-  export trans=~/rds/public_databases/eQTLGen/trans.txt.gz
-  cat ${INF}/eQTLGen/eQTLGen.trans | \
-  parallel -C' ' --env INF --env trans '
-    grep -w {1} <(Rscript -e "subset(read.table(Sys.getenv(\"jma\"),header=TRUE),select=c(uniprot,SNP,p.gene,Chr,bp))") | \
-    grep -w {2} | \
-    awk "{cmd=sprintf(\"tabix %s %d:%d-%d\", ENVIRON[\"trans\"], \$5,\$6,\$6);system(cmd)}" | \
-    awk -v gene={3} "gene==\$9"
-  ' | \
-  sort -k3,3n -k4,4n > ${INF}/eQTLGen/eQTLGen.trans-detailed
   Rscript -e '
     suppressMessages(library(dplyr))
+    library(seqminer)
     INF <- Sys.getenv("INF")
     jma <- Sys.getenv("jma")
     eQTLGen <- Sys.getenv("eQTLGen")
-    eQTLGen_cis_cols <- c("P","SNP","chr","pos","z","A1","A2","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR")
-    eQTLGen_trans_cols <- c("P","SNP","chr","pos","A1","A2","z","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR","BonferroniP")
+    cis_full_cols <- c("P","SNP","chr","pos","z","A1","A2","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR")
+    cols <- c("P","SNP","chr","pos","Allele1","Allele2","z","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR","BonferroniP")
+    reverse_strand <- function(allele,forward=c("A","C","G","T"),reverse=c("T","G","C","A")) reverse[(1:4)[toupper(allele)==forward]]
     for(cistrans in c("cis","trans"))
     {
-       qtls <- read.table(file.path(INF,"eQTLGen",paste0("eQTLGen.",cistrans)),col.names=c("rsid","uniprot","gene","p1","A1","A2","gene2")) %>%
+       qtls <- read.table(file.path(INF,"eQTLGen",paste0("eQTLGen.",cistrans)),
+                          col.names=c("rsid","uniprot","gene","p1","A1","A2","gene2")) %>%
                left_join(read.table(jma,header=TRUE),by=c("uniprot"="uniprot","gene"="p.gene")) %>%
                rename(chr=Chr,pos=bp) %>%
-               left_join(read.table(file.path(INF,"eQTLGen",paste0("eQTLGen.",cistrans,"-detailed")),col.names=get(paste0("eQTLGen_",cistrans,"_cols"))),
+               left_join(read.table(file.path(INF,"eQTLGen",paste0("eQTLGen.",cistrans,"-detailed")),col.names=cols),
                          by=c('chr'='chr','pos'='pos','gene'='GeneSymbol','SNP'='SNP')) %>%
                filter(!is.na(z)) %>%
-               select(prot,SNP,b,se,p,bJ,bJ_se,pJ,chr,pos,z,N) %>%
+               select(chr,pos,prot,SNP,b,se,p,bJ,bJ_se,pJ,z,P,N,A1,A2,Allele1,Allele2) %>%
                distinct()
        for(i in 1:nrow(qtls))
        {
          snpRegion <- with(qtls[i,],paste0(chr,":",pos,"-",pos))
-         eqtl_info <- seqminer::tabix.read.table(tabixFile=file.path(eQTLGen,"AF_AC_MAF_pos.txt.gz"),tabixRange=snpRegion,stringsAsFactors=FALSE)
+         eqtl_info <- tabix.read.table(tabixFile=file.path(eQTLGen,"AF_AC_MAF_pos.txt.gz"),tabixRange=snpRegion,stringsAsFactors=FALSE)
          names(eqtl_info) <- c("SNP","chr","pos","AlleleA","AlleleB","allA_total","allAB_total","allB_total","f")
          d <- left_join(qtls[i,],eqtl_info)
-         qtls[i,c("be","see")] <- with(d,gap::get_b_se(f,N,z))
+         qtls[i,c("be","see")] <- with(d,signif(gap::get_b_se(f,N,z),2))
          qtls[i,"cis.trans"] <- cistrans
        }
+       qtls <- filter(qtls,A1==Allele1)
        assign(paste0(cistrans,".pqtl"),qtls)
     }
     pqtls <- bind_rows(cis.pqtl,trans.pqtl) %>%
-             arrange(chr,pos)
+             arrange(chr,pos,prot)
     write.table(pqtls,file=file.path(INF,"eQTLGen","SCALLOP-INF-eQTLGen.txt"),quote=FALSE,row.names=FALSE)
   '
+#              mutate(A1A2=if_else(A1<A2,paste0(A1,A2),paste0(A2,A1)),
+#                     rA1=reverse_strand(A1),rA2=reverse_strand(A2),rA1A2=if_else(rA1<rA2,paste0(rA1,rA2),paste0(rA2,rA1)),
+#                     Allele1Allele2=if_else(Allele1<Allele2,paste0(Allele1,Allele2),paste0(Allele2,Allele1))) %>%
+#              filter((A1A2==Allele1Allele2 | rA1A2==Allele1Allele2))
+#   qtls <- mutate(qtls,be=if_else(A1A2==Allele1Allele2 & A1==Allele1,be,-be),be=if_else(rA1A2=Allele1Allele2 & rA1==Allele1,-be,be))
 
   Rscripe -e '
     ys1 <- c(paste0("Yes-",1:37),paste0("No1-",1:81931))
