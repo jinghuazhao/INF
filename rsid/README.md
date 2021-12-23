@@ -92,7 +92,8 @@ Without loss of generality, we have a more explicit figure[^1] linking genotype 
 
 <p align="left"><img src="grViz.png"></p>
 
-Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-fusion](https://jinghuazhao.github.io/EWAS-fusion/).
+Alternative routes are T(P)WAS with [fusion_twas](http://gusevlab.org/projects/fusion/) and EWAS with [EWAS-
+fusion](https://jinghuazhao.github.io/EWAS-fusion/).
 
 ```mermaid
 graph TD;
@@ -220,7 +221,7 @@ corresponding Wald statistic for PWAS is defined such that
 
 $z_{PWAS} = \frac{w^T_{P}z_P}{\sqrt{w^T_{P}Vw_{P}}}$
 
-where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively. The weights were generated for pQTLs using individual level data from INTERVAL and then used to infer protein-trait association based on a GWAS. The relevant implementation was done with FUSION.compute_weights.R and FUSION.assoc_test.R from fusion_twas (http://gusevlab.org/projects/fusion/). For regions linking multiple proteins, a multivariable counterpart could be considered. This framework could also be restricted to proteins showing a satisfactory level of heritability/PVE and/or limited to tagging SNPs such as those from HapMap. 
+where $w_{P}$ is a weight associated with protein abundance level and **V** covariance matrix for $z_P$, respectively. The weights were generated for pQTLs using individual level data from INTERVAL and then used to infer protein-trait association based on a GWAS. The relevant implementation was done with **FUSION.compute_weights.R** and **FUSION.assoc_test.R** from fusion_twas. For regions linking multiple proteins, a multivariable counterpart could be considered. This framework could also be restricted to proteins showing a satisfactory level of heritability/PVE and/or limited to tagging SNPs such as those from HapMap.
 
 This also mirrors the EWAS-fusion software for methylation data using epigenomewide association statistics.
 
