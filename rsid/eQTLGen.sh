@@ -127,8 +127,8 @@ function lookup_jma()
     INF <- Sys.getenv("INF")
     jma <- Sys.getenv("jma")
     eQTLGen <- Sys.getenv("eQTLGen")
-    cis_full_cols <- c("P","SNP","chr","pos","z","A1","A2","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR")
-    cols <- c("P","SNP","chr","pos","Allele1","Allele2","z","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR","BonferroniP")
+    cis_full_cols <- c("P_eqtl","SNP","chr","pos","z","A1","A2","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR")
+    cols <- c("P_eqtl","SNP","chr","pos","Allele1","Allele2","z","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR","BonferroniP")
     reverse_strand <- function(allele,forward=c("A","C","G","T"),reverse=c("T","G","C","A")) reverse[(1:4)[toupper(allele)==forward]]
     for(cistrans in c("cis","trans"))
     {
@@ -139,7 +139,7 @@ function lookup_jma()
                left_join(read.table(file.path(INF,"eQTLGen",paste0("eQTLGen.",cistrans,"-detailed")),col.names=cols),
                          by=c('chr'='chr','pos'='pos','gene'='GeneSymbol','SNP'='SNP')) %>%
                filter(!is.na(z)) %>%
-               select(chr,pos,prot,SNP,b,se,p,bJ,bJ_se,pJ,z,P,N,A1,A2,Allele1,Allele2) %>%
+               select(chr,pos,prot,gene,SNP,b,se,p,bJ,bJ_se,pJ,z,P_eqtl,N,A1,A2,Allele1,Allele2) %>%
                distinct()
        for(i in 1:nrow(qtls))
        {
@@ -147,15 +147,14 @@ function lookup_jma()
          eqtl_info <- tabix.read.table(tabixFile=file.path(eQTLGen,"AF_AC_MAF_pos.txt.gz"),tabixRange=snpRegion,stringsAsFactors=FALSE)
          names(eqtl_info) <- c("SNP","chr","pos","AlleleA","AlleleB","allA_total","allAB_total","allB_total","f")
          d <- left_join(qtls[i,],eqtl_info)
-         qtls[i,c("be","see")] <- with(d,signif(gap::get_b_se(f,N,z),2))
+         qtls[i,c("b_eqtl","se_eqtl")] <- with(d,signif(gap::get_b_se(f,N,z),2))
          qtls[i,"cis.trans"] <- cistrans
        }
        qtls <- filter(qtls,A1==Allele1) %>%
                select(-A1,-A2,-Allele1,-Allele2)
-       assign(paste0(cistrans,".pqtl"),qtls)
+       assign(paste0(cistrans,".pqtl"),arrange(qtls,chr,pos,prot))
     }
-    pqtls <- bind_rows(cis.pqtl,trans.pqtl) %>%
-             arrange(chr,pos,prot)
+    pqtls <- bind_rows(cis.pqtl,trans.pqtl)
     write.table(pqtls,file=file.path(INF,"eQTLGen","SCALLOP-INF-eQTLGen.txt"),quote=FALSE,row.names=FALSE)
   '
 #              mutate(A1A2=if_else(A1<A2,paste0(A1,A2),paste0(A2,A1)),
