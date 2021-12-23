@@ -259,7 +259,8 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 </div>
 <p>Without loss of generality, we have a more explicit figure<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> linking genotype data G, proteins P1, P2, P3 and outcome y.</p>
 <p align="left"><img src="grViz.png"/></p>
-<p>Alternative routes are T(P)WAS with <a href="http://gusevlab.org/projects/fusion/">fusion_twas</a> and EWAS with <a href="https://jinghuazhao.github.io/EWAS-fusion/">EWAS-fusion</a>.</p>
+<p>Alternative routes are T(P)WAS with <a href="http://gusevlab.org/projects/fusion/">fusion_twas</a> and EWAS with <a href="https://jinghuazhao.github.io/EWAS-fusion/">EWAS-
+fusion</a>.</p>
 <div class="mermaid">graph TD;
   SNP["LD reference panel (bed,bim,fam)"] --&gt; |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
   Methylation --&gt; Protein;
@@ -415,7 +416,7 @@ se &amp; = 1/d
 as inspired from studies of gene expression data. For a given Protein of interest <strong>P</strong> for which GWAS summary statistics <span class="arithmatex">\(z_P\)</span> is available, the
 corresponding Wald statistic for PWAS is defined such that</p>
 <p><span class="arithmatex">\(z_{PWAS} = \frac{w^T_{P}z_P}{\sqrt{w^T_{P}Vw_{P}}}\)</span></p>
-<p>where <span class="arithmatex">\(w_{P}\)</span> is a weight associated with protein abundance level and <strong>V</strong> covariance matrix for <span class="arithmatex">\(z_P\)</span>, respectively. The weights were generated for pQTLs using individual level data from INTERVAL and then used to infer protein-trait association based on a GWAS. The relevant implementation was done with FUSION.compute_weights.R and FUSION.assoc_test.R from fusion_twas (http://gusevlab.org/projects/fusion/). For regions linking multiple proteins, a multivariable counterpart could be considered. This framework could also be restricted to proteins showing a satisfactory level of heritability/PVE and/or limited to tagging SNPs such as those from HapMap. </p>
+<p>where <span class="arithmatex">\(w_{P}\)</span> is a weight associated with protein abundance level and <strong>V</strong> covariance matrix for <span class="arithmatex">\(z_P\)</span>, respectively. The weights were generated for pQTLs using individual level data from INTERVAL and then used to infer protein-trait association based on a GWAS. The relevant implementation was done with <strong>FUSION.compute_weights.R</strong> and <strong>FUSION.assoc_test.R</strong> from fusion_twas. For regions linking multiple proteins, a multivariable counterpart could be considered. This framework could also be restricted to proteins showing a satisfactory level of heritability/PVE and/or limited to tagging SNPs such as those from HapMap.</p>
 <p>This also mirrors the EWAS-fusion software for methylation data using epigenomewide association statistics.</p>
 <p><img align="right" height="300" src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300"/></p>
 <h2 id="somalogic_overlap">SomaLogic overlap<a class="headerlink" href="#somalogic_overlap" title="Permanent link">¶</a></h2>
