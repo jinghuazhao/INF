@@ -30,11 +30,15 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
      vep <- merge(read.sheet("VEP", 1:27, 2:182),gap_inf1,by.x="Protein",by.y="prot") %>%
             mutate(Protein=target.short) %>% select(-target.short)
    eqtls <- read.sheet("eQTLs", 1:24, 2:24)
- eQTLGen <- read.table(file.path(INF,"eQTLGen","coloc.txt"),header=TRUE) %>%
-            rename(H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf) %>%
+ eQTLGen <- read.table(file.path(INF,"eQTLGen","SCALLOP-INF-eQTLGen.txt"),header=TRUE) %>%
             left_join(gap_inf1) %>%
-            mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
-            rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
+            mutate(prot=target.short,flag=if_else(P_eqtl<5e-8,"x","")) %>%
+            rename(Protein=prot) %>% select(-target.short)
+ eQTLGen_coloc <- read.table(file.path(INF,"eQTLGen","coloc.txt"),header=TRUE) %>%
+                  rename(H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf) %>%
+                  left_join(gap_inf1) %>%
+                  mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
+                  rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
 reactome <- read.sheet("Reactome", 1:19, 2:589)
 garfield <- read.table(file.path(INF,"garfield-data","output","INF1","garfield.test.INF1.out"),header=TRUE) %>%
             select(ID,PThresh,Pvalue,Annotation,Celltype,Tissue,Type,Category,OR,Beta,SE,CI95_lower,CI95_upper,NAnnotThesh,NAnnot,NThresh,N,linkID)
@@ -157,7 +161,7 @@ outsheets <- c("summary","studies","inf1",
                "pqtls","cojo","knownpqtls","coloc","pqtldisease",
                "vep","magma",
                "gsmr_efo","hgi_gsmr","hgi_pqtlmr","drug",
-               "eQTLGen","reactome","great","garfield","efo","gdb",
+               "eQTLGen","eQTLGen_coloc","reactome","great","garfield","efo","gdb",
                "interval","os","cvd1","fenland","decode","aristotl","pqtlstudies",
                "great3","mr_immun","smr","cis_mr","mr_misc",
                "protein_correlation", "protein_dgi", "pqtl_impact")
@@ -165,7 +169,7 @@ titles <- c("summary","study information","panel information",
             "pQTLs","conditional analysis","known pQTLs","GTEx coloc","Disease GWAS overlap",
             "VEP annotation","MAGMA outputs",
             "GSMR results","HGI-GSMR r6","HGI-pQTLMR","PI drug",
-            "eQTLGen","Reactome","GREAT","GARFIELD outputs","EFO","geneDrugbank",
+            "eQTLGen","eQTLGen_coloc","Reactome","GREAT","GARFIELD outputs","EFO","geneDrugbank",
             "INTERVAL study","Other studies","SCALLOP-CVD1","Fenland study","deCODE study","ARISTOTLE study","previous pQTL studies",
             "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","cis-MR results","pQTL-misc-MR",
             "Protein correlation","DGI membership", "pQTL impact")
