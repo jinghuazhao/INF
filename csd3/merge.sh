@@ -189,7 +189,8 @@ awk -v OFS="\t" '{
 };1' > work/INF1.merge.ukbsnp
 
 R --no-save -q <<END
-  library(dplyr)
+  suppressMessages(library(dplyr))
+  supressMessages(library(gap))
   INF <- Sys.getenv("INF")
   gz <- gzfile(file.path(INF,"METAL","IL.12B-1.tbl.gz"))
   IL.12B <- within(read.delim(gz,as.is=TRUE), {Z <- Effect/StdErr; P <- pvalue(Z); log10P <- -log10p(Z)}) %>%
@@ -206,7 +207,6 @@ R --no-save -q <<END
   save(IL.12B, genes, file=file.path(INF,"work","IL.12B.rda"))
 # load(file.path(INF,"work","IL.12B.rda"))
   subset(IL.12B,!is.na(gene))
-  library(gap)
   png("IL.12B-mhtplot.trunc.png", res=300, units="in", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
   source(file.path(INF,"csd3","IL.12B-mhtplot.trunc.R"))
