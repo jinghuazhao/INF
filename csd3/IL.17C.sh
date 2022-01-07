@@ -61,11 +61,16 @@ Rscript -e '
                 col = c("blue4", "skyblue")
   )
   dev.off()
+  mhtdata <- filter(IL.17C,!is.na(Z)) %>%
+             select(-MarkerName,-Z,-log10P) %>%
+             mutate(P=as.numeric(P))
+  subset(mhtdata,!is.na(gene))
   png("IL.17C-mhtplot.png", res=300, units="in", width=9, height=6)
   opar <- par()
   par(cex=0.4)
   ops <- mht.control(colors=rep(c("blue4","skyblue"),11),srt=0,yline=2.5,xline=2)
-  mhtplot2(data.frame(IL.17C[,c("Chromosome","Position","P","gene","color")]),ops,xlab="",ylab="",srt=0)
+  hops <- hmht.control(data=subset(mhtdata,!is.na(gene)))
+  mhtplot2(mhtdata,ops,hops,xlab="",ylab="",srt=0)
   axis(2,at=1:8)
   title("")
   par(opar)
