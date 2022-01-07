@@ -51,13 +51,12 @@ Rscript -e '
   subset(IL.17C,!is.na(gene))
   png("IL.17C-mhtplot.trunc.png", res=300, units="in", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
-  source(file.path(INF,"csd3","IL.17C-mhtplot.trunc.R"))
   mhtplot.trunc(subset(IL.17C,!is.na(Z),select=-color), chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=-log10(1e-7), genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=0.7,
-                annotatelog10P=-log10(1.1e-6), annotateTop = TRUE, highlight=with(genes,gene),
-                mtext.line=3, y.brk1=0.1, y.brk2=0.5, delta=0.01, cex.axis=1.2, cex.y=1.2, cex=0.5,
-                font=2, font.axis=1,
+                annotatelog10P=-log10(1.1e-6), annotateTop = FALSE, highlight=with(genes,gene),
+                mtext.line=3, y.brk1=0.1, y.brk2=0.5, trunc.yaxis=FALSE, delta=0.01, cex.axis=1.2,
+                cex.y=1.2, cex=0.5, font=2, font.axis=1,
                 y.ax.space=20,
                 col = c("blue4", "skyblue")
   )
