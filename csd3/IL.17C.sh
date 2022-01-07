@@ -70,7 +70,7 @@ Rscript -e '
   par(cex=0.4)
   ops <- mht.control(colors=rep(c("blue4","skyblue"),11),srt=0,yline=2.5,xline=2)
   hops <- hmht.control(data=subset(mhtdata,!is.na(gene)))
-  mhtplot2(mhtdata,ops,hops,xlab="",ylab="",srt=0)
+  mhtplot2(mhtdata,ops,hops,xlab="",ylab="",srt=0, cex.axis=1.2, cex.yaxis=1.2, cex=0.5)
   axis(2,at=1:8)
   title("")
   par(opar)
