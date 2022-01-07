@@ -27,13 +27,12 @@ vep --id "16 61477410 61477410 G/GTA" --species homo_sapiens --assembly GRCh37 -
 vep --id "16 88684495 88684495 G/T" --species homo_sapiens --assembly GRCh37 -o rs17700884 --cache --offline --force_overwrite --tab \
                                     --nearest symbol --pick
 gunzip -c ${INF}/sumstats/INTERVAL/INTERVAL.IL.17C.gz | cut -f1-3,9-10 | gzip -f > ${INF}/work/IL.17C.gz
-}
 
 Rscript -e '
   suppressMessages(library(dplyr))
   suppressMessages(library(gap))
   INF <- Sys.getenv("INF")
-  genes <- data.frame(MarkerName=c("chr16:88684495_G_T"), gene=c("IL17C"))
+  genes <- data.frame(MarkerName=c("chr16:88684495_G_T"),gene=c("IL17C"),color=c("red"))
   gz <- gzfile(file.path(INF,"work","IL.17C.gz"))
   IL.17C <- read.delim(gz,as.is=TRUE) %>%
             mutate(Z=BETA/SE,P=pvalue(Z),log10P=-log10p(Z)) %>%
@@ -41,18 +40,35 @@ Rscript -e '
             select(Chromosome,Position,MarkerName,Z,P,log10P) %>%
             left_join(genes)
   save(IL.17C, genes, file=file.path(INF,"work","IL.17C.rda"))
+'
+}
+
+Rscript -e '
+  suppressMessages(library(dplyr))
+  suppressMessages(library(gap))
+  INF <- Sys.getenv("INF")
   load(file.path(INF,"work","IL.17C.rda"))
   subset(IL.17C,!is.na(gene))
   png("IL.17C-mhtplot.trunc.png", res=300, units="in", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
-  mhtplot.trunc(subset(IL.17C,!is.na(Z)), chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
-                suggestiveline=FALSE, genomewideline=-log10(5e-10),
+  source(file.path(INF,"csd3","IL.17C-mhtplot.trunc.R"))
+  mhtplot.trunc(subset(IL.17C,!is.na(Z),select=-color), chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
+                suggestiveline=-log10(1e-7), genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=0.7,
-                annotatelog10P=-log10(5e-10), annotateTop = FALSE, highlight=with(genes,gene),
-                mtext.line=3, y.brk1=1, y.brk2=2, delta=0.01, cex.axis=1.2, cex.y=1.2, cex=0.5,
+                annotatelog10P=-log10(1.1e-6), annotateTop = TRUE, highlight=with(genes,gene),
+                mtext.line=3, y.brk1=0.1, y.brk2=0.5, delta=0.01, cex.axis=1.2, cex.y=1.2, cex=0.5,
                 font=2, font.axis=1,
                 y.ax.space=20,
                 col = c("blue4", "skyblue")
   )
+  dev.off()
+  png("IL.17C-mhtplot.png", res=300, units="in", width=9, height=6)
+  opar <- par()
+  par(cex=0.4)
+  ops <- mht.control(colors=rep(c("blue4","skyblue"),11),srt=0,yline=2.5,xline=2)
+  mhtplot2(data.frame(IL.17C[,c("Chromosome","Position","P","gene","color")]),ops,xlab="",ylab="",srt=0)
+  axis(2,at=1:8)
+  title("")
+  par(opar)
   dev.off()
 '
