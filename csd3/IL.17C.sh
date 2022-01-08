@@ -1,14 +1,5 @@
 #!/usr/bin/bash
 
-#SBATCH --job-name=IL.17C
-#SBATCH --account CARDIO-SL0-CPU
-#SBATCH --partition cardio
-#SBATCH --qos=cardio
-#SBATCH --time=1-00:00:00
-#SBATCH --output=/rds/user/jhz22/hpc-work/work/%A_%a.out
-#SBATCH --error=/rds/user/jhz22/hpc-work/work/%A_%a.err
-#SBATCH --export ALL
-
 function setup()
 # IL.17C
 {
