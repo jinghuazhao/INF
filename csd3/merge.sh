@@ -214,7 +214,7 @@ R --no-save -q <<END
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=0.7,
                 annotatelog10P=-log10(5e-10), annotateTop = FALSE, highlight=with(genes,gene),
-                mtext.line=3, y.brk1=115, y.brk2=200, delta=0.01, cex.axis=1.2, cex.yaxis=1.2, cex=0.5, font=2, font.axis=1,
+                mtext.line=3, y.brk1=115, y.brk2=200, delta=0.01, cex.axis=1.2, cex=0.5, font=2, font.axis=1,
                 y.ax.space=20,
                 col = c("blue4", "skyblue")
   )

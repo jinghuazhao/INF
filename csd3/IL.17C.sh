@@ -56,7 +56,7 @@ Rscript -e '
                 cex.mtext=1.2, cex.text=0.7,
                 annotatelog10P=-log10(1.1e-6), annotateTop = FALSE, highlight=with(genes,gene),
                 mtext.line=3, y.brk1=0.1, y.brk2=0.5, trunc.yaxis=FALSE, delta=0.01, cex.axis=1.2,
-                cex.y=1.2, cex=0.5, font=2, font.axis=1,
+                cex=0.5, font=2, font.axis=1,
                 y.ax.space=20,
                 col = c("blue4", "skyblue")
   )
@@ -64,13 +64,15 @@ Rscript -e '
   mhtdata <- filter(IL.17C,!is.na(Z)) %>%
              select(-MarkerName,-Z,-log10P) %>%
              mutate(P=as.numeric(P))
+  cis <- with(mhtdata,Chromosome==16 & Position<=88704999-1e6 & Position>=88706881+1e6)
+  mhtdata[cis,"color"] <- "red"
   subset(mhtdata,!is.na(gene))
   png("IL.17C-mhtplot.png", res=300, units="in", width=9, height=6)
   opar <- par()
   par(cex=0.4)
   ops <- mht.control(colors=rep(c("blue4","skyblue"),11),srt=0,yline=2.5,xline=2)
   hops <- hmht.control(data=subset(mhtdata,!is.na(gene)))
-  mhtplot2(mhtdata,ops,hops,xlab="",ylab="",srt=0, cex.axis=1.2, cex.yaxis=1.2, cex=0.5)
+  mhtplot2(mhtdata,ops,hops,xlab="",ylab="",srt=0, cex.axis=1.2, cex=0.5)
   axis(2,at=1:8)
   title("")
   par(opar)
