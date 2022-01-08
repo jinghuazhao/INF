@@ -24,6 +24,7 @@
 #' @param y.ax.space interval of ticks of the y axis.
 #' @param y.brk1 lower -log10(P) break point.
 #' @param y.brk2 upper -log10(P) break point.
+#' @param cex.axis extension factor for y-axis.
 #' @param delta a value to enable column(s) of red points.
 #' @param ... other options.
 #' @return The plot is shown on or saved to the appropriate device.
