@@ -64,10 +64,10 @@ Rscript -e '
   mhtdata <- filter(IL.17C,!is.na(Z)) %>%
              select(-MarkerName,-Z,-log10P) %>%
              mutate(P=as.numeric(P))
-  cis <- with(mhtdata,Chromosome==16 & Position<=88704999-1e6 & Position>=88706881+1e6)
+  cis <- with(mhtdata,Chromosome==16 & Position>=88704999-1e6 & Position<=88706881+1e6)
   mhtdata[cis,"color"] <- "red"
   subset(mhtdata,!is.na(gene))
-  png("IL.17C-mhtplot.png", res=300, units="in", width=9, height=6)
+  png("IL.17C-mhtplot2.png", res=300, units="in", width=9, height=6)
   opar <- par()
   par(cex=0.5)
   ops <- mht.control(colors=rep(c("blue4","skyblue"),11),srt=0,yline=2.5,xline=2)
@@ -78,3 +78,27 @@ Rscript -e '
   par(opar)
   dev.off()
 '
+
+R --no-save -q <<END
+# 24/9/2020, not highlighted
+  library(gap)
+# library(Rmpfr)
+  INF <- Sys.getenv("INF")
+  gz <- gzfile(file.path(INF,"METAL","IL.17C-1.tbl.gz"))
+  IL.17C <- within(read.delim(gz,as.is=TRUE), {
+   Z <- Effect/StdErr;
+#  P <- as.numeric(2*pnorm(mpfr(abs(Z),100),lower.tail=FALSE))
+   P <- 2*pnorm(abs(Z),lower.tail=FALSE)
+  })
+  subset(IL.17C, P==0)
+  png("IL.17C.png", res=300, units="in", width=9, height=6)
+  par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
+  mhtplot.trunc(IL.17C, chr="Chromosome", bp="Position", p="P", snp="MarkerName", z = "Z",
+                suggestiveline=FALSE, genomewideline=-log10(5e-10), logp = TRUE,
+                cex.mtext=0.6, cex.text=0.7,
+                mtext.line=4, y.brk1=300, y.brk2=500, cex.axis=0.6, cex=0.5,
+                y.ax.space=20,
+                col = c("blue4", "skyblue")
+  )
+  dev.off()
+END
