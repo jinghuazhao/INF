@@ -30,7 +30,8 @@ Rscript -e '
             mutate(Z=BETA/SE,P=pvalue(Z),log10P=-log10p(Z)) %>%
             rename(Chromosome=CHR,Position=POS,MarkerName=SNPID) %>%
             select(Chromosome,Position,MarkerName,Z,P,log10P) %>%
-            left_join(genes)
+            left_join(genes) %>%
+            mutate(MarkerName=ifelse(!is.na(gene),gene,MarkerName))
   save(IL.17C, genes, file=file.path(INF,"work","IL.17C.rda"))
 '
 
@@ -70,7 +71,7 @@ Rscript -e '
                 suggestiveline=-log10(1e-7), genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=0.7,
                 annotatelog10P=-log10(6.35e-9), annotateTop = FALSE, highlight=with(genes,gene),
-                mtext.line=3, y.brk1=2, y.brk2=3, trunc.yaxis=FALSE, delta=0.1, cex.axis=1.2,
+                mtext.line=3, y.brk1=0.0001, y.brk2=0.0002, trunc.yaxis=FALSE, delta=0.1, cex.axis=1.2,
                 cex=0.5, font=2, font.axis=1, y.ax.space=1,
                 col = c("blue4", "skyblue")
   )
