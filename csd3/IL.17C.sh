@@ -28,6 +28,7 @@ Rscript -e '
   gz <- gzfile(file.path(INF,"work","IL.17C.gz"))
   IL.17C <- read.delim(gz,as.is=TRUE) %>%
             mutate(Z=BETA/SE,P=pvalue(Z),log10P=-log10p(Z)) %>%
+            filter(!is.na(Z)) %>%
             rename(Chromosome=CHR,Position=POS,MarkerName=SNPID) %>%
             select(Chromosome,Position,MarkerName,Z,P,log10P) %>%
             left_join(genes) %>%
@@ -67,7 +68,7 @@ Rscript -e '
   subset(IL.17C,!is.na(gene))
   png("IL.17C-mhtplot.trunc.png", res=300, units="in", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
-  mhtplot.trunc(subset(IL.17C,!is.na(Z),select=-color), chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
+  mhtplot.trunc(subset(IL.17C,select=-color), chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=-log10(1e-7), genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=0.7,
                 annotatelog10P=-log10(6.35e-9), annotateTop = FALSE, highlight=with(genes,gene),
@@ -76,8 +77,7 @@ Rscript -e '
                 col = c("blue4", "skyblue")
   )
   dev.off()
-  mhtdata <- filter(IL.17C,!is.na(Z)) %>%
-             select(-MarkerName,-Z,-log10P) %>%
+  mhtdata <- select(IL.17C,-MarkerName,-Z,-log10P) %>%
              mutate(P=as.numeric(P))
   cis <- with(mhtdata,Chromosome==16 & Position>=88704999-1e6 & Position<=88706881+1e6)
   mhtdata[cis,"color"] <- seq(length(colors()))[colors()=="red"]
@@ -86,7 +86,7 @@ Rscript -e '
   opar <- par()
   par(cex=0.5)
   ops <- mht.control(colors=rep(c("blue4","skyblue"),11),srt=0,yline=2.5,xline=2)
-  hops <- hmht.control(data=subset(mhtdata,!is.na(gene)))
+  hops <- hmht.control(data=subset(mhtdata,!is.na(gene)),boxed=TRUE)
   mhtplot2(mhtdata,ops,hops,xlab="",ylab="",srt=0, cex.axis=1.2)
   axis(2,at=1:10)
   title("")
