@@ -14,32 +14,40 @@ setup <- function(simplify=TRUE)
          select(Protein,Location,NEAREST) %>%
          rename(prot=Protein,gene=NEAREST) %>%
          arrange(Location)
-  require(openxlsx)
-  f <- file.path(INF,"NG","trans-pQTL_annotation.xlsx")
-  annotation_trans <- read.xlsx(f,sheet=1,startRow = 6,colNames=FALSE,cols=c(1:3,14),skipEmptyRows=TRUE)
-  names(annotation_trans) <- c("No","rsid","gene.encoding","gene.causal")
-  metal <- read.delim(file.path(INF,"work","INF1.METAL"))
-  inf1 <- select(gap.datasets::inf1,uniprot,target.short,gene) %>%
-          rename(gene.inf1=gene)
-  annotated <- left_join(metal,annotation_trans) %>%
-               left_join(inf1) %>%
-               mutate(Location=paste0(Chromosome,":",Position)) %>%
-               left_join(vep) %>%
-               mutate(SYMBOL=if_else(cis.trans=="cis",gene.inf1,gene.causal)) %>%
-               mutate(SYMBOL=if_else(SYMBOL=="-",gene,SYMBOL)) %>%
-               arrange(Chromosome,Position) %>%
-               select(MarkerName,prot,target.short,rsid,cis.trans,gene,gene.causal,gene.inf1,SYMBOL)
-  subset(annotated,prot=="IL.12B")
-  subset(annotated,prot=="TRAIL")
+# only VEP annotated genes
   annotate <- read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans"),as.is=TRUE) %>%
               select(-cis,-cis.end,-cis.start,-p.prot,-p.target) %>%
               rename(MarkerName=SNP) %>%
               mutate(Location=paste(Chr,bp,sep=":")) %>%
-              arrange(Location) %>%
+              left_join(vep) %>%
               mutate(chr=Chr,chrom=paste0("hs",Chr),start=bp,end=bp,p.chrom=paste0("hs",p.chr),value=if_else(-log10p>150,150,-log10p),
                      fcolor=ifelse(cis.trans=="cis","color=vdred","color=vdblue"),
                      lcolor=ifelse(cis.trans=="cis","color=lred","color=lblue"),
-                     chrbp=paste(Chr,bp,sep=":"),gene=if_else(cis.trans=="cis",p.gene,vep[["gene"]]))
+                     chrbp=paste(Chr,bp,sep=":"),gene=if_else(cis.trans=="cis",p.gene,gene))
+# causal genes
+  require(openxlsx)
+  f <- file.path(INF,"NG","trans-pQTL_annotation.xlsx")
+  annotation_trans <- read.xlsx(f,sheet=1,startRow = 6,colNames=FALSE,cols=c(1:3,14),skipEmptyRows=TRUE)
+  names(annotation_trans) <- c("No","rsid","gene.encoding","gene.causal")
+  metal <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+           select(MarkerName,rsid,prot,Chromosome,Position,log.P.,uniprot,cis.trans) %>%
+           rename(log10p=log.P.)
+  inf1 <- rename(gap.datasets::inf1,gene.inf1=gene,p.chr=chr,p.start=start,p.end=end)
+  annotate <- left_join(metal,annotation_trans) %>%
+              left_join(inf1) %>%
+              mutate(Location=paste0(Chromosome,":",Position)) %>%
+              left_join(vep) %>%
+              mutate(SYMBOL=if_else(cis.trans=="cis",gene.inf1,gene.causal)) %>%
+              mutate(SYMBOL=if_else(SYMBOL=="-",gene,SYMBOL)) %>%
+              arrange(Chromosome,Position) %>%
+              mutate(chrom=paste0("hs",Chromosome),start=Position,end=Position,
+                     p.chrom=paste0("hs",p.chr),value=if_else(-log10p>150,150,-log10p),
+                     fcolor=ifelse(cis.trans=="cis","color=vdred","color=vdblue"),
+                     lcolor=ifelse(cis.trans=="cis","color=lred","color=lblue"),
+                     chrbp=paste(Chromosome,Position,sep=":")) %>%
+              select(MarkerName,prot,uniprot,target.short,rsid,chrom,start,end,cis.trans,gene,gene.causal,gene.inf1,SYMBOL,p.chrom,p.start,p.end)
+  subset(annotate,prot=="IL.12B")
+  subset(annotate,prot=="TRAIL")
   write.table(annotate,file=file.path(INF,"circos","annotate.txt"),row.names=FALSE)
   f <- file.path(INF,"work","INF1.merge")
   INF1_merge <- read.delim(f)[c("Chrom","Start","End","prot","MarkerName")]
