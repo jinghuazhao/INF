@@ -1,4 +1,5 @@
 rsid2gene <- function()
+# ieugwasr annotation
 {
   geneinfo <- vector("character")
   for(i in 1:180) geneinfo[i] <- with(ieugwasr::variants_chrpos(cvt$chrbp[i],300),geneinfo)
@@ -10,10 +11,27 @@ setup <- function(simplify=TRUE)
 {
 # gene <- rsid2gene()
   vep <- read.delim(file.path(INF,"annotate","INF1.merge-annotate.tsv")) %>%
-         select(Location,NEAREST) %>%
-         rename(gene=NEAREST) %>%
+         select(Protein,Location,NEAREST) %>%
+         rename(prot=Protein,gene=NEAREST) %>%
          arrange(Location)
-  annotate <- read.csv(file.path(INF,"work","/INF1.merge.cis.vs.trans"),as.is=TRUE) %>%
+  require(openxlsx)
+  f <- file.path(INF,"NG","trans-pQTL_annotation.xlsx")
+  annotation_trans <- read.xlsx(f,sheet=1,startRow = 6,colNames=FALSE,cols=c(1:3,14),skipEmptyRows=TRUE)
+  names(annotation_trans) <- c("No","rsid","gene.encoding","gene.causal")
+  metal <- read.delim(file.path(INF,"work","INF1.METAL"))
+  inf1 <- select(gap.datasets::inf1,uniprot,target.short,gene) %>%
+          rename(gene.inf1=gene)
+  annotated <- left_join(metal,annotation_trans) %>%
+               left_join(inf1) %>%
+               mutate(Location=paste0(Chromosome,":",Position)) %>%
+               left_join(vep) %>%
+               mutate(SYMBOL=if_else(cis.trans=="cis",gene.inf1,gene.causal)) %>%
+               mutate(SYMBOL=if_else(SYMBOL=="-",gene,SYMBOL)) %>%
+               arrange(Chromosome,Position) %>%
+               select(MarkerName,prot,target.short,rsid,cis.trans,gene,gene.causal,gene.inf1,SYMBOL)
+  subset(annotated,prot=="IL.12B")
+  subset(annotated,prot=="TRAIL")
+  annotate <- read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans"),as.is=TRUE) %>%
               select(-cis,-cis.end,-cis.start,-p.prot,-p.target) %>%
               rename(MarkerName=SNP) %>%
               mutate(Location=paste(Chr,bp,sep=":")) %>%

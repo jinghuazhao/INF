@@ -393,3 +393,17 @@ Rscript -e '
   '
   sed '1d' ${INF}/ppi/inf1.txt | cut -f5 | grep -f - -w ${INF}/ppi/ppi.txt
 }
+
+function googlesheet()
+# https://www.hdfstutorial.com/blog/connect-r-google-sheet-use/
+{
+  Rscript -e '
+    url <- "https://docs.google.com/spreadsheets/d/1nLqPlG5RwGcxAzolYI5bsctIVGl25f_W/edit?usp=sharing&ouid=102539576739161755759&rtpof=true&sd=true"
+    library(googlesheets)
+    gs_auth(new_user = TRUE)
+    gs_ls()
+    for_gs <- gs_title("mtcars")
+    for_gs_sheet <- gs_read(for_gs)
+    gs_new(title = "IRIS Dataset", ws_title = "first_sheet", input = iris)
+  '
+}
