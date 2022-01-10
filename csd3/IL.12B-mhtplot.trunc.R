@@ -67,7 +67,7 @@ mhtplot.trunc <- function (x, chr = "CHR", bp = "BP", p = NULL, log10p = NULL, z
                            chrlabs = NULL, suggestiveline = -log10(1e-05),
                            genomewideline = -log10(5e-08), highlight = NULL,
                            annotatelog10P = NULL, annotateTop = FALSE, cex.mtext=1.5, cex.text=0.7,
-                           mtext.line = 2, y.ax.space = 5, y.brk1, y.brk2, delta=0.05, ...)
+                           mtext.line = 2, y.ax.space = 5, y.brk1, y.brk2, cex.axis=1.2, delta=0.05, ...)
 {
   for (q in c("calibrate","plotrix")) {
      if (length(grep(paste("^package:", q, "$", sep=""), search())) == 0) {
@@ -174,11 +174,14 @@ mhtplot.trunc <- function (x, chr = "CHR", bp = "BP", p = NULL, log10p = NULL, z
     topHits = subset(d, log10P >= annotatelog10P)
     if (!annotateTop) {
       toHighlight <- subset(topHits,SNP %in% highlight)
-      toLift <- c("SH2B3","TARF3","FLT3","RAD51B")
-      part1 <- subset(toHighlight, ! SNP %in% toLift)
-      part2 <- subset(toHighlight, SNP %in% toLift)
+      toLift1 <- c("SH2B3;TRAFD1")
+      toLift2 <- c("TARF3","FLT3","RAD51B")
+      part1 <- subset(toHighlight, ! SNP %in% c(toLift1,toLift2))
+      part2 <- subset(toHighlight, SNP %in% toLift1)
+      part3 <- subset(toHighlight, SNP %in% toLift2)
       with(part1, calibrate::textxy(pos, log10P, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-      with(part2, calibrate::textxy(pos, log10P+10, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
+      with(part2, calibrate::textxy(pos, log10P+20, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
+      with(part3, calibrate::textxy(pos, log10P+10, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
     }
     else {
       topHits <- topHits[order(with(topHits,log10P)), ]

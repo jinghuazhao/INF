@@ -20,7 +20,7 @@ function turboman()
     cut -f8,9 | \
     sort -k1,1n -k2,2n
   ) | \
-  paste - <(echo SNP CFHR3 TNFSF10 KNG1 MYRF SERPINA1 APOH MEP1B PLAUR | tr ' ' '\n') > ${INF}/work/${prot}.annotate
+  paste - <(echo SNP CFHR1\;CFHR3 TNFSF10 KNG1 MYRF SERPINA1 APOH MEP1B PLAUR | tr ' ' '\n') > ${INF}/work/${prot}.annotate
 
   export refgene_file_name=turboman_hg19_reference_data.rda
   R --no-save -q <<\ \ END
@@ -28,11 +28,6 @@ function turboman()
     refgene_file_name <- Sys.getenv("refgene_file_name")
     load(file.path(INF,"cardio",refgene_file_name))
     library(dplyr)
-    refgene_gene_coordinates_h19 <- refgene_gene_coordinates_h19 %>%
-                                    mutate(gene_name=if_else(gene_name=="LOC285626","IL12B",gene_name)) %>%
-                                    mutate(gene_name=if_else(gene_name=="PSORS1C3","MHC",gene_name)) %>%
-                                    mutate(gene_name=if_else(gene_name=="SH2B3","ATXN2",gene_name)) %>%
-                                    mutate(gene_name=if_else(gene_name=="FLT3","URAD",gene_name))
     save(ld_block_breaks_pickrell_hg19_eur,refgene_gene_coordinates_h19,file=refgene_file_name,compress="xz")
   END
 
@@ -62,7 +57,7 @@ Rscript -e '
                       snpid=c("chr1:196710916_C_T", "chr3:172274232_A_C", "chr3:186449122_A_G", "chr11:61549025_A_G",
                               "chr14:94844947_C_T", "chr17:64224775_C_T", "chr18:29804863_A_T", "chr19:44153100_A_G"),
                       snp=c("rs16840522", "rs574044675", "rs5030044", "rs174533", "rs28929474", "rs8178824", "rs654488", "rs4760"),
-                      gene=c("CFHR3","TNFSF10","KNG1","MYRF","SERPINA1","APOH","MEP1B","PLAUR")
+                      gene=c("CFHR1;CFHR3","TNFSF10","KNG1","MYRF","SERPINA1","APOH","MEP1B","PLAUR")
 
            )
   TRAIL <- left_join(TRAIL,genes,by=c("MarkerName"="snpid"),keep=TRUE) %>%
