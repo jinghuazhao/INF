@@ -39,6 +39,7 @@ setup <- function(simplify=TRUE)
               left_join(vep) %>%
               mutate(gene=if_else(cis.trans=="cis",p.gene,gsub("; |, ",";",gene.causal))) %>%
               mutate(gene=if_else(gene=="-",nearest,gene)) %>%
+              mutate(gene=if_else(rsid=="rs7612912","ACKR2",gene)) %>%
               rename(Chr=Chromosome,bp=Position,chrbp=Location) %>%
               arrange(Chr,bp) %>%
               mutate(chr=Chr,chrom=paste0("hs",Chr),start=bp,end=bp,
