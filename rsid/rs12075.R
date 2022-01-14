@@ -7,8 +7,6 @@ fetch_region <- function()
   end <- 159525679
   M <- 1e6
   r <- paste0(chr,":",start-M,"-",end+M)
-  g <- c("CCL2", "CCL7", "CCL8", "CCL11", "CCL13", "CXCL6")
-  p <- c("MCP.1", "MCP.3", "MCP.2", "CCL11", "MCP.4", "CXCL6")
   for (i in 1:6)
   {
     f <- file.path(INF,"METAL","gwas2vcf","LP",paste0(p[i],".tsv.gz"))
@@ -40,7 +38,7 @@ fetch_region <- function()
     if(i==1) d <- t
     else d <- bind_rows(d,t)
   }
-  mono <- mutate(mono,track="Monocyte",is_lead_var=if_else(snpid=="chr1:159175354_A_G",2,1)) %>%
+  mono <- mutate(mono,track="Monocytes",is_lead_var=if_else(snpid=="chr1:159175354_A_G",2,1)) %>%
           select(-snpid,-rsid)
   long <- bind_rows(d,mono[c("chr","pos","a1","a2","af","b","se","log10p","is_lead_var","track")])
   list(wide=wide,long=long)
@@ -70,12 +68,14 @@ plot_region <- function(dat,g)
        xlab("Position")
 }
 
+g <- c("CCL2", "CCL7", "CCL8", "CCL11", "CCL13", "CXCL6")
+p <- c("MCP.1", "MCP.3", "MCP.2", "CCL11", "MCP.4", "CXCL6")
 dat <- fetch_region()
 wide <- with(dat,wide)
 long <- with(dat,long) %>%
-        mutate(lcl=b-1.96*se,ucl=b+1.96*se)
+        mutate(lcl=b-1.96*se,ucl=b+1.96*se,track=factor(track,levels=c(g,"Monocytes")))
 region_coords <- c(first(wide$pos),last(wide$pos))
-dat_text <- data.frame(label = c(paste0("\nred ", "rs12075", "\nblue ", "others")))
+dat_text <- data.frame(label = c(paste0("\nred: ", "rs12075", "\nblue: ", "others")))
 l <- plot_region(long) +
      geom_text(data    = dat_text,
                mapping = aes(x = -Inf, y = -Inf, label = label),
@@ -88,7 +88,7 @@ rs12075 <- filter(long,pos==159175354)
 m <- with(rs12075,weighted.mean(b,1/se^2))
 format_p <- function(p) paste("p =", substring(prettyNum(p, digits=2, scientific=TRUE), 2))
 f <- ggplot(data = rs12075,
-     aes(x = 7:1, y = b, label=paste0(track,"  ",format_p(10^log10p)))) +
+     aes(x = 7:1, y = b, label=paste0(track,": ",format_p(10^log10p)))) +
      geom_pointrange(aes(ymin=lcl, ymax=ucl), size=0.7) +
      geom_text(y=-15, hjust=0) +
      geom_abline(intercept = 0, slope = 0) +
