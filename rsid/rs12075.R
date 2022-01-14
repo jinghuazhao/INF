@@ -85,16 +85,32 @@ l <- plot_region(long) +
 ggsave("rs12075.png",l,height=20,width=10)
 
 rs12075 <- filter(long,pos==159175354)
+f <- ggplot(data=rs12075, aes(y=1:7, x=b))+
+     geom_point()+
+     geom_errorbarh(aes(xmax = ucl, xmin = lcl, height=0.001))+
+     scale_x_continuous(limits=c(-0.2,0.3), breaks = seq(-0.2,0.3,0.1), name="Effect size")+
+     scale_y_continuous(breaks=1:7,label=rs12075$track,name="",trans="reverse")+
+     geom_vline(xintercept=0, color="black", linetype="dashed", alpha=.5)+
+     theme_minimal()+
+     theme(text=element_text(size=13, color="black"))+
+     theme(panel.grid=element_blank())+
+     theme(panel.spacing = unit(1, "lines"))
+  
+# arrangement of plots
+require(cowplot)
+fl <- plot_grid(f, l, nrow = 1, labels = "AUTO", label_size = 12, align = "h")
+ggsave("rs12075-forest-assoc.png",height=20,width=10)
+
+deprecated <- function()
+{
 m <- with(rs12075,weighted.mean(b,1/se^2))
 format_p <- function(p) paste("p =", substring(prettyNum(p, digits=2, scientific=TRUE), 2))
-fold <- 1
 ymin <- -10
 f <- ggplot(data = rs12075,
      aes(x = 7:1, y = fold*b, label=paste0(track,": ",format_p(10^log10p)))) +
-     geom_pointrange(aes(ymin=fold*lcl, ymax=fold*ucl), size=0.7) +
+     geom_pointrange(aes(ymin=lcl, ymax=ucl), size=0.7) +
      geom_text(y=ymin, hjust=0) +
-     geom_abline(intercept = 0, slope = 0) +
-     geom_abline(intercept = fold*m, slope = 0, lty = 2) +
+     geom_abline(intercept = m, slope = 0, lty = 2) +
      ylim(c(ymin,5)) +
      coord_flip() +
      theme_bw() + theme(
@@ -105,11 +121,7 @@ f <- ggplot(data = rs12075,
                        ) +
      xlab("Phenotypes") +
      ylab("Effect size")
-
-# arrangement of plots
-require(cowplot)
-fl <- plot_grid(f, l, nrow = 1, labels = "AUTO", label_size = 12, align = "h")
-ggsave("rs12075-forest-assoc.png",height=20,width=10)
+}
 
 # gunzip -c ~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/gzipped_interval/mono.tsv.gz | \
 # bgzip -f > ${INF}/work/mono.tsv.gz
