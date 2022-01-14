@@ -26,13 +26,13 @@ fetch_region <- function()
   mono <- rename(mono, snpid=VARIANT,rsid=ID_dbSNP49,chr=CHR,pos=BP,a1=ALT,a2=REF,b=EFFECT_INT,se=SE_INT,log10p=MLOG10P_INT,af=ALT_FREQ_INT) %>%
           select(snpid, rsid, chr, pos, a2, a1, b, se, af, log10p) %>%
           mutate(snpid=if_else(a1<a2,paste0("chr",chr,":",pos,"_",a1,"_",a2),paste0("chr",chr,":",pos,"_",a2,"_",a1)),log10p=-log10p)
-  wide <- right_join(d,mono)[grepl("chr|pos|snpid|rsid|b|se|log10p",names(d))] %>%
+  wide <- right_join(d,mono)[grepl("chr|pos|snpid|rsid|a1|a2|af|b|se|log10p",names(d))] %>%
           mutate(is_lead_var=if_else(snpid=="chr1:159175354_A_G",2,1)) %>%
           arrange(chr,pos)
   for(i in 1:6)
   {
     t <- wide[grepl(paste("chr","pos",g[i],"is_lead_var",sep="|"),names(wide))]
-    names(t) <- c("chr","pos","b","se","log10p","is_lead_var")
+    names(t) <- c("chr","pos","a1","a2","af","b","se","log10p","is_lead_var")
     t <- mutate(t,track=g[i])
     assign(g[i],t)
     if(i==1) d <- t
@@ -87,13 +87,15 @@ ggsave("rs12075.png",l,height=20,width=10)
 rs12075 <- filter(long,pos==159175354)
 m <- with(rs12075,weighted.mean(b,1/se^2))
 format_p <- function(p) paste("p =", substring(prettyNum(p, digits=2, scientific=TRUE), 2))
+fold <- 1
+ymin <- -10
 f <- ggplot(data = rs12075,
-     aes(x = 7:1, y = b, label=paste0(track,": ",format_p(10^log10p)))) +
-     geom_pointrange(aes(ymin=lcl, ymax=ucl), size=0.7) +
-     geom_text(y=-15, hjust=0) +
+     aes(x = 7:1, y = fold*b, label=paste0(track,": ",format_p(10^log10p)))) +
+     geom_pointrange(aes(ymin=fold*lcl, ymax=fold*ucl), size=0.7) +
+     geom_text(y=ymin, hjust=0) +
      geom_abline(intercept = 0, slope = 0) +
-     geom_abline(intercept = m, slope = 0, lty = 2) +
-     ylim(c(-15,5)) +
+     geom_abline(intercept = fold*m, slope = 0, lty = 2) +
+     ylim(c(ymin,5)) +
      coord_flip() +
      theme_bw() + theme(
                          axis.text.y = element_blank(),
