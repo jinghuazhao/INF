@@ -74,9 +74,9 @@ wide <- with(dat,wide)
 long <- with(dat,long) %>%
         mutate(lcl=b-1.96*se,ucl=b+1.96*se,track=factor(track,levels=c(g,"Monocytes")))
 region_coords <- c(first(wide$pos),last(wide$pos))
-dat_text <- data.frame(label = c(paste0("\nred: ", "rs12075", "\nblue: ", "others")))
+legend <- data.frame(label = c(paste0("\nred: ", "rs12075", "\nblue: ", "others")))
 l <- plot_region(long) +
-     geom_text(data    = dat_text,
+     geom_text(data    = legend,
                mapping = aes(x = -Inf, y = -Inf, label = label),
                hjust   = -0.1,
                vjust = -3.4
@@ -88,7 +88,7 @@ f <- ggplot(data=rs12075, aes(y=1:7, x=b))+
      geom_point()+
      geom_errorbarh(aes(xmax = ucl, xmin = lcl, height=0.001))+
      scale_x_continuous(limits=c(-0.2,0.3), breaks = seq(-0.2,0.3,0.1), name="Effect size")+
-     scale_y_continuous(breaks=1:7,label=rs12075$track,name="",trans="reverse")+
+     scale_y_continuous(breaks=1:7,label=with(rs12075,track),name="",trans="reverse")+
      geom_vline(xintercept=0, color="black", linetype="dashed", alpha=.5)+
      theme_minimal()+
      theme(text=element_text(size=12, color="black"))+
