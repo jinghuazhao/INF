@@ -27,20 +27,19 @@ fetch_region <- function()
           select(snpid, rsid, chr, pos, a2, a1, b, se, af, log10p) %>%
           mutate(snpid=if_else(a1<a2,paste0("chr",chr,":",pos,"_",a1,"_",a2),paste0("chr",chr,":",pos,"_",a2,"_",a1)),log10p=-log10p)
   wide <- right_join(d,mono)[grepl("chr|pos|snpid|rsid|a1|a2|af|b|se|log10p",names(d))] %>%
-          mutate(is_lead_var=if_else(snpid=="chr1:159175354_A_G",2,1)) %>%
-          arrange(chr,pos)
+            arrange(chr,pos)
   for(i in 1:6)
   {
-    t <- wide[grepl(paste("chr","pos",g[i],"is_lead_var",sep="|"),names(wide))]
-    names(t) <- c("chr","pos","a1","a2","af","b","se","log10p","is_lead_var")
+    t <- wide[grepl(paste("chr","pos",g[i],sep="|"),names(wide))]
+    names(t) <- c("chr","pos","a1","a2","af","b","se","log10p")
     t <- mutate(t,track=g[i])
     assign(g[i],t)
     if(i==1) d <- t
     else d <- bind_rows(d,t)
   }
-  mono <- mutate(mono,track="Monocytes",is_lead_var=if_else(snpid=="chr1:159175354_A_G",2,1)) %>%
+  mono <- mutate(mono,track="Monocytes") %>%
           select(-snpid,-rsid)
-  long <- bind_rows(d,mono[c("chr","pos","a1","a2","af","b","se","log10p","is_lead_var","track")])
+  long <- bind_rows(d,mono[c("chr","pos","a1","a2","af","b","se","log10p","track")])
   list(wide=wide,long=long)
 }
 
@@ -49,8 +48,8 @@ plot_region <- function(dat,g)
   suppressMessages(library(ggplot2))
   p <- ggplot(dat, aes(pos,-log10p)) +
        geom_blank() +
-       geom_point(aes(colour = factor(is_lead_var), alpha = 0.7)) +
-       geom_point(data = dat %>% filter(is_lead_var %in% c(1,2)), aes(colour = factor(is_lead_var))) +
+       geom_point(aes(colour = factor(pos==159175354), alpha = 0.7)) +
+       geom_point(data = dat, aes(colour = factor(pos==159175354))) +
        theme_light() +
        ylab(expression(paste("-", log[10], " p-value"))) +
        scale_x_continuous(limits = region_coords, expand = c(0, 0)) +
@@ -92,13 +91,13 @@ f <- ggplot(data=rs12075, aes(y=1:7, x=b))+
      scale_y_continuous(breaks=1:7,label=rs12075$track,name="",trans="reverse")+
      geom_vline(xintercept=0, color="black", linetype="dashed", alpha=.5)+
      theme_minimal()+
-     theme(text=element_text(size=13, color="black"))+
+     theme(text=element_text(size=12, color="black"))+
      theme(panel.grid=element_blank())+
      theme(panel.spacing = unit(1, "lines"))
   
 # arrangement of plots
 require(cowplot)
-fl <- plot_grid(f, l, nrow = 1, labels = "AUTO", label_size = 12, align = "h")
+fl <- plot_grid(f, l, nrow = 1, labels = "AUTO", label_size = 12, align = "h",axis="lr")
 ggsave("rs12075-forest-assoc.png",height=20,width=10)
 
 deprecated <- function()
