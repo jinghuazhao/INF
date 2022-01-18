@@ -85,14 +85,12 @@ gtex <- function(gwas_stats_hg38,ensGene,region38)
 
 ge <- function(gwas_stats_hg38,ensGene,region38)
 {
-  cat("c. GTEx_v8 imported eQTL datasets\n")
+  cat("d. eQTL datasets\n")
   f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths_ge.tsv")
   imported_tabix_paths <- within(read.delim(f, stringsAsFactors = FALSE) %>% dplyr::as_tibble(),
         {ftp_path <- gsub("ftp://ftp.ebi.ac.uk/pub/databases/spot/eQTL/csv/Alasoo_2018/ge",
                           paste0(HOME,"/rds/public_databases/eQTLCatalogue"),ftp_path)})
-  rnaseq_df <- dplyr::filter(imported_tabix_paths, quant_method == "ge") %>%
-               dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
-  ftp_path_list <- setNames(as.list(rnaseq_df$ftp_path), rnaseq_df$qtl_id)
+  ftp_path_list <- setNames(as.list(imported_tabix_paths$ftp_path), imported_tabix_paths$unique_id)
   hdr <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","column_names.Alasoo")
   column_names <- names(read.delim(hdr))
   safe_import <- purrr::safely(import_eQTLCatalogue)
@@ -102,7 +100,7 @@ ge <- function(gwas_stats_hg38,ensGene,region38)
   result_list <- result_list[!unlist(purrr::map(result_list, is.null))]
   result_filtered <- purrr::map(result_list[lapply(result_list,nrow)!=0],
                                 ~dplyr::filter(., !is.na(se)))
-  purrr::map_df(result_filtered, ~run_coloc(., gwas_stats_hg38), .id = "qtl_id")
+  purrr::map_df(result_filtered, ~run_coloc(., gwas_stats_hg38), .id = "unique_id")
 }
 
 gtex_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
