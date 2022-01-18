@@ -196,33 +196,8 @@ single_run <- function(r)
   ge_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
 }
 
-# slow with the following loop:
-loop <- function() for (r in 1:nrow(sentinels)) single_run(r)
-
-library(pQTLtools)
-f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
-chain <- rtracklayer::import.chain(f)
-pkgs <- c("dplyr", "ggplot2", "readr", "coloc", "GenomicRanges","seqminer")
-invisible(lapply(pkgs, require, character.only = TRUE))
-HPC_WORK <- Sys.getenv("HPC_WORK")
-gwasvcf::set_bcftools(file.path(HPC_WORK,"bin","bcftools"))
-f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths.tsv")
-tabix_paths <- read.delim(f, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
-HOME <- Sys.getenv("HOME")
-options(width=200)
-suppressMessages(library(dplyr))
-INF <- Sys.getenv("INF")
-M <- 1e6
-sentinels <- subset(read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans")),cis)
-cvt_rsid <- file.path(INF,"work","INF1.merge.cis.vs.trans-rsid")
-prot_rsid <- subset(read.delim(cvt_rsid,sep=" "),cis,select=c(prot,SNP))
-# loop()
-# Faster with parallel Bash runs.
-r <- as.integer(Sys.getenv("r"))
-single_run(r)
-
-# with the same setup, to collect results when all single runs are done
-gtex_collect <- function()
+collect <- function(coloc_dir="eQTLCatalogue")
+# to collect results when all single runs are done
 {
   df_coloc <- data.frame()
   for(r in 1:nrow(sentinels))
@@ -230,17 +205,49 @@ gtex_collect <- function()
     prot <- sentinels[["prot"]][r]
     snpid <- sentinels[["SNP"]][r]
     rsid <- prot_rsid[["SNP"]][r]
-    f <- file.path(INF,"coloc",paste0(prot,"-",snpid,".RDS"))
+    f <- file.path(INF,coloc_dir,paste0(prot,"-",snpid,".RDS"))
     if (!file.exists(f)) next
     cat(prot,"-",rsid,"\n")
     rds <- readRDS(f)
     if (nrow(rds)==0) next
     df_coloc <- rbind(df_coloc,data.frame(prot=prot,rsid=rsid,snpid=snpid,rds))
   }
-  df_coloc <- within(df_coloc,{qtl_id <- gsub("GTEx_V8_","",qtl_id)}) %>%
-              rename(H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf)
-  write.table(subset(df_coloc,H3+H4>=0.9&H4/H3>=3),file=file.path(INF,"coloc","GTEx.tsv"),
-              quote=FALSE,row.names=FALSE,sep="\t")
-  write.table(df_coloc,file=file.path(INF,"coloc","GTEx-all.tsv"),
-              quote=FALSE,row.names=FALSE,sep="\t")
+  df <- dplyr::rename(df_coloc,H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf)
+  if (coloc_dir=="coloc") {
+    df_coloc <- within(df,{qtl_id <- gsub("GTEx_V8_","",qtl_id)})
+    write.table(subset(df,H3+H4>=0.9&H4/H3>=3),file=file.path(INF,coloc_dir,"GTEx.tsv"),
+                quote=FALSE,row.names=FALSE,sep="\t")
+    write.table(df,file=file.path(INF,coloc_dir,"GTEx-all.tsv"),
+                quote=FALSE,row.names=FALSE,sep="\t")
+  } else {
+    write.table(subset(df,H3+H4>=0.9&H4/H3>=3),file=file.path(INF,coloc_dir,"eQTLCatalogue.tsv"),
+                quote=FALSE,row.names=FALSE,sep="\t")
+    write.table(df,file=file.path(INF,coloc_dir,"eQTLCatalogue-all.tsv"),
+                quote=FALSE,row.names=FALSE,sep="\t")
+  }
 }
+
+loop_slowly <- function() for (r in 1:nrow(sentinels)) single_run(r)
+
+# Environmental variables
+
+options(width=200)
+HOME <- Sys.getenv("HOME")
+HPC_WORK <- Sys.getenv("HPC_WORK")
+INF <- Sys.getenv("INF")
+M <- 1e6
+
+pkgs <- c("dplyr", "gap", "ggplot2", "readr", "coloc", "GenomicRanges","pQTLtools"x"seqminer")
+invisible(suppressMessages(lapply(pkgs, require, character.only = TRUE)))
+
+f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
+chain <- rtracklayer::import.chain(f)
+gwasvcf::set_bcftools(file.path(HPC_WORK,"bin","bcftools"))
+f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths.tsv")
+tabix_paths <- read.delim(f, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
+sentinels <- subset(read.csv(file.path(INF,"work","INF1.merge.cis.vs.trans")),cis)
+cvt_rsid <- file.path(INF,"work","INF1.merge.cis.vs.trans-rsid")
+prot_rsid <- subset(read.delim(cvt_rsid,sep=" "),cis,select=c(prot,SNP))
+
+r <- as.integer(Sys.getenv("r"))
+single_run(r)
