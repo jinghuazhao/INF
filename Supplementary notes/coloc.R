@@ -93,7 +93,7 @@ ge <- function(gwas_stats_hg38,ensGene,region38)
   rnaseq_df <- dplyr::filter(imported_tabix_paths, quant_method == "ge") %>%
                dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
   ftp_path_list <- setNames(as.list(rnaseq_df$ftp_path), rnaseq_df$qtl_id)
-  hdr <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","column_names.GTEx")
+  hdr <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","column_names.Alasoo")
   column_names <- names(read.delim(hdr))
   safe_import <- purrr::safely(import_eQTLCatalogue)
   summary_list <- purrr::map(ftp_path_list,
@@ -141,10 +141,9 @@ ge_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
   gwas_stats_hg38 <- sumstats(prot,chr,region37)
   if (run_all)
   {
-  {
     df_microarray <- microarray(gwas_stats_hg38,ensGene,region38)
     df_rnaseq <- rnaseq(gwas_stats_hg38,ensGene,region38)
-    df_ge <- gtex(gwas_stats_hg38,ensGene,region38)
+    df_ge <- ge(gwas_stats_hg38,ensGene,region38)
     if (exists("df_microarray") & exits("df_rnaseq") & exists("df_gtex"))
     {
       coloc_df = dplyr::bind_rows(df_microarray, df_rnaseq, df_gtex)
@@ -153,7 +152,7 @@ ge_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
       p <- ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
     }
   } else {
-    df_ge <- gtex(gwas_stats_hg38,ensGene,region38)
+    df_ge <- ge(gwas_stats_hg38,ensGene,region38)
     if (exists("df_ge"))
     {
       saveRDS(df_ge,file=paste0(out,".RDS"))
@@ -191,10 +190,11 @@ single_run <- function(r)
   region38 <- with(liftRegion(isnpid,chain),region)
   ensGene <- subset(inf1,prot==sentinel[["prot"]])[["ensembl_gene_id"]]
   ensRegion38 <- with(liftRegion(subset(inf1,prot==sentinel[["prot"]]),chain),region)
-  f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",SNP)))
   cat(chr,region37,region38,ensGene,ensRegion37,ensRegion38,"\n")
+# f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",SNP)))
 # # gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,region37,region38,f)
 # gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
+  f <- file.path(INF,"eQTLCatalogue",with(sentinel,paste0(prot,"-",SNP)))
   ge_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
 }
 
