@@ -87,7 +87,7 @@ rs12075 <- filter(long,pos==159175354)
 f <- ggplot(data=rs12075, aes(y=1:7, x=b))+
      geom_point()+
      geom_errorbarh(aes(xmax = ucl, xmin = lcl, height=0.001))+
-     scale_x_continuous(limits=c(-0.2,0.3), breaks = seq(-0.2,0.3,0.1), name="Effect size")+
+     scale_x_continuous(name="Effect size")+
      scale_y_continuous(breaks=1:7,label=with(rs12075,track),name="",trans="reverse")+
      geom_vline(xintercept=0, color="black", linetype="dashed", alpha=.5)+
      theme_minimal()+
