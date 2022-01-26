@@ -234,5 +234,3 @@ Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558:
 *Date last changed:* **26/1/2022**
 
 [^1]: The figure is obtained with `dot -Tpng grViz.gv -ogrViz.png` which also be obtained from RStudio for somewhat larger size.
-[^2]: Kotz, S., Read, C.B., Balakrishnan, N., Vidakovic, B. & Johnson, N.L. Encyclopedia of Statistical Sciences. 2nd edn (John Wiley & Sons, Inc., Hoboken, New Jersey, 2006).
-[^3]: [https://www.stat.cmu.edu/~hseltman/files/ratio.pdf](https://www.stat.cmu.edu/~hseltman/files/ratio.pdf)
