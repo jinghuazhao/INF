@@ -61,6 +61,10 @@ Eearlier experiments were done with `coloc.sb` (clumsy) and `coloc.R` (with pQTL
 
 Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LTBR.sh` (stack_assoc_plot + HyPrColoc/PWCoCo) and `LTBR.sh` contains a routine to generate tabix-indexed blood cell traits. Stacked association plots were done with `IL.18-rs385076.sh` and `OPG-TRANCE.sh`.
 
+## Linear regression
+
+This is related to estimates of proprotion of variance explained (PVE), effect sizes and their standard errors, see [https://jinghuazhao.github.io/R/vignettes/gap.html](https://jinghuazhao.github.io/R/vignettes/gap.html).
+
 ## Mendelian Randomization
 
 There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in `mr.sh` and `mr.sb`. To get around the mishap with rsids we switched back to SNPids; we found the options `--clump-r2 0.1 --gsmr-snp-min 10` make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.
@@ -109,10 +113,6 @@ File `fusion_twas.sb` initiated a FUSION TWAS experiment. Shown below is an exam
 ## Summary statistics
 
 This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
-
-## Linear regression
-
-This section now can be found here, [https://jinghuazhao.github.io/R/vignettes/gap.html](https://jinghuazhao.github.io/R/vignettes/gap.html).
 
 ## PWAS
 
