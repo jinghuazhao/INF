@@ -116,6 +116,10 @@
 <ul class="nav flex-column">
 </ul>
 </li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#linear_regression">Linear regression</a>
+<ul class="nav flex-column">
+</ul>
+</li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#mendelian_randomization">Mendelian Randomization</a>
 <ul class="nav flex-column">
 </ul>
@@ -125,10 +129,6 @@
 </ul>
 </li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#summary_statistics">Summary statistics</a>
-<ul class="nav flex-column">
-</ul>
-</li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#linear_regression">Linear regression</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -239,6 +239,8 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>Credible set lookup from GTEx v8 is furnished with <code>GTEx-cs.sh</code> and <code>GTEx-cs-jma.sh</code>.</p>
 <p>Eearlier experiments were done with <code>coloc.sb</code> (clumsy) and <code>coloc.R</code> (with pQTLtools) as well as <code>fastenloc.sb</code>.</p>
 <p>Multitrait counterparts were also done with HyPrColoc as in <code>rs12075.sh</code> and <code>LTBR.sh</code> (stack_assoc_plot + HyPrColoc/PWCoCo) and <code>LTBR.sh</code> contains a routine to generate tabix-indexed blood cell traits. Stacked association plots were done with <code>IL.18-rs385076.sh</code> and <code>OPG-TRANCE.sh</code>.</p>
+<h2 id="linear_regression">Linear regression<a class="headerlink" href="#linear_regression" title="Permanent link">¶</a></h2>
+<p>This is related to estimates of proprotion of variance explained (PVE), effect sizes and their standard errors, see <a href="https://jinghuazhao.github.io/R/vignettes/gap.html">https://jinghuazhao.github.io/R/vignettes/gap.html</a>.</p>
 <h2 id="mendelian_randomization">Mendelian Randomization<a class="headerlink" href="#mendelian_randomization" title="Permanent link">¶</a></h2>
 <p>There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in <code>mr.sh</code> and <code>mr.sb</code>. To get around the mishap with rsids we switched back to SNPids; we found the options <code>--clump-r2 0.1 --gsmr-snp-min 10</code> make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.</p>
 <p>It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.</p>
@@ -270,8 +272,6 @@ fusion</a>.</p>
 <p align="center"><img src="ewas-plot.png"/></p>
 <h2 id="summary_statistics">Summary statistics<a class="headerlink" href="#summary_statistics" title="Permanent link">¶</a></h2>
 <p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
-<h2 id="linear_regression">Linear regression<a class="headerlink" href="#linear_regression" title="Permanent link">¶</a></h2>
-<p>This section now can be found here, <a href="https://jinghuazhao.github.io/R/vignettes/gap.html">https://jinghuazhao.github.io/R/vignettes/gap.html</a>.</p>
 <h2 id="pwas">PWAS<a class="headerlink" href="#pwas" title="Permanent link">¶</a></h2>
 <p>A separate but closely related approach only rely on GWAS summary statistics analogous to a transcriptomewide association statistic (Gusev, 2016),
 as inspired from studies of gene expression data. For a given Protein of interest <strong>P</strong> for which GWAS summary statistics <span class="arithmatex">\(z_P\)</span> is available, the
