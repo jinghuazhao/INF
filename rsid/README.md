@@ -114,15 +114,7 @@ This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some oper
 
 This section now can be found here, [https://jinghuazhao.github.io/R/vignettes/gap.html](https://jinghuazhao.github.io/R/vignettes/gap.html).
 
-## Other math expressions
-
-The prior probability for $i$ out of $m$ variants is causal, is obtained as a binomial probability
-
-$p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}$
-
-The posterior number of causal signals in the genomic region is obtained as the expectation $\sum_i p(i|\mbox{data}) \times i$. The search of total number of configurations
-
-$\sum_{i=1}^k{m\choose{i}}$
+## PWAS
 
 A separate but closely related approach only rely on GWAS summary statistics analogous to a transcriptomewide association statistic (Gusev, 2016),
 as inspired from studies of gene expression data. For a given Protein of interest **P** for which GWAS summary statistics $z_P$ is available, the
