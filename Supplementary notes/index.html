@@ -132,7 +132,7 @@
 <ul class="nav flex-column">
 </ul>
 </li>
-<li class="nav-item" data-level="2"><a class="nav-link" href="#other_math_expressions">Other math expressions</a>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#pwas">PWAS</a>
 <ul class="nav flex-column">
 </ul>
 </li>
@@ -272,11 +272,7 @@ fusion</a>.</p>
 <p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
 <h2 id="linear_regression">Linear regression<a class="headerlink" href="#linear_regression" title="Permanent link">¶</a></h2>
 <p>This section now can be found here, <a href="https://jinghuazhao.github.io/R/vignettes/gap.html">https://jinghuazhao.github.io/R/vignettes/gap.html</a>.</p>
-<h2 id="other_math_expressions">Other math expressions<a class="headerlink" href="#other_math_expressions" title="Permanent link">¶</a></h2>
-<p>The prior probability for <span class="arithmatex">\(i\)</span> out of <span class="arithmatex">\(m\)</span> variants is causal, is obtained as a binomial probability</p>
-<p><span class="arithmatex">\(p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}\)</span></p>
-<p>The posterior number of causal signals in the genomic region is obtained as the expectation <span class="arithmatex">\(\sum_i p(i|\mbox{data}) \times i\)</span>. The search of total number of configurations</p>
-<p><span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span></p>
+<h2 id="pwas">PWAS<a class="headerlink" href="#pwas" title="Permanent link">¶</a></h2>
 <p>A separate but closely related approach only rely on GWAS summary statistics analogous to a transcriptomewide association statistic (Gusev, 2016),
 as inspired from studies of gene expression data. For a given Protein of interest <strong>P</strong> for which GWAS summary statistics <span class="arithmatex">\(z_P\)</span> is available, the
 corresponding Wald statistic for PWAS is defined such that</p>
