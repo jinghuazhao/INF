@@ -215,6 +215,7 @@ utils.sh | utilties
 * [IntAct](https://www.ebi.ac.uk/intact/home).
 * [ShinyGO](http://bioinformatics.sdstate.edu/go/).
 * [SomaLogic plasma protein GWAS summary statistics](http://www.phpc.cam.ac.uk/ceu/proteins).
+* Search Tool for the Retrieval of Interacting Genes/Proteins database, [STRINGdb](https://string-db.org/)
 * [The human protein atlas](https://www.proteinatlas.org/)
 * [Worldwide PDB](http://www.wwpdb.org/)
 
