@@ -128,3 +128,34 @@ function ge()
 ge
 
 #   ls *tbi | xargs -I {} bash -c "rm {}"
+
+function coloc_gene()
+{
+  Rscript -e '
+  suppressMessages(library(dplyr))
+  library(openxlsx)
+
+  INF <- Sys.getenv("INF")
+  metal <- read.delim(file.path(INF,"work","INF1.METAL"))
+  pqtls <- left_join(metal, pQTLtools::inf1)
+
+  xlsx <- file.path(INF,"NG","SCALLOP-INF-ST.xlsx")
+
+  plist <- function(sheet)
+           read.xlsx(xlsx,sheet=sheet,startRow=2) %>%
+           filter(flag=="x") %>%
+           select(Protein) %>%
+           distinct()
+
+  gtex <- plist("ST4-GTEx coloc")
+  eqtlgen <- plist("EQTLGen_coloc")
+  eqtlcat <- plist("EQTL-Catalogue_coloc")
+
+  pall <- unique(bind_rows(gtex,eqtlgen,eqtlcat)) %>%
+          rename(target.short=Protein) %>%
+          left_join(pQTLtools::inf1) %>%
+          select(target.short,uniprot,prot,gene,ensembl_gene_id)
+  genes <- pull(pall,gene)
+  write.table(genes,row.names=FALSE,col.names=FALSE,quote=FALSE)
+  '
+}
