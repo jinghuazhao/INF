@@ -208,6 +208,7 @@ utils.sh | utilties
 ---
 * [Aging Plasma Proteome](https://twc-stanford.shinyapps.io/aging_plasma_proteome/) ([DEswan](https://github.com/lehallib/DEswan)).
 * [Bgee](https://bgee.org/).
+* [BIOPLEX](https://bioplex.hms.harvard.edu/).
 * [Enrichr](https://maayanlab.cloud/Enrichr/).
 * [Computed structures of core eukaryotic protein complexes](https://modelarchive.org/doi/10.5452/ma-bak-cepc)
 * [ImmunoBase](https://genetics.opentargets.org/immunobase).
