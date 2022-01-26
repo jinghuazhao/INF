@@ -110,10 +110,6 @@ File `fusion_twas.sb` initiated a FUSION TWAS experiment. Shown below is an exam
 
 <p align="center"><img src="ewas-plot.png"></p>
 
-## Summary statistics
-
-This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
-
 ## PWAS
 
 A separate but closely related approach only rely on GWAS summary statistics analogous to a transcriptomewide association statistic (Gusev, 2016),
@@ -127,6 +123,10 @@ where $w_{P}$ is a weight associated with protein abundance level and **V** cova
 This also mirrors the EWAS-fusion software for methylation data using epigenomewide association statistics.
 
 <img src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300" height="300" align="right">
+
+## Summary statistics
+
+This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
 
 ## SomaLogic overlap
 
