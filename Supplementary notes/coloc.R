@@ -237,7 +237,7 @@ HPC_WORK <- Sys.getenv("HPC_WORK")
 INF <- Sys.getenv("INF")
 M <- 1e6
 
-pkgs <- c("dplyr", "gap", "ggplot2", "readr", "coloc", "GenomicRanges","pQTLtools"x"seqminer")
+pkgs <- c("dplyr", "gap", "ggplot2", "readr", "coloc", "GenomicRanges","pQTLtools","seqminer")
 invisible(suppressMessages(lapply(pkgs, require, character.only = TRUE)))
 
 f <- file.path(path.package("pQTLtools"),"eQTL-Catalogue","hg19ToHg38.over.chain")
