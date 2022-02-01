@@ -1073,3 +1073,12 @@ cd work
 # PWCoCo
 # coloc
 cd -
+
+Rscript -e '
+  options(width=80)
+  library(phenoscanner)
+  args(phenoscanner)
+  phenoscanner(snpquery="rs2364485")
+  phenoscanner(snpquery="rs2364485",proxies="EUR")
+  phenoscanner(snpquery="rs1800693")
+' > ${INF}/MS/MS.log

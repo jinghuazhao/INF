@@ -335,8 +335,9 @@ R --no-save -q <<END
    gsmr <- read.delim(file.path(INF,"mr","gsmr","out","5e-8","gsmr-efo.txt")) %>%
            mutate(outcome=paste0(trait),
                   exposure=protein,
-                  group=as.numeric(cut(bxy,breaks=quantile(bxy,seq(0,1,0.33))))) %>%
-           select(exposure,outcome,bxy,se,p,nsnp,fdr,group)
+                  z=bxy/se,
+                  group=as.numeric(cut(z,breaks=quantile(z,seq(0,1,0.333))))) %>%
+           select(exposure,outcome,z,se,p,nsnp,fdr,group)
    exposure <- unique(with(gsmr,exposure))
    outcome <- unique(with(gsmr,outcome))
    n <- length(exposure)
@@ -346,10 +347,10 @@ R --no-save -q <<END
    rownames(gsmr_mat) <- outcome
    for(k in 1:nrow(gsmr))
    {
-      t <- gsmr[k,c('exposure','outcome','bxy','group','fdr')]
+      t <- gsmr[k,c('exposure','outcome','z','group','fdr')]
       i <- t[['outcome']]
       j <- t[['exposure']]
-      v <- t[['bxy']]
+      v <- t[['z']]
       gsmr_mat[i,j] <- v
    }
    options(width=200)
