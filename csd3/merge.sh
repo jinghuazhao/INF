@@ -327,3 +327,12 @@ function cis.vs.trans()
 
 cis.vs.trans
 rm a b bse.dta ab.dta
+
+# b37 --> b38
+
+sed '1d' ${INF}/work/INF1.METAL | \
+awk -vOFS="\t" '{print "chr"$4,$5,$5+1,$2,$3}' > ${INF}/work/INF1.bed
+liftOver -bedPlus=4 ${INF}/work/INF1.bed ${HPC_WORK}/bin/hg19ToHg38.over.chain ${INF}/work/INF1.b38 ${INF}/work/INF1.unmatched
+
+cat <(echo pos38) <(cut -f2 ${INF}/work/INF1.b38) | \
+paste ${INF}/work/INF1.METAL -
