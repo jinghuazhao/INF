@@ -166,7 +166,7 @@ ge_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
 #        height = 15, width = 15, units = "cm", dpi = 300)
 }
 
-single_run <- function(r)
+single_run <- function(r, batch="GTEx")
 {
   sentinel <- sentinels[r,]
   isnpid <- within(gap::inv_chr_pos_a1_a2(sentinel[["SNP"]]),
@@ -190,11 +190,15 @@ single_run <- function(r)
   ensGene <- subset(inf1,prot==sentinel[["prot"]])[["ensembl_gene_id"]]
   ensRegion38 <- with(liftRegion(subset(inf1,prot==sentinel[["prot"]]),chain),region)
   cat(chr,region37,region38,ensGene,ensRegion37,ensRegion38,"\n")
-# f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",SNP)))
-# # gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,region37,region38,f)
-# gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
-  f <- file.path(INF,"eQTLCatalogue",with(sentinel,paste0(prot,"-",SNP)))
-  ge_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
+  if (batch=="GTEx")
+  {
+    f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",SNP)))
+  # gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,region37,region38,f)
+    gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
+  } else {
+   f <- file.path(INF,"eQTLCatalogue",with(sentinel,paste0(prot,"-",SNP)))
+   ge_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
+  }
 }
 
 collect <- function(coloc_dir="eQTLCatalogue")
