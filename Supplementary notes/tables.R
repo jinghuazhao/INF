@@ -22,6 +22,8 @@ interval <- merge(within(read.sheet("INTERVAL", 1:12, 2:29),{Protein <- gsub(" "
             mutate(r2=as.character(r2),p=as.character(p),PMID=as.character(PMID),Comment=as.character(Comment))
   decode <- read.delim(file.path(INF,"deCODE","deCODE.tsv")) %>%
             mutate(r2=as.character(r2),p=as.character(p),PMID=as.character(PMID),Comment=as.character(Comment))
+    aric <- read.delim(file.path(INF,"ARIC","ARIC.tsv")) %>%
+            mutate(r2=as.character(r2),p=as.character(p),PMID=as.character(PMID),Comment=as.character(Comment))
 aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","target.short")], by.x="Protein", by.y="prot") %>%
             mutate(Protein=target.short) %>% select(-target.short)
     cojo <- merge(read.sheet("cojo", 1:19, 2:229),gap_inf1[c("prot","target.short")],by="prot") %>%
@@ -127,7 +129,8 @@ print(head(os))
 print(head(cvd1))
 print(head(fenland))
 print(head(decode))
-names(interval)[5] <- names(os)[5] <- names(cvd1)[5] <- names(fenland)[5] <- names(decode)[5] <- "cis/trans"
+print(head(aric))
+names(interval)[5] <- names(os)[5] <- names(cvd1)[5] <- names(fenland)[5] <- names(decode)[5] <- names(aric)[5] <- "cis/trans"
 knownpqtls_dup <- bind_rows(interval,os,cvd1,fenland,decode)
 knownpqtls <- distinct(knownpqtls_dup[c("Sentinels","SNPid","UniProt","Protein")]) %>% arrange(Protein,SNPid)
 pqtlstudies <- unique(knownpqtls_dup[c("Source","PMID")]) %>% arrange(PMID)
@@ -166,7 +169,7 @@ outsheets <- c("summary","studies","inf1",
                "vep","magma",
                "gsmr_efo","hgi_gsmr","hgi_pqtlmr","drug",
                "eQTLGen","eQTLGen_coloc","eQTLCatalogue","reactome","great","garfield","efo","gdb",
-               "interval","os","cvd1","fenland","decode","aristotl","pqtlstudies",
+               "interval","os","cvd1","fenland","decode","aric","aristotl","pqtlstudies",
                "great3","mr_immun","smr","cis_mr","mr_misc",
                "protein_correlation", "protein_dgi", "pqtl_impact")
 titles <- c("summary","study information","panel information",
@@ -174,7 +177,7 @@ titles <- c("summary","study information","panel information",
             "VEP annotation","MAGMA outputs",
             "GSMR results","HGI-GSMR r6","HGI-pQTLMR","PI drug",
             "eQTLGen","eQTLGen_coloc","eQTL-Catalogue_coloc","Reactome","GREAT","GARFIELD outputs","EFO","geneDrugbank",
-            "INTERVAL study","Other studies","SCALLOP-CVD1","Fenland study","deCODE study","ARISTOTLE study","previous pQTL studies",
+            "INTERVAL study","Other studies","SCALLOP-CVD1","Fenland study","deCODE study","ARIC study","ARISTOTLE study","previous pQTL studies",
             "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","cis-MR results","pQTL-misc-MR",
             "Protein correlation","DGI membership", "pQTL impact")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
