@@ -193,11 +193,12 @@ single_run <- function(r, batch="GTEx")
   if (batch=="GTEx")
   {
     f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",SNP)))
-  # gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,region37,region38,f)
-    gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
+    gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,region37,region38,f)
+  # gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
   } else {
-   f <- file.path(INF,"eQTLCatalogue",with(sentinel,paste0(prot,"-",SNP)))
-   ge_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
+    f <- file.path(INF,"eQTLCatalogue",with(sentinel,paste0(prot,"-",SNP)))
+    ge_coloc(sentinel[["prot"]],chr,ensGene,chain,Region37,Region38,f)
+  # ge_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
   }
 }
 
@@ -256,3 +257,4 @@ prot_rsid <- subset(read.delim(cvt_rsid,sep=" "),cis,select=c(prot,SNP))
 
 r <- as.integer(Sys.getenv("r"))
 single_run(r)
+single_run(r,batch="eQTLCatalogue")

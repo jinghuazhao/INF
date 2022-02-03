@@ -126,6 +126,7 @@ function ge()
 }
 
 gtex
+ge
 
 #   ls *tbi | xargs -I {} bash -c "rm {}"
 
