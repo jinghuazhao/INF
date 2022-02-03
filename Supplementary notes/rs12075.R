@@ -122,6 +122,32 @@ f <- ggplot(data = rs12075,
      ylab("Effect size")
 }
 
+circos_plot <- function()
+# circos plot
+{
+   t.genes <- filter(pQTLtools::hg19, pQTLtools::hg19$SYMBOL %in% g) %>%
+              distinct() %>%
+              select(chr,start,end,SYMBOL) %>%
+              rename(t.chr=chr,t.start=start,t.end=end,t.gene=SYMBOL) %>%
+              mutate(t.gene=as.character(unlist(t.gene)))
+   suggestive <- transmute(long, chr=paste0("chr",chr),start=pos-1,end=pos,p=10^log10p,from="ACKR1",to=as.character(track)) %>%
+                 filter(p<=1e-5 & to!="Monocytes") %>%
+                 left_join(t.genes,by=c('to'='t.gene'))
+   labels <- head(suggestive,1) %>%
+             transmute(t.chr=chr,t.start=start,t.end=end,t.gene=from) %>%
+             bind_rows(t.genes)
+   suppressMessages(library(circlize))
+   png(file.path(INF,"hotspots","hotspot-rs12075.png"),res=300,width=10,height=10,units="in")
+   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
+   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06)
+   circos.genomicLabels(labels,labels.column = 4, side="inside")
+   circos.genomicLink(suggestive[c("chr","start","end")], suggestive[c("t.chr","t.start","t.end")], col="blue", directional=1, border = 10, lwd = 2)
+   circos.clear()
+   dev.off()
+}
+
+circos_plot()
+
 # gunzip -c ~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/gzipped_interval/mono.tsv.gz | \
 # bgzip -f > ${INF}/work/mono.tsv.gz
 # tabix -S1 -s3 -b4 -e4 ${INF}/work/mono.tsv.gz

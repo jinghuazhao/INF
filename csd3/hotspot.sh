@@ -35,6 +35,7 @@ Rscript -e '
 pdftopng -r 300 ${INF}/hotspots/hotspot-${HOTSPOT}.pdf ${HOTSPOT}
 mv ${HOTSPOT}-000001.png ${INF}/hotspots/hotspot-${HOTSPOT}.png
 
+# chr1:159175354_A_G
 # chr12:11058117_C_T
 # chr17:34326215_A_C
 # chr19:49206145_C_G

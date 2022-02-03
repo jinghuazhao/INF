@@ -197,7 +197,7 @@ single_run <- function(r, batch="GTEx")
   # gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
   } else {
     f <- file.path(INF,"eQTLCatalogue",with(sentinel,paste0(prot,"-",SNP)))
-    ge_coloc(sentinel[["prot"]],chr,ensGene,chain,Region37,Region38,f)
+    ge_coloc(sentinel[["prot"]],chr,ensGene,chain,region37,region38,f)
   # ge_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
   }
 }
