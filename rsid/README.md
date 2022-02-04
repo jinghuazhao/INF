@@ -199,7 +199,7 @@ utils.sh | utilties
 ## Related links
 
 * [OlinkAnalyze](https://github.com/Olink-Proteomics/OlinkRPackage)
-* [Olink Insights Stat Analysis](https://tinyurl.com/shj46ukj)
+* [Olink Insights Stat Analysis](https://olinkproteomics.shinyapps.io/OlinkInsightsStatAnalysis/)
 * [Olink location](https://www.olink.com/scallop/), [What is NPX](https://www.olink.com/question/what-is-npx/), [F2F London meeting](https://www.olink.com/scallop-f2f-2019/), [Data Science Workshop 2019](https://www.olink.com/data-science-workshop-2019/).
 * [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
 * [GitHub repository](https://github.com/lassefolkersen/scallop) for the 2017 *PLoS Genetics* paper.
