@@ -20,36 +20,19 @@ export sumstats=~/rds/results/public/proteomics/ARIC
   '
 ) > ${INF}/ARIC/replication.tsv
 
-function aric()
 (
-echo -e "Protein\tSentinels\tUniProt\tSNPid\tcis/trans\tProxies\tr2\tp\tTarget Full Name\tSource\tPMID\tComment"
-Rscript -e '
-   INF <- Sys.getenv("INF")
-   suppressMessages(library(dplyr))
-   replication <- read.delim(file.path(INF,"ARIC","replication.tsv")) %>%
-                  filter(P<=5e-8) %>%
-                  mutate(prot_snpid=paste0(prot,"-",snpid),proxies="as sentinel",r2=1,
-                         p=if_else(snpid!="chr2:102992675_C_T",as.character(P),"1.16196e-517")) %>%
-                  left_join(within(read.delim(file.path(INF,"work","INF1.METAL")),{prot_snpid=paste0(prot,"-",MarkerName)})) %>%
-                  left_join(select(pQTLtools::inf1,target.short,target,prot)) %>%
-                  select(target.short,snpid,uniprot,rsid,cis.trans,proxies,r2,p,target)
-   write.table(data.frame(replication,Source="Zhang et al. (2022)",PMID="",Comment=""),
-                          col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-'
-)
-aric > ${INF}/ARIC/ARIC.tsv
-
-
-# --- legacy code
-
-cat <(echo pos38) <(cut -f2 ${INF}/work/INF1.b38) | \
-paste ${INF}/work/INF1.METAL - | \
-sed '1d;s/chr[0-9]*:[0-9]*//' | \
-awk '{$1="chr"$4":"$22$1;print $1,$2,$3,$20}' | \
-sort -k4,4 | \
-join -12 -24 <(sed '1d' ${sumstats}/seqid.txt | cut -f1,2 | sort -k2,2) - | \
-cut -d' ' -f1 --complement | \
-parallel -j12 -C' ' --env sumstats '
-  grep -w {3} ${sumstats}/EA/{1}.PHENO1.glm.linear | \
-  awk -vseqid={1} -vsnpid={2} -vrsid={3} -vprot={4} -vOFS="\t" "\$13<=5e-8{print seqid,snpid,rsid,prot,\$0}"
-'
+  echo -e "Protein\tSentinels\tUniProt\tSNPid\tcis/trans\tProxies\tr2\tp\tTarget Full Name\tSource\tPMID\tComment"
+  Rscript -e '
+     INF <- Sys.getenv("INF")
+     suppressMessages(library(dplyr))
+     replication <- read.delim(file.path(INF,"ARIC","replication.tsv")) %>%
+                    filter(P<=5e-8) %>%
+                    mutate(prot_snpid=paste0(prot,"-",snpid),proxies="as sentinel",r2=1,
+                           p=if_else(snpid!="chr2:102992675_C_T",as.character(P),"1.16196e-517")) %>%
+                    left_join(within(read.delim(file.path(INF,"work","INF1.METAL")),{prot_snpid=paste0(prot,"-",MarkerName)})) %>%
+                    left_join(select(pQTLtools::inf1,target.short,target,prot)) %>%
+                    select(target.short,snpid,uniprot,rsid,cis.trans,proxies,r2,p,target)
+     write.table(data.frame(replication,Source="Zhang et al. (2022)",PMID="",Comment=""),
+                            col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+  '
+) > ${INF}/ARIC/ARIC.tsv
