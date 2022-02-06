@@ -13,15 +13,27 @@ R --no-save <<END
   st16 <- openxlsx::read.xlsx(stables, sheet=1, colNames=TRUE, skipEmptyRows=TRUE, startRow=3)
   write.table(st16,file="AGES.txt",col.names=FALSE,quote=FALSE,row.names=FALSE,sep="\t")
   suppressMessages(library(dplyr))
-  https <- "https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90086001-GCST90087000"
-  urls <- mutate(st16, tag=gsub("_",".",Study.tag),trait=gsub("Serum levels of protein ","",Reported.trait),
+  url1 <- "https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90086001-GCST90087000"
+  url2 <- "https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90087001-GCST90088000"
+  url3 <- "https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90088001-GCST90089000/"
+  url4 <- "https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90090001-GCST90091000/"
+  urls <- mutate(st16, tag=gsub("_",".",Study.tag),
+                 trait=gsub("Serum levels of protein ","",Reported.trait),
+                 Accession=Study.Accession,
                  SOMAMER_ID=paste0(trait,".",tag)) %>%
           left_join(pQTLtools::SomaLogic160410) %>%
-          select(Study.Accession,Summary.statistics.file,SOMAMER_ID,UniProt,Target) %>%
+          select(Accession,Summary.statistics.file,SOMAMER_ID,UniProt,Target) %>%
           filter(UniProt %in% pQTLtools::inf1$uniprot) %>%
           distinct() %>%
-          mutate(src=file.path(https,Study.Accession,paste0(Study.Accession,"_buildGRCh37.tsv")),cmd=paste("wget",src))
-  write.table(select(urls,cmd),file=file.path(INF,"AGES","wget.sh"),quote=FALSE,col.names=FALSE,row.names=FALSE)
+          mutate(url=case_when(
+                                 Accession >= "GCST90086001" & Accession <= "GCST90087000" ~ url1,
+                                 Accession >= "GCST90087001" & Accession <= "GCST90088000" ~ url2,
+                                 Accession >= "GCST90088001" & Accession <= "GCST90089000" ~ url3,
+                                 Accession >= "GCST90089001" & Accession <= "GCST90091000" ~ url4,
+                                 TRUE ~ as.character(Accession)
+                              ),
+                 src=file.path(url,Accession),cmd=paste("lftp -c mirror",src))
+  write.table(select(urls,cmd),file=file.path(INF,"AGES","lftp.sh"),quote=FALSE,col.names=FALSE,row.names=FALSE)
 END
 
 # write.table(pQTLtools::inf1[c("prot","target.short")],file="INF1.prot",quote=FALSE,row.names=FALSE,col.names=FALSE)
