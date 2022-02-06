@@ -33,6 +33,6 @@ export sumstats=~/rds/results/public/proteomics/ARIC
                     left_join(select(pQTLtools::inf1,target.short,target,prot)) %>%
                     select(target.short,snpid,uniprot,rsid,cis.trans,proxies,r2,p,target)
      write.table(data.frame(replication,Source="Zhang et al. (2022)",PMID="",Comment=""),
-                            col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+                            col.names=FALSE,row.names=FALSE,sep="\t")
   '
 ) > ${INF}/ARIC/ARIC.tsv

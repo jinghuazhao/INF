@@ -74,7 +74,8 @@ Rscript -e '
            left_join(replication,by=c('prot'='Protein','rsid'='variant_id')) %>%
            filter(!is.na(p)) %>%
            left_join(pQTLtools::inf1[c("prot","target.short","target")]) %>%
-           rename(Protein=target.short,Sentinels=rsid,UniProt=uniprot,SNPid=MarkerName,TargetFullName=target) %>%
-           mutate(Source="Gudjonsson, et al. (2022)",PMID=NA,Proxies="as sentinels",r2=1) %>%
-           select(Protein,Sentinels,UniProt,SNPid,cis.trans,Proxies,r2,p,TargetFullName,Source,Comment)
+           rename(Protein=target.short,Sentinels=rsid,UniProt=uniprot,SNPid=MarkerName,"cis/trans"=cis.trans,TargetFullName=target) %>%
+           mutate(Source="Gudjonsson, et al. (2022)",PMID=NA,Proxies="as sentinels",r2=1,p=as.character(p)) %>%
+           select(Protein,Sentinels,UniProt,SNPid,"cis/trans",Proxies,r2,p,TargetFullName,Source,PMID,Comment)
+  write.table(metal,file=file.path(INF,"AGES","AGES.tsv"),row.names=FALSE,sep="\t")
 '
