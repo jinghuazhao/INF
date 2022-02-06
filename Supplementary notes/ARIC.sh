@@ -15,7 +15,7 @@ export sumstats=~/rds/results/public/proteomics/ARIC
   join -12 -25 <(sed '1d' ${sumstats}/seqid.txt | cut -f1,2 | sort -k2,2) - | \
   cut -d' ' -f1 --complement | \
   parallel -j12 -C' ' --env sumstats '
-    grep -w {4} ${sumstats}/EA/{1}.PHENO1.glm.linear | \
+    zgrep -w {4} ${sumstats}/EA/{1}.PHENO1.glm.linear.gz | \
     awk -vseqid={1} -vsnpid={2} -vsnpid38={3} -vrsid={4} -vprot={5} -vOFS="\t" "{print seqid,snpid,snpid38,rsid,prot,\$0}"
   '
 ) > ${INF}/ARIC/replication.tsv
