@@ -1,4 +1,6 @@
 .Rhistory
+AGES/
+ARIC/
 docs/
 1KG/
 annotate/
@@ -19,6 +21,7 @@ data/
 deCODE/
 ds/
 ebi/
+eQTLCatalogue/
 eQTLGen/
 Fenland/
 files/
@@ -42,8 +45,9 @@ jam/
 KORA/
 ldak/
 lz/
-merge/
 METAL/
+merge/
+mgwas/
 mr/
 MS/
 NG/
