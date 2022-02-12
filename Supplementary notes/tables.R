@@ -143,7 +143,9 @@ hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, font
 url <- "https://jhz22.user.srcf.net/pqtl-immune_infection_edited.xlsx"
 url <- file.path(INF,"work","pqtl-immune_infection_edited.xlsx")
 credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c("prot","MarkerName","CredibleSet"),sep="\t")
+credibleppa <- read.table(file.path(INF,"work","INF1.merge-rsid.ppa"),col.names=c("prot","MarkerName","PPA"),sep="\t")
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
+         merge(credibleppa,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
          rename(Protein=prot) %>% mutate(prots=Protein,Protein=target.short) %>% select(-target.short)
 metal <- read.delim(file.path(INF,"work","INF1.METAL"))
 pqtldisease <- subset(read.sheet("short",1:51,1:220),Keep==1) %>%
