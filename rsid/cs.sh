@@ -37,6 +37,13 @@ cd ${INF}/cs
       awk -vprot={1} -vrsid={2} -vOFS="\t" "{print prot,rsid,\$0}" ${INF}/cs/{1}-{2}.cs
   '
 ) > ${INF}/work/INF1.merge-rsid.cs
+(
+  awk 'NR > 1 {print $5,$6,NR-1}' ${INF}/work/INF1.merge-rsid | \
+  parallel --env INF -C' ' '
+      ${INF}/rsid/cs.inc {3}
+      awk -vprot={1} -vrsid={2} -vOFS="\t" "{print prot,rsid,\$0}" ${INF}/cs/{1}-{2}.ppa
+  '
+) > ${INF}/work/INF1.merge-rsid.ppa
 
 R --no-save -q <<END
   library(dplyr)
