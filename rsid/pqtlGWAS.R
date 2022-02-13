@@ -131,14 +131,16 @@ for(i in 1:nrow(pqtl_immune_infection))
   for(j in 1:nprots) aa <- gsub(ij[j],inf1_targetshort[ij[j]],aa)
   pqtl_immune_infection[i, "target.short"] <- aa
 }
-v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo","ref_rsid","ref_a1","ref_a2","proxy","r2",
+v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
+       "ref_rsid","ref_a1","ref_a2","proxy","r2",
        "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
 mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
 {
   flag <- (HLA==1)
   prefix <- rsid
   prefix[flag] <- paste0(rsid[flag],"*")
-  rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-",prefix," [",target.short,"](",hgnc,")")
+  rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-",
+                      prefix," [",target.short,"](",hgnc,")")
   trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
   trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
   trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
@@ -164,7 +166,7 @@ subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","Keep")],unit==
 rxc <- with(mat,table(efoTraits,rsidProts))
 indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
 if (FALSE) {
-  add_entry <- data.frame(efoTraits="Multiple sclerosis",rsidProts="12-rs2364485 [TNFB](LTA),qtl_direction=1)
+  add_entry <- data.frame(efoTraits="Multiple sclerosis",rsidProts="12-rs2364485 [TNFB](LTA)",qtl_direction=1)
   indices_new <- rbind(indices,add_entry)
   rxc <- with(indices_new,table(efoTraits,rsidProts))
 }
