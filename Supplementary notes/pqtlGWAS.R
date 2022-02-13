@@ -163,6 +163,11 @@ subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","Keep")],unit==
 
 rxc <- with(mat,table(efoTraits,rsidProts))
 indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
+if (FALSE) {
+  add_entry <- data.frame(efoTraits="Multiple sclerosis",rsidProts="12-rs2364485 [TNFB](LTA),qtl_direction=1)
+  indices_new <- rbind(indices,add_entry)
+  rxc <- with(indices_new,table(efoTraits,rsidProts))
+}
 # pedantic implementation but take advantage of indexed by character names
 for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
    s <- subset(indices,efoTraits==rn & rsidProts==cn)
