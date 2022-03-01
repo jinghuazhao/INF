@@ -233,6 +233,6 @@ Suhre K et al. (2017). Connecting genetic risk to disease endpoints through the 
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
 
-*Date last changed:* **3/1/2022**
+*Date last changed:* **1/3/2022**
 
 [^1]: The figure is obtained with `dot -Tpng grViz.gv -ogrViz.png` which also be obtained from RStudio for somewhat larger size.
