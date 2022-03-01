@@ -199,7 +199,7 @@ utils.sh | utilties
 ## Related links
 
 * [Olink Insights Stat Analysis](https://olinkproteomics.shinyapps.io/OlinkInsightsStatAnalysis/)
-* [Olink R package](https://github.com/Olink-Proteomics/OlinkRPackage)
+* [Olink R package](https://github.com/Olink-Proteomics/OlinkRPackage) (CRAN [OlinkAnalyze](https://CRAN.R-project.org/package=OlinkAnalyze))
 * [Olink location](https://www.olink.com/scallop/), [What is NPX](https://www.olink.com/question/what-is-npx/), [F2F London meeting](https://www.olink.com/scallop-f2f-2019/), [Data Science Workshop 2019](https://www.olink.com/data-science-workshop-2019/).
 * [Olink publications](https://www.olink.com/data-you-can-trust/publications/).
 * [GitHub repository](https://github.com/lassefolkersen/scallop) for the 2017 *PLoS Genetics* paper.
@@ -233,6 +233,6 @@ Suhre K et al. (2017). Connecting genetic risk to disease endpoints through the 
 
 Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. *Nature* 558: 73–79.
 
-*Date last changed:* **26/1/2022**
+*Date last changed:* **3/1/2022**
 
 [^1]: The figure is obtained with `dot -Tpng grViz.gv -ogrViz.png` which also be obtained from RStudio for somewhat larger size.
