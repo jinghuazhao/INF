@@ -2,7 +2,7 @@
 
 # count genomic regions for all sentinels
 (
-  awk -v OFS='\t' '(NR==1){print $1,$2,$3,$5,$6,$8,$9}' work/INF1.merge 
+  awk -v OFS='\t' '(NR==1){print $1,$2,$3,$5,$6,$8,$9}' work/INF1.merge
   awk -vd=1e6 -v OFS='\t' '
     (NR>1){
     if($3-$2<=2) {$2=$2-d;$3=$3+d}
@@ -144,12 +144,62 @@ function ieu()
   ls  *.tsv.gz | parallel -C' ' 'echo {}; gunzip -c {} | wc -l' | paste - - | sort -k1,1 > INF1.size
 }
 
+# idmap
+export gwas_id=${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_9.fam
+export inf_id=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
+export scallop_inf_id=${HOME}/COVID-19/SCALLOP-Seq
+
+wc -l ${gwas_id}
+wc -l <(sed '1,2d' ${inf_id})
+join <(cut -f1 ${gwas_id} | sort -k1,1n) <(sed '1,2d' ${inf_id} | cut -d' ' -f1 | sort -k1,1n) | wc -l
+
+module load ceuadmin/stata
+
+stata <<END
+local scallop_inf_id : env scallop_inf_id
+di "\`scallop_inf_id\'"
+insheet using \`scallop_inf_id\'/omicsMap.csv, case clear comma
+sort identifier
+merge 1:1 identifier using \`scallop_inf_id\'/work/INTERVALdata_28FEB2020
+format Olink_inf_QC_24m %15.0g
+format Olink_inf_gwasQC_24m %15.0g
+format Affymetrix_QC_bl %15.0g
+format Affymetrix_gwasQC_bl %15.0g
+format Affymetrix_QC_24m %15.0g
+format Affymetrix_gwasQC_24m %15.0g
+
+keep identifier Olink_inf_QC_24m Olink_inf_gwasQC_24m Affymetrix_gwasQC_bl ethnicPulse agePulse sexPulse
+d,f
+tab ethnicPulse
+di _N
+outsheet if Olink_inf_QC_24m!=. | Olink_inf_gwasQC_24m!=. using idmap.tsv,noquote replace
+gen str20 ethnic=ethnicPulse
+replace ethnic="EUR" if inlist(ethnicPulse,"Eng/W/Scot/NI/Brit","White Irish")==1
+replace ethnic="EAS" if inlist(ethnicPulse,"Asian- Bangladeshi","Asian- Indian","Asian- Pakistani","Chinese")==1
+replace ethnic="MID" if ethnicPulse=="Arab"
+gen ethnic_NA=ethnic
+replace ethnic_NA="NA" if inlist(ethnic,"EUR","EAS","MID")==0
+gen FID=0
+rename Affymetrix_gwasQC_bl IID
+keep if Olink_inf_QC_24m!=. | Olink_inf_gwasQC_24m!=.
+outsheet FID IID ethnic using ethnic.txt if IID!=., noquote replace
+outsheet FID IID ethnic_NA using ethnic_NA.txt if IID!=., noquote replace
+END
+
+cut -f1 ${gwas_id} | grep -f - idmap.tsv | wc -l
+
 # Scaled phenotypes
 R --no-save <<END
+  suppressMessages(library(dplyr))
   INF <- Sys.getenv("INF")
+  ethnic <- read.delim(file.path(INF,"work","ethnic.txt"))
+  eur <- filter(ethnic,ethnic %in% c("EUR"))
   f <- file.path(INF,"INTERVAL","o5000-inf1-outlier_in-r2.sample")
   ph <- read.delim(f,sep=" ",nrows=1)
-  p <- read.table(f,col.names=names(ph),skip=2)
+  p <- read.table(f,col.names=names(ph),skip=2) %>%
+       filter(ID_1 %in% with(eur,IID))
+  scatterplot3d::scatterplot3d(p[c("PC1","PC2","PC3")])
+  rgl::plot3d(p[c("PC1","PC2","PC3")])
   PCs <- paste0("PC", 1:20)
   covars <- c(c("sexPulse", "age", "season", "plate", "bleed_to_process_time"), PCs)
   proteins <- p[setdiff(names(ph),c("ID_1","ID_2","missing",covars))]
