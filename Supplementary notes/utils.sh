@@ -196,8 +196,9 @@ R --no-save <<END
   eur <- filter(ethnic,ethnic %in% c("EUR"))
   f <- file.path(INF,"INTERVAL","o5000-inf1-outlier_in-r2.sample")
   ph <- read.delim(f,sep=" ",nrows=1)
-  p <- read.table(f,col.names=names(ph),skip=2) %>%
-       filter(ID_1 %in% with(eur,IID))
+  p <- read.table(f,col.names=names(ph),skip=2)
+  eur <- with(p,ID_1 %in% with(eur,IID))
+  p[!eur,4:ncol(p)] <- NA
   scatterplot3d::scatterplot3d(p[c("PC1","PC2","PC3")])
   rgl::plot3d(p[c("PC1","PC2","PC3")])
   PCs <- paste0("PC", 1:20)
@@ -418,11 +419,6 @@ function pdf_test()
 # convert qq_manhattan.pdf -density 300 tiff64:qq+manhattan.tiff
 # locuszoom plots for 91 cis-regions are possible with pdfunite but got complaints from qpdf
 # pdfunite *.pdf ~/lz.pdf
-# Add background under Ubuntu
-# pdftk in.pdf background stamp.pdf output out.pdf
-# Extract and add bookmarks
-# pdftk a.pdf dump_data output a.txt
-# pdftk c.pdf update_info a.txt output d.pdf
 }
 
 function ppi()
