@@ -27,7 +27,7 @@ export sample=${INF}/finemapping/${p}-${r}.sample
 cd ${INF}/finemap
 # z0 - INTERVAL data only excluding NLRP2 region if overlapped and employs P value cutoff to avoid nonsense results
 (
-  echo MarkerName Chromosome Position Allele2 Allele1 MAF Effect StdErr
+  echo MarkerName Chromosome Position Allele1 Allele2 MAF Effect StdErr
 # zcat ${sumstats} | \
 # awk 'NR > 1' | \
   cat ${sumstats} | \
@@ -46,8 +46,9 @@ awk 'NR > 1{print $1}' ${pr}.tmp > ${pr}.incl
 
 # bgen/bgi - duplicates
 qctool -g ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.bgen \
-       -s ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.sample \
-       -og ${pr}-${job}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -incl-samples ${INF}/finemapping/eur.id
+       -s ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.sample -og ${pr}-${job}.bgen -ofiletype bgen \
+       -incl-rsids ${pr}.incl \
+       -incl-samples ${INF}/finemapping/eur.id
 bgenix -g ${pr}-${job}.bgen -index -clobber
 ln -sf ${pr}-${job}.bgen.bgi ${pr}-${job}.bgi
 bgenix -g ${pr}-${job}.bgen -list > ${pr}.list
@@ -66,7 +67,7 @@ rm ${pr}.tmp ${pr}-${job}.* ${pr}.incl ${pr}.list
 (
   awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se", "flip"}'
   join <(awk 'NR > 1' ${pr}.z0 | sort -k1,1) <(sort -k1,1 ${pr}.flip) | \
-  awk '{if($9==1) {t=$4;$4=$5;$5=t};$7=-$7; print}' | awk 'a[$1]++==0'
+  awk '{if($9==1) {t=$4;$4=$5;$5=t;$7=-$7}; print}' | awk 'a[$1]++==0'
 ) > ${pr}.z
 
 if [ ! -f ${dir}/${pr}.jma.cojo ]; then
