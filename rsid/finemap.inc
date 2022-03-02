@@ -46,7 +46,7 @@ awk 'NR > 1{print $1}' ${pr}.tmp > ${pr}.incl
 
 # bgen/bgi - duplicates
 qctool -g ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.bgen \
-       -og ${pr}-${job}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -incl-samples ${INF}/finempping/eur.id
+       -og ${pr}-${job}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -incl-samples ${INF}/finemapping/eur.id
 bgenix -g ${pr}-${job}.bgen -index -clobber
 ln -sf ${pr}-${job}.bgen.bgi ${pr}-${job}.bgi
 bgenix -g ${pr}-${job}.bgen -list > ${pr}.list
