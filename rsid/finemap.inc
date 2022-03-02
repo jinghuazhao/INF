@@ -13,7 +13,7 @@ export end=$(sed '1d' ${list} | awk -v job=${job} -v d=${flanking} 'NR==job{prin
 export sumstats=$SCALLOP/jp549/olink-merged-output/$(ls $SCALLOP/jp549/olink-merged-output | grep -v cvd | grep ${p}___)
 export sample=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
 export study=INTERVAL
-export N=4994
+export N=4462
 export n=1000
 export TMPDIR=${HPC_WORK}/work
 export dir=${INF}/sentinels
@@ -46,6 +46,7 @@ awk 'NR > 1{print $1}' ${pr}.tmp > ${pr}.incl
 
 # bgen/bgi - duplicates
 qctool -g ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.bgen \
+       -s ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.sample \
        -og ${pr}-${job}.bgen -ofiletype bgen -incl-rsids ${pr}.incl -incl-samples ${INF}/finemapping/eur.id
 bgenix -g ${pr}-${job}.bgen -index -clobber
 ln -sf ${pr}-${job}.bgen.bgi ${pr}-${job}.bgi
