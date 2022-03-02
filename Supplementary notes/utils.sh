@@ -215,7 +215,7 @@ R --no-save <<END
   colnames(z) <- names(proteins)
   rownames(z) <- with(p,ID_1)
   z <- as.data.frame(z)
-  write.table(p[eur,"ID_1"],file.path(INF,"finemapping","eur.id"),row.names=FALSE,col.names=FALSE,quote=FALSE)
+  write.table(p[eur,c("ID_1")],file.path(INF,"finemapping","eur.id"),row.names=FALSE,col.names=FALSE,quote=FALSE)
   gap::snptest_sample(p,file.path(INF,"finemapping","INTERVAL.sample"),P=names(proteins))
 END
 
@@ -238,6 +238,7 @@ function scaled_assoc()
            -s ${INF}/finemapping/INTERVAL.sample \
            -incl-range ${start}-${end} \
            -og ${INF}/finemapping/${prot}-${MarkerName}.bgen -os ${INF}/finemapping/${prot}-${MarkerName}.sample
+    bgenix -g ${INF}/finemapping/${prot}-${MarkerName}.bgen -index -clobber
   }
   bgen
   export phenocol=$(grep ${prot}_ ${INF}/finemapping/INTERVAL.prot)
