@@ -223,8 +223,7 @@ function scaled_assoc()
 {
   head -1 finemapping/INTERVAL.sample | cut -d' ' -f1-3 --complement | tr ' ' '\n' > ${INF}/finemapping/INTERVAL.prot
   export M=1e6
-  cut -f5,6,8,9 --output-delimiter=" " ${INF}/work/INF1.merge | \
-  sed '1d' | \
+  awk 'NR>1{print $5,$6,$8,$9}' ${INF}/work/INF1.merge | \
   parallel -C' ' --env M '
   export prot={1}
   export MarkerName={2}
