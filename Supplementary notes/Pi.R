@@ -43,6 +43,7 @@ print(mp)
 dev.off()
 library(png)
 library(grid)
+library(XGR)
 eTerm <- xPierPathways(pNode, priority.top=100, ontology="MsigdbC2CPall", RData.location=RData.location)
 eTerm_nonred <- xEnrichConciser(eTerm)
 
@@ -58,7 +59,7 @@ print(bp)
 dev.off()
 
 # find maximum-scoring gene network with the desired node number=50
-g <- xPierSubnet(pNode, priority.quantite=0.1, subnet.size=50, RData.location=RData.location)
+g <- xPierSubnet(pNode, priority.quantile=0.1, subnet.size=50, RData.location=RData.location)
 
 pattern <- as.numeric(V(g)$priority)
 zmax <- ceiling(quantile(pattern,0.75)*1000)/1000
