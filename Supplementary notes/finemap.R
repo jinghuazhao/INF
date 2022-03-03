@@ -1,4 +1,4 @@
-# 17-1-2021 JHZ
+# 3-3-2022 JHZ
 
 zld <- function(z)
 {
@@ -6,7 +6,10 @@ zld <- function(z)
   rank <- 1:with(z,length(index))
   ldt <- ld[id,id]
   ldt[upper.tri(ldt, diag=TRUE)] <- NA
-  cbind(rank,z[rank,c("index","rsid","z","log10bf","group","corr_group","prob_group","log10bf_group")],ldt)
+  varlist <- c("index","rsid","z","log10bf")
+  varlist2 <- c(varlist,"group","corr_group","prob_group","log10bf_group")
+  if (finemap_version=="1.4") cbind(rank,z[rank,varlist],ldt)
+  else cbind(rank,z[rank,varlist2],ldt)
 }
 
 pip.log10bf.plot <- function()
@@ -25,6 +28,7 @@ pip.log10bf.plot <- function()
 }
 
 options(digits=3, scipen=20, width=500)
+finemap_version <- Sys.getenv("finemap_version")
 pr <- Sys.getenv("pr")
 z <- read.table(paste0(pr, ".z"), as.is=TRUE, header=TRUE)
 ld <- read.table(paste0(pr, ".ld.gz"),col.names=with(z,rsid))
@@ -40,8 +44,14 @@ wb <- createWorkbook(xlsx)
   d <- within(snp,{log10p_incl <- gap::log10p(mean_incl/sd_incl)})
   name_snp <- d[,setdiff(names(d),c("chromosome","position","allele1","allele2","maf","beta","se","rank"))]
   addWorksheet(wb, "snp", zoom=150)
-  ord <- with(name_snp,order(-prob_group))
-  writeDataTable(wb, "snp", name_snp[ord,])
+  if(finemap_version=="1.4")
+  {
+    ord2 <- with(name_snp,order(-prob))
+    writeDataTable(wb, "snp", name_snp[ord2,])
+  } else {
+    ord <- with(name_snp,order(-prob_group))
+    writeDataTable(wb, "snp", name_snp[ord,])
+  }
 # pip.plot
   pip.log10bf.plot()
   addWorksheet(wb, "pip.plot", zoom=150)
