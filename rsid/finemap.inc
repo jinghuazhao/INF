@@ -46,7 +46,7 @@ awk 'NR > 1{print $1}' ${pr}.tmp > ${pr}.incl
 
 # bgen/bgi - duplicates
 qctool -g ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.bgen \
-       -s ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.sample -og ${pr}-${job}.bgen -ofiletype bgen \
+       -s ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr}.sample -og ${pr}-${job}.bgen -ofiletype bgen -os ${pr}-${job}.sample \
        -incl-rsids ${pr}.incl \
        -incl-samples ${INF}/finemapping/eur.id
 bgenix -g ${pr}-${job}.bgen -index -clobber
@@ -54,7 +54,7 @@ ln -sf ${pr}-${job}.bgen.bgi ${pr}-${job}.bgi
 bgenix -g ${pr}-${job}.bgen -list > ${pr}.list
 awk 'count[$1]++>0 {print $1}' ${pr}.list | sort | uniq | grep -v -f - ${pr}.tmp > ${pr}.z0
 awk 'NR > 1{print $1}' ${pr}.z0 > ${pr}.incl
-qctool -g ${pr}-${job}.bgen -og ${pr}.bgen -ofiletype bgen -incl-rsids ${pr}.incl
+qctool -g ${pr}-${job}.bgen -s ${pr}-${job}.sample -og ${pr}.bgen -ofiletype bgen -os ${pr}.sample -incl-rsids ${pr}.incl
 bgenix -g ${pr}.bgen -index -clobber
 ln -sf ${pr}.bgen.bgi ${pr}.bgi
 rm ${pr}.tmp ${pr}-${job}.* ${pr}.incl ${pr}.list
@@ -96,16 +96,18 @@ function ld_finemap2()
 # ldstore 2 and finemap 1.4
 {
   (
-    echo "z;ld;bgen;bgi;bcor;bdose;snp;config;cred;log;n_samples"
-    echo "${pr}.z;${pr}.ld;${pr}.bgen;${pr}.bgi;${pr}.bcor;${pr}.bdose;${pr}.snp;${pr}.config;${pr}.cred;${pr}.log;$N"
+    echo "z;bgen;bgi;sample;bdose;bcor;ld;snp;cred;config;log;n_samples"
+    echo "${pr}.z;${pr}.bgen;${pr}.bgi;${pr}.sample;${pr}.bdose;${pr}.bcor;${pr}.ld;${pr}.snp;${pr}.cred;${pr}.config;${pr}.log;$N"
   ) > ${pr}.master2
-  ldstore_v2.0_x86_64 --in-files ${pr}.master2 --write-bcor
+  ldstore_v2.0_x86_64 --in-files ${pr}.master2 --write-bdose --bdose-version 1.1
+  ldstore_v2.0_x86_64 --in-files ${pr}.master2 --write-bcor --read-bdose
   ldstore_v2.0_x86_64 --in-files ${pr}.master2 --bcor-to-text
-  finemap_v1.4_x86_64 --sss --in-files ${pr}.master2 --log --n-causal-snps $k --corr-group 0.7 --group-snps
+  finemap_v1.4_x86_64 --sss --in-files ${pr}.master2 --log --n-causal-snps $k --flip-beta
 }
 
 # xlsx
-ld_finemap
+export finemap_version=1.4
+ld_finemap2
 gzip -f ${pr}.ld
 R -q --no-save < ${INF}/rsid/finemap.R > /dev/null
 # rm -f ${pr}.z0 ${pr}.flip ${pr}.master ${pr}.master2 ${pr}.bcor ${pr}.ld.gz ${pr}.bgen ${pr}.bgen.bgi ${pr}.bgi
