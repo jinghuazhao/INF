@@ -106,8 +106,8 @@ function ld_finemap2()
 }
 
 # xlsx
-export finemap_version=1.4
-ld_finemap2
+export finemap_version=1.3.1
+ld_finemap
 gzip -f ${pr}.ld
 R -q --no-save < ${INF}/rsid/finemap.R > /dev/null
 # rm -f ${pr}.z0 ${pr}.flip ${pr}.master ${pr}.master2 ${pr}.bcor ${pr}.ld.gz ${pr}.bgen ${pr}.bgen.bgi ${pr}.bgi
