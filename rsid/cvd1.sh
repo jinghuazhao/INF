@@ -138,6 +138,7 @@ END
       if(chr=chrpos[1]&&chrpos[2]>=pos-M&&chrpos[2]<=pos+M) print prot,snpid,chrpos[1],chrpos[2],\$0
     }"
   ' | \
+  awk 'NF>1' | \
   sort -k1,1 -k3,3n -k4,4n
 ) > ${INF}/cvd1/INF1.merge.regions.txt
 
