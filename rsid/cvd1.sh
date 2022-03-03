@@ -78,6 +78,7 @@ cut -f10,11 --complement > INF1.cvd1.replication
 ) > INF1.cvd1.txt
 rm INF1.cvd1.replication
 
+# Grouping by p values
 for p in 5e-8 1e-5 5e-2
 do
   echo ${p}
@@ -85,6 +86,7 @@ do
 done
 cd -
 
+# Correlation of effect sizes
 R --no-save -q <<END
   library(dplyr)
   INF <- Sys.getenv("INF")
@@ -95,7 +97,7 @@ R --no-save -q <<END
           mutate(A1=toupper(A1),A2=toupper(A2),MarkerName=paste0("chr",sub("(\\:.*?)\\:", "\\1_",MarkerName))) %>%
           select(-MarkerName,-Direction)
   INF1_cvd1 <- INF1_METAL %>%
-               left_join(gap::inf1[c("prot","target.short")]) %>%
+               left_join(gap.datasets::inf1[c("prot","target.short")]) %>%
                mutate(Protein=paste0(target.short,"-",rsid)) %>%
                left_join(cvd1) %>%
                select(Protein,Allele1,Allele2,A1,A2,Freq1,Effect,StdErr,CODE_ALL_FQ,BETA,SE,cis.trans) %>%
@@ -115,6 +117,29 @@ R --no-save -q <<END
            select(Effect,BETA)
   cor(trans,use="everything")
 END
+
+# Selection by region
+(
+  gunzip -c ~/rds/results/public/proteomics/scallop-cvd1/*txt.gz | \
+  head -1 | \
+  awk -vOFS="\t" '{print "Protein","MarkerName","chr","pos",$0}'
+  join <(cut -f5,6 ${INF}/work/INF1.merge | sed '1d' | sort -k1,1) \
+       <(grep -v BDNF ${INF}/cvd1/INF1.prot | sort -k1,1 ) | \
+  sed 's/VEGF_A/VEGF-A/;s/MIP.1.alpha/CCL3/;s/MIP-1 alpha/CCL3/' | \
+  sort -k3,3 | \
+  join -13 - ${INF}/cvd1/inf.txt | \
+  cut -d' ' -f2 --complement | \
+  awk '{snpid=$2;gsub(/chr|_[A-Z]*_[A-Z]*/,"",$2);split($2,a,":");print $1,snpid,a[1],a[2]}' | \
+  parallel -j8 -C' ' '
+    echo {1}-{2}
+    gunzip -c ~/rds/results/public/proteomics/scallop-cvd1/{1}.txt.gz | \
+    awk -vprot={1} -vsnpid={2} -vchr={3} -vpos={4} -vM=1e6 -vOFS="\t" "{
+      split(\$1,chrpos,\":\");
+      if(chr=chrpos[1]&&chrpos[2]>=pos-M&&chrpos[2]<=pos+M) print prot,snpid,chrpos[1],chrpos[2],\$0
+    }"
+  ' | \
+  sort -k1,1 -k3,3n -k4,4n
+) > ${INF}/cvd1/INF1.merge.regions.txt
 
 ## obsolete
 
