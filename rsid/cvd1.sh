@@ -123,8 +123,11 @@ END
   gunzip -c ~/rds/results/public/proteomics/scallop-cvd1/*txt.gz | \
   head -1 | \
   awk -vOFS="\t" '{print "Protein","MarkerName","chr","pos",$0}'
-  join <(cut -f5,6 ${INF}/work/INF1.merge | sed '1d' | sort -k1,1) \
-       <(grep -v BDNF ${INF}/cvd1/INF1.prot | sort -k1,1 ) | \
+  Rscript -e '
+     INF <- Sys.getenv("INF")
+     load(file.path(INF,"work","novel_data.rda"))
+     write.table(unique(novel_data[c("prot","MarkerName","Protein")]),row.names=FALSE,col.names=FALSE,quote=FALSE)
+  ' | \
   sed 's/VEGF_A/VEGF-A/;s/MIP.1.alpha/CCL3/;s/MIP-1 alpha/CCL3/' | \
   sort -k3,3 | \
   join -13 - ${INF}/cvd1/inf.txt | \
@@ -141,8 +144,9 @@ END
   awk 'NF>1' | \
   sort -k1,1 -k3,3n -k4,4n
 ) > ${INF}/cvd1/INF1.merge.regions.txt
+awk 'NR>1 && $12<5e-8' ${INF}/cvd1/INF1.merge.regions.txt
 
-## obsolete
+# legacy code
 
 function st2()
 {
