@@ -245,7 +245,7 @@ saveWorkbook(wb, file=xlsx, overwrite=TRUE)
 
 annotate <- read.table(file.path(INF,"circos","annotate.txt"),header=TRUE) %>%
             mutate(gene=gsub("[.]"," ",gene))
-novelpqtls <- subset(within(pqtls,{
+novel_data <- subset(within(pqtls,{
                                     chrpos=paste0(Chromosome,":",Position)
                                     a1a2=paste0(toupper(Allele1),"/",toupper(Allele2))
                                     bse=paste0(round(Effect,3)," (",round(StdErr,3),")")
@@ -253,12 +253,11 @@ novelpqtls <- subset(within(pqtls,{
                                   }),
                      !paste0(Protein,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),
                      select=c(uniprot,Protein,MarkerName,chrpos,rsid,a1a2,bse,log10p,cis.trans,Chromosome,Position)) %>%
-              left_join(annotate[c("uniprot","p.gene","gene","MarkerName")]) %>%
-              mutate(cis=if_else(cis.trans=="cis","cis","trans")) %>%
-              rename(g.target=p.gene,g.pQTL=gene) %>%
-              arrange(Chromosome,Position) %>%
-              select(Protein,chrpos,rsid,a1a2,bse,log10p,cis,g.target,g.pQTL,uniprot)
-save(novelpqtls,file=file.path(INF,"work","novelpqtls.rda"))
+              left_join(annotate[c("uniprot","prot","p.gene","gene","MarkerName")]) %>%
+              rename(cis=cis.trans,g.target=p.gene,g.pQTL=gene) %>%
+              arrange(Chromosome,Position)
+novelpqtls <- select(novel_data,Protein,chrpos,rsid,a1a2,bse,log10p,cis,g.target,g.pQTL,uniprot)
+save(novel_data,file=file.path(INF,"work","novel_data.rda"))
 write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls[,-c(1,10)]), file=file.path(INF,"NG","novelpqtls.xlsx"), overwrite=TRUE,
            colNames=TRUE,
            borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
