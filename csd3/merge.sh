@@ -335,4 +335,6 @@ awk -vOFS="\t" '{print "chr"$4,$5,$5+1,$2,$3}' > ${INF}/work/INF1.bed
 liftOver -bedPlus=4 ${INF}/work/INF1.bed ${HPC_WORK}/bin/hg19ToHg38.over.chain ${INF}/work/INF1.b38 ${INF}/work/INF1.unmatched
 
 cat <(echo pos38) <(cut -f2 ${INF}/work/INF1.b38) | \
-paste ${INF}/work/INF1.METAL -
+paste ${INF}/work/INF1.METAL - > ${INF}/work/INF1.METAL38
+
+paste work/INF1.b38 <(cut -f1-5 work/INF1.METAL | sed '1d') | cut -f2,4,5,7,8,10 | awk '$2==$4&&$3==$5' | wc -l
