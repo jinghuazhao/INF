@@ -66,8 +66,7 @@ rm ${pr}.tmp ${pr}-${job}.* ${pr}.incl ${pr}.list
 ) > ${pr}.flip
 (
   awk 'BEGIN {print "rsid", "chromosome", "position", "allele1", "allele2", "maf", "beta", "se", "flip"}'
-  join <(awk 'NR > 1' ${pr}.z0 | sort -k1,1) <(sort -k1,1 ${pr}.flip) | \
-  awk '{if($9==1) {t=$4;$4=$5;$5=t;$7=-$7}; print}' | awk 'a[$1]++==0'
+  join <(awk 'NR > 1' ${pr}.z0 | sort -k1,1) <(sort -k1,1 ${pr}.flip) | awk 'a[$1]++==0'
 ) > ${pr}.z
 
 if [ ! -f ${dir}/${pr}.jma.cojo ]; then
@@ -89,7 +88,7 @@ function ld_finemap()
   rm ${pr}-1_*
   mv ${pr}-1 ${pr}.bcor
   rm -rf ${pr}.cred* ${pr}.snp ${pr}.config
-  finemap_v1.3.1 --sss --in-files ${pr}.master --log --n-causal-snps $k --corr-group 0.7 --group-snps
+  finemap_v1.3.1 --sss --in-files ${pr}.master --flip-beta --log --n-causal-snps $k --corr-group 0.7 --group-snps
 }
 
 function ld_finemap2()

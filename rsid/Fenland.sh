@@ -71,7 +71,7 @@ Rscript -e '
   {
     blocks[[i]] <- subset(region,sentinel==sentinels[i])
     sentinel_and_snps <- c(sentinels[i],blocks[[i]]$rsid[grepl("^rs",blocks[[i]]$rsid)])
-    r[[i]] <- LDmatrix(snps=sentinel_and_snps,pop="EUR",r2d="r2",token=key)
+    r[[i]] <- LDlinkR::LDmatrix(snps=sentinel_and_snps,pop="EUR",r2d="r2",token=key)
     r2 <- subset(r[[i]],RS_number==sentinels[i])
     sel <- !is.na(r2) & r2>=0.8
     cat(sentinels[i],"\n")
@@ -79,6 +79,8 @@ Rscript -e '
     print(r2[sel])
   }
 '
+
+# The following list disappears with updated list from deCODE
 # > sentinels
 # [1] "rs28735437" "rs7213460"  "rs3184504"
 # rs28735437
