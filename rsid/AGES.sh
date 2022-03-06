@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+export AGES=~/rds/results/public/proteomics/AGES
+
 if [ ! -d ${INF}/AGES ]; then mkdir ${INF}/AGES; fi
 cd ${INF}/AGES
 
@@ -40,16 +42,14 @@ R --no-save <<END
   write.table(select(urls,cmd),file=file.path(INF,"AGES","lftp.sh"),quote=FALSE,col.names=FALSE,row.names=FALSE)
 END
 
-cd ~/rds/results/public/proteomics/AGES
+cd ${AGES}
 bash ~/INF/AGES/lftp.sh
 ls GC*/*tsv | parallel -C' ' -j15 'bgzip {}'
 ls GC*/*gz | parallel -C' ' -j15 'tabix -S1 -s3 -b4 -e4 -f {}'
 cd -
 
 (
-  gunzip -c ~/rds/results/public/proteomics/AGES/GCST*/*tsv.gz | \
-  head -1 | \
-  awk -vOFS="\t" '{print "Protein","Comment",$0}'
+  awk -vOFS="\t" '{print "Protein","Comment",$0}' ${AGES}/AGES.hdr
   join -13 -22 <(cut -f1,2,3 ${INF}/work/INF1.METAL | sed '1d' | sort -k3,3) \
                <(sed '1d' ${INF}/AGES/links.txt | grep -v BDNF | cut -f1,5,7 | sort -k2,2 ) | \
   parallel -j15 -C' ' '
@@ -62,6 +62,52 @@ cat <(awk 'NR==1' ${INF}/AGES/INF1.replication.txt) \
     <(awk 'NR==1||$4<=5e-8' ${INF}/AGES/INF1.replication.txt | \
       sort -k1,1 -k2,2 -k4,4g | \
       awk 'a[$1$3]++==0') > ${INF}/AGES/INF1.replication
+
+function region()
+{
+  (
+    awk -vOFS="\t" '{print $0,"Protein","MarkerName","sentinel"}' ${AGES}/AGES.hdr
+    join -11 -22 <(Rscript -e '
+                     INF <- Sys.getenv("INF")
+                     suppressMessages(library(dplyr))
+                     load(file.path(INF,"work","novel_data.rda"))
+                     novel_data <- novel_data %>%
+                                   mutate(region=paste0(Chromosome,":",Position-1e6,"-",Position+1e6)) %>%
+                                          select(prot,MarkerName,rsid,region)
+                     write.table(novel_data,row.names=FALSE,col.names=FALSE,quote=FALSE)
+                   ' | sort -k1,1) \
+                 <(sed '1d' ${INF}/AGES/links.txt | grep -v BDNF | cut -f1,5,7 | sort -k2,2 ) | \
+    parallel -j15 -C' ' '
+      tabix ~/rds/results/public/proteomics/AGES/{5}/{5}_buildGRCh37.tsv.gz {4} | \
+      awk -vOFS="\t" -vprot={1} -vsnpid={2} -vrsid={3} "{print \$0,prot,snpid,rsid}"
+    '
+  ) > ${INF}/AGES/region.tsv
+  Rscript -e '
+    INF <- Sys.getenv("INF")
+    suppressMessages(library(dplyr))
+    region <- read.delim(file.path(INF,"AGES","region.tsv")) %>%
+              mutate(rsid=gsub("_[A-Z]*_[A-Z]*","",variant_id))
+    key <- Sys.getenv("LDLINK_TOKEN")
+    sentinels <- unique(region$sentinel)
+    print(sentinels)
+    blocks <- r <- list()
+    check <- function(snps)
+    {
+      sentinel_and_snps <- c(sentinels[i],snps[grepl("^rs",snps)])
+      r[[i]] <- LDlinkR::LDmatrix(snps=sentinel_and_snps,pop="EUR",r2d="r2",token=key)
+      r2 <- subset(r[[i]],RS_number==sentinels[i])
+      sel <- !is.na(r2) & r2>=0.8
+      cat(sentinels[i],"\n")
+      print(names(r2)[sel])
+      print(r2[sel])
+    }
+    for(i in 1:length(sentinels))
+    {
+      blocks[[i]] <- subset(region,sentinel==sentinels[i])
+      check(blocks[[i]]$rsid)
+    }
+  '
+}
 
 Rscript -e '
   INF <- Sys.getenv("INF")
