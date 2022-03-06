@@ -91,6 +91,11 @@ function region()
   '
 }
 
+# > table(df$sentinel,df$Prot)
+#
+#              MCP.3 SLAMF1
+#   rs60094514     0      4
+#   rs7213460    345      0
 # > sentinels
 # [1] "rs60094514" "rs7213460"
 # rs60094514
