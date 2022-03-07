@@ -86,10 +86,12 @@ function region()
     INF <- Sys.getenv("INF")
     suppressMessages(library(dplyr))
     region <- read.delim(file.path(INF,"AGES","region.tsv")) %>%
-              mutate(rsid=gsub("_[A-Z]*_[A-Z]*","",variant_id))
+              mutate(rsid=gsub("_[A-Z]*_[A-Z]*","",variant_id)) %>%
+              filter(p_value<=5e-8)
     key <- Sys.getenv("LDLINK_TOKEN")
     sentinels <- unique(region$sentinel)
-    print(sentinels)
+    options(width=200)
+    with(region,table(sentinel,Protein))
     blocks <- r <- list()
     check <- function(snps)
     {
@@ -108,6 +110,13 @@ function region()
     }
   '
 }
+#           Protein
+# sentinel    MCP.3
+#   rs7213460   533
+#
+# rs7213460
+# [1] "RS_number" "rs7213460"
+# [1] "rs7213460" "1"
 
 Rscript -e '
   INF <- Sys.getenv("INF")
