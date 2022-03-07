@@ -127,6 +127,15 @@ function region()
         check(blocks[[i]]$rsid[801:1320])
      }
     }
+    r1 <- subset(region,sentinel=="rs7406661" & rsid=="rs56115403")
+    r2 <- subset(region,sentinel=="rs579459" & rsid=="rs977371848")
+    r <- rbind(r1,r2)
+    library(pQTLtools)
+    si <- merge(SomaScanV4.1,inf1,by.x="UniProt.ID",by.y="uniprot") %>%
+          mutate(SeqID=gsub("-","_",SeqID))
+    annex <- left_join(r,select(si,SeqID,prot),by=c('Prot'='prot')) %>%
+             select(MarkerName,SeqID,Pval)
+    write.table(annex,file=file.path(INF,"deCODE","annex.tsv"),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
   '
 }
 
@@ -162,7 +171,7 @@ function region()
 function deCODE()
 (
   echo -e "Protein\tSentinels\tUniProt\tSNPid\tcis/trans\tProxies\tr2\tp\tTarget Full Name\tSource\tPMID\tComment"
-  join -12 -21 <(awk '$3<5e-8' ${INF}/deCODE/replication.tsv | sort -k2,2) \
+  join -12 -21 <(awk '$3<5e-8' ${INF}/deCODE/replication.tsv ${INF}/deCODE/annex.tsv | sort -k2,2) \
                <(cut -f1,7 --output-delimiter=' ' ${INF}/deCODE/${v4} | sort -k1,1) | \
   awk '{print $4"-"$2,$0}' | \
   sort -k1,1 | \
@@ -182,3 +191,4 @@ function deCODE()
 )
 
 deCODE > ${INF}/deCODE/deCODE.tsv
+## further editing rs56115403, rs977371848
