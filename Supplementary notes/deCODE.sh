@@ -191,8 +191,9 @@ function deCODE()
 )
 
 deCODE | \
-awk -v OFS="\t" '
+awk -vFS="\t" -v OFS="\t" '
 {
   if($1=="TWEAK" && $2=="rs579459") {$6="rs977371848";$7=0.823}
   if($1=="uPA" && $2=="rs7406661") {$6="rs56115403";$7=0.988}
-};1' > ${INF}/deCODE/deCODE.tsv
+  print
+}' > ${INF}/deCODE/deCODE.tsv
