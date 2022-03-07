@@ -171,7 +171,7 @@ function region()
 function deCODE()
 (
   echo -e "Protein\tSentinels\tUniProt\tSNPid\tcis/trans\tProxies\tr2\tp\tTarget Full Name\tSource\tPMID\tComment"
-  join -12 -21 <(awk '$3<5e-8' ${INF}/deCODE/replication.tsv ${INF}/deCODE/annex.tsv | sort -k2,2) \
+  join -12 -21 <(awk '$3<=5e-8' ${INF}/deCODE/replication.tsv ${INF}/deCODE/annex.tsv | sort -k2,2) \
                <(cut -f1,7 --output-delimiter=' ' ${INF}/deCODE/${v4} | sort -k1,1) | \
   awk '{print $4"-"$2,$0}' | \
   sort -k1,1 | \
@@ -190,5 +190,9 @@ function deCODE()
                  sort -t$'\t' -k1,1)
 )
 
-deCODE > ${INF}/deCODE/deCODE.tsv
-## further editing rs56115403, rs977371848
+deCODE | \
+awk '
+{
+  if($1=="TWEAK" && $2=="rs579459") {$6="rs977371848";$7=0.823}
+  if($1=="uPA" && $2=="rs7406661") {$6="rs56115403";$7=0.988}
+};1' > ${INF}/deCODE/deCODE.tsv
