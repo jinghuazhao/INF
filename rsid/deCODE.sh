@@ -104,7 +104,7 @@ function region()
               mutate(rsid=gsub("_[A-Z]*_[A-Z]*","",rsids))
     key <- Sys.getenv("LDLINK_TOKEN")
     sentinels <- unique(region$sentinel)
-    print(sentinels)
+    with(region,table(sentinel,Prot))
     blocks <- r <- list()
     check <- function(snps)
     {
@@ -130,17 +130,34 @@ function region()
   '
 }
 
-# sentinels
-# [1] "rs1950897"   "rs7406661"   "rs200489612" "rs7213460"   "rs570025519" "rs28377109"  "rs11574915"  "rs579459"
+# >     with(region,table(sentinel,Prot))
+#              Prot
+# sentinel      CCL19 IL.10 IL.12B MCP.3 SLAMF1 TWEAK  uPA
+#   rs1950897       0     0     38     0      0     0    0
+#   rs7406661       0     0      0     0      0     0   60
+#   rs200489612     0     0      0     0      5     0    0
+#   rs7213460       0     0      0  1320      0     0    0
+#   rs570025519     0     0      0     0      1     0    0
+#   rs28377109      0     1      0     0      0     0    0
+#   rs11574915     19     0      0     0      0     0    0
+#   rs579459        0     0      0     0      0    21    0
+#
 # hightlight
 # [1] "RS_number"   "rs7406661"   "rs56093546"  "rs56115403"  "rs56244095"
 # [6] "rs12945886"  "rs62061425"  "rs72837687"  "rs62061426"  "rs67143157"
 #[11] "rs111072793" "rs55714927"
 # [1] "rs7406661" "1"         "0.976"     "0.988"     "0.988"     "0.866"
 # [7] "0.923"     "0.917"     "0.911"     "0.818"     "0.859"     "0.836"
+# subset(region,sentinel=="rs7406661" & rsid%in%c("rs56115403","rs56244095"))
+#      chr   pos37     Pos      rsids effectAllele otherAllele   Beta      Pval       SE Prot        MarkerName  sentinel       rsid
+# 67 chr17 7063898 7160579 rs56115403            A           G 0.0881 2.552e-18 0.010092  uPA chr17:7063667_C_T rs7406661 rs56115403
+# 68 chr17 7063899 7160580 rs56244095            A           C 0.0881 2.552e-18 0.010092  uPA chr17:7063667_C_T rs7406661 rs56244095
 # rs579459
 # [1] "RS_number"   "rs977371848" "rs579459"
 # [1] "rs579459" "0.823"    "1"
+#  subset(region,sentinel=="rs579459" & rsid=="rs977371848")
+#       chr     pos37       Pos       rsids effectAllele otherAllele   Beta      Pval       SE  Prot         MarkerName sentinel        rsid
+# 1464 chr9 136141870 133266456 rs977371848            C           T 0.0661 4.796e-08 0.012109 TWEAK chr9:136154168_C_T rs579459 rs977371848
 
 function deCODE()
 (
