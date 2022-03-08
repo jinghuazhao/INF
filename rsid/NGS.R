@@ -53,7 +53,7 @@ for(i in 1:length(sentinels))
   snps <- blocks[[i]][["rsName"]]
   sentinel_and_snps <- c(snp,snps[grepl("^rs",snps)])
   len <- length(sentinel_and_snps)
-  cat("No", i,"prot-uniprot-pQTL", paste0(prot,"-",sentinels[i]),"total SNPs =", len, "\n")
+  cat("No", i,"prot-uniprot-pQTL", paste0(prot,"-",sentinels[i]),"chr =", chr, "pos =", pos, "total SNPs =", len, "\n")
   print(subset(select(blocks[[i]],Chrom,Pos,uniprot,GeneName,panel,CisOrTrans,Log10.pval.gc.cor.unadj),10^-Log10.pval.gc.cor.unadj<=5e-8))
   if(len >=2 & len <1000)
   {
