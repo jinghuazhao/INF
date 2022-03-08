@@ -4,7 +4,7 @@ url <- "https://jhz22.user.srcf.net/INF1.latest.xlsx"
 INF <- Sys.getenv("INF")
 url <- file.path(INF,"work","INF1.latest.xlsx")
 read.sheet <- function(sheet,cols,rows) read.xlsx(url,sheet=sheet,colNames=TRUE,cols=cols,rows=rows,skipEmptyRows=TRUE)
-require(dplyr)
+suppressMessages(library(dplyr))
 require(stringr)
 gap_inf1 <- gap.datasets::inf1[c("uniprot", "prot", "target.short")]
  summary <- read.sheet("Summary", 1:2, 2:36)
@@ -258,12 +258,22 @@ novel_data <- subset(within(pqtls,{
               arrange(Chromosome,Position)
 novelpqtls <- select(novel_data,Protein,chrpos,rsid,a1a2,bse,log10p,cis,g.target,g.pQTL,uniprot)
 save(novel_data,file=file.path(INF,"work","novel_data.rda"))
-write.xlsx(cbind(no=1:nrow(novelpqtls),novelpqtls[,-c(1,10)]), file=file.path(INF,"NG","novelpqtls.xlsx"), overwrite=TRUE,
+f <- file.path(INF,"NG","trans-pQTL_annotation.xlsx")
+transpqtls <- read.xlsx(f,sheet=1,startRow = 6,colNames=FALSE,cols=c(1:3,14),skipEmptyRows=TRUE) %>%
+              rename(Sentinel=X2,Encoding.gene=X3,causal.gene=X4) %>%
+              mutate(causal.gene=if_else(causal.gene=="-","",causal.gene))
+novelpqtls <- data.frame(no=1:nrow(novelpqtls),novelpqtls[,-c(1,10)]) %>%
+              mutate(Sentinel=rsid) %>%
+              left_join(transpqtls) %>%
+              mutate(g.target=if_else(rsid=="rs3184504",Encoding.gene,g.target),
+                     g.pQTL=if_else(is.na(causal.gene)|causal.gene=="",g.pQTL,paste0("*",causal.gene))) %>%
+              select(-X1,-Sentinel,-Encoding.gene,-causal.gene)
+write.xlsx(novelpqtls, file=file.path(INF,"NG","novelpqtls.xlsx"), overwrite=TRUE,
            colNames=TRUE,
            borders="surrounding", headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
 
 # known and novel pQTLs should be exclusive.
 s <- pqtls %>% mutate(prot_rsid=paste0(Protein,"-",rsid))
-s1 <- novelpqtls %>% mutate(prot_rsid=paste0(Protein,"-",rsid))
+s1 <- novel_data %>% mutate(prot_rsid=paste0(Protein,"-",rsid))
 s2 <- knownpqtls %>% mutate(prot_rsid=paste0(Protein,"-",Sentinels))
 c(s1$prot_rsid,s2$prot_rsid)[!c(s1$prot_rsid,s2$prot_rsid) %in% s$prot_rsid]
