@@ -50,17 +50,16 @@ for(i in 1:length(sentinels))
   pos <- with(x,bp)
   blocks[[i]] <- subset(region,UniProt==uniprot & Chrom==chr & Pos>=pos-1e6 & Pos<pos+1e6)
   if(nrow(blocks[[i]])==0) next
-  print(subset(blocks[[i]],10^-Log10.pval.gc.cor.unadj<=5e-8))
   snps <- blocks[[i]][["rsName"]]
   sentinel_and_snps <- c(snp,snps[grepl("^rs",snps)])
   len <- length(sentinel_and_snps)
   cat("No", i,"prot-uniprot-pQTL", paste0(prot,"-",sentinels[i]),"total SNPs =", len, "\n")
+  print(subset(select(blocks[[i]],Chrom,Pos,uniprot,GeneName,panel,CisOrTrans,Log10.pval.gc.cor.unadj),10^-Log10.pval.gc.cor.unadj<=5e-8))
   if(len >=2 & len <1000)
   {
      r[[i]] <- LDlinkR::LDmatrix(snps=sentinel_and_snps,pop="EUR",r2d="r2",token=key)
      r2 <- subset(r[[i]],RS_number==snp)
      sel <- !is.na(r2) & r2>=0.8
-     cat(snp,"\n")
      print(names(r2)[sel])
      print(r2[sel])
   }
