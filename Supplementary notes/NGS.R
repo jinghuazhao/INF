@@ -50,7 +50,7 @@ for(i in 1:length(sentinels))
   pos <- with(x,bp)
   blocks[[i]] <- subset(region,UniProt==uniprot & Chrom==chr & Pos>=pos-1e6 & Pos<pos+1e6)
   if(nrow(blocks[[i]])==0) next
-  print(blocks[[i]])
+  print(subset(blocks[[i]],10^-Log10.pval.gc.cor.unadj<=5e-8))
   snps <- blocks[[i]][["rsName"]]
   sentinel_and_snps <- c(snp,snps[grepl("^rs",snps)])
   len <- length(sentinel_and_snps)
