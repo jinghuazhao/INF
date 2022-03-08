@@ -5,7 +5,7 @@ rds <- function(src="rds")
   {
     f <- "~/rds/results/public/proteomics/deCODE/doc/eldjarn22.xlsx"
     S1 <- read.xlsx(f,1)
-    S2 <- read.xlsx(f,3)
+    S3 <- read.xlsx(f,3)
   } else {
     f <- 'https://www.biorxiv.org/content/biorxiv/early/2022/02/20/2022.02.18.481034/DC3/embed/media-3.xlsx'
     S1 <- read.xlsx(f)
