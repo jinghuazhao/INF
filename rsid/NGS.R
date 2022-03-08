@@ -1,7 +1,4 @@
 #
-suppressMessages(library(dplyr))
-suppressMessages(library(openxlsx))
-
 rds <- function(src="rds")
 {
   if (src=="rds")
@@ -18,21 +15,8 @@ rds <- function(src="rds")
   save(S1,S3,file=file.path(INF,"ukb","tables.rda"))
 }
 
-check <- function(sns)
-{
-   sentinel_and_snps <- c(snp,snps[grepl("^rs",snps)])
-   len <- length(sentinel_and_snps)
-   cat (len, "\n")
-   if(len >=2 & len <999)
-   {
-     r[[i]] <- LDlinkR::LDmatrix(snps=sentinel_and_snps,pop="EUR",r2d="r2",token=key)
-     r2 <- subset(r[[i]],RS_number==snp)
-     sel <- !is.na(r2) & r2>=0.8
-     cat(snp,"\n")
-     print(names(r2)[sel])
-     print(r2[sel])
-   }
-}
+suppressMessages(library(dplyr))
+suppressMessages(library(openxlsx))
 
 INF <- Sys.getenv("INF")
 rds()
@@ -49,7 +33,6 @@ ss <- merge(S1,S3) %>%
                 Proxies="as sentinel",r2=1,p=10^-Log10.pval.gc.cor.unadj,Source="Eldjarn, et al. (2022)",PMID="",Comment="")
 options(width=200)
 write.table(ss,file=file.path(INF,"ukb","NGS.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
-load(file.path(INF,"work","novel_data.rda"))
 cojo <- merge(read.csv(file.path(INF,"sentinels","INF1.jma-rsid.cis.vs.trans.csv")),gap.datasets::inf1[c("prot","target.short")],by="prot") %>%
         mutate(prot=target.short,uniprot_rsid=paste0(uniprot,"-",SNP)) %>% rename(Protein=prot) %>% select(-target.short)
 region <- merge(S1,S3) %>%
@@ -60,9 +43,9 @@ with(region,table(rsName,Affected.Protein.Gene.name))
 blocks <- r <- list()
 for(i in 1:length(sentinels))
 {
-  cat(i,sentinels[i],"\n")
   x <- subset(cojo,uniprot_rsid==sentinels[i])
   snp <- with(x,SNP)
+  prot <- with(x,p.prot)
   uniprot <- with(x,uniprot)
   chr <- with(x,paste0("chr",Chr))
   pos <- with(x,bp)
@@ -70,5 +53,16 @@ for(i in 1:length(sentinels))
   if(nrow(blocks[[i]])==0) next
   snps <- blocks[[i]][["rsName"]]
 # print(blocks[[i]])
-  check(snps)
+  sentinel_and_snps <- c(snp,snps[grepl("^rs",snps)])
+  len <- length(sentinel_and_snps)
+  cat("No", i,"prot-uniprot-pQTL", paste0(prot,"-",sentinels[i]),"total SNPs=", len, "\n")
+  if(len >=2 & len <999)
+  {
+     r[[i]] <- LDlinkR::LDmatrix(snps=sentinel_and_snps,pop="EUR",r2d="r2",token=key)
+     r2 <- subset(r[[i]],RS_number==snp)
+     sel <- !is.na(r2) & r2>=0.8
+     cat(snp,"\n")
+     print(names(r2)[sel])
+     print(r2[sel])
+  }
 }
