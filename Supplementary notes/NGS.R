@@ -39,7 +39,6 @@ region <- merge(S1,S3) %>%
           filter(uniprot %in% cojo[["uniprot"]])
 key <- Sys.getenv("LDLINK_TOKEN")
 sentinels <- with(cojo,uniprot_rsid)
-with(region,table(rsName,Affected.Protein.Gene.name))
 blocks <- r <- list()
 for(i in 1:length(sentinels))
 {
@@ -51,12 +50,12 @@ for(i in 1:length(sentinels))
   pos <- with(x,bp)
   blocks[[i]] <- subset(region,UniProt==uniprot & Chrom==chr & Pos>=pos-1e6 & Pos<pos+1e6)
   if(nrow(blocks[[i]])==0) next
+  print(blocks[[i]])
   snps <- blocks[[i]][["rsName"]]
-# print(blocks[[i]])
   sentinel_and_snps <- c(snp,snps[grepl("^rs",snps)])
   len <- length(sentinel_and_snps)
-  cat("No", i,"prot-uniprot-pQTL", paste0(prot,"-",sentinels[i]),"total SNPs=", len, "\n")
-  if(len >=2 & len <999)
+  cat("No", i,"prot-uniprot-pQTL", paste0(prot,"-",sentinels[i]),"total SNPs =", len, "\n")
+  if(len >=2 & len <1000)
   {
      r[[i]] <- LDlinkR::LDmatrix(snps=sentinel_and_snps,pop="EUR",r2d="r2",token=key)
      r2 <- subset(r[[i]],RS_number==snp)
