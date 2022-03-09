@@ -41,7 +41,8 @@ key <- Sys.getenv("LDLINK_TOKEN")
 
 signals <- function(src="metal")
 {
-  if(src=="metal") sentinels <- with(metal,uniprot_rsid) else sentinels <- with(cojo,uniprot_rsid)
+  if (src=="metal") sentinels <- with(metal,uniprot_rsid)
+  else sentinels <- with(subset(cojo,!uniprot_rsid %in% with(metal,uniprot_rsid)),uniprot_rsid)
   blocks <- r <- list()
   for(i in 1:length(sentinels))
   {
