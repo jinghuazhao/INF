@@ -38,29 +38,46 @@ cojo <- merge(read.csv(file.path(INF,"sentinels","INF1.jma-rsid.cis.vs.trans.csv
 region <- merge(S1,S3) %>%
           filter(uniprot %in% cojo[["uniprot"]])
 key <- Sys.getenv("LDLINK_TOKEN")
-sentinels <- with(cojo,uniprot_rsid)
-blocks <- r <- list()
-for(i in 1:length(sentinels))
+
+signals <- function(src="metal")
 {
-  x <- subset(cojo,uniprot_rsid==sentinels[i])
-  snp <- with(x,SNP)
-  prot <- with(x,p.prot)
-  uniprot <- with(x,uniprot)
-  chr <- with(x,paste0("chr",Chr))
-  pos <- with(x,bp)
-  blocks[[i]] <- subset(region,UniProt==uniprot & Chrom==chr & Pos>=pos-1e6 & Pos<pos+1e6)
-  if(nrow(blocks[[i]])==0) next
-  snps <- blocks[[i]][["rsName"]]
-  sentinel_and_snps <- c(snp,snps[grepl("^rs",snps)])
-  len <- length(sentinel_and_snps)
-  cat("No", i,"prot-uniprot-pQTL", paste0(prot,"-",sentinels[i]),"chr =", chr, "pos =", pos, "total SNPs =", len, "\n")
-  print(subset(select(blocks[[i]],Chrom,Pos,uniprot,GeneName,panel,CisOrTrans,Log10.pval.gc.cor.unadj),10^-Log10.pval.gc.cor.unadj<=5e-8))
-  if(len >=2 & len <1000)
+  if(src=="metal") sentinels <- with(metal,uniprot_rsid) else sentinels <- with(cojo,uniprot_rsid)
+  blocks <- r <- list()
+  for(i in 1:length(sentinels))
   {
-     r[[i]] <- LDlinkR::LDmatrix(snps=sentinel_and_snps,pop="EUR",r2d="r2",token=key)
-     r2 <- subset(r[[i]],RS_number==snp)
-     sel <- !is.na(r2) & r2>=0.8
-     print(names(r2)[sel])
-     print(r2[sel])
+    if(src=="metal")
+    {
+      x <- subset(metal,uniprot_rsid==sentinels[i])
+      snp <- with(x,rsid)
+      prot <- with(x,prot)
+      uniprot <- with(x,uniprot)
+      chr <- with(x,paste0("chr",Chromosome))
+      pos <- with(x,Position)
+    } else {
+      x <- subset(cojo,uniprot_rsid==sentinels[i])
+      snp <- with(x,SNP)
+      prot <- with(x,p.prot)
+      uniprot <- with(x,uniprot)
+      chr <- with(x,paste0("chr",Chr))
+      pos <- with(x,bp)
+    }
+    blocks[[i]] <- subset(region,UniProt==uniprot & Chrom==chr & Pos>=pos-1e6 & Pos<pos+1e6)
+    if(nrow(blocks[[i]])==0) next
+    snps <- blocks[[i]][["rsName"]]
+    sentinel_and_snps <- c(snp,snps[grepl("^rs",snps)])
+    len <- length(sentinel_and_snps)
+    cat("No", i,"prot-uniprot-pQTL", paste0(prot,"-",sentinels[i]),"chr =", chr, "pos =", pos, "total SNPs =", len, "\n")
+    print(subset(select(blocks[[i]],Chrom,Pos,uniprot,GeneName,panel,CisOrTrans,Log10.pval.gc.cor.unadj),10^-Log10.pval.gc.cor.unadj<=5e-8))
+    if(len >=2 & len <1000)
+    {
+       r[[i]] <- LDlinkR::LDmatrix(snps=sentinel_and_snps,pop="EUR",r2d="r2",token=key)
+       r2 <- subset(r[[i]],RS_number==snp)
+       sel <- !is.na(r2) & r2>=0.8
+       print(names(r2)[sel])
+       print(r2[sel])
+    }
   }
 }
+
+signals("metal")
+signals("cojo")
