@@ -1,4 +1,4 @@
-#
+
 rds <- function(src="rds")
 {
   if (src=="rds")
@@ -82,3 +82,5 @@ signals <- function(src="metal")
 
 signals("metal")
 signals("cojo")
+
+# grep -e = -e - -e panel -v  ukb/NGS.txt | sed '/^$/d'
