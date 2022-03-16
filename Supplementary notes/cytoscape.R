@@ -39,11 +39,42 @@ graph <- network.make.graph(net,labels)
 g <- graph_from_graphnel(graph)
 plot(g)
 dev.off()
-nodes <- data.frame(id,label=labels[id])
-edges <- with(net,data.frame(from=node1,to=node2,label=paste0("r=",round(pcor,2))))
-network <- visNetwork(nodes,edges,width=1500,height=1250) %>%
-           visOptions(highlightNearest=TRUE, nodesIdSelection=TRUE)
-visSave(network,file=file.path(INF,"work","network.html"))
+title <- list(text="Gaussian graphical models of proteins",
+              style="font-family:Arial;color:black;font-size:30px;text-align:center;")
+nodes <- data.frame(id,label=labels[id],shape="box")
+edges <- with(net,data.frame(from=node1,to=node2,value=pcor*20))
+nodesId <- list(enabled = TRUE,
+                selected="36",
+                style='width: 200px; height: 26px;
+                       background: #f8f8f8;
+                       color: darkblue;
+                       border:none;
+                       outline:none;')
+network <- visNetwork(nodes,edges,width=1500,height=1250,main=title) %>%
+           visOptions(highlightNearest=TRUE,nodesIdSelection=nodesId) %>%
+           visInteraction(navigationButtons=TRUE) %>%
+           visIgraphLayout(type="full") %>%
+           visNodes(size=30)
+visSave(network,file=file.path(INF,"work","network.html"),selfcontained=TRUE)
+
+visData <- toVisNetworkData(g)
+nodes <- with(visData,nodes) %>%
+         mutate(shape="box")
+edges <- with(visData,edges) %>%
+         mutate(value=weight*30)
+nodesId <- list(enabled = TRUE,
+                selected="IL-12B",
+                style='width: 200px; height: 26px;
+                       background: #f8f8f8;
+                       color: darkblue;
+                       border:none;
+                       outline:none;')
+network <- visNetwork(nodes,edges,width=1500,height=1250,main=title) %>%
+           visOptions(highlightNearest=TRUE,nodesIdSelection=nodesId) %>%
+           visInteraction(navigationButtons=TRUE) %>%
+           visIgraphLayout(type="full") %>%
+           visNodes(size=30)
+visSave(network,file=file.path(INF,"work","visData.html"),selfcontained=TRUE)
 
 library(RCy3)
 cytoscapePing()
