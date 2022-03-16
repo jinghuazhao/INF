@@ -20,6 +20,31 @@ names(prot) <- unlist(lapply(strsplit(gsub("X4E","4E",names(prot)),"___"),"[",1)
 prot <- select(prot,INF_METAL[["prot"]])
 names(prot) <- target[names(prot),1]
 
+options(width=200)
+library(GeneNet)
+library(igraph)
+library(visNetwork)
+prot_sum <- apply(prot,2,sum)
+names(prot_sum)[is.na(prot_sum)]
+d <- prot[sort(names(prot))]
+p <- unclass(ggm.estimate.pcor(d))
+pdf(file.path(INF,"work","network.pdf"))
+tests <- network.test.edges(p)
+labels <- colnames(p)
+nnodes <- ncol(p)
+e <- extract.network(tests, cutoff.ggm=0.05/(nnodes*(nnodes-1)/2))
+id=sort(unique(c(e[["node1"]],e[["node2"]])))
+net <- mutate(e,label1=labels[node1],label2=labels[node2])
+graph <- network.make.graph(net,labels)
+g <- graph_from_graphnel(graph)
+plot(g)
+dev.off()
+nodes <- data.frame(id,label=labels[id])
+edges <- with(net,data.frame(from=node1,to=node2,label=paste0("r=",round(pcor,2))))
+network <- visNetwork(nodes,edges,width=1500,height=1250) %>%
+           visOptions(highlightNearest=TRUE, nodesIdSelection=TRUE)
+visSave(network,file=file.path(INF,"work","network.html"))
+
 library(RCy3)
 cytoscapePing()
 cytoscapeVersionInfo()
