@@ -61,8 +61,10 @@ visSave(network,file=file.path(INF,"work","network.html"),selfcontained=TRUE)
 visData <- toVisNetworkData(g)
 nodes <- with(visData,nodes) %>%
          mutate(shape="box")
+q4 <- with(with(visData,edges),quantile(weight))
+c4 <- with(with(visData,edges),cut(weight,q4))
 edges <- with(visData,edges) %>%
-         mutate(value=weight*30)
+         mutate(value=weight*30,color=c("#0000FF","#9999FF","#00FF00","#FF9999","#FF0000")[c4])
 nodesId <- list(enabled = TRUE,
                 selected="IL-12B",
                 style='width: 200px; height: 26px;
