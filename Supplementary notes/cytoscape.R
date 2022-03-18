@@ -24,8 +24,6 @@ options(width=200)
 library(GeneNet)
 library(igraph)
 library(visNetwork)
-prot_sum <- apply(prot,2,sum)
-names(prot_sum)[is.na(prot_sum)]
 d <- prot[sort(names(prot))]
 p <- unclass(ggm.estimate.pcor(d))
 pdf(file.path(INF,"work","network.pdf"))
@@ -42,7 +40,10 @@ dev.off()
 title <- list(text="Gaussian graphical models of proteins",
               style="font-family:Arial;color:black;font-size:30px;text-align:center;")
 nodes <- data.frame(id,label=labels[id],shape="box")
-edges <- with(net,data.frame(from=node1,to=node2,value=pcor*20))
+q4 <- with(net,quantile(pcor))
+c4 <- with(net,cut(pcor,q4))
+edges <- with(net,data.frame(from=node1,to=node2,value=30*pcor,
+                             color=c("#0000FF","#9999FF","#00FF00","#FF9999","#FF0000")[c4]))
 nodesId <- list(enabled = TRUE,
                 selected="36",
                 style='width: 200px; height: 26px;
