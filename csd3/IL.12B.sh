@@ -2,7 +2,6 @@
 
 Rscript -e '
   suppressMessages(library(dplyr))
-  suppressMessages(library(gap))
   INF <- Sys.getenv("INF")
   gz <- gzfile(file.path(INF,"METAL","IL.12B-1.tbl.gz"))
   IL.12B <- within(read.delim(gz,as.is=TRUE), {Z <- Effect/StdErr; P <- pvalue(Z); log10P <- -log10p(Z)}) %>%
@@ -17,22 +16,24 @@ Rscript -e '
                               "chr14:68760141_C_T",
                               "chr14:103230758_C_G"),
                       snp=c("rs11130215","rs9815073","rs10076557","rs3130510","rs3184504","rs76428106","rs12588969","rs1950897"),
+INF
                       gene=c("BHLHE40","LPP","IL12B","MHC","SH2B3;TRAFD1","FLT3","RAD51B","TARF3")
            )
   IL.12B <- left_join(IL.12B,genes,by=c("MarkerName"="snpid"),keep=TRUE) %>%
              mutate(MarkerName=ifelse(!is.na(snpid),gene,MarkerName)) %>%
              select(-c(chr,snp,snpid))
   save(IL.12B, genes, file=file.path(INF,"work","IL.12B.rda"))
-# load(file.path(INF,"work","IL.12B.rda"))
+  log10p <- gap::log10p
+  load(file.path(INF,"work","IL.12B.rda"))
   subset(IL.12B,!is.na(gene))
   png("IL.12B-mhtplot.trunc.png", res=300, units="in", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
   source(file.path(INF,"csd3","IL.12B-mhtplot.trunc.R"))
   mhtplot.trunc(IL.12B, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
-                cex.mtext=1.2, cex.text=0.7,
+                cex.mtext=1.2, cex.text=1.2,
                 annotatelog10P=-log10(5e-10), annotateTop = FALSE, highlight=with(genes,gene),
-                mtext.line=3, y.brk1=115, y.brk2=200, delta=0.01, cex.axis=1.2, cex=0.5, font=2, font.axis=1,
+                mtext.line=3, y.brk1=115, y.brk2=300, delta=0.01, cex.axis=1.5, cex=1.48, font=3, font.axis=1.5,
                 y.ax.space=20,
                 col = c("blue4", "skyblue")
   )
