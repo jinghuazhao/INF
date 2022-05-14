@@ -1,7 +1,6 @@
 fetch_region <- function()
 {
   suppressMessages(library(dplyr))
-  INF <- Sys.getenv("INF")
   chr <- 1
   start <- 159175353
   end <- 159525679
@@ -69,6 +68,7 @@ plot_region <- function(dat,g)
 
 g <- c("CCL2", "CCL7", "CCL8", "CCL11", "CCL13", "CXCL6")
 p <- c("MCP.1", "MCP.3", "MCP.2", "CCL11", "MCP.4", "CXCL6")
+INF <- Sys.getenv("INF")
 dat <- fetch_region()
 wide <- with(dat,wide)
 long <- with(dat,long) %>%
@@ -138,11 +138,11 @@ circos_plot <- function()
              bind_rows(t.genes)
    suppressMessages(library(circlize))
    png(file.path(INF,"hotspots","hotspot-rs12075.png"),res=300,width=10,height=10,units="in")
-   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
-   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06)
-   circos.genomicLabels(labels,labels.column = 4, side="inside")
-   circos.genomicLink(suggestive[c("chr","start","end")], suggestive[c("t.chr","t.start","t.end")], col="blue", directional=1, border = 10, lwd = 2)
    circos.clear()
+   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
+   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06, labels.cex=1.2, chromosome.index=paste0("chr",1:22))
+   circos.genomicLabels(labels,labels.column=4, cex=1.8, side="inside")
+   circos.genomicLink(suggestive[c("chr","start","end")], suggestive[c("t.chr","t.start","t.end")], col="blue", directional=1, border = 10, lwd = 2)
    dev.off()
 }
 

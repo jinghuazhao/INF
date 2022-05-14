@@ -48,7 +48,6 @@ function turboman()
 
 Rscript -e '
   suppressMessages(library(dplyr))
-  suppressMessages(library(gap))
   INF <- Sys.getenv("INF")
   gz <- gzfile(file.path(INF,"METAL","TRAIL-1.tbl.gz"))
   TRAIL <- within(read.delim(gz,as.is=TRUE), {Z <- Effect/StdErr; P <- pvalue(Z); log10P <- -log10p(Z)}) %>%
@@ -66,14 +65,15 @@ Rscript -e '
   save(TRAIL, genes, file=file.path(INF,"work","TRAIL.rda"))
   load(file.path(INF,"work","TRAIL.rda"))
   subset(TRAIL,!is.na(gene))
+  log10p <- gap::log10p
   png("TRAIL-mhtplot.trunc.png", res=300, units="in", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
-# source(file.path(INF,"csd3","IL.12B-mhtplot.trunc.R"))
+  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc.R"))
   mhtplot.trunc(TRAIL, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
-                cex.mtext=1.2, cex.text=0.7,
+                cex.mtext=1.2, cex.text=1.2,
                 annotatelog10P=-log10(5e-10), annotateTop = FALSE, highlight=with(genes,gene),
-                mtext.line=3, y.brk1=60, y.brk2=80, delta=0.01, cex.axis=1.2, cex.y=1.2, cex=0.5, font=2, font.axis=1,
+                mtext.line=3, y.brk1=30, y.brk2=70, delta=0.01, cex.axis=1.5, cex.x=2, cex=0.8, font=3, font.axis=1.5,
                 y.ax.space=20,
                 col = c("blue4", "skyblue")
   )

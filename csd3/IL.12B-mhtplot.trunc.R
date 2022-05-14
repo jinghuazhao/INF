@@ -24,7 +24,7 @@
 #' @param y.ax.space interval of ticks of the y axis.
 #' @param y.brk1 lower -log10(P) break point.
 #' @param y.brk2 upper -log10(P) break point.
-#' @param cex.axis extension factor for y-axis.
+#' @param cex.axis extension factor for the x and y axis.
 #' @param delta a value to enable column(s) of red points.
 #' @param ... other options.
 #' @return The plot is shown on or saved to the appropriate device.
@@ -150,7 +150,7 @@ mhtplot.trunc <- function (x, chr = "CHR", bp = "BP", p = NULL, log10p = NULL, z
     }
     else warning("If you're trying to specify chromosome labels, chrlabs must be a character vector")
   }
-  if (nchr == 1) axis(1, ...) else axis(1, at = ticks, labels = labs)
+  if (nchr == 1) axis(1, cex.axis=cex.axis, ...) else axis(1, at = ticks, labels = labs, cex.axis=cex.axis)
   col <- rep(col, max(with(d,CHR)))
   if (nchr == 1) with(d, points(pos, log10P, pch = 20, col = col[1], ...))
   else {
@@ -175,13 +175,23 @@ mhtplot.trunc <- function (x, chr = "CHR", bp = "BP", p = NULL, log10p = NULL, z
     if (!annotateTop) {
       toHighlight <- subset(topHits,SNP %in% highlight)
       toLift1 <- c("SH2B3;TRAFD1")
-      toLift2 <- c("TARF3","FLT3","RAD51B")
-      part1 <- subset(toHighlight, ! SNP %in% c(toLift1,toLift2))
+      toLift2 <- c("TARF3")
+      toLift3 <- c("MHC","RAD51B")
+      toLift4 <- c("FLT3")
+      part1 <- subset(toHighlight, ! SNP %in% c(toLift1,toLift2,toLift3,toLift4,"IL12B","PLAUR"))
       part2 <- subset(toHighlight, SNP %in% toLift1)
       part3 <- subset(toHighlight, SNP %in% toLift2)
+      part4 <- subset(toHighlight, SNP %in% toLift3)
+      part5 <- subset(toHighlight, SNP %in% toLift4)
+      part6 <- subset(toHighlight, SNP %in% "IL12B")
+      part7 <- subset(toHighlight, SNP %in% "PLAUR")
       with(part1, calibrate::textxy(pos, log10P, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-      with(part2, calibrate::textxy(pos, log10P+20, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-      with(part3, calibrate::textxy(pos, log10P+10, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
+      with(part2, calibrate::textxy(pos, log10P+30, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
+      with(part3, calibrate::textxy(pos, log10P+20, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
+      with(part4, calibrate::textxy(pos+1000000, log10P+15, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
+      with(part5, calibrate::textxy(pos+150000, log10P, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
+      with(part6, calibrate::textxy(pos, log10P-15, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
+      with(part7, calibrate::textxy(pos, log10P-15, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
     }
     else {
       topHits <- topHits[order(with(topHits,log10P)), ]
