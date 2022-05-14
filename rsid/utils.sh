@@ -454,3 +454,16 @@ function googlesheet()
     gs_new(title = "IRIS Dataset", ws_title = "first_sheet", input = iris)
   '
 }
+
+function f2()
+# Figure 2 for the Google document
+{
+  convert Figure\ 2a.png -resize 280% 2a.png
+  convert hotspot-rs12075.png -resize 60% 2b.png
+  convert IL.12B-mhtplot.trunc.png -resize 70% 2c.png
+  convert TRAIL-mhtplot.trunc.png -resize 70% 2d.png
+  convert +append 2a.png 2b.png f2-1.png
+  convert +append 2c.png 2d.png f2-2.png
+  convert -append f2-1.png f2-2.png f2.png
+  rm 2a.png 2b.png 2c.png 2d.png f2-1.png f2-2.png
+}
