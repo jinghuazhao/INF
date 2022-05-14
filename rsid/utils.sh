@@ -61,14 +61,15 @@ R --no-save -q <<END
   dev.off()
 END
 
-R --no-save -q <<END
+Rscript -e '
   cvt <- read.table("work/INF1.merge.out",as.is=TRUE,header=TRUE,nrows=70)
   H <- with(cvt,table(total))
   M <- names(H)
-  png(file = "work/signals_by_protein.png",width=6,height=5,units="cm",pointsize=4,res=300)
-  barplot(H,names.arg=M,xlab="No. of pQTL regions",ylab="No. of proteins",ylim=c(0,25),col="darkgrey",border="black")
+  png(file = "work/signals_by_protein.png",width=7,height=5,units="in",res=300)
+  barplot(H,names.arg=M,xlab="No. of pQTL regions",ylab="No. of proteins",
+          ylim=c(0,25),col="darkgrey",border="black",cex=0.8,cex.axis=1.5,cex.names=1.5)
   dev.off()
-END
+'
 
 # twas_fusion coloc results
 function get_fusion()
@@ -458,10 +459,10 @@ function googlesheet()
 function f2()
 # Figure 2 for the Google document
 {
-  convert Figure\ 2a.png -resize 280% 2a.png
+  convert signals_by_protein.png -resize 110% 2a.png
   convert hotspot-rs12075.png -resize 60% 2b.png
-  convert IL.12B-mhtplot.trunc.png -resize 70% 2c.png
-  convert TRAIL-mhtplot.trunc.png -resize 70% 2d.png
+  convert IL.12B-mhtplot.trunc.png -resize 80% 2c.png
+  convert TRAIL-mhtplot.trunc.png -resize 80% 2d.png
   convert +append 2a.png 2b.png f2-1.png
   convert +append 2c.png 2d.png f2-2.png
   convert -append f2-1.png f2-2.png f2.png
