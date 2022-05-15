@@ -40,15 +40,20 @@ isp <- rbind(interval,scallop,pve)
 p <- ggplot(isp,aes(y = x, x = h2))+
      theme_bw()+
      theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-           axis.line = element_line(colour = "black"), axis.ticks.length=unit(.1, "cm"),
-           axis.text.y = element_text(color=if_else(isp$MissDataProp>=80, "red", "black"), size=7))+
+           axis.line = element_line(colour = "black"),
+           axis.ticks.length=unit(.1, "cm"),
+           axis.title = element_text(size=18),
+           axis.text.x = element_text(size=16),
+           axis.text.y = element_text(color=if_else(isp$MissDataProp>=80, "red", "black"), size=12),
+           strip.text = element_text(face="bold",size=18)
+          )+
      facet_wrap(~source,ncol=3,scales="free_x")+
      geom_segment(aes(x = h2-1.96*h2se, xend = h2+1.96*h2se, yend = x, colour=source), show.legend=FALSE)+
      geom_vline(lty=2, aes(xintercept=0), colour = "red")+
      scale_y_continuous(breaks=isp$x,labels=isp$target.short,position="left")+
-     geom_point()+
+     geom_point(size=2)+
      xlab("Heritability/PVE")+
-     ylab("")
+     ylab("Protein")
 ggsave(p,filename=file.path(INF,"h2","h2-pve-ggplot2.png"),device="png",dpi = 300, units="in", width=12, height=20)
 
 test <- function()
