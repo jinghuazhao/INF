@@ -383,11 +383,10 @@ function pdf()
 function pdf_test()
 {
 # OCR/resolution is poor (though layout is nice) with the following:
-  qpdf fp-lz.pdf --pages . 1-1 -- 1.pdf
-  qpdf fp-lz.pdf --pages . 2-2 -- 2.pdf
+  qpdf fp-lz.pdf --pages . 1 -- 1.pdf
+  qpdf fp-lz.pdf --pages . 2 -- 2.pdf
   convert 1.pdf 2.pdf -density 300 +append 12.pdf
   rm 1.pdf 2.pdf
-  convert $(ls work/*pdf) -density 300 -append qq_manhattan.pdf
 # The .tiff format is possible with the tiff64 tag but too large
   qpdf --empty -collate --pages fp.pdf lz.pdf -- fp+lz.pdf
 # forest/locuszoom side-by-side format, OCR via PDF-viewer and compressed by Adobe
@@ -418,6 +417,10 @@ function pdf_test()
     rm work/{}.jp2
   '
   qpdf --empty --pages $(ls work/*.pdf) -- qq+manhattan.pdf
+# Not working very well
+# see https://legacy.imagemagick.org/Usage/layers/
+  convert $(paste -d ' ' <(ls *qq*) <(ls *manhattan*) | xargs -l -I {} echo '\(' {} +append '\)' '\')
+          -append qq_manhattan.pdf
 # convert qq_manhattan.pdf -density 300 tiff64:qq+manhattan.tiff
 # locuszoom plots for 91 cis-regions are possible with pdfunite but got complaints from qpdf
 # pdfunite *.pdf ~/lz.pdf
@@ -467,4 +470,32 @@ function f2()
   convert +append 2c.png 2d.png f2-2.png
   convert -append f2-1.png f2-2.png f2.png
   rm 2a.png 2b.png 2c.png 2d.png f2-1.png f2-2.png
+}
+
+function pdf_final()
+# Rework
+{
+  cd ${INF}/METAL/qqmanhattanlz
+# qpdf --empty --pages $(ls *_rs*.pdf) -- lz2.pdf
+  qpdf --empty --pages $(ls *_rs*.pdf | \
+                         xargs -l basename -s .pdf | \
+                         join - <(awk 'NR>1{print $3"_"$2,$1}' ${INF}/work/INF1.METAL | sort -k1,1) | \
+                         sed 's/_/ /' | \
+                         sort -k1,1 -k3,3 | \
+                         awk '{print $1"_"$2".pdf"}') -- lz2.pdf
+  qpdf -show-npages lz2.pdf
+  qpdf --pages . 1-360:odd -- lz2.pdf lz.pdf
+  rm lz2.pdf
+  pdfseparate ${INF}/ds/latest/fp.pdf temp-%04d-fp.pdf
+  pdfseparate lz.pdf temp-%04d-lz.pdf
+# Combine the final pdf
+  pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile fp+lz.pdf
+  rm temp*pdf
+  ls *_qq.png | xargs -l basename -s _qq.png | \
+  parallel -C' ' 'convert -resize 150% {}_qq.png {}_qq.pdf;convert {}_manhattan.png {}_manhattan.pdf'
+  qpdf --empty --pages $(ls *_qq.pdf) -- qq.pdf
+  qpdf --empty --pages $(ls *_manhattan.pdf) -- manhattan.pdf
+  pdfseparate qq.pdf temp-%04d-qq.pdf
+  pdfseparate manhattan.pdf temp-%04d-manhattan.pdf
+  pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile qq-manhattan.pdf
 }
