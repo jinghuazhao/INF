@@ -171,21 +171,19 @@ hgi_pqtlmr <- read.delim(file.path(INF,"HGI","pqtlMR.txt"))
 pqtls <- select(pqtls,-prots)
 
 outsheets <- c("summary","studies","inf1",
-               "pqtls","cojo","coloc","pqtldisease",
-               "vep","magma",
-               "gsmr_efo","hgi_gsmr","hgi_pqtlmr","drug",
-               "knownpqtls","eQTLGen","eQTLGen_coloc","eQTLCatalogue","reactome","great","garfield","efo","gdb",
-               "interval","os","cvd1","fenland","decode","aric","ages","ngs","aristotl","pqtlstudies",
+               "pqtls","aristotl","cojo","eQTLGen_coloc","eQTLCatalogue","coloc","pqtldisease","gsmr_efo","drug","garfield",
+               "pqtl_impact","vep","magma","hgi_gsmr","hgi_pqtlmr",
+	       "knownpqtls","eQTLGen","reactome","great","efo","gdb",
+               "interval","os","cvd1","fenland","decode","aric","ages","ngs","pqtlstudies",
                "great3","mr_immun","smr","cis_mr","mr_misc",
-               "protein_correlation", "protein_dgi", "pqtl_impact")
+               "protein_correlation", "protein_dgi")
 titles <- c("summary","study information","panel information",
-            "pQTLs","conditional analysis","GTEx coloc","Disease GWAS overlap",
-            "VEP annotation","MAGMA outputs",
-            "GSMR results","HGI-GSMR r6","HGI-pQTLMR","PI drug",
-            "known pQTLs","eQTLGen","eQTLGen_coloc","eQTL-Catalogue_coloc","Reactome","GREAT","GARFIELD outputs","EFO","geneDrugbank",
-            "INTERVAL study","Other studies","SCALLOP-CVD1","Fenland study","deCODE study","ARIC study","AGES study","UKB47k","ARISTOTLE study","previous pQTL studies",
+            "pQTLs","ARISTOTLE study","conditional analysis","eQTLGen_coloc","eQTL-Catalogue_coloc","GTEx coloc","Disease GWAS overlap","GSMR results","PI drug","GARFIELD outputs",
+            "pQTL impact","VEP annotation","MAGMA outputs","HGI-GSMR r6","HGI-pQTLMR",
+            "known pQTLs","eQTLGen","Reactome","GREAT","EFO","geneDrugbank",
+            "INTERVAL study","Other studies","SCALLOP-CVD1","Fenland study","deCODE study","ARIC study","AGES study","UKB47k","previous pQTL studies",
             "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","cis-MR results","pQTL-misc-MR",
-            "Protein correlation","DGI membership", "pQTL impact")
+            "Protein correlation","DGI membership")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
@@ -196,7 +194,7 @@ prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
           )
 summary <- data.frame(Sheetnames=prefix,Description=description)
-xlsx <- file.path(INF,"NG","SCALLOP-INF-ST.xlsx")
+xlsx <- file.path(INF,"NG","Supplementary Tables.xlsx")
 wb <- createWorkbook(xlsx)
 for (i in 1:length(outsheets))
 {
