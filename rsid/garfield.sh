@@ -44,7 +44,7 @@ function cis_snps()
 (
   cat ${INF}/work/INF1.merge-cis.genes | \
   parallel -j5 --env INF -C' ' '
-    zcat ${INF}/METAL/{1}-1.tbl.gz | awk -vM=1e6 "\$1=={3} && \$2>={4}-M && \$2 <{5}+M && \$12<-5"'
+    zcat ${INF}/METAL/{1}-1.tbl.gz | awk -vM=1e6 "\$1=={3} && \$2>={4}-M && \$2 <{5}+M && \$12<-1.30103"'
 ) | sort -k1,1n -k2,2n > ${INF}/garfield/garfield.dat
 }
 
