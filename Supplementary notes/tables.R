@@ -6,9 +6,17 @@ url <- file.path(INF,"work","INF1.latest.xlsx")
 read.sheet <- function(sheet,cols,rows) read.xlsx(url,sheet=sheet,colNames=TRUE,cols=cols,rows=rows,skipEmptyRows=TRUE)
 suppressMessages(library(dplyr))
 require(stringr)
-gap_inf1 <- gap.datasets::inf1[c("uniprot", "prot", "target.short")]
+gap_inf1 <- gap.datasets::inf1[c("uniprot", "prot", "target.short")] %>%
+            mutate(target.short=gsub("MCP-1","CCL2",target.short)) %>%
+            mutate(target.short=gsub("MCP-2","CCL8",target.short)) %>%
+            mutate(target.short=gsub("MCP-3","CCL7",target.short)) %>%
+            mutate(target.short=gsub("MCP-4","CCL13",target.short))
  summary <- read.sheet("Summary", 1:2, 2:36)
     inf1 <- subset(read.sheet("INF1", 1:12, 2:94),uniprot!="P23560") %>% select(-panel); names(inf1)[2] <- "Protein"
+    inf1 <- mutate(inf1,Protein=gsub("MCP-1","CCL2",Protein)) %>%
+            mutate(Protein=gsub("MCP-2","CCL8",Protein)) %>%
+            mutate(Protein=gsub("MCP-3","CCL7",Protein)) %>%
+            mutate(Protein=gsub("MCP-4","CCL13",Protein))
  studies <- read.sheet("Studies", 1:3, 2:15)
    pqtls <- merge(read.sheet("pQTLs", 1:21, 2:182),gap_inf1[c("prot","target.short")],by="prot")
 interval <- merge(within(read.sheet("INTERVAL", 1:12, 2:29),{Protein <- gsub(" ", "", Protein)}),
@@ -50,7 +58,7 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
                   mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
                   rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
 reactome <- read.sheet("Reactome", 1:19, 2:589)
-garfield <- read.table(file.path(INF,"garfield-data","output","INF1","garfield.test.INF1.out"),header=TRUE) %>%
+garfield <- read.table(file.path(INF,"garfield-data","output","INF1-cis","garfield.test.INF1.out"),header=TRUE) %>%
             select(ID,PThresh,Pvalue,Annotation,Celltype,Tissue,Type,Category,OR,Beta,SE,CI95_lower,CI95_upper,NAnnotThesh,NAnnot,NThresh,N,linkID)
    magma <- read.delim(file.path(INF,"work","All.dat"))
   fusion <- read.sheet("FUSION", 1:26, 2:117)
@@ -64,17 +72,21 @@ garfield <- read.table(file.path(INF,"garfield-data","output","INF1","garfield.t
     gsmr <- merge(d, gap_inf1[c("prot","target.short")],by.x="Exposure1",by.y="prot") %>%
             mutate(Exposure1=target.short,Exposure2=target.short) %>% rename(Protein1=Exposure1,Protein2=Exposure2) %>%
             select(-target.short)
-    gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","out","5e-8","gsmr-efo.txt"))
-    crp <- read.sheet("CRP", 1:15, 2:30)
-    gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
-    at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
-    at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2"); #names(at2) <- replace(names(at2),grepl("^[X]",names(at2)),"")
-    at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
+   gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","out","5e-8","gsmr-efo.txt")) %>%
+            mutate(protein=gsub("MCP-1","CCL2",protein)) %>%
+            mutate(protein=gsub("MCP-2","CCL8",protein)) %>%
+            mutate(protein=gsub("MCP-3","CCL7",protein)) %>%
+            mutate(protein=gsub("MCP-4","CCL13",protein))
+     crp <- read.sheet("CRP", 1:15, 2:30)
+     gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
+     at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
+     at2 <- readWorkbook(xlsxFile=url,sheet="Annotrans2"); #names(at2) <- replace(names(at2),grepl("^[X]",names(at2)),"")
+     at3 <- readWorkbook(xlsxFile=url,sheet="Annotrans3"); #names(at3) <- replace(names(at3),grepl("^[X]",names(at3)),"")
 
-great3 <- read.delim(file.path(INF,"GREAT","IL12B-KITLG-TNFSF10.tsv")) %>%
-          mutate(fdr=p.adjust(BinomP,method="fdr")) %>% arrange(fdr)
-great <- read.delim(file.path(INF,"GREAT","cistrans.tsv")) %>%
-          mutate(fdr=p.adjust(BinomP,method="fdr")) %>% arrange(fdr)
+  great3 <- read.delim(file.path(INF,"GREAT","IL12B-KITLG-TNFSF10.tsv")) %>%
+            mutate(fdr=p.adjust(BinomP,method="fdr")) %>% arrange(fdr)
+   great <- read.delim(file.path(INF,"GREAT","cistrans.tsv")) %>%
+            mutate(fdr=p.adjust(BinomP,method="fdr")) %>% arrange(fdr)
 
 read_table <- function(f, exprs="pval <= 0.05/nrow(t)")
 {
@@ -135,7 +147,11 @@ print(head(fenland))
 print(head(decode))
 print(head(aric))
 names(interval)[5] <- names(os)[5] <- names(cvd1)[5] <- names(fenland)[5] <- names(decode)[5] <- names(aric)[5] <- names(ages)[5] <- "cis/trans"
-knownpqtls_dup <- bind_rows(interval,os,cvd1,fenland,decode,aric,ages,ngs)
+knownpqtls_dup <- bind_rows(interval,os,cvd1,fenland,decode,aric,ages,ngs) %>%
+                  mutate(Protein=gsub("MCP-1","CCL2",Protein)) %>%
+                  mutate(Protein=gsub("MCP-2","CCL8",Protein)) %>%
+                  mutate(Protein=gsub("MCP-3","CCL7",Protein)) %>%
+                  mutate(Protein=gsub("MCP-4","CCL13",Protein))
 knownpqtls <- distinct(knownpqtls_dup[c("Sentinels","SNPid","UniProt","Protein")]) %>% arrange(Protein,SNPid)
 pqtlstudies <- unique(knownpqtls_dup[c("Source","PMID")]) %>% arrange(PMID)
 rownames(pqtlstudies) <- seq(nrow(pqtlstudies))
@@ -193,15 +209,22 @@ prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(
             paste0("ST",1:n1),
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
           )
-summary <- data.frame(Sheetnames=prefix,Description=description)
+summary <- data.frame(Sheetnames=prefix,Description=description)[1:(n0+n1),]
+summary2 <- data.frame(Sheetnames=prefix,Description=description)[-(1:(n0+n1)),]
 xlsx <- file.path(INF,"NG","Supplementary Tables.xlsx")
 wb <- createWorkbook(xlsx)
+xlsx2 <- file.path(INF,"NG","Additional Tables.xlsx")
+wb2 <- createWorkbook(xlsx2)
+addWorksheet(wb2,"Summary",zoom=150)
+writeData(wb2,"Summary","Summary",xy=c(1,1),headerStyle=createStyle(textDecoration="BOLD",
+          fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
+writeDataTable(wb2, "Summary", summary2, xy=c(1,2), headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
 for (i in 1:length(outsheets))
 {
-  sheetnames <- with(summary[i,], ifelse(i<=n0|i>n0+n1, Description, paste0(Sheetnames,"-",Description)))
-  cat(sheetnames,"\n")
-# if (i<=n0+n1 | i>n0+n1+3)
-# {
+  if (i<=n0+n1)
+  {
+    sheetnames <- with(summary[i,], ifelse(i<=n0|i>n0+n1, Description, paste0(Sheetnames,"-",Description)))
+    cat(sheetnames,"\n")
     addWorksheet(wb, sheetnames, zoom=150)
     writeData(wb, sheetnames, sheetnames, xy=c(1,1),
                   headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
@@ -212,13 +235,19 @@ for (i in 1:length(outsheets))
   # width_vec_header <- nchar(colnames(body))+2
     setColWidths(wb, sheetnames, cols = 1:ncol(body), widths = width_vec)
     writeData(wb, sheetnames, tail(body,1), xy=c(1, nrow(body)+2), colNames=FALSE, borders="rows", borderStyle="thick")
-# } else {
-#   sheet <- paste0("Annotrans-",i-n0-n1)
-#   addWorksheet(wb,sheet,gridLines=FALSE)
-#   writeData(wb,sheet,paste0("Trans-pQTL annotation-",i-n0-n1), xy=c(1,1),
-#             headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
-#   writeDataTable(wb,sheet, get(paste0("at",i-n0-n1)), xy=c(1,2), firstColumn=TRUE, bandedRows=FALSE)
-# }
+  } else {
+    sheetnames <- with(summary2[i-n0-n1,], ifelse(i<=n0|i>n0+n1, Description, paste0(Sheetnames,"-",Description)))
+    cat(sheetnames,"\n")
+    addWorksheet(wb2, sheetnames, zoom=150)
+    writeData(wb2, sheetnames, sheetnames, xy=c(1,1),
+                  headerStyle=createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
+    body <- get(outsheets[i])
+    writeDataTable(wb2, sheetnames, body, xy=c(1,2), headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
+    freezePane(wb2, sheetnames, firstCol=TRUE, firstActiveRow=3)
+    width_vec <- apply(body, 2, function(x) max(nchar(as.character(x))+2, na.rm=TRUE))
+    setColWidths(wb2, sheetnames, cols = 1:ncol(body), widths = width_vec)
+    writeData(wb2, sheetnames, tail(body,1), xy=c(1, nrow(body)+2), colNames=FALSE, borders="rows", borderStyle="thick")
+ }
 }
 sheets_wb <- sheets(wb)
 data.frame(sheets_wb)
@@ -234,6 +263,7 @@ hStyle <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
 #conditionalFormatting(wb, sheets_wb[grepl("misc-MR",sheets_wb)], cols = 7, rows = 3:nrow(mr_misc), rule = "==\"x\"", style = hStyle)
 
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
+saveWorkbook(wb2, file=xlsx2, overwrite=TRUE)
 
 # mr_immun <- read.sheet("pqtlMR-immune", 1:7, 2:67)
 #  mr_misc <- read.sheet("pqtlMR-misc", 1:7, 2:39)

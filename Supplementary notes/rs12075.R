@@ -42,7 +42,7 @@ fetch_region <- function()
   list(wide=wide,long=long)
 }
 
-plot_region <- function(dat,g)
+plot_region <- function(dat)
 {
   suppressMessages(library(ggplot2))
   p <- ggplot(dat, aes(pos,-log10p)) +
