@@ -38,6 +38,7 @@ interval <- merge(within(read.sheet("INTERVAL", 1:12, 2:29),{Protein <- gsub(" "
             mutate(r2=as.character(r2),p=as.character(p),PMID=as.character(PMID),Comment=as.character(Comment))
 aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","target.short")], by.x="Protein", by.y="prot") %>%
             mutate(Protein=target.short) %>% select(-target.short)
+ ukb_ppp <- read.delim(file.path(INF,"work","UKB-PPP.txt"))
     cojo <- merge(read.sheet("cojo", 1:19, 2:229),gap_inf1[c("prot","target.short")],by="prot") %>%
             mutate(prot=target.short) %>% rename(Protein=prot) %>% select(-target.short)
    h2pve <- read.csv(file.path(INF,"ldak","h2-ldak-pve.csv"))
@@ -190,14 +191,14 @@ outsheets <- c("summary","studies","inf1",
                "pqtls","aristotl","cojo","eQTLGen_coloc","eQTLCatalogue","coloc","pqtldisease","gsmr_efo","drug","garfield",
                "pqtl_impact","vep","magma","hgi_gsmr","hgi_pqtlmr",
 	       "knownpqtls","eQTLGen","reactome","great","efo","gdb",
-               "interval","os","cvd1","fenland","decode","aric","ages","ngs","pqtlstudies",
+               "interval","os","cvd1","fenland","decode","aric","ages","ukb_ppp","ngs","pqtlstudies",
                "great3","mr_immun","smr","cis_mr","mr_misc",
                "protein_correlation", "protein_dgi")
 titles <- c("summary","study information","panel information",
             "pQTLs","ARISTOTLE study","conditional analysis","eQTLGen_coloc","eQTL-Catalogue_coloc","GTEx coloc","Disease GWAS overlap","GSMR results","PI drug","GARFIELD outputs",
             "pQTL impact","VEP annotation","MAGMA outputs","HGI-GSMR r6","HGI-pQTLMR",
             "known pQTLs","eQTLGen","Reactome","GREAT","EFO","geneDrugbank",
-            "INTERVAL study","Other studies","SCALLOP-CVD1","Fenland study","deCODE study","ARIC study","AGES study","UKB47k","previous pQTL studies",
+            "INTERVAL study","Other studies","SCALLOP-CVD1","Fenland study","deCODE study","ARIC study","AGES study","UKB-PPP","UKB47k","previous pQTL studies",
             "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","cis-MR results","pQTL-misc-MR",
             "Protein correlation","DGI membership")
 description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))
@@ -284,8 +285,14 @@ novel_data <- subset(within(pqtls,{
               left_join(annotate[c("uniprot","prot","p.gene","gene","MarkerName")]) %>%
               rename(cis=cis.trans,g.target=p.gene,g.pQTL=gene) %>%
               arrange(Chromosome,Position)
-novelpqtls <- select(novel_data,Protein,chrpos,rsid,a1a2,bse,log10p,cis,g.target,g.pQTL,uniprot)
 save(novel_data,file=file.path(INF,"work","novel_data.rda"))
+prot_rsid <- with(novel_data,paste0(prot,"-",rsid))
+prot_rsid_repl <- with(ukb_ppp,paste0(SCALLOP.prot,"-",SCALLOP.rsid))
+left <- setdiff(prot_rsid,prot_rsid_repl)
+novel_data <- mutate(novel_data,prot_rsid=paste0(prot,"-",rsid)) %>%
+              filter(prot_rsid %in% left) %>%
+              select(-prot_rsid)
+novelpqtls <- select(novel_data,Protein,chrpos,rsid,a1a2,bse,log10p,cis,g.target,g.pQTL,uniprot)
 f <- file.path(INF,"NG","trans-pQTL_annotation.xlsx")
 transpqtls <- read.xlsx(f,sheet=1,startRow = 6,colNames=FALSE,cols=c(1:3,14),skipEmptyRows=TRUE) %>%
               rename(Sentinel=X2,Encoding.gene=X3,causal.gene=X4) %>%
