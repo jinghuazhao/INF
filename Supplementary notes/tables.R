@@ -289,9 +289,12 @@ save(novel_data,file=file.path(INF,"work","novel_data.rda"))
 prot_rsid <- with(novel_data,paste0(prot,"-",rsid))
 prot_rsid_repl <- with(ukb_ppp,paste0(SCALLOP.prot,"-",SCALLOP.rsid))
 left <- setdiff(prot_rsid,prot_rsid_repl)
-novel_data <- mutate(novel_data,prot_rsid=paste0(prot,"-",rsid)) %>%
-              filter(prot_rsid %in% left) %>%
-              select(-prot_rsid)
+if (FALSE)
+{
+  novel_data <- mutate(novel_data,prot_rsid=paste0(prot,"-",rsid)) %>%
+                filter(prot_rsid %in% left) %>%
+                select(-prot_rsid)
+}
 novelpqtls <- select(novel_data,Protein,chrpos,rsid,a1a2,bse,log10p,cis,g.target,g.pQTL,uniprot)
 f <- file.path(INF,"NG","trans-pQTL_annotation.xlsx")
 transpqtls <- read.xlsx(f,sheet=1,startRow = 6,colNames=FALSE,cols=c(1:3,14),skipEmptyRows=TRUE) %>%
