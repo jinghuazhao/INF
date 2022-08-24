@@ -11,7 +11,7 @@ export prot=IL.18
 gunzip -c METAL/${prot}-1.tbl.gz | \
 awk -vOFS="\t" -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} '
 {
-  if ($1 == chr && $2 >= start-M && $2 <= end+M) 
+  if ($1 == chr && $2 >= start-M && $2 <= end+M)
   {
     split($3,a,"_")
     print a[1],$1,$2,$10/$11,$3,toupper($4),toupper($5)
@@ -22,7 +22,8 @@ join -12 -21 work/snp_pos - | \
 awk -vOFS="\t" '{print $2, $3, $4, $5, $6, $7, $8}' > work/${prot}-pQTL.lz
 
 # eQTLGen
-zgrep -w ${gene} data/eQTLGen/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
+# zgrep -w ${gene} data/eQTLGen/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
+zgrep -w ${gene} ~/rds/public_databases/eQTLGen/2019-12-11-cis-eQTLsFDR-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz | \
 awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
 {
   if ($5<$6) snpid="chr" $3 ":" $4 "_" $5 "_" $6;
