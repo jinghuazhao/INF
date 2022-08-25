@@ -12,7 +12,7 @@ function setup()
 
   for type in cis trans pan
   do
-    if [ ! -d ${INF}/mr/${type} ]; then mkdir -p ${INF}/mr/${type}; fi 
+    if [ ! -d ${INF}/mr/${type} ]; then mkdir -p ${INF}/mr/${type}; fi
     export suffix=${type};
     export lp=-7.30103
     cut -f3 ${INF}/work/INF1.METAL | sed '1d' | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
@@ -49,9 +49,9 @@ function setup()
 function mr()
 {
   parallel --env INF -C' ' '
-    export MRBASEID={1}; 
-    export prot={2}; 
-    export type={3}; 
+    export MRBASEID={1};
+    export prot={2};
+    export type={3};
     export prefix={1}-{2}-{3};
     export suffix=${type};
     echo ${prefix}
@@ -336,8 +336,8 @@ R --no-save -q <<END
            mutate(outcome=paste0(trait),
                   exposure=protein,
                   z=bxy/se,
-                  group=as.numeric(cut(z,breaks=quantile(z,seq(0,1,0.333))))) %>%
-           select(exposure,outcome,z,se,p,nsnp,fdr,group)
+                  group=as.numeric(cut(z,breaks=quantile(z,seq(0,1,0.3333))))) %>%
+           select(exposure,outcome,z,bxy,se,p,nsnp,fdr,group)
    exposure <- unique(with(gsmr,exposure))
    outcome <- unique(with(gsmr,outcome))
    n <- length(exposure)
@@ -355,10 +355,30 @@ R --no-save -q <<END
    }
    options(width=200)
    subset(gsmr,fdr<=0.05)
+   rm(exposure,outcome)
+   requireNamespace("rmeta")
+   tnfb <- filter(gsmr,exposure=="TNFB" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
+   attach(tnfb)
+   pdf(file.path(INF,"mr","gsmr","out","TNFB.pdf"),height=8,width=14)
+   rmeta::metaplot(Effect,StdErr,
+                   labels=outcome,
+                   xlab="Effect size",ylab="",xlim=c(-1.5,1),cex=2,
+                   summlabel="",summn=NA,sumse=NA,sumn=NA,lwd=2,boxsize=0.6,
+                   colors=rmeta::meta.colors(box="red",lines="blue", zero="black", summary="red", text="black"))
+   requireNamespace("meta")
+   mg <- meta::metagen(Effect,StdErr,sprintf("%s",outcome),title="TNFB")
+   meta::forest(mg,colgap.forest.left = "1cm",fontsize=18,leftlabs=c("Outcome","b","SE"),rightlabs="ci",
+                common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE)
+   with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q,
+               "I2 =", I2, "lower.I2 =", lower.I2, "upper.I2 =", upper.I2, "\n"))
+   gap::ESplot(data.frame(id=outcome,b=Effect,se=StdErr),fontsize=22)
+   detach(tnfb)
+   dev.off()
    library(grid)
    library(pheatmap)
    png(file.path(INF,"mr","gsmr","out","gsmr-efo.png"),res=300,width=30,height=18,units="in")
-   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
+   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
+           action="prepend")
    pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30)
    setHook("grid.newpage", NULL, "replace")
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
