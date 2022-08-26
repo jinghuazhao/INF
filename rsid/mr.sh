@@ -350,21 +350,27 @@ R --no-save -q <<END
       t <- gsmr[k,c('exposure','outcome','z','group','fdr')]
       i <- t[['outcome']]
       j <- t[['exposure']]
-      v <- t[['z']]
-      gsmr_mat[i,j] <- v
+      gsmr_mat[i,j] <- t[['z']]
    }
+   colnames(gsmr_mat) <- gsub("VEGF_A","VEGF-A",colnames(gsmr_mat))
    options(width=200)
    subset(gsmr,fdr<=0.05)
+   library(grid)
+   library(pheatmap)
+   png(file.path(INF,"mr","gsmr","out","gsmr-efo.png"),res=300,width=30,height=18,units="in")
+   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
+           action="prepend")
+   pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,
+            display_numbers = matrix(ifelse(!is.na(gsmr_mat) & abs(gsmr_mat) > 3, "*", ""), nrow(gsmr_mat)), fontsize_number=20)
+   setHook("grid.newpage", NULL, "replace")
+   grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
+   grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
+   dev.off()
    rm(exposure,outcome)
    requireNamespace("rmeta")
    tnfb <- filter(gsmr,exposure=="TNFB" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
    attach(tnfb)
-   pdf(file.path(INF,"mr","gsmr","out","TNFB.pdf"),height=8,width=14)
-   rmeta::metaplot(Effect,StdErr,
-                   labels=outcome,
-                   xlab="Effect size",ylab="",xlim=c(-1.5,1),cex=2,
-                   summlabel="",summn=NA,sumse=NA,sumn=NA,lwd=2,boxsize=0.6,
-                   colors=rmeta::meta.colors(box="red",lines="blue", zero="black", summary="red", text="black"))
+   pdf(file.path(INF,"mr","gsmr","out","TNFB.pdf"),height=10,width=11)
    requireNamespace("meta")
    mg <- meta::metagen(Effect,StdErr,sprintf("%s",outcome),title="TNFB")
    meta::forest(mg,colgap.forest.left = "1cm",fontsize=18,leftlabs=c("Outcome","b","SE"),rightlabs="ci",
@@ -372,17 +378,12 @@ R --no-save -q <<END
    with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q,
                "I2 =", I2, "lower.I2 =", lower.I2, "upper.I2 =", upper.I2, "\n"))
    gap::ESplot(data.frame(id=outcome,b=Effect,se=StdErr),fontsize=22)
+   rmeta::metaplot(Effect,StdErr,
+                   labels=outcome,
+                   xlab="Effect size",ylab="",xlim=c(-1.5,1),cex=2,
+                   summlabel="",summn=NA,sumse=NA,sumn=NA,lwd=2,boxsize=0.6,
+                   colors=rmeta::meta.colors(box="red",lines="blue", zero="black", summary="red", text="black"))
    detach(tnfb)
-   dev.off()
-   library(grid)
-   library(pheatmap)
-   png(file.path(INF,"mr","gsmr","out","gsmr-efo.png"),res=300,width=30,height=18,units="in")
-   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
-           action="prepend")
-   pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30)
-   setHook("grid.newpage", NULL, "replace")
-   grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
-   grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
    dev.off()
 END
 
