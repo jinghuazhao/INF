@@ -22,14 +22,17 @@ do
   awk -vOFS="\t" '{print $2, $3, $4, $5, $6, $7, $8}' > work/${prot}-pQTL.lz
 done
 
-# Monoocyte count
-gunzip -c ~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/gzipped_interval/mono.tsv.gz | \
-awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
-{
-  if ($5<$6) snpid="chr" $3 ":" $4 "_" $5 "_" $6;
-  else snpid="chr" $3 ":" $4 "_" $6 "_" $5
-  if($3==chr && $4>=start-M && $4 <=end+M) print $2,$3,$4,$7/$8,snpid,$5,$6
-}' > work/mono-QTL.lz
+# Baseophil, monocyte, WBC counts
+for trait in baso mono wbc
+do
+  gunzip -c ~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/gzipped_interval/${trait}.tsv.gz | \
+  awk -vchr=${chr} -vstart=${start} -vend=${end} -vM=${M} -vOFS="\t" '
+  {
+    if ($5<$6) snpid="chr" $3 ":" $4 "_" $5 "_" $6;
+    else snpid="chr" $3 ":" $4 "_" $6 "_" $5
+    if($3==chr && $4>=start-M && $4 <=end+M) print $2,$3,$4,$7/$8,snpid,$5,$6
+  }' > work/${trait}-QTL.lz
+done
 
 join -j5 <(sort -k5,5 work/MCP.1-pQTL.lz) <(sort -k5,5 work/MCP.2-pQTL.lz) | \
 join -25 - <(sort -k5,5 work/MCP.3-pQTL.lz) | \
