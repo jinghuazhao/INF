@@ -140,7 +140,7 @@ mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
   prefix <- rsid
   prefix[flag] <- paste0(rsid[flag],"*")
   rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-",
-                      prefix," [",target.short,"](",hgnc,")")
+                      prefix," (",hgnc,")")
   trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
   trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
   trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
@@ -193,7 +193,7 @@ colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
 pheatmap(rxc, legend=TRUE, legend_labels=c("-","","+"), angle_col="315", color=col, width=18, height=13, cellwidth=21,
          cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
 setHook("grid.newpage", NULL, "replace")
-grid.text("pQTL [target proteins](gene)", y=-0.07, gp=gpar(fontsize=15))
+grid.text("pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
 grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=15))
 dev.off()
 
