@@ -205,7 +205,7 @@ END
 # d3[d3$cistrans=="pan","trait"] <- d3[d3$cistrans=="pan","x"]
 # d3[d3$cistrans=="trans","trait"] <- d3[d3$cistrans=="trans","x"]
 # unlist(gregexpr("[|]{1}","abc||"))
-#  
+#
 # uncomment if clumping outside TwoSampleMR:
 # cut -f3 mr/{2}-${suffix}.mri > mr/{2}-${suffix}.mrs
 # plink --bfile INTERVAL/cardio/INTERVAL --extract mr/{2}-${suffix}.mrs \
@@ -353,6 +353,7 @@ R --no-save -q <<END
       gsmr_mat[i,j] <- t[['z']]
    }
    colnames(gsmr_mat) <- gsub("VEGF_A","VEGF-A",colnames(gsmr_mat))
+   rm(exposure,outcome)
    options(width=200)
    subset(gsmr,fdr<=0.05)
    library(grid)
@@ -366,25 +367,27 @@ R --no-save -q <<END
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
    grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
    dev.off()
-   rm(exposure,outcome)
    requireNamespace("rmeta")
-   tnfb <- filter(gsmr,exposure=="TNFB" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
-   attach(tnfb)
-   pdf(file.path(INF,"mr","gsmr","out","TNFB.pdf"),height=10,width=11)
-   requireNamespace("meta")
-   mg <- meta::metagen(Effect,StdErr,sprintf("%s",outcome),title="TNFB")
-   meta::forest(mg,colgap.forest.left = "1cm",fontsize=18,leftlabs=c("Outcome","b","SE"),rightlabs="ci",
-                common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE)
-   with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q,
-               "I2 =", I2, "lower.I2 =", lower.I2, "upper.I2 =", upper.I2, "\n"))
+   others <- function()
+   {
    gap::ESplot(data.frame(id=outcome,b=Effect,se=StdErr),fontsize=22)
    rmeta::metaplot(Effect,StdErr,
                    labels=outcome,
                    xlab="Effect size",ylab="",xlim=c(-1.5,1),cex=2,
                    summlabel="",summn=NA,sumse=NA,sumn=NA,lwd=2,boxsize=0.6,
                    colors=rmeta::meta.colors(box="red",lines="blue", zero="black", summary="red", text="black"))
-   detach(tnfb)
+   }
+   tnfb <- filter(gsmr,exposure=="TNFB" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
+   attach(tnfb)
+   png(file.path(INF,"mr","gsmr","out","TNFB.png"),height=8,width=15,units="in",res=300)
+   requireNamespace("meta")
+   mg <- meta::metagen(Effect,StdErr,sprintf("%s",outcome),sm="OR",title="TNFB")
+   meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=24,leftlabs=c("Outcome","b","SE"),rightlabs="ci",plotwidth="5inch",
+                common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
+   with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q,
+               "I2 =", I2, "lower.I2 =", lower.I2, "upper.I2 =", upper.I2, "\n"))
    dev.off()
+   detach(tnfb)
 END
 
 # --- HGI
