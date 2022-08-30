@@ -1,3 +1,26 @@
+blood_cell_trait <- function(d,trait,r,track="")
+{
+# f <- file.path(INF,"work",paste0(trait,".tsv.gz"))
+# trait <- seqminer::tabix.read.table(tabixFile = f, tabixRange = r, stringsAsFactors = FALSE)
+# names(trait) <- c("VARIANT","ID_dbSNP49","CHR","BP","REF","ALT","EFFECT_INT","SE_INT","MLOG10P_INT","ALT_FREQ_INT","INFO_INT")
+# trait <- rename(trait, snpid=VARIANT,rsid=ID_dbSNP49,chr=CHR,pos=BP,
+#                 a1=ALT,a2=REF,b=EFFECT_INT,se=SE_INT,log10p=MLOG10P_INT,af=ALT_FREQ_INT) %>%
+#         select(snpid, rsid, chr, pos, a2, a1, b, se, af, log10p) %>%
+#         mutate(snpid=if_else(a1<a2,paste0("chr",chr,":",pos,"_",a1,"_",a2),paste0("chr",chr,":",pos,"_",a2,"_",a1)),log10p=-log10p)
+  f <- file.path("~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/bgzipped_narrow_form",paste0(trait,".tsv.gz"))
+  sumstats <- seqminer::tabix.read.table(tabixFile = f, tabixRange = r, stringsAsFactors = FALSE) %>%
+              setNames(c("snpid","rsid","chr","pos","a2","a1","ALT_MINOR","DIRECTION","b","se","P","log10p","af","MA_FREQ")) %>%
+              mutate(snpid=if_else(a1<a2,paste0("chr",chr,":",pos,"_",a1,"_",a2),paste0("chr",chr,":",pos,"_",a2,"_",a1)),log10p=-log10p) %>%
+              select(snpid,rsid,chr,pos,a1,a2,b,se,af,log10p)
+  wide <- sumstats %>%
+          setNames(c("snpid","rsid","chr","pos",paste0(trait,".a1"),paste0(trait,".a2"),paste0(trait,".b"),paste0(trait,".se"),
+                   paste0(trait,".af"),paste0(trait,".log10p"))) %>%
+          arrange(chr,pos)
+  sumstats <- mutate(sumstats,track=track) %>%
+              select(-snpid,-rsid)
+  list(long=sumstats,wide=wide)
+}
+
 fetch_region <- function()
 {
   suppressMessages(library(dplyr))
@@ -6,12 +29,13 @@ fetch_region <- function()
   end <- 159525679
   M <- 1e6
   r <- paste0(chr,":",start-M,"-",end+M)
-  for (i in 1:6)
+  for (i in 1:length(g))
   {
     f <- file.path(INF,"METAL","gwas2vcf","LP",paste0(p[i],".tsv.gz"))
-    t <- seqminer::tabix.read.table(tabixFile = f, tabixRange = r, stringsAsFactors = FALSE)
-    names(t) <- c("chr","pos","snpid","a1","a2","af","b","se","log10p","n")
-    t <- rename_with(t, ~ paste0(paste0(g[i],"."),.x),.cols=4:10)
+    t <- seqminer::tabix.read.table(tabixFile = f, tabixRange = r, stringsAsFactors = FALSE) %>%
+         setNames(c("chr","pos","snpid","a1","a2","af","b","se","log10p","n")) %>%
+         mutate(track=g[i])
+#   t <- rename_with(t, ~ paste0(paste0(g[i],"."),.x),.cols=4:10)
     if(i==1) d <- t
     else d <- left_join(d,t)
     assign(g[i],t)
@@ -19,26 +43,11 @@ fetch_region <- function()
     print(subset(t,snpid=="chr1:159175354_A_G"))
     print(dim(t))
   }
-  f <- file.path(INF,"work","mono.tsv.gz")
-  mono <- seqminer::tabix.read.table(tabixFile = f, tabixRange = r, stringsAsFactors = FALSE)
-  names(mono) <- c("VARIANT","ID_dbSNP49","CHR","BP","REF","ALT","EFFECT_INT","SE_INT","MLOG10P_INT","ALT_FREQ_INT","INFO_INT")
-  mono <- rename(mono, snpid=VARIANT,rsid=ID_dbSNP49,chr=CHR,pos=BP,a1=ALT,a2=REF,b=EFFECT_INT,se=SE_INT,log10p=MLOG10P_INT,af=ALT_FREQ_INT) %>%
-          select(snpid, rsid, chr, pos, a2, a1, b, se, af, log10p) %>%
-          mutate(snpid=if_else(a1<a2,paste0("chr",chr,":",pos,"_",a1,"_",a2),paste0("chr",chr,":",pos,"_",a2,"_",a1)),log10p=-log10p)
-  wide <- right_join(d,mono)[grepl("chr|pos|snpid|rsid|a1|a2|af|b|se|log10p",names(d))] %>%
-          arrange(chr,pos)
-  for(i in 1:6)
-  {
-    t <- wide[grepl(paste("chr","pos",g[i],sep="|"),names(wide))]
-    names(t) <- c("chr","pos","a1","a2","af","b","se","log10p")
-    t <- mutate(t,track=g[i])
-    assign(g[i],t)
-    if(i==1) d <- t
-    else d <- bind_rows(d,t)
-  }
-  mono <- mutate(mono,track="Monocytes") %>%
-          select(-snpid,-rsid)
-  long <- bind_rows(d,mono[c("chr","pos","a1","a2","af","b","se","log10p","track")])
+  baso <- blood_cell_trait(d,"baso",r,track="Basophils")
+  mono <- blood_cell_trait(d,"mono",r,track="Monocytes")
+  wbc <- blood_cell_trait(d,"wbc",r,track="WBC")
+  long <- bind_rows(d,baso$long,mono$long,wbc$long)
+  wide <- left_join(d,baso$wide) %>% left_join(mono$wide) %>% left_join(wbc$wide)
   list(wide=wide,long=long)
 }
 
@@ -69,22 +78,22 @@ plot_region <- function(dat)
 }
 
 INF <- Sys.getenv("INF")
-g <- c("CCL2", "CCL13")
-p <- c("MCP.1", "MCP.4")
+g <- "CCL13"
+p <- "MCP.4"
 dat <- fetch_region()
 wide <- with(dat,wide) %>% mutate(pos=pos/1e6)
 long <- with(dat,long) %>%
-        mutate(lcl=b-1.96*se,ucl=b+1.96*se,track=factor(track,levels=c(g,"Monocytes")),pos=pos/1e6)
+        mutate(lcl=b-1.96*se,ucl=b+1.96*se,track=factor(track,levels=c(g,"Basophils","Monocytes", "WBC")),pos=pos/1e6)
 region_coords <- c(first(wide$pos),last(wide$pos))
 l <- plot_region(long)
 ggsave("rs12075.png",l,height=20,width=10)
 
 rs12075 <- filter(long,pos==159.175354)
-f <- ggplot(data=rs12075, aes(y=1:7, x=b))+
+f <- ggplot(data=rs12075, aes(y=1:4, x=b))+
      geom_point(size=2)+
      geom_errorbarh(aes(xmax = ucl, xmin = lcl, height=0.001))+
      scale_x_continuous(name="Effect size")+
-     scale_y_continuous(breaks=1:7,label=with(rs12075,track),name="",trans="reverse")+
+     scale_y_continuous(breaks=1:4,label=with(rs12075,track),name="",trans="reverse")+
      geom_vline(xintercept=0, color="black", linetype="dashed", alpha=.5)+
      theme_minimal()+
      theme(text=element_text(size=16, color="black"),
@@ -93,59 +102,6 @@ f <- ggplot(data=rs12075, aes(y=1:7, x=b))+
            panel.grid=element_blank(),
            panel.spacing = unit(1, "lines"))
   
-# arrangement of plots
 require(cowplot)
 fl <- plot_grid(f, l, nrow = 1, labels = "AUTO", label_size = 16)
 ggsave("rs12075-forest-assoc.png",height=20,width=10)
-
-circos_plot <- function()
-# circos plot
-{
-   t.genes <- filter(pQTLtools::hg19, pQTLtools::hg19$SYMBOL %in% g) %>%
-              distinct() %>%
-              select(chr,start,end,SYMBOL) %>%
-              rename(t.chr=chr,t.start=start,t.end=end,t.gene=SYMBOL) %>%
-              mutate(t.gene=as.character(unlist(t.gene)))
-   suggestive <- transmute(long, chr=paste0("chr",chr),start=pos-1,end=pos,p=10^log10p,from="ACKR1",to=as.character(track)) %>%
-                 filter(p<=1e-5 & to!="Monocytes") %>%
-                 left_join(t.genes,by=c('to'='t.gene'))
-   labels <- head(suggestive,1) %>%
-             transmute(t.chr=chr,t.start=start,t.end=end,t.gene=from) %>%
-             bind_rows(t.genes)
-   suppressMessages(library(circlize))
-   png(file.path(INF,"hotspots","hotspot-rs12075.png"),res=300,width=10,height=10,units="in")
-   circos.clear()
-   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
-   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06, labels.cex=2, chromosome.index=paste0("chr",1:22))
-   circos.genomicLabels(labels,labels.column=4, cex=1.8, side="inside")
-   circos.genomicLink(suggestive[c("chr","start","end")], suggestive[c("t.chr","t.start","t.end")], col="blue", directional=1, border = 10, lwd = 2)
-   dev.off()
-}
-
-circos_plot()
-
-# gunzip -c ~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/gzipped_interval/mono.tsv.gz | \
-# bgzip -f > ${INF}/work/mono.tsv.gz
-# tabix -S1 -s3 -b4 -e4 ${INF}/work/mono.tsv.gz
-
-deprecated <- function()
-{
-m <- with(rs12075,weighted.mean(b,1/se^2))
-format_p <- function(p) paste("p =", substring(prettyNum(p, digits=2, scientific=TRUE), 2))
-ymin <- -10
-f <- ggplot(data = rs12075,
-     aes(x = 7:1, y = fold*b, label=paste0(track,": ",format_p(10^log10p)))) +
-     geom_pointrange(aes(ymin=lcl, ymax=ucl), size=2) +
-     geom_text(y=ymin, hjust=0) +
-     geom_abline(intercept = m, slope = 0, lty = 2) +
-     ylim(c(ymin,5)) +
-     coord_flip() +
-     theme_bw() + theme(
-                         axis.text.y = element_blank(),
-                         panel.grid = element_blank(),
-                         panel.border = element_blank(),
-                         text = element_text(size=17)
-                       ) +
-     xlab("Phenotypes") +
-     ylab("Effect size")
-}
