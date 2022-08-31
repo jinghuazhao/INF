@@ -78,8 +78,8 @@ plot_region <- function(dat)
 }
 
 INF <- Sys.getenv("INF")
-g <- "CCL13"
-p <- "MCP.4"
+g <- "CCL2"
+p <- "MCP.1"
 dat <- fetch_region()
 wide <- with(dat,wide) %>% mutate(pos=pos/1e6)
 long <- with(dat,long) %>%
