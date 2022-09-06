@@ -77,10 +77,10 @@ circlize <- function()
   suppressMessages(library(gridBase))
   suppressMessages(library("circlize"))
   setEPS()
-  postscript(file=file.path(INF,"circos","circlize.eps"), width=7.08, height=7.08, horizontal=FALSE, paper="special", colormodel="rgb")
+  postscript(file=file.path(INF,"circos","circlize.eps"), width=7.08, height=8.07, horizontal=FALSE, paper="special", colormodel="rgb")
   col_fun <- colorRamp2(c(-1, 1), c("red", "blue"))
   circle_size <- unit(1, "snpc")
-  pushViewport(viewport(x=0.5, y=1, width=circle_size, height=circle_size, just=c("center", "top")))
+  pushViewport(viewport(x=0.5, y=1, width=circle_size, height=circle_size, just=c("center", "bottom")))
   pQTLs <- read.table(file.path(INF,"circos","pQTLs.txt"),col.names=c("chr","start","end","value1","value2")) %>%
            mutate(chr=gsub("hs","chr",chr),value2=gsub("color=vd","",value2))
   pQTL_labels <- read.table(file.path(INF,"circos","pQTL_labels.txt"),col.names=c("chr","start","end","value1","value2"),sep="\t") %>%
@@ -89,7 +89,6 @@ circlize <- function()
                 mutate(chr1=gsub("hs","chr",chr1),chr2=gsub("hs","chr",chr2),color=gsub("color=l","",color))
   pQTL_genes <- read.table(file.path(INF,"circos","pQTL_genes.txt"),col.names=c("chr","start","end","gene")) %>%
                 mutate(chr=gsub("hs","chr",chr))
-  par(omi=gridOMI(), new=TRUE)
   circos.clear()
   circos.par(start.degree=90, gap.degree=c(rep(c(0.7), 21), 8), track.margin=c(0.005, 0.005), cell.padding=c(0.001, 0.01, 0.01, 0.001))
   circos.initializeWithIdeogram(cytoband=file.path(INF,"circos","cytoband.txt"),plotType=NULL)
@@ -112,6 +111,13 @@ circlize <- function()
                                 panel.fun=function(region, value, ...) circos.genomicPoints(region, value, pch=16, col=value[,2], cex=0.3))
   circos.yaxis(side="left", at=seq(0, 150, 50), labels=seq(0, 150, 50), sector.index=get.all.sector.index()[1], labels.cex=0.3, lwd=0.3,
                tick.length=0.5*(convert_x(1, "mm", get.cell.meta.data("sector.index"), get.cell.meta.data("track.index"))))
+  circos.genomicText(data.frame(start=1,end=1),sector.index=get.all.sector.index()[1],
+                     labels = "-log10(P)",
+                     h = "bottom",
+                     cex = 0.4,
+                     y = 90,
+                     adj = c(0.2, 1.5),
+                     facing = "clockwise")
   circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col=pQTL_links[[7]], border=NA, directional=1, arr.length=0.05,
                      arr.width=0.03, arr.lwd=0.05)
   dev.off()
