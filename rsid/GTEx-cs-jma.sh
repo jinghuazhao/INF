@@ -3,7 +3,7 @@
 if [ ! -d ${INF}/coloc-jma ]; then mkdir ${INF}/coloc-jma; fi
 
 function liftOver()
-# cis-pQTLs with GRCh38 coordinates 
+# cis-pQTLs with GRCh38 coordinates
 {
   Rscript -e '
     options(width=200)
@@ -162,6 +162,7 @@ function cs()
     tbl <- eqtl_table
     tbl[eqtl_table==""] <- 0
     tbl[eqtl_table!=""] <- 1 # round(1000*as.numeric(eqtl_table[eqtl_table != ""]),2)
+    rownames(tbl) <- gsub("^[0-9]*-","",rownames(tbl))
     storage.mode(tbl) <- "double"
     print(tbl)
     library(pheatmap)
