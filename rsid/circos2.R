@@ -93,6 +93,7 @@ circlize <- function()
   circos.par(start.degree=90, gap.degree=c(rep(c(0.7), 21), 8), track.margin=c(0.005, 0.005), cell.padding=c(0.001, 0.01, 0.01, 0.001))
   circos.initializeWithIdeogram(cytoband=file.path(INF,"circos","cytoband.txt"),plotType=NULL)
   circos.genomicLabels(pQTL_labels, labels.column=4, side="outside", cex=0.45, line_lwd=0.8,
+                       labels_height=min(c(cm_h(3.15), max(strwidth(pQTL_labels, cex = 0.4, font = par("font"))))),
                        connection_height=convert_height(8, "mm"), col=pQTL_labels[[5]], line_col=pQTL_labels[[5]])
   circos.track(ylim=c(0,1), track.height=0.05, bg.border=NA,
                panel.fun=function(x, y) {
@@ -107,7 +108,7 @@ circlize <- function()
                xlim=CELL_META$xlim
                ylim=CELL_META$ylim
                circos.genomicAxis(h="top", direction="inside", labels.cex=0.2, major.at=seq(0,1e10,5e7))})
-  circos.genomicTrackPlotRegion(pQTLs, track.height=0.25, bg.border=NA, bg.col="#FFFFFF", ylim=c(0, 150),
+  circos.genomicTrackPlotRegion(pQTLs, track.height=0.15, bg.border=NA, bg.col="#FFFFFF", ylim=c(0, 150),
                                 panel.fun=function(region, value, ...) circos.genomicPoints(region, value, pch=16, col=value[,2], cex=0.3))
   circos.yaxis(side="left", at=seq(0, 150, 50), labels=seq(0, 150, 50), sector.index=get.all.sector.index()[1], labels.cex=0.3, lwd=0.3,
                tick.length=0.5*(convert_x(1, "mm", get.cell.meta.data("sector.index"), get.cell.meta.data("track.index"))))
