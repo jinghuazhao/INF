@@ -353,6 +353,7 @@ R --no-save -q <<END
       gsmr_mat[i,j] <- t[['z']]
    }
    colnames(gsmr_mat) <- gsub("VEGF_A","VEGF-A",colnames(gsmr_mat))
+   rownames(gsmr_mat) <- gsub("\\b(^[a-z])","\\U\\1",rownames(gsmr_mat),perl=TRUE)
    rm(exposure,outcome)
    options(width=200)
    subset(gsmr,fdr<=0.05)
@@ -381,7 +382,7 @@ R --no-save -q <<END
    attach(tnfb)
    png(file.path(INF,"mr","gsmr","out","TNFB.png"),height=8,width=15,units="in",res=300)
    requireNamespace("meta")
-   mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",outcome)),sm="OR",title="TNFB")
+   mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))),sm="OR",title="TNFB")
    meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=24,leftcols="studlab",leftlabs="Outcome",rightlabs="ci",plotwidth="5inch",sortvar=Effect,
                 common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
    with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q,
