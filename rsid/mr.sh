@@ -368,26 +368,28 @@ R --no-save -q <<END
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
    grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
    dev.off()
-   requireNamespace("rmeta")
-   others <- function()
-   {
-   gap::ESplot(data.frame(id=outcome,b=Effect,se=StdErr),fontsize=22)
-   rmeta::metaplot(Effect,StdErr,
-                   labels=outcome,
-                   xlab="Effect size",ylab="",xlim=c(-1.5,1),cex=2,
-                   summlabel="",summn=NA,sumse=NA,sumn=NA,lwd=2,boxsize=0.6,
-                   colors=rmeta::meta.colors(box="red",lines="blue", zero="black", summary="red", text="black"))
-   }
    tnfb <- filter(gsmr,exposure=="TNFB" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
    attach(tnfb)
-   png(file.path(INF,"mr","gsmr","out","TNFB.png"),height=8,width=15,units="in",res=300)
+   png(file.path(INF,"mr","gsmr","out","TNFB.png"),height=8,width=18,units="in",res=300)
    requireNamespace("meta")
    mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))),sm="OR",title="TNFB")
-   meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=24,leftcols="studlab",leftlabs="Outcome",rightlabs="ci",plotwidth="5inch",sortvar=Effect,
+   meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=24,leftcols=c("studlab","TE","seTE","pval"),
+                leftlabs=c("Outcome","b","SE","GSMR P"),digits.pval=5,rightlabs="ci",
+                plotwidth="5inch",sortvar=Effect,
                 common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
    with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q,
                "I2 =", I2, "lower.I2 =", lower.I2, "upper.I2 =", upper.I2, "\n"))
    dev.off()
+   others <- function()
+   {
+     requireNamespace("rmeta")
+     gap::ESplot(data.frame(id=outcome,b=Effect,se=StdErr),fontsize=22)
+     rmeta::metaplot(Effect,StdErr,
+                     labels=outcome,
+                     xlab="Effect size",ylab="",xlim=c(-1.5,1),cex=2,
+                     summlabel="",summn=NA,sumse=NA,sumn=NA,lwd=2,boxsize=0.6,
+                     colors=rmeta::meta.colors(box="red",lines="blue", zero="black", summary="red", text="black"))
+   }
    detach(tnfb)
 END
 
