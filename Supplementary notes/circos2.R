@@ -116,7 +116,7 @@ circlize <- function()
                      labels = "-log10(P)",
                      h = "bottom",
                      cex = 0.4,
-                     y = 90,
+                     y = 65,
                      adj = c(0.2, 1.5),
                      facing = "clockwise")
   circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col=pQTL_links[[7]], border=NA, directional=1, arr.length=0.05,
