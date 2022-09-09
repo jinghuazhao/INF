@@ -372,9 +372,9 @@ R --no-save -q <<END
    attach(tnfb)
    png(file.path(INF,"mr","gsmr","out","TNFB.png"),height=8,width=18,units="in",res=300)
    requireNamespace("meta")
-   mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))),sm="OR",title="TNFB")
+   mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))),title="TNFB")
    meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=24,leftcols=c("studlab","TE","seTE","pval"),
-                leftlabs=c("Outcome","bxy","SE","GSMR P"),digits.pval=5,rightlabs="ci",
+                leftlabs=c("Outcome","bxy","SE","GSMR P"),digits.pval=5,rightcols=c("effect","ci"),rightlabs=c("Effect size","95% CI"),
                 plotwidth="5inch",sortvar=Effect,
                 common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
    with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q,
