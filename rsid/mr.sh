@@ -375,7 +375,7 @@ R --no-save -q <<END
    mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))),sm="OR",title="TNFB")
    meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=24,leftcols=c("studlab","pval"),
                 leftlabs=c("Outcome","GSMR P"),digits.pval=2,scientific.pval=TRUE,
-                rightcols=c("effect","ci"),rightlabs=c("OR","95% CI"),digits=5,
+                rightcols=c("effect","ci"),rightlabs=c("OR","95% CI"),digits=3,
                 plotwidth="5inch",sortvar=Effect,
                 common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
    with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q,
