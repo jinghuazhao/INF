@@ -337,24 +337,24 @@ R --no-save -q <<END
                   exposure=protein,
                   z=bxy/se,
                   group=as.numeric(cut(z,breaks=quantile(z,seq(0,1,0.3333))))) %>%
-           select(exposure,outcome,z,bxy,se,p,nsnp,fdr,group)
-   exposure <- unique(with(gsmr,exposure))
+           left_join(gap.datasets::inf1[c("target.short","gene")],by=c('exposure'='target.short')) %>%
+           select(gene,outcome,z,bxy,se,p,nsnp,fdr,group)
+   gene <- unique(with(gsmr,gene))
    outcome <- unique(with(gsmr,outcome))
-   n <- length(exposure)
+   n <- length(gene)
    m <- length(outcome)
    gsmr_mat <- matrix(NA,m,n)
-   colnames(gsmr_mat) <- exposure
+   colnames(gsmr_mat) <- gene
    rownames(gsmr_mat) <- outcome
    for(k in 1:nrow(gsmr))
    {
-      t <- gsmr[k,c('exposure','outcome','z','group','fdr')]
+      t <- gsmr[k,c('gene','outcome','z','group','fdr')]
       i <- t[['outcome']]
-      j <- t[['exposure']]
+      j <- t[['gene']]
       gsmr_mat[i,j] <- t[['z']]
    }
-   colnames(gsmr_mat) <- gsub("VEGF_A","VEGF-A",colnames(gsmr_mat))
    rownames(gsmr_mat) <- gsub("\\b(^[a-z])","\\U\\1",rownames(gsmr_mat),perl=TRUE)
-   rm(exposure,outcome)
+   rm(gene,outcome)
    options(width=200)
    subset(gsmr,fdr<=0.05)
    library(grid)
@@ -368,7 +368,7 @@ R --no-save -q <<END
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
    grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
    dev.off()
-   tnfb <- filter(gsmr,exposure=="TNFB" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
+   tnfb <- filter(gsmr,gene=="LTA" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
    attach(tnfb)
    png(file.path(INF,"mr","gsmr","out","TNFB.png"),height=8,width=18,units="in",res=300)
    requireNamespace("meta")
