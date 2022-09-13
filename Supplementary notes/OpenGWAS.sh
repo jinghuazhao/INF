@@ -49,3 +49,41 @@ R --no-save -q <<END
   get_studies(study_id = 'GCST004787')
   get_associations(study_id = 'GCST004787')
 END
+
+# UKB replacement
+
+cd ${INF}/OpenGWAS
+for id in $(echo $(cut -f4 ${INF}/OpenGWAS/ukb-replacement.txt | awk '!/^$/'))
+do
+  export f=https://gwas.mrcieu.ac.uk/files/${id}/${id}.vcf.gz
+  if [ ! -f ${id}.vcf.gz ]; then wget ${f}; fi
+  if [ ! -f ${id}.vcf.gz.tbi ]; then wget ${f}.tbi; fi
+done
+cd -
+
+Rscript -e "
+
+library(TwoSampleMR)
+ao <- available_outcomes()
+exposure_dat <- read_exposure_data(
+ filename = 'TNFB.csv',
+ sep = ',',
+ snp_col = 'SNP',
+ beta_col = 'beta',
+ se_col = 'se',
+ effect_allele_col = 'effect_allele',
+ phenotype_col = 'Phenotype',
+ units_col = 'units',
+ other_allele_col = 'other_allele',
+ eaf_col = 'eaf',
+ samplesize_col = 'samplesize',
+ ncase_col = 'ncase',
+ ncontrol_col = 'ncontrol',
+ gene_col = 'gene',
+ pval_col = 'pval'
+)
+outcome_dat <- extract_outcome_data(exposure_dat$SNP, c('finn-b-L12_VITILIGO'), 
+                                    proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3)
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+mr_results <- mr(dat)
+"
