@@ -282,7 +282,8 @@ function ref_prot_outcome_gsmr()
     ) | gzip -f > ${INF}/mr/gsmr/prot/{2}.gz
   '
   if [ ! -d ${INF}/mr/gsmr/trait ]; then mkdir -p ${INF}/mr/gsmr/trait; fi
-  awk -vFS="\t" 'NR>1 {print $4,2/(1/$5+1/$6)}' ${INF}/rsid/efo.txt | \
+  cat <(awk -vFS="\t" ' NR>1 && $4 !~ /ukb/ {print $4,2/(1/$5+1/$6)}' ${INF}/rsid/efo.txt) \
+      <(awk '!/ebi|finn/' ${INF}/OpenGWAS/ukb-replacement.txt | awk '$5!=""' | awk -vFS="\t" '{print $4,2/(1/$5+1/$6)}') | \
   while read efo N
   do
     export efo=${efo}
@@ -300,6 +301,37 @@ function ref_prot_outcome_gsmr()
           print snpid, \$4, \$5, \$6, \$7, \$8, \$9, \$10
         }"
       ) | \
+      gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
+    '
+  done
+  awk -vFS="\t" '/ebi|finn/{print $4,2/(1/$5+1/$6)}' ${INF}/OpenGWAS/ukb-replacement.txt | \
+  while read efo N
+  do
+    export efo=${efo}
+    export N=${N}
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
+    parallel -C' ' -j15 --env INF --env efo --env N --env suffix '
+      export uniprot={1}
+      export prot={2}
+      export id={3}
+      echo {1} {2} {3}
+      Rscript -e "
+        require(TwoSampleMR)
+        require(dplyr)
+        efo <- Sys.getenv(\"efo\")
+        id <- Sys.getenv(\"id\")
+        n <- Sys.getenv(\"N\")
+        od <- extract_outcome_data(id,efo) %>%
+              distinct() %>%
+              mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),
+                     effect_allele.outcome=toupper(effect_allele.outcome),
+                     other_allele.outcome=toupper(other_allele.outcome)) %>%
+              select(snpid,effect_allele.outcome,other_allele.outcome,eaf.outcome,beta.outcome,se.outcome,pval.outcome,samplesize.outcome) %>%
+              setNames(c(\"SNP\",\"A1\",\"A2\",\"freq\",\"b\",\"se\",\"p\",\"N\"))
+         od[is.na(od\$N),\"N\"] <- n
+        write.table(od,quote=FALSE,row.names=FALSE)
+      " | \
       gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
     '
   done
