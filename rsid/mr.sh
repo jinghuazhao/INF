@@ -229,7 +229,7 @@ if [ ! -d ${INF}/mr/gsmr ]; then mkdir -p ${INF}/mr/gsmr; fi
 function opengwas()
 {
   cd ${INF}/OpenGWAS
-  for id in $(sed '1d' ${INF}/rsid/efo.txt | cut -f4)
+  for id in $(cat <(sed '1d' ${INF}/rsid/efo.txt | grep -v ukb | cut -f4) <(cut -f4 ${INF}/OpenGWAS/ukb-replacement.txt | grep -v finn))
   do
     export f=https://gwas.mrcieu.ac.uk/files/${id}/${id}.vcf.gz
     if [ ! -f ${f} ]; then wget ${f}; fi
@@ -282,8 +282,8 @@ function ref_prot_outcome_gsmr()
     ) | gzip -f > ${INF}/mr/gsmr/prot/{2}.gz
   '
   if [ ! -d ${INF}/mr/gsmr/trait ]; then mkdir -p ${INF}/mr/gsmr/trait; fi
-  cat <(awk -vFS="\t" ' NR>1 && $4 !~ /ukb/ {print $4,2/(1/$5+1/$6)}' ${INF}/rsid/efo.txt) \
-      <(awk '!/ebi|finn/' ${INF}/OpenGWAS/ukb-replacement.txt | awk '$5!=""' | awk -vFS="\t" '{print $4,2/(1/$5+1/$6)}') | \
+  cat <(awk -vFS="\t" 'NR>1 && $4 !~ /ukb/ {print $4,2/(1/$5+1/$6)}' ${INF}/rsid/efo.txt) \
+      <(awk '!/finn/' ${INF}/OpenGWAS/ukb-replacement.txt | awk '$5!=""' | awk -vFS="\t" '{print $4,2/(1/$5+1/$6)}') | \
   while read efo N
   do
     export efo=${efo}
@@ -298,13 +298,13 @@ function ref_prot_outcome_gsmr()
           if(\$4<\$5) snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$5;
                  else snpid=\"chr\"\$1\":\"\$2\"_\"\$5\"_\"\$4
           \$9=10^-\$9
-          print snpid, \$4, \$5, \$6, \$7, \$8, \$9, \$10
-        }"
+          print snpid, \$1, \$2, \$4, \$5, \$6, \$7, \$8, \$9, \$10
+        }" | sort -k2,2n -k3,3n -k8,8g| cut -d" " -f2,3 --complement | awk "a[\$1]++==0" | awk -vFS="\t" -vN=${N} "{if(\$8=\"\") \$8=N;print}"
       ) | \
       gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
     '
   done
-  awk -vFS="\t" '/ebi|finn/{print $4,2/(1/$5+1/$6)}' ${INF}/OpenGWAS/ukb-replacement.txt | \
+  awk -vFS="\t" '/finn/{print $4,2/(1/$5+1/$6)}' ${INF}/OpenGWAS/ukb-replacement.txt | \
   while read efo N
   do
     export efo=${efo}
@@ -328,8 +328,11 @@ function ref_prot_outcome_gsmr()
                      effect_allele.outcome=toupper(effect_allele.outcome),
                      other_allele.outcome=toupper(other_allele.outcome)) %>%
               select(snpid,effect_allele.outcome,other_allele.outcome,eaf.outcome,beta.outcome,se.outcome,pval.outcome,samplesize.outcome) %>%
-              setNames(c(\"SNP\",\"A1\",\"A2\",\"freq\",\"b\",\"se\",\"p\",\"N\"))
-         od[is.na(od\$N),\"N\"] <- n
+              setNames(c(\"SNP\",\"A1\",\"A2\",\"freq\",\"b\",\"se\",\"p\",\"N\")) %>%
+              group_by(SNP) %>%
+              slice(which.min(p)) %>%
+              data.frame()
+        od[is.na(od\$N),\"N\"] <- n
         write.table(od,quote=FALSE,row.names=FALSE)
       " | \
       gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
@@ -341,10 +344,16 @@ function ref_prot_outcome_gsmr()
     grep -e Exposure -e nan -v *gsmr | tr ':' '\t' | cut -f1 --complement
   ) > gsmr.txt
   R --no-save -q <<\ \ END
-    INF <- Sys.getenv("INF")
-    efo <- read.delim(file.path(INF,"rsid","efo.txt"))
-    gsmr <- read.delim("gsmr.txt")
     library(dplyr)
+    INF <- Sys.getenv("INF")
+    non_ukb <- read.table(file.path(INF,"OpenGWAS","ukb-replacement.txt"),col.names=c("MRBASEID","x1","x2","New","y1","y2"),sep="\t")
+    efo <- read.delim(file.path(INF,"rsid","efo.txt")) %>%
+           left_join(non_ukb) %>%
+           mutate(MRBASEID=if_else(is.na(New),MRBASEID,New),
+                  Ncases=if_else(is.na(y1),Ncases,y1),
+                  Ncontrols=if_else(is.na(y2),Ncontrols,y2)) %>%
+                  select(-New,-x1,-x2,-y1,-y2)
+    gsmr <- read.delim("gsmr.txt")
     gsmr_efo <- gsmr %>%
                 left_join(pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
                 left_join(efo,by=c("Outcome"="MRBASEID")) %>%
@@ -364,7 +373,7 @@ R --no-save -q <<END
    INF <- Sys.getenv("INF")
    suppressMessages(library(dplyr))
    library(stringr)
-   gsmr <- read.delim(file.path(INF,"mr","gsmr","out","5e-8","gsmr-efo.txt")) %>%
+   gsmr <- read.delim(file.path(INF,"mr","gsmr","out","gsmr-efo.txt")) %>%
            mutate(outcome=paste0(trait),
                   exposure=protein,
                   z=bxy/se,
@@ -402,12 +411,12 @@ R --no-save -q <<END
    dev.off()
    tnfb <- filter(gsmr,gene=="LTA" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
    attach(tnfb)
-   png(file.path(INF,"mr","gsmr","out","TNFB.png"),height=8,width=18,units="in",res=300)
+   png(file.path(INF,"mr","gsmr","out","TNFB.png"),height=10,width=18,units="in",res=300)
    requireNamespace("meta")
    mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))),sm="OR",title="TNFB")
    meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=24,
                 leftcols=c("studlab"),leftlabs=c("Outcome"),
-                rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","GSMR P"),digits=3,digits.pval=2,scientific.pval=TRUE,
+                rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","GSMR P"),digits=2,digits.pval=2,scientific.pval=TRUE,
                 plotwidth="5inch",sortvar=Effect,
                 common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
    with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q,
