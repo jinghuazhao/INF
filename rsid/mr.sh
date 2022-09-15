@@ -411,7 +411,7 @@ R --no-save -q <<END
    dev.off()
    tnfb <- filter(gsmr,gene=="LTA" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
    attach(tnfb)
-   png(file.path(INF,"mr","gsmr","out","TNFB.png"),height=11,width=18,units="in",res=300)
+   png(file.path(INF,"mr","gsmr","out","TNFB.png"),height=10,width=18,units="in",res=300)
    requireNamespace("meta")
    mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))),sm="OR",title="TNFB")
    meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=24,
