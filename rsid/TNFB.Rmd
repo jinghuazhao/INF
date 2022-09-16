@@ -1,0 +1,199 @@
+---
+title: "TNFB/LTA MR analysis"
+date: "`r Sys.Date()`"
+toc: false
+number_sections: false
+output:
+  bookdown::word_document2: default
+bibliography: [packages.bib]
+link-citations: yes
+csl: /home/jhz22/R/gap/vignettes/nature-genetics.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  out.extra = 'style="display:block; margin: auto"',
+  fig.align = "center",
+  fig.path = "./",
+  collapse = TRUE,
+  comment = "#>",
+  dev = "png")
+library(bookdown)
+library(knitr)
+library(png)
+library(tinytex)
+library(lattice)
+set.seed(0)
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
+```{r bib, include=FALSE}
+knitr::write_bib(file = 'packages.bib')
+```
+
+```{r init, echo=FALSE}
+options(width=200)
+INF <- Sys.getenv("INF")
+rt <- file.path(INF,"mr","gsmr")
+prot <- "TNFB"
+suppressMessages(library(TwoSampleMR))
+suppressMessages(library(dplyr))
+suppressMessages(library(ggplot2))
+suppressMessages(library(stringr))
+```
+
+## GSMR results
+
+```{r gsmr, echo=FALSE, fig.align="left", fig.cap="Figure 1. GSMR results on TNFB", fig.height=18, fig.width=30, message=FALSE, warning=FALSE}
+gsmr <- read.delim(file.path(INF,"mr","gsmr","out","gsmr-efo.txt")) %>%
+        mutate(outcome=paste0(trait),
+               exposure=protein,
+               z=bxy/se,
+               group=as.numeric(cut(z,breaks=quantile(z,seq(0,1,0.3333))))) %>%
+        left_join(gap.datasets::inf1[c("target.short","gene")],by=c('exposure'='target.short')) %>%
+        select(gene,outcome,z,bxy,se,p,nsnp,fdr,group)
+gene <- unique(with(gsmr,gene))
+outcome <- unique(with(gsmr,outcome))
+n <- length(gene)
+m <- length(outcome)
+gsmr_mat <- matrix(NA,m,n)
+colnames(gsmr_mat) <- gene
+rownames(gsmr_mat) <- outcome
+for(k in 1:nrow(gsmr))
+{
+   t <- gsmr[k,c('gene','outcome','z','group','fdr')]
+   i <- t[['outcome']]
+   j <- t[['gene']]
+   gsmr_mat[i,j] <- t[['z']]
+}
+rownames(gsmr_mat) <- gsub("\\b(^[a-z])","\\U\\1",rownames(gsmr_mat),perl=TRUE)
+rm(gene,outcome)
+knitr::kable(filter(gsmr,fdr<=0.05) %>% select(gene,outcome,z,nsnp,fdr),caption="Table 1. GSMR results for TNFB")
+library(grid)
+library(pheatmap)
+setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
+        action="prepend")
+pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,
+         display_numbers = matrix(ifelse(!is.na(gsmr_mat) & abs(gsmr_mat) > 2.72, "*", ""), nrow(gsmr_mat)), fontsize_number=20)
+setHook("grid.newpage", NULL, "replace")
+grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
+grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
+tnfb <- filter(gsmr,gene=="LTA" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
+attach(tnfb)
+requireNamespace("meta")
+mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))),sm="OR",title="TNFB")
+meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=24,
+             leftcols=c("studlab"),leftlabs=c("Outcome"),
+             rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","GSMR P"),digits=2,digits.pval=2,scientific.pval=TRUE,
+             plotwidth="5inch",sortvar=Effect,
+             common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
+detach(tnfb)
+```
+
+## Single-SNP results
+
+```{r wald, echo=FALSE, message=FALSE, warning=FALSE}
+
+exposure_dat <- read_exposure_data(
+ filename = file.path(INF,"TNFB","TNFB.csv"),
+ sep = ',',
+ snp_col = 'SNP',
+ beta_col = 'beta',
+ se_col = 'se',
+ effect_allele_col = 'effect_allele',
+ phenotype_col = 'Phenotype',
+ units_col = 'units',
+ other_allele_col = 'other_allele',
+ eaf_col = 'eaf',
+ samplesize_col = 'samplesize',
+ ncase_col = 'ncase',
+ ncontrol_col = 'ncontrol',
+ gene_col = 'gene',
+ pval_col = 'pval'
+) %>%
+mutate(SNP="rs2229092")
+ids <- scan("efo","")
+outcome_dat <- extract_outcome_data(exposure_dat$SNP, ids,
+               proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3) %>%
+               distinct()
+knitr::kable(read.csv("TNFB.csv"), caption="Table 2. Protein data (rs2229092)")
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+save(dat,file=file.path(INF,"work","TNFB.rda"))
+mr_results <- mr(dat) %>%
+              mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+              select(id.outcome,b,se,pval,disease)
+knitr::kable(select(mr_results,disease,b,se,pval), caption="Table 3. MR results based on Wald statistics", digits=4)
+write.table(mr_results,file=file.path(INF,"work","TNFB.txt"),row.names=FALSE,sep="\t")
+```
+
+## IVW results
+
+```{r ivw, echo=FALSE, message=FALSE, warning=FALSE}
+exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".gz")), sep = ' ',
+  snp_col = 'SNP',
+  effect_allele_col = 'A1',
+  other_allele_col = 'A2',
+  eaf_col = 'freq',
+  beta_col = 'b',
+  se_col = 'se',
+  pval_col = 'p',
+  samplesize_col = 'N'
+) %>%
+mutate(region=gsub("chr|_|[a-z]","",SNP),snpid=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE)) %>%
+select(-SNP)
+rsids <- read.delim("TNFB-rsid.txt",header=TRUE)
+exposure_dat <- clump_data(left_join(exposure_dat,rsids))
+outcome_dat <- extract_outcome_data(exposure_dat$region, ids,
+               proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3)
+save(outcome_dat,file="TNFB-outcome.rda")
+outcome_dat <- outcome_dat %>%
+               distinct() %>%
+               mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),SNP,
+                      effect_allele.outcome=toupper(effect_allele.outcome),
+                      other_allele.outcome=toupper(other_allele.outcome)) %>%
+               select(snpid,SNP,effect_allele.outcome,other_allele.outcome,eaf.outcome,
+                      beta.outcome,se.outcome,pval.outcome,samplesize.outcome,id.outcome,outcome) %>%
+               group_by(id.outcome,SNP) %>%
+               slice(which.min(pval.outcome)) %>%
+               data.frame()
+
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+save(dat,file="TNFB-hamonise.rda")
+mr_ivw_results <- mr(dat,method="mr_ivw") %>%
+                  mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+                  select(id.outcome,b,se,pval,disease)
+knitr::kable(select(mr_ivw_results,disease,b,se,pval), caption="Table 4. MR results based on IVW", digits=4)
+write.table(mr_ivw_results,file="TNFB-ivw.txt",row.names=FALSE,quote=FALSE,sep="\t")
+mr_heterogeneity_results <- mr_heterogeneity(dat, method_list = "mr_egger_regression") %>%
+                            mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+                            select(disease,method,Q,-id.exposure,-id.outcome,-exposure)
+knitr::kable(mr_heterogeneity_results,caption="Table 5. Heterogeneity analysis")
+mr_pleiotropy_results <- mr_pleiotropy_test(dat) %>%
+                         mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+                         select(disease,egger_intercept,se,pval)
+knitr::kable(mr_pleiotropy_results,caption="Table 6. Pleiotropy analysis")
+res <- mr(dat, method_list = c("mr_egger_regression", "mr_ivw"))
+p1 <- mr_scatter_plot(res, dat)
+res_single <- mr_singlesnp(dat)
+p2 <- mr_forest_plot(res_single)
+directionality_test(dat)
+mr_steiger(
+    p_exp = dat$pval.exposure, 
+    p_out = dat$pval.outcome, 
+    n_exp = dat$samplesize.exposure, 
+    n_out = dat$samplesize.outcome, 
+    r_xxo = 1, 
+    r_yyo = 1,
+    r_exp=0
+)
+
+## Comparison between single-snp and IVW MRs
+
+```{r comparison, echo=FALSE, message=FALSE, warning=FALSE}
+mr_all <- right_join(setNames(mr_results,c("id.outcome","b_single","se_single","p_single","disease")),
+                     setNames(mr_ivw_results, c("id.outcome","b_IVW", "se_IVW", "p_IVW", "disease"))) %>%
+          mutate(flag=sign(b_single)*sign(b_IVW)) %>%
+          select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW)
+knitr::kable(mr_all,caption="Table 7. Comparison of single and IVW MR",digits=4)
+```
