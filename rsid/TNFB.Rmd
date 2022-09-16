@@ -1,5 +1,5 @@
 ---
-title: "TNFB/LTA MR analysis"
+title: "TNFB/LTA GSMR/TwoSampleMR analysis"
 date: "`r Sys.Date()`"
 toc: false
 number_sections: false
@@ -11,24 +11,15 @@ csl: /home/jhz22/R/gap/vignettes/nature-genetics.csl
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo = TRUE,
-  out.extra = 'style="display:block; margin: auto"',
-  fig.align = "center",
-  fig.path = "./",
-  collapse = TRUE,
-  comment = "#>",
-  dev = "png")
+knitr::opts_chunk$set(echo=TRUE,fig.path="./")
 library(bookdown)
 library(knitr)
 library(png)
 library(tinytex)
 library(lattice)
-set.seed(0)
-options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-```{r bib, include=FALSE}
+```{r, include=FALSE}
 knitr::write_bib(file = 'packages.bib')
 ```
 
@@ -45,7 +36,7 @@ suppressMessages(library(stringr))
 
 ## GSMR results
 
-```{r gsmr, echo=FALSE, fig.align="left", fig.cap="Figure 1. GSMR results on TNFB", fig.height=18, fig.width=30, message=FALSE, warning=FALSE}
+```{r gsmr, echo=FALSE, fig.align="left", fig.cap="Figure 1. GSMR results on TNFB", fig.height=24, fig.width=35, message=FALSE, warning=FALSE}
 gsmr <- read.delim(file.path(INF,"mr","gsmr","out","gsmr-efo.txt")) %>%
         mutate(outcome=paste0(trait),
                exposure=protein,
@@ -83,17 +74,17 @@ tnfb <- filter(gsmr,gene=="LTA" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
 attach(tnfb)
 requireNamespace("meta")
 mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))),sm="OR",title="TNFB")
-meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=24,
+meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
              leftcols=c("studlab"),leftlabs=c("Outcome"),
              rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","GSMR P"),digits=2,digits.pval=2,scientific.pval=TRUE,
-             plotwidth="5inch",sortvar=Effect,
+             plotwidth="10inch",sortvar=Effect,
              common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
 detach(tnfb)
 ```
 
 ## Single-SNP results
 
-```{r wald, echo=FALSE, message=FALSE, warning=FALSE}
+```{r wald, echo=FALSE, fig.cap="Figure 2. Single-SNP results", fig.height=24, fig.width=35, message=FALSE, warning=FALSE}
 
 exposure_dat <- read_exposure_data(
  filename = file.path(INF,"TNFB","TNFB.csv"),
@@ -119,17 +110,24 @@ outcome_dat <- extract_outcome_data(exposure_dat$SNP, ids,
                distinct()
 knitr::kable(read.csv("TNFB.csv"), caption="Table 2. Protein data (rs2229092)")
 dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
-save(dat,file=file.path(INF,"work","TNFB.rda"))
 mr_results <- mr(dat) %>%
               mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
               select(id.outcome,b,se,pval,disease)
 knitr::kable(select(mr_results,disease,b,se,pval), caption="Table 3. MR results based on Wald statistics", digits=4)
 write.table(mr_results,file=file.path(INF,"work","TNFB.txt"),row.names=FALSE,sep="\t")
+attach(mr_results)
+mg <- meta::metagen(b,se,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE))),sm="OR",title="TNFB")
+meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
+             leftcols=c("studlab"),leftlabs=c("Outcome"),
+             rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","Wald P"),digits=2,digits.pval=2,scientific.pval=TRUE,
+             plotwidth="10inch",sortvar=b,
+             common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
+detach(mr_results)
 ```
 
 ## IVW results
 
-```{r ivw, echo=FALSE, message=FALSE, warning=FALSE}
+```{r ivw, echo=FALSE, fig.cap="Figure 3. IVW results", fig.height=24, fig.width=35, message=FALSE, warning=FALSE}
 exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".gz")), sep = ' ',
   snp_col = 'SNP',
   effect_allele_col = 'A1',
@@ -146,7 +144,6 @@ rsids <- read.delim("TNFB-rsid.txt",header=TRUE)
 exposure_dat <- clump_data(left_join(exposure_dat,rsids))
 outcome_dat <- extract_outcome_data(exposure_dat$region, ids,
                proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3)
-save(outcome_dat,file="TNFB-outcome.rda")
 outcome_dat <- outcome_dat %>%
                distinct() %>%
                mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),SNP,
@@ -159,10 +156,17 @@ outcome_dat <- outcome_dat %>%
                data.frame()
 
 dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
-save(dat,file="TNFB-hamonise.rda")
 mr_ivw_results <- mr(dat,method="mr_ivw") %>%
                   mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
                   select(id.outcome,b,se,pval,disease)
+attach(mr_ivw_results)
+mg <- meta::metagen(b,se,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE))),sm="OR",title="TNFB")
+meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
+             leftcols=c("studlab"),leftlabs=c("Outcome"),
+             rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","IVW P"),digits=2,digits.pval=2,scientific.pval=TRUE,
+             plotwidth="10inch",sortvar=b,
+             common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
+detach(mr_ivw_results)
 knitr::kable(select(mr_ivw_results,disease,b,se,pval), caption="Table 4. MR results based on IVW", digits=4)
 write.table(mr_ivw_results,file="TNFB-ivw.txt",row.names=FALSE,quote=FALSE,sep="\t")
 mr_heterogeneity_results <- mr_heterogeneity(dat, method_list = "mr_egger_regression") %>%
@@ -191,9 +195,11 @@ mr_steiger(
 ## Comparison between single-snp and IVW MRs
 
 ```{r comparison, echo=FALSE, message=FALSE, warning=FALSE}
-mr_all <- right_join(setNames(mr_results,c("id.outcome","b_single","se_single","p_single","disease")),
-                     setNames(mr_ivw_results, c("id.outcome","b_IVW", "se_IVW", "p_IVW", "disease"))) %>%
-          mutate(flag=sign(b_single)*sign(b_IVW)) %>%
-          select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW)
+mr_all <- full_join(setNames(mr_results,c("id.outcome","b_single","se_single","p_single","disease")),
+                    setNames(mr_ivw_results, c("id.outcome","b_IVW", "se_IVW", "p_IVW", "disease"))) %>%
+          mutate(x=sign(b_single)*sign(b_IVW)) %>%
+          select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,x)
 knitr::kable(mr_all,caption="Table 7. Comparison of single and IVW MR",digits=4)
 ```
+
+An `x` flag is set when the effects have the same (`x`=1) or different directions (`x`=-1).
