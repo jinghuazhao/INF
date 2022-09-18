@@ -3,15 +3,14 @@ title: "TNFB/LTA GSMR/TwoSampleMR analysis"
 date: "`r Sys.Date()`"
 toc: false
 number_sections: false
-output:
-  bookdown::word_document2: default
+output: word_document
 bibliography: [packages.bib]
 link-citations: yes
 csl: /home/jhz22/R/gap/vignettes/nature-genetics.csl
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=TRUE,fig.path="./")
+knitr::opts_chunk$set(echo=TRUE,fig.path="")
 library(bookdown)
 library(knitr)
 library(png)
@@ -36,7 +35,7 @@ suppressMessages(library(stringr))
 
 ## GSMR results
 
-```{r gsmr, echo=FALSE, fig.align="left", fig.cap="Figure 1. GSMR results on TNFB", fig.height=24, fig.width=35, message=FALSE, warning=FALSE}
+```{r gsmr, echo=FALSE, fig.cap="Figure 1. GSMR results on TNFB", fig.height=24, fig.width=35, message=FALSE, warning=FALSE}
 gsmr <- read.delim(file.path(INF,"mr","gsmr","out","gsmr-efo.txt")) %>%
         mutate(outcome=paste0(trait),
                exposure=protein,
@@ -60,7 +59,6 @@ for(k in 1:nrow(gsmr))
 }
 rownames(gsmr_mat) <- gsub("\\b(^[a-z])","\\U\\1",rownames(gsmr_mat),perl=TRUE)
 rm(gene,outcome)
-knitr::kable(filter(gsmr,fdr<=0.05) %>% select(gene,outcome,z,nsnp,fdr),caption="Table 1. GSMR results for TNFB")
 library(grid)
 library(pheatmap)
 setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
@@ -70,6 +68,10 @@ pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize
 setHook("grid.newpage", NULL, "replace")
 grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
 grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
+knitr::kable(filter(gsmr,fdr<=0.05) %>% select(gene,outcome,z,nsnp,fdr),caption="Table 1. GSMR results for TNFB (fdr<=0.05)",digits=4)
+```
+
+```{r forestplot, echo=FALSE, fig.cap="Figure 2. GSMR forest plot", fig.height=12, fig.width=20, message=FALSE, warning=FALSE}
 tnfb <- filter(gsmr,gene=="LTA" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
 attach(tnfb)
 requireNamespace("meta")
@@ -77,15 +79,14 @@ mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z]
 meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
              leftcols=c("studlab"),leftlabs=c("Outcome"),
              rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","GSMR P"),digits=2,digits.pval=2,scientific.pval=TRUE,
-             plotwidth="10inch",sortvar=Effect,
+             plotwidth="8inch",sortvar=Effect,
              common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
 detach(tnfb)
 ```
 
 ## Single-SNP results
 
-```{r wald, echo=FALSE, fig.cap="Figure 2. Single-SNP results", fig.height=24, fig.width=35, message=FALSE, warning=FALSE}
-
+```{r wald, echo=FALSE, fig.cap="Figure 3. Single-SNP results", fig.height=15, fig.width=30, message=FALSE, warning=FALSE}
 exposure_dat <- read_exposure_data(
  filename = file.path(INF,"TNFB","TNFB.csv"),
  sep = ',',
@@ -120,14 +121,14 @@ mg <- meta::metagen(b,se,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\
 meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
              leftcols=c("studlab"),leftlabs=c("Outcome"),
              rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","Wald P"),digits=2,digits.pval=2,scientific.pval=TRUE,
-             plotwidth="10inch",sortvar=b,
+             plotwidth="8inch",sortvar=b,
              common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
 detach(mr_results)
 ```
 
 ## IVW results
 
-```{r ivw, echo=FALSE, fig.cap="Figure 3. IVW results", fig.height=24, fig.width=35, message=FALSE, warning=FALSE}
+```{r ivw, echo=FALSE, fig.cap="Figure 4. IVW results", fig.height=15, fig.width=30, message=FALSE, warning=FALSE}
 exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".gz")), sep = ' ',
   snp_col = 'SNP',
   effect_allele_col = 'A1',
@@ -144,17 +145,17 @@ rsids <- read.delim("TNFB-rsid.txt",header=TRUE)
 exposure_dat <- clump_data(left_join(exposure_dat,rsids))
 outcome_dat <- extract_outcome_data(exposure_dat$region, ids,
                proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3)
-outcome_dat <- outcome_dat %>%
-               distinct() %>%
+outcome_dat <- outcome_dat %>% distinct() %>%
                mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),SNP,
                       effect_allele.outcome=toupper(effect_allele.outcome),
                       other_allele.outcome=toupper(other_allele.outcome)) %>%
                select(snpid,SNP,effect_allele.outcome,other_allele.outcome,eaf.outcome,
                       beta.outcome,se.outcome,pval.outcome,samplesize.outcome,id.outcome,outcome) %>%
-               group_by(id.outcome,SNP) %>%
-               slice(which.min(pval.outcome)) %>%
-               data.frame()
-
+               group_by(id.outcome,SNP) %>% slice(which.min(pval.outcome)) %>% data.frame()
+knitr::kable(mutate(outcome_dat,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+             select(SNP,snpid,effect_allele.outcome,
+                    beta.outcome,se.outcome,pval.outcome,samplesize.outcome,disease) %>%
+             setNames(c("SNP","SNPid","A1","b","se","p","N","disease")),caption="Extracted SNP from diseases",digits=3)
 dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
 mr_ivw_results <- mr(dat,method="mr_ivw") %>%
                   mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
@@ -164,7 +165,7 @@ mg <- meta::metagen(b,se,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\
 meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
              leftcols=c("studlab"),leftlabs=c("Outcome"),
              rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","IVW P"),digits=2,digits.pval=2,scientific.pval=TRUE,
-             plotwidth="10inch",sortvar=b,
+             plotwidth="8inch",sortvar=b,
              common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
 detach(mr_ivw_results)
 knitr::kable(select(mr_ivw_results,disease,b,se,pval), caption="Table 4. MR results based on IVW", digits=4)
@@ -181,16 +182,9 @@ res <- mr(dat, method_list = c("mr_egger_regression", "mr_ivw"))
 p1 <- mr_scatter_plot(res, dat)
 res_single <- mr_singlesnp(dat)
 p2 <- mr_forest_plot(res_single)
+with(dat, mr_steiger(p_exp=pval.exposure,p_out=pval.outcome,n_exp=samplesize.exposure,n_out=samplesize.outcome,r_xxo=1,r_yyo=1,r_exp=0))
 directionality_test(dat)
-mr_steiger(
-    p_exp = dat$pval.exposure, 
-    p_out = dat$pval.outcome, 
-    n_exp = dat$samplesize.exposure, 
-    n_out = dat$samplesize.outcome, 
-    r_xxo = 1, 
-    r_yyo = 1,
-    r_exp=0
-)
+```
 
 ## Comparison between single-snp and IVW MRs
 
@@ -203,3 +197,13 @@ knitr::kable(mr_all,caption="Table 7. Comparison of single and IVW MR",digits=4)
 ```
 
 An `x` flag is set when the effects have the same (`x`=1) or different directions (`x`=-1).
+
+```{r x, echo=FALSE, message=FALSE, warning=FALSE}
+mr_all_x <- filter(mr_all,x==-1)[["disease"]]
+knitr::kable(mutate(outcome_dat,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+             filter(disease %in% mr_all_x) %>%
+             select(SNP,snpid,effect_allele.outcome,
+                    beta.outcome,se.outcome,pval.outcome,samplesize.outcome,disease) %>%
+             setNames(c("SNP","SNPid","A1","b","se","p","N","disease")),
+                      caption="Table 8. SNP information on inconsistent single/IVW MR results",digits=3)
+```
