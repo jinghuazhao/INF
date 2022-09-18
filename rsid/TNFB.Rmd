@@ -1,5 +1,5 @@
 ---
-title: "TNFB/LTA GSMR/TwoSampleMR analysis"
+title: "TNFB/LTA (GS/TwoSample)MR analysis"
 date: "`r Sys.Date()`"
 toc: false
 number_sections: false
@@ -68,7 +68,8 @@ pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize
 setHook("grid.newpage", NULL, "replace")
 grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
 grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
-knitr::kable(filter(gsmr,fdr<=0.05) %>% select(gene,outcome,z,nsnp,fdr),caption="Table 1. GSMR results for TNFB (fdr<=0.05)",digits=4)
+knitr::kable(filter(gsmr,fdr<=0.05) %>% mutate(OR=exp(z)) %>% select(gene,outcome,OR,nsnp,fdr),
+             caption="Table 1. GSMR results for TNFB (fdr<=0.05)",digits=4)
 ```
 
 ```{r forestplot, echo=FALSE, fig.cap="Figure 2. GSMR forest plot", fig.height=12, fig.width=20, message=FALSE, warning=FALSE}
