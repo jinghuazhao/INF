@@ -217,3 +217,10 @@ knitr::kable(mutate(outcome_dat,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*
              setNames(c("SNP","SNPid","A1","b","se","p","N","disease")),
                       caption="Table 9. SNP information on inconsistent single/IVW MR results",digits=3)
 ```
+
+## Appendix
+
+```{r appendix, echo=FALSE}
+cis <- read.table("cis.dat",col.names=c("UniProt","prot","chr","start","end"))
+knitr::kable(cis,caption="Appendix. Definition of cis regions by protein")
+```
