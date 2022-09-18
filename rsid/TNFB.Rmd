@@ -68,7 +68,7 @@ pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize
 setHook("grid.newpage", NULL, "replace")
 grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
 grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
-knitr::kable(filter(gsmr,fdr<=0.05) %>% mutate(OR=exp(z)) %>% select(gene,outcome,OR,nsnp,fdr),
+knitr::kable(filter(gsmr,fdr<=0.05) %>% mutate(OR=exp(bxy)) %>% select(gene,outcome,OR,nsnp,fdr),
              caption="Table 1. GSMR results for TNFB (fdr<=0.05)",digits=4)
 ```
 
