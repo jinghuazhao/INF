@@ -16,17 +16,12 @@ library(knitr)
 library(png)
 library(tinytex)
 library(lattice)
-```
-
-```{r, include=FALSE}
 knitr::write_bib(file = 'packages.bib')
-```
-
-```{r init, echo=FALSE}
 options(width=200)
 INF <- Sys.getenv("INF")
 rt <- file.path(INF,"mr","gsmr")
 prot <- "TNFB"
+ids <- scan("efo","")
 suppressMessages(library(TwoSampleMR))
 suppressMessages(library(dplyr))
 suppressMessages(library(ggplot2))
@@ -106,12 +101,14 @@ exposure_dat <- read_exposure_data(
  pval_col = 'pval'
 ) %>%
 mutate(SNP="rs2229092")
-ids <- scan("efo","")
 outcome_dat <- extract_outcome_data(exposure_dat$SNP, ids,
                proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3) %>%
                distinct()
-knitr::kable(read.csv("TNFB.csv"), caption="Table 2. Protein data (rs2229092)")
 dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+knitr::kable(mutate(dat, disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+             select(beta.outcome, se.outcome, pval.outcome, samplesize.outcome, disease) %>%
+             setNames(c("b","se","p","N","disease")),
+             caption="Table 2. Harmonised data on TNFB/LTA cis-pQTL (rs2229092, 6:31540757_A_C, b/se=1.356/0.026)", digits=3)
 mr_results <- mr(dat) %>%
               mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
               select(id.outcome,b,se,pval,disease)
@@ -153,11 +150,11 @@ outcome_dat <- outcome_dat %>% distinct() %>%
                select(snpid,SNP,effect_allele.outcome,other_allele.outcome,eaf.outcome,
                       beta.outcome,se.outcome,pval.outcome,samplesize.outcome,id.outcome,outcome) %>%
                group_by(id.outcome,SNP) %>% slice(which.min(pval.outcome)) %>% data.frame()
-knitr::kable(mutate(outcome_dat,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
-             select(SNP,snpid,effect_allele.outcome,
-                    beta.outcome,se.outcome,pval.outcome,samplesize.outcome,disease) %>%
-             setNames(c("SNP","SNPid","A1","b","se","p","N","disease")),caption="Extracted SNP from diseases",digits=3)
 dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+knitr::kable(mutate(dat, disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+             select(beta.exposure, se.exposure, beta.outcome, se.outcome, pval.outcome, samplesize.outcome, disease) %>%
+             setNames(c("bX", "seX", "bY","seY","pY","NY","disease")),
+             caption="Table 4. Harmonised data on TNFB/LTA (X=protein, Y=disease)", digits=3)
 mr_ivw_results <- mr(dat,method="mr_ivw") %>%
                   mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
                   select(id.outcome,b,se,pval,disease)
@@ -169,22 +166,34 @@ meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
              plotwidth="8inch",sortvar=b,
              common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
 detach(mr_ivw_results)
-knitr::kable(select(mr_ivw_results,disease,b,se,pval), caption="Table 4. MR results based on IVW", digits=4)
+knitr::kable(select(mr_ivw_results,disease,b,se,pval), caption="Table 5. MR results based on IVW", digits=4)
 write.table(mr_ivw_results,file="TNFB-ivw.txt",row.names=FALSE,quote=FALSE,sep="\t")
 mr_heterogeneity_results <- mr_heterogeneity(dat, method_list = "mr_egger_regression") %>%
                             mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
                             select(disease,method,Q,-id.exposure,-id.outcome,-exposure)
-knitr::kable(mr_heterogeneity_results,caption="Table 5. Heterogeneity analysis")
+knitr::kable(mr_heterogeneity_results,caption="Table 6. Heterogeneity analysis")
 mr_pleiotropy_results <- mr_pleiotropy_test(dat) %>%
                          mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
                          select(disease,egger_intercept,se,pval)
-knitr::kable(mr_pleiotropy_results,caption="Table 6. Pleiotropy analysis")
-res <- mr(dat, method_list = c("mr_egger_regression", "mr_ivw"))
-p1 <- mr_scatter_plot(res, dat)
-res_single <- mr_singlesnp(dat)
-p2 <- mr_forest_plot(res_single)
-with(dat, mr_steiger(p_exp=pval.exposure,p_out=pval.outcome,n_exp=samplesize.exposure,n_out=samplesize.outcome,r_xxo=1,r_yyo=1,r_exp=0))
-directionality_test(dat)
+knitr::kable(mr_pleiotropy_results,caption="Table 7. Pleiotropy analysis")
+```
+
+```{r ms, echo=FALSE, fig.cap="Figure 5. Forest plot for MS", fig.height=15, fig.with=10, message=FALSE, warning=FALSE}
+for(id in ids)
+{
+  d <- filter(dat, id.outcome==id) %>% distinct()
+  if(id=="ieu-b-18" & nrow(d)>0)
+  {
+    res <- mr(d, method_list = c("mr_egger_regression", "mr_ivw"))
+    p1 <- mr_scatter_plot(res, d)
+    res_single <- mr_singlesnp(d)
+    p2 <- mr_forest_plot(res_single)
+    with(d, mr_steiger(p_exp=pval.exposure,p_out=pval.outcome,n_exp=samplesize.exposure,n_out=samplesize.outcome,r_xxo=1,r_yyo=1,r_exp=0,r_out=0.8))
+#   r <- get_r_from_lor(lor, af, ncase, ncontrol, prevalence, model = "logit", correction = FALSE)
+    directionality_test(d)
+    p2
+  }
+}
 ```
 
 ## Comparison between single-snp and IVW MRs
@@ -194,7 +203,7 @@ mr_all <- full_join(setNames(mr_results,c("id.outcome","b_single","se_single","p
                     setNames(mr_ivw_results, c("id.outcome","b_IVW", "se_IVW", "p_IVW", "disease"))) %>%
           mutate(x=sign(b_single)*sign(b_IVW)) %>%
           select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,x)
-knitr::kable(mr_all,caption="Table 7. Comparison of single and IVW MR",digits=4)
+knitr::kable(mr_all,caption="Table 8. Comparison of single and IVW MR",digits=4)
 ```
 
 An `x` flag is set when the effects have the same (`x`=1) or different directions (`x`=-1).
@@ -206,5 +215,5 @@ knitr::kable(mutate(outcome_dat,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*
              select(SNP,snpid,effect_allele.outcome,
                     beta.outcome,se.outcome,pval.outcome,samplesize.outcome,disease) %>%
              setNames(c("SNP","SNPid","A1","b","se","p","N","disease")),
-                      caption="Table 8. SNP information on inconsistent single/IVW MR results",digits=3)
+                      caption="Table 9. SNP information on inconsistent single/IVW MR results",digits=3)
 ```
