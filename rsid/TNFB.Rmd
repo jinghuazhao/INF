@@ -16,6 +16,9 @@ library(knitr)
 library(png)
 library(tinytex)
 library(lattice)
+```
+
+```{r varpkgs, echo=FALSE}
 knitr::write_bib(file = 'packages.bib')
 options(width=200)
 INF <- Sys.getenv("INF")
@@ -26,6 +29,7 @@ suppressMessages(library(TwoSampleMR))
 suppressMessages(library(dplyr))
 suppressMessages(library(ggplot2))
 suppressMessages(library(stringr))
+suppressMessages(library(pQTLtools))
 ```
 
 ## GSMR results
@@ -179,20 +183,21 @@ knitr::kable(mr_pleiotropy_results,caption="Table 7. Pleiotropy analysis")
 ```
 
 ```{r ms, echo=FALSE, fig.cap="Figure 5. Forest plot for MS", fig.height=15, fig.with=10, message=FALSE, warning=FALSE}
-for(id in ids)
+id <- "ieu-b-18"
 {
   d <- filter(dat, id.outcome==id) %>% distinct()
-  if(id=="ieu-b-18" & nrow(d)>0)
-  {
-    res <- mr(d, method_list = c("mr_egger_regression", "mr_ivw"))
-    p1 <- mr_scatter_plot(res, d)
-    res_single <- mr_singlesnp(d)
-    p2 <- mr_forest_plot(res_single)
-    with(d, mr_steiger(p_exp=pval.exposure,p_out=pval.outcome,n_exp=samplesize.exposure,n_out=samplesize.outcome,r_xxo=1,r_yyo=1,r_exp=0,r_out=0.8))
-#   r <- get_r_from_lor(lor, af, ncase, ncontrol, prevalence, model = "logit", correction = FALSE)
-    directionality_test(d)
-    p2
-  }
+  res <- mr(d, method_list = c("mr_egger_regression", "mr_ivw"))
+  p1 <- mr_scatter_plot2(res, d)
+  res_single <- mr_singlesnp(d)
+  mr_forest_plot2(res_single)
+# with(d, mr_steiger(p_exp=pval.exposure,p_out=pval.outcome,n_exp=samplesize.exposure,n_out=samplesize.outcome,r_xxo=1,r_yyo=1,r_exp=0,r_out=0.8))
+  lor <- with(d,beta.outcome)
+  af <- with(d,eaf.outcome)
+  ncase <- 68374
+  ncontrol <- 47429
+  prevalence <- 0.02
+# r <- get_r_from_lor(lor, af, ncase, ncontrol, prevalence, model = "logit", correction = FALSE)
+# directionality_test(d)
 }
 ```
 
@@ -221,7 +226,8 @@ knitr::kable(mutate(outcome_dat,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*
 ## Appendix
 
 ```{r appendix, echo=FALSE}
-cis <- read.table("cis.dat",col.names=c("UniProt","prot","chr","start","end")) %>%
+cis <- read.table("cis.dat",col.names=c("UniProt","gene","prot","chr","start","end")) %>%
+       select(UniProt,prot,gene,chr,start,end) %>%
        arrange(chr)
-knitr::kable(cis,caption="Appendix. Definition of cis regions by chromosome")
+knitr::kable(cis,caption="Definition of cis regions by chromosome")
 ```

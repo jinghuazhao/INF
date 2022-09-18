@@ -499,3 +499,9 @@ function pdf_final()
   pdfseparate manhattan.pdf temp-%04d-manhattan.pdf
   pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile qq-manhattan.pdf
 }
+
+function cis_info()
+{
+  awk '$21==ENVIRON["suffix"] {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  sort -k1,1 | join <(cut -f3,7 doc/olink.inf.panel.annot.tsv | sed 's/"//g' | sort -k1,1) - > TNFB/cis.dat
+}
