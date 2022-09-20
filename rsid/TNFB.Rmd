@@ -259,6 +259,8 @@ knitr::kable(mutate(outcome_dat,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*
 
 ## Comments
 
+Sepsis (ieu-b-69) is an infectious disease.
+
 From the definition of cis regions at the Appendix, LTA was the only gene in the HLA region. One expects
 that this was also where LD has the strongest impact; from the harmonised data it is apparent that the
 LD pruning was somewhat too harsh and it is more appropriate to utilise LD information directly (to follow).
