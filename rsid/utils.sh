@@ -502,6 +502,7 @@ function pdf_final()
 
 function cis_info()
 {
-  awk '$21==ENVIRON["suffix"] {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+  awk -vM=1e6 '{$4=$4-M;$5=$5+M};1' | \
   sort -k1,1 | join <(cut -f3,7 doc/olink.inf.panel.annot.tsv | sed 's/"//g' | sort -k1,1) - > TNFB/cis.dat
 }

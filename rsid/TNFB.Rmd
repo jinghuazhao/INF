@@ -1,8 +1,8 @@
 ---
 title: "TNFB/LTA (GS/TwoSample)MR analysis"
 date: "`r Sys.Date()`"
-toc: false
-number_sections: false
+toc: true
+number_sections: true
 output: word_document
 bibliography: [packages.bib]
 link-citations: yes
@@ -11,25 +11,28 @@ csl: /home/jhz22/R/gap/vignettes/nature-genetics.csl
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=TRUE,fig.path="")
+```
+
+```{r varpkgs, echo=FALSE, message=FALSE, warning=FALSE}
 library(bookdown)
 library(knitr)
 library(png)
 library(tinytex)
 library(lattice)
-```
+library(TwoSampleMR)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(openxlsx)
+library(pQTLtools)
 
-```{r varpkgs, echo=FALSE}
-knitr::write_bib(file = 'packages.bib')
 options(width=200)
+HPC_WORK <- Sys.getenv("HPC_WORK")
 INF <- Sys.getenv("INF")
 rt <- file.path(INF,"mr","gsmr")
 prot <- "TNFB"
 ids <- scan("efo","")
-suppressMessages(library(TwoSampleMR))
-suppressMessages(library(dplyr))
-suppressMessages(library(ggplot2))
-suppressMessages(library(stringr))
-suppressMessages(library(pQTLtools))
+knitr::write_bib(file = 'packages.bib')
 ```
 
 ## GSMR results
@@ -143,6 +146,25 @@ exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".
 ) %>%
 mutate(region=gsub("chr|_|[a-z]","",SNP),snpid=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE)) %>%
 select(-SNP)
+if (FALSE)
+{
+  d <- rename(exposure_dat,SNP=snpid,P=pval.exposure)
+  # not working with INTERVAL reference
+  exposure_dat <- ieugwasr::ld_clump_local(d,clump_kb=10000,clump_r2=0.001,clump_p=0.99,
+                                           bfile=file.path(INF,"INTERVAL","cardio","INTERVAL"),
+                                           plink_bin=file.path(HPC_WORK,"bin","plink-1.9"))
+  # working with PLINK 1.9 directly under Bash
+  res <- read.table(paste(prot, ".clumped", sep = ""), header = T)
+  y <- subset(d, !d[["SNP"]] %in% res[["SNP"]])
+  if (nrow(y) > 0) {
+      message("Removing ", length(y[["SNP"]]), " of ", nrow(d),
+            " variants due to LD with other variants or absence from LD reference panel")
+  }
+  rsids <- read.table("TNFB.rsid",col.names=c("snpid","SNP"))
+  exposure_dat <- left_join(rsids,subset(d, d[["SNP"]] %in% res[["SNP"]])%>%rename(snpid=SNP))
+}
+
+# working but with MR Base reference
 rsids <- read.delim("TNFB-rsid.txt",header=TRUE)
 exposure_dat <- clump_data(left_join(exposure_dat,rsids))
 outcome_dat <- extract_outcome_data(exposure_dat$region, ids,
@@ -204,10 +226,20 @@ id <- "ieu-b-18"
 ## Comparison between single-snp and IVW MRs
 
 ```{r comparison, echo=FALSE, message=FALSE, warning=FALSE}
+efo <- read.xlsx(xlsx,sheet="EFO",startRow=2,colNames=TRUE,skipEmptyRows=TRUE) %>%
+       select(-c(Zhengetal,uri))
+efo_old <- filter(efo,is.na(Replacement) & grepl("ieu|ebi|finn-a-D3")) %>%
+           select(-c(MRBASEID,Controls,Cases)))
+efo_new <- filter(efo,Replacement!="") %>%
+           select(c-(MRBASEID,Ncontrols,Ncases)) %>%
+           rename(MRBASEID=Replacement,Ncontrols=Controls,Ncases=cases)
+efo_update <- bind_rows(efo_old,efo_new) %>%
+              rename(id.outcome=MRBASEID)
 mr_all <- full_join(setNames(mr_results,c("id.outcome","b_single","se_single","p_single","disease")),
                     setNames(mr_ivw_results, c("id.outcome","b_IVW", "se_IVW", "p_IVW", "disease"))) %>%
+          left_join(select(efo_update,Ncases,Ncontrols)) %>%
           mutate(x=sign(b_single)*sign(b_IVW)) %>%
-          select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,x)
+          select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,x,Ncases,Ncontrols)
 knitr::kable(mr_all,caption="Table 8. Comparison of single and IVW MR",digits=4)
 ```
 
@@ -223,6 +255,12 @@ knitr::kable(mutate(outcome_dat,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*
                       caption="Table 9. SNP information on inconsistent single/IVW MR results",digits=3)
 ```
 
+## Comments
+
+From the definition of cis regions at the Appendix, LTA was the only gene in the HLA region. One expects
+that this was also where LD has the strongest impact; from the harmonised data it is apparent that the
+LD pruning was somewhat too harsh and it is more appropriate to utilise LD information directly (to follow).
+
 ## Appendix
 
 ```{r appendix, echo=FALSE}
@@ -230,4 +268,19 @@ cis <- read.table("cis.dat",col.names=c("UniProt","gene","prot","chr","start","e
        select(UniProt,prot,gene,chr,start,end) %>%
        arrange(chr)
 knitr::kable(cis,caption="Definition of cis regions by chromosome")
+```
+
+```{r outcome, echo=FALSE, message=FALSE, warning=FALSE}
+region <- filter(cis,gene=="LTA") %>%
+          mutate(region=paste0(chr,":",start,"-",end))
+for(id in ids)
+{
+  extracted_outcome <- pQTLtools::import_OpenGWAS(id,region$region,method="TwoSampleMR")
+  write.table(extracted_outcome,file=paste0(prot,"-",id,".txt"),row.names=FALSE,quote=FALSE,sep="\t")
+  if (!is.null(extracted_outcome))
+  write.table(select(extracted_outcome,SNP,pval.outcome,samplesize.outcome) %>%
+              mutate(pval.outcome=-log10(pval.outcome)) %>%
+              setNames(c("SNP","log10p","N")),
+              file=paste0(prot,"-",id,".lz"),row.names=FALSE,quote=FALSE,sep="\t")
+}
 ```
