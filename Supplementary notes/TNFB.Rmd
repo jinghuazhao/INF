@@ -227,6 +227,7 @@ id <- "ieu-b-18"
 
 ```{r comparison, echo=FALSE, message=FALSE, warning=FALSE}
 efo <- read.xlsx("efo.xlsx",sheet="EFO",startRow=2,colNames=TRUE,skipEmptyRows=TRUE) %>%
+       mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
        select(-c(Zhengetal,uri))
 efo_old <- filter(efo,is.na(Replacement) & grepl("ieu|ebi",MRBASEID)) %>%
            select(-c(Controls,Cases))
@@ -286,20 +287,20 @@ for(id in ids)
 }
 ```
 
-![celiacdisease](ieu-a-276.png)
-![sepsis](ieu-b-69.png)
-![juvenileidiopathicarthritis](ebi-a-GCST005528.png)
-![systemiclupuserythematosus](ebi-a-GCST003156.png)
-![inflammatoryboweldisease](ieu-a-31.png)
-![multiplesclerosis](ieu-b-18.png)
-![IGAglomerulonephritis](ieu-a-1081.png)
-![sclerosingcholangitis](ieu-a-1112.png)
-![primarybiliarycirrhosis](ebi-a-GCST005581.png)
-![asthma](ebi-a-GCST005212.png)
-![atopiceczema](ieu-a-996.png)
-![Crohn'sdisease](ebi-a-GCST004132.png)
-![psoriasis](finn-b-L12_PSORIASIS.png)
-![rheumatoidarthritis](ieu-a-833.png)
-![ulcerativecolitis](ebi-a-GCST004133.png)
-![ankylosingspondylitis](ebi-a-GCST005529.png)
-![gout](ebi-a-GCST001790.png)
+![Celiac disease](TNFB-ieu-a-276.png)
+![Sepsis](TNFB-ieu-b-69.png)
+![Juvenile idiopathi carthritis](TNFB-ebi-a-GCST005528.png)
+![Systemic lupus erythematosus](TNFB-ebi-a-GCST003156.png)
+![Inflammatory bowel disease](TNFB-ieu-a-31.png)
+![Multiple sclerosis](TNFB-ieu-b-18.png)
+![IgA glomerulonephritis](TNFB-ieu-a-1081.png)
+![Sclerosing cholangitis](TNFB-ieu-a-1112.png)
+![Primary biliary cirrhosis](TNFB-ebi-a-GCST005581.png)
+![Asthma](TNFB-ebi-a-GCST005212.png)
+![Atopic eczema](TNFB-ieu-a-996.png)
+![Crohn's disease](TNFB-ebi-a-GCST004132.png)
+![Psoriasis](TNFB-finn-b-L12_PSORIASIS.png)
+![Rheumatoid arthritis](TNFB-ieu-a-833.png)
+![Ulcerative colitis](TNFB-ebi-a-GCST004133.png)
+![Ankylosing spondylitis](TNFB-ebi-a-GCST005529.png)
+![Gout](TNFB-ebi-a-GCST001790.png)
