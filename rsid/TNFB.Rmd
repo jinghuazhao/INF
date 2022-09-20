@@ -226,15 +226,16 @@ id <- "ieu-b-18"
 ## Comparison between single-snp and IVW MRs
 
 ```{r comparison, echo=FALSE, message=FALSE, warning=FALSE}
-efo <- read.xlsx(xlsx,sheet="EFO",startRow=2,colNames=TRUE,skipEmptyRows=TRUE) %>%
+efo <- read.xlsx("efo.xlsx",sheet="EFO",startRow=2,colNames=TRUE,skipEmptyRows=TRUE) %>%
        select(-c(Zhengetal,uri))
-efo_old <- filter(efo,is.na(Replacement) & grepl("ieu|ebi|finn-a-D3")) %>%
-           select(-c(MRBASEID,Controls,Cases)))
+efo_old <- filter(efo,is.na(Replacement) & grepl("ieu|ebi",MRBASEID)) %>%
+           select(-c(Controls,Cases))
 efo_new <- filter(efo,Replacement!="") %>%
-           select(c-(MRBASEID,Ncontrols,Ncases)) %>%
-           rename(MRBASEID=Replacement,Ncontrols=Controls,Ncases=cases)
+           select(-c(MRBASEID,Ncontrols,Ncases)) %>%
+           rename(MRBASEID=Replacement,Ncontrols=Controls,Ncases=Cases)
 efo_update <- bind_rows(efo_old,efo_new) %>%
-              rename(id.outcome=MRBASEID)
+              rename(id.outcome=MRBASEID) %>%
+              select(-Replacement)
 mr_all <- full_join(setNames(mr_results,c("id.outcome","b_single","se_single","p_single","disease")),
                     setNames(mr_ivw_results, c("id.outcome","b_IVW", "se_IVW", "p_IVW", "disease"))) %>%
           left_join(select(efo_update,Ncases,Ncontrols)) %>%
@@ -284,3 +285,21 @@ for(id in ids)
               file=paste0(prot,"-",id,".lz"),row.names=FALSE,quote=FALSE,sep="\t")
 }
 ```
+
+![celiacdisease](ieu-a-276.png)
+![sepsis](ieu-b-69.png)
+![juvenileidiopathicarthritis](ebi-a-GCST005528.png)
+![systemiclupuserythematosus](ebi-a-GCST003156.png)
+![inflammatoryboweldisease](ieu-a-31.png)
+![multiplesclerosis](ieu-b-18.png)
+![IGAglomerulonephritis](ieu-a-1081.png)
+![sclerosingcholangitis](ieu-a-1112.png)
+![primarybiliarycirrhosis](ebi-a-GCST005581.png)
+![asthma](ebi-a-GCST005212.png)
+![atopiceczema](ieu-a-996.png)
+![Crohn'sdisease](ebi-a-GCST004132.png)
+![psoriasis](finn-b-L12_PSORIASIS.png)
+![rheumatoidarthritis](ieu-a-833.png)
+![ulcerativecolitis](ebi-a-GCST004133.png)
+![ankylosingspondylitis](ebi-a-GCST005529.png)
+![gout](ebi-a-GCST001790.png)
