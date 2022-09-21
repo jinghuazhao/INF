@@ -73,7 +73,7 @@ Rscript -e '
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=1.2,
                 annotatelog10P=-log10(5e-10), annotateTop = FALSE, highlight=with(genes,gene),
-                mtext.line=3, y.brk1=30, y.brk2=70, delta=0.01, cex.axis=1.5, cex.x=2, cex=0.8, font=3, font.axis=1.5,
+                mtext.line=3, y.brk1=20, y.brk2=45, delta=0.01, cex.axis=1.5, cex.x=2, cex=0.8, font=3, font.axis=1.5,
                 y.ax.space=20,
                 col = c("blue4", "skyblue")
   )
