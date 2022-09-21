@@ -223,7 +223,7 @@ id <- "ieu-b-18"
 }
 ```
 
-## Comparison between single-snp and IVW MRs
+## Comparison with single-SNP MRs
 
 ```{r comparison, echo=FALSE, message=FALSE, warning=FALSE}
 efo <- read.xlsx("efo.xlsx",sheet="EFO",startRow=2,colNames=TRUE,skipEmptyRows=TRUE) %>%
@@ -241,16 +241,17 @@ mr_all <- full_join(setNames(mr_results,c("id.outcome","b_single","se_single","p
                     setNames(mr_ivw_results,c("id.outcome","b_IVW", "se_IVW", "p_IVW", "disease"))) %>%
           left_join(select(efo_update,id.outcome,Ncases,Ncontrols)) %>%
           mutate(x=sign(b_single)*sign(b_IVW)) %>%
-          select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,x,Ncases,Ncontrols)
+          select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,x,Ncases,Ncontrols) %>%
+          rename(Cases=Ncases,Controls=Ncontrols)
 knitr::kable(mr_all,caption="Table 8. Comparison of single and IVW MR",digits=4)
 gsmr <- read.delim(file.path(rt,"out","gsmr-efo.txt")) %>%
         filter(protein=="TNFB") %>%
+        mutate(disease=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
         rename(id.outcome=MRBASEID)
 single_gsmr <- full_join(setNames(select(mr_results,-disease),c("id.outcome","b_single","se_single","p_single")),
-                         select(gsmr,id.outcome,bxy,se,p,Ncases,Ncontrols) %>%
-                         mutate(disease=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
+                         select(gsmr,id.outcome,bxy,se,p,Ncases,Ncontrols,disease) %>%
                          setNames(c("id.outcome","b_GSMR", "se_GSMR", "p_GSMR","Cases","Controls","Disease")))
-knitr::kable(single_gsmr,caption="Table 9. Effect size comparison between single SNP MR and GSMR results")
+knitr::kable(single_gsmr,caption="Table 9. Effect size comparison between single/GS MR results")
 ```
 
 An `x` flag is set when the effects have the same (`x`=1) or different directions (`x`=-1).
