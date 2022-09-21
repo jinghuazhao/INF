@@ -47,6 +47,7 @@ function ld_clump()
   awk 'NR >1 {print $3}' TNFB.clumped | sed '/^$/d' > TNFB.snplist
   grep -w -f TNFB.snplist ${INF}/work/INTERVAL.rsid > TNFB.rsid
   plink-1.9 --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+            --chr 6 \
             --extract TNFB.snplist \
             --r square gz \
             --out TNFB
@@ -59,7 +60,7 @@ function lz()
             --delim tab title="${id}" --chr=6 --start=30539831 --end=32542101 \
             --markercol SNP --pvalcol log10p --no-transform  --cache None \
             --no-date --plotonly --prefix=TNFB-${id} --rundir . --svg --refsnp rs2229092
-  convert -density 300 TNFB-${id}_rs2229092.pdf[1] TNFB-${id}.png
+  convert -density 300 TNFB-${id}_rs2229092.pdf[0] TNFB-${id}.png
 }
 
-lz
+docx_html

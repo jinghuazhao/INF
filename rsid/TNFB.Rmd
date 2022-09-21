@@ -38,7 +38,7 @@ knitr::write_bib(file = 'packages.bib')
 ## GSMR results
 
 ```{r gsmr, echo=FALSE, fig.cap="Figure 1. GSMR results on TNFB", fig.height=24, fig.width=35, message=FALSE, warning=FALSE}
-gsmr <- read.delim(file.path(INF,"mr","gsmr","out","gsmr-efo.txt")) %>%
+gsmr <- read.delim(file.path(rt,"out","gsmr-efo.txt")) %>%
         mutate(outcome=paste0(trait),
                exposure=protein,
                z=bxy/se,
@@ -123,7 +123,7 @@ knitr::kable(select(mr_results,disease,b,se,pval), caption="Table 3. MR results 
 write.table(mr_results,file=file.path(INF,"work","TNFB.txt"),row.names=FALSE,sep="\t")
 attach(mr_results)
 mg <- meta::metagen(b,se,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE))),sm="OR",title="TNFB")
-meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
+meta::forest(mg,colgap.forest.left="0.5cm",fontsize=32,
              leftcols=c("studlab"),leftlabs=c("Outcome"),
              rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","Wald P"),digits=2,digits.pval=2,scientific.pval=TRUE,
              plotwidth="8inch",sortvar=b,
@@ -238,11 +238,19 @@ efo_update <- bind_rows(efo_old,efo_new) %>%
               rename(id.outcome=MRBASEID) %>%
               select(-Replacement)
 mr_all <- full_join(setNames(mr_results,c("id.outcome","b_single","se_single","p_single","disease")),
-                    setNames(mr_ivw_results, c("id.outcome","b_IVW", "se_IVW", "p_IVW", "disease"))) %>%
-          left_join(select(efo_update,Ncases,Ncontrols)) %>%
+                    setNames(mr_ivw_results,c("id.outcome","b_IVW", "se_IVW", "p_IVW", "disease"))) %>%
+          left_join(select(efo_update,id.outcome,Ncases,Ncontrols)) %>%
           mutate(x=sign(b_single)*sign(b_IVW)) %>%
           select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,x,Ncases,Ncontrols)
 knitr::kable(mr_all,caption="Table 8. Comparison of single and IVW MR",digits=4)
+gsmr <- read.delim(file.path(rt,"out","gsmr-efo.txt")) %>%
+        filter(protein=="TNFB") %>%
+        rename(id.outcome=MRBASEID)
+single_gsmr <- full_join(setNames(select(mr_results,-disease),c("id.outcome","b_single","se_single","p_single")),
+                         select(gsmr,id.outcome,bxy,se,p,Ncases,Ncontrols) %>%
+                         mutate(disease=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
+                         setNames(c("id.outcome","b_GSMR", "se_GSMR", "p_GSMR","Cases","Controls","Disease")))
+knitr::kable(single_gsmr,caption="Table 9. Effect size comparison between single SNP MR and GSMR results")
 ```
 
 An `x` flag is set when the effects have the same (`x`=1) or different directions (`x`=-1).
@@ -254,7 +262,7 @@ knitr::kable(mutate(outcome_dat,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*
              select(SNP,snpid,effect_allele.outcome,
                     beta.outcome,se.outcome,pval.outcome,samplesize.outcome,disease) %>%
              setNames(c("SNP","SNPid","A1","b","se","p","N","disease")),
-                      caption="Table 9. SNP information on inconsistent single/IVW MR results",digits=3)
+                      caption="Table 10. SNP information on inconsistent single/IVW MR results",digits=3)
 ```
 
 ## Comments
@@ -289,7 +297,6 @@ for(id in ids)
 }
 ```
 
-![Celiac disease](TNFB-ieu-a-276.png)
 ![Sepsis](TNFB-ieu-b-69.png)
 ![Juvenile idiopathi carthritis](TNFB-ebi-a-GCST005528.png)
 ![Systemic lupus erythematosus](TNFB-ebi-a-GCST003156.png)
