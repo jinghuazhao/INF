@@ -29,7 +29,7 @@ library(pQTLtools)
 options(width=200)
 HPC_WORK <- Sys.getenv("HPC_WORK")
 INF <- Sys.getenv("INF")
-rt <- file.path(INF,"mr","gsmr")
+rt <- file.path(INF,"TNFB")
 prot <- "TNFB"
 ids <- scan("efo","")
 knitr::write_bib(file = 'packages.bib')
@@ -38,7 +38,7 @@ knitr::write_bib(file = 'packages.bib')
 ## GSMR results
 
 ```{r gsmr, echo=FALSE, fig.cap="Figure 1. GSMR results on TNFB", fig.height=24, fig.width=35, message=FALSE, warning=FALSE}
-gsmr <- read.delim(file.path(rt,"out","gsmr-efo.txt")) %>%
+gsmr <- read.delim(file.path(rt,"gsmr-efo.txt")) %>%
         mutate(outcome=paste0(trait),
                exposure=protein,
                z=bxy/se,
@@ -244,7 +244,7 @@ mr_all <- full_join(setNames(mr_results,c("id.outcome","b_single","se_single","p
           select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,x,Ncases,Ncontrols) %>%
           rename(Cases=Ncases,Controls=Ncontrols)
 knitr::kable(mr_all,caption="Table 8. Comparison of single and IVW MR",digits=4)
-gsmr <- read.delim(file.path(rt,"out","gsmr-efo.txt")) %>%
+gsmr <- read.delim(file.path(rt,"gsmr-efo.txt")) %>%
         filter(protein=="TNFB") %>%
         mutate(disease=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
         rename(id.outcome=MRBASEID)

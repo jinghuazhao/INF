@@ -73,7 +73,7 @@ garfield <- read.table(file.path(INF,"garfield-data","output","INF1-cis","garfie
     gsmr <- merge(d, gap_inf1[c("prot","target.short")],by.x="Exposure1",by.y="prot") %>%
             mutate(Exposure1=target.short,Exposure2=target.short) %>% rename(Protein1=Exposure1,Protein2=Exposure2) %>%
             select(-target.short)
-   gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","out","5e-8","gsmr-efo.txt")) %>%
+   gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","out","gsmr-efo.txt")) %>%
             mutate(protein=gsub("MCP-1","CCL2",protein)) %>%
             mutate(protein=gsub("MCP-2","CCL8",protein)) %>%
             mutate(protein=gsub("MCP-3","CCL7",protein)) %>%
