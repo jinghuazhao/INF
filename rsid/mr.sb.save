@@ -7,8 +7,8 @@
 #SBATCH --array=1-59
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
-#SBATCH --output=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm/_mr_%A_%a.out
-#SBATCH --error=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm//_mr_%A_%a.err
+#SBATCH --output=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm/_gsmr_%A_%a.out
+#SBATCH --error=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm//_gsmr_%A_%a.err
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -132,37 +132,32 @@ function gsmr2()
 }
 
 function mr()
-# now done after gsmr2
 {
-  export prot=$(awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
-  export rt=${INF}/mr/gsmr
-  gunzip -c ${rt}/prot/${prot}.gz | sed '1d' | cut -d' ' -f1 | sort -k1,1 | join - ${INF}/work/INTERVAL.rsid > ${rt}/prot/${prot}-rsid.txt
   Rscript -e '
-    options(width=200)
-    HPC_WORK <- Sys.getenv("HPC_WORK")
-    INF <- Sys.getenv("INF")
-    prot <- Sys.getenv("prot")
-    rt <- Sys.getenv("rt")
-    ids <- scan(file.path(INF,"TNFB","efo"),"")
-    rsids <- read.table(file.path(rt,"prot",paste0(prot,"-rsid.txt")), col.names=c("snpid","SNP"))
-    pkgs <- c("TwoSampleMR","dplyr","ggplot2","openxlsx","stringr")
-    invisible(suppressMessages(lapply(pkgs, require, character.only = TRUE)))
-    prot_dat <- read.table(file.path(rt,"prot",paste0(prot,".gz")),header=TRUE) %>%
-                rename(snpid=SNP) %>%
-                left_join(rsids) %>%
-                filter(!is.na(SNP)) %>%
-                select(-snpid)
-    exposure_dat <- format_data(prot_dat,
-      snp_col = 'SNP',
-      effect_allele_col = 'A1',
-      other_allele_col = 'A2',
-      eaf_col = 'freq',
-      beta_col = 'b',
-      se_col = 'se',
-      pval_col = 'p',
-      samplesize_col = 'N'
-    ) %>% clump_data()
-    outcome_dat <- extract_outcome_data(exposure_dat$SNP, ids) %>%
+    library(TwoSampleMR)
+    library(dplyr)
+    library(ggplot2)
+    library(stringr)
+    library(openxlsx)
+    library(pQTLtools)
+    exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".gz")), sep = ' ',
+    snp_col = 'SNP',
+    effect_allele_col = 'A1',
+    other_allele_col = 'A2',
+    eaf_col = 'freq',
+    beta_col = 'b',
+    se_col = 'se',
+    pval_col = 'p',
+    samplesize_col = 'N'
+    ) %>%
+    mutate(region=gsub("chr|_|[a-z]","",SNP),snpid=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE)) %>%
+    select(-SNP)
+    ids <- scan(file.path(INF,"TNFB","efo","")
+    rsids <- read.delim("TNFB-rsid.txt",header=TRUE)
+    exposure_dat <- clump_data(left_join(exposure_dat,rsids))
+    outcome_dat <- extract_outcome_data(exposure_dat$region, ids,
+                   proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3)
+    outcome_dat <- outcome_dat %>% distinct() %>%
                    mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),SNP,
                           effect_allele.outcome=toupper(effect_allele.outcome),
                           other_allele.outcome=toupper(other_allele.outcome)) %>%
@@ -170,22 +165,16 @@ function mr()
                           beta.outcome,se.outcome,pval.outcome,samplesize.outcome,id.outcome,outcome) %>%
                    group_by(id.outcome,SNP) %>% slice(which.min(pval.outcome)) %>% data.frame()
     dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
-  # run_TwoSampleMR(harmonise, mr_plot="pQTLtools", prefix=prefix)
     mr_ivw_results <- mr(dat,method="mr_ivw") %>%
-                      mutate(prot=prot,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
-                      select(prot,id.outcome,b,se,pval,nsnp,disease)
-    write.table(mr_ivw_results,file=file.path(rt,"mr",paste0(prot,".mr")),row.names=FALSE,quote=FALSE,sep="\t")
-    mr_heterogeneity_results <- mr_heterogeneity(dat, method_list = "mr_egger_regression") %>%
-                                mutate(prot=prot,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
-                                select(prot,id.outcome,disease,method,Q,Q_df,Q_pval,-id.exposure,-exposure)
-    write.table(mr_heterogeneity_results,file=file.path(rt,"mr",paste0(prot,".het")),row.names=FALSE,quote=FALSE,sep="\t")
+                      mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+                      select(id.outcome,b,se,pval,disease)
+
   '
 }
 
 ## EFO traits
 # bfile
 # gsmr2
-mr
 
 function gsmr_hgi()
 {
