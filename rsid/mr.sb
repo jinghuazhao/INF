@@ -153,15 +153,14 @@ function mr()
                 filter(!is.na(SNP)) %>%
                 select(-snpid)
     exposure_dat <- format_data(prot_dat,
-      snp_col = 'SNP',
-      effect_allele_col = 'A1',
-      other_allele_col = 'A2',
-      eaf_col = 'freq',
-      beta_col = 'b',
-      se_col = 'se',
-      pval_col = 'p',
-      samplesize_col = 'N'
-    ) %>% clump_data()
+      snp_col = "SNP",
+      effect_allele_col = "A1",
+      other_allele_col = "A2",
+      eaf_col = "freq",
+      beta_col = "b",
+      se_col = "se",
+      pval_col = "p",
+      samplesize_col = "N") %>% clump_data()
     outcome_dat <- extract_outcome_data(exposure_dat$SNP, ids) %>%
                    mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),SNP,
                           effect_allele.outcome=toupper(effect_allele.outcome),
