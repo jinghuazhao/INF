@@ -185,10 +185,43 @@ function mr()
   '
 }
 
+function gsmr_trait()
+{
+  export prot=$(awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
+  export rt=${INF}/mr/gsmr
+  Rscript -e '
+    options(width=200)
+    HPC_WORK <- Sys.getenv("HPC_WORK")
+    INF <- Sys.getenv("INF")
+    prot <- Sys.getenv("prot")
+    rt <- Sys.getenv("rt")
+    ids <- scan(file.path(INF,"TNFB","efo"),"")
+    pkgs <- c("TwoSampleMR","dplyr","ggplot2","openxlsx","stringr")
+    invisible(suppressMessages(lapply(pkgs, require, character.only = TRUE)))
+    exposure_dat <- read.table(file.path(rt,"prot",paste0(prot,".gz")), header=TRUE) %>%
+                    mutate(region=gsub("chr|_|[A-Z]","",SNP))
+    outcome_dat <- extract_outcome_data(exposure_dat$region, ids) %>%
+                   mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),
+                          effect_allele.outcome=toupper(effect_allele.outcome),
+                          other_allele.outcome=toupper(other_allele.outcome)
+                         ) %>%
+                   select(snpid,effect_allele.outcome,other_allele.outcome,eaf.outcome,
+                          beta.outcome,se.outcome,pval.outcome,samplesize.outcome,id.outcome) %>%
+                   setNames(c("SNP","A1","A2","freq","b","se","p","N","id"))
+    for (id in ids)
+    {
+      fp <- file.path(rt,"trait",paste0(prot,"-",id,".gz"))
+      gz <- gzfile(fp,"w")
+      write.table(select(outcome_dat,-id),gz,quote=FALSE,row.names=FALSE)
+      cat(id,fp,file=file.path(rt,"trait",paste0(prot,"-",id)))
+    }
+  '
+}
 ## EFO traits
 # bfile
 # gsmr2
-mr
+# mr
+gsmr_trait
 
 function gsmr_hgi()
 {
