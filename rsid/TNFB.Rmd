@@ -183,7 +183,7 @@ knitr::kable(mutate(dat, disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",o
              caption="Table 4. Harmonised data on TNFB/LTA (X=protein, Y=disease)", digits=3)
 mr_ivw_results <- mr(dat,method="mr_ivw") %>%
                   mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
-                  select(id.outcome,b,se,pval,disease)
+                  select(id.outcome,b,se,pval,nsnp,disease)
 attach(mr_ivw_results)
 mg <- meta::metagen(b,se,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE))),sm="OR",title="TNFB")
 meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
@@ -192,11 +192,11 @@ meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
              plotwidth="8inch",sortvar=b,
              common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
 detach(mr_ivw_results)
-knitr::kable(select(mr_ivw_results,disease,b,se,pval), caption="Table 5. MR results based on IVW", digits=4)
+knitr::kable(select(mr_ivw_results,disease,b,se,pval,nsnp), caption="Table 5. MR results based on IVW", digits=4)
 write.table(mr_ivw_results,file="TNFB-ivw.txt",row.names=FALSE,quote=FALSE,sep="\t")
 mr_heterogeneity_results <- mr_heterogeneity(dat, method_list = "mr_egger_regression") %>%
                             mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
-                            select(disease,method,Q,-id.exposure,-id.outcome,-exposure)
+                            select(disease,method,Q,Q_df,Q_pval,-id.exposure,-id.outcome,-exposure)
 knitr::kable(mr_heterogeneity_results,caption="Table 6. Heterogeneity analysis")
 mr_pleiotropy_results <- mr_pleiotropy_test(dat) %>%
                          mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
@@ -238,10 +238,10 @@ efo_update <- bind_rows(efo_old,efo_new) %>%
               rename(id.outcome=MRBASEID) %>%
               select(-Replacement)
 mr_all <- full_join(setNames(mr_results,c("id.outcome","b_single","se_single","p_single","disease")),
-                    setNames(mr_ivw_results,c("id.outcome","b_IVW", "se_IVW", "p_IVW", "disease"))) %>%
+                    setNames(mr_ivw_results,c("id.outcome","b_IVW", "se_IVW", "p_IVW", "N_IVW", "disease"))) %>%
           left_join(select(efo_update,id.outcome,Ncases,Ncontrols)) %>%
           mutate(x=sign(b_single)*sign(b_IVW)) %>%
-          select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,x,Ncases,Ncontrols) %>%
+          select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,N_IVW,x,Ncases,Ncontrols) %>%
           rename(Cases=Ncases,Controls=Ncontrols)
 knitr::kable(mr_all,caption="Table 8. Comparison of single and IVW MR",digits=4)
 gsmr <- read.delim(file.path(INF,"TNFB","gsmr-efo.txt")) %>%
