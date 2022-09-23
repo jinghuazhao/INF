@@ -147,15 +147,15 @@ function mr()
     rsids <- read.table(file.path(rt,"prot",paste0(prot,"-rsid.txt")), col.names=c("snpid","SNP"))
     pkgs <- c("TwoSampleMR","dplyr","ggplot2","openxlsx","stringr")
     invisible(suppressMessages(lapply(pkgs, require, character.only = TRUE)))
-    exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".gz")), sep = ' ',
-      snp_col = 'SNP',
-      effect_allele_col = 'A1',
-      other_allele_col = 'A2',
-      eaf_col = 'freq',
-      beta_col = 'b',
-      se_col = 'se',
-      pval_col = 'p',
-      samplesize_col = 'N'
+    exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".gz")), sep = " ",
+      snp_col = "SNP",
+      effect_allele_col = "A1",
+      other_allele_col = "A2",
+      eaf_col = "freq",
+      beta_col = "b",
+      se_col = "se",
+      pval_col = "p",
+      samplesize_col = "N"
     ) %>%
     mutate(region=gsub("chr|_|[a-z]","",SNP),snpid=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE)) %>%
     select(-SNP)
@@ -172,7 +172,7 @@ function mr()
                    select(snpid,SNP,effect_allele.outcome,other_allele.outcome,eaf.outcome,
                           beta.outcome,se.outcome,pval.outcome,samplesize.outcome,id.outcome,outcome) %>%
                    group_by(id.outcome,SNP) %>% slice(which.min(pval.outcome)) %>% data.frame()
-    dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+    dat <- harmonise_data(exposure_dat, outcome_dat, action=2)
   # run_TwoSampleMR(harmonise, mr_plot="pQTLtools", prefix=prefix)
     mr_ivw_results <- mr(dat,method="mr_ivw") %>%
                       mutate(prot=prot,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
