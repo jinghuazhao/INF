@@ -132,11 +132,11 @@ function gsmr2()
 }
 
 function mr()
-# now done after gsmr2
+# now done after gsmr2; only optionally use INTERVAL snpid/rsid pairings
 {
   export prot=$(awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
   export rt=${INF}/mr/gsmr
-  gunzip -c ${rt}/prot/${prot}.gz | sed '1d' | cut -d' ' -f1 | sort -k1,1 | join - ${INF}/work/INTERVAL.rsid > ${rt}/prot/${prot}-rsid.txt
+# gunzip -c ${rt}/prot/${prot}.gz | sed '1d' | cut -d' ' -f1 | sort -k1,1 | join - ${INF}/work/INTERVAL.rsid > ${rt}/prot/${prot}-rsid.txt
   Rscript -e '
     options(width=200)
     HPC_WORK <- Sys.getenv("HPC_WORK")
@@ -147,22 +147,26 @@ function mr()
     rsids <- read.table(file.path(rt,"prot",paste0(prot,"-rsid.txt")), col.names=c("snpid","SNP"))
     pkgs <- c("TwoSampleMR","dplyr","ggplot2","openxlsx","stringr")
     invisible(suppressMessages(lapply(pkgs, require, character.only = TRUE)))
-    prot_dat <- read.table(file.path(rt,"prot",paste0(prot,".gz")),header=TRUE) %>%
-                rename(snpid=SNP) %>%
-                left_join(rsids) %>%
-                filter(!is.na(SNP)) %>%
-                select(-snpid)
-    exposure_dat <- format_data(prot_dat,
-      snp_col = "SNP",
-      effect_allele_col = "A1",
-      other_allele_col = "A2",
-      eaf_col = "freq",
-      beta_col = "b",
-      se_col = "se",
-      pval_col = "p",
-      samplesize_col = "N") %>% clump_data()
-    outcome_dat <- extract_outcome_data(exposure_dat$SNP, ids) %>%
-                   mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),SNP,
+    exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".gz")), sep = ' ',
+      snp_col = 'SNP',
+      effect_allele_col = 'A1',
+      other_allele_col = 'A2',
+      eaf_col = 'freq',
+      beta_col = 'b',
+      se_col = 'se',
+      pval_col = 'p',
+      samplesize_col = 'N'
+    ) %>%
+    mutate(region=gsub("chr|_|[a-z]","",SNP),snpid=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE)) %>%
+    select(-SNP)
+  # exposure_dat <- clump_data(left_join(exposure_dat,rsids))
+    snpid_rsid <- extract_outcome_data(exposure_dat$region, ids) %>%
+                  distinct() %>%
+                  mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome)) %>%
+                  select(snpid,SNP)
+    exposure_dat <- clump_data(left_join(exposure_dat,snpid_rsid))
+    outcome_dat <- extract_outcome_data(exposure_dat$region, ids) %>%
+                   mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),
                           effect_allele.outcome=toupper(effect_allele.outcome),
                           other_allele.outcome=toupper(other_allele.outcome)) %>%
                    select(snpid,SNP,effect_allele.outcome,other_allele.outcome,eaf.outcome,
