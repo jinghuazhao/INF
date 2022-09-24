@@ -214,7 +214,9 @@ function mr()
                           other_allele.outcome=toupper(other_allele.outcome)) %>%
                    select(snpid,SNP,effect_allele.outcome,other_allele.outcome,eaf.outcome,
                           beta.outcome,se.outcome,pval.outcome,samplesize.outcome,id.outcome,outcome) %>%
-                   group_by(id.outcome,SNP) %>% slice(which.min(pval.outcome)) %>% data.frame()
+                   group_by(id.outcome,SNP) %>%
+                   slice(which.min(pval.outcome)) %>%
+                   data.frame()
     dat <- harmonise_data(exposure_dat, outcome_dat, action=2)
   # run_TwoSampleMR(harmonise, mr_plot="pQTLtools", prefix=prefix)
     mr_ivw_results <- mr(dat,method="mr_ivw") %>%
