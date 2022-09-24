@@ -53,6 +53,7 @@ function bfile()
 }
 
 function gsmr()
+# first list of traits
 {
   if [ ! -d ${INF}/mr/gsmr/out ]; then mkdir -p ${INF}/mr/gsmr/out; fi
   awk -vFS="\t" 'NR>1 {print $4}' ${INF}/rsid/efo.txt | \
@@ -92,6 +93,7 @@ function gsmr()
 }
 
 function gsmr2()
+# revised list without ukb, bbj, fenn
 {
   if [ ! -d ${INF}/mr/gsmr/out ]; then mkdir -p ${INF}/mr/gsmr/out; fi
   cat <(awk -vFS="\t" 'NR>1 && $4 !~ /ukb/ {print $4}' ${INF}/rsid/efo.txt) \
@@ -131,6 +133,47 @@ function gsmr2()
   done
 }
 
+function gsmr3()
+# revised list without ukb, bbj, fenn AND trait based on extract_outcome_data but now VCF
+{
+  if [ ! -d ${INF}/mr/gsmr/out ]; then mkdir -p ${INF}/mr/gsmr/out; fi
+  cat <(awk -vFS="\t" 'NR>1 && $4 !~ /ukb/ {print $4}' ${INF}/rsid/efo.txt) \
+      <(awk -vFS="\t" '/ebi|ieu|finn/{print $4}' ${INF}/OpenGWAS/ukb-replacement.txt) | \
+  while read efo
+  do
+    export trait=${efo}
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk -vM=1e6 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $2}' | \
+    while read prot
+    do
+      export prot=${prot}
+      echo ${INF}/mr/gsmr/ref/${prot} > ${INF}/mr/gsmr/ref/gsmr_${prot}
+      echo ${prot} ${INF}/mr/gsmr/prot/${prot}.gz > ${INF}/mr/gsmr/prot/gsmr_${prot}
+    # echo ${trait} ${INF}/mr/gsmr/trait/${prot}-${trait}.gz > ${INF}/mr/gsmr/trait/gsmr_${prot}-${trait}
+
+      gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_${prot} \
+               --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${prot}-${trait} \
+               --gsmr-direction 0 \
+               --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 10 --effect-plot \
+               --out ${INF}/mr/gsmr/out/${prot}-${trait}
+      if [ ! -f ${INF}/mr/gsmr/out/${prot}-${trait}.eff_plot.gz ]; then continue; fi
+      R --no-save -q <<\ \ \ \ \ \ END
+        INF <- Sys.getenv("INF")
+        trait <- Sys.getenv("trait")
+        p <- Sys.getenv("prot")
+        source(file.path(INF,"rsid","gsmr_plot.r"))
+        eff_dat <- paste0(INF,"/mr/gsmr/out/",p,"-",trait,".eff_plot.gz")
+        gsmr_data <- read_gsmr_data(eff_dat)
+        gsmr_summary(gsmr_data)
+        pdf(paste0(INF,"/mr/gsmr/out/",p,"-",trait,".eff_plot.pdf"))
+        par(mar=c(6,6,5,1),mgp=c(4,1,0),xpd=TRUE)
+        plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
+        dev.off()
+      END
+    done
+  done
+}
+
 function mr()
 # now done after gsmr2; only optionally use INTERVAL snpid/rsid pairings
 {
@@ -161,9 +204,9 @@ function mr()
     select(-SNP)
   # exposure_dat <- clump_data(left_join(exposure_dat,rsids))
     snpid_rsid <- extract_outcome_data(exposure_dat$region, ids) %>%
-                  distinct() %>%
                   mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome)) %>%
-                  select(snpid,SNP)
+                  select(snpid,SNP) %>%
+                  distinct()
     exposure_dat <- clump_data(left_join(exposure_dat,snpid_rsid))
     outcome_dat <- extract_outcome_data(exposure_dat$region, ids) %>%
                    mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),
@@ -207,21 +250,25 @@ function gsmr_trait()
                          ) %>%
                    select(snpid,effect_allele.outcome,other_allele.outcome,eaf.outcome,
                           beta.outcome,se.outcome,pval.outcome,samplesize.outcome,id.outcome) %>%
-                   setNames(c("SNP","A1","A2","freq","b","se","p","N","id"))
+                   setNames(c("SNP","A1","A2","freq","b","se","p","N","id.outcome")) %>%
+                   group_by(id.outcome,SNP) %>%
+                   slice(which.min(p)) %>%
+                   data.frame()
     for (id in ids)
     {
       fp <- file.path(rt,"trait",paste0(prot,"-",id,".gz"))
       gz <- gzfile(fp,"w")
-      write.table(select(outcome_dat,-id),gz,quote=FALSE,row.names=FALSE)
-      cat(id,fp,file=file.path(rt,"trait",paste0(prot,"-",id)))
+      write.table(filter(outcome_dat,id.outcome) %>% select(outcome_dat,-id.outocme),gz,quote=FALSE,row.names=FALSE)
+      cat(id,fp,file=file.path(rt,"trait",paste0("gsmr_",prot,"-",id)))
     }
   '
 }
 ## EFO traits
 # bfile
 # gsmr2
-# mr
+mr
 gsmr_trait
+gsmr3
 
 function gsmr_hgi()
 {

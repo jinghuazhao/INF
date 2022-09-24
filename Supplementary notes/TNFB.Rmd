@@ -165,7 +165,8 @@ if (FALSE)
 }
 
 # working but with MR Base reference
-rsids <- read.delim("TNFB-rsid.txt",header=TRUE)
+rsids <- read.delim("TNFB-rsid.txt",header=TRUE) %>%
+         distinct()
 exposure_dat <- clump_data(left_join(exposure_dat,rsids))
 outcome_dat <- extract_outcome_data(exposure_dat$region, ids,
                proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3)
@@ -175,7 +176,9 @@ outcome_dat <- outcome_dat %>% distinct() %>%
                       other_allele.outcome=toupper(other_allele.outcome)) %>%
                select(snpid,SNP,effect_allele.outcome,other_allele.outcome,eaf.outcome,
                       beta.outcome,se.outcome,pval.outcome,samplesize.outcome,id.outcome,outcome) %>%
-               group_by(id.outcome,SNP) %>% slice(which.min(pval.outcome)) %>% data.frame()
+               group_by(id.outcome,SNP) %>%
+               slice(which.min(pval.outcome)) %>%
+               data.frame()
 dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
 knitr::kable(mutate(dat, disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
              select(beta.exposure, se.exposure, beta.outcome, se.outcome, pval.outcome, samplesize.outcome, disease) %>%
