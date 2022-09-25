@@ -260,17 +260,17 @@ function gsmr_trait()
     {
       fp <- file.path(rt,"trait",paste0(prot,"-",id,".gz"))
       gz <- gzfile(fp,"w")
-      write.table(filter(outcome_dat,id==id.outcome) %>% select(-id.outocme),gz,quote=FALSE,row.names=FALSE)
+      write.table(filter(outcome_dat,id==id.outcome) %>% select(-id.outcome),gz,quote=FALSE,row.names=FALSE)
       cat(id,fp,file=file.path(rt,"trait",paste0("gsmr_",prot,"-",id)))
     }
   '
 }
 ## EFO traits
 # bfile
+# mr
 # gsmr2
 gsmr_trait
 gsmr3
-mr
 
 function gsmr_hgi()
 {
