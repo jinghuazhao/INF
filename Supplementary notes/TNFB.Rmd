@@ -193,8 +193,8 @@ outcome_dat <- outcome_dat %>% distinct() %>%
                data.frame()
 dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
 knitr::kable(mutate(dat, disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
-             select(beta.exposure, se.exposure, beta.outcome, se.outcome, pval.outcome, samplesize.outcome, disease) %>%
-             setNames(c("bX", "seX", "bY","seY","pY","NY","disease")),
+             select(SNP,beta.exposure, se.exposure, beta.outcome, se.outcome, pval.outcome, samplesize.outcome, disease) %>%
+             setNames(c("SNP","bX", "seX", "bY","seY","pY","NY","disease")),
              caption="Table 4. Harmonised data on TNFB/LTA (X=protein, Y=disease)", digits=3)
 mr_ivw_results <- mr(dat,method="mr_ivw") %>%
                   mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
@@ -208,7 +208,7 @@ meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
              plotwidth="8inch",sortvar=b,
              common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
 detach(mr_ivw_results)
-knitr::kable(select(mr_ivw_results,disease,b,se,pval,nsnp), caption="Table 5. MR results based on IVW", digits=4)
+knitr::kable(select(mr_ivw_results,disease,b,se,pval,nsnp,Cases,Controls), caption="Table 5. MR results based on IVW", digits=4)
 write.table(mr_ivw_results,file="TNFB-ivw.txt",row.names=FALSE,quote=FALSE,sep="\t")
 mr_heterogeneity_results <- mr_heterogeneity(dat, method_list = "mr_egger_regression") %>%
                             mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
