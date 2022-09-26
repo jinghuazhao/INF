@@ -369,17 +369,20 @@ function ref_prot_outcome_gsmr()
 # sed 's/.vcf.gz:/\t/;s/TotalControls=/\t/;s/,TotalCases=/\t/;s/,StudyType/\t/' ieu.sample | cut -f1,3,4 > ${INF}/OpenGWAS/ieu.N
 #   zgrep -h SAMPLE ${INF}/OpenGWAS/${efo}.vcf.gz | cut -f1,7,8 > ${INF}/mr/gsmr/trait/${efo}.sample
 
-R --no-save -q <<END
+function gsmr_mr_heatmap()
+{
+Rscripte -e '
    INF <- Sys.getenv("INF")
    suppressMessages(library(dplyr))
    library(stringr)
-   gsmr <- read.delim(file.path(INF,"mr","gsmr","out","gsmr-efo.txt")) %>%
+   gsmr <- read.delim(file.path(INF,"mr","gsmr","out","gsmr2","gsmr-efo.txt")) %>%
            mutate(outcome=paste0(trait),
                   exposure=protein,
                   z=bxy/se,
-                  group=as.numeric(cut(z,breaks=quantile(z,seq(0,1,0.3333))))) %>%
-           left_join(gap.datasets::inf1[c("target.short","gene")],by=c('exposure'='target.short')) %>%
-           select(gene,outcome,z,bxy,se,p,nsnp,fdr,group)
+                  or=exp(bxy),
+                  group=as.numeric(cut(or,breaks=quantile(or,seq(0,1,0.3333))))) %>%
+           left_join(gap.datasets::inf1[c("target.short","gene")],by=c("exposure"="target.short")) %>%
+           select(gene,outcome,z,or,bxy,se,p,nsnp,fdr,group)
    gene <- unique(with(gsmr,gene))
    outcome <- unique(with(gsmr,outcome))
    n <- length(gene)
@@ -387,12 +390,14 @@ R --no-save -q <<END
    gsmr_mat <- matrix(NA,m,n)
    colnames(gsmr_mat) <- gene
    rownames(gsmr_mat) <- outcome
+   gsmr_mat_fdr <- gsmr_mat
    for(k in 1:nrow(gsmr))
    {
-      t <- gsmr[k,c('gene','outcome','z','group','fdr')]
-      i <- t[['outcome']]
-      j <- t[['gene']]
-      gsmr_mat[i,j] <- t[['z']]
+      t <- gsmr[k,c("gene","outcome","or","group","fdr")]
+      i <- t[["outcome"]]
+      j <- t[["gene"]]
+      gsmr_mat[i,j] <- t[["or"]]
+      gsmr_mat_fdr[i,j] <- t[["fdr"]]
    }
    rownames(gsmr_mat) <- gsub("\\b(^[a-z])","\\U\\1",rownames(gsmr_mat),perl=TRUE)
    rm(gene,outcome)
@@ -400,11 +405,11 @@ R --no-save -q <<END
    subset(gsmr,fdr<=0.05)
    library(grid)
    library(pheatmap)
-   png(file.path(INF,"mr","gsmr","out","gsmr-efo.png"),res=300,width=30,height=18,units="in")
+   png(file.path(INF,"mr","gsmr","gsmr-efo.png"),res=300,width=30,height=18,units="in")
    setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
            action="prepend")
    pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,
-            display_numbers = matrix(ifelse(!is.na(gsmr_mat) & abs(gsmr_mat) > 2.72, "*", ""), nrow(gsmr_mat)), fontsize_number=20)
+            display_numbers = matrix(ifelse(!is.na(gsmr_mat) & abs(gsmr_mat_fdr) <= 0.05, "*", ""), nrow(gsmr_mat)), fontsize_number=20)
    setHook("grid.newpage", NULL, "replace")
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
    grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
@@ -434,7 +439,57 @@ R --no-save -q <<END
                      colors=rmeta::meta.colors(box="red",lines="blue", zero="black", summary="red", text="black"))
      detach(tnfb)
    }
-END
+'
+
+Rscript -e '
+   INF <- Sys.getenv("INF")
+   suppressMessages(library(dplyr))
+   library(stringr)
+   a1 <- " (oligoarticular or rheumatoid factor-negative polyarticular)"
+   a2 <- " (non-Lofgren's syndrome)"
+   mr <- read.delim(file.path(INF,"mr","gsmr","mr-efo-mr.tsv")) %>%
+         mutate(disease=gsub("\\s\\(oligoarticular or rheumatoid factor-negative polyarticular\\)","",disease)) %>%
+         mutate(disease=gsub("\\s\\(non-Lofgren's syndrome\\)","",disease)) %>%
+         mutate(disease=gsub("_PSORIASIS","",disease)) %>%
+         mutate(outcome=disease,
+                exposure=gene,
+                z=b/se,
+                or=exp(b),
+                group=cut(or,breaks=c(-Inf,0.9999,Inf),labels=c("<1",">1"))) %>%
+         select(gene,outcome,z,or,b,se,pval,nsnp,fdr,group)
+   options(width=200)
+   subset(mr,fdr<=0.05)
+   gene <- unique(with(mr,gene))
+   outcome <- unique(with(mr,outcome))
+   n <- length(gene)
+   m <- length(outcome)
+   mr_mat <- matrix(NA,m,n)
+   colnames(mr_mat) <- gene
+   rownames(mr_mat) <- outcome
+   mr_mat_fdr <- mr_mat
+   for(k in 1:nrow(mr))
+   {
+      t <- mr[k,c("gene","outcome","or","group","fdr")]
+      i <- t[["outcome"]]
+      j <- t[["gene"]]
+      mr_mat[i,j] <- t[["group"]]
+      mr_mat_fdr[i,j] <- t[["fdr"]]
+   }
+   rownames(mr_mat) <- gsub("\\b(^[a-z])","\\U\\1",rownames(mr_mat),perl=TRUE)
+   rm(gene,outcome)
+   library(grid)
+   library(pheatmap)
+   png(file.path(INF,"mr","gsmr","mr-efo.png"),res=300,width=30,height=18,units="in")
+   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
+           action="prepend")
+   pheatmap(mr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,legend_breaks=c(-Inf,0.9999,Inf),
+            display_numbers = matrix(ifelse(!is.na(mr_mat) & abs(mr_mat_fdr) <= 0.05, "*", ""), nrow(mr_mat)), fontsize_number=20)
+   setHook("grid.newpage", NULL, "replace")
+   grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
+   grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
+   dev.off()
+'
+}
 
 function mr_recollect()
 {
