@@ -371,7 +371,17 @@ function ref_prot_outcome_gsmr()
 
 function gsmr_mr_heatmap()
 {
-Rscripte -e '
+#!/usr/bin/bash
+
+#SBATCH --account=PETERS-SL3-CPU
+#SBATCH --partition=cclake-himem
+#SBATCH --job-name=_mr
+#SBATCH --mem=6840
+#SBATCH --time=12:00:00
+#SBATCH --output=_mr_%A_%a.o
+#SBATCH --error=_mr_%A_%a.e
+
+Rscript -e '
    INF <- Sys.getenv("INF")
    suppressMessages(library(dplyr))
    library(stringr)
@@ -445,8 +455,6 @@ Rscript -e '
    INF <- Sys.getenv("INF")
    suppressMessages(library(dplyr))
    library(stringr)
-   a1 <- " (oligoarticular or rheumatoid factor-negative polyarticular)"
-   a2 <- " (non-Lofgren's syndrome)"
    mr <- read.delim(file.path(INF,"mr","gsmr","mr-efo-mr.tsv")) %>%
          mutate(disease=gsub("\\s\\(oligoarticular or rheumatoid factor-negative polyarticular\\)","",disease)) %>%
          mutate(disease=gsub("\\s\\(non-Lofgren's syndrome\\)","",disease)) %>%
@@ -455,7 +463,7 @@ Rscript -e '
                 exposure=gene,
                 z=b/se,
                 or=exp(b),
-                group=cut(or,breaks=c(-Inf,0.9999,Inf),labels=c("<1",">1"))) %>%
+                group=cut(or,breaks=c(-Inf,0.49,0.99,1.49,Inf),labels=c("<0.5","<1","<1.5",">=1.5"))) %>%
          select(gene,outcome,z,or,b,se,pval,nsnp,fdr,group)
    options(width=200)
    subset(mr,fdr<=0.05)
@@ -482,7 +490,9 @@ Rscript -e '
    png(file.path(INF,"mr","gsmr","mr-efo.png"),res=300,width=30,height=18,units="in")
    setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
            action="prepend")
-   pheatmap(mr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,legend_breaks=c(-Inf,0.9999,Inf),
+   pheatmap(mr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,
+            legend_breaks=c(0,0.49,0.99,1.49,Inf),
+            legend_labels=c("0","<0.5","<1","<1.5",">=1.5"),
             display_numbers = matrix(ifelse(!is.na(mr_mat) & abs(mr_mat_fdr) <= 0.05, "*", ""), nrow(mr_mat)), fontsize_number=20)
    setHook("grid.newpage", NULL, "replace")
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
