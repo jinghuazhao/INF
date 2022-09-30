@@ -346,22 +346,32 @@ function ref_prot_outcome_gsmr()
   R --no-save -q <<\ \ END
     library(dplyr)
     INF <- Sys.getenv("INF")
-    non_ukb <- read.table(file.path(INF,"OpenGWAS","ukb-replacement.txt"),col.names=c("MRBASEID","x1","x2","New","y1","y2"),sep="\t")
-    efo <- read.delim(file.path(INF,"rsid","efo.txt")) %>%
-           left_join(non_ukb) %>%
-           mutate(MRBASEID=if_else(is.na(New),MRBASEID,New),
-                  Ncases=if_else(is.na(y1),Ncases,y1),
-                  Ncontrols=if_else(is.na(y2),Ncontrols,y2)) %>%
-                  select(-New,-x1,-x2,-y1,-y2)
     gsmr <- read.delim("gsmr.txt")
-    gsmr_efo <- gsmr %>%
-                left_join(pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
-                left_join(efo,by=c("Outcome"="MRBASEID")) %>%
-                rename(protein=Exposure,MRBASEID=Outcome) %>%
+    efo <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt"))
+    gsmr_efo <- left_join(gsmr,pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
+                left_join(efo,by=c("Outcome"="opengwasid")) %>%
+                rename(protein=Exposure,opengwasid=Outcome,N.total=Total.N) %>%
                 mutate(protein=target.short,fdr=p.adjust(p,method="fdr")) %>%
-                select(protein,MRBASEID,trait,bxy,se,p,nsnp,fdr,Ncases,Ncontrols,id,uri,Zhengetal) %>%
+                select(protein,opengwasid,Disease,bxy,se,p,nsnp,fdr,N.cases,N.controls,N.total) %>%
                 arrange(fdr)
-    subset(gsmr_efo[setdiff(names(gsmr_efo),c("Zhengetal","uri"))],fdr<=0.05)
+    old <- function()
+    {
+      non_ukb <- read.table(file.path(INF,"OpenGWAS","ukb-replacement.txt"),col.names=c("MRBASEID","x1","x2","New","y1","y2"),sep="\t")
+      efo <- read.delim(file.path(INF,"rsid","efo.txt")) %>%
+            left_join(non_ukb) %>%
+            mutate(MRBASEID=if_else(is.na(New),MRBASEID,New),
+                   Ncases=if_else(is.na(y1),Ncases,y1),
+                   Ncontrols=if_else(is.na(y2),Ncontrols,y2)) %>%
+                   select(-New,-x1,-x2,-y1,-y2)
+      gsmr_efo <- gsmr %>%
+                  left_join(pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
+                  left_join(efo,by=c("Outcome"="MRBASEID")) %>%
+                  rename(protein=Exposure,MRBASEID=Outcome) %>%
+                  mutate(protein=target.short,fdr=p.adjust(p,method="fdr")) %>%
+                  select(protein,MRBASEID,trait,bxy,se,p,nsnp,fdr,Ncases,Ncontrols,id,uri,Zhengetal) %>%
+                  arrange(fdr)
+      subset(gsmr_efo[setdiff(names(gsmr_efo),c("Zhengetal","uri"))],fdr<=0.05)
+    }
     write.table(gsmr_efo,"gsmr-efo.txt",row.names=FALSE,quote=FALSE,sep="\t")
   END
 }
@@ -605,10 +615,13 @@ function mr_recollect()
                      select(gene,id.outcome,method,Q,Q_df,Q_pval,fdr,disease)
     cat(nrow(filter(Heterogeneity,fdr<=0.05)),"\n")
     write.table(Heterogeneity,file.path(rt,"mr-efo-het.tsv"),quote=FALSE,row.names=FALSE,sep="\t")
+#   GSMR <- read.delim(file.path(rt,"out","gsmr-efo.txt")) %>%
+#           rename(target.short=protein) %>%
+#           left_join(select(pQTLtools::inf1,target.short,gene)) %>%
+#           select(gene,MRBASEID,trait,bxy,se,p,nsnp,fdr,Ncases,Ncontrols,id,uri,Zhengetal)
     GSMR <- read.delim(file.path(rt,"out","gsmr-efo.txt")) %>%
             rename(target.short=protein) %>%
-            left_join(select(pQTLtools::inf1,target.short,gene)) %>%
-            select(gene,MRBASEID,trait,bxy,se,p,nsnp,fdr,Ncases,Ncontrols,id,uri,Zhengetal)
+            left_join(select(pQTLtools::inf1,target.short,gene))
     xlsx <- file.path(rt,"gsmr-mr.xlsx")
     wb <- createWorkbook(xlsx)
     hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
