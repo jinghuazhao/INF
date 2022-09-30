@@ -369,6 +369,83 @@ function ref_prot_outcome_gsmr()
 # sed 's/.vcf.gz:/\t/;s/TotalControls=/\t/;s/,TotalCases=/\t/;s/,StudyType/\t/' ieu.sample | cut -f1,3,4 > ${INF}/OpenGWAS/ieu.N
 #   zgrep -h SAMPLE ${INF}/OpenGWAS/${efo}.vcf.gz | cut -f1,7,8 > ${INF}/mr/gsmr/trait/${efo}.sample
 
+#!/usr/bin/bash
+
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --mem=28800
+
+##SBATCH --account=PETERS-SL3-CPU
+##SBATCH --partition=cclake-himem
+#SBATCH --job-name=_lz
+##SBATCH --mem=6840
+#SBATCH --output=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/TNFB/slurm/_lz_%A_%a.o
+#SBATCH --error=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/TNFB/slurm/_lz_%A_%a.e
+
+#SBATCH --time=12:00:00
+
+function efo_update()
+# too slow to use and should siwtch to gsmr_trait in mr.sb
+{
+  export EFO_UPDATE=${INF}/OpenGWAS/efo-update.txt
+  sed '1d' ${EFO_UPDATE} | grep -v -e finn -e ebi-a-GCST90014325 -e ebi-a-GCST90013534 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
+  while read efo N
+  do
+    export efo=${efo}
+    export N=${N}
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
+    parallel -C' ' -j15 --env INF --env efo --env N --env suffix '
+      (
+        echo -e "SNP A1 A2 freq b se p N"
+        bcftools query -f "%CHROM %POS %ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [$N] \n" -r {3} ${INF}/OpenGWAS/${efo}.vcf.gz | \
+        awk "{
+          if(\$4<\$5) snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$5;
+                 else snpid=\"chr\"\$1\":\"\$2\"_\"\$5\"_\"\$4
+          \$9=10^-\$9
+          print snpid, \$1, \$2, \$4, \$5, \$6, \$7, \$8, \$9, \$10
+        }" | sort -k2,2n -k3,3n -k8,8g| cut -d" " -f2,3 --complement | awk "a[\$1]++==0" | awk -vFS="\t" -vN=${N} "{if(\$8=\"\") \$8=N;print}"
+      ) | \
+      gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
+    '
+  done
+  sed '1d' ${EFO_UPDATE} | grep -e finn -e ebi-a-GCST90014325 -e ebi-a-GCST90013534 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
+  while read efo N
+  do
+    export efo=${efo}
+    export N=${N}
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
+    parallel -C' ' -j15 --env INF --env efo --env N --env suffix '
+      export uniprot={1}
+      export prot={2}
+      export id={3}
+      echo {1} {2} {3}
+      Rscript -e "
+        require(TwoSampleMR)
+        require(dplyr)
+        efo <- Sys.getenv(\"efo\")
+        id <- Sys.getenv(\"id\")
+        n <- Sys.getenv(\"N\")
+        od <- extract_outcome_data(id,efo) %>%
+              distinct() %>%
+              mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),
+                     effect_allele.outcome=toupper(effect_allele.outcome),
+                     other_allele.outcome=toupper(other_allele.outcome)) %>%
+              select(snpid,effect_allele.outcome,other_allele.outcome,eaf.outcome,beta.outcome,se.outcome,pval.outcome,samplesize.outcome) %>%
+              setNames(c(\"SNP\",\"A1\",\"A2\",\"freq\",\"b\",\"se\",\"p\",\"N\")) %>%
+              group_by(SNP) %>%
+              slice(which.min(p)) %>%
+              data.frame()
+        od[is.na(od\$N),\"N\"] <- n
+        write.table(od,quote=FALSE,row.names=FALSE)
+      " | \
+      gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
+    '
+  done
+}
+
 function gsmr_mr_heatmap()
 {
 #!/usr/bin/bash
