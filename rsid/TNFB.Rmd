@@ -227,7 +227,7 @@ id <- "ieu-b-18"
   res <- mr(d, method_list = c("mr_egger_regression", "mr_ivw"))
   p1 <- mr_scatter_plot2(res, d)
   res_single <- mr_singlesnp(d)
-  mr_forest_plot2(res_single)
+  print(mr_forest_plot2(res_single))
 # with(d, mr_steiger(p_exp=pval.exposure,p_out=pval.outcome,n_exp=samplesize.exposure,n_out=samplesize.outcome,r_xxo=1,r_yyo=1,r_exp=0,r_out=0.8))
   lor <- with(d,beta.outcome)
   af <- with(d,eaf.outcome)

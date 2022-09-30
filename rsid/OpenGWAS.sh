@@ -61,6 +61,19 @@ do
 done
 cd -
 
+# The lastest with FinnGen
+
+export EFO_UPDATE=${INF}/OpenGWAS/efo-update.txt
+for f in $(sed '1d' ${EFO_UPDATE} | grep -v -e finn -e ebi-a-GCST90014325 -e ebi-a-GCST90013534 | awk '{print $NF}')
+do
+  export vcf=https://gwas.mrcieu.ac.uk/files/${f}/${f}.vcf.gz
+  if [ ! -f ${vcf} ]; then
+     wget ${vcf}
+     wget ${vcf}.tbi
+     ls ${f}.vcf.gz.*
+  fi
+done
+
 Rscript -e "
 
 library(TwoSampleMR)
