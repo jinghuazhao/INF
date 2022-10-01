@@ -472,8 +472,8 @@ Rscript -e '
    INF <- Sys.getenv("INF")
    suppressMessages(library(dplyr))
    library(stringr)
-   gsmr <- read.delim(file.path(INF,"mr","gsmr","out","gsmr2","gsmr-efo.txt")) %>%
-           mutate(outcome=paste0(trait),
+   gsmr <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
+           mutate(outcome=paste0(opengwasid),
                   exposure=protein,
                   z=bxy/se,
                   or=exp(bxy),
