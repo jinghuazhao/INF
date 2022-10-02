@@ -388,10 +388,10 @@ function ref_prot_outcome_gsmr()
 
 ##SBATCH --account=PETERS-SL3-CPU
 ##SBATCH --partition=cclake-himem
-#SBATCH --job-name=_lz
+#SBATCH --job-name=_trait
 ##SBATCH --mem=6840
-#SBATCH --output=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/TNFB/slurm/_lz_%A_%a.o
-#SBATCH --error=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/TNFB/slurm/_lz_%A_%a.e
+#SBATCH --output=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm/_trait_%A_%a.o
+#SBATCH --error=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm/_trait_%A_%a.e
 
 #SBATCH --time=12:00:00
 
@@ -399,7 +399,7 @@ function efo_update()
 # too slow to use and should siwtch to gsmr_trait in mr.sb
 {
   export EFO_UPDATE=${INF}/OpenGWAS/efo-update.txt
-  sed '1d' ${EFO_UPDATE} | grep -v -e finn -e ebi-a-GCST90014325 -e ebi-a-GCST90013534 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
+  sed '1d' ${EFO_UPDATE} | grep -v -e finn -e ebi-a-GCST90014325 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
   while read efo N
   do
     export efo=${efo}
@@ -420,7 +420,7 @@ function efo_update()
       gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
     '
   done
-  sed '1d' ${EFO_UPDATE} | grep -e finn -e ebi-a-GCST90014325 -e ebi-a-GCST90013534 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
+  sed '1d' ${EFO_UPDATE} | grep -e finn -e ebi-a-GCST90014325 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
   while read efo N
   do
     export efo=${efo}
