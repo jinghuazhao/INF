@@ -417,7 +417,7 @@ function efo_update()
           print snpid, \$1, \$2, \$4, \$5, \$6, \$7, \$8, \$9, \$10
         }" | sort -k2,2n -k3,3n -k8,8g| cut -d" " -f2,3 --complement | awk "a[\$1]++==0" | awk -vFS="\t" -vN=${N} "{if(\$8=\"\") \$8=N;print}"
       ) | \
-      gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
+      gzip -f> ${INF}/mr/gsmr/trait/{2}-${efo}.gz
     '
   done
   sed '1d' ${EFO_UPDATE} | grep -e finn -e ebi-a-GCST90014325 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
@@ -451,7 +451,7 @@ function efo_update()
         od[is.na(od\$N),\"N\"] <- n
         write.table(od,quote=FALSE,row.names=FALSE)
       " | \
-      gzip -f> ${INF}/mr/gsmr/trait/${efo}-{2}.gz
+      gzip -f> ${INF}/mr/gsmr/trait/{2}-${efo}.gz
     '
   done
 }
