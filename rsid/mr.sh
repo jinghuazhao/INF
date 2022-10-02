@@ -454,6 +454,16 @@ function efo_update()
       gzip -f> ${INF}/mr/gsmr/trait/{2}-${efo}.gz
     '
   done
+  sed '1d' ${EFO_UPDATE} | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
+  while read efo N
+  do
+    export efo=${efo}
+    export N=${N}
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    parallel -C' ' -j15 --env INF --env efo --env N --env suffix '
+      echo ${efo} ${INF}/mr/gsmr/trait/{2}-${efo}.gz > ${INF}/mr/gsmr/trait/gsmr_{2}-${efo}
+    '
+  done
 }
 
 function gsmr_mr_heatmap()
