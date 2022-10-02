@@ -19,9 +19,12 @@ efo_new <- filter(efo_right,grepl("http",Source2)) %>%
 efo_update <- bind_rows(efo_old,efo_new) %>%
               filter(!is.na(Disease))
 missed <- with(efo_update, grepl("Crohn",Disease))
-efo_update[missed,c("N.cases","N.controls","Source")] <- c("12194","28072","https://gwas.mrcieu.ac.uk/datasets/ebi-a-GCST004132/")
+efo_update[missed,c("N.cases","N.controls","Source")] <- c(12194,280722,"https://gwas.mrcieu.ac.uk/datasets/ebi-a-GCST004132/")
+ra <- with(efo_update, grepl("Rheumatoid",Disease))
+efo_update[ra,c("N.cases","N.controls","Source")] <- c(19234,61565,"https://gwas.mrcieu.ac.uk/datasets/ieu-a-833")
 efo_update <- mutate(efo_update,opengwasid=unlist(lapply(strsplit(Source,"/"),"[",5)))
-write.table(efo_update,file="efo_update.txt",quote=FALSE,row.names=FALSE,sep="\t")
+write.table(efo_update,file="efo-update.txt",quote=FALSE,row.names=FALSE,sep="\t")
+knitr::kable(efo_update)
 # Output
 xlsx <- file.path("efo-update.xlsx")
 wb <- createWorkbook(xlsx)

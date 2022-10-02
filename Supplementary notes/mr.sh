@@ -473,7 +473,7 @@ Rscript -e '
    suppressMessages(library(dplyr))
    library(stringr)
    gsmr <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
-           mutate(outcome=paste0(opengwasid),
+           mutate(outcome=paste0(Disease),
                   exposure=protein,
                   z=bxy/se,
                   or=exp(bxy),
