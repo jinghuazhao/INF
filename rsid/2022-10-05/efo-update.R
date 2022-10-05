@@ -23,18 +23,6 @@ efo_update[missed,c("N.cases","N.controls","Source")] <- c(12194,280722,"https:/
 ra <- with(efo_update, grepl("Rheumatoid",Disease))
 efo_update[ra,c("N.cases","N.controls","Source")] <- c(19234,61565,"https://gwas.mrcieu.ac.uk/datasets/ieu-a-833")
 efo_update <- mutate(efo_update,opengwasid=unlist(lapply(strsplit(Source,"/"),"[",5)))
-csv <- read.delim(file.path(INF,"OpenGWAS","finngen_endpoints.tsv"))
-sel.trait <- c("JUVEN_ARTHR","D3_SARCOIDOSIS","L12_PSORIASIS","M13_SLE")
-sel.var <- c("phenotype","phenocode","number.of.cases.R6","number.of.cases","number.of.controls")
-knitr::kable(subset(csv,phenocode %in%sel.trait)[sel.var] %>% arrange(phenocode))
-efo_update <- arrange(efo_update,opengwasid)
-finngen <- with(efo_update,grepl("finn-b",opengwasid))
-efo_update[finngen,c("N.cases","N.controls","Total.N")]
-finngen_r7_N <- subset(csv,phenocode %in%sel.trait)[sel.var] %>%
-                arrange(phenocode) %>%
-                select(number.of.cases, number.of.controls) %>%
-                mutate(all=number.of.cases+number.of.controls)
-efo_update[finngen,c("N.cases","N.controls","Total.N")] <- finngen_r7_N
 write.table(efo_update,file="efo-update.txt",quote=FALSE,row.names=FALSE,sep="\t")
 knitr::kable(efo_update)
 # Output
@@ -55,3 +43,7 @@ for (sheet in c("efo_update"))
    writeData(wb, sheet, tail(body,1), xy=c(1, nrow(body)+2), colNames=FALSE, borders="rows", borderStyle="thick")
 }
 saveWorkbook(wb, file=xlsx, overwrite=TRUE)
+
+library(TwoSampleMR)
+library(ggplot2)
+library(stringr)
