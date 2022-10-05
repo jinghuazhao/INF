@@ -397,7 +397,7 @@ function ref_prot_outcome_gsmr()
 #SBATCH --time=12:00:00
 
 function efo_update()
-# switch to gsmr_trait in mr.sb apeared problematic
+# too slow to use and should siwtch to gsmr_trait in mr.sb
 {
   export EFO_UPDATE=${INF}/OpenGWAS/efo-update.txt
   sed '1d' ${EFO_UPDATE} | grep -v -e finn -e ebi-a-GCST90014325 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
@@ -412,36 +412,17 @@ function efo_update()
         echo -e "SNP A1 A2 freq b se p N"
         bcftools query -f "%CHROM %POS %ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [%SS] \n" -r {3} ${INF}/OpenGWAS/${efo}.vcf.gz | \
         awk -vN=${N} "{
-               if(\$4<\$5) snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$5;
-               else snpid=\"chr\"\$1\":\"\$2\"_\"\$5\"_\"\$4
-               \$9=10^-\$9
-               if (\$10==\".\") \$10=N
-               print snpid, \$1, \$2, \$4, \$5, \$6, \$7, \$8, \$9, \$10
-             }" | sort -k2,2n -k3,3n -k9,9gr | cut -d" " -f2,3 --complement | awk "a[\$1]++==0"
+          if(\$4<\$5) snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$5;
+                 else snpid=\"chr\"\$1\":\"\$2\"_\"\$5\"_\"\$4
+          \$9=10^-\$9
+          if (\$10==\".\") \$10=N
+          print snpid, \$1, \$2, \$4, \$5, \$6, \$7, \$8, \$9, \$10
+        }" | sort -k2,2n -k3,3n -k8,8g| cut -d" " -f2,3 --complement | awk "a[\$1]++==0"
       ) | \
-      gzip -f > ${INF}/mr/gsmr/trait/{2}-${efo}.gz
+      gzip -f> ${INF}/mr/gsmr/trait/{2}-${efo}.gz
     '
   done
-  sed '1d' ${EFO_UPDATE} | grep finn | awk -vFS="\t" '{print $6,$2,$3}' | sed 's/finn-b-//' | \
-  while read efo cases controls
-  do
-    export efo=${efo}
-    export cases=${cases}
-    export controls=${controls}
-    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
-    awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
-    parallel -C' ' -j15 --env INF --env efo --env cases --env controls '
-      cat <(echo -e "Phenotype SNP A1 A2 freq b se p cases controls") \
-          <(tabix ${INF}/OpenGWAS/finngen_R7_${efo}.gz {3} | \
-            awk -vefo=${efo} -vcases=${cases} -vcontrols=${controls} "{
-                            if(\$3<\$4) snpid=\"chr\"\$1\":\"\$2\"_\"\$3\"_\"\$4; else snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$3
-                            print efo, \$5, \$1, \$2, \$4, \$3, \$11, \$9, \$10, \$7, cases, controls
-                          }" | sort -k3,3n -k4,4n -k10,10g | cut -d" " -f2,3 --complement | awk "a[\$2]++==0") | \
-      gzip -f > ${INF}/mr/gsmr/finngen/{2}-finn-b-${efo}.gz
-    '
-  done
-  # chrom  pos     ref     alt     rsids   nearest_genes   pval    mlogp   beta    sebeta  af_alt  af_alt_cases    af_alt_controls
-  sed '1d' ${EFO_UPDATE} | grep ebi-a-GCST90014325 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
+  sed '1d' ${EFO_UPDATE} | grep -e finn -e ebi-a-GCST90014325 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \
   while read efo N
   do
     export efo=${efo}
@@ -472,7 +453,7 @@ function efo_update()
         od[is.na(od\$N),\"N\"] <- n
         write.table(od,quote=FALSE,row.names=FALSE)
       " | \
-      gzip -f > ${INF}/mr/gsmr/trait/{2}-${efo}.gz
+      gzip -f> ${INF}/mr/gsmr/trait/{2}-${efo}.gz
     '
   done
   sed '1d' ${EFO_UPDATE} | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}' | \

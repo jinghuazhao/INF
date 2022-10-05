@@ -7,8 +7,8 @@
 #SBATCH --array=1-59
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
-#SBATCH --output=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm/_gsmr3-3-1e-5_%A_%a.out
-#SBATCH --error=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm//_gsmr3-3-1e-5_%A_%a.err
+#SBATCH --output=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm/_gsmr3-1_%A_%a.out
+#SBATCH --error=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm//_gsmr3-1_%A_%a.err
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -72,7 +72,7 @@ function gsmr()
       gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_${prot} \
                --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${trait}-${prot} \
                --gsmr-direction 0 \
-               --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 10 --effect-plot \
+               --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 1 --effect-plot \
                --out ${INF}/mr/gsmr/out/${trait}-${prot}
       if [ ! -f ${INF}/mr/gsmr/out/${trait}-${prot}.eff_plot.gz ]; then continue; fi
       R --no-save -q <<\ \ \ \ \ \ END
@@ -157,7 +157,7 @@ function gsmr3()
       gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_${prot} \
                --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${prot}-${trait} \
                --gsmr-direction 0 \
-               --clump-r2 0.1 --gwas-thresh 1e-5 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 3 --effect-plot \
+               --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 10 --effect-plot \
                --out ${INF}/mr/gsmr/out/${prot}-${trait}
       if [ ! -f ${INF}/mr/gsmr/out/${prot}-${trait}.eff_plot.gz ]; then continue; fi
       R --no-save -q <<\ \ \ \ \ \ END
@@ -191,10 +191,7 @@ function mr()
     rt <- Sys.getenv("rt")
 #   ids <- scan(file.path(INF,"TNFB","efo"),"")
     suppressMessages(library(dplyr))
-    finngen <- c("L12_PSORIASIS","M13_SLE","D3_SARCOIDOSIS","JUVEN_ARTHR")
-    ids <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt")) %>%
-           pull(opengwasid) %>%
-           setdiff(paste0("finn-b-",finngen))
+    ids <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt")) %>% pull(opengwasid)
     rsids <- read.table(file.path(rt,"prot",paste0(prot,"-rsid.txt")), col.names=c("snpid","SNP"))
     pkgs <- c("TwoSampleMR","dplyr","ggplot2","openxlsx","stringr")
     invisible(suppressMessages(lapply(pkgs, require, character.only = TRUE)))
@@ -225,23 +222,6 @@ function mr()
                    group_by(id.outcome,SNP) %>%
                    slice(which.min(pval.outcome)) %>%
                    data.frame()
-    finngen_dat <- function(id)
-     read_outcome_data(filename=file.path(rt,"finngen",paste0(prot,"-finngen-b-",id,".gz"))), sep=" ",
-       phenotype_col = "Phenotype",
-       snp_col = "SNP",
-       beta_col = "b",
-       se_col = "se",
-       eaf_col = "freq",
-       effect_allele_col = "A1",
-       other_allele_col = "A2",
-       pval_col = "p",
-       samplesize_col = "N",
-       gene_col = "gene",
-       id_col = "id",
-       log_pval = FALSE,
-       chr_col = "chr",
-       pos_col = "pos"
-     )
     dat <- harmonise_data(exposure_dat, outcome_dat, action=2)
   # run_TwoSampleMR(harmonise, mr_plot="pQTLtools", prefix=prefix)
     mr_ivw_results <- mr(dat,method="mr_ivw") %>%
