@@ -7,8 +7,8 @@
 #SBATCH --array=1-59
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
-#SBATCH --output=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm/_gsmr3-3-1e-5_%A_%a.out
-#SBATCH --error=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm//_gsmr3-3-1e-5_%A_%a.err
+#SBATCH --output=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm/_mr_%A_%a.out
+#SBATCH --error=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm//_mr_%A_%a.err
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -226,7 +226,7 @@ function mr()
                    slice(which.min(pval.outcome)) %>%
                    data.frame()
     finngen_dat <- function(id)
-     read_outcome_data(filename=file.path(rt,"finngen",paste0(prot,"-finngen-b-",id,".gz")), sep=" ",
+     read_outcome_data(filename=file.path(rt,"finngen",paste0(prot,"-finn-b-",id,".gz")), sep=" ",
        phenotype_col = "Phenotype",
        snp_col = "SNP",
        beta_col = "b",
