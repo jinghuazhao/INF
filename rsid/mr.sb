@@ -226,7 +226,7 @@ function mr()
                    slice(which.min(pval.outcome)) %>%
                    data.frame()
     finngen_dat <- function(id)
-     read_outcome_data(filename=file.path(rt,"finngen",paste0(prot,"-finngen-b-",id,".gz"))), sep=" ",
+     read_outcome_data(filename=file.path(rt,"finngen",paste0(prot,"-finngen-b-",id,".gz")), sep=" ",
        phenotype_col = "Phenotype",
        snp_col = "SNP",
        beta_col = "b",
@@ -236,12 +236,11 @@ function mr()
        other_allele_col = "A2",
        pval_col = "p",
        samplesize_col = "N",
-       gene_col = "gene",
-       id_col = "id",
        log_pval = FALSE,
        chr_col = "chr",
        pos_col = "pos"
      )
+     for (id in finngen) outcome_dat <- bind_rows(outcome_dat,finngen_dat(id))
     dat <- harmonise_data(exposure_dat, outcome_dat, action=2)
   # run_TwoSampleMR(harmonise, mr_plot="pQTLtools", prefix=prefix)
     mr_ivw_results <- mr(dat,method="mr_ivw") %>%
@@ -306,10 +305,10 @@ function gsmr_trait()
 }
 ## EFO traits
 # bfile
-# mr
+mr
 # gsmr2
 # gsmr_trait
-gsmr3
+# gsmr3
 
 function gsmr_hgi()
 {

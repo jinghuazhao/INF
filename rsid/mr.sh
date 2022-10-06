@@ -431,12 +431,12 @@ function efo_update()
     awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
     awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
     parallel -C' ' -j15 --env INF --env efo --env cases --env controls '
-      cat <(echo -e "Phenotype SNP A1 A2 freq b se p cases controls") \
+      cat <(echo -e "Phenotype SNP chr pos A1 A2 freq b se p cases controls") \
           <(tabix ${INF}/OpenGWAS/finngen_R7_${efo}.gz {3} | \
             awk -vefo=${efo} -vcases=${cases} -vcontrols=${controls} "{
                             if(\$3<\$4) snpid=\"chr\"\$1\":\"\$2\"_\"\$3\"_\"\$4; else snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$3
                             print efo, \$5, \$1, \$2, \$4, \$3, \$11, \$9, \$10, \$7, cases, controls
-                          }" | sort -k3,3n -k4,4n -k10,10g | cut -d" " -f2,3 --complement | awk "a[\$2]++==0") | \
+                          }" | sort -k3,3n -k4,4n -k10,10g | awk "a[\$2]++==0") | \
       gzip -f > ${INF}/mr/gsmr/finngen/{2}-finn-b-${efo}.gz
     '
   done
