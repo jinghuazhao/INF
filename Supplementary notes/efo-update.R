@@ -1,5 +1,7 @@
 suppressMessages(library(dplyr))
 suppressMessages(library(openxlsx))
+suppressMessages(library(gwasrapidd))
+
 # Input
 options(width=200)
 HPC_WORK <- Sys.getenv("HPC_WORK")
@@ -17,6 +19,8 @@ efo_info <- ieugwasr::gwasinfo(pull(efo_update,opengwasid)) %>%
 knitr::kable(efo_info)
 
 csv <- read.delim(file.path(INF,"OpenGWAS","finngen_endpoints.tsv"))
+sel.trait <- c("D3_SARCOIDOSIS","L12_PSORIASIS","M13_ANKYLOSPON","M13_SJOGREN")
+sel.var <- c("phenotype","phenocode","number.of.cases","number.of.controls")
 finngen <- with(efo_update,grepl("finn-b",opengwasid))
 finngen_r7_N <- subset(csv,phenocode %in%sel.trait)[sel.var] %>%
                 arrange(phenocode) %>%
@@ -26,9 +30,40 @@ efo_update[finngen,c("N.cases","N.controls","N.total")] <- finngen_r7_N
 write.table(efo_update,file=file.path(INF,"OpenGWAS","efo-update.txt"),quote=FALSE,row.names=FALSE,sep="\t")
 knitr::kable(efo_update)
 knitr::kable(cbind(efo_update[c(1:3,6)],efo_info[c(2:4,7:9)]))
-sel.trait <- c("D3_SARCOIDOSIS","L12_PSORIASIS","M13_ANKYLOSPON")
-sel.var <- c("phenotype","phenocode","number.of.cases","number.of.controls")
 knitr::kable(subset(csv,phenocode %in%sel.trait)[sel.var] %>% arrange(phenotype))
+
+check_efo <- function(efo_id,out)
+{
+  id <- get_studies(trait_to_study(efo_id) %>% pull(study_id))
+  write.table(slot(id,"publications") %>%
+              data.frame() %>%
+              filter(!grepl("UK Biobank|Tobacco",title) & publication_date > "2017-01-09") %>%
+              select(-author_orcid),file=out,sep="\t",row.names=FALSE,quote=FALSE)
+}
+
+manual_check <- function()
+{
+  xlsx <- "https://jhz22.user.srcf.net/INF/latest/efo.xlsx"
+  efo <- read.xlsx(xlsx,sheet=1,startRow=2) %>%
+         filter(grepl("ukb|bbj|finn",MRBASEID) & is.na(Replacement)) %>%
+         select(-c(uri,Zhengetal,Replacement, Cases, Controls)) %>%
+         arrange(MRBASEID)
+
+  gs <- get_studies(trait_to_study(pull(efo,id)) %>% pull(study_id))
+  gs@ancestries %>% data.frame()
+
+  check_efo("EFO_0003767","ibd.tsv") # no change
+  check_efo("Orphanet_797","sarcoidosis.tsv") # no change
+  check_efo("EFO_0004237","graves.tsv") # only BBJ
+  check_efo("EFO_0000764","hiv.tsv") # GCST90096801/2 only have hits
+  check_efo("EFO_0000699","sjorgren.tsv") # GCST004062 only with partial information
+
+  immune_infection <- read.delim(file.path(INF,"doc","immune.efos.txt"),as.is=TRUE) %>%
+                      mutate(id=gsub(":","_",id)) %>%
+                      filter(! id %in% c("EFO_0003840","EFO_0003885"))
+}
+
+# https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/
 
 efo_2022_10_05 <- function()
 {
