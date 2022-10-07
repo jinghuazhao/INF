@@ -41,7 +41,7 @@ check_efo <- function(efo_id,out)
               select(-author_orcid),file=out,sep="\t",row.names=FALSE,quote=FALSE)
 }
 
-manual_check <- function()
+gwas_catalog_check <- function()
 {
   xlsx <- "https://jhz22.user.srcf.net/INF/latest/efo.xlsx"
   efo <- read.xlsx(xlsx,sheet=1,startRow=2) %>%
@@ -55,8 +55,16 @@ manual_check <- function()
   check_efo("EFO_0003767","ibd.tsv") # no change
   check_efo("Orphanet_797","sarcoidosis.tsv") # no change
   check_efo("EFO_0004237","graves.tsv") # only BBJ
-  check_efo("EFO_0000764","hiv.tsv") # GCST90096801/2 only have hits
+  check_efo("EFO_0000764","hiv.tsv") # GCST90096801/2 only with hits
   check_efo("EFO_0000699","sjorgren.tsv") # GCST004062 only with partial information
+  check_efo("EFO_0000584","meningitis.tsv") # unavailable
+  check_efo("EFO_0004208","vitiligo.tsv") # GCST010676 only with hits
+  check_efo("EFO_0003106","pneumonia.tsv") # GCST90134363 10k hits, https://research.23andme.com/dataset-access/
+  check_efo("Orphanet_3389","tuberculosis.tsv") # GCST004922/3, only with hits
+  check_efo("EFO_0005854","allergic-rhinitis.tsv") # only UKB
+  check_efo("EFO_0003785","allergy.tsv") # unavailable
+  check_efo("EFO_0004705","hypothyroidism.tsv") # GCST006898 only with hits or UKB
+  check_efo("EFO_0003103","urinary-tract-infection.tsv") # only UKB
 
   immune_infection <- read.delim(file.path(INF,"doc","immune.efos.txt"),as.is=TRUE) %>%
                       mutate(id=gsub(":","_",id)) %>%
