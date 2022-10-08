@@ -19,7 +19,7 @@ efo_info <- ieugwasr::gwasinfo(pull(efo_update,opengwasid)) %>%
 knitr::kable(efo_info)
 
 csv <- read.delim(file.path(INF,"OpenGWAS","finngen_endpoints.tsv"))
-sel.trait <- c("D3_SARCOIDOSIS","L12_PSORIASIS","M13_ANKYLOSPON","M13_SJOGREN")
+sel.trait <- c("D3_SARCOIDOSIS","M13_ANKYLOSPON","M13_SJOGREN","AB1_HIV","AB1_VIRAL_MENINGITIS")
 sel.var <- c("phenotype","phenocode","number.of.cases","number.of.controls")
 finngen <- with(efo_update,grepl("finn-b",opengwasid))
 finngen_r7_N <- subset(csv,phenocode %in%sel.trait)[sel.var] %>%
@@ -32,9 +32,10 @@ knitr::kable(efo_update)
 knitr::kable(cbind(efo_update[c(1:3,6)],efo_info[c(2:4,7:9)]))
 knitr::kable(subset(csv,phenocode %in%sel.trait)[sel.var] %>% arrange(phenotype))
 
-check_efo <- function(efo_id,out)
+check_efo <- function(efo_id,out,trait.name=FALSE)
 {
-  id <- get_studies(trait_to_study(efo_id) %>% pull(study_id))
+  if (trait.name) id <- get_studies(efo_trait=efo_id)
+  else id <- get_studies(trait_to_study(efo_id) %>% pull(study_id))
   write.table(slot(id,"publications") %>%
               data.frame() %>%
               filter(!grepl("UK Biobank|Tobacco",title) & publication_date > "2017-01-09") %>%
@@ -65,6 +66,34 @@ gwas_catalog_check <- function()
   check_efo("EFO_0003785","allergy.tsv") # unavailable
   check_efo("EFO_0004705","hypothyroidism.tsv") # GCST006898 only with hits or UKB
   check_efo("EFO_0003103","urinary-tract-infection.tsv") # only UKB
+# ---
+  check_efo("EFO_0000270","asthma.tsv") # unavailable
+  check_efo("EFO_0004591","asthma.tsv") # childhood asthma unavailable
+  check_efo("asthma","asthma.tsv",trait.name=TRUE)
+  # https://ftp.ebi.ac.uk/pub/databases/gwassummary_statistics/GCST90131001-GCST90132000/ (AA)
+  # https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST005001-GCST006000/GCST005212/ (TAGC)
+  # https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST010001-GCST011000/GCST010043/ (UKB+TAGC)
+  # based on OpenGWAS for GCST90014325
+  # https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90014001-GCST90015000/GCST90014325/
+  check_efo("EFO_0002609","jia.tsv") # BBJ paper, GCST90010715
+  # https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90010001-GCST90011000/GCST90010715/
+  check_efo("EFO_1001486","pbc.tsv") # EUR/AS considerably larger, GCST90061440[1|2] but only one entry availabhle
+  # https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90061001-GCST90062000/GCST90061440/
+  check_efo("EFO_0001060","celiac.tsv") # GCST005319 [21|22], GCST009874, only with hits
+  check_efo("EFO_0001359","t1d.tsv") # unavailable
+  # http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90014001-GCST90015000/GCST90014023/
+  check_efo("EFO_0000270","asthma.tsv") # unavailable
+  check_efo("EFO_0004194","iga.tsv") # GCST011296, summary data unavailable; # GCST011781 only with hits
+  check_efo("EFO_0001068","malaria.tsv") # GCST009514[5] summary statistics unavailable
+  check_efo("EFO_0000764","hiv.tsv") # GCST90096801[2] summary statistics unavailable
+  check_efo("EFO_1001231","uveitis.tsv") # GCST006126[7] only with hits, BBJ
+  check_efo("MONDO_0100096","covid.tsv") # GCST90134599,GCST90134598,GCST90134602,GCST90134601,GCST90134596,GCST90134597,GCST90134600
+  # COVID-19 hospitalisation
+  # https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90134001-GCST90135000/GCST90134602/
+  check_efo("EFO_0000676","psoriasis.tsv") # GCST90019016
+  # https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90019001-GCST90020000/GCST90019016/
+  check_efo("EFO_0003898","ankyspondy.tsv") # no useful information
+  check_efo("EFO_0004268","scleroschol.tsv") # no useful information
 
   immune_infection <- read.delim(file.path(INF,"doc","immune.efos.txt"),as.is=TRUE) %>%
                       mutate(id=gsub(":","_",id)) %>%
@@ -93,7 +122,7 @@ efo_2022_10_05 <- function()
   efo_update[ra,c("N.cases","N.controls","Source")] <- c(19234,61565,"https://gwas.mrcieu.ac.uk/datasets/ieu-a-833")
   efo_update <- mutate(efo_update,opengwasid=unlist(lapply(strsplit(Source,"/"),"[",5)))
   efo_update <- arrange(efo_update,opengwasid)
-  sel.trait <- c("JUVEN_ARTHR","D3_SARCOIDOSIS","L12_PSORIASIS","M13_SLE")
+  sel.trait <- c("JUVEN_ARTHR","D3_SARCOIDOSIS","M13_SLE")
   finngen <- with(efo_update,grepl("finn-b",opengwasid))
   efo_update[finngen,c("N.cases","N.controls","Total.N")]
   finngen_r7_N <- subset(csv,phenocode %in%sel.trait)[sel.var] %>%
