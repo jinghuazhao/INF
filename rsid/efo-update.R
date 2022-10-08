@@ -17,6 +17,8 @@ efo_info <- ieugwasr::gwasinfo(pull(efo_update,opengwasid)) %>%
             mutate(trait=gsub("\\b(^[a-z])","\\U\\1",substr(trait,1,30),perl=TRUE)) %>%
             select(id,trait,unit,pmid,author,year,ncase,ncontrol,nsnp,population)
 knitr::kable(efo_info)
+efo_add <- read.xlsx(xlsx,sheet=2)
+knitr::kable(efo_add)
 
 csv <- read.delim(file.path(INF,"OpenGWAS","finngen_endpoints.tsv"))
 sel.trait <- c("D3_SARCOIDOSIS","M13_ANKYLOSPON","M13_SJOGREN","AB1_HIV","AB1_VIRAL_MENINGITIS")
@@ -94,6 +96,8 @@ gwas_catalog_check <- function()
   # https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90019001-GCST90020000/GCST90019016/
   check_efo("EFO_0003898","ankyspondy.tsv") # no useful information
   check_efo("EFO_0004268","scleroschol.tsv") # no useful information
+  check_efo("EFO_0003779","thyroid.tsv") # BBJ
+  check_efo("EFO_0000584","meningitis.tsv") # no data
 
   immune_infection <- read.delim(file.path(INF,"doc","immune.efos.txt"),as.is=TRUE) %>%
                       mutate(id=gsub(":","_",id)) %>%
