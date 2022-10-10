@@ -380,6 +380,68 @@ function ref_prot_outcome_gsmr()
 # sed 's/.vcf.gz:/\t/;s/TotalControls=/\t/;s/,TotalCases=/\t/;s/,StudyType/\t/' ieu.sample | cut -f1,3,4 > ${INF}/OpenGWAS/ieu.N
 #   zgrep -h SAMPLE ${INF}/OpenGWAS/${efo}.vcf.gz | cut -f1,7,8 > ${INF}/mr/gsmr/trait/${efo}.sample
 
+# https://www.ebi.ac.uk/gwas/docs/methods/summary-statistics
+export TMPDIR=${HPC_WORK}/work
+export b38tob37=~/hpc-work/bin/hg38ToHg19.over.chain.gz
+
+function T1D()
+{
+  export GCST=GCST90014023
+  export T1D=${INF}/OpenGWAS/${GCST}/harmonised/34012112-GCST90014023-EFO_0001359.h.tsv.gz
+
+  cat <(echo \#chrom Start End SNPid | tr ' ' '\t') \
+      <(gunzip -c ${T1D} | awk -vOFS="\t" 'NR>1&&$3!="NA"{print "chr"$3,$4,$4+1,$1}') > ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.bed
+
+  liftOver -bedPlus=4 \
+           ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.bed \
+           ${b38tob37} \
+           ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}-b37.bed \
+           ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}-b37.unlifted.bed
+
+  cat <(echo chr pos hm_chrom hm_pos A2 A1 b freq rsid p se) \
+      <(join -13 -21 <(sed '1d;s/chr//' ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}-b37.bed | cut -f1,2,4 | sort -k3,3) \
+                     <(gunzip -c ${T1D} | sed '1d' | cut -f1,3-7,11,13,14,21 | sort -k1,1) | \
+        sort -k1,1 -k10,10g | \
+        awk 'a[$1]++==0' | \
+        cut -d' ' -f1 --complement | \
+        awk '{gsub(/X/,"23",$1);gsub(/Y/,"24",$1);print}' | \
+        sort -k1,1n -k2,2n) | \
+  tr ' ' '\t' | \
+  bgzip -f > ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz
+  tabix -S1 -s1 -b2 -e2 -f ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz
+
+}
+
+function HGI()
+{
+  export GCST=GCST90134602
+
+  export HGI=${INF}/OpenGWAS/${GCST}/${GCST}_buildGRCh38.tsv
+  cat <(echo \#chrom Start End SNPid | tr ' ' '\t') \
+      <(awk -vOFS="\t" 'NR>1{gsub(/23/,"X",$1);print "chr"$1,$2,$2+1,$5}' ${HGI}) > ${INF}/OpenGWAS/${GCST}/${GCST}.bed
+
+  liftOver -bedPlus=4 \
+           ${INF}/OpenGWAS/${GCST}/${GCST}.bed \
+           ${b38tob37} \
+           ${INF}/OpenGWAS/${GCST}/${GCST}-b37.bed \
+           ${INF}/OpenGWAS/${GCST}/${GCST}-b37.unlifted.bed
+
+  cat <(echo chr pos A2 A1 b se p cases controls N freq rsid) \
+      <(join -j3 <(sed '1d;s/chr//' ${INF}/OpenGWAS/${GCST}/${GCST}-b37.bed | cut -f1,2,4 | sort -k3,3) \
+                 <(sed '1d' ${HGI} | cut -f3-5,7,8,9,10-12,14,15 | sort -k3,3) | \
+        sort -k1,1 -k8,8g | \
+        awk 'a[$1]++==0' | \
+        cut -d' ' -f1 --complement | \
+        awk '{gsub(/X/,"23",$1);print}' | \
+        sort -k1,1n -k2,2n) | \
+  tr ' ' '\t' | \
+  bgzip -f > ${INF}/OpenGWAS/${GCST}/${GCST}.tsv.gz
+  tabix -S1 -s1 -b2 -e2 -f ${GCST}.tsv.gz
+
+  gzip -f ${INF}/OpenGWAS/${GCST}/${GCST}.bed \
+          ${INF}/OpenGWAS/${GCST}/${GCST}-b37.unlifted.bed
+}
+
 #!/usr/bin/bash
 
 #SBATCH --account CARDIO-SL0-CPU
