@@ -11,11 +11,10 @@ rt <- file.path(INF,"mr","gsmr")
 xlsx <- "https://jhz22.user.srcf.net/INF/latest/efo-update.xlsx"
 efo_update <- read.xlsx(xlsx,sheet=1) %>%
               filter(!is.na(Disease)) %>%
-              mutate(opengwasid=unlist(lapply(strsplit(Source,"/"),"[",5))) %>%
-              arrange(opengwasid)
+              mutate(opengwasid=unlist(lapply(strsplit(Source,"/"),"[",5)))
 efo_info <- ieugwasr::gwasinfo(pull(efo_update,opengwasid)) %>%
             mutate(trait=gsub("\\b(^[a-z])","\\U\\1",substr(trait,1,30),perl=TRUE)) %>%
-            select(id,trait,unit,pmid,author,year,ncase,ncontrol,nsnp,population)
+            select(id,trait,ncase,ncontrol,nsnp,population,pmid,author,year)
 knitr::kable(efo_info)
 efo_add <- read.xlsx(xlsx,sheet=2)
 knitr::kable(efo_add)
@@ -23,16 +22,13 @@ knitr::kable(efo_add)
 csv <- read.delim(file.path(INF,"OpenGWAS","finngen_endpoints.tsv"))
 sel.trait <- c("D3_SARCOIDOSIS","M13_ANKYLOSPON","M13_SJOGREN","AB1_HIV","AB1_VIRAL_MENINGITIS")
 sel.var <- c("phenotype","phenocode","number.of.cases","number.of.controls")
-finngen <- with(efo_update,grepl("finn-b",opengwasid))
-finngen_r7_N <- subset(csv,phenocode %in%sel.trait)[sel.var] %>%
-                arrange(phenocode) %>%
-                select(number.of.cases, number.of.controls) %>%
-                mutate(all=number.of.cases+number.of.controls)
-efo_update[finngen,c("N.cases","N.controls","N.total")] <- finngen_r7_N
-write.table(efo_update,file=file.path(INF,"OpenGWAS","efo-update.txt"),quote=FALSE,row.names=FALSE,sep="\t")
-knitr::kable(efo_update)
-knitr::kable(cbind(efo_update[c(1:3,6)],efo_info[c(2:4,7:9)]))
+finngen <- subset(csv[sel.var],phenocode %in%sel.trait) %>%
+           rename(id=phenocode,trait=phenotype,ncase=number.of.cases,ncontrol=number.of.controls) %>%
+           mutate(id=paste0("finngen_R7_",id))
 knitr::kable(subset(csv,phenocode %in%sel.trait)[sel.var] %>% arrange(phenotype))
+
+efo_update <- bind_rows(efo_info,efo_add,finngen)
+write.table(efo_update,file=file.path(INF,"OpenGWAS","efo-update.txt"),quote=FALSE,row.names=FALSE,sep="\t")
 
 check_efo <- function(efo_id,out,trait.name=FALSE)
 {
