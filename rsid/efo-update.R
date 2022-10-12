@@ -65,8 +65,10 @@ gwas_catalog_check <- function()
   check_efo("EFO_0004705","hypothyroidism.tsv") # GCST006898 only with hits or UKB
   check_efo("EFO_0003103","urinary-tract-infection.tsv") # only UKB
 # ---
-  check_efo("EFO_0000270","asthma.tsv") # unavailable
-  check_efo("EFO_0004591","asthma.tsv") # childhood asthma unavailable
+  check_efo("EFO_0000270","asthma.tsv") # unavailable since replaced with http://purl.obolibrary.org/obo/MONDO_0004979
+  check_efo("MONDO_0004979","asthma.tsv")
+  check_efo("EFO_0004591","asthma.tsv") # childhood asthma replaced with http://purl.obolibrary.org/obo/MONDO_0005405
+  check_efo("MONDO_0005405","asthma.tsv")
   check_efo("asthma","asthma.tsv",trait.name=TRUE)
   # https://ftp.ebi.ac.uk/pub/databases/gwassummary_statistics/GCST90131001-GCST90132000/ (AA)
   # https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST005001-GCST006000/GCST005212/ (TAGC)

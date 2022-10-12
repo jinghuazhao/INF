@@ -348,12 +348,14 @@ function ref_prot_outcome_gsmr()
     library(dplyr)
     INF <- Sys.getenv("INF")
     gsmr <- read.delim("gsmr.txt")
-    efo <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt"))
+    efo <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt")) %>%
+           select(id,trait,ncase,ncontrol) %>%
+           mutate(Ntotal=ncase+ncontrol)
     gsmr_efo <- left_join(gsmr,pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
-                left_join(efo,by=c("Outcome"="opengwasid")) %>%
-                rename(protein=Exposure,opengwasid=Outcome,N.total=Total.N) %>%
+                left_join(efo,by=c("Outcome"="id")) %>%
+                rename(protein=Exposure,id=Outcome,Disease=trait,Ncase=ncase,Ncontrol=ncontrol) %>%
                 mutate(protein=target.short,fdr=p.adjust(p,method="fdr")) %>%
-                select(protein,opengwasid,Disease,bxy,se,p,nsnp,fdr,N.cases,N.controls,N.total) %>%
+                select(protein,id,Disease,bxy,se,p,nsnp,fdr,Ncase,Ncontrol,Ntotal) %>%
                 arrange(fdr)
     old <- function()
     {
@@ -427,11 +429,9 @@ done
 function GCST90134602()
 {
   export GCST=GCST90134602
-
   export HGI=${INF}/OpenGWAS/${GCST}/${GCST}_buildGRCh38.tsv
   cat <(echo \#chrom Start End SNPid | tr ' ' '\t') \
       <(awk -vOFS="\t" 'NR>1{gsub(/23/,"X",$1);print "chr"$1,$2,$2+1,$5}' ${HGI}) > ${INF}/OpenGWAS/${GCST}/${GCST}.bed
-
   liftOver -bedPlus=4 \
            ${INF}/OpenGWAS/${GCST}/${GCST}.bed \
            ${b38tob37} \
@@ -460,7 +460,7 @@ function GCST90134602()
 # chr     pos     A2      A1      b       se      p       cases   controls        N       freq    rsid
 # 1       714596  T       C       -3.3903e-02     7.0748e-02      6.3179e-01      5743    41335   4676    3.347e-02       rs149887893
 
-function GCST010043()
+function HanY()
 {
   gunzip -c ${INF}/OpenGWAS/GCST010043/HanY_prePMID_asthma_Meta-analysis_UKBB_TAGC.txt.gz | \
   awk -vOFS='\t' '
@@ -480,8 +480,12 @@ function GCST010043()
   bgzip -f > ${INF}/OpenGWAS/GCST010043/GCST010043.tsv.gz
   tabix -S1 -s2 -b3 -e3 ${INF}/OpenGWAS/GCST010043/GCST010043.tsv.gz
 }
+# GCST010043/HanY_prePMID_asthma_Meta-analysis_UKBB_TAGC.txt.gz
 # SNP     CHR     BP      EA      NEA     Z       P       Direction_UKBB_TAGC     P_het   N
 # 1:100004463_TA_T        1       100004463       T       TA      0.374   0.7081  -+      0.2873  536345
+# GCST010042/HanY_prePMID_asthma_UKBB.txt.gz
+# SNP     CHR     BP      EA      NEA     EAF     INFO    OR      OR_95L  OR_95U  P       N
+# 1:692794_CA_C   1       692794  CA      C       0.881938        0.824483        1.00032752742223        0.980323146514236       1.0207401158248 0.97    393859
 
 #!/usr/bin/bash
 
@@ -534,28 +538,27 @@ function efo_update()
     awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
     parallel -C' ' -j15 --env INF --env efo --env cases --env controls '
       (
-        cat <(echo -e "SNP A1 A2 freq b se p N")
+        echo SNP A1 A2 freq b se p N
         case ${efo} in
         GCST90061440 | GCST90019016 | GCST90014023 | GCST90010715 | GCST90014325)
            tabix ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz {3} | \
             awk -vefo=${efo} -vN=${N} "{
                 if(\$5<\$6) snpid=\"chr\"\$1\":\"\$2\"_\"\$5\"_\"\$6;
                        else snpid=\"chr\"\$1\":\"\$2\"_\"\$6\"_\"\$5
-                print  snpid, \$6, \$5, \$9, \$8, \$11, \$10, N
-            }" | awk "a[\$2]++==0" | \
-            gzip -f > ${INF}/mr/gsmr/trait/{2}-${efo}.gz
+                print snpid, \$6, \$5, \$8, \$7, \$11, \$10, N
+            }"
         ;;
       # chr pos hm_chrom hm_pos A2 A1 b freq rsid p se
         GCST90134602)
            tabix ${INF}/OpenGWAS/GCST90134602/GCST90134602.tsv.gz {3} | \
            awk "{
-                  chr=\$1;pos=\$2;a1=\$4;a2=\$3;
-                  if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2;
-                        else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
-                  print snpid, a1, a2, \$11, \$5, \$6, \$7, \$10
-                }"
-         # chr     pos     A2      A1      b       se      p       cases   controls        N       freq    rsid
+               chr=\$1;pos=\$2;a1=\$4;a2=\$3;
+               if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2;
+                     else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
+               print snpid, a1, a2, \$11, \$5, \$6, \$7, \$10
+           }"
         ;;
+      # chr pos A2 A1 b se p cases controls N freq rsid
         *)
         ;;
         esac
@@ -575,18 +578,18 @@ function efo_update()
       cat <(echo SNP A1 A2 freq b se p N) \
           <(tabix ${INF}/OpenGWAS/${efo}.gz {3} | \
             awk -vN=${N} "{
-                            chr=\$1;pos=\$2;a1=toupper(\$4);a2=toupper(\$3)
-                            if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2;
-                                  else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
-                            print snpid,a1,a2,\$11,\$9,\$10,\$7,N
-                          }" | \
+               chr=\$1;pos=\$2;a1=toupper(\$4);a2=toupper(\$3)
+               if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2;
+                     else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
+               print snpid,a1,a2,\$11,\$9,\$10,\$7,N
+               }" | \
             sort -k1,1 -k7,7g | \
             awk "a[\$1]++==0"
            ) | \
       gzip -f > ${INF}/mr/gsmr/trait/{2}-${efo}.gz
     '
   done
-# chrom  pos     ref     alt     rsids   nearest_genes   pval    mlogp   beta    sebeta  af_alt  af_alt_cases    af_alt_controls
+# chrom pos ref alt rsids nearest_genes pval mlogp beta sebeta af_alt af_alt_cases af_alt_controls
   sed '1d' ${EFO_UPDATE} | awk -vFS="\t" '{print $1,2/(1/$3+1/$4)}' | \
   while read efo N
   do
