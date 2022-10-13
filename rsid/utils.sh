@@ -506,3 +506,10 @@ function cis_info()
   awk -vM=1e6 '{$4=$4-M;$5=$5+M};1' | \
   sort -k1,1 | join <(cut -f3,7 doc/olink.inf.panel.annot.tsv | sed 's/"//g' | sort -k1,1) - > TNFB/cis.dat
 }
+
+function gsmr_png()
+{
+# https://bioinformatics.psb.ugent.be/webtools/Venn/
+  convert gsmr-5e-8-3/gsmr-efo.png gsmr-5e-8-10/gsmr-efo.png -append -density 300 -resize 20% gsmr.png
+  convert +append gsmr-5e-8-3/gsmr-efo.png gsmr-5e-8-10/gsmr-efo.png -resize 10% gsmr-lr.png
+}

@@ -388,43 +388,69 @@ export b38tob37=~/hpc-work/bin/hg38ToHg19.over.chain.gz
 
 function harmonise()
 {
-  export GCST=${1}
-  export hdata=${2}
-
-  cat <(echo \#chrom Start End SNPid | tr ' ' '\t') \
-      <(gunzip -c ${hdata} | awk -vOFS="\t" 'NR>1&&$3!="NA"{print "chr"$3,$4,$4+1,$1}') > ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.bed
-
-  liftOver -bedPlus=4 \
-           ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.bed \
-           ${b38tob37} \
-           ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}-b37.bed \
-           ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}-b37.unlifted.bed
-
-  cat <(echo chr pos hm_chrom hm_pos A2 A1 b freq rsid p se) \
-      <(join -13 -21 <(awk '!/Un/ && !/_random/' ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}-b37.bed | sed '1d;s/chr//' | cut -f1,2,4 | sort -k3,3) \
-                     <(gunzip -c ${hdata} | sed '1d' | cut -f1,3-7,11,13,14,21 | sort -k1,1) | \
-        sort -k1,1 -k10,10g | \
-        awk 'a[$1]++==0' | \
-        cut -d' ' -f1 --complement | \
-        awk '{gsub(/X/,"23",$1);gsub(/Y/,"24",$1);print}' | \
-        sort -k1,1n -k2,2n) | \
-  tr ' ' '\t' | \
-  bgzip -f > ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz
-  tabix -S1 -s1 -b2 -e2 -f ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz
+  export hdata=${1}
+  export GCST=$(echo ${1} | sed 's|/|\t|g' | cut -f10)
+  export fields=${2}
+  echo ${hdata} $GCST ${fields}
+  case ${GCST} in
+  GCST90014023)
+    if [ ! -f ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}-b37.bed ]; then
+       cat <(echo \#chrom Start End SNPid | tr ' ' '\t') \
+           <(gunzip -c ${hdata} | awk -vOFS="\t" 'NR>1&&$3!="NA"{print "chr"$3,$4,$4+1,$1}') > ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.bed
+       liftOver -bedPlus=4 \
+                ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.bed \
+                ${b38tob37} \
+                ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}-b37.bed \
+                ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}-b37.unlifted.bed
+    fi
+    cat <(echo chr pos $(gunzip -c ${hdata} | head -1 | cut -f${fields} | cut -f1 --complement)) \
+        <(join -13 -21 <(awk '!/Un/ && !/_random/' ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}-b37.bed | sed '1d;s/chr//' | cut -f1,2,4 | sort -k3,3) \
+                       <(gunzip -c ${hdata} | sed '1d' | cut -f${fields} | sort -k1,1) | \
+          cut -d' ' -f1 --complement | awk '!/X|Y/' | sort -k1,1n -k2,2n) | tr ' ' '\t' | \
+    bgzip -f > ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz
+    tabix -S1 -s1 -b2 -e2 -f ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz
+    ;;
+  GCST90061440 | GCST90019016 | GCST90014325)
+    gunzip -c ${hdata} | head -3 | cut -f${fields}
+    cat <(gunzip -c ${hdata} | head -1 | cut -f${fields}) \
+        <(gunzip -c ${hdata} | sed '1d' | cut -f${fields} | awk '$1!="NA" && !/X|Y/' | sort -k3,3 -k4,4n) | \
+    bgzip -f > ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz
+    tabix -S1 -s3 -b4 -e4 -f ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz
+    ;;
+  *)
+    ;;
+  esac
 }
-for h in \
-      OpenGWAS/GCST90061440/harmonised/34033851-GCST90061440-EFO_1001486.h.tsv.gz \
-      OpenGWAS/GCST90019016/harmonised/34927100-GCST90019016-EFO_0000676.h.tsv.gz \
-      OpenGWAS/GCST90014023/harmonised/34012112-GCST90014023-EFO_0001359.h.tsv.gz \
-      OpenGWAS/GCST90010715/harmonised/33106285-GCST90010715-EFO_0002609.h.tsv.gz \
-      OpenGWAS/GCST90014325/harmonised/34103634-GCST90014325-EFO_0000270.h.tsv.gz
+for h in ${INF}/OpenGWAS/GCST90061440/harmonised/34033851-GCST90061440-EFO_1001486.h.tsv.gz \
+         ${INF}/OpenGWAS/GCST90019016/harmonised/34927100-GCST90019016-EFO_0000676.h.tsv.gz \
+         ${INF}/OpenGWAS/GCST90014023/harmonised/34012112-GCST90014023-EFO_0001359.h.tsv.gz \
+         ${INF}/OpenGWAS/GCST90014325/harmonised/34103634-GCST90014325-EFO_0000270.h.tsv.gz
 do
-    export GCST=$(echo ${h} | sed 's|/|\t|g' | cut -f2)
-    export f=${INF}/${h}
-    harmonise ${GCST} ${f}
+ export f=$( gunzip -c ${h} | head -1 | tr '\t' '\n' | \
+ awk '/hm_variant_id|hm_chrom|hm_pos|hm_rsid|hm_other_allele|hm_effect_allele|hm_beta|hm_effect_allele_frequency|p_value|standard_error/{printf ","NR}'|\
+ sed 's/^[,]//')
+ harmonise ${h} ${f}
 done
-# hm_variant_id   hm_rsid hm_chrom        hm_pos  hm_other_allele hm_effect_allele        hm_beta hm_odds_ratio   hm_ci_lower     hm_ci_upper     hm_effect_allele_frequency  hm_code variant_id      chromosome      base_pair_location      other_allele    effect_allele   p_value standard_error  odds_ratio      ci_lower    ci_upper        beta    effect_allele_frequency
-# 1_832873_A_C    rs2977608       1       832873  A       C       NA      NA      NA      NA      NA      10      rs2977608       1       832873  A       C  0.104282 0.044166        NA      NA      NA      NA      NA
+
+function GCST90010715()
+{
+  cat <(echo snpid rsid chr pos a1 a2 freq b se p N) \
+      <(sed '1d' ${INF}/OpenGWAS/GCST90010715/GCST90010715_buildGRCh37.tsv) | \
+        awk '
+        {
+          chr=$3+0; pos=$4; a1=$6; a2=$5
+          if (a1<a2) snpid="chr" chr ":" pos "_" a1 "_" a2; else snpid="chr" chr ":" pos "_" a2 "_" a1
+          print snpid, $2, chr, pos, a1, a2, "NA", $12, $13, $11, 2/(1/3305+1/9196)
+         }' | \
+  sort -k1,1 -k10,10g | \
+  awk 'a[$1]++==0' | \
+  sort -k3,3n -k4,4n | \
+  tr ' ' '\t' | \
+  bgzip -f > ${INF}/OpenGWAS/GCST90010715/harmonised/GCST90010715.tsv.gz
+  tabix -S1 -s3 -b4 -e4 -f ${INF}/OpenGWAS/GCST90010715/harmonised/GCST90010715.tsv.gz
+}
+# alternate_ids	variant_id	chromosome	position	alleleA	alleleB	all_maf	all_OR	all_OR_lower	all_OR_upper	p_value	frequentist_add_beta_1	frequentist_add_se_1
+# rs2977608	rs2977608	01	768253	A	C	0.242297	1.03793	0.971733	1.10864	0.104282	0.071745	0.044166
 
 function GCST90134602()
 {
@@ -537,24 +563,48 @@ function efo_update()
     awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
     awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
     parallel -C' ' -j15 --env INF --env efo --env cases --env controls '
+      echo ${efo} {2}
       (
         echo SNP A1 A2 freq b se p N
         case ${efo} in
-        GCST90061440 | GCST90019016 | GCST90014023 | GCST90010715 | GCST90014325)
+        GCST90019016)
            tabix ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz {3} | \
-            awk -vefo=${efo} -vN=${N} "{
-                if(\$5<\$6) snpid=\"chr\"\$1\":\"\$2\"_\"\$5\"_\"\$6;
-                       else snpid=\"chr\"\$1\":\"\$2\"_\"\$6\"_\"\$5
-                print snpid, \$6, \$5, \$8, \$7, \$11, \$10, N
-            }"
-        ;;
-      # chr pos hm_chrom hm_pos A2 A1 b freq rsid p se
+           awk -vefo=${efo} -vN=${N} "
+           {
+               chr=\$3; pos=\$4; a1=\$6; a2=\$5
+               if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2; else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
+               print snpid, \$6, \$5, \$8, \$7, \$9, \$10, N
+           }" | \
+           sort -k1,1 -k7,7g | \
+           awk "a[\$1]++==0"
+           ;;
+        GCST90061440 | GCST90010715 | GCST90014325)
+           tabix ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz {3} | \
+           awk -vefo=${efo} -vN=${N} "
+           {
+               chr=\$3; pos=\$4; a1=\$6; a2=\$5
+               if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2; else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
+               print snpid, a1, a2, \$8, \$7, \$10, \$9, N
+           }" | \
+           sort -k1,1 -k7,7g | \
+           awk "a[\$1]++==0"
+           ;;
+        GCST90014023)
+           tabix ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz {3} | cut -f3-5 --complement | \
+           awk -vefo=${efo} -vN=${N} "
+           {
+               chr=\$1; pos=\$2; a1=\$4; a2=\$3
+               if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2; else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
+               print snpid, a1, a2, \$6, \$5, \$8, \$7, N
+           }" | \
+           sort -k1,1 -k7,7g | \
+           awk "a[\$1]++==0"
+           ;;
         GCST90134602)
-           tabix ${INF}/OpenGWAS/GCST90134602/GCST90134602.tsv.gz {3} | \
+           tabix ${INF}/OpenGWAS/${efo}/${efo}.tsv.gz {3} | \
            awk "{
                chr=\$1;pos=\$2;a1=\$4;a2=\$3;
-               if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2;
-                     else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
+               if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2; else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
                print snpid, a1, a2, \$11, \$5, \$6, \$7, \$10
            }"
         ;;
@@ -596,7 +646,7 @@ function efo_update()
     export efo=${efo}
     export N=${N}
     awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
-    parallel -C' ' -j15 --env INF --env efo --env N '
+    parallel -C' ' -j15 --env INF --env efo '
       echo ${efo} ${INF}/mr/gsmr/trait/{2}-${efo}.gz > ${INF}/mr/gsmr/trait/gsmr_{2}-${efo}
     '
   done
@@ -657,6 +707,7 @@ Rscript -e '
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
    grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
    dev.off()
+   write.table(colnames(gsmr_mat),quote=FALSE,row.names=FALSE)
    others <- function()
    {
    # moved in the latest decision

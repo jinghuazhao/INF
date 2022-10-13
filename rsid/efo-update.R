@@ -24,7 +24,7 @@ sel.trait <- c("D3_SARCOIDOSIS","M13_ANKYLOSPON","M13_SJOGREN","AB1_HIV","AB1_VI
 sel.var <- c("phenotype","phenocode","number.of.cases","number.of.controls")
 finngen <- subset(csv[sel.var],phenocode %in%sel.trait) %>%
            rename(id=phenocode,trait=phenotype,ncase=number.of.cases,ncontrol=number.of.controls) %>%
-           mutate(id=paste0("finngen_R7_",id))
+           mutate(id=paste0("finngen_R7_",id),trait=gsub("Human immunodeficiency virus [HIV]","HIV",trait,fixed=TRUE))
 knitr::kable(subset(csv,phenocode %in%sel.trait)[sel.var] %>% arrange(phenotype))
 
 efo_update <- bind_rows(efo_info,efo_add,finngen)
