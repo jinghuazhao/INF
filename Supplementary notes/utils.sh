@@ -510,6 +510,7 @@ function cis_info()
 function gsmr_png()
 {
 # https://bioinformatics.psb.ugent.be/webtools/Venn/
+# https://shiny.cnsgenomics.com/LMOR/
   convert gsmr-5e-8-3/gsmr-efo.png gsmr-5e-8-10/gsmr-efo.png -append -density 300 -resize 20% gsmr.png
   convert +append gsmr-5e-8-3/gsmr-efo.png gsmr-5e-8-10/gsmr-efo.png -resize 10% gsmr-lr.png
 }
