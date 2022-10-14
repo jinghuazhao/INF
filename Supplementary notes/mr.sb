@@ -260,54 +260,46 @@ function mr2()
     INF <- Sys.getenv("INF")
     prot <- Sys.getenv("prot")
     rt <- Sys.getenv("rt")
-#   ids <- scan(file.path(INF,"TNFB","efo"),"")
     pkgs <- c("TwoSampleMR","dplyr","ggplot2","openxlsx","stringr")
     invisible(suppressMessages(lapply(pkgs, require, character.only = TRUE)))
-    finngen <- c("finngen_R7_M13_ANKYLOSPON","finngen_R7_D3_SARCOIDOSIS","finngen_R7_M13_SJOGREN","finngen_R7_AB1_VIRAL_MENINGITIS","finngen_R7_AB1_HIV")
-    gwas_catalog <- c("GCST90014325","GCST90134602","GCST90010715","GCST90061440","GCST90019016","GCST90014023")
     ids <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt")) %>%
-           pull(id) %>%
-           setdiff(c(finngen,gwas_catalog))
-    rsids <- read.table(file.path(rt,"prot",paste0(prot,"-rsid.txt")), col.names=c("snpid","SNP"))
+           pull(id)
+    rsids <- read.table(file.path(rt,"prot",paste0(prot,"-rsid.txt")), col.names=c("snpid","rsid"))
     exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".gz")), sep = " ",
-      snp_col = "SNP",
-      effect_allele_col = "A1",
-      other_allele_col = "A2",
-      eaf_col = "freq",
-      beta_col = "b",
-      se_col = "se",
-      pval_col = "p",
-      samplesize_col = "N"
-    ) %>%
-    mutate(region=gsub("chr|_|[a-z]","",SNP),snpid=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE)) %>%
-    select(-SNP)
-  # exposure_dat <- clump_data(left_join(exposure_dat,rsids))
-    snpid_rsid <- extract_outcome_data(exposure_dat$region, ids) %>%
-                  mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome)) %>%
-                  select(snpid,SNP) %>%
-                  distinct()
-    exposure_dat <- left_join(exposure_dat,snpid_rsid)
+                    snp_col = "SNP",
+                    effect_allele_col = "A1",
+                    other_allele_col = "A2",
+                    eaf_col = "freq",
+                    beta_col = "b",
+                    se_col = "se",
+                    pval_col = "p",
+                    samplesize_col = "N") %>%
+                    mutate(SNP=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE), id.exposure=prot) %>%
+                    left_join(rsids, by=c('SNP'='snpid')) %>%
+                    mutate(SNP=rsid)
+    info <- read.delim(file.path(INF,"mr","gsmr","region",paste0(prot,".rsid.txt"))) %>%
+            transmute(rsid=name,chrpos=paste0(chr,":",pos))
     user_dat <- function(id)
-    {
-       z <- read_outcome_data(filename=file.path(rt,"trait",paste0(prot,"-",id,".gz")), sep=" ",
-                              snp_col = "SNP",
-                              beta_col = "b",
-                              se_col = "se",
-                              eaf_col = "freq",
-                              effect_allele_col = "A1",
-                              other_allele_col = "A2",
-                              pval_col = "p",
-                              samplesize_col = "N",
-                              log_pval = FALSE
-                             ) %>%
-            mutate(SNP=gsub("(_[a-z]*)","\\U\\1",SNP,perl=TRUE),phenotype_col=id,id.outcome=id,
-                   x=inv_chr_pos_a1_a2(SNP)%>%select(chr,pos)%>%mutate(chr=gsub("chr","",chr)))
-       data.frame(select(z,-x),z$x[c("chr","pos")])
-    }
+    z <- read_outcome_data(filename=file.path(rt,"trait",paste0(prot,"-",id,".gz")), sep=" ",
+                           snp_col = "SNP",
+                           beta_col = "b",
+                           se_col = "se",
+                           eaf_col = "freq",
+                           effect_allele_col = "A1",
+                           other_allele_col = "A2",
+                           pval_col = "p",
+                           samplesize_col = "N",
+                           log_pval = FALSE
+                          ) %>%
+         mutate(phenotype_col=id,id.outcome=id,chrpos=gsub("chr|[_A-Z]|[_a-z]*","",SNP)) %>%
+         left_join(info) %>%
+         mutate(SNP=rsid) %>%
+         select(-rsid,-chrpos)
     outcome_dat <- data.frame()
-    for (id in finngen) finngen_outcome <- bind_rows(outcome_dat,user_dat(id))
+    for (id in ids) outcome_dat <- bind_rows(outcome_dat,user_dat(id))
     dat <- harmonise_data(exposure_dat, outcome_dat, action=2)
   # run_TwoSampleMR(harmonise, mr_plot="pQTLtools", prefix=prefix)
+    exposure_dat <- clump_data(dat)
     mr_ivw_results <- mr(dat,method="mr_ivw") %>%
                       mutate(prot=prot,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
                       select(prot,id.outcome,b,se,pval,nsnp,disease)
@@ -370,10 +362,10 @@ function gsmr_trait()
 }
 ## EFO traits
 # bfile
-# mr
+mr2
 # gsmr2
 # gsmr_trait
-gsmr3
+# gsmr3
 
 function gsmr_hgi()
 {

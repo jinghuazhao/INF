@@ -434,20 +434,21 @@ done
 
 function GCST90010715()
 {
+  export efo=GCST90010715
   cat <(echo snpid rsid chr pos a1 a2 freq b se p N) \
-      <(sed '1d' ${INF}/OpenGWAS/GCST90010715/GCST90010715_buildGRCh37.tsv) | \
+      <(sed '1d' ${INF}/OpenGWAS/${efo}/${efo}_buildGRCh37.tsv | \
         awk '
         {
           chr=$3+0; pos=$4; a1=$6; a2=$5
           if (a1<a2) snpid="chr" chr ":" pos "_" a1 "_" a2; else snpid="chr" chr ":" pos "_" a2 "_" a1
           print snpid, $2, chr, pos, a1, a2, "NA", $12, $13, $11, 2/(1/3305+1/9196)
-         }' | \
-  sort -k1,1 -k10,10g | \
-  awk 'a[$1]++==0' | \
-  sort -k3,3n -k4,4n | \
+        }' | \
+        sort -k1,1 -k9,9g | \
+        awk 'a[$1]++==0' | \
+        sort -k3,3n -k4,4n) | \
   tr ' ' '\t' | \
-  bgzip -f > ${INF}/OpenGWAS/GCST90010715/harmonised/GCST90010715.tsv.gz
-  tabix -S1 -s3 -b4 -e4 -f ${INF}/OpenGWAS/GCST90010715/harmonised/GCST90010715.tsv.gz
+  bgzip -f > ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz
+  tabix -S1 -s3 -b4 -e4 -f ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz
 }
 # alternate_ids	variant_id	chromosome	position	alleleA	alleleB	all_maf	all_OR	all_OR_lower	all_OR_upper	p_value	frequentist_add_beta_1	frequentist_add_se_1
 # rs2977608	rs2977608	01	768253	A	C	0.242297	1.03793	0.971733	1.10864	0.104282	0.071745	0.044166
@@ -513,6 +514,67 @@ function HanY()
 # SNP     CHR     BP      EA      NEA     EAF     INFO    OR      OR_95L  OR_95U  P       N
 # 1:692794_CA_C   1       692794  CA      C       0.881938        0.824483        1.00032752742223        0.980323146514236       1.0207401158248 0.97    393859
 
+function mr_rsid()
+# data with RSid for TwoSampleMR
+{
+  for r in {1..59}
+  do
+    export region=$(awk -vr=${r} 'NR==r{print $4":"$5"-"$6}' ${INF}/TNFB/cis.dat)
+    export prot=$(awk -vr=${r} 'NR==r{print $3}' ${INF}/TNFB/cis.dat)
+    echo ${prot} ${region}
+    for OpenGWAS in $(sed '1d' ${INF}/OpenGWAS/efo-update.txt | cut -f1 | awk '/ieu|ebi|bbj/')
+    do
+      export N=$(grep -w ${OpenGWAS} ${INF}/OpenGWAS/efo-update.txt | awk -vFS='\t' '{print 2/(1/$3+1/$4)}')
+      (
+        echo -e "SNP A1 A2 freq b se p N"
+        bcftools query -f "%ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [%SS] \n" -r {3} ${INF}/OpenGWAS/${OpenGWAS}.vcf.gz | \
+        awk -vN=${N} '{if ($8=="NA") $8=N}'
+      ) > ${INF}/mr/gsmr/prot/${prot}-${OpenGWAS}-rsid.txt
+    done
+    for GCST in $(sed '1d' ${INF}/OpenGWAS/efo-update.txt | cut -f1 | awk '/^GCST/')
+    do
+      export N=$(grep -w ${GCST} ${INF}/OpenGWAS/efo-update.txt | awk -vFS='\t' '{print 2/(1/$3+1/$4)}')
+      (
+        echo -e "SNP A1 A2 freq b se p N"
+        case ${GCST} in
+        GCST90010715)
+          tabix ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz ${region} | \
+          awk '{print $2,$5,$6,"NA",$8,$9,$10,$11}'
+          ;;
+        GCST90014325 | GCST90061440)
+          tabix ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz ${region} | \
+          awk -vN=${N} '{print $2,$6,$5,$8,$7,$10,$9,N}'
+          ;;
+        GCST90019016)
+          tabix ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz ${region} | \
+          awk -vN=${N} '{print $2,$6,$5,$8,$7,$9,$10,N}'
+          ;;
+        GCST90014023)
+          tabix ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz ${region} | \
+          awk -vN=${N} '{print $3,$7,$6,$9,$8,$11,$10,N}'
+          ;;
+        GCST90134602)
+          tabix ${INF}/OpenGWAS/${GCST}/${GCST}.tsv.gz ${region} | \
+          awk '{print $12,$4,$3,$11,$5,$6,$7,$10}'
+          ;;
+        *)
+          ;;
+        esac
+      ) > ${INF}/mr/gsmr/prot/${prot}-${GCST}-rsid.txt
+    done
+    for finngen in $(sed '1d' ${INF}/OpenGWAS/efo-update.txt | cut -f1 | awk -vFS='\t' '/^finngen/')
+    do
+      export N=$(grep -w ${finngen} ${INF}/OpenGWAS/efo-update.txt | awk -vFS='\t' '{print 2/(1/$3+1/$4)}')
+      (
+         echo -e "SNP A1 A2 freq b se p N"
+         tabix ${INF}/OpenGWAS/${finngen}.gz ${region} | \
+         awk -vN=${N} '{print $5,$4,$3,$11,$9,$10,$7,N}'
+      ) > ${INF}/mr/gsmr/trait/${prot}-${finngen}-rsid.txt
+    done
+  done
+}
+# gunzip -c GCST90134602.tsv.gz | head -1 | tr '\t' '\n' | awk '{print NR,$1}'
+
 #!/usr/bin/bash
 
 #SBATCH --account CARDIO-SL0-CPU
@@ -573,12 +635,23 @@ function efo_update()
            {
                chr=\$3; pos=\$4; a1=\$6; a2=\$5
                if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2; else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
-               print snpid, \$6, \$5, \$8, \$7, \$9, \$10, N
+               print snpid, a1, a2, \$8, \$7, \$9, \$10, N
            }" | \
            sort -k1,1 -k7,7g | \
            awk "a[\$1]++==0"
            ;;
-        GCST90061440 | GCST90010715 | GCST90014325)
+        GCST90010715)
+           tabix ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz {3} | \
+           awk -vefo=${efo} -vN=${N} "
+           {
+               chr=\$3; pos=\$4; a1=\$5; a2=\$6
+               if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2; else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
+               print snpid, a1, a2, "NA", \$8, \$9, \$10, \$11
+           }" | \
+           sort -k1,1 -k7,7g | \
+           awk "a[\$1]++==0"
+           ;;
+        GCST90061440 | GCST90014325)
            tabix ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz {3} | \
            awk -vefo=${efo} -vN=${N} "
            {
@@ -590,12 +663,12 @@ function efo_update()
            awk "a[\$1]++==0"
            ;;
         GCST90014023)
-           tabix ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz {3} | cut -f3-5 --complement | \
+           tabix ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz {3} | \
            awk -vefo=${efo} -vN=${N} "
            {
-               chr=\$1; pos=\$2; a1=\$4; a2=\$3
+               chr=\$1; pos=\$2; a1=\$7; a2=\$6
                if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2; else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
-               print snpid, a1, a2, \$6, \$5, \$8, \$7, N
+               print snpid, \$7, \$6, \$9, \$8, \$11, \$10, N
            }" | \
            sort -k1,1 -k7,7g | \
            awk "a[\$1]++==0"
