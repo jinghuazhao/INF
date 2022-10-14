@@ -514,3 +514,17 @@ function gsmr_png()
   convert gsmr-5e-8-3/gsmr-efo.png gsmr-5e-8-10/gsmr-efo.png -append -density 300 -resize 20% gsmr.png
   convert +append gsmr-5e-8-3/gsmr-efo.png gsmr-5e-8-10/gsmr-efo.png -resize 10% gsmr-lr.png
 }
+
+function chrpos_rsid()
+{
+  Rscript -e '
+    suppressMessages(library(dplyr))
+    suppressMessages(library(ieugwasr))
+    INF <- Sys.getenv("INF")
+    cis <- read.table(file.path(INF,"TNFB","cis.dat"),col.names=c("uniprot","gene","prot","chr","start","end")) %>%
+           mutate(region=paste0(chr,":",start,"-",end))
+    info <- sapply(cis$region, function(x) variants_chrpos(x) %>% select(name,chr,pos))
+    sapply(1:59,function(x)
+           write.table(info[,x],file=file.path(INF,"mr","gsmr","region",paste0(cis[x,"prot"],".rsid.txt")),quote=FALSE,row.names=FALSE,sep="\t"))
+  '
+}
