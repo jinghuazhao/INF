@@ -274,13 +274,12 @@ function mr2()
                     se_col = "se",
                     pval_col = "p",
                     samplesize_col = "N") %>%
-                    mutate(SNP=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE), id.exposure=prot) %>%
+                    mutate(SNP=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE), id.exposure=prot,exposure=prot) %>%
                     left_join(rsids, by=c('SNP'='snpid')) %>%
                     mutate(SNP=rsid)
-    info <- read.delim(file.path(INF,"mr","gsmr","region",paste0(prot,".rsid.txt"))) %>%
-            transmute(rsid=name,chrpos=paste0(chr,":",pos))
     user_dat <- function(id)
-    z <- read_outcome_data(filename=file.path(rt,"trait",paste0(prot,"-",id,".gz")), sep=" ",
+    z <- read_outcome_data(filename=file.path(rt,"trait",paste0(prot,"-",id,"-rsid.txt")), sep=" ",
+                           phenotype = id,
                            snp_col = "SNP",
                            beta_col = "b",
                            se_col = "se",
@@ -290,16 +289,11 @@ function mr2()
                            pval_col = "p",
                            samplesize_col = "N",
                            log_pval = FALSE
-                          ) %>%
-         mutate(phenotype_col=id,id.outcome=id,chrpos=gsub("chr|[_A-Z]|[_a-z]*","",SNP)) %>%
-         left_join(info) %>%
-         mutate(SNP=rsid) %>%
-         select(-rsid,-chrpos)
+                          ) %>% mutate(id.outcome=id,outcome=id)
     outcome_dat <- data.frame()
     for (id in ids) outcome_dat <- bind_rows(outcome_dat,user_dat(id))
-    dat <- harmonise_data(exposure_dat, outcome_dat, action=2)
+    dat <- harmonise_data(clump_data(exposure_dat), outcome_dat, action=2)
   # run_TwoSampleMR(harmonise, mr_plot="pQTLtools", prefix=prefix)
-    exposure_dat <- clump_data(dat)
     mr_ivw_results <- mr(dat,method="mr_ivw") %>%
                       mutate(prot=prot,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
                       select(prot,id.outcome,b,se,pval,nsnp,disease)
@@ -312,7 +306,7 @@ function mr2()
                       mutate(prot=prot,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
                       select(prot,id.exposure,id.outcome,SNP,b,se,p,disease)
     fp <- mr_forest_plot(mr_single_results)
-    fp_outcome <- unlist(lapply(strsplit(names(fp),"[.]"),"[",2))
+    fp_outcome <- gsub("^.","",gsub(prot,"",names(fp)))
     for(i in 1:length(fp))
     {
       ggsave(fp[[i]],filename=file.path(rt,"mr",paste0(prot,"-",fp_outcome[i],".png")),device="png")

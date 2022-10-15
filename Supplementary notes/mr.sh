@@ -527,9 +527,10 @@ function mr_rsid()
       export N=$(grep -w ${OpenGWAS} ${INF}/OpenGWAS/efo-update.txt | awk -vFS='\t' '{print 2/(1/$3+1/$4)}')
       (
         echo -e "SNP A1 A2 freq b se p N"
-        bcftools query -f "%ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [%SS] \n" -r {3} ${INF}/OpenGWAS/${OpenGWAS}.vcf.gz | \
-        awk -vN=${N} '{if ($8=="NA") $8=N}'
-      ) > ${INF}/mr/gsmr/prot/${prot}-${OpenGWAS}-rsid.txt
+        bcftools query -f "%ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [%SS]\n" -r ${region} ${INF}/OpenGWAS/${OpenGWAS}.vcf.gz | \
+        $7=10^-$7
+        awk -vN=${N} '{if ($8==".") $8=N;print}'
+      ) > ${INF}/mr/gsmr/trait/${prot}-${OpenGWAS}-rsid.txt
     done
     for GCST in $(sed '1d' ${INF}/OpenGWAS/efo-update.txt | cut -f1 | awk '/^GCST/')
     do
@@ -560,7 +561,7 @@ function mr_rsid()
         *)
           ;;
         esac
-      ) > ${INF}/mr/gsmr/prot/${prot}-${GCST}-rsid.txt
+      ) > ${INF}/mr/gsmr/trait/${prot}-${GCST}-rsid.txt
     done
     for finngen in $(sed '1d' ${INF}/OpenGWAS/efo-update.txt | cut -f1 | awk -vFS='\t' '/^finngen/')
     do
