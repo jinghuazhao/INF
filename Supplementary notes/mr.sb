@@ -143,9 +143,10 @@ function gsmr3()
 # cat <(sed '1d' ${EFO_UPDATE} | grep -v -e finn -e ebi-a-GCST90014325 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}') \
 #     <(sed '1d' ${EFO_UPDATE} | grep -e finn -e ebi-a-GCST90014325 | awk -vFS="\t" '{print $6,2/(1/$2+1/$3)}')  | \
   cat <(sed '1d' ${EFO_UPDATE} | awk -vFS="\t" '{print $1,2/(1/$3+1/$4)}') | \
-  while read efo N
+  while IFS=$'\t' read -r efo trait ncase ncontrol
   do
-    export trait=${efo}
+    export efo=${efo}
+    export trait=${trait}
     awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
     awk -vM=1e6 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $2}' | \
     while read prot
@@ -156,26 +157,27 @@ function gsmr3()
     # echo ${trait} ${INF}/mr/gsmr/trait/${prot}-${trait}.gz > ${INF}/mr/gsmr/trait/gsmr_${prot}-${trait}
 
       gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_${prot} \
-               --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${prot}-${trait} \
+               --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${prot}-${efo} \
                --gsmr-direction 0 \
-               --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 3 --effect-plot \
-               --out ${INF}/mr/gsmr/out/${prot}-${trait}
-      if [ ! -f ${INF}/mr/gsmr/out/${prot}-${trait}.eff_plot.gz ]; then continue; fi
+               --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 10 --effect-plot \
+               --out ${INF}/mr/gsmr/out/${prot}-${efo}
+      if [ ! -f ${INF}/mr/gsmr/out/${prot}-${efo}.eff_plot.gz ]; then continue; fi
       R --no-save -q <<\ \ \ \ \ \ END
         INF <- Sys.getenv("INF")
+        efo <- Sys.getenv("efo")
         trait <- Sys.getenv("trait")
         p <- Sys.getenv("prot")
         source(file.path(INF,"rsid","gsmr_plot.r"))
-        eff_dat <- paste0(INF,"/mr/gsmr/out/",p,"-",trait,".eff_plot.gz")
+        eff_dat <- paste0(INF,"/mr/gsmr/out/",p,"-",efo,".eff_plot.gz")
         gsmr_data <- read_gsmr_data(eff_dat)
         gsmr_summary(gsmr_data)
         pdf(paste0(INF,"/mr/gsmr/out/",p,"-",trait,".eff_plot.pdf"))
         par(mar=c(6,6,5,1),mgp=c(4,1,0),xpd=TRUE)
-        plot_gsmr_effect(gsmr_data, p, trait, colors()[75])
+        plot_gsmr_effect(gsmr_data, p, efo, colors()[75])
         dev.off()
       END
     done
-  done
+  done < <(cut -f1,2,3,4 ${INF}/OpenGWAS/efo-update.txt)
 }
 
 function mr()
@@ -355,10 +357,10 @@ function gsmr_trait()
 }
 ## EFO traits
 # bfile
-mr2
+# mr2
 # gsmr2
 # gsmr_trait
-# gsmr3
+gsmr3
 
 function gsmr_hgi()
 {
