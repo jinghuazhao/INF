@@ -514,6 +514,8 @@ function gsmr_png()
   convert gsmr-5e-8-3/gsmr-efo.png gsmr-5e-8-10/gsmr-efo.png -append -density 300 -resize 20% gsmr.png
   convert +append gsmr-5e-8-3/gsmr-efo.png gsmr-5e-8-10/gsmr-efo.png -resize 10% gsmr-lr.png
   convert -resize 25% protein_venn_diagram.png latest/protein_venn_diagram.png
+  convert -resize 25% protein_MR_GSMR.png latest/protein_MR_GSMR.png
+  convert -resize 20% mr-efo.png latest/mr-efo.png
 }
 
 function chrpos_rsid()
