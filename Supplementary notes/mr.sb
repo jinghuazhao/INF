@@ -237,8 +237,8 @@ function mr()
                                 select(prot,id.outcome,disease,method,Q,Q_df,Q_pval,-id.exposure,-exposure)
     write.table(mr_heterogeneity_results,file=file.path(rt,"mr",paste0(prot,".het")),row.names=FALSE,quote=FALSE,sep="\t")
     mr_single_results <- mr_singlesnp(dat) %>%
-                      mutate(prot=prot,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
-                      select(prot,id.exposure,id.outcome,SNP,b,se,p,disease)
+                      mutate(prot=prot,id.outcome=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+                      select(prot,id.exposure,id.outcome,SNP,b,se,p)
     fp <- mr_forest_plot(mr_single_results)
     fp_outcome <- unlist(lapply(strsplit(names(fp),"[.]"),"[",2))
     for(i in 1:length(fp))
@@ -262,9 +262,8 @@ function mr2()
     rt <- Sys.getenv("rt")
     pkgs <- c("TwoSampleMR","dplyr","ggplot2","openxlsx","stringr")
     invisible(suppressMessages(lapply(pkgs, require, character.only = TRUE)))
-    ids <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt")) %>%
-           pull(id)
-    rsids <- read.table(file.path(rt,"prot",paste0(prot,"-rsid.txt")), col.names=c("snpid","rsid"))
+    gwas <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt"))
+    rsids <- read.table(file.path(rt,"prot",paste0(prot,"-rsid.txt")), col.names=c("SNP","rsid"))
     exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".gz")), sep = " ",
                     snp_col = "SNP",
                     effect_allele_col = "A1",
@@ -274,12 +273,12 @@ function mr2()
                     se_col = "se",
                     pval_col = "p",
                     samplesize_col = "N") %>%
-                    mutate(SNP=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE), id.exposure=prot,exposure=prot) %>%
-                    left_join(rsids, by=c('SNP'='snpid')) %>%
+                    mutate(SNP=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE),id.exposure=prot,exposure=prot) %>%
+                    left_join(rsids) %>%
                     mutate(SNP=rsid)
-    user_dat <- function(id)
-    z <- read_outcome_data(filename=file.path(rt,"trait",paste0(prot,"-",id,"-rsid.txt")), sep=" ",
-                           phenotype = id,
+    user_dat <- function(gwas_id,gwas_trait)
+    z <- read_outcome_data(filename=file.path(rt,"trait",paste0(prot,"-",gwas_id,"-rsid.txt")), sep=" ",
+                           phenotype = gwas_id,
                            snp_col = "SNP",
                            beta_col = "b",
                            se_col = "se",
@@ -289,9 +288,9 @@ function mr2()
                            pval_col = "p",
                            samplesize_col = "N",
                            log_pval = FALSE
-                          ) %>% mutate(id.outcome=id,outcome=id)
+                          ) %>% mutate(id.outcome=gwas_id,outcome=gwas_trait)
     outcome_dat <- data.frame()
-    for (id in ids) outcome_dat <- bind_rows(outcome_dat,user_dat(id))
+    for (gwas_id in pull(gwas,id)) outcome_dat <- bind_rows(outcome_dat,user_dat(gwas_id,filter(gwas,id==gwas_id)%>%pull(trait)))
     dat <- harmonise_data(clump_data(exposure_dat), outcome_dat, action=2)
   # run_TwoSampleMR(harmonise, mr_plot="pQTLtools", prefix=prefix)
     mr_ivw_results <- mr(dat,method="mr_ivw") %>%
@@ -303,8 +302,8 @@ function mr2()
                                 select(prot,id.outcome,disease,method,Q,Q_df,Q_pval,-id.exposure,-exposure)
     write.table(mr_heterogeneity_results,file=file.path(rt,"mr",paste0(prot,".het")),row.names=FALSE,quote=FALSE,sep="\t")
     mr_single_results <- mr_singlesnp(dat) %>%
-                      mutate(prot=prot,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
-                      select(prot,id.exposure,id.outcome,SNP,b,se,p,disease)
+                      mutate(prot=prot,id.outcome=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+                      select(prot,id.exposure,id.outcome,SNP,b,se,p)
     fp <- mr_forest_plot(mr_single_results)
     fp_outcome <- gsub("^.","",gsub(prot,"",names(fp)))
     for(i in 1:length(fp))
