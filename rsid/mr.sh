@@ -528,8 +528,7 @@ function mr_rsid()
       (
         echo -e "SNP A1 A2 freq b se p N"
         bcftools query -f "%ID %ALT %REF [%AF] [%ES] [%SE] [%LP] [%SS]\n" -r ${region} ${INF}/OpenGWAS/${OpenGWAS}.vcf.gz | \
-        $7=10^-$7
-        awk -vN=${N} '{if ($8==".") $8=N;print}'
+        awk -vN=${N} '{$7=10^-$7;if ($8==".") $8=N;print}'
       ) > ${INF}/mr/gsmr/trait/${prot}-${OpenGWAS}-rsid.txt
     done
     for GCST in $(sed '1d' ${INF}/OpenGWAS/efo-update.txt | cut -f1 | awk '/^GCST/')
