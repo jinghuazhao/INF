@@ -4,7 +4,7 @@
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
-#SBATCH --array=1-59
+#SBATCH --array=1-58
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
 #SBATCH --output=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF/mr/gsmr/slurm/_gsmr_%A_%a.out
@@ -147,7 +147,7 @@ function gsmr3()
   do
     export efo=${efo}
     export trait=${trait}
-    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | awk '!/TNFB/' | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
     awk -vM=1e6 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $2}' | \
     while read prot
     do
@@ -253,7 +253,7 @@ function mr()
 function mr2()
 # This uses INTERVAL snpid/rsid pairings as well as OpenGWAS/GWAS Catalogu/FinnGen curations
 {
-  export prot=$(awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
+  export prot=$(awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | awk '!/TNFB/' | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
   export rt=${INF}/mr/gsmr
 # gunzip -c ${rt}/prot/${prot}.gz | sed '1d' | cut -d' ' -f1 | sort -k1,1 | join - ${INF}/work/INTERVAL.rsid > ${rt}/prot/${prot}-rsid.txt
   Rscript -e '
@@ -318,8 +318,8 @@ function mr2()
 function gsmr_trait()
 {
 # export prot=$(awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
-  export prot=$(sort -k4,4n ${INF}/TNFB/cis.dat | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"] {print $3}')
-  export region=$(sort -k4,4n ${INF}/TNFB/cis.dat | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"] {print $4":"$5"-"$6}')
+  export prot=$(sort -k4,4n ${INF}/TNFB/cis.dat  | awk '!/TNFB/' | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"] {print $3}')
+  export region=$(sort -k4,4n ${INF}/TNFB/cis.dat | awk '!/TNFB/' | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"] {print $4":"$5"-"$6}')
   export rt=${INF}/mr/gsmr
   Rscript -e '
     options(width=200)
