@@ -595,12 +595,12 @@ function efo_update()
 # switch to gsmr_trait in mr.sb apeared problematic
 {
   export EFO_UPDATE=${INF}/OpenGWAS/efo-update.txt
-  sed '1d' ${EFO_UPDATE} | grep -e ebi -e ieu -e bbj | awk -vFS="\t" '{print $1,2/(1/$3+1/$4)}' | \
+  sed '1d' ${EFO_UPDATE} | grep -e ebi -e ieu | awk -vFS="\t" '{print $1,2/(1/$3+1/$4)}' | \
   while read efo N
   do
     export efo=${efo}
     export N=${N}
-    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | awk '!/TNFB/' | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
     awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
     parallel -C' ' -j15 --env INF --env efo --env N --env suffix '
       (
@@ -617,12 +617,12 @@ function efo_update()
       gzip -f > ${INF}/mr/gsmr/trait/{2}-${efo}.gz
     '
   done
-  sed '1d' ${EFO_UPDATE} | grep -v -e ebi -e ieu -e bbj -e finn | awk -vFS="\t" '{print $1,2/(1/$3+1/$4)}' | \
+  sed '1d' ${EFO_UPDATE} | grep -v -e ebi -e ieu -e finn | awk -vFS="\t" '{print $1,2/(1/$3+1/$4)}' | \
   while read efo N
   do
     export efo=${efo}
     export N=${N}
-    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
+    awk '$21=="cis" {print $3}' ${INF}/work/INF1.METAL | awk '!/TNFB/' | sort | uniq | grep -w -f - ${INF}/work/INF1.merge.genes | \
     awk -vM=1e6 "{print \$1, \$2, \$3\":\"\$4-M\"-\"\$5+M}" | \
     parallel -C' ' -j15 --env INF --env efo --env cases --env controls '
       echo ${efo} {2}
@@ -746,9 +746,8 @@ Rscript -e '
                   exposure=protein,
                   z=bxy/se,
                   or=exp(bxy),
-                  group=as.numeric(cut(or,breaks=quantile(or,seq(0,1,0.3333))))) %>%
            left_join(gap.datasets::inf1[c("target.short","gene")],by=c("exposure"="target.short")) %>%
-           select(gene,outcome,z,or,bxy,se,p,nsnp,fdr,group)
+           select(gene,outcome,z,or,bxy,se,p,nsnp,fdr)
    gene <- unique(with(gsmr,gene))
    outcome <- unique(with(gsmr,outcome))
    n <- length(gene)
@@ -759,7 +758,7 @@ Rscript -e '
    gsmr_mat_fdr <- gsmr_mat
    for(k in 1:nrow(gsmr))
    {
-      t <- gsmr[k,c("gene","outcome","or","group","fdr")]
+      t <- gsmr[k,c("gene","outcome","or","fdr")]
       i <- t[["outcome"]]
       j <- t[["gene"]]
       gsmr_mat[i,j] <- t[["or"]]
@@ -808,7 +807,7 @@ Rscript -e '
    }
 '
 
-Rscript -e '
+Rscripe -e '
    INF <- Sys.getenv("INF")
    suppressMessages(library(dplyr))
    library(stringr)
@@ -818,10 +817,10 @@ Rscript -e '
          mutate(disease=gsub("_PSORIASIS","",disease)) %>%
          mutate(outcome=disease,
                 exposure=gene,
-                z=b/se,
                 or=exp(b),
-                group=cut(or,breaks=c(-Inf,0.49,0.99,1.49,Inf),labels=c("<0.5","<1","<1.5",">=1.5"))) %>%
-         select(gene,outcome,z,or,b,se,pval,nsnp,fdr,group)
+                group=cut(or,breaks=c(0,0.49,0.99,1.49,2))) %>%
+         select(gene,outcome,or,b,se,pval,nsnp,fdr,group) %>%
+         mutate(or=ifelse(!is.na(or) & or<=2,or,NA))
    options(width=200)
    subset(mr,fdr<=0.05)
    gene <- unique(with(mr,gene))
@@ -837,7 +836,7 @@ Rscript -e '
       t <- mr[k,c("gene","outcome","or","group","fdr")]
       i <- t[["outcome"]]
       j <- t[["gene"]]
-      mr_mat[i,j] <- t[["group"]]
+      mr_mat[i,j] <- t[["or"]]
       mr_mat_fdr[i,j] <- t[["fdr"]]
    }
    rownames(mr_mat) <- gsub("\\b(^[a-z])","\\U\\1",rownames(mr_mat),perl=TRUE)
@@ -848,13 +847,12 @@ Rscript -e '
    setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
            action="prepend")
    pheatmap(mr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,
-            legend_breaks=c(0,0.49,0.99,1.49,Inf),
-            legend_labels=c("0","<0.5","<1","<1.5",">=1.5"),
             display_numbers = matrix(ifelse(!is.na(mr_mat) & abs(mr_mat_fdr) <= 0.05, "*", ""), nrow(mr_mat)), fontsize_number=20)
    setHook("grid.newpage", NULL, "replace")
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
    grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
    dev.off()
+   write.table(colnames(mr_mat),quote=FALSE,row.names=FALSE)
 '
 }
 
