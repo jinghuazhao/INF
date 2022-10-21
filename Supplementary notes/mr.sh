@@ -434,6 +434,16 @@ done
 
 function GCST90010715()
 {
+  gunzip -c ${INF}//OpenGWAS/jia/jia_gwas_snptest_control_freq.txt.gz | \
+  sed '1d' | \
+  awk '
+  {
+    if ($4<$5) snpid = "chr" $2 ":" $3 "_" $4 "_" $5; else snpid = "chr" $2 ":" $3 "_" $5 "_" $4
+    g=$6+$7+$8
+    EAF=(0.5*$6+$7)/g
+    print snpid, $1, EAF
+  }' | \
+  sort -k1,1 > ${INF}/OpenGWAS/jia/jia.eaf
   export efo=GCST90010715
   cat <(echo snpid rsid chr pos a1 a2 freq b se p N) \
       <(sed '1d' ${INF}/OpenGWAS/${efo}/${efo}_buildGRCh37.tsv | \
@@ -445,11 +455,28 @@ function GCST90010715()
         }' | \
         sort -k1,1 -k9,9g | \
         awk 'a[$1]++==0' | \
-        sort -k3,3n -k4,4n) | \
+        sort -k1,1 | \
+        join - <(cut -d' ' -f1,3 ${INF}/OpenGWAS/jia/jia.eaf) | \
+        sort -k3,3n -k4,4n | \
+        awk '{$7=$12;print}' | \
+        cut -d' ' -f12 --complement) | \
   tr ' ' '\t' | \
   bgzip -f > ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz
   tabix -S1 -s3 -b4 -e4 -f ${INF}/OpenGWAS/${efo}/harmonised/${efo}.tsv.gz
 }
+# gunzip -c jia/jia_gwas_snptest_control_freq.txt.gz | head -1 | tr ' ' '\n' | awk '{print "#"NR,$1}'
+#1 rsid
+#2 chromosome
+#3 position
+#4 alleleA
+#5 alleleB
+#6 controls_AA
+#7 controls_AB
+#8 controls_BB
+#9 controls_NULL
+#10 controls_total
+#11 controls_maf
+
 # alternate_ids	variant_id	chromosome	position	alleleA	alleleB	all_maf	all_OR	all_OR_lower	all_OR_upper	p_value	frequentist_add_beta_1	frequentist_add_se_1
 # rs2977608	rs2977608	01	768253	A	C	0.242297	1.03793	0.971733	1.10864	0.104282	0.071745	0.044166
 
@@ -522,6 +549,7 @@ function mr_rsid()
     export region=$(awk -vr=${r} 'NR==r{print $4":"$5"-"$6}' ${INF}/TNFB/cis.dat)
     export prot=$(awk -vr=${r} 'NR==r{print $3}' ${INF}/TNFB/cis.dat)
     echo ${prot} ${region}
+    if [ ${prot} == "TNFB" ]; then continue; fi
     for OpenGWAS in $(sed '1d' ${INF}/OpenGWAS/efo-update.txt | cut -f1 | awk '/ieu|ebi|bbj/')
     do
       export N=$(grep -w ${OpenGWAS} ${INF}/OpenGWAS/efo-update.txt | awk -vFS='\t' '{print 2/(1/$3+1/$4)}')
@@ -539,7 +567,7 @@ function mr_rsid()
         case ${GCST} in
         GCST90010715)
           tabix ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz ${region} | \
-          awk '{print $2,$5,$6,"NA",$8,$9,$10,$11}'
+          awk '{print $2,$5,$6,$7,$8,$9,$10,$11}'
           ;;
         GCST90014325 | GCST90061440)
           tabix ${INF}/OpenGWAS/${GCST}/harmonised/${GCST}.tsv.gz ${region} | \
@@ -646,7 +674,7 @@ function efo_update()
            {
                chr=\$3; pos=\$4; a1=\$5; a2=\$6
                if (a1<a2) snpid=\"chr\" chr \":\" pos \"_\" a1 \"_\" a2; else snpid=\"chr\" chr \":\" pos \"_\" a2 \"_\" a1
-               print snpid, a1, a2, "NA", \$8, \$9, \$10, \$11
+               print snpid, a1, a2, \$7, \$8, \$9, \$10, \$11
            }" | \
            sort -k1,1 -k7,7g | \
            awk "a[\$1]++==0"
@@ -745,7 +773,8 @@ Rscript -e '
            mutate(outcome=paste0(Disease),
                   exposure=protein,
                   z=bxy/se,
-                  or=exp(bxy),
+                  or=exp(bxy)
+           ) %>%
            left_join(gap.datasets::inf1[c("target.short","gene")],by=c("exposure"="target.short")) %>%
            select(gene,outcome,z,or,bxy,se,p,nsnp,fdr)
    gene <- unique(with(gsmr,gene))
@@ -765,6 +794,9 @@ Rscript -e '
       gsmr_mat_fdr[i,j] <- t[["fdr"]]
    }
    rownames(gsmr_mat) <- gsub("\\b(^[a-z])","\\U\\1",rownames(gsmr_mat),perl=TRUE)
+   z <- rowSums(is.na(gsmr_mat))
+   gsmr_mat_reduce <- gsmr_mat[z<40,]
+   gsmr_mat_reduce_fdr <- gsmr_mat_fdr[z<40,]
    rm(gene,outcome)
    options(width=200)
    subset(gsmr,fdr<=0.05)
@@ -775,6 +807,15 @@ Rscript -e '
            action="prepend")
    pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,
             display_numbers = matrix(ifelse(!is.na(gsmr_mat) & abs(gsmr_mat_fdr) <= 0.05, "*", ""), nrow(gsmr_mat)), fontsize_number=20)
+   setHook("grid.newpage", NULL, "replace")
+   grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
+   grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
+   dev.off()
+   png(file.path(INF,"mr","gsmr","gsmr-efo-reduce.png"),res=300,width=30,height=18,units="in")
+   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
+           action="prepend")
+   pheatmap(gsmr_mat_reduce,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,
+            display_numbers = matrix(ifelse(!is.na(gsmr_mat_reduce) & abs(gsmr_mat_reduce_fdr) <= 0.05, "*", ""), nrow(gsmr_mat_reduce)), fontsize_number=20)
    setHook("grid.newpage", NULL, "replace")
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
    grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))

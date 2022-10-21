@@ -196,8 +196,8 @@ plot_snp_effect = function(expo_str, outcome_str, bxy, bzx, bzx_se, bzy, bzy_se,
     ymin = min(vals); ymax = max(vals)
     plot(bzx, bzy, pch=20, cex=0.8, bty="n", cex.axis=1.1, cex.lab=1.2,
          col=effect_col, xlim=c(xmin, xmax), ylim=c(ymin, ymax),
-         xlab=substitute(paste(trait, " (", italic(b[zx]), ")", sep=""), list(trait=expo_str)),
-         ylab=substitute(paste(trait, " (", italic(b[zy]), ")", sep=""), list(trait=outcome_str)))
+         xlab=substitute(paste(trait, " (", italic(b[zx]), ")", sep=""), list(trait=protein)),
+         ylab=substitute(paste(trait, " (", italic(b[zy]), ")", sep=""), list(trait=trait)))
     if(!is.na(bxy)) abline(0, bxy, lwd=1.5, lty=2, col="dim grey")
     ## Standard errors
     nsnps = length(bzx)
@@ -278,7 +278,7 @@ plot_gsmr_pvalue = function(gsmr_data, expo_str, outcome_str, gwas_thresh=5e-8, 
 }
 
 # ************************************************** #
-#                     bxy distribution plot                         #
+#                     bxy distribution plot          #
 # ************************************************** #
 
 # expo_str, exposure
