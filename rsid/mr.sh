@@ -377,6 +377,18 @@ function ref_prot_outcome_gsmr()
     }
     write.table(gsmr_efo,"gsmr-efo.txt",row.names=FALSE,quote=FALSE,sep="\t")
   END
+  # LZ
+  cut -f1,2,3,8 ${INF}/mr/gsmr/gsmr-efo.txt | \
+  awk -vFS="\t" -vOFS='\t' '$4<0.05{ gsub(/-/,".",$1);print $1"-"$2,$3}' | \
+  parallel -C '\t' 'echo {2}; ls ${INF}/mr/gsmr/trait/{1}; cp ${INF}/mr/gsmr/trait/{1}/{1}*.pdf ${INF}/mr/gsmr/{1}-{2}.pdf'
+  # r(Top SNPs)
+  cut -f1,2,3,8 ${INF}/mr/gsmr/gsmr-efo.txt | \
+  awk -vFS="\t" -vOFS='\t' '$4<0.05{ gsub(/-/,".",$1);print $1"-"$2,$3}' | \
+  parallel -C '\t' 'echo {2}; cp ${INF}/mr/gsmr/out/{1}*.top ${INF}/mr/gsmr/{1}-{2}.top'
+  # r(pQTL,GSMR SNPs)
+  cut -f1,2,3,8 ${INF}/mr/gsmr/gsmr-efo.txt | \
+  awk -vFS="\t" -vOFS='\t' '$4<0.05{ gsub(/-/,".",$1);print $1"-"$2,$3}' | \
+  parallel -C '\t' 'echo {2}; cp ${INF}/mr/gsmr/out/{1}*.r ${INF}/mr/gsmr/{1}-{2}.r'
 }
 # zgrep SAMPLE ${INF}/OpenGWAS/*.vcf.gz | cut -f1,7,8 > ${INF}/OpenGWAS/ieu.sample
 # sed 's/.vcf.gz:/\t/;s/TotalControls=/\t/;s/,TotalCases=/\t/;s/,StudyType/\t/' ieu.sample | cut -f1,3,4 > ${INF}/OpenGWAS/ieu.N
@@ -598,6 +610,13 @@ function mr_rsid()
          tabix ${INF}/OpenGWAS/${finngen}.gz ${region} | \
          awk -vN=${N} '{print $5,$4,$3,$11,$9,$10,$7,N}'
       ) > ${INF}/mr/gsmr/trait/${prot}-${finngen}-rsid.txt
+    done
+    for efo in $(sed '1d' ${INF}/OpenGWAS/efo-update.txt | cut -f1)
+    do
+       sed '1d' ${INF}/mr/gsmr/trait/${prot}-${efo}-rsid.txt | \
+       sort -k7,7g | \
+       head -1 > ${INF}/mr/gsmr/trait/${prot}-${efo}-top.txt
+       if [ $(wc -l ${INF}/mr/gsmr/trait/${prot}-${efo}-top.txt | cut -d' ' -f1) -eq 0 ]; then rm ${INF}/mr/gsmr/trait/${prot}-${efo}-top.txt; fi
     done
   done
 }
@@ -1094,3 +1113,79 @@ done
 # done previously
 # echo ${INF}/mr/gsmr/ref/${prot} > ${INF}/mr/gsmr/ref/gsmr_${prot}
 # echo ${prot} ${INF}/mr/gsmr/prot/${prot}.gz > ${INF}/mr/gsmr/prot/gsmr_${prot}
+
+# The following code checks for validity of GSMR results (FDR<=0.05).
+
+Rscript -e '
+  options(width=200)
+  INF <- Sys.getenv("INF")
+  verbose <- FALSE
+  all <- TRUE
+  ldcalc <- TRUE
+  suppressMessages(library(dplyr))
+  ldr2 <- function(panel="1000Genomes")
+  # Target action
+  {
+    for(i in 1:nrow(gsmr_efo))
+    {
+       f <- fs[i]
+       rsid <- rsids[i]
+       cat(f,"\n")
+       h <- read.table(f,header=TRUE)
+       h3 <-  filter(h,p<1e-3)
+       h5 <-  filter(h,p<1e-5)
+       if(nrow(h)>1 & verbose) print(h)
+       if (nrow(h3) < 500) snps <- c(rsid,pull(h3,SNP)) else snps <- c(rsid,pull(h5,SNP))
+       if(length(snps)>1 & verbose) print(snps)
+       if (panel=="1000Genomes") r <- ieugwasr::ld_matrix(snps,pop="EUR") else
+       r <- ieugwasr::ld_matrix(snps,with_alleles=TRUE,pop="EUR",
+                                bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chrs[i])),
+                                plink_bin="/rds/user/jhz22/hpc-work/bin/plink")
+       cn <- colnames(r)
+       inside <- rsid==gsub("_[A-Z]*","",cn)
+       nn <- c(cn[inside],cn[!inside])
+       r <- r[nn,nn]
+       if(nrow(r)>1 & verbose) print(r)
+       write.table(r^2,file=r2[i],sep="\t")
+    }
+  }
+  METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+           filter(cis.trans=="cis") %>%
+           rename(chr=Chromosome)
+  d <- paste0(INF,"/mr/gsmr/trait/")
+  z <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
+       filter(fdr<=0.05) %>%
+       mutate(prot=gsub("-",".",protein)) %>%
+       left_join(select(METAL,prot,rsid,chr)) %>%
+       mutate(f=paste0(prot,"-",id),r=paste0(f,"-",Disease,"-",rsid))
+# No LD information from OpenGWAS for the following protein-id:
+  incl <- c("CXCL5-ebi-a-GCST004131","CD6-ebi-a-GCST004133","CD6-ebi-a-GCST003156","CD5-ieu-a-1112",
+            "CCL4-ieu-b-69","CCL4-ieu-a-996","CCL4-ebi-a-GCST004133","CCL4-ebi-a-GCST004131")
+  x <- sapply(incl, function(x) grepl(x,z$f))
+  tokeep <- as.logical(apply(x,1,sum))
+  if (all) gsmr_efo <- z else gsmr_efo <- filter(z,tokeep)
+  rsids <- pull(gsmr_efo,rsid)
+  chrs <- pull(gsmr_efo,chr)
+  r <- pull(gsmr_efo,r)
+  r2 <- paste0(r,"-r2.txt")
+  f <- pull(gsmr_efo,f)
+  id <- basename(f)
+  fs <- paste0(id,"-rsid.txt")
+  write.table(data.frame(d,id,r2,fs),row.names=FALSE,col.names=FALSE,sep=",")
+  if (ldcalc) ldr2(panel="INTERVAL")
+' | \
+parallel --dry-run --csv "
+  export d={1}
+  export id={2}
+  export r2=\${d}{3}
+  export gwas=\${d}{4}
+  export ids=~/INF/work/INTERVAL.rsid
+  echo \${id} {3}
+  awk '\$2>=0.8 {gsub(/_[A-Z]*/,\"\",\$1);print \$1,\$2}' \"\${r2}\" | sort -k2,2g
+  awk '\$2>=0.8 {gsub(/_[A-Z]*/,\"\",\$1);print \$1,\$2}' \"\${r2}\" | \
+  cut -d' ' -f1 | sed 's/\"//g' | grep -f - -w \"\${gwas}\" | sort -k7,7g
+  awk '\$2>=0.8 {gsub(/_[A-Z]*/,\"\",\$1);print \$1,\$2}' \"\${r2}\" | \
+  cut -d' ' -f1 | sed 's/\"//g' | grep -f - -w \"\${gwas}\" | cut -d' ' -f1 | grep -f - -w \"\${ids}\"
+" | sed 's/^[ ]//' > script
+
+# awk -vFS="\t" 'NR>1 && $8<0.05 {gsub(/-/,".",$1);print "trait/"$1"-"$2"-rsid.txt"}' gsmr-efo.txt | xargs -l -I{} awk '$7<1e-5' {}
