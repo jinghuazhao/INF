@@ -1162,8 +1162,8 @@ Rscript -e '
        if(nrow(h)>1 & verbose) print(h)
        if (panel=="1000Genomes")
        {
-          r <- ieugwasr::ld_matrix(snps,pop="EUR")
           if (nrow(h3) < 500) snps <- c(pqtl,pull(h3,SNP)) else snps <- c(pqtl,pull(h5,SNP))
+          r <- ieugwasr::ld_matrix(snps,pop="EUR")
        } else
        {
           snps <- c(pqtl,pull(h3,SNP))
