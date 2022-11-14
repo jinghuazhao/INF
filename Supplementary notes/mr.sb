@@ -14,6 +14,10 @@
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=$SLURM_ARRAY_TASK_ID
 
+. /etc/profile.d/modules.sh
+module purge
+module load rhel7/default-peta4
+
 function rmdup()
 # Remove duplicates via PLINK
 {
@@ -152,26 +156,46 @@ function gsmr3()
     while read prot
     do
       export prot=${prot}
+      export rsid=$(awk -vprot=${prot} '$3==prot && $21=="cis" {print $2}' ${INF}/work/INF1.METAL)
       echo ${INF}/mr/gsmr/ref/${prot} > ${INF}/mr/gsmr/ref/gsmr_${prot}
       echo ${prot} ${INF}/mr/gsmr/prot/${prot}.gz > ${INF}/mr/gsmr/prot/gsmr_${prot}
     # echo ${trait} ${INF}/mr/gsmr/trait/${prot}-${trait}.gz > ${INF}/mr/gsmr/trait/gsmr_${prot}-${trait}
-
+      grep -w ${prot} ${INF}/TNFB/cis.dat | cut -d' ' -f4-6 | while read chr start end
+      do
+        module load python/2.7
+        mkdir ${INF}/mr/gsmr/trait/${prot}-${efo}
+        locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/mr/gsmr/trait/${prot}-${efo}-rsid.txt \
+                  --delim space title="${prot}-${efo}-${trait}" \
+                  --markercol SNP --pvalcol p --chr ${chr} --start ${start} --end ${end} --cache None \
+                  --no-date --plotonly --prefix=${prot}-${efo} --rundir ${INF}/mr/gsmr/trait/${prot}-${efo} --svg --refsnp ${rsid}
+      done
       gcta-1.9 --mbfile ${INF}/mr/gsmr/ref/gsmr_${prot} \
                --gsmr-file ${INF}/mr/gsmr/prot/gsmr_${prot} ${INF}/mr/gsmr/trait/gsmr_${prot}-${efo} \
                --gsmr-direction 0 \
                --clump-r2 0.1 --gwas-thresh 5e-8 --diff-freq 0.4 --heidi-thresh 0.05 --gsmr-snp-min 3 --effect-plot \
                --out ${INF}/mr/gsmr/out/${prot}-${efo}
       if [ ! -f ${INF}/mr/gsmr/out/${prot}-${efo}.eff_plot.gz ]; then continue; fi
+      gunzip -c ${INF}/mr/gsmr/out/${prot}-${efo}.eff_plot.gz | awk '/effect_begin/,/effect_end/' | grep -v effect | cut -d' ' -f1 | \
+      grep -f - ${INF}/work/INTERVAL.rsid > ${INF}/mr/gsmr/out/${prot}-${efo}.rsid
       R --no-save -q <<\ \ \ \ \ \ END
         INF <- Sys.getenv("INF")
         efo <- Sys.getenv("efo")
         trait <- Sys.getenv("trait")
         p <- Sys.getenv("prot")
+        r <- Sys.getenv("rsid")
+        rt <- paste0(INF,"/mr/gsmr/out/",p,"-",efo)
+        snpid_rsid <- read.table(paste0(rt,".rsid"),col.names=c("snp","rsid"))
         suppressMessages(require(dplyr))
         suppressMessages(require(MendelianRandomization))
+        if (file.exists(paste0(INF,"/mr/gsmr/trait/",p,"-",efo,"-top.txt")))
+        {
+          top <- read.table(paste0(INF,"/mr/gsmr/trait/",p,"-",efo,"-top.txt"),col.names=c("SNP","A1","A2","freq","b","se","p","N")) %>% pull(SNP)
+          ld <- ieugwasr::ld_matrix(c(r,top),pop="EUR",with_alleles=FALSE)
+          write.table(ld,file=paste0(rt,"-",r,".top"),quote=FALSE,sep="\t")
+        }
         protein <- filter(gap.datasets::inf1,prot==p) %>% mutate(target.short=gsub("VEGF_A","VEGF-A",target.short)) %>% pull(target.short)
         source(file.path(INF,"rsid","gsmr_plot.r"))
-        eff_dat <- paste0(INF,"/mr/gsmr/gsmr-5e-8-3/out/",p,"-",efo,".eff_plot.gz")
+        eff_dat <- paste0(rt,".eff_plot.gz")
         gsmr_data <- read_gsmr_data(eff_dat)
         gsmr_summary(gsmr_data)
         pdf(paste0(INF,"/mr/gsmr/out/",p,"-",trait,".eff_plot.pdf"))
@@ -182,6 +206,10 @@ function gsmr3()
         gsmr_snp_effect <- as.data.frame(snp_effect[,-(2:3)]) %>%
                            setNames(c("snp","effect_allele","other_allele","eaf","bx","bxse","by","byse")) %>%
                            mutate(bx=as.numeric(bx),bxse=as.numeric(bxse),by=as.numeric(by),byse=as.numeric(byse))
+        j <- left_join(gsmr_snp_effect,snpid_rsid) %>% pull(rsid)
+        rsid <- c(r,j)
+        ldr <- ieugwasr::ld_matrix(rsid,pop="EUR",with_alleles=FALSE)
+        write.table(ldr,file=paste0(rt,"-",r,".r"),quote=FALSE,sep="\t")
         detach(gsmr_data)
         attach(gsmr_snp_effect)
         png(paste0(INF,"/mr/gsmr/out/",p,"-",trait,".eff_plot.png"),res=300,height=7,width=7,units="in")
