@@ -340,23 +340,47 @@ function ref_prot_outcome_gsmr()
     '
   done
 # sbatch --wait ${INF}/rsid/mr.sb
-  (
+ (
     cat *.gsmr | head -1
     grep -e Exposure -e nan -e TNFB -v *gsmr | tr ':' '\t' | cut -f1 --complement
   ) > gsmr.txt
+  (
+    grep -e Psoriasis -e HIV -e Anky -e Celiac -e Sarcoidosis -e Sicca -e biliary -e Viral ${INF}/OpenGWAS/efo-update.txt | \
+    cut -f1 | \
+    grep -f - -v  gsmr.txt
+  ) > gsmr-reduce.txt
+  awk 'NR>1{print $1,$2}' gsmr.txt | \
+  parallel  -C' ' 'sed "1d" ${INF}/mr/gsmr/trait/{1}-{2}-rsid.txt | sort -k7,7g | awk -vprot={1} -vid={2} "NR==1{print prot,id,\$0}"' > gsmr-top.txt
+  awk 'NR>1{print $1,$2}' gsmr-reduce.txt | \
+  parallel  -C' ' 'sed "1d" ${INF}/mr/gsmr/trait/{1}-{2}-rsid.txt | sort -k7,7g | awk -vprot={1} -vid={2} "NR==1{print prot,id,\$0}"' > gsmr-reduce-top.txt
   R --no-save -q <<\ \ END
     library(dplyr)
     INF <- Sys.getenv("INF")
-    gsmr <- read.delim("gsmr.txt")
-    efo <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt")) %>%
-           select(id,trait,ncase,ncontrol) %>%
-           mutate(Ntotal=ncase+ncontrol)
-    gsmr_efo <- left_join(gsmr,pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
-                left_join(efo,by=c("Outcome"="id")) %>%
-                rename(protein=Exposure,id=Outcome,Disease=trait,Ncase=ncase,Ncontrol=ncontrol) %>%
-                mutate(protein=target.short,fdr=p.adjust(p,method="fdr")) %>%
-                select(protein,id,Disease,bxy,se,p,nsnp,fdr,Ncase,Ncontrol,Ntotal) %>%
-                arrange(fdr)
+    metal <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+             filter(cis.trans=="cis") %>%
+             select(prot,rsid,Chromosome) %>%
+             rename(pqtl=rsid,chr=Chromosome)
+    gsmr <- function (input="gsmr.txt",output="gsmr-efo.txt",top="gsmr-top.txt")
+    {
+      gsmr <- read.delim(input)
+      efo <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt")) %>%
+             select(id,trait,ncase,ncontrol) %>%
+             mutate(Ntotal=ncase+ncontrol) %>%
+             filter(id %in% unique(gsmr$Outcome))
+      gwas <- read.table(top,col.names=c("prot","id","qtl","a1_qtl","a2_qtl","freq","b_qtl","se_qtl","p_qtl","n_qtl")) %>%
+              select(prot,id,qtl,p_qtl)
+      gsmr_efo <- left_join(gsmr,pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
+                  left_join(filter(metal,prot %in% (gsmr$Exposure)), by=c("Exposure"="prot")) %>%
+                  left_join(efo,by=c("Outcome"="id")) %>%
+                  left_join(gwas,by=c("Exposure"="prot","Outcome"="id")) %>%
+                  rename(protein=Exposure,id=Outcome,Disease=trait,Ncase=ncase,Ncontrol=ncontrol) %>%
+                  mutate(protein=target.short,fdr=p.adjust(p,method="fdr")) %>%
+                  select(protein,Disease,id,nsnp,fdr,Ncase,Ncontrol,Ntotal,bxy,se,pqtl,p,qtl,p_qtl,chr,pqtl) %>%
+                  arrange(fdr)
+      write.table(gsmr_efo,output,row.names=FALSE,quote=FALSE,sep="\t")
+    }
+    gsmr()
+    gsmr(input="gsmr-reduce.txt",output="gsmr-efo-reduce.txt",top="gsmr-reduce-top.txt")
     old <- function()
     {
       non_ukb <- read.table(file.path(INF,"OpenGWAS","ukb-replacement.txt"),col.names=c("MRBASEID","x1","x2","New","y1","y2"),sep="\t")
@@ -374,8 +398,8 @@ function ref_prot_outcome_gsmr()
                   select(protein,MRBASEID,trait,bxy,se,p,nsnp,fdr,Ncases,Ncontrols,id,uri,Zhengetal) %>%
                   arrange(fdr)
       subset(gsmr_efo[setdiff(names(gsmr_efo),c("Zhengetal","uri"))],fdr<=0.05)
+      write.table(gsmr_efo,"gsmr-efo.txt",row.names=FALSE,quote=FALSE,sep="\t")
     }
-    write.table(gsmr_efo,"gsmr-efo.txt",row.names=FALSE,quote=FALSE,sep="\t")
   END
   # LZ
   cut -f1,2,3,8 ${INF}/mr/gsmr/gsmr-efo.txt | \
@@ -1119,60 +1143,78 @@ done
 Rscript -e '
   options(width=200)
   INF <- Sys.getenv("INF")
-  verbose <- FALSE
-  all <- TRUE
-  ldcalc <- TRUE
   suppressMessages(library(dplyr))
-  ldr2 <- function(panel="1000Genomes")
-  # Target action
+  d <- file.path(INF,"mr","gsmr","trait")
+  gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
+              filter(fdr<=0.05) %>%
+              mutate(prot=gsub("-",".",protein)) %>%
+              mutate(file_gwas=paste(prot,id,"rsid.txt",sep="-"),file_r2=paste(prot,id,Disease,pqtl,"r2.txt",sep="-"),proxy=NA,rsq=NA)
+  ldr2 <- function(panel="1000Genomes",verbose=FALSE)
   {
     for(i in 1:nrow(gsmr_efo))
     {
-       f <- fs[i]
-       rsid <- rsids[i]
-       cat(f,"\n")
-       h <- read.table(f,header=TRUE)
+       z <- gsmr_efo[i,]
+       pqtl <- z[["pqtl"]]
+       cat(z[["file_gwas"]],"\n")
+       h <- read.table(basename(z[["file_gwas"]]),header=TRUE)
        h3 <-  filter(h,p<1e-3)
        h5 <-  filter(h,p<1e-5)
        if(nrow(h)>1 & verbose) print(h)
-       if (nrow(h3) < 500) snps <- c(rsid,pull(h3,SNP)) else snps <- c(rsid,pull(h5,SNP))
-       if(length(snps)>1 & verbose) print(snps)
-       if (panel=="1000Genomes") r <- ieugwasr::ld_matrix(snps,pop="EUR") else
-       r <- ieugwasr::ld_matrix(snps,with_alleles=TRUE,pop="EUR",
-                                bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chrs[i])),
-                                plink_bin="/rds/user/jhz22/hpc-work/bin/plink")
+       if (panel=="1000Genomes")
+       {
+          r <- ieugwasr::ld_matrix(snps,pop="EUR")
+          if (nrow(h3) < 500) snps <- c(pqtl,pull(h3,SNP)) else snps <- c(pqtl,pull(h5,SNP))
+       } else
+       {
+          snps <- c(pqtl,pull(h3,SNP))
+          r <- ieugwasr::ld_matrix(snps,with_alleles=TRUE,pop="EUR",
+                                   bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",z[["chr"]])),
+                                   plink_bin="/rds/user/jhz22/hpc-work/bin/plink")
+       }
+       if(length(snps[-1])>1 & verbose) print(snps[-1])
        cn <- colnames(r)
-       inside <- rsid==gsub("_[A-Z]*","",cn)
+       inside <- pqtl==gsub("_[A-Z]*","",cn)
        nn <- c(cn[inside],cn[!inside])
-       r <- r[nn,nn]
-       if(nrow(r)>1 & verbose) print(r)
-       write.table(r^2,file=r2[i],sep="\t")
+       r_mat <- r[nn,nn]
+       if(nrow(r_mat)>1 & verbose) print(r)
+       write.table(r_mat^2,file=z[["file_r2"]],sep="\t")
     }
   }
-  METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
-           filter(cis.trans=="cis") %>%
-           rename(chr=Chromosome)
-  d <- paste0(INF,"/mr/gsmr/trait/")
-  z <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
-       filter(fdr<=0.05) %>%
-       mutate(prot=gsub("-",".",protein)) %>%
-       left_join(select(METAL,prot,rsid,chr)) %>%
-       mutate(f=paste0(prot,"-",id),r=paste0(f,"-",Disease,"-",rsid))
-# No LD information from OpenGWAS for the following protein-id:
-  incl <- c("CXCL5-ebi-a-GCST004131","CD6-ebi-a-GCST004133","CD6-ebi-a-GCST003156","CD5-ieu-a-1112",
-            "CCL4-ieu-b-69","CCL4-ieu-a-996","CCL4-ebi-a-GCST004133","CCL4-ebi-a-GCST004131")
-  x <- sapply(incl, function(x) grepl(x,z$f))
-  tokeep <- as.logical(apply(x,1,sum))
-  if (all) gsmr_efo <- z else gsmr_efo <- filter(z,tokeep)
-  rsids <- pull(gsmr_efo,rsid)
-  chrs <- pull(gsmr_efo,chr)
-  r <- pull(gsmr_efo,r)
-  r2 <- paste0(r,"-r2.txt")
-  f <- pull(gsmr_efo,f)
-  id <- basename(f)
-  fs <- paste0(id,"-rsid.txt")
-  write.table(data.frame(d,id,r2,fs),row.names=FALSE,col.names=FALSE,sep=",")
-  if (ldcalc) ldr2(panel="INTERVAL")
+# ldr2(panel="INTERVAL")
+  proxy <- function(dat)
+  {
+    for(i in 1:nrow(dat))
+    {
+       z <- dat[i,]
+       gwas <- read.table(file.path(d,basename(z[["file_gwas"]])),header=TRUE) %>%
+               arrange(p)
+       h3 <-  filter(gwas,p<1e-3)
+       gwas_snps <- pull(h3,SNP)
+       r2_mat <- read.delim(file.path(d,z[["file_r2"]]))
+       colnames(r2_mat) <- gsub("_[A-Z]*","",colnames(r2_mat))
+       rownames(r2_mat) <- gsub("_[A-Z]*","",rownames(r2_mat))
+       snps <- intersect(gwas_snps,colnames(r2_mat))
+       r2_mat <- r2_mat[snps,snps]
+       qtl_new <- z[["qtl"]]
+       r2_i <- r2_mat[z[["pqtl"]],z[["qtl"]]]
+       while(length(snps)>1)
+       {
+         qtl_new <- snps[1]
+         snps <- setdiff(snps,qtl_new)
+         r2_i <- r2_mat[z[["pqtl"]],qtl_new]
+         cat(i,z[["protein"]],z[["id"]],z[["Disease"]],z[["pqtl"]],z[["qtl"]],qtl_new,r2_i,z[["p_qtl"]],"\n",sep="\t")
+         if(!is.null(r2_i)&!is.na(r2_i)) if(r2_i>0.8) break
+       }
+       dat[i,"proxy"] <- qtl_new
+       dat[i,"rsq"] <- r2_i
+    }
+    dat
+  }
+  test <- proxy(gsmr_efo) %>%
+          select(protein,id,Disease,pqtl,p,qtl,p_qtl,proxy,rsq,file_r2,file_gwas)
+  write.table(test,file=file.path(INF,"mr","gsmr","r2_INTERVAL.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+)
+# write.table(data.frame(d,id,r,f),row.names=FALSE,col.names=FALSE,sep=",")
 ' | \
 parallel --dry-run --csv "
   export d={1}
@@ -1189,3 +1231,9 @@ parallel --dry-run --csv "
 " | sed 's/^[ ]//' > script
 
 # awk -vFS="\t" 'NR>1 && $8<0.05 {gsub(/-/,".",$1);print "trait/"$1"-"$2"-rsid.txt"}' gsmr-efo.txt | xargs -l -I{} awk '$7<1e-5' {}
+# No LD information from OpenGWAS for the following protein-id:
+# incl <- c("CXCL5-ebi-a-GCST004131","CD6-ebi-a-GCST004133","CD6-ebi-a-GCST003156","CD5-ieu-a-1112",
+#           "CCL4-ieu-b-69","CCL4-ieu-a-996","CCL4-ebi-a-GCST004133","CCL4-ebi-a-GCST004131")
+# x <- sapply(incl, function(x) grepl(x,z$f))
+# tokeep <- as.logical(apply(x,1,sum))
+# if (all) gsmr_efo <- z else gsmr_efo <- filter(z,tokeep)
