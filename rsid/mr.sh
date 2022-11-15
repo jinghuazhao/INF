@@ -1214,7 +1214,7 @@ Rscript -e '
           select(protein,id,Disease,pqtl,p,qtl,p_qtl,proxy,rsq,file_r2,file_gwas)
   write.table(test,file=file.path(INF,"mr","gsmr","r2_INTERVAL.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
 )
-# write.table(data.frame(d,id,r,f),row.names=FALSE,col.names=FALSE,sep=",")
+# write.table(data.frame(d,id,file_r2,file_gwas),row.names=FALSE,col.names=FALSE,sep=",")
 ' | \
 parallel --dry-run --csv "
   export d={1}
