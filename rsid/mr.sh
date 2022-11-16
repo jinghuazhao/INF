@@ -1145,75 +1145,90 @@ Rscript -e '
   INF <- Sys.getenv("INF")
   suppressMessages(library(dplyr))
   d <- file.path(INF,"mr","gsmr","trait")
+  inf1 <- select(gap.datasets::inf1,prot,target.short)
   gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
-              filter(fdr<=0.05) %>%
-              mutate(prot=gsub("-",".",protein)) %>%
-              mutate(file_gwas=paste(prot,id,"rsid.txt",sep="-"),file_r2=paste(prot,id,Disease,pqtl,"r2.txt",sep="-"),proxy=NA,rsq=NA)
-  ldr2 <- function(panel="1000Genomes",verbose=FALSE)
-  {
-    for(i in 1:nrow(gsmr_efo))
-    {
-       z <- gsmr_efo[i,]
-       pqtl <- z[["pqtl"]]
-       cat(z[["file_gwas"]],"\n")
-       h <- read.table(basename(z[["file_gwas"]]),header=TRUE)
-       h3 <-  filter(h,p<1e-3)
-       h5 <-  filter(h,p<1e-5)
-       if(nrow(h)>1 & verbose) print(h)
-       if (panel=="1000Genomes")
-       {
-          if (nrow(h3) < 500) snps <- c(pqtl,pull(h3,SNP)) else snps <- c(pqtl,pull(h5,SNP))
-          r <- ieugwasr::ld_matrix(snps,pop="EUR")
-       } else
-       {
-          snps <- c(pqtl,pull(h3,SNP))
-          r <- ieugwasr::ld_matrix(snps,with_alleles=TRUE,pop="EUR",
-                                   bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",z[["chr"]])),
-                                   plink_bin="/rds/user/jhz22/hpc-work/bin/plink")
-       }
-       if(length(snps[-1])>1 & verbose) print(snps[-1])
-       cn <- colnames(r)
-       inside <- pqtl==gsub("_[A-Z]*","",cn)
-       nn <- c(cn[inside],cn[!inside])
-       r_mat <- r[nn,nn]
-       if(nrow(r_mat)>1 & verbose) print(r)
-       write.table(r_mat^2,file=z[["file_r2"]],sep="\t")
-    }
-  }
-# ldr2(panel="INTERVAL")
-  proxy <- function(dat)
+              left_join(inf1,by=c("protein"="target.short")) %>%
+              mutate(file_gwas=paste(prot,id,"rsid.txt",sep="-"),
+                     bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr)),
+                     proxy=NA,p_proxy=NA,rsq=NA)
+  gsmr_efo_reduce <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
+                     left_join(inf1,by=c("protein"="target.short")) %>%
+                     mutate(file_gwas=paste(prot,id,"rsid.txt",sep="-"),
+                            bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr)),
+                            proxy=NA,p_proxy=NA,rsq=NA)
+  qtl_lookup <- function(dat,panel="INTERVAL",pthreshold=1e-3,pop="EUR",plink_bin=NULL,xlsx=NULL)
   {
     for(i in 1:nrow(dat))
     {
-       z <- dat[i,]
+       z <- slice(dat,i)
+       pqtl <- z[["pqtl"]]
+       cat(z[["file_gwas"]],"\n")
        gwas <- read.table(file.path(d,basename(z[["file_gwas"]])),header=TRUE) %>%
                arrange(p)
-       h3 <-  filter(gwas,p<1e-3)
-       gwas_snps <- pull(h3,SNP)
-       r2_mat <- read.delim(file.path(d,z[["file_r2"]]))
+       h <-  filter(gwas,p<=pthreshold)
+       panel_snps <- c(pqtl,pull(h,SNP))
+       if (panel=="1000Genomes")
+       {
+          if (length(panel_snps)>500) stop("too many SNPs -- put a more stringent ptreshold")
+          r <- ieugwasr::ld_matrix(panel_snps,pop="EUR")
+       } else
+       r <- ieugwasr::ld_matrix(panel_snps,with_alleles=TRUE,pop=pop,bfile=z[["bfile"]],plink_bin=plink_bin)
+       cn <- colnames(r)
+       inside <- pqtl==gsub("_[A-Z]*","",cn)
+       nn <- c(cn[inside],cn[!inside])
+       if (length(r)==1) r_mat <- r else r_mat <- r[nn,nn]
+       r2_mat <- r_mat^2
        colnames(r2_mat) <- gsub("_[A-Z]*","",colnames(r2_mat))
        rownames(r2_mat) <- gsub("_[A-Z]*","",rownames(r2_mat))
-       snps <- intersect(gwas_snps,colnames(r2_mat))
-       r2_mat <- r2_mat[snps,snps]
-       qtl_new <- z[["qtl"]]
-       r2_i <- r2_mat[z[["pqtl"]],z[["qtl"]]]
-       while(length(snps)>1)
+       snps <- intersect(pull(h,SNP),colnames(r2_mat))
+       if (length(snps)<1) next else if (length(snps)==1) dat[i,c("proxy","p_proxy","rsq")] <- c(z[c("qtl","p_qtl")],1)
+       else while(length(snps)>1)
        {
-         qtl_new <- snps[1]
-         snps <- setdiff(snps,qtl_new)
-         r2_i <- r2_mat[z[["pqtl"]],qtl_new]
-         cat(i,z[["protein"]],z[["id"]],z[["Disease"]],z[["pqtl"]],z[["qtl"]],qtl_new,r2_i,z[["p_qtl"]],"\n",sep="\t")
+         proxy <- snps[1]
+         snps <- setdiff(snps,proxy)
+         r2_i <- r2_mat[z[["pqtl"]],proxy]
+         p_proxy <- filter(gwas,SNP==proxy) %>%
+                    slice(which.min(p)) %>%
+                    pull(p)
+         cat(i,z[["protein"]],z[["id"]],z[["Disease"]],z[["pqtl"]],z[["qtl"]],proxy,r2_i,z[["p_qtl"]],"\n",sep="\t")
          if(!is.null(r2_i)&!is.na(r2_i)) if(r2_i>0.8) break
        }
-       dat[i,"proxy"] <- qtl_new
+       dat[i,"proxy"] <- proxy
+       dat[i,"p_proxy"] <- p_proxy
        dat[i,"rsq"] <- r2_i
+    }
+    if (!is.null(xlsx))
+    {
+      suppressMessages(library(openxlsx))
+      wb <- createWorkbook(xlsx)
+      hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
+      proxies <- select(dat,protein,id,Disease,fdr,pqtl,p,qtl,p_qtl,proxy,p_proxy,rsq)
+      for (sheet in "proxies")
+      {
+        addWorksheet(wb,sheet,zoom=150)
+        writeData(wb,sheet,sheet,xy=c(1,1),headerStyle=createStyle(textDecoration="BOLD",
+                 fontColour="#FFFFFF", fontSize=14, fontName="Arial Narrow", fgFill="#4F80BD"))
+        body <- get(sheet)
+        writeDataTable(wb, sheet, body, xy=c(1,2), headerStyle=hs, firstColumn=TRUE, tableStyle="TableStyleMedium2")
+        freezePane(wb, sheet, firstActiveCol=3, firstActiveRow=3)
+        width_vec <- apply(body, 2, function(x) max(nchar(as.character(x))+2, na.rm=TRUE))
+      # width_vec_header <- nchar(colnames(body))+2
+        setColWidths(wb, sheet, cols = 1:ncol(body), widths = width_vec)
+        writeData(wb, sheet, tail(body,1), xy=c(1, nrow(body)+2), colNames=FALSE, borders="rows", borderStyle="thick")
+      }
+      saveWorkbook(wb, file=xlsx, overwrite=TRUE)
     }
     dat
   }
-  test <- proxy(gsmr_efo) %>%
-          select(protein,id,Disease,pqtl,p,qtl,p_qtl,proxy,rsq,file_r2,file_gwas)
-  write.table(test,file=file.path(INF,"mr","gsmr","r2_INTERVAL.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
-)
+  proxies <- qtl_lookup(gsmr_efo,plink_bin="/rds/user/jhz22/hpc-work/bin/plink",
+                        xlsx=file.path(INF,"mr","gsmr","r2_INTERVAL.xlsx")) %>%
+             select(protein,id,Disease,fdr,pqtl,p,qtl,p_qtl,proxy,p_proxy,rsq)
+  write.table(proxies,file=file.path(INF,"mr","gsmr","r2_INTERVAL.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+  proxies <- qtl_lookup(gsmr_efo_reduce,plink_bin="/rds/user/jhz22/hpc-work/bin/plink",
+                        xlsx=file.path(INF,"mr","gsmr","r2_INTERVAL_reduce.xlsx")) %>%
+             select(protein,id,Disease,fdr,pqtl,p,qtl,p_qtl,proxy,p_proxy,rsq)
+  write.table(proxies,file=file.path(INF,"mr","gsmr","r2_INTERVAL_reduce.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+# file_r2=paste(prot,id,Disease,pqtl,"r2.txt",sep="-")
 # write.table(data.frame(d,id,file_r2,file_gwas),row.names=FALSE,col.names=FALSE,sep=",")
 ' | \
 parallel --dry-run --csv "
@@ -1237,3 +1252,5 @@ parallel --dry-run --csv "
 # x <- sapply(incl, function(x) grepl(x,z$f))
 # tokeep <- as.logical(apply(x,1,sum))
 # if (all) gsmr_efo <- z else gsmr_efo <- filter(z,tokeep)
+#      proxy <- z[["qtl"]]
+#      r2_i <- r2_mat[z[["pqtl"]],z[["qtl"]]]
