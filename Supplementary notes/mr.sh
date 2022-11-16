@@ -1151,7 +1151,7 @@ Rscript -e '
               mutate(file_gwas=paste(prot,id,"rsid.txt",sep="-"),
                      bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr)),
                      proxy=NA,p_proxy=NA,rsq=NA)
-  gsmr_efo_reduce <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
+  gsmr_efo_reduce <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo-reduce.txt")) %>%
                      left_join(inf1,by=c("protein"="target.short")) %>%
                      mutate(file_gwas=paste(prot,id,"rsid.txt",sep="-"),
                             bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr)),
