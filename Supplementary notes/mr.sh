@@ -849,7 +849,7 @@ Rscript -e '
    setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
            action="prepend")
    pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,
-            display_numbers = matrix(ifelse(!is.na(gsmr_mat) & abs(gsmr_mat_fdr) <= 0.05, "*", ""), nrow(gsmr_mat)), fontsize_number=20)
+            display_numbers = matrix(ifelse(!is.na(gsmr_mat) & abs(gsmr_mat_fdr) <= 0.01, "*", ""), nrow(gsmr_mat)), fontsize_number=20)
    setHook("grid.newpage", NULL, "replace")
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
    grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
@@ -858,7 +858,7 @@ Rscript -e '
    setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
            action="prepend")
    pheatmap(gsmr_mat_reduce,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,
-            display_numbers = matrix(ifelse(!is.na(gsmr_mat_reduce) & abs(gsmr_mat_reduce_fdr) <= 0.05, "*", ""), nrow(gsmr_mat_reduce)), fontsize_number=20)
+            display_numbers = matrix(ifelse(!is.na(gsmr_mat_reduce) & abs(gsmr_mat_reduce_fdr) <= 0.02, "*", ""), nrow(gsmr_mat_reduce)), fontsize_number=20)
    setHook("grid.newpage", NULL, "replace")
    grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
    grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
@@ -1147,6 +1147,7 @@ Rscript -e '
   d <- file.path(INF,"mr","gsmr","trait")
   inf1 <- select(gap.datasets::inf1,prot,target.short)
   gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
+              filter(fdr<=0.05) %>%
               left_join(inf1,by=c("protein"="target.short")) %>%
               mutate(file_gwas=paste(prot,id,"rsid.txt",sep="-"),
                      bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr)),
@@ -1156,7 +1157,7 @@ Rscript -e '
                      mutate(file_gwas=paste(prot,id,"rsid.txt",sep="-"),
                             bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr)),
                             proxy=NA,p_proxy=NA,rsq=NA)
-  qtl_lookup <- function(dat,panel="INTERVAL",pthreshold=1e-3,pop="EUR",plink_bin=NULL,xlsx=NULL)
+  qtl_lookup <- function(dat,panel="INTERVAL",pthreshold=1e-5,pop="EUR",plink_bin=NULL,xlsx=NULL)
   {
     for(i in 1:nrow(dat))
     {
@@ -1180,22 +1181,39 @@ Rscript -e '
        r2_mat <- r_mat^2
        colnames(r2_mat) <- gsub("_[A-Z]*","",colnames(r2_mat))
        rownames(r2_mat) <- gsub("_[A-Z]*","",rownames(r2_mat))
+       success <- 1
        snps <- intersect(pull(h,SNP),colnames(r2_mat))
        if (length(snps)<1) next else if (length(snps)==1) dat[i,c("proxy","p_proxy","rsq")] <- c(z[c("qtl","p_qtl")],1)
        else while(length(snps)>1)
        {
+         success <- -1
          proxy <- snps[1]
          snps <- setdiff(snps,proxy)
          r2_i <- r2_mat[z[["pqtl"]],proxy]
          p_proxy <- filter(gwas,SNP==proxy) %>%
                     slice(which.min(p)) %>%
                     pull(p)
-         cat(i,z[["protein"]],z[["id"]],z[["Disease"]],z[["pqtl"]],z[["qtl"]],proxy,r2_i,z[["p_qtl"]],"\n",sep="\t")
-         if(!is.null(r2_i)&!is.na(r2_i)) if(r2_i>0.8) break
+         cat("Same locus", i,z[["protein"]],z[["id"]],z[["Disease"]],z[["pqtl"]],z[["qtl"]],proxy,r2_i,z[["p_qtl"]],"\n",sep="\t")
+         if(!is.null(r2_i)&!is.na(r2_i)) if(r2_i>0.8) {success <- 1; break}
        }
-       dat[i,"proxy"] <- proxy
-       dat[i,"p_proxy"] <- p_proxy
-       dat[i,"rsq"] <- r2_i
+       if (success==-1) while (length(snps)>1)
+       {
+         success <- -1
+         proxy <- snps[1]
+         snps <- setdiff(snps,proxy)
+         r2_i <- r2_mat[z[["pqtl"]],proxy]
+         p_proxy <- filter(gwas,SNP==proxy) %>%
+                    slice(which.min(p)) %>%
+                    pull(p)
+         cat("Independent locus",i,z[["protein"]],z[["id"]],z[["Disease"]],z[["pqtl"]],z[["qtl"]],proxy,r2_i,z[["p_qtl"]],"\n",sep="\t")
+         if(!is.null(r2_i)&!is.na(r2_i)) if(r2_i<0.8) {success <- 1; break}
+       }
+       if (success==1)
+       {
+         dat[i,"proxy"] <- proxy
+         dat[i,"p_proxy"] <- p_proxy
+         dat[i,"rsq"] <- r2_i
+       }
     }
     if (!is.null(xlsx))
     {
