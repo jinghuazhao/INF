@@ -4,7 +4,7 @@
 cut -d, -f3,4 ${INF}/work/INF1.jma-rsid.cis.vs.trans | \
 tr ',' '\t' | \
 awk -vflanking=1e6 -vOFS='\t' 'NR>1{print $1,$2-flanking,$2+flanking}' | \
-awk -vOFS='\t' '{if(NR>1&&$2<0) $2=1};1' | \
+awk -vOFS='\t' '{if(NR>1&&$2<0) $2=0};1' | \
 sort -k1n -k2n | \
 awk '{print "chr" $0}' | \
 bedtools merge | \
