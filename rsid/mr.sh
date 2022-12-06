@@ -1147,12 +1147,13 @@ Rscript -e '
   d <- file.path(INF,"mr","gsmr","trait")
   inf1 <- select(gap.datasets::inf1,prot,target.short)
   gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
-              filter(fdr<=0.05) %>%
+              filter(fdr<=0.01) %>%
               left_join(inf1,by=c("protein"="target.short")) %>%
               mutate(file_gwas=paste(prot,id,"rsid.txt",sep="-"),
                      bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr)),
                      proxy=NA,p_proxy=NA,rsq=NA)
   gsmr_efo_reduce <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo-reduce.txt")) %>%
+                     filter(fdr<=0.01) %>%
                      left_join(inf1,by=c("protein"="target.short")) %>%
                      mutate(file_gwas=paste(prot,id,"rsid.txt",sep="-"),
                             bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr)),
