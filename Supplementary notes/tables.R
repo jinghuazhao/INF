@@ -37,10 +37,21 @@ interval <- merge(within(read.sheet("INTERVAL", 1:12, 2:29),{Protein <- gsub(" "
      ngs <- read.delim(file.path(INF,"ukb","NGS.tsv")) %>%
             mutate(r2=as.character(r2),p=as.character(p),PMID=as.character(PMID),Comment=as.character(Comment))
 aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","target.short")], by.x="Protein", by.y="prot") %>%
-            mutate(Protein=target.short) %>% select(-target.short)
+            rename(rsid=SNPID,Chromosome=CHR,Position=POS,Allele1=EFFECT_ALLELE,Allele2=REFERENCE_ALLELE,
+                   EAF=CODE_ALL_FQ,b=BETA,P=PVAL,Info=RSQ_IMP,Imputed=IMP) %>%
+            mutate(Protein=target.short,Position=formatC(Position,format="f",big.mark=",",digits=0,width=11),
+                   EAF=round(EAF,3),b=round(b,3),SE=round(SE,3),P=format(P,digits=3,scientific=TRUE),
+                   Info=round(Info,3),
+                   N=formatC(N,format="f",big.mark=",",digits=0,width=5)) %>%
+            select(Protein,Chromosome,Position,rsid,EAF,b,SE,P,N,Info,Imputed)
  ukb_ppp <- read.delim(file.path(INF,"work","UKB-PPP.txt"))
     cojo <- merge(read.sheet("cojo", 1:19, 2:229),gap_inf1[c("prot","target.short")],by="prot") %>%
-            mutate(prot=target.short) %>% rename(Protein=prot) %>% select(-target.short)
+            mutate(prot=target.short,p=format(p,digits=3,scientific=TRUE),pJ=format(pJ,digits=3,scientific=TRUE)) %>%
+            rename(UniProt=uniprot,Protein=prot,Chromosome=Chr,Position=bp,rsid=SNP,SE=se,P=p,
+                   bJ_SE=bJ_se,PJ=pJ,cistrans=cis.trans) %>%
+            mutate(Position=formatC(Position,format="f",big.mark=",",digits=0,width=11),
+                   b=round(b,3),SE=round(SE,3),bJ=round(bJ,3),bJ_SE=round(bJ_SE,3)) %>%
+            select(UniProt,Protein,Chromosome,Position,rsid,b,SE,P,bJ,bJ_SE,PJ,cistrans)
    h2pve <- read.csv(file.path(INF,"ldak","h2-ldak-pve.csv"))
      vep <- merge(read.sheet("VEP", 1:27, 2:182),gap_inf1,by.x="Protein",by.y="prot") %>%
             mutate(Protein=target.short) %>% select(-target.short)
@@ -50,14 +61,30 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
             mutate(prot=target.short,flag=if_else(P_eqtl<5e-8,"x","")) %>%
             rename(Protein=prot) %>% select(-target.short)
  eQTLGen_coloc <- read.table(file.path(INF,"eQTLGen","coloc.txt"),header=TRUE) %>%
-                  rename(H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf) %>%
+                  rename(Gene=gene,H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf) %>%
                   left_join(gap_inf1) %>%
-                  mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
-                  rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
+                  mutate(prot=target.short,
+                         Nsnps=formatC(nsnps,format="f",big.mark=",",digits=0,width=5),
+                         flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x",""),
+                         H0=format(H0,digits=3,scientific=TRUE,justify="right"),
+                         H1=format(H1,digits=3,scientific=TRUE,justify="right"),
+                         H2=format(H2,digits=3,scientific=TRUE,justify="right"),
+                         H3=format(H3,digits=3,scientific=TRUE,justify="right"),
+                         H4=format(H4,digits=3,scientific=TRUE,justify="right")) %>%
+                  rename(Protein=prot,UniProt=uniprot) %>%
+                  select(ID,UniProt,Protein,Gene,Nsnps,H0,H1,H2,H3,H4,flag)
  eQTLCatalogue <- read.delim(file.path(INF,"eQTLCatalogue","eQTLCatalogue-all.tsv"),header=TRUE) %>%
                   left_join(gap_inf1) %>%
-                  mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
-                  rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
+                  mutate(prot=target.short,
+                         Nsnps=formatC(nsnps,format="f",big.mark=",",digits=0,width=5),
+                         flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x",""),
+                         H0=format(H0,digits=3,scientific=TRUE,justify="right"),
+                         H1=format(H1,digits=3,scientific=TRUE,justify="right"),
+                         H2=format(H2,digits=3,scientific=TRUE,justify="right"),
+                         H3=format(H3,digits=3,scientific=TRUE,justify="right"),
+                         H4=format(H4,digits=3,scientific=TRUE,justify="right")) %>%
+                  rename(UniProt=uniprot,Protein=prot,SNPid=snpid,Unique_id=unique_id) %>%
+                  select(UniProt,Protein,rsid,SNPid,Unique_id,Nsnps,H0,H1,H2,H3,H4,flag)
 reactome <- read.sheet("Reactome", 1:19, 2:589)
 garfield <- read.table(file.path(INF,"garfield-data","output","INF1-cis","garfield.test.INF1.out"),header=TRUE) %>%
             select(ID,PThresh,Pvalue,Annotation,Celltype,Tissue,Type,Category,OR,Beta,SE,CI95_lower,CI95_upper,NAnnotThesh,NAnnot,NThresh,N,linkID)
@@ -73,7 +100,7 @@ garfield <- read.table(file.path(INF,"garfield-data","output","INF1-cis","garfie
     gsmr <- merge(d, gap_inf1[c("prot","target.short")],by.x="Exposure1",by.y="prot") %>%
             mutate(Exposure1=target.short,Exposure2=target.short) %>% rename(Protein1=Exposure1,Protein2=Exposure2) %>%
             select(-target.short)
-   gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","out","gsmr-efo.txt")) %>%
+   gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo-reduce.txt")) %>%
             mutate(protein=gsub("MCP-1","CCL2",protein)) %>%
             mutate(protein=gsub("MCP-2","CCL8",protein)) %>%
             mutate(protein=gsub("MCP-3","CCL7",protein)) %>%
@@ -165,27 +192,52 @@ credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c
 credibleppa <- read.table(file.path(INF,"work","INF1.merge-rsid.ppa"),col.names=c("prot","MarkerName","PPA"),sep="\t")
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
          merge(credibleppa,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
-         rename(Protein=prot) %>% mutate(prots=Protein,Protein=target.short) %>% select(-target.short)
+         rename(Protein=prot,SNPid=MarkerName,EAF=Freq1,b=Effect,SE=StdErr,logP=log.P.) %>%
+         mutate(prots=Protein,
+                UniProt=uniprot,
+                Protein=target.short,
+                Position=formatC(Position,format="f",big.mark=",",digits=0,width=11),
+                EAF=round(EAF,digits=2),
+                b=format(b,digits=2,justify="right"),
+                SE=format(SE,digits=2,justify="right"),
+                logP=format(-logP,digits=2,justify="right"),
+                HetChiSq=formatC(HetChiSq,format="f",big.mark=",",digits=1,width=6),
+                logHetP=format(-logHetP,digits=3,scientific=TRUE,justify="right"),
+                N=formatC(N,format="f",big.mark=",",digits=0,width=5),
+                lengthCS=unlist(lapply(sapply(CredibleSet,function(x) strsplit(x," ")),length))) %>%
+         select(UniProt,Protein,Chromosome,Position,Start,End,cis.trans,rsid,SNPid,Allele1,Allele2,EAF,
+                b,SE,logP,Direction,HetISq,HetChiSq,HetDf,logHetP,N,
+                CredibleSet,PPA,lengthCS,prots,uniprot,-target.short,-Start,-End)
 metal <- read.delim(file.path(INF,"work","INF1.METAL"))
 pqtldisease <- subset(read.sheet("short",1:51,1:220),Keep==1) %>%
                left_join(unique(pqtls[c("Protein","prots")]),by="prots") %>%
                mutate(prots=if_else(grepl(";",prots),prots,str_replace(prots,prots,Protein))) %>%
                mutate(prots=if_else(grepl("CXCL9;IL.12B",prots),str_replace_all(prots,c("IL.12B"="IL-12B")),prots)) %>%
                mutate(prots=if_else(grepl("MMP.10;CST5",prots),str_replace_all(prots,c("MMP.10"="MMP-10")),prots)) %>%
-               rename(Proteins=prots) %>% left_join(distinct(metal[c("MarkerName","rsid")])) %>%
+               rename(Proteins=prots) %>%
+               left_join(distinct(metal[c("MarkerName","rsid")])) %>%
                select(rsid,Proteins,Allele1,Allele2,Effects,SEs,cistrans,trait,efo,study,pmid,dataset,infection)
 coloc <- merge(read.delim(file.path(INF,"coloc","GTEx-all.tsv")),gap_inf1,by="prot") %>%
-         mutate(prot=target.short,flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x","")) %>%
-         rename(Protein=prot) %>% select(-target.short) %>% arrange(desc(flag))
+         mutate(prot=target.short,
+                Nsnps=formatC(nsnps,format="f",big.mark=",",digits=0,width=5),
+                flag=if_else(H3+H4>=0.9 & H4/H3>=3,"x",""),
+                H0=format(H0,digits=3,scientific=TRUE,justify="right"),
+                H1=format(H1,digits=3,scientific=TRUE,justify="right"),
+                H2=format(H2,digits=3,scientific=TRUE,justify="right"),
+                H3=format(H3,digits=3,scientific=TRUE,justify="right"),
+                H4=format(H4,digits=3,scientific=TRUE,justify="right")) %>%
+         rename(UniProt=uniprot,Protein=prot,SNPid=snpid,QTLid=qtl_id) %>%
+         select(UniProt,Protein,rsid,SNPid,QTLid,Nsnps,H0,H1,H2,H3,H4,flag)
 cs95 <- read.delim(file.path(INF,"coloc-jma","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=str_replace(rownames(cs95),"[.]","-"),cs95)
 HOME <- Sys.getenv("HOME")
 load(file.path(HOME,"software-notes","docs","files","pi_database.rda"))
-drug <- subset(pi_drug,target%in%with(gap.datasets::inf1,gene)) %>% left_join(pi_trait)
+drug <- subset(pi_drug,target%in%with(gap.datasets::inf1,gene)) %>% left_join(pi_trait) %>%
+        transmute(Trait=trait,Target=target,Drug=drug,Mechanism=mechanism_of_action,actionType=action_type,Name=name,Source=source,maxPhase=max_phase)
 efo <- read.delim(file.path(INF,"rsid","efo.txt"))
 hgi_gsmr <- read.delim(file.path(INF,"mr","gsmr","hgi","5e-8","5e-8.tsv"))
 hgi_pqtlmr <- read.delim(file.path(INF,"HGI","pqtlMR.txt"))
-pqtls <- select(pqtls,-prots)
+pqtls <- select(pqtls,-prots,-uniprot)
 
 outsheets <- c("summary","studies","inf1",
                "pqtls","aristotl","cojo","eQTLGen_coloc","eQTLCatalogue","coloc","pqtldisease","gsmr_efo","drug","garfield",
@@ -207,7 +259,7 @@ description[description%in%uppered] <- titles[description%in%uppered]
 n0 <- 3
 n1 <- 10
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
-            paste0("ST",1:n1),
+            rep("ST",n1),
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
           )
 summary <- data.frame(Sheetnames=prefix,Description=description)[1:(n0+n1),]
@@ -277,12 +329,12 @@ annotate <- read.table(file.path(INF,"circos","annotate.txt"),header=TRUE) %>%
 novel_data <- subset(within(pqtls,{
                                     chrpos=paste0(Chromosome,":",Position)
                                     a1a2=paste0(toupper(Allele1),"/",toupper(Allele2))
-                                    bse=paste0(round(Effect,3)," (",round(StdErr,3),")")
-                                    log10p=-log.P.
+                                    bse=paste0(b," (",SE,")")
+                                    log10p=logP
                                   }),
                      !paste0(Protein,"-",rsid)%in%with(knownpqtls,paste0(Protein,"-",Sentinels)),
-                     select=c(uniprot,Protein,MarkerName,chrpos,rsid,a1a2,bse,log10p,cis.trans,Chromosome,Position)) %>%
-              left_join(annotate[c("uniprot","prot","p.gene","gene","MarkerName")]) %>%
+                     select=c(UniProt,Protein,SNPid,chrpos,rsid,a1a2,bse,log10p,cis.trans,Chromosome,Position)) %>%
+              left_join(annotate[c("uniprot","prot","p.gene","gene","MarkerName")],by=c('UniProt'='uniprot','SNPid'='MarkerName')) %>%
               rename(cis=cis.trans,g.target=p.gene,g.pQTL=gene) %>%
               arrange(Chromosome,Position)
 save(novel_data,file=file.path(INF,"work","novel_data.rda"))
@@ -295,7 +347,7 @@ if (FALSE)
                 filter(prot_rsid %in% left) %>%
                 select(-prot_rsid)
 }
-novelpqtls <- select(novel_data,Protein,chrpos,rsid,a1a2,bse,log10p,cis,g.target,g.pQTL,uniprot)
+novelpqtls <- select(novel_data,Protein,chrpos,rsid,a1a2,bse,log10p,cis,g.target,g.pQTL,UniProt)
 f <- file.path(INF,"NG","trans-pQTL_annotation.xlsx")
 transpqtls <- read.xlsx(f,sheet=1,startRow = 6,colNames=FALSE,cols=c(1:3,14),skipEmptyRows=TRUE) %>%
               rename(Sentinel=X2,Encoding.gene=X3,causal.gene=X4) %>%
