@@ -5,6 +5,7 @@ INF <- Sys.getenv("INF")
 url <- file.path(INF,"work","INF1.latest.xlsx")
 read.sheet <- function(sheet,cols,rows) read.xlsx(url,sheet=sheet,colNames=TRUE,cols=cols,rows=rows,skipEmptyRows=TRUE)
 suppressMessages(library(dplyr))
+suppressMessages(library(gap))
 require(stringr)
 gap_inf1 <- gap.datasets::inf1[c("uniprot", "prot", "target.short")] %>%
             mutate(target.short=gsub("MCP-1","CCL2",target.short)) %>%
@@ -45,13 +46,14 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
                    N=formatC(N,format="f",big.mark=",",digits=0,width=5)) %>%
             select(Protein,Chromosome,Position,rsid,EAF,b,SE,P,N,Info,Imputed)
  ukb_ppp <- read.delim(file.path(INF,"work","UKB-PPP.txt"))
-    cojo <- merge(read.sheet("cojo", 1:19, 2:229),gap_inf1[c("prot","target.short")],by="prot") %>%
-            mutate(prot=target.short,p=format(p,digits=3,scientific=TRUE),pJ=format(pJ,digits=3,scientific=TRUE)) %>%
+    cojo <- merge(read.csv(file.path(INF,"sentinels","INF1.jma-rsid.cis.vs.trans.csv")),
+                  gap_inf1[c("prot","target.short")],by="prot") %>%
+            mutate(prot=target.short,log10P=round(-log10p(b/se),2),log10PJ=round(-log10p(bJ/bJ_se),2)) %>%
             rename(UniProt=uniprot,Protein=prot,Chromosome=Chr,Position=bp,rsid=SNP,SE=se,P=p,
-                   bJ_SE=bJ_se,PJ=pJ,cistrans=cis.trans) %>%
+                   bJ_SE=bJ_se,cistrans=cis.trans) %>%
             mutate(Position=formatC(Position,format="f",big.mark=",",digits=0,width=11),
                    b=round(b,3),SE=round(SE,3),bJ=round(bJ,3),bJ_SE=round(bJ_SE,3)) %>%
-            select(UniProt,Protein,Chromosome,Position,rsid,b,SE,P,bJ,bJ_SE,PJ,cistrans)
+            select(UniProt,Protein,Chromosome,Position,rsid,b,SE,log10P,bJ,bJ_SE,log10PJ,cistrans)
    h2pve <- read.csv(file.path(INF,"ldak","h2-ldak-pve.csv"))
      vep <- merge(read.sheet("VEP", 1:27, 2:182),gap_inf1,by.x="Protein",by.y="prot") %>%
             mutate(Protein=target.short) %>% select(-target.short)
