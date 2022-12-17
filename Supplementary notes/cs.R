@@ -1,4 +1,4 @@
-# 12-2-2022 JHZ
+# 17-12-2022 JHZ
 
 options(width=200)
 
@@ -10,7 +10,7 @@ tbl <- read.delim(paste0(pr,".z"),sep=" ")
 suppressMessages(library(gap))
 z <- suppressMessages(cs(tbl))
 write(z[["MarkerName"]],file=paste0(pr,".cs"),nrow(z))
-write(z[["ppa"]],file=paste0(pr,".ppa"),nrow(z))
+write(format(z[["ppa"]],digits=3,scientific=TRUE),file=paste0(pr,".ppa"),nrow(z))
 
 # tbl <- within(tbl,{logp <- logp(Effect/StdErr)})
 # l <- cs(tbl,log_p="logp")
