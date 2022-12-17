@@ -109,13 +109,23 @@ garfield <- read.table(file.path(INF,"garfield-data","output","INF1-cis","garfie
     gsmr <- merge(d, gap_inf1[c("prot","target.short")],by.x="Exposure1",by.y="prot") %>%
             mutate(Exposure1=target.short,Exposure2=target.short) %>% rename(Protein1=Exposure1,Protein2=Exposure2) %>%
             select(-target.short)
-   gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo-reduce.txt")) %>%
-               mutate(protein=gsub("MCP-1","CCL2",protein),
-                      protein=gsub("MCP-2","CCL8",protein),
-                      protein=gsub("MCP-3","CCL7",protein),
-                      protein=gsub("MCP-4","CCL13",protein)) %>%
-               rename(Protein=protein,ID=id,nSNP=nsnp,SE=se,
-                      FDR=fdr,nCase=Ncase,nControl=Ncontrol,nTotal=Ntotal,pQTL=pqtl,P=p,QTL=qtl,P_QTL=p_qtl,Chromosome=chr)
+    gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo-reduce.txt")) %>%
+                mutate(protein=gsub("MCP-1","CCL2",protein),
+                       protein=gsub("MCP-2","CCL8",protein),
+                       protein=gsub("MCP-3","CCL7",protein),
+                       protein=gsub("MCP-4","CCL13",protein),
+                       r2=NA) %>%
+                rename(Protein=protein,ID=id,nSNP=nsnp,SE=se,
+                       FDR=fdr,nCase=Ncase,nControl=Ncontrol,nTotal=Ntotal,pQTL=pqtl,P=p,QTL=qtl,P_QTL=p_qtl)
+     for (i in 1:nrow(gsmr_efo))
+     {
+         z <- gsmr_efo[i,]
+         r <- ieugwasr::ld_matrix_local(z[c("pQTL","QTL")],with_alleles=TRUE,
+                                        bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",z$chr)),
+                                        plink_bin="/rds/user/jhz22/hpc-work/bin/plink")
+         gsmr_efo[i,"r2"] <- ifelse(nrow(r)==1,1,r[1,2]^2)
+     }
+     gsmr_efo <- select(gsmr_efo,-chr)
      crp <- read.sheet("CRP", 1:15, 2:30)
      gdb <- read.sheet("geneDrugbank", 1:7, 2:72)
      at1 <- readWorkbook(xlsxFile=url,sheet="Annotrans1"); #names(at1) <- replace(names(at1),grepl("^[X]",names(at1)),"")
