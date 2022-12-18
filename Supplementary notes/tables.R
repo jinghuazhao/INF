@@ -23,7 +23,8 @@ gap_inf1 <- gap.datasets::inf1[c("uniprot", "prot", "target.short")] %>%
             select(UniProt,Target,Protein,onMultiplePanel,onPanels,hgncSymbol,Chromosome,Start,End,olinkId,altUniProt)
  studies <- read.sheet("Studies", 1:3, 2:14) %>%
             filter(Name!="MadCam")
- studies <- bind_rows(studies,data.frame(Name="Total",Design="",Size=sum(studies$Size)))
+ studies <- bind_rows(studies,data.frame(Name="Total",Design="",Size=sum(studies$Size))) %>%
+            mutate(Size=formatC(Size,format="f",big.mark=",",digits=0,width=11))
    pqtls <- merge(read.sheet("pQTLs", 1:21, 2:182),gap_inf1[c("prot","target.short")],by="prot")
 interval <- merge(within(read.sheet("INTERVAL", 1:12, 2:29),{Protein <- gsub(" ", "", Protein)}),
                   gap_inf1[c("prot","target.short")],by.x="Protein",by.y="prot") %>%
@@ -96,7 +97,8 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
 reactome <- read.sheet("Reactome", 1:19, 2:589)
 garfield <- read.table(file.path(INF,"garfield-data","output","INF1-cis","garfield.test.INF1.out"),header=TRUE) %>%
             rename(P=Pvalue,cellType=Celltype,b=Beta,LCL=CI95_lower,UCL=CI95_upper) %>%
-            select(ID,PThresh,P,Annotation,cellType,Tissue,Type,Category,OR,b,SE,LCL,UCL,NAnnotThesh,NAnnot,NThresh,N,linkID)
+            mutate(PThresh=format(PThresh,digits=3,scientific=TRUE),P=round(P,3),OR=round(OR,3),b=round(b,3),SE=round(SE,3)) %>%
+            select(ID,PThresh,P,Annotation,cellType,Tissue,Type,Category,OR,b,SE)
    magma <- read.delim(file.path(INF,"work","All.dat"))
   fusion <- read.sheet("FUSION", 1:26, 2:117)
      smr <- merge(read.sheet("SMR", 1:27, 2:83),gap_inf1,by="prot") %>%
