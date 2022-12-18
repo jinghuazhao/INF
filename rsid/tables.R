@@ -116,14 +116,21 @@ garfield <- read.table(file.path(INF,"garfield-data","output","INF1-cis","garfie
                        protein=gsub("MCP-4","CCL13",protein),
                        r2=NA) %>%
                 rename(Protein=protein,ID=id,nSNP=nsnp,SE=se,
-                       FDR=fdr,nCase=Ncase,nControl=Ncontrol,nTotal=Ntotal,pQTL=pqtl,P=p,QTL=qtl,P_QTL=p_qtl)
+                       FDR=fdr,nCase=Ncase,nControl=Ncontrol,nTotal=Ntotal,pQTL=pqtl,P=p,QTL=qtl,P_QTL=p_qtl) %>%
+                mutate(FDR=format(FDR,digits=3,scientific=TRUE),
+                       nCase=formatC(nCase,format="f",big.mark=",",digits=0,width=11),
+                       nControl=formatC(nControl,format="f",big.mark=",",digits=0,width=11),
+                       nTotal=formatC(nTotal,format="f",big.mark=",",digits=0,width=11),
+                       bxy=round(bxy,3),SE=round(SE,3),P=format(P,digits=3,scientific=TRUE),
+                       P_QTL=format(P_QTL,digits=3,scientific=TRUE))
      for (i in 1:nrow(gsmr_efo))
      {
          z <- gsmr_efo[i,]
          r <- ieugwasr::ld_matrix_local(z[c("pQTL","QTL")],with_alleles=TRUE,
                                         bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",z$chr)),
                                         plink_bin="/rds/user/jhz22/hpc-work/bin/plink")
-         gsmr_efo[i,"r2"] <- ifelse(nrow(r)==1,1,r[1,2]^2)
+         r2 <- ifelse(nrow(r)==2,r[1,2]^2,r^2)
+         gsmr_efo[i,"r2"] <- round(r2,3)
      }
      gsmr_efo <- select(gsmr_efo,-chr)
      crp <- read.sheet("CRP", 1:15, 2:30)
