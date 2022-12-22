@@ -451,16 +451,23 @@ function googlesheet()
 
 function f2()
 # Figure 2 for the Google document
+# f2 hotspot-rs12075.png
 {
+  cd ${INF}/work
+  export figure2b=${INF}/hotspots/$1
   convert signals_by_protein.png -resize 110% 2a.png
-  convert hotspot-rs12075.png -resize 60% 2b.png
+  convert ${figure2b} -resize 80% 2b.png
   convert IL.12B-mhtplot.trunc.png -resize 80% 2c.png
   convert TRAIL-mhtplot.trunc.png -resize 80% 2d.png
-  convert +append 2a.png 2b.png f2-1.png
+# convert +append 2a.png 2b.png f2-1.png
+  ln -sf 2a.png f2-1.png
   convert +append 2c.png 2d.png f2-2.png
   convert -append f2-1.png f2-2.png f2.png
   rm 2a.png 2b.png 2c.png 2d.png f2-1.png f2-2.png
+  cd -
 }
+
+f2 hotspot-rs3184504.png
 
 function pdf_final()
 # Rework
@@ -520,5 +527,47 @@ function chrpos_rsid()
     info <- sapply(cis$region, function(x) variants_chrpos(x) %>% select(name,chr,pos))
     sapply(1:59,function(x)
            write.table(info[,x],file=file.path(INF,"mr","gsmr","region",paste0(cis[x,"prot"],".rsid.txt")),quote=FALSE,row.names=FALSE,sep="\t"))
+  '
+}
+
+function llod()
+{
+  Rscript -e '
+    annot <- readRDS(file.path("~","pQTLtools","tests","annot.RDS"))
+    annot <- within(annot,{prot=gsub("^[0-9]*_","",olink.id)})
+    INF <- Sys.getenv("INF")
+    png(file.path(INF,"work","llod.png"),width=10,height=8,units="in",pointsize=8,res=300)
+    par(mar=c(5,4,1,1))
+    plot(100-annot$pc.belowLOD.new, col=annot$pQTL, las=1,
+         ylab = "1 - % samples with very low abundance per protein", xaxt= "n",
+         xlab = "Ordered proteins", cex=0.8, pch=19)
+    axis(side=1, at = seq(from=0, to=nrow(annot), by=20))
+    legend("topright", legend= c("no pQTL", "pQTL"), col= c("red","blue"), pch = 19)
+    dev.off()
+
+    attach(annot)
+    png(file.path(INF,"work","llod2.png"),width=10,height=8,units="in",pointsize=8,res=300)
+    plot(100-pc.belowLOD.new,pch=19,cex=2,col=pQTL,axes=FALSE,ann=FALSE)
+    axis(1,cex.axis=1.5,lwd.tick=0.5,line=0)
+    axis(2,cex.axis=1.5,lwd.tick=0.5,line=0)
+    legend(x=1.5,y=-0.5,c("cis","trans"),box.lwd=0,cex=2,col=c("red","blue"),pch=19)
+    mtext("1 - % samples with very low abundance per protein",side=2,line=2.5,cex=1.5)
+    mtext("Ordered proteins",side=1,line=2.5,cex=1.5)
+    detach(annot)
+    dev.off()
+
+    attach(annot)
+    png(file.path(INF,"work","llod3.png"),width=10,height=8,units="in",pointsize=8,res=300)
+    plot(100-pc.belowLOD.new,cex=2,pch=19,col=pQTL,axes=FALSE, xlab="", ylab="", cex.lab=2)
+    xy <- xy.coords(100-pc.belowLOD.new)
+    xtick <- seq(1, nrow(annot))
+    axis(1, at=xtick, labels = FALSE, lwd.tick=0.1, lwd=0)
+    axis(2, cex.axis=1.5)
+    text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.8)
+    mtext("1 - % samples with very low abundance per protein",side=2,line=2.5,cex=1.5)
+    mtext("Ordered proteins",side=1,line=2.5,cex=1.5,font=2)
+    legend(x=75,y=20,c("without PQTL","with pQTL"),box.lwd=0,cex=2,col=c("red","blue"),pch=19)
+    dev.off()
+    detach(annot)
   '
 }
