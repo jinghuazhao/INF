@@ -12,12 +12,12 @@ gsmr_efo <- function(root="gsmr-efo")
           left_join(gap.datasets::inf1[c("target.short","gene")],by=c("exposure"="target.short")) %>%
           select(gene,outcome,z,or,bxy,se,p,nsnp,fdr)
   gene <- sort(unique(with(gsmr,gene)))
-  outcome <- sort(unique(with(gsmr,outcome)))
+  if (root=="gsmr-efo") outcome <- sort(unique(with(gsmr,outcome))) else outcome <- clustered_outcome
   n <- length(gene)
   m <- length(outcome)
   gsmr_mat <- matrix(NA,m,n)
   colnames(gsmr_mat) <- gene
-  rownames(gsmr_mat) <- outcome
+  rownames(gsmr_mat) <- paste(outcome)
   gsmr_mat_id <- gsmr_mat_fdr <- gsmr_mat
   for(k in 1:nrow(gsmr))
   {
@@ -55,5 +55,30 @@ gsmr_efo <- function(root="gsmr-efo")
 # https://www.rapidtables.com/code/text/unicode-characters.html (Page 38)
 unicode1 <- c("\u25FC","\u25FB")
 unicode2 <- c("\u26AB","\u25EF")
+# NOTES
+# 1. cluster_rows=TRUE won't work with gsmr_efo()
+
 gsmr_efo()
+
+# 2. Initially cluster_rows=TRUE to obtain the order and then switch it off
+# For text extraction PDF is generated first, followed by pdftotext & fix "COVID-19 hospitalisation" inside R
+# pdf(file.path(INF,"mr","gsmr",paste0(root,".pdf")),width=30,height=18)
+
+clustered_outcome <-
+c(
+  "IgA nephropathy",
+  "Primary sclerosing cholangitis",
+  "Multiple sclerosis",
+  "Type 1 diabetes",
+  "Ulcerative colitis",
+  "Crohn's disease",
+  "Inflammatory bowel disease",
+  "Systemic lupus erythematosus",
+  "Gout",
+  "Eczema",
+  "Rheumatoid arthritis",
+  "Sepsis",
+  "Asthma",
+  "COVID-19 hospitalisation"
+)
 gsmr_efo("gsmr-efo-reduce")
