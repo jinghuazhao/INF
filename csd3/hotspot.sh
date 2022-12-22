@@ -1,4 +1,4 @@
-# 17-11-2021 JHZ
+# 22-12-2022 JHZ
 
 export HOTSPOT=$1
 export cvt=${INF}/work/INF1.merge.cis.vs.trans
@@ -25,7 +25,7 @@ Rscript -e '
   pdf(file.path(INF,"hotspots",paste0("hotspot-",HOTSPOT,".pdf")))
   circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
   circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06)
-  circos.genomicLabels(labels,labels.column = 4, side="inside")
+  circos.genomicLabels(labels, labels.column=4, cex=1.1, font=4, side="inside")
   circos.genomicLink(d, b[c("chr","start","end")], col = cols, directional=1, border = 10, lwd = 2)
   circos.clear()
   dev.off()
@@ -39,3 +39,14 @@ mv ${HOTSPOT}-000001.png ${INF}/hotspots/hotspot-${HOTSPOT}.png
 # chr12:11058117_C_T
 # chr17:34326215_A_C
 # chr19:49206145_C_G
+
+cut -f1 work/INF1.METAL | sort | uniq -c | awk '$1>1'
+
+# 6 chr1:159175354_A_G
+# 6 chr12:111884608_C_T
+# 2 chr13:28604007_C_T
+# 2 chr17:26694861_A_G
+# 2 chr19:49206145_C_G
+# 3 chr3:42906116_C_T
+# 2 chr8:106581528_A_T
+# 3 chr9:136155000_C_T
