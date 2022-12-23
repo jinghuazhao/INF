@@ -566,7 +566,7 @@ function llod()
     text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.8)
     mtext("100 - % samples with very low abundance per protein",side=2,line=2.5,cex=1.5)
     mtext("Ordered proteins",side=1,line=2.5,cex=1.5,font=2)
-    legend(x=75,y=20,c("without PQTL","with pQTL"),box.lwd=0,cex=2,col=c("red","blue"),pch=19)
+    legend(x=75,y=20,c("without pQTL","with pQTL"),box.lwd=0,cex=2,col=c("red","blue"),pch=19)
     dev.off()
     detach(annot)
   '
