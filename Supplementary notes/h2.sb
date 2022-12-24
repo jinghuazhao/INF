@@ -47,6 +47,7 @@ function prune()
 }
 
 function h2()
+# --reml-alg 1 for 47,91
 {
   export s=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
   export p=$(cut -d' ' -f29- ${s} | head -1 | sed 's/ /\n/g' | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{split($1,a,"__"); print a[1]}')
