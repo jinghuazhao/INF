@@ -298,9 +298,9 @@ prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(
           )
 summary <- data.frame(Sheetnames=prefix,Description=description)[1:(n0+n1),]
 summary2 <- data.frame(Sheetnames=prefix,Description=description)[-(1:(n0+n1)),]
-xlsx <- file.path(INF,"NG","Supplementary Tables.xlsx")
+xlsx <- file.path(INF,"NG","Supplementary-Tables.xlsx")
 wb <- createWorkbook(xlsx)
-xlsx2 <- file.path(INF,"NG","Additional Tables.xlsx")
+xlsx2 <- file.path(INF,"NG","Additional-Tables.xlsx")
 wb2 <- createWorkbook(xlsx2)
 addWorksheet(wb2,"Summary",zoom=150)
 writeData(wb2,"Summary","Summary",xy=c(1,1),headerStyle=createStyle(textDecoration="BOLD",
