@@ -27,7 +27,7 @@
              filter(id %in% unique(gsmr$Outcome))
       gwas <- read.table(top,col.names=c("prot","id","qtl","a1_qtl","a2_qtl","freq","b_qtl","se_qtl","p_qtl","n_qtl")) %>%
               select(prot,id,qtl,p_qtl)
-      gsmr_efo <- left_join(gsmr,pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
+      gsmr_efo <- left_join(gsmr,pQTLdata::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
                   left_join(filter(metal,prot %in% (gsmr$Exposure)), by=c("Exposure"="prot")) %>%
                   left_join(efo,by=c("Outcome"="id")) %>%
                   left_join(gwas,by=c("Exposure"="prot","Outcome"="id")) %>%
@@ -49,7 +49,7 @@
                    Ncontrols=if_else(is.na(y2),Ncontrols,y2)) %>%
                    select(-New,-x1,-x2,-y1,-y2)
       gsmr_efo <- gsmr %>%
-                  left_join(pQTLtools::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
+                  left_join(pQTLdata::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
                   left_join(efo,by=c("Outcome"="MRBASEID")) %>%
                   rename(protein=Exposure,MRBASEID=Outcome) %>%
                   mutate(protein=target.short,fdr=p.adjust(p,method="fdr")) %>%

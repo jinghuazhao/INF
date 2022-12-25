@@ -13,23 +13,23 @@
     rt <- Sys.getenv("rt")
     IVW <- read.delim(file.path(rt,"mr-efo.mr")) %>%
            mutate(fdr=p.adjust(pval,method="fdr")) %>%
-           left_join(select(pQTLtools::inf1,prot,gene)) %>%
+           left_join(select(pQTLdata::inf1,prot,gene)) %>%
            select(gene,id.outcome,b,se,pval,fdr,nsnp,disease)
     cat(nrow(filter(IVW,fdr<=0.05)),"\n")
     write.table(IVW,file.path(rt,"mr-efo-mr.tsv"),quote=FALSE,row.names=FALSE,sep="\t")
     Heterogeneity <- read.delim(file.path(rt,"mr-efo.het")) %>%
                      mutate(fdr=p.adjust(Q_pval,method="fdr")) %>%
-                     left_join(select(pQTLtools::inf1,prot,gene)) %>%
+                     left_join(select(pQTLdata::inf1,prot,gene)) %>%
                      select(gene,id.outcome,method,Q,Q_df,Q_pval,fdr,disease)
     cat(nrow(filter(Heterogeneity,fdr<=0.05)),"\n")
     write.table(Heterogeneity,file.path(rt,"mr-efo-het.tsv"),quote=FALSE,row.names=FALSE,sep="\t")
 #   GSMR <- read.delim(file.path(rt,"out","gsmr-efo.txt")) %>%
 #           rename(target.short=protein) %>%
-#           left_join(select(pQTLtools::inf1,target.short,gene)) %>%
+#           left_join(select(pQTLdata::inf1,target.short,gene)) %>%
 #           select(gene,MRBASEID,trait,bxy,se,p,nsnp,fdr,Ncases,Ncontrols,id,uri,Zhengetal)
     GSMR <- read.delim(file.path(rt,"gsmr-efo-reduce.txt")) %>%
             rename(target.short=protein) %>%
-            left_join(select(pQTLtools::inf1,target.short,gene))
+            left_join(select(pQTLdata::inf1,target.short,gene))
     xlsx <- file.path(rt,"gsmr-mr.xlsx")
     wb <- createWorkbook(xlsx)
     hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
