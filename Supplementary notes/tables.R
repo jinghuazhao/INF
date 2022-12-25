@@ -272,17 +272,17 @@ pqtls <- select(pqtls,-prots,-uniprot)
 pqtls_o <- select(pqtls,-SNPid)
 
 outsheets <- c("summary",
-               "studies","inf1","pqtls_o","cojo","aristotl","garfield",
+               "inf1","pqtls_o","cojo","aristotl",
                          "eQTLGen_coloc","coloc","eQTLCatalogue","pqtldisease","gsmr_efo","drug",
-               "pqtl_impact","vep","magma","hgi_gsmr","hgi_pqtlmr",
+               "studies","garfield","pqtl_impact","vep","magma","hgi_gsmr","hgi_pqtlmr",
 	       "knownpqtls","eQTLGen","reactome","great","efo","gdb",
                "interval","os","cvd1","fenland","decode","aric","ages","ukb_ppp","ngs","pqtlstudies",
                "great3","mr_immun","smr","cis_mr","mr_misc",
                "protein_correlation", "protein_dgi")
 titles <- c("summary",
-            "Cohorts","Inflammation-panel","pQTLs","Conditional-analysis","ARISTOTLE-study","GARFIELD-outputs",
+            "Inflammation-panel","pQTLs","Conditional-analysis","ARISTOTLE-study",
                       "eQTLGen-coloc","GTEx-coloc","eQTL-Catalogue-coloc","Disease-GWAS-overlap","GSMR-results","PI-drug",
-            "pQTL impact","VEP annotation","MAGMA outputs","HGI-GSMR r6","HGI-pQTLMR",
+            "Cohorts","GARFIELD-outputs","pQTL impact","VEP annotation","MAGMA outputs","HGI-GSMR r6","HGI-pQTLMR",
             "known pQTLs","eQTLGen","Reactome","GREAT","EFO","geneDrugbank",
             "INTERVAL study","Other studies","SCALLOP-CVD1","Fenland study","deCODE study","ARIC study","AGES study","UKB-PPP","UKB47k","previous pQTL studies",
             "IL12B-KITLG-TNFSF10","pQTL-immune-MR","SMR","cis-MR results","pQTL-misc-MR",
@@ -291,7 +291,7 @@ description=paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles
 uppered <- c("PQTLs")
 description[description%in%uppered] <- titles[description%in%uppered]
 n0 <- 1
-n1 <- 12
+n1 <- 10
 prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(outsheets)))[1:n0],
             rep("ST",n1),
             paste0(toupper(substr(titles, 1, 1)), substr(titles, 2, nchar(titles)))[(n0+n1+1):length(outsheets)]
@@ -401,3 +401,6 @@ s <- pqtls %>% mutate(prot_rsid=paste0(Protein,"-",rsid))
 s1 <- novel_data %>% mutate(prot_rsid=paste0(Protein,"-",rsid))
 s2 <- knownpqtls %>% mutate(prot_rsid=paste0(Protein,"-",Sentinels))
 c(s1$prot_rsid,s2$prot_rsid)[!c(s1$prot_rsid,s2$prot_rsid) %in% s$prot_rsid]
+
+# ST-GARFIELD-outputs		This involves 1,005 combinations (42 Chromatin_States,  6 Formaldehyde-Assisted Isolation of Regulatory Elements (FAIREs), 41 Footprints. 7 Genic. 55 Histone_Modifications, 424 Hotspots, 424 Peaks, 6  transcription factor binding sites (TFBSs)) for four P value thresholds: 1e-2, 1e-5,1e-8, 1e-15, leading to enrichment P value with a Bonferroni cutoff of 0.05/4,020=1.24e-5. GARFIELD also has the garfield-Meff-Padj.R utility giving the effective number of annotations (457.04) and 1.1x10-4, leading to annotations reaching the association P=1.21x10-6 threshold with any protein.
+

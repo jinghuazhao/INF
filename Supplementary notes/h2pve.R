@@ -25,12 +25,12 @@ annot <- annot %>% select(ID,MissDataProp) %>% rename(prot=ID)
 
 hlp <- read.csv(file.path(INF,"ldak","h2-ldak-pve.csv")) %>%
        left_join(annot) %>%
-       left_join(pQTLtools::inf1[c("prot","target.short")]) %>%
+       left_join(pQTLdata::inf1[c("prot","target.short")]) %>%
        arrange(h2_interval) %>%
        mutate(x=1:n())
 
 interval <- hlp[c("target.short", "h2_interval", "SE_h2_interval", "MissDataProp", "x")]; names(interval)[2:3] <- c("h2","h2se")
-interval <- data.frame(interval,source="(a) INTERVAL")
+interval <- data.frame(interval,source="(a) INTERVAL h2")
 scallop <- hlp[c("target.short", "h2_scallop", "SE_h2_scallop", "MissDataProp", "x")]; names(scallop)[2:3] <- c("h2","h2se")
 scallop <- data.frame(scallop,source="(b) SCALLOP")
 pve <- hlp[c("target.short", "pve", "SE_pve", "MissDataProp", "x")]; names(pve)[2:3] <- c("h2","h2se")
@@ -52,9 +52,32 @@ p <- ggplot(isp,aes(y = x, x = h2))+
      geom_vline(lty=2, aes(xintercept=0), colour = "red")+
      scale_y_continuous(breaks=isp$x,labels=isp$target.short,position="left")+
      geom_point(size=2)+
-     xlab("Heritability/PVE")+
+     xlab("Heritability estimates using INTERVAL data and PVE according to pQTLs")+
      ylab("Protein")
 ggsave(p,filename=file.path(INF,"h2","h2-pve-ggplot2.png"),device="png",dpi = 300, units="in", width=12, height=20)
+
+pve <- hlp[c("target.short", "pve", "SE_pve", "MissDataProp", "x")]; names(pve)[2:3] <- c("h2","h2se")
+pve <- data.frame(pve,source="(b) PVE")
+isp2 <- rbind(interval,pve)
+
+p <- ggplot(isp2,aes(y = x, x = h2))+
+     theme_bw()+
+     theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+           axis.line = element_line(colour = "black"),
+           axis.ticks.length=unit(.1, "cm"),
+           axis.title = element_text(size=18),
+           axis.text.x = element_text(size=16),
+           axis.text.y = element_text(color=if_else(isp2$MissDataProp>=80, "red", "black"), size=12),
+           strip.text = element_text(face="bold",size=18)
+          )+
+     facet_wrap(~source,ncol=2,scales="free_x")+
+     geom_segment(aes(x = h2-1.96*h2se, xend = h2+1.96*h2se, yend = x, colour=source), show.legend=FALSE)+
+     geom_vline(lty=2, aes(xintercept=0), colour = "red")+
+     scale_y_continuous(breaks=isp2$x,labels=isp2$target.short,position="left")+
+     geom_point(size=2)+
+     xlab("Heritability estimates using INTERVAL data and PVE according to pQTLs")+
+     ylab("Protein")
+ggsave(p,filename=file.path(INF,"h2","h2-pve.png"),device="png",dpi = 300, units="in", width=12, height=20)
 
 test <- function()
 {
