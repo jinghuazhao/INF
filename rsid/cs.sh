@@ -2,7 +2,7 @@
 
 if [ ! -d ${INF}/cs ]; then mkdir ${INF}/cs; fi
 
-function tbl()
+function cs()
 # all variants in the region
 {
   cut -f5,6,8,9 --output-delimiter=' ' ${INF}/work/INF1.merge | sed '1d' | \
@@ -14,22 +14,41 @@ function tbl()
     export pos={4}
     zcat ${INF}/METAL/{1}-1.tbl.gz | \
     cut -f1-3,6,10-12,18 | \
-    awk -vchr=${chr} -vpos=${pos} "NR==1 || (\$1==chr && \$2 >= pos - 1e6 && \$2 < pos + 1e6)" | \
-    gzip -f > ${INF}/cs/{1}-{2}.tbl.gz
+    awk -vchr=${chr} -vpos=${pos} "NR==1 || (\$1==chr && \$2 >= pos - 1e6 && \$2 < pos + 1e6) && !(chr==19 && pos >= 53296855 && pos <= 54500000)" | \
+    gzip -f > ${INF}/cs/unprune/{1}-{2}.tbl.gz
   R --no-save <<\ \ END
     options(width=200)
     p <- Sys.getenv("p")
     r <- Sys.getenv("r")
     pr <- paste0(p,"-",r)
-    tbl <- read.delim(paste0(pr,".z"),sep=" ")
-    z <- suppressMessages(library(gap))
-    z <- suppressMessages(cs(tbl))
-    write(z[["MarkerName"]],file=paste0(pr,".metal"),nrow(z))
+    tbl <- read.delim(paste0("~/INF/cs/unprune/",pr,".tbl.gz"))
+    z <- suppressMessages(gap::cs(tbl))
+    write(z[["MarkerName"]],file=paste0("~/INF/cs/unprune/",pr,".snpid"),nrow(z))
+    write(z[["ppa"]],file=paste0("~/INF/cs/unprune/",pr,".ppa"),nrow(z))
   END
- '
+  cat ~/INF/cs/unprune/${p}-${r}.snpid | \
+  tr " " "\n" | \
+  sort -k1,1 | \
+  join - ${INF}/work/INTERVAL.rsid | \
+  cut -d" " -f2 | \
+  tr "\n" " " > ~/INF/cs/unprune/${p}-${r}.cs
+  '
+  (
+    awk 'NR > 1 {print $3,$2,$1}' ${INF}/work/INF1.METAL | \
+    parallel --env INF -C' ' 'awk -vprot={1} -vrsid={2} -vOFS="\t" "{print prot,rsid,\$0}" ${INF}/cs/unprune/{1}-{3}.cs'
+  ) > ${INF}/cs/unprune/INF1.merge-rsid.cs
+  (
+    awk 'NR > 1 {print $3,$2,$1}' ${INF}/work/INF1.METAL | \
+    parallel --env INF -C' ' '
+      cat ${INF}/cs/unprune/{1}-{3}.ppa | \
+      Rscript -e "options(width=2000);ppa <- scan(\"stdin\");cat(format(ppa,digits=3,scientific=TRUE))" | \
+      awk -vprot={1} -vrsid={2} -vOFS="\t" "{print prot,rsid,\$0}"
+    '
+  ) > ${INF}/cs/unprune/INF1.merge-rsid.ppa
 }
 
-cd ${INF}/cs
+function prune()
+{
 (
   awk 'NR > 1 {print $5,$6,NR-1}' ${INF}/work/INF1.merge-rsid | \
   parallel --env INF -C' ' '
@@ -44,18 +63,29 @@ cd ${INF}/cs
       awk -vprot={1} -vrsid={2} -vOFS="\t" "{print prot,rsid,\$0}" ${INF}/cs/{1}-{2}.ppa
   '
 ) > ${INF}/work/INF1.merge-rsid.ppa
+}
 
 R --no-save -q <<END
   library(dplyr)
   INF <- Sys.getenv("INF")
-  cs <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"), col.names=c("prot","pQTL","set"), sep='\t')
-  for (i in 1:nrow(cs))
+  sumcs <- function(cs)
   {
-    cs$n[i] <- length(unlist(strsplit(cs$set[i]," ")))
-    cs$isin[i] <- grepl(cs$pQTL[i],cs$set[i])
+    for (i in 1:nrow(cs))
+    {
+      cs$n[i] <- length(unlist(strsplit(cs$set[i]," ")))
+      cs$isin[i] <- grepl(cs$pQTL[i],cs$set[i])
+    }
+    n <- table(cs$n)
+    isin <- table(cs$isin)
+    print(n)
+    print(isin)
+    list(n=n,isin=isin)
   }
   options(width=200)
-  table(cs$n)
-  table(cs$isin)
+  cat("prune\n")
+  prune <- read.table(file.path(INF,"cs","prune","INF1.merge-rsid.cs"), col.names=c("prot","pQTL","set"), sep='\t')
+  summary_prune <- sumcs(prune)
+  cat("unprune\n")
+  unprune <- read.table(file.path(INF,"cs","unprune","INF1.merge-rsid.cs"), col.names=c("prot","pQTL","set"), sep='\t')
+  summary_unprune <- sumcs(unprune)
 END
-cd -
