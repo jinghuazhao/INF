@@ -238,7 +238,7 @@ pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName
                 HetChiSq=formatC(HetChiSq,format="f",big.mark=",",digits=1,width=6),
                 logHetP=format(-logHetP,digits=3,scientific=TRUE,justify="right"),
                 N=formatC(N,format="f",big.mark=",",digits=0,width=5),
-                lengthCS=unlist(lapply(sapply(CredibleSet,function(x) strsplit(x," ")),length))) %>%
+                lengthCS=unlist(lapply(sapply(CredibleSet,function(x) strsplit(x," ")),length)),
                 lengthCS_unpruned=unlist(lapply(sapply(CredibleSet_unpruned,function(x) strsplit(x," ")),length))) %>%
          select(UniProt,Protein,Chromosome,Position,Start,End,cistrans,rsid,SNPid,Allele1,Allele2,EAF,
                 b,SE,logP,Direction,HetISq,HetChiSq,HetDf,logHetP,N,
