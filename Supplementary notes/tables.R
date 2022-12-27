@@ -220,8 +220,12 @@ url <- "https://jhz22.user.srcf.net/pqtl-immune_infection_edited.xlsx"
 url <- file.path(INF,"work","pqtl-immune_infection_edited.xlsx")
 credibleset <- read.table(file.path(INF,"work","INF1.merge-rsid.cs"),col.names=c("prot","MarkerName","CredibleSet"),sep="\t")
 credibleppa <- read.table(file.path(INF,"work","INF1.merge-rsid.ppa"),col.names=c("prot","MarkerName","PPA"),sep="\t")
+credibleset_unprune <- read.table(file.path(INF,"cs","unprune","INF1.merge-rsid.cs"),col.names=c("prot","MarkerName","CredibleSet_unpruned"),sep="\t")
+credibleppa_unprune <- read.table(file.path(INF,"cs","unprune","INF1.merge-rsid.ppa"),col.names=c("prot","MarkerName","PPA_unpruned"),sep="\t")
 pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
          merge(credibleppa,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
+         merge(credibleset_unprune,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
+         merge(credibleppa_unprune,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
          rename(Protein=prot,SNPid=MarkerName,cistrans=cis.trans,EAF=Freq1,b=Effect,SE=StdErr,logP=log.P.) %>%
          mutate(prots=Protein,
                 UniProt=uniprot,
@@ -235,9 +239,10 @@ pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName
                 logHetP=format(-logHetP,digits=3,scientific=TRUE,justify="right"),
                 N=formatC(N,format="f",big.mark=",",digits=0,width=5),
                 lengthCS=unlist(lapply(sapply(CredibleSet,function(x) strsplit(x," ")),length))) %>%
+                lengthCS_unpruned=unlist(lapply(sapply(CredibleSet_unpruned,function(x) strsplit(x," ")),length))) %>%
          select(UniProt,Protein,Chromosome,Position,Start,End,cistrans,rsid,SNPid,Allele1,Allele2,EAF,
                 b,SE,logP,Direction,HetISq,HetChiSq,HetDf,logHetP,N,
-                CredibleSet,PPA,lengthCS,prots,uniprot,-target.short,-Start,-End)
+                CredibleSet,PPA,lengthCS,CredibleSet_unpruned,PPA_unpruned,lengthCS_unpruned,prots,uniprot,-target.short,-Start,-End)
 metal <- read.delim(file.path(INF,"work","INF1.METAL"))
 pqtldisease <- subset(read.sheet("short",1:51,1:220),Keep==1) %>%
                left_join(unique(pqtls[c("Protein","prots")]),by="prots") %>%

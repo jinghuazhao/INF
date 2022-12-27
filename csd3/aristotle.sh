@@ -46,7 +46,7 @@ R --no-save -q <<END
                rename(n=N)
   INF1_aristotle <- mutate(INF1_METAL,Protein=paste0(prot,"-",rsid)) %>%
                     left_join(aristotle) %>%
-                    select(Protein,Allele1,Allele2,EFFECT_ALLELE,REFERENCE_ALLELE,Freq1,Effect,StdErr,CODE_ALL_FQ,BETA,SE,cis.trans) %>%
+                    select(Protein,Allele1,Allele2,EFFECT_ALLELE,REFERENCE_ALLELE,Freq1,Effect,StdErr,log.P.,CODE_ALL_FQ,BETA,SE,PVAL,cis.trans) %>%
                     mutate(sw=if_else(Allele1==REFERENCE_ALLELE,-1,1)) %>%
                     mutate(BETA=sw*BETA)
   png(file=file.path(INF,"aristotle","SF-INF-ARISTOTLE.png"),res=300,width=15,height=15,units="in")

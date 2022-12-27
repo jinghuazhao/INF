@@ -1,17 +1,34 @@
-# 17-12-2022 JHZ
+# 27-12-2022 JHZ
 
 options(width=200)
 
-p <- Sys.getenv("p")
-r <- Sys.getenv("r")
-pr <- paste0(p,"-",r)
+prune <- function()
+{
+  p <- Sys.getenv("p")
+  r <- Sys.getenv("r")
+  pr <- paste0(p,"-",r)
 
-tbl <- read.delim(paste0(pr,".z"),sep=" ")
-suppressMessages(library(gap))
-z <- suppressMessages(cs(tbl))
-write(z[["MarkerName"]],file=paste0(pr,".cs"),nrow(z))
-write(format(z[["ppa"]],digits=3,scientific=TRUE),file=paste0(pr,".ppa"),nrow(z))
+  tbl <- read.delim(paste0(pr,".z"),sep=" ")
+  suppressMessages(library(gap))
+  z <- suppressMessages(cs(tbl))
+  write(z[["MarkerName"]],file=paste0("~/INF/cs/prune/",pr,".cs"),nrow(z))
+  write(format(z[["ppa"]],digits=3,scientific=TRUE),file=paste0("~/INF/cs/prune/",pr,".ppa"),nrow(z))
+}
 
+unprune <- function()
+{
+  p <- Sys.getenv("p")
+  r <- Sys.getenv("r")
+  pr <- paste0(p,"-",r)
+
+  tbl <- read.delim(paste0(pr,".tbl.gz"))
+  suppressMessages(library(gap))
+  z <- suppressMessages(cs(tbl))
+  write(z[["MarkerName"]],file=paste0("~/INF/cs/unprune/",pr,".cs"),nrow(z))
+  write(format(z[["ppa"]],digits=3,scientific=TRUE),file=paste0("~/INF/cs/unprune/",pr,".ppa"),nrow(z))
+}
+
+# prune()
 # tbl <- within(tbl,{logp <- logp(Effect/StdErr)})
 # l <- cs(tbl,log_p="logp")
 
