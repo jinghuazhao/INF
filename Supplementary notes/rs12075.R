@@ -39,6 +39,7 @@ fetch_region <- function()
   mono <- mutate(mono,track="Monocytes") %>%
           select(-snpid,-rsid)
   long <- bind_rows(d,mono[c("chr","pos","a1","a2","af","b","se","log10p","track")])
+  save(wide,long,file=file.path(INF,"hotspots","rs12075.rda"),compress="xz")
   list(wide=wide,long=long)
 }
 
@@ -71,7 +72,7 @@ plot_region <- function(dat)
 INF <- Sys.getenv("INF")
 g <- c("CCL2", "CCL7", "CCL8", "CCL11", "CCL13", "CXCL6")
 p <- c("MCP.1", "MCP.3", "MCP.2", "CCL11", "MCP.4", "CXCL6")
-dat <- fetch_region()
+dat <- ddat <- fetch_region()
 wide <- with(dat,wide) %>% mutate(pos=pos/1e6)
 long <- with(dat,long) %>%
         mutate(lcl=b-1.96*se,ucl=b+1.96*se,track=factor(track,levels=c(g,"Monocytes")),pos=pos/1e6)
@@ -80,6 +81,7 @@ l <- plot_region(long)
 ggsave("rs12075.png",l,height=20,width=10)
 
 rs12075 <- filter(long,pos==159.175354)
+save(rs12075,file="rs12075.rda")
 f <- ggplot(data=rs12075, aes(y=1:7, x=b))+
      geom_point(size=2)+
      geom_errorbarh(aes(xmax = ucl, xmin = lcl, height=0.001))+
@@ -92,6 +94,7 @@ f <- ggplot(data=rs12075, aes(y=1:7, x=b))+
            axis.text.x = element_text(size=16),
            panel.grid=element_blank(),
            panel.spacing = unit(1, "lines"))
+ggsave("rs12075-forest.png",f,height=20,width=10)
   
 # arrangement of plots
 require(cowplot)
@@ -101,7 +104,7 @@ ggsave("rs12075-forest-assoc.png",height=20,width=10)
 circos_plot <- function()
 # circos plot
 {
-   t.genes <- filter(pQTLtools::hg19, pQTLtools::hg19$SYMBOL %in% g) %>%
+   t.genes <- filter(pQTLdata::hg19, pQTLdata::hg19$SYMBOL %in% g) %>%
               distinct() %>%
               select(chr,start,end,SYMBOL) %>%
               rename(t.chr=chr,t.start=start,t.end=end,t.gene=SYMBOL) %>%
@@ -124,28 +127,44 @@ circos_plot <- function()
 
 circos_plot()
 
-# gunzip -c ~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/gzipped_interval/mono.tsv.gz | \
-# bgzip -f > ${INF}/work/mono.tsv.gz
-# tabix -S1 -s3 -b4 -e4 ${INF}/work/mono.tsv.gz
+dat <- rs12075[c("track","b","se")]
+library(gap)
+png("rs12075-forest.png",height=20,width=10,units="in",res=300)
+mr_forestplot(dat, colgap.forest.left="0.05cm", fontsize=14, digits=3,
+              leftlabs=c("Outcome","b","SE"),
+              rightcols=c("ci","pval"), rightlabs=c("95%CI","P"),digits.pval=2,scientific.pval=TRUE,
+              common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
+              spacing=1.6,digits.TE=3,digits.se=3)
+dev.off()
 
-deprecated <- function()
-{
-m <- with(rs12075,weighted.mean(b,1/se^2))
-format_p <- function(p) paste("p =", substring(prettyNum(p, digits=2, scientific=TRUE), 2))
-ymin <- -10
-f <- ggplot(data = rs12075,
-     aes(x = 7:1, y = fold*b, label=paste0(track,": ",format_p(10^log10p)))) +
-     geom_pointrange(aes(ymin=lcl, ymax=ucl), size=2) +
-     geom_text(y=ymin, hjust=0) +
-     geom_abline(intercept = m, slope = 0, lty = 2) +
-     ylim(c(ymin,5)) +
-     coord_flip() +
-     theme_bw() + theme(
-                         axis.text.y = element_blank(),
-                         panel.grid = element_blank(),
-                         panel.border = element_blank(),
-                         text = element_text(size=17)
-                       ) +
-     xlab("Phenotypes") +
-     ylab("Effect size")
-}
+wide <- with(ddat,wide) %>%
+        mutate(
+        CCL2=CCL2.b/CCL2.se,
+        CCL7=CCL7.b/CCL7.se,
+        CCL8=CCL8.b/CCL8.se,
+        CCL11=CCL11.b/CCL11.se,
+        CCL13=CCL13.b/CCL13.se,
+        CXCL6=CXCL6.b/CXCL6.se,
+        Monocyte=b/se,
+        s=CCL2+CCL7+CCL8+CCL11+CCL13+CXCL6+Monocyte) %>%
+        filter(!is.na(s)) %>%
+        select(rsid,chr,pos,CCL2,CCL7,CCL8,CCL11,CCL13,CXCL6,Monocyte) %>%
+        rename(marker=rsid)
+plink_bin <- "/rds/user/jhz22/hpc-work/bin/plink"
+chr <- 1
+bfile <- file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr))
+r <- ieugwasr::ld_matrix(select(wide,marker),with_alleles=TRUE,pop="EUR",bfile=bfile,plink_bin=plink_bin)
+rnames <- gsub("_[A-Z]*","",colnames(r))
+wide <- subset(wide,marker %in% rnames)
+rsids <- intersect(rnames,with(wide,marker))
+ld <- r
+colnames(ld) <- rownames(ld) <- rnames
+ld <- ld[rsids,rsids]
+d <- subset(wide,marker %in% rsids)
+z <- d[c("CCL2","CCL7","CCL8","CCL11","CCL13","CXCL6","Monocyte")]
+rownames(z) <- with(d,marker)
+library(gassocplot)
+sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits = c("CCL2","CCL7","CCL8","CCL11","CCL13","CXCL6","Monocyte"),
+                        ylab = "-log10(P)", legend=TRUE)
+stack_assoc_plot_save(sap, paste0("rs12075-gassoc.png"), 7, width=8, height=20, dpi=300)
+
