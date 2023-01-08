@@ -49,14 +49,16 @@ R --no-save -q <<END
                     select(Protein,Allele1,Allele2,EFFECT_ALLELE,REFERENCE_ALLELE,Freq1,Effect,StdErr,log.P.,CODE_ALL_FQ,BETA,SE,PVAL,cis.trans) %>%
                     mutate(sw=if_else(Allele1==REFERENCE_ALLELE,-1,1)) %>%
                     mutate(BETA=sw*BETA)
+  subset(INF1_aristotle[c("Effect","BETA","log.P.","PVAL","cis.trans")],cis.trans=="cis") %>% arrange(Effect)
   png(file=file.path(INF,"aristotle","SF-INF-ARISTOTLE.png"),res=300,width=15,height=15,units="in")
   attach(INF1_aristotle)
-  plot(Effect,BETA,pch=19,cex=2,col=ifelse(cis.trans=="trans","blue","red"),axes=FALSE,ann=FALSE)
-  axis(1,cex.axis=1.5,lwd.tick=0.5,line=0)
-  axis(2,cex.axis=1.5,lwd.tick=0.5,line=0)
+  par(mar=c(5,5,1,1))
+  plot(Effect,BETA,pch=19,cex=2,col=ifelse(cis.trans=="trans","blue","red"),xaxt="n",ann=FALSE,cex.axis=2)
+  axis(1,cex.axis=2,lwd.tick=0.5)
+# axis(2,cex.axis=2,lwd.tick=0.5)
   legend(x=1.5,y=-0.5,c("cis","trans"),box.lwd=0,cex=2,col=c("red","blue"),pch=19)
-  mtext("ARISTOTLE",side=2,line=2.5,cex=1.5)
-  mtext("Meta-analyhsis",side=1,line=2.5,cex=1.5)
+  mtext("ARISTOTLE",side=2,line=2.5,cex=2)
+  mtext("Meta-analysis",side=1,line=2.5,cex=2)
   detach(INF1_aristotle)
   dev.off()
   all <- INF1_aristotle %>%
