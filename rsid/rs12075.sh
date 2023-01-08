@@ -239,3 +239,12 @@ R --no-save -q <<END
    m <- merge(gap::inf1,g,by="uniprot",all.x=TRUE)
 END
 }
+
+
+function mono()
+{
+  gunzip -c ~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/gzipped_interval/mono.tsv.gz | \
+  awk 'NR==1 || ($3==1 && $4 >= 158175353 && $4 <= 160525679)' | \
+  bgzip -f > ${INF}/work/mono.tsv.gz
+  tabix -S1 -s3 -b4 -e4 ${INF}/work/mono.tsv.gz
+}
