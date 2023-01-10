@@ -1,4 +1,4 @@
-fetch_region <- function()
+fetch_region <- function(src="chen")
 {
   suppressMessages(library(dplyr))
   chr <- 1
@@ -19,12 +19,20 @@ fetch_region <- function()
     print(subset(t,snpid=="chr1:159175354_A_G"))
     print(dim(t))
   }
-  f <- file.path(INF,"work","mono.tsv.gz")
-  mono <- seqminer::tabix.read.table(tabixFile = f, tabixRange = r, stringsAsFactors = FALSE)
-  names(mono) <- c("VARIANT","ID_dbSNP49","CHR","BP","REF","ALT","EFFECT_INT","SE_INT","MLOG10P_INT","ALT_FREQ_INT","INFO_INT")
-  mono <- rename(mono, snpid=VARIANT,rsid=ID_dbSNP49,chr=CHR,pos=BP,a1=ALT,a2=REF,b=EFFECT_INT,se=SE_INT,log10p=MLOG10P_INT,af=ALT_FREQ_INT) %>%
-          select(snpid, rsid, chr, pos, a2, a1, b, se, af, log10p) %>%
-          mutate(snpid=if_else(a1<a2,paste0("chr",chr,":",pos,"_",a1,"_",a2),paste0("chr",chr,":",pos,"_",a2,"_",a1)),log10p=-log10p)
+  if (src!="chen")
+  {
+    f <- file.path(INF,"work","mono.tsv.gz")
+    mono <- seqminer::tabix.read.table(tabixFile = f, tabixRange = r, stringsAsFactors = FALSE)
+    names(mono) <- c("VARIANT","ID_dbSNP49","CHR","BP","REF","ALT","EFFECT_INT","SE_INT","MLOG10P_INT","ALT_FREQ_INT","INFO_INT")
+    mono <- rename(mono, snpid=VARIANT,rsid=ID_dbSNP49,chr=CHR,pos=BP,a1=ALT,a2=REF,b=EFFECT_INT,se=SE_INT,log10p=MLOG10P_INT,af=ALT_FREQ_INT) %>%
+            select(snpid, rsid, chr, pos, a2, a1, b, se, af, log10p) %>%
+            mutate(snpid=if_else(a1<a2,paste0("chr",chr,":",pos,"_",a1,"_",a2),paste0("chr",chr,":",pos,"_",a2,"_",a1)),log10p=-log10p)
+  } else {
+    f <- file.path(INF,"work","mono-chen.tsv.gz")
+    mono <- seqminer::tabix.read.table(tabixFile = f, tabixRange = r, stringsAsFactors = FALSE) %>%
+    setNames(c("snpid","rsid","chr","pos","a1","a2","af","b","se","p")) %>%
+    mutate(log10p=log10(p))
+  }
   wide <- right_join(d,mono)[grepl("chr|pos|snpid|rsid|a1|a2|af|b|se|log10p",names(d))] %>%
           arrange(chr,pos)
   for(i in 1:6)
@@ -78,10 +86,9 @@ long <- with(dat,long) %>%
         mutate(lcl=b-1.96*se,ucl=b+1.96*se,track=factor(track,levels=c(g,"Monocytes")),pos=pos/1e6)
 region_coords <- c(first(wide$pos),last(wide$pos))
 l <- plot_region(long)
-ggsave("rs12075.png",l,height=20,width=10)
+ggsave(file.path(INF,"hotspots","rs12075.png"),l,height=20,width=10)
 
 rs12075 <- filter(long,pos==159.175354)
-save(rs12075,file="rs12075.rda")
 f <- ggplot(data=rs12075, aes(y=1:7, x=b))+
      geom_point(size=2)+
      geom_errorbarh(aes(xmax = ucl, xmin = lcl, height=0.001))+
@@ -94,12 +101,12 @@ f <- ggplot(data=rs12075, aes(y=1:7, x=b))+
            axis.text.x = element_text(size=16),
            panel.grid=element_blank(),
            panel.spacing = unit(1, "lines"))
-ggsave("rs12075-forest.png",f,height=20,width=10)
+ggsave(file.path(INF,"hotspots","rs12075-forest.png"),f,height=10,width=10)
   
 # arrangement of plots
 require(cowplot)
 fl <- plot_grid(f, l, nrow = 1, labels = "AUTO", label_size = 16)
-ggsave("rs12075-forest-assoc.png",height=20,width=10)
+ggsave(file.path(INF,"hotspots","rs12075-forest-assoc.png"),height=20,width=10)
 
 circos_plot <- function()
 # circos plot
@@ -129,7 +136,7 @@ circos_plot()
 
 dat <- rs12075[c("track","b","se")]
 library(gap)
-png("rs12075-forest.png",height=20,width=10,units="in",res=300)
+png(file.path(INF,"hotspots","SF-rs12075-forest.png"),height=4,width=7,units="in",res=300)
 mr_forestplot(dat, colgap.forest.left="0.05cm", fontsize=14, digits=3,
               leftlabs=c("Outcome","b","SE"),
               rightcols=c("ci","pval"), rightlabs=c("95%CI","P"),digits.pval=2,scientific.pval=TRUE,
@@ -145,10 +152,10 @@ wide <- with(ddat,wide) %>%
         CCL11=CCL11.b/CCL11.se,
         CCL13=CCL13.b/CCL13.se,
         CXCL6=CXCL6.b/CXCL6.se,
-        Monocyte=b/se,
-        s=CCL2+CCL7+CCL8+CCL11+CCL13+CXCL6+Monocyte) %>%
+        Monocytes=b/se,
+        s=CCL2+CCL7+CCL8+CCL11+CCL13+CXCL6+Monocytes) %>%
         filter(!is.na(s)) %>%
-        select(rsid,chr,pos,CCL2,CCL7,CCL8,CCL11,CCL13,CXCL6,Monocyte) %>%
+        select(rsid,chr,pos,CCL2,CCL7,CCL8,CCL11,CCL13,CXCL6,Monocytes) %>%
         rename(marker=rsid)
 plink_bin <- "/rds/user/jhz22/hpc-work/bin/plink"
 chr <- 1
@@ -161,10 +168,13 @@ ld <- r
 colnames(ld) <- rownames(ld) <- rnames
 ld <- ld[rsids,rsids]
 d <- subset(wide,marker %in% rsids)
-z <- d[c("CCL2","CCL7","CCL8","CCL11","CCL13","CXCL6","Monocyte")]
+z <- d[c("CCL2","CCL7","CCL8","CCL11","CCL13","CXCL6","Monocytes")]
 rownames(z) <- with(d,marker)
 library(gassocplot)
-sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits = c("CCL2","CCL7","CCL8","CCL11","CCL13","CXCL6","Monocyte"),
-                        ylab = "-log10(P)", legend=TRUE)
-stack_assoc_plot_save(sap, paste0("rs12075-gassoc.png"), 7, width=8, height=20, dpi=300)
+pdf(file.path(INF,"hotspots","SF-rs12075-gassoc.pdf"),height=20,width=10)
+sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits=names(z), ylab="-log10(P)", legend=FALSE)
+grid::grid.draw(sap)
+dev.off()
 
+# stack_assoc_plot_save(sap, paste0("rs12075-gassoc.png"), 7, width=8, dpi=300)
+# ggsave("rs12075-gassoc.png", plot=grid::grid.draw(sap), dpi=300, height=20, width=8, units="in", limitsize=FALSE)
