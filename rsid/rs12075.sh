@@ -240,11 +240,23 @@ R --no-save -q <<END
 END
 }
 
-
 function mono()
 {
+# Astle paper
   gunzip -c ~/rds/results/public/gwas/blood_cell_traits/astle_2016/raw_results/blood_cell_traits/gzipped_interval/mono.tsv.gz | \
   awk 'NR==1 || ($3==1 && $4 >= 158175353 && $4 <= 160525679)' | \
   bgzip -f > ${INF}/work/mono.tsv.gz
   tabix -S1 -s3 -b4 -e4 ${INF}/work/mono.tsv.gz
+# Chen paper
+  (
+    echo snpid rsid chromosome base_pair_location effect_allele other_allele effect_allele_frequency beta standard_error p_value
+    tabix ~/rds/rds-jmmh2-results/public/gwas/blood_cell_traits/chen_2020/tsv/EUR-mono.tsv.gz 1:158175353-160525679 | \
+    sort -k1,1 | \
+    join ~/INF/work/INTERVAL.rsid -
+  ) | \
+  tr ' ' '\t' | \
+  bgzip -f > ${INF}/work/mono-chen.tsv.gz
+  tabix -S1 -s3 -b4 -e4 ${INF}/work/mono-chen.tsv.gz
 }
+
+convert -density 300 SF-rs12075-gassoc.pdf SF-rs12075-gassoc.png

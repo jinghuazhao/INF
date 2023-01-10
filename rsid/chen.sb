@@ -1,0 +1,25 @@
+#!/usr/bin/bash
+
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --job-name=tabix
+#SBATCH --array=1-15
+#SBATCH --qos=cardio
+#SBATCH --mem=50000
+#SBATCH --time=12:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_tabix_%A_%a.o
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_tabix_%A_%a.e
+
+export TMPDIR=${HPC_WORK}/work
+
+export f=$(ls ~/rds/rds-jmmh2-results/public/gwas/blood_cell_traits/chen_2020/*EUR* | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
+export d=$(dirname $f)
+export trait=$(basename $f | tr '_' '\t' | cut -f1)
+
+(
+  gunzip -c $f | head -1 | awk -vFS="\t" -vOFS="\t" '{print "snpid",$0}'
+  gunzip -c $f | sed '1d' | sort -k1,1n -k2,2n | \
+  awk -vFS="\t" -vOFS="\t" '{if($3<$4) snpid="chr"$1":"$2"_"$3"_"$4; else snpid="chr"$1":"$2"_"$3"_"$4; print snpid,$0}'
+) | \
+bgzip -f > $d/tsv/EUR-$trait.tsv.gz
+tabix -S1 -s2 -b3 -e3 $d/tsv/EUR-$trait.tsv.gz
