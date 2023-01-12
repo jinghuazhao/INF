@@ -80,7 +80,7 @@ plot_region <- function(dat)
 INF <- Sys.getenv("INF")
 g <- c("CCL2", "CCL7", "CCL8", "CCL11", "CCL13", "CXCL6")
 p <- c("MCP.1", "MCP.3", "MCP.2", "CCL11", "MCP.4", "CXCL6")
-dat <- ddat <- fetch_region()
+dat <- fetch_region()
 wide <- with(dat,wide) %>% mutate(pos=pos/1e6)
 long <- with(dat,long) %>%
         mutate(lcl=b-1.96*se,ucl=b+1.96*se,track=factor(track,levels=c(g,"Monocytes")),pos=pos/1e6)
@@ -134,17 +134,17 @@ circos_plot <- function()
 
 circos_plot()
 
-dat <- rs12075[c("track","b","se")]
+d <- rs12075[c("track","b","se")]
 library(gap)
 png(file.path(INF,"hotspots","SF-rs12075-forest.png"),height=4,width=7,units="in",res=300)
-mr_forestplot(dat, colgap.forest.left="0.05cm", fontsize=14, digits=3,
+mr_forestplot(d, colgap.forest.left="0.05cm", fontsize=14, digits=3,
               leftlabs=c("Outcome","b","SE"),
               rightcols=c("ci","pval"), rightlabs=c("95%CI","P"),digits.pval=2,scientific.pval=TRUE,
               common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
               spacing=1.6,digits.TE=3,digits.se=3)
 dev.off()
 
-wide <- with(ddat,wide) %>%
+wide <- with(dat,wide) %>%
         mutate(
         CCL2=CCL2.b/CCL2.se,
         CCL7=CCL7.b/CCL7.se,
@@ -172,7 +172,7 @@ z <- d[c("CCL2","CCL7","CCL8","CCL11","CCL13","CXCL6","Monocytes")]
 rownames(z) <- with(d,marker)
 library(gassocplot)
 pdf(file.path(INF,"hotspots","SF-rs12075-gassoc.pdf"),height=20,width=10)
-sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits=names(z), ylab="-log10(P)", legend=FALSE)
+sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits=names(z), ylab="-log10(P)", legend=TRUE)
 grid::grid.draw(sap)
 dev.off()
 
