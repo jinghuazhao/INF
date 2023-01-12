@@ -20,7 +20,7 @@ INF1_aggr <- INF1_metal %>%
             SEs=paste(StdErr,collapse=";"),
             log10P=paste(log.P.,collapse=";"),
             cistrans=paste(cis.trans,collapse=";")) %>% data.frame()
-
+setwd(INF)
 rsid <- INF1_aggr[["INF1_rsid"]]
 catalogue <- "GWAS"
 proxies <- "EUR"
@@ -28,14 +28,17 @@ p <- 5e-8
 r2 <- 0.8
 build <- 37
 
-r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
-lapply(r,dim)
-snps_results <- with(r,right_join(snps,results))
-ps <- subset(snps_results,select=-c(hg38_coordinates,ref_hg38_coordinates,pos_hg38,ref_pos_hg38,dprime))
-sarcoidosis <- with(ps,grep("sarcoidosis",trait))
-ps[sarcoidosis,"efo"] <- "Orphanet_797"
-save(INF1_aggr,r,ps,file=file.path(INF,"work","INF1.merge.GWAS"))
-
+if (FALSE) {
+  r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
+  lapply(r,dim)
+  snps_results <- with(r,right_join(snps,results))
+  ps <- subset(snps_results,select=-c(hg38_coordinates,ref_hg38_coordinates,pos_hg38,ref_pos_hg38,dprime))
+  sarcoidosis <- with(ps,grep("sarcoidosis",trait))
+  ps[sarcoidosis,"efo"] <- "Orphanet_797"
+  save(INF1_aggr,r,ps,file=file.path(INF,"work","INF1.merge.GWAS"))
+} else {
+  load(file.path(INF,"work","INF1.merge.GWAS"))
+}
 metal <- subset(within(INF1_metal,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)}),
                 select=-c(Chromosome,Position,INF1_rsid,Direction))
 aggr <- subset(within(INF1_aggr,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)}),
@@ -50,22 +53,25 @@ short[with(short,efo)%in%infection_efo,"infection"] <- 1
 
 require(openxlsx)
 xlsx <- file.path(INF,"work","pqtl-immune_infection.xlsx")
-wb <- createWorkbook(xlsx)
-addWorksheet(wb, "METAL")
-writeDataTable(wb, "METAL", subset(INF1_metal,select=-c(INF1_rsid,hg19_coordinates)))
-addWorksheet(wb, "ps")
-writeDataTable(wb, "ps", ps)
-addWorksheet(wb, "EFO")
-writeDataTable(wb, "EFO", immune_infection)
-addWorksheet(wb, "long")
-writeDataTable(wb, "long", 
-               subset(long,select=-c(hg19_coordinates,ref_hg19_coordinates,ref_protein_position,ref_amino_acids,
+if (FALSE)
+{
+  wb <- createWorkbook(xlsx)
+  addWorksheet(wb, "METAL")
+  writeDataTable(wb, "METAL", subset(INF1_metal,select=-c(INF1_rsid,hg19_coordinates)))
+  addWorksheet(wb, "ps")
+  writeDataTable(wb, "ps", ps)
+  addWorksheet(wb, "EFO")
+  writeDataTable(wb, "EFO", immune_infection)
+  addWorksheet(wb, "long")
+  writeDataTable(wb, "long",
+                 subset(long,select=-c(hg19_coordinates,ref_hg19_coordinates,ref_protein_position,ref_amino_acids,
                       snp,snpid,protein_position,amino_acids)))
-addWorksheet(wb, "short")
-writeDataTable(wb, "short", 
-               subset(short,select=-c(hg19_coordinates,ref_hg19_coordinates,ref_protein_position,ref_amino_acids,
-                      snp,snpid,protein_position,amino_acids)))
-saveWorkbook(wb, file=xlsx, overwrite=TRUE)
+  addWorksheet(wb, "short")
+  writeDataTable(wb, "short",
+                 subset(short,select=-c(hg19_coordinates,ref_hg19_coordinates,ref_protein_position,ref_amino_acids,
+                        snp,snpid,protein_position,amino_acids)))
+  saveWorkbook(wb, file=xlsx, overwrite=TRUE)
+}
 
 view <- function(id,efoid,
                  v=c("MarkerName","Allele1","Allele2","a1","a2","efo","ref_a1","ref_a2","proxy","r2",
@@ -76,212 +82,295 @@ view <- function(id,efoid,
   d <- subset(short[v],MarkerName==id & efo==efoid)
   subset(d,select=-c(MarkerName,efo))
 }
-# Rheumatoid arthritis
-view("chr1:154426970_A_C","EFO_0000685")
-# T1D
-view("chr12:111884608_C_T", "EFO_0001359")
-# Primary sclerosing cholangitis
-view("chr12:111884608_C_T", "EFO_0004268")
-# celiac
-view("chr12:111884608_C_T", "EFO_0001060")
-# Hypothyroidism
-view("chr12:111884608_C_T", "EFO_0004705")
-# Inflammatory bowel disease
-view("chr12:111884608_C_T", "EFO_0003767")
-# Primary biliary cirrhosis
-view("chr12:111884608_C_T", "EFO_1001486")
-# Allergic disease asthma hay fever or eczema
-view("chr12:111932800_C_T", "EFO_0003785")
-# Celiac
-view("chr12:112007756_C_T","EFO_0001060")
-# Crohn's
-view("chr19:49206172_C_T","EFO_0000384")
-# IBD
-view("chr19:49206172_C_T","EFO_0003767")
-# Rheumatoid arthritis
-view("chr6:32424882_C_T","EFO_0000685")
-# Self-reported ankylosing spondylitis
-view("chr6:32424882_C_T","EFO_0003898")
-# Multiple sclerosis
-view("chr6:32424882_C_T","EFO_0003885")
-# Self-reported psoriasis
-view("chr6:32424882_C_T","EFO_0000676")
-# Systemic lupus erythematosus SLE
-view("chr6:32424882_C_T","EFO_0002690")
-# Self-reported malabsorption or coeliac disease
-view("chr6:32424882_C_T","EFO_0001060")
-# IgA nephropathy
-view("chr6:32424882_C_T","EFO_0004194")
-# Self-reported sarcoidosis
-view("chr6:32424882_C_T","Orphanet_797")
-# Primary sclerosing cholangitis
-view("chr6:32424882_C_T","EFO_0004268")
 
-inf1_targetshort <- vector()
-for(i in 1:92) inf1_targetshort[inf1[i,"prot"]] <- inf1[i,"target.short"]
-
-xlsx <- "work/pqtl-immune_infection_edited.xlsx"
-pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220)) %>%
-                         mutate(target.short=prots)
-for(i in 1:nrow(pqtl_immune_infection))
+imd <- function()
 {
-  nprots <- pqtl_immune_infection[i,"nprots"]
-  aa <- pqtl_immune_infection[i,"prots"]
-  ij <- unlist(strsplit(pqtl_immune_infection[i,"prots"],";"))
-  for(j in 1:nprots) aa <- gsub(ij[j],inf1_targetshort[ij[j]],aa)
-  pqtl_immune_infection[i, "target.short"] <- aa
+  # Rheumatoid arthritis
+  view("chr1:154426970_A_C","EFO_0000685")
+  # T1D
+  view("chr12:111884608_C_T", "EFO_0001359")
+  # Primary sclerosing cholangitis
+  view("chr12:111884608_C_T", "EFO_0004268")
+  # celiac
+  view("chr12:111884608_C_T", "EFO_0001060")
+  # Hypothyroidism
+  view("chr12:111884608_C_T", "EFO_0004705")
+  # Inflammatory bowel disease
+  view("chr12:111884608_C_T", "EFO_0003767")
+  # Primary biliary cirrhosis
+  view("chr12:111884608_C_T", "EFO_1001486")
+  # Allergic disease asthma hay fever or eczema
+  view("chr12:111932800_C_T", "EFO_0003785")
+  # Celiac
+  view("chr12:112007756_C_T","EFO_0001060")
+  # Crohn's
+  view("chr19:49206172_C_T","EFO_0000384")
+  # IBD
+  view("chr19:49206172_C_T","EFO_0003767")
+  # Rheumatoid arthritis
+  view("chr6:32424882_C_T","EFO_0000685")
+  # Self-reported ankylosing spondylitis
+  view("chr6:32424882_C_T","EFO_0003898")
+  # Multiple sclerosis
+  view("chr6:32424882_C_T","EFO_0003885")
+  # Self-reported psoriasis
+  view("chr6:32424882_C_T","EFO_0000676")
+  # Systemic lupus erythematosus SLE
+  view("chr6:32424882_C_T","EFO_0002690")
+  # Self-reported malabsorption or coeliac disease
+  view("chr6:32424882_C_T","EFO_0001060")
+  # IgA nephropathy
+  view("chr6:32424882_C_T","EFO_0004194")
+  # Self-reported sarcoidosis
+  view("chr6:32424882_C_T","Orphanet_797")
+  # Primary sclerosing cholangitis
+  view("chr6:32424882_C_T","EFO_0004268")
+
+  inf1_targetshort <- vector()
+  for(i in 1:92) inf1_targetshort[inf1[i,"prot"]] <- inf1[i,"target.short"]
+
+  xlsx <- "work/pqtl-immune_infection_edited.xlsx"
+  pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220)) %>%
+                           mutate(target.short=prots)
+  for(i in 1:nrow(pqtl_immune_infection))
+  {
+    nprots <- pqtl_immune_infection[i,"nprots"]
+    aa <- pqtl_immune_infection[i,"prots"]
+    ij <- unlist(strsplit(pqtl_immune_infection[i,"prots"],";"))
+    for(j in 1:nprots) aa <- gsub(ij[j],inf1_targetshort[ij[j]],aa)
+    pqtl_immune_infection[i, "target.short"] <- aa
+  }
+  v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
+         "ref_rsid","ref_a1","ref_a2","proxy","r2",
+         "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
+  mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
+  {
+    flag <- (HLA==1)
+    prefix <- rsid
+    prefix[flag] <- paste0(rsid[flag],"*")
+    rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-",
+                        prefix," (",hgnc,")")
+    trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
+    trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
+    trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
+    trait_shown <- gsub("malabsorption or coeliac disease","malasorption or celiac disease",trait_shown)
+    trait_shown <- gsub("systemic lupus erythematosis or sle|Systemic lupus erythematosus SLE","systemic lupus erythematosus",trait_shown)
+    trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
+    positiveEffects <- sign(as.numeric(Effects))
+  # it happened that all NA's have beta>0 from multiple proteins
+    positiveEffects[is.na(as.numeric(Effects))] <- 1
+    qtl_direction <- sign(as.numeric(beta))
+  # we have >1 with beta=NA, so settle on either side of zero
+    qtl_direction[unit=="-"] <- 0.5*(runif(1)>0)
+    qtl_direction[positiveEffects==-1] <- -qtl_direction[positiveEffects==-1]
+    qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
+  # efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
+    efoTraits <- paste0(trait_shown)
+  })
+  # all beta's are NAs when unit=="-"
+  subset(mat[c("study","pmid","unit","beta","Keep")],unit=="-")
+  # all studies with risk difference were UKBB, so take the pragmatic decision to award increase in cases
+  subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","Keep")],unit=="risk diff")
+
+  rxc <- with(mat,table(efoTraits,rsidProts))
+  indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
+  if (FALSE) {
+    add_entry <- data.frame(efoTraits="Multiple sclerosis",rsidProts="12-rs2364485 [TNFB](LTA)",qtl_direction=1)
+    indices_new <- rbind(indices,add_entry)
+    rxc <- with(indices_new,table(efoTraits,rsidProts))
+  }
+  # pedantic implementation but take advantage of indexed by character names
+  for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
+     s <- subset(indices,efoTraits==rn & rsidProts==cn)
+  # there should be a unique cn and rn combination so only one direction
+     qd <- s[["qtl_direction"]]
+     if(length(qd)>1) stop("duplicates")
+     class(qd) <- "numeric"
+     if(nrow(s)>0 & !is.na(qd[1])) rxc[rn,cn] <- qd[1]
+  }
+  rxc
 }
-v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
-       "ref_rsid","ref_a1","ref_a2","proxy","r2",
-       "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
-mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
+
+rxc <- imd()
+
+SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", h=13, w=18, ylab="Immune-mediated outcomes")
 {
-  flag <- (HLA==1)
-  prefix <- rsid
-  prefix[flag] <- paste0(rsid[flag],"*")
-  rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-",
-                      prefix," (",hgnc,")")
-  trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
-  trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
-  trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
-  trait_shown <- gsub("malabsorption or coeliac disease","malasorption or celiac disease",trait_shown)
-  trait_shown <- gsub("systemic lupus erythematosis or sle|Systemic lupus erythematosus SLE","systemic lupus erythematosus",trait_shown)
-  trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
-  positiveEffects <- sign(as.numeric(Effects))
-# it happened that all NA's have beta>0 from multiple proteins
-  positiveEffects[is.na(as.numeric(Effects))] <- 1
-  qtl_direction <- sign(as.numeric(beta))
-# we have >1 with beta=NA, so settle on either side of zero
-  qtl_direction[unit=="-"] <- 0.5*(runif(1)>0)
-  qtl_direction[positiveEffects==-1] <- -qtl_direction[positiveEffects==-1]
-  qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
-# efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
-  efoTraits <- paste0(trait_shown)
-})
-# all beta's are NAs when unit=="-"
-subset(mat[c("study","pmid","unit","beta","Keep")],unit=="-")
-# all studies with risk difference were UKBB, so take the pragmatic decision to award increase in cases
-subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","Keep")],unit=="risk diff")
-
-rxc <- with(mat,table(efoTraits,rsidProts))
-indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
-if (FALSE) {
-  add_entry <- data.frame(efoTraits="Multiple sclerosis",rsidProts="12-rs2364485 [TNFB](LTA)",qtl_direction=1)
-  indices_new <- rbind(indices,add_entry)
-  rxc <- with(indices_new,table(efoTraits,rsidProts))
-}
-# pedantic implementation but take advantage of indexed by character names
-for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
-   s <- subset(indices,efoTraits==rn & rsidProts==cn)
-# there should be a unique cn and rn combination so only one direction
-   qd <- s[["qtl_direction"]]
-   if(length(qd)>1) stop("duplicates")
-   class(qd) <- "numeric"
-   if(nrow(s)>0 & !is.na(qd[1])) rxc[rn,cn] <- qd[1]
+  library(pheatmap)
+  col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
+  n1 <- round(nrow(rxc)/2)
+  n2 <- nrow(rxc)-n1
+  annotation_row <- data.frame(c(rep("cis", n1), rep("trans", n2)), row.names=rownames(rxc))
+  colnames(annotation_row) <- c("Cell")
+  library(grid)
+  png(file.path(INF,f),res=300,width=w,height=h,units="in")
+  setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
+  colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
+  pheatmap(rxc, legend=FALSE, angle_col="315", color=col, width=18, height=13, cellwidth=21, cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
+  setHook("grid.newpage", NULL, "replace")
+  grid.text("pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
+  grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
+  dev.off()
 }
 
-library(pheatmap)
-col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
-n1 <- round(nrow(rxc)/2)
-n2 <- nrow(rxc)-n1
-annotation_row <- data.frame(c(rep("cis", n1), rep("trans", n2)), row.names=rownames(rxc))
-colnames(annotation_row) <- c("Cell")
-library(grid)
-png(file.path(INF,"INF1_pQTL_immune_qtl_unclustered.png"),res=300,width=18,height=13,units="in")
-setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
-colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
-pheatmap(rxc, legend=FALSE, angle_col="315", color=col, width=18, height=13, cellwidth=21, cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
-setHook("grid.newpage", NULL, "replace")
-grid.text("pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
-grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=15))
-dev.off()
+# INF1_pQTL_immune_qtl_unclustered.png
+SF(rxc)
 
-pheatmap(rxc,
-         color = col,
-         legend = TRUE,
-         main = "",
-         angle_col = "315",
-         filename = "INF1_pQTL_immune_qtl.png",
-         width = 17,
-         height = 11,
-         treeheight_row = 100,
-         treeheigh_col = 100,
-         cellheight = 20,
-         cellwidth = 20,
-         fontsize_row = 14,
-         fontsize = 13)
+gwas <- function()
+{
+  inf1_targetshort <- vector()
+  for(i in 1:92) inf1_targetshort[inf1[i,"prot"]] <- inf1[i,"target.short"]
 
-library(highcharter)
-fntltp <- JS("function(){
-  return this.series.xAxis.categories[this.point.x] + ' ' +
-  this.series.yAxis.categories[this.point.y] + ':<br>' +
-  Highcharts.numberFormat(this.point.value, 2);
-}")
-hc <- data.frame()
-i <- 1
-for(cn in colnames(tbl)) for(rn in rownames(tbl)) {
-   hc[i,c("f1","f2","v")] <- c(cn,rn,tbl[rn,cn])
-   i <- i + 1
-}
-n <- 4
-stops <- data.frame(
-  q = 0:n/n,
-  c = c("#4287f5","grey","#ffffff","grey","#e32222"),
-  stringsAsFactors = FALSE
-  )
+  short <- merge(aggr,ps,by="hg19_coordinates")
+  for(i in 1:nrow(short))
+  {
+    nprots <- short[i,"nprots"]
+    aa <- short[i,"prots"]
+    ij <- unlist(strsplit(short[i,"prots"],";"))
+    for(j in 1:nprots) aa <- gsub(ij[j],inf1_targetshort[ij[j]],aa)
+    short[i, "target.short"] <- aa
+  }
+  v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
+         "ref_rsid","ref_a1","ref_a2","proxy","r2",
+         "HLA","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study")
+  mat <- within(short[v],
+  {
+    flag <- (HLA==1)
+    prefix <- rsid
+    prefix[flag] <- paste0(rsid[flag],"*")
+    rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-",
+                        prefix," (",hgnc,")")
+    trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
+    trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
+    trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
+    trait_shown <- gsub("malabsorption or coeliac disease","malasorption or celiac disease",trait_shown)
+    trait_shown <- gsub("systemic lupus erythematosis or sle|Systemic lupus erythematosus SLE","systemic lupus erythematosus",trait_shown)
+    trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
+    positiveEffects <- sign(as.numeric(Effects))
+  # it happened that all NA's have beta>0 from multiple proteins
+    positiveEffects[is.na(as.numeric(Effects))] <- 1
+    qtl_direction <- sign(as.numeric(beta))
+  # we have >1 with beta=NA, so settle on either side of zero
+    qtl_direction[unit=="-"] <- 0.5*(runif(1)>0)
+    qtl_direction[positiveEffects==-1] <- -qtl_direction[positiveEffects==-1]
+  # qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
+  # efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
+    efoTraits <- paste0(trait_shown)
+  })
+  # all beta's are NAs when unit=="-"
+  subset(mat[c("study","pmid","unit","beta")],unit=="-")
+  # all studies with risk difference were UKBB, so take the pragmatic decision to award increase in cases
+  subset(mat[c("study","pmid","unit","beta","n_cases","n_controls")],unit=="risk diff")
 
-hc$f1 <- as.factor(hc$f1)
-hc$f2 <- as.factor(hc$f2)
-f1 <- levels(hc$f1)
-highchart() %>%
-  hc_title(text = "pQTLs and Immune-related Diseases",align="center")%>%
-  hc_xAxis(categories = f1) %>%
-  hc_yAxis(categories = hc$f2, reversed = TRUE)%>%
-  hc_colorAxis(min = -1, max=1, stops=list_parse2(stops)) %>%
-  hc_legend(align = "right",layout = "vertical",
-            margin = 0,verticalAlign = "top",
-            y = 30,symbolHeight = 200) %>%
-  hc_tooltip(formatter = fntltp) %>%
-  hc_add_series(data = hc, type = "heatmap",
-                hcaes(x = f1,y = f2,value = v),
-                dataLabels = list(enabled = FALSE))
-
-library(gap)
-aux <- with(with(mat, cbind(inv_chr_pos_a1_a2(MarkerName)[c("chr","pos")],rsid,Allele1,Allele2,prots,HLA,cistrans,efoTraits,qtl_direction)), {
-            flag <- (HLA==1)
-# a bit too specific here as they involve too many proteins nevertheless each combination with the same effect allele
-            Allele1[8:13] <- "T"
-            Allele2[8:13] <- "C"
-            Allele1[25] <- "C"
-            Allele2[25] <- "G"
-            colId <- paste0(substr(chr,4,5),":",pos,"(",Allele1,"/",Allele2,")")
-            colId[flag] <- paste0(colId[flag],"*")
-            colLabel <- paste0(colId," (",prots,")")
-            col <- rep("blue",nrow(mat))
-            col[cistrans=="cis"] <- "red"
-            data.frame(colLabel,col,efoTraits,qtl_direction)
-          })
-Col <- unique(aux[c("colLabel","col")])
-rownames(Col) <- with(Col,colLabel)
-
-RXC <- with(aux,table(efoTraits,colLabel))
-indices <- aux[c("efoTraits","colLabel","qtl_direction")]
-for(cn in colnames(RXC)) for(rn in rownames(RXC)) {
-   s <- subset(indices,efoTraits==rn & colLabel==cn)
-   qd <- s[["qtl_direction"]]
-   if(length(qd)>1) stop("duplicates")
-   class(qd) <- "numeric"
-   if(nrow(s)>0 & !is.na(qd[1])) RXC[rn,cn] <- qd[1]
+  rxc <- with(mat,table(efoTraits,rsidProts))
+  indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
+  if (FALSE) {
+    add_entry <- data.frame(efoTraits="Multiple sclerosis",rsidProts="12-rs2364485 [TNFB](LTA)",qtl_direction=1)
+    indices_new <- rbind(indices,add_entry)
+    rxc <- with(indices_new,table(efoTraits,rsidProts))
+  }
+  # pedantic implementation but take advantage of indexed by character names
+  for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
+     s <- subset(indices,efoTraits==rn & rsidProts==cn)
+  # there should be a unique cn and rn combination so only one direction
+     qd <- s[["qtl_direction"]]
+     class(qd) <- "numeric"
+     if(nrow(s)>0 & !is.na(qd[1])) rxc[rn,cn] <- qd[1]
+  }
+  rxc
 }
 
-library(gplots)
-png("INF1_pQTL_immune_gplots.png",height=35,width=40,units="cm",res=300)
-heatmap.2(RXC, scale = "none", keysize=0.8, col = colorpanel(5, "blue", "white", "red"), margin=c(20,20), trace = "none", 
-          colCol=Col[colnames(RXC),"col"], dendrogram="none", density.info = "none", srtCol=45)
-dev.off()
+rxc <- gwas()
+
+# dummy for GWAS traits and diseases
+SF(rxc[,1:48],f="SF-pQTL-GWAS-1.png",h=100,w=20,ylab="GWAS traits and diseases")
+SF(rxc[,49:96],f="SF-pQTL-GWAS-2.png",h=100,w=20,ylab="GWAS traits and diseases")
 
 obsolete <- function()
 {
+  pheatmap(rxc,
+           color = col,
+           legend = TRUE,
+           main = "",
+           angle_col = "315",
+           filename = "INF1_pQTL_immune_qtl.png",
+           width = 17,
+           height = 11,
+           treeheight_row = 100,
+           treeheigh_col = 100,
+           cellheight = 20,
+           cellwidth = 20,
+           fontsize_row = 14,
+           fontsize = 13)
+
+  library(highcharter)
+  fntltp <- JS("function(){
+    return this.series.xAxis.categories[this.point.x] + ' ' +
+    this.series.yAxis.categories[this.point.y] + ':<br>' +
+    Highcharts.numberFormat(this.point.value, 2);
+  }")
+  hc <- data.frame()
+  i <- 1
+  for(cn in colnames(tbl)) for(rn in rownames(tbl)) {
+     hc[i,c("f1","f2","v")] <- c(cn,rn,tbl[rn,cn])
+     i <- i + 1
+  }
+  n <- 4
+  stops <- data.frame(
+    q = 0:n/n,
+    c = c("#4287f5","grey","#ffffff","grey","#e32222"),
+    stringsAsFactors = FALSE
+  )
+
+  hc$f1 <- as.factor(hc$f1)
+  hc$f2 <- as.factor(hc$f2)
+  f1 <- levels(hc$f1)
+  highchart() %>%
+    hc_title(text = "pQTLs and Immune-related Diseases",align="center")%>%
+    hc_xAxis(categories = f1) %>%
+    hc_yAxis(categories = hc$f2, reversed = TRUE)%>%
+    hc_colorAxis(min = -1, max=1, stops=list_parse2(stops)) %>%
+    hc_legend(align = "right",layout = "vertical",
+              margin = 0,verticalAlign = "top",
+              y = 30,symbolHeight = 200) %>%
+    hc_tooltip(formatter = fntltp) %>%
+    hc_add_series(data = hc, type = "heatmap",
+                  hcaes(x = f1,y = f2,value = v),
+                  dataLabels = list(enabled = FALSE))
+
+  library(gap)
+  aux <- with(with(mat, cbind(inv_chr_pos_a1_a2(MarkerName)[c("chr","pos")],rsid,Allele1,Allele2,prots,HLA,cistrans,efoTraits,qtl_direction)), {
+              flag <- (HLA==1)
+  # a bit too specific here as they involve too many proteins nevertheless each combination with the same effect allele
+              Allele1[8:13] <- "T"
+              Allele2[8:13] <- "C"
+              Allele1[25] <- "C"
+              Allele2[25] <- "G"
+              colId <- paste0(substr(chr,4,5),":",pos,"(",Allele1,"/",Allele2,")")
+              colId[flag] <- paste0(colId[flag],"*")
+              colLabel <- paste0(colId," (",prots,")")
+              col <- rep("blue",nrow(mat))
+              col[cistrans=="cis"] <- "red"
+              data.frame(colLabel,col,efoTraits,qtl_direction)
+            })
+  Col <- unique(aux[c("colLabel","col")])
+  rownames(Col) <- with(Col,colLabel)
+
+  RXC <- with(aux,table(efoTraits,colLabel))
+  indices <- aux[c("efoTraits","colLabel","qtl_direction")]
+  for(cn in colnames(RXC)) for(rn in rownames(RXC)) {
+     s <- subset(indices,efoTraits==rn & colLabel==cn)
+     qd <- s[["qtl_direction"]]
+     if(length(qd)>1) stop("duplicates")
+     class(qd) <- "numeric"
+     if(nrow(s)>0 & !is.na(qd[1])) RXC[rn,cn] <- qd[1]
+  }
+
+  library(gplots)
+  png("INF1_pQTL_immune_gplots.png",height=35,width=40,units="cm",res=300)
+  heatmap.2(RXC, scale = "none", keysize=0.8, col = colorpanel(5, "blue", "white", "red"), margin=c(20,20), trace = "none",
+            colCol=Col[colnames(RXC),"col"], dendrogram="none", density.info = "none", srtCol=45)
+  dev.off()
+
   efo_list_immune <- subset(read.csv("work/efo_list_annotated.csv",as.is=TRUE),immune_mediated==1)
   isd1 <- merge(aggr,subset(ps,efo%in%with(efo_list_immune,EFO)),by="hg19_coordinates")
   write.table(isd1,file="isd1.tsv",row.names=FALSE,quote=FALSE,sep="\t")
@@ -312,10 +401,7 @@ obsolete <- function()
   heatmap(scale(rxc), Rowv = Rowv, Colv = Colv, scale = "none")
 # gplots
   heatmap.2(scale(rxc), scale = "none", col = bluered(100), Rowv = Rowv, Colv = Colv, trace = "none", density.info = "none")
-}
-
-R --no-save -q <<END
   options(width=200)
   IL_12Bcis <- ieugwasr::phewas("rs10076557")
   data.frame(IL_12Bcis)
-END
+}
