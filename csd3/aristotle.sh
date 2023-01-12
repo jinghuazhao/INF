@@ -1,4 +1,4 @@
-# 22-12-2022 JHZ
+# 10-1-2023 JHZ
 
 if [ ! -d ${INF}/aristotle ]; then mkdir ${INF}/aristotle; fi
 (
@@ -29,13 +29,13 @@ do
   "
   ) | bash
 done
-awk -vOFS="\t" '{if(NR>1) {split($1,a,"-");$1=a[1]};print}' INF1.merge.replication.txt-rsid | xsel -i
-for p in 5e-10 1e-5 5e-2
+for p in 5e-10 5e-8 1e-5 5e-2
 do
   echo ${p}
   cut -f12 ${INF}/aristotle/INF1.merge.replication.txt-rsid | awk -v p=${p} '$1<p{print $1}' | wc -l
 done
 cd -
+awk -vOFS="\t" '{if(NR>1) {split($1,a,"-");$1=a[1]};print}' ${INF}/aristotle/INF1.merge.replication.txt-rsid | xsel -i
 
 R --no-save -q <<END
   library(dplyr)
@@ -47,18 +47,17 @@ R --no-save -q <<END
   INF1_aristotle <- mutate(INF1_METAL,Protein=paste0(prot,"-",rsid)) %>%
                     left_join(aristotle) %>%
                     select(Protein,Allele1,Allele2,EFFECT_ALLELE,REFERENCE_ALLELE,Freq1,Effect,StdErr,log.P.,CODE_ALL_FQ,BETA,SE,PVAL,cis.trans) %>%
-                    mutate(sw=if_else(Allele1==REFERENCE_ALLELE,-1,1)) %>%
-                    mutate(BETA=sw*BETA)
+                    mutate(sw=if_else(Allele1==REFERENCE_ALLELE,-1,1),BETA=sw*BETA,sw2=(sign(Effect)==sign(BETA))+0)
   subset(INF1_aristotle[c("Effect","BETA","log.P.","PVAL","cis.trans")],cis.trans=="cis") %>% arrange(Effect)
+  table(INF1_aristotle$sw2)
   png(file=file.path(INF,"aristotle","SF-INF-ARISTOTLE.png"),res=300,width=15,height=15,units="in")
   attach(INF1_aristotle)
   par(mar=c(5,5,1,1))
   plot(Effect,BETA,pch=19,cex=2,col=ifelse(cis.trans=="trans","blue","red"),xaxt="n",ann=FALSE,cex.axis=2)
   axis(1,cex.axis=2,lwd.tick=0.5)
-# axis(2,cex.axis=2,lwd.tick=0.5)
   legend(x=1.5,y=-0.5,c("cis","trans"),box.lwd=0,cex=2,col=c("red","blue"),pch=19)
-  mtext("ARISTOTLE",side=2,line=2.5,cex=2)
-  mtext("Meta-analysis",side=1,line=2.5,cex=2)
+  mtext("ARISTOTLE",side=2,line=3,cex=2)
+  mtext("Meta-analysis",side=1,line=3,cex=2)
   detach(INF1_aristotle)
   dev.off()
   all <- INF1_aristotle %>%
