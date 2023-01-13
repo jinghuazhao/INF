@@ -58,6 +58,7 @@ R --no-save -q <<END
   legend(x=1.5,y=-0.5,c("cis","trans"),box.lwd=0,cex=2,col=c("red","blue"),pch=19)
   mtext("ARISTOTLE",side=2,line=3,cex=2)
   mtext("Meta-analysis",side=1,line=3,cex=2)
+  abline(h=0,v=0)
   detach(INF1_aristotle)
   dev.off()
   all <- INF1_aristotle %>%

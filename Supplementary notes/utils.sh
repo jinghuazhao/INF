@@ -573,3 +573,29 @@ function llod()
     detach(annot)
   '
 }
+
+function pve()
+{
+R --no-save -q <<END
+  INF <- Sys.getenv("INF")
+  png(file.path(INF,"h2","SF-Effect-size-PVE.png"), res=300, units="cm", width=30, height=30)
+  jma <- read.delim(file.path(INF,"work","INF1.jma-rsid"))
+  jma.cistrans <- read.csv(file.path(INF,"work","INF1.jma-rsid.cis.vs.trans"))[c("prot","cis.trans")]
+  INF1_jma <- merge(jma,jma.cistrans,by="prot")
+  with(INF1_jma,
+  {
+    MAF <- freq
+    repl <- MAF > 1-MAF
+    MAF[repl] <- 1-MAF[repl]
+    Effect <- bJ
+    v <- 2*MAF*(1-MAF)*Effect^2
+    col <- c("blue","red")[1+(cis.trans=="trans")]
+#   plot(MAF,abs(Effect),cex.axis=1.3,cex.lab=1.3,pch=19,main="a",xlab="MAF", ylab="Effect size",col=col)
+    library(scatterplot3d)
+    scatterplot3d(MAF,abs(Effect),v,color=col, pch=16, type="h",
+                  xlab="MAF", ylab="Effect", zlab=expression(italic(2*MAF(1-MAF)*Effect^2)), cex.axis=1.3, cex.lab=1.3)
+    legend("right", legend=levels(as.factor(cis.trans)), box.lwd=0, col=c("red", "blue"), pch=16)
+  })
+  dev.off()
+END
+}
