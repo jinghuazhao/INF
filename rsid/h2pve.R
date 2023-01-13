@@ -37,6 +37,20 @@ pve <- hlp[c("target.short", "pve", "SE_pve", "MissDataProp", "x")]; names(pve)[
 pve <- data.frame(pve,source="(c) PVE")
 isp <- rbind(interval,scallop,pve)
 
+png(file.path(INF,"h2","SF-PVE.png"),width=15,height=8,units="in",pointsize=8,res=300)
+pve_order <- filter(pve,!is.na(h2)) %>%
+             arrange(desc(h2)) %>%
+             mutate(xtick=1:n())
+attach(pve_order)
+    par(mar=c(10,5,1,1))
+    plot(h2,cex=2,pch=19,xaxt="n",xlab="",ylab="",cex.axis=1.2)
+    segments(xtick,h2-1.96*h2se,xtick,h2+1.96*h2se)
+    axis(1, at=xtick, labels=target.short, lwd.tick=0.5, lwd=0, las=2, hadj=1, cex.axis=1.2)
+    mtext("PVE",side=2,line=2.5,cex=1.5)
+    mtext("Ordered protein",side=1,line=8.5,cex=1.5,font=1)
+detach(pve_order)
+dev.off()
+
 p <- ggplot(isp,aes(y = x, x = h2))+
      theme_bw()+
      theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
