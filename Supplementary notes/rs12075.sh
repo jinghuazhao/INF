@@ -262,4 +262,6 @@ function mono()
   done
 }
 
-convert -density 300 SF-rs12075-gassoc.pdf SF-rs12075-gassoc.png
+convert -density 300 SF-rs12075-gassoc.pdf[1] SF-rs12075-gassoc.png
+convert -density 300 SF-rs12075-traits-gassoc.pdf[1] SF-rs12075-traits-gassoc.png
+convert +append SF-rs12075-gassoc.png SF-rs12075-traits-gassoc.png SF-rs12075-gassoc-combined.png

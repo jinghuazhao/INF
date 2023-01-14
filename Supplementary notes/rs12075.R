@@ -1,6 +1,5 @@
 fetch_region <- function(src="chen")
 {
-  suppressMessages(library(dplyr))
   chr <- 1
   start <- 159175353
   end <- 159525679
@@ -77,6 +76,8 @@ plot_region <- function(dat)
        ylab(expression(paste("-", log[10], " p-value")))
 }
 
+suppressMessages(library(dplyr))
+
 INF <- Sys.getenv("INF")
 g <- c("CCL2", "CCL7", "CCL8", "CCL11", "CCL13", "CXCL6")
 p <- c("MCP.1", "MCP.3", "MCP.2", "CCL11", "MCP.4", "CXCL6")
@@ -134,47 +135,85 @@ circos_plot <- function()
 
 circos_plot()
 
-d <- rs12075[c("track","b","se")]
+run_gassoc <- TRUE
+
+if (run_gassoc)
+{
+  wide_z <- with(dat,wide) %>%
+            mutate(
+            CCL2=CCL2.b/CCL2.se,
+            CCL7=CCL7.b/CCL7.se,
+            CCL8=CCL8.b/CCL8.se,
+            CCL11=CCL11.b/CCL11.se,
+            CCL13=CCL13.b/CCL13.se,
+            CXCL6=CXCL6.b/CXCL6.se,
+            Monocytes=b/se,
+            s=CCL2+CCL7+CCL8+CCL11+CCL13+CXCL6+Monocytes) %>%
+            filter(!is.na(s)) %>%
+            select(rsid,chr,pos,CCL2,CCL7,CCL8,CCL11,CCL13,CXCL6,Monocytes) %>%
+            rename(marker=rsid)
+  plink_bin <- "/rds/user/jhz22/hpc-work/bin/plink"
+  chr <- 1
+  bfile <- file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr))
+  r <- ieugwasr::ld_matrix(select(wide_z,marker),with_alleles=TRUE,pop="EUR",bfile=bfile,plink_bin=plink_bin)
+  rnames <- gsub("_[A-Z]*","",colnames(r))
+  wide_z <- subset(wide_z,marker %in% rnames)
+  rsids <- intersect(rnames,with(wide_z,marker))
+  ld <- r
+  colnames(ld) <- rownames(ld) <- rnames
+  ld <- ld[rsids,rsids]
+  d <- subset(wide_z,marker %in% rsids)
+  z <- d[c("CCL2","CCL7","CCL8","CCL11","CCL13","CXCL6")]
+  rownames(z) <- with(d,marker)
+  library(gassocplot)
+  pdf(file.path(INF,"hotspots","SF-rs12075-gassoc.pdf"),height=20,width=8)
+  sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits=names(z), ylab="-log10(P)", legend=TRUE)
+  grid::grid.draw(sap)
+  dev.off()
+}
+
+chen_vars <- c("snpid","rsid","chr","pos","a1","a2","af","b","se","p")
+wbc <- read.delim(file.path(INF,"work","wbc-chen.tsv.gz")) %>% setNames(chen_vars)
+mono <- read.delim(file.path(INF,"work","mono-chen.tsv.gz")) %>% setNames(chen_vars)
+baso <- read.delim(file.path(INF,"work","baso-chen.tsv.gz")) %>% setNames(chen_vars)
+
+if (run_gassoc)
+{
+  wbc_z <- wbc %>% mutate(wbc=b/se) %>%
+           select(snpid,rsid,wbc,chr,pos) %>% rename(marker=rsid)
+  mono_z <- mono %>% mutate(mono=b/se) %>% select(snpid,mono)
+  baso_z <- baso %>% mutate(baso=b/se) %>% select(snpid,baso)
+
+  blood_traits <- wbc_z %>% left_join(mono_z) %>% left_join(baso_z) %>% filter(marker!="rs6413465")
+  r <- ieugwasr::ld_matrix(select(blood_traits,marker),with_alleles=TRUE,pop="EUR",bfile=bfile,plink_bin=plink_bin)
+  rnames <- gsub("_[A-Z]*","",colnames(r))
+  blood_traits <- subset(blood_traits,marker %in% rnames)
+  rsids <- intersect(rnames,with(blood_traits,marker))
+  ld <- r
+  colnames(ld) <- rownames(ld) <- rnames
+  ld <- ld[rsids,rsids]
+  d <- subset(blood_traits,marker %in% rsids)
+  z <- d[c("wbc","baso","mono")] %>% setNames(c("WBC","Monocyte count","Basophils count"))
+  rownames(z) <- with(d,marker)
+  library(gassocplot)
+  pdf(file.path(INF,"hotspots","SF-rs12075-traits-gassoc.pdf"),height=20,width=8)
+  sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits=names(z), ylab="-log10(P)", legend=TRUE)
+  grid::grid.draw(sap)
+  dev.off()
+}
+
+# stack_assoc_plot_save(sap, paste0("rs12075-gassoc.png"), 7, width=8, dpi=300)
+# ggsave("rs12075-gassoc.png", plot=grid::grid.draw(sap), dpi=300, height=20, width=8, units="in", limitsize=FALSE)
+
+wbc_rs12075 <- filter(wbc,pos==159175354) %>% mutate(track="WBC") %>% select(track, b,se)
+mono_rs12075 <- filter(mono,pos==159175354) %>% mutate(track="Monocyte count") %>% select(track, b,se)
+baso_rs12075 <- filter(baso,pos==159175354) %>% mutate(track="Basophils count") %>% select(track, b,se)
+d <- bind_rows(filter(rs12075[c("track","b","se")],track!="Monocytes"), wbc_rs12075, mono_rs12075, baso_rs12075)
 library(gap)
-png(file.path(INF,"hotspots","SF-rs12075-forest.png"),height=4,width=7,units="in",res=300)
+png(file.path(INF,"hotspots","SF-rs12075-forest.png"),height=7,width=7.5,units="in",res=300)
 mr_forestplot(d, colgap.forest.left="0.05cm", fontsize=14, digits=3,
               leftlabs=c("Outcome","b","SE"),
               rightcols=c("ci","pval"), rightlabs=c("95%CI","P"),digits.pval=2,scientific.pval=TRUE,
               common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
               spacing=1.6,digits.TE=3,digits.se=3)
 dev.off()
-
-wide <- with(dat,wide) %>%
-        mutate(
-        CCL2=CCL2.b/CCL2.se,
-        CCL7=CCL7.b/CCL7.se,
-        CCL8=CCL8.b/CCL8.se,
-        CCL11=CCL11.b/CCL11.se,
-        CCL13=CCL13.b/CCL13.se,
-        CXCL6=CXCL6.b/CXCL6.se,
-        Monocytes=b/se,
-        s=CCL2+CCL7+CCL8+CCL11+CCL13+CXCL6+Monocytes) %>%
-        filter(!is.na(s)) %>%
-        select(rsid,chr,pos,CCL2,CCL7,CCL8,CCL11,CCL13,CXCL6,Monocytes) %>%
-        rename(marker=rsid)
-plink_bin <- "/rds/user/jhz22/hpc-work/bin/plink"
-chr <- 1
-bfile <- file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr))
-r <- ieugwasr::ld_matrix(select(wide,marker),with_alleles=TRUE,pop="EUR",bfile=bfile,plink_bin=plink_bin)
-rnames <- gsub("_[A-Z]*","",colnames(r))
-wide <- subset(wide,marker %in% rnames)
-rsids <- intersect(rnames,with(wide,marker))
-ld <- r
-colnames(ld) <- rownames(ld) <- rnames
-ld <- ld[rsids,rsids]
-d <- subset(wide,marker %in% rsids)
-z <- d[c("CCL2","CCL7","CCL8","CCL11","CCL13","CXCL6","Monocytes")]
-rownames(z) <- with(d,marker)
-library(gassocplot)
-pdf(file.path(INF,"hotspots","SF-rs12075-gassoc.pdf"),height=20,width=10)
-sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits=names(z), ylab="-log10(P)", legend=TRUE)
-grid::grid.draw(sap)
-dev.off()
-
-# stack_assoc_plot_save(sap, paste0("rs12075-gassoc.png"), 7, width=8, dpi=300)
-# ggsave("rs12075-gassoc.png", plot=grid::grid.draw(sap), dpi=300, height=20, width=8, units="in", limitsize=FALSE)

@@ -620,12 +620,12 @@ Rscript -e '
   mhtdata[cis,"color"] <- "IL17C"
   subset(mhtdata,!is.na(gene))
   png(file.path(INF,"work","INF-IL.17C-mhtplot.png"), res=300, units="in", width=12, height=8)
-    par(cex=0.8, mar=c(6,6,3,1),xpd=TRUE)
-    ops <- mht.control(colors=rep(c("blue4","skyblue"),11),srt=0,yline=2.5,xline=2)
-    hops <- hmht.control(data=filter(mhtdata,!is.na(gene)))
-    mhtplot2(mhtdata,ops,hops,xlab="",ylab="",srt=0, cex.axis=2)
-    axis(2,at=0:15)
+    par(cex=0.8, mar=c(6,6,3,1))
+    ops <- mht.control(colors=rep(c("blue4","skyblue"),11),srt=0,yline=3)
+    hops <- hmht.control(data=filter(mhtdata,!is.na(gene)),colors="red")
+    mhtplot2(mhtdata,ops,hops,xlab="Chromosome",ylab="-log10(P)",srt=0, cex.axis=2)
     abline(h=-log10(5e-10),col="red")
+    axis(2,at=0:15)
   dev.off()
 '
 }
