@@ -1,3 +1,21 @@
+#!/bin/bash
+
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --ntasks=1
+#SBATCH --job-name=_BLR
+#SBATCH --time=8:00:00
+#SBATCH --cpus-per-task=1
+#SBATCH --partition=cardio
+#SBATCH --qos=cardio
+#SBATCH --mem=128800
+#SBATCH --array=1-92
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_BLR_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_BLR_%A_%a.err
+#SBATCH --export ALL
+
+export protein___uniprot=$(cut -d ' ' -f1-28 --complement ${INF}/h2/s.sample | head -1 | tr ' ' '\n' | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
+
+Rscript -e '
 meyer_test <- function()
 # Meyer data
 {
@@ -26,7 +44,6 @@ meyer_test <- function()
 
 scallop <- function(protein,reml=FALSE,eps=0.02)
 # INTERVAL data
-# sed '2d' ~/INF/INTERVAL/o5000-inf1-outlier_in-r2.sample > ~/INF/h2/s.sample"
 {
   if (reml)
   {
@@ -65,7 +82,7 @@ library("BLR")
 library("coda")
 library(gap)
 
-meyer_test()
+# meyer_test()
 
 INF <- Sys.getenv("INF")
 setwd(file.path(INF,"h2"))
@@ -76,6 +93,8 @@ prefix <- file.path(INF,"h2","INTERVAL")
 G <- ReadGRMBin(prefix)
 GRM <- with(G,GRM)
 
-scallop("CCL25___O15444")
-scallop("IL.18R1___Q13478")
-scallop("TNFB___P01374")
+protein___uniprot <- Sys.getenv("protein___uniprot")
+scallop(protein___uniprot)
+'
+
+# sed '2d' ~/INF/INTERVAL/o5000-inf1-outlier_in-r2.sample > ~/INF/h2/s.sample"
