@@ -193,7 +193,7 @@ if (run_gassoc)
   colnames(ld) <- rownames(ld) <- rnames
   ld <- ld[rsids,rsids]
   d <- subset(blood_traits,marker %in% rsids)
-  z <- d[c("wbc","baso","mono")] %>% setNames(c("WBC","Monocyte count","Basophils count"))
+  z <- d[c("wbc","baso","mono")] %>% setNames(c("WBC","Monocyte count","Basophil count"))
   rownames(z) <- with(d,marker)
   library(gassocplot)
   pdf(file.path(INF,"hotspots","SF-rs12075-traits-gassoc.pdf"),height=20,width=8)
@@ -207,7 +207,7 @@ if (run_gassoc)
 
 wbc_rs12075 <- filter(wbc,pos==159175354) %>% mutate(track="WBC") %>% select(track, b,se)
 mono_rs12075 <- filter(mono,pos==159175354) %>% mutate(track="Monocyte count") %>% select(track, b,se)
-baso_rs12075 <- filter(baso,pos==159175354) %>% mutate(track="Basophils count") %>% select(track, b,se)
+baso_rs12075 <- filter(baso,pos==159175354) %>% mutate(track="Basophil count") %>% select(track, b,se)
 d <- bind_rows(filter(rs12075[c("track","b","se")],track!="Monocytes"), wbc_rs12075, mono_rs12075, baso_rs12075)
 library(gap)
 png(file.path(INF,"hotspots","SF-rs12075-forest.png"),height=7,width=7.5,units="in",res=300)
