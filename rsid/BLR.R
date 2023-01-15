@@ -24,13 +24,16 @@ meyer_test <- function()
   with(r, h2G(sigma, sigma.cov))
 }
 
-scallop <- function(protein,eps=0.02)
+scallop <- function(protein,reml=FALSE,eps=0.02)
 # INTERVAL data
 # sed '2d' ~/INF/INTERVAL/o5000-inf1-outlier_in-r2.sample > ~/INF/h2/s.sample"
 {
-  m <- as.formula(paste(protein,"~",paste(covar,collapse="+"),"+",paste(qcovar,collapse="+"),"+","GRM"))
-  i <- regress(m, data = s)
-  i
+  if (reml)
+  {
+    m <- as.formula(paste(protein,"~",paste(covar,collapse="+"),"+",paste(qcovar,collapse="+"),"+","GRM"))
+    i <- regress(m, data = s)
+    print(i)
+  }
   attach(s)
   X <- as.matrix(s[c(covar, qcovar)])
   keep <- !is.na(apply(X,1,sum))
