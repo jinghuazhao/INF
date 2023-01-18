@@ -11,12 +11,7 @@ R --no-save <<END
   {
     x2 <- (Effect/StdErr)^2
     r2 <- x2 / (N - 2 + x2)
-    v <- 1 / (N - 1)
-# r
-# r <- sqrt(r2)
-# vr <- (1 - r2)^2/ N
-# Taylor expansion
-# v2 <- 2 * r2^2 * (1 + 1/ (N + 1)^2)
+    v <- 2*(N-2) / ((N - 1)^2*(N+1))
   })
   s <- with(tbl, aggregate(r2,list(prot),sum))
   names(s) <- c("prot", "pve")
