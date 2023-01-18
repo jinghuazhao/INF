@@ -13,7 +13,7 @@ Rscript -e '
   {
     x2 <- (Effect/StdErr)^2
     r2 <- x2 / (N - 2 + x2)
-    v <- 2 / (N - 1)^2
+    v <- 2*(N-2) / ((N - 1)^2*(N+1))
   })
   s <- with(tbl, aggregate(r2,list(prot),sum))
   names(s) <- c("prot", "pve")
@@ -69,8 +69,6 @@ Rscript -e '
   dev.off()
 '
 
-function merge()
-{
 Rscript -e '
 # This part needs to be run inside R
   options(width=200)
@@ -134,4 +132,3 @@ Rscript -e '
   h2_ldak_pve <- merge(merge(h2,ldak,by="prot"),pve,by="prot",all=TRUE)
   write.csv(h2_ldak_pve,file=file.path(INF,"ldak","h2-ldak-pve.csv"),quote=FALSE,row.names=FALSE)
 '
-}

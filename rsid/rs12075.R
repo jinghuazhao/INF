@@ -184,7 +184,7 @@ if (run_gassoc)
   mono_z <- mono %>% mutate(mono=b/se) %>% select(snpid,mono)
   baso_z <- baso %>% mutate(baso=b/se) %>% select(snpid,baso)
 
-  blood_traits <- wbc_z %>% left_join(mono_z) %>% left_join(baso_z) %>% filter(marker!="rs6413465")
+  blood_traits <- wbc_z %>% left_join(mono_z) %>% left_join(baso_z) %>% filter(marker!="rs6413465") %>% select(chr,pos,marker,mono,baso,wbc)
   r <- ieugwasr::ld_matrix(select(blood_traits,marker),with_alleles=TRUE,pop="EUR",bfile=bfile,plink_bin=plink_bin)
   rnames <- gsub("_[A-Z]*","",colnames(r))
   blood_traits <- subset(blood_traits,marker %in% rnames)
@@ -193,7 +193,7 @@ if (run_gassoc)
   colnames(ld) <- rownames(ld) <- rnames
   ld <- ld[rsids,rsids]
   d <- subset(blood_traits,marker %in% rsids)
-  z <- d[c("wbc","baso","mono")] %>% setNames(c("WBC","Monocyte count","Basophil count"))
+  z <- d[c("mono","baso","wbc")] %>% setNames(c("Monocyte count","Basophil count","WBC"))
   rownames(z) <- with(d,marker)
   library(gassocplot)
   pdf(file.path(INF,"hotspots","SF-rs12075-traits-gassoc.pdf"),height=20,width=8)

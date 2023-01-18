@@ -3,17 +3,17 @@
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --ntasks=1
 #SBATCH --job-name=_BLR
-#SBATCH --time=8:00:00
+#SBATCH --time=1-00:00:00
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=cardio
 #SBATCH --qos=cardio
 #SBATCH --mem=128800
-#SBATCH --array=1-92
+#SBATCH --array=1-91
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_BLR_%A_%a.out
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_BLR_%A_%a.err
 #SBATCH --export ALL
 
-export protein___uniprot=$(cut -d ' ' -f1-28 --complement ${INF}/h2/s.sample | head -1 | tr ' ' '\n' | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
+export protein___uniprot=$(cut -d ' ' -f1-28 --complement ${INF}/h2/s.sample | head -1 | tr ' ' '\n' | grep -v BDNF | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]')
 
 Rscript -e '
 meyer_test <- function()
@@ -60,15 +60,15 @@ scallop <- function(protein,reml=FALSE,eps=0.02)
   m <- BLR(y, XF = XF, GF = list(ID = 1:nrow(A), A = A),
            prior = list(varE = list(df = 1, S = 0.25),
            varU = list(df = 1, S = 0.63)),
-           nIter = 500000, burnIn = 15000, thin = 1, saveAt = paste0(protein,".BLR_"))
+           nIter = 250000, burnIn = 10000, thin = 1, saveAt = paste0(protein,".BLR_"))
   with(m, h2G(sigma, sigma.cov))
   detach(s)
   attach(m)
   varU
   varE
   varU / ((1 + eps) * varU + varE)
-  U <- as.mcmc(scan(paste0(protein,".BLR_varU.dat"))[-(1:150000)])
-  E <- as.mcmc(scan(paste0(protein,".BLR_varE.dat"))[-(1:150000)])
+  U <- as.mcmc(scan(paste0(protein,".BLR_varU.dat"))[-(1:10000)])
+  E <- as.mcmc(scan(paste0(protein,".BLR_varE.dat"))[-(1:10000)])
   e <- as.mcmc(cbind(U, E, h2 = U / ((1 + eps) * U + E)))
   summary(e)$statistics
   HPDinterval(e)
