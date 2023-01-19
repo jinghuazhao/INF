@@ -454,12 +454,12 @@ function f2()
 # f2 hotspot-rs12075.png
 {
   cd ${INF}/work
-  export figure2b=${INF}/hotspots/$1
-  convert signals_by_protein.png -resize 110% 2a.png
-  convert ${figure2b} -resize 80% 2b.png
+  export figure2a=${INF}/hotspots/$1
+  convert ${figure2a} -resize 80% 2a.png
+  convert signals_by_protein.png -resize 110% 2b.png
   convert IL.12B-mhtplot.trunc.png -resize 80% 2c.png
   convert TRAIL-mhtplot.trunc.png -resize 80% 2d.png
-# convert +append 2a.png 2b.png f2-1.png
+  convert +append 2a.png 2b.png f2-1.png
   ln -sf 2a.png f2-1.png
   convert +append 2c.png 2d.png f2-2.png
   convert -append f2-1.png f2-2.png f2.png
@@ -535,8 +535,8 @@ function llod()
   Rscript -e '
     library(dplyr)
     annot <- readRDS(file.path("~","pQTLtools","tests","annot.RDS")) %>%
-             left_join(pQTLdata::inf1[c("prot","target.short","alt_name")],by=c("ID"="prot")) %>%
-             mutate(prot=if_else(is.na(alt_name),target.short,alt_name),order=1:n()) %>%
+             left_join(pQTLdata::inf1[c("prot","gene")],by=c("ID"="prot")) %>%
+             mutate(order=1:n()) %>%
              arrange(desc(order))
     xtick <- seq(1, nrow(annot))
     INF <- Sys.getenv("INF")
@@ -565,7 +565,7 @@ function llod()
     plot(100-pc.belowLOD.new,cex=2,pch=19,col=pQTL,xaxt="n",xlab="",ylab="",cex.axis=1.2)
     text(66,16,"IL-17C",offset=0,pos=2,cex=1.5,font=2,srt=0)
     arrows(67,16,71,16,lwd=2)
-    axis(1, at=xtick, labels=prot, lwd.tick=0.5, lwd=0, las=2, hadj=1, cex.axis=1.2)
+    axis(1, at=xtick, labels=gene, lwd.tick=0.5, lwd=0, las=2, hadj=1, cex.axis=1.2)
     mtext("% samples above LLOD",side=2,line=2.5,cex=1.5)
     mtext("Ordered protein",side=1,line=8.5,cex=1.5,font=1)
     legend(x=1,y=25,c("without pQTL","with pQTL"),box.lwd=0,cex=2,col=c("red","blue"),pch=19)
