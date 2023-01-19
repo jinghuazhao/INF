@@ -2,7 +2,6 @@ options(width=200)
 
 suppressMessages(library(dplyr))
 suppressMessages(library(gap))
-suppressMessages(library(pQTLtools))
 
 INF <- Sys.getenv("INF")
 INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
@@ -27,6 +26,8 @@ proxies <- "EUR"
 p <- 5e-8
 r2 <- 0.8
 build <- 37
+efo_diseases <- read.table(file.path(INF,"ebi","efo-3.26.0","efo_diseases.csv"),col.names=c("efo","disease"),as.is=TRUE,sep=",") %>% pull(efo)
+efo_diseases <- gsub(":", "_", efo_diseases)
 
 if (FALSE) {
   r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
@@ -220,7 +221,8 @@ gwas <- function()
   inf1_targetshort <- vector()
   for(i in 1:92) inf1_targetshort[inf1[i,"prot"]] <- inf1[i,"target.short"]
 
-  short <- merge(aggr,ps,by="hg19_coordinates")
+  short <- merge(aggr,ps,by="hg19_coordinates") %>%
+           filter(efo %in% efo_diseases)
   for(i in 1:nrow(short))
   {
     nprots <- short[i,"nprots"]
@@ -260,6 +262,7 @@ gwas <- function()
   subset(mat[c("study","pmid","unit","beta")],unit=="-")
   # all studies with risk difference were UKBB, so take the pragmatic decision to award increase in cases
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls")],unit=="risk diff")
+  write.table(mat,file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
 
   rxc <- with(mat,table(efoTraits,rsidProts))
   indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
@@ -282,8 +285,7 @@ gwas <- function()
 rxc <- gwas()
 
 # dummy for GWAS traits and diseases
-SF(rxc[,1:48],f="SF-pQTL-GWAS-1.png",h=100,w=20,ylab="GWAS traits and diseases")
-SF(rxc[,49:96],f="SF-pQTL-GWAS-2.png",h=100,w=20,ylab="GWAS traits and diseases")
+SF(rxc,f="SF-pQTL-GWAS.png",h=30,w=20,ylab="GWAS traits and diseases")
 
 obsolete <- function()
 {
@@ -375,7 +377,7 @@ obsolete <- function()
   isd1 <- merge(aggr,subset(ps,efo%in%with(efo_list_immune,EFO)),by="hg19_coordinates")
   write.table(isd1,file="isd1.tsv",row.names=FALSE,quote=FALSE,sep="\t")
 
-  load("work/efo.rda")
+  load(file.path(INF,"files","efo.rda"))
   efo_0000540 <- gsub(":","_",as.data.frame(isd)[["efo_0000540"]])
   isd2 <- merge(aggr,subset(ps,efo%in%efo_0000540),by="hg19_coordinates")
   write.table(isd2,file="isd2.tsv",row.names=FALSE,quote=FALSE,sep="\t")
