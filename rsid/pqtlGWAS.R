@@ -7,11 +7,14 @@ INF <- Sys.getenv("INF")
 INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
                     hg19_coordinates=paste0("chr",Chromosome,":",Position)}) %>%
                     rename(INF1_rsid=rsid, Total=N) %>%
-                    left_join(gap.datasets::inf1[c("prot","gene")])
+                    left_join(pQTLdata::inf1[c("prot","gene","target.short","alt_name")]) %>%
+                    mutate(target.short=if_else(!is.na(alt_name),alt_name,target.short)) %>%
+                    select(-alt_name)
 INF1_aggr <- INF1_metal %>%
-  select(Chromosome,Position,prot,gene,hg19_coordinates,MarkerName,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans,INF1_rsid) %>%
-  group_by(Chromosome,Position,MarkerName,INF1_rsid,hg19_coordinates) %>% summarise(nprots=n(),
-            prots=paste(prot,collapse=";"),
+  select(Chromosome,Position,target.short,gene,hg19_coordinates,MarkerName,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans,INF1_rsid) %>%
+  group_by(Chromosome,Position,MarkerName,INF1_rsid,hg19_coordinates) %>%
+  summarise(nprots=n(),
+            prots=paste(target.short,collapse=";"),
             Allele1=paste(toupper(Allele1),collapse=";"),
             Allele2=paste(toupper(Allele2),collapse=";"),
             EAF=paste(Freq1,collapse=";"),
@@ -19,6 +22,7 @@ INF1_aggr <- INF1_metal %>%
             SEs=paste(StdErr,collapse=";"),
             log10P=paste(log.P.,collapse=";"),
             cistrans=paste(cis.trans,collapse=";")) %>% data.frame()
+INF1_aggr_save <- INF1_aggr
 setwd(INF)
 rsid <- INF1_aggr[["INF1_rsid"]]
 catalogue <- "GWAS"
@@ -26,8 +30,8 @@ proxies <- "EUR"
 p <- 5e-8
 r2 <- 0.8
 build <- 37
-efo_diseases <- read.table(file.path(INF,"ebi","efo-3.26.0","efo_diseases.csv"),col.names=c("efo","disease"),as.is=TRUE,sep=",") %>% pull(efo)
-efo_diseases <- gsub(":", "_", efo_diseases)
+efo_diseases <- read.table(file.path(INF,"ebi","efo-3.26.0","efo_diseases.csv"),col.names=c("efo","disease"),as.is=TRUE,sep=",") %>%
+                mutate(efo=gsub(":", "_", efo))
 
 if (FALSE) {
   r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
@@ -39,6 +43,7 @@ if (FALSE) {
   save(INF1_aggr,r,ps,file=file.path(INF,"work","INF1.merge.GWAS"))
 } else {
   load(file.path(INF,"work","INF1.merge.GWAS"))
+  INF1_aggr <- INF1_aggr_save
 }
 metal <- subset(within(INF1_metal,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)}),
                 select=-c(Chromosome,Position,INF1_rsid,Direction))
@@ -127,8 +132,8 @@ imd <- function()
   # Primary sclerosing cholangitis
   view("chr6:32424882_C_T","EFO_0004268")
 
-  inf1_targetshort <- vector()
-  for(i in 1:92) inf1_targetshort[inf1[i,"prot"]] <- inf1[i,"target.short"]
+  inf1_gene <- vector()
+  for(i in 1:92) inf1_gene[inf1[i,"prot"]] <- inf1[i,"target.short"]
 
   xlsx <- "work/pqtl-immune_infection_edited.xlsx"
   pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220)) %>%
@@ -138,7 +143,7 @@ imd <- function()
     nprots <- pqtl_immune_infection[i,"nprots"]
     aa <- pqtl_immune_infection[i,"prots"]
     ij <- unlist(strsplit(pqtl_immune_infection[i,"prots"],";"))
-    for(j in 1:nprots) aa <- gsub(ij[j],inf1_targetshort[ij[j]],aa)
+    for(j in 1:nprots) aa <- gsub(ij[j],inf1_gene[ij[j]],aa)
     pqtl_immune_infection[i, "target.short"] <- aa
   }
   v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
@@ -147,10 +152,9 @@ imd <- function()
   mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
   {
     flag <- (HLA==1)
-    prefix <- rsid
+    prefix <- paste0(target.short,"-",rsid)
     prefix[flag] <- paste0(rsid[flag],"*")
-    rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-",
-                        prefix," (",hgnc,")")
+    rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-", prefix," (",hgnc,")")
     trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
     trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
     trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
@@ -159,18 +163,18 @@ imd <- function()
     trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
     positiveEffects <- sign(as.numeric(Effects))
   # it happened that all NA's have beta>0 from multiple proteins
-    positiveEffects[is.na(as.numeric(Effects))] <- 1
+  # positiveEffects[is.na(as.numeric(Effects))] <- 1
     qtl_direction <- sign(as.numeric(beta))
   # we have >1 with beta=NA, so settle on either side of zero
-    qtl_direction[unit=="-"] <- 0.5*(runif(1)>0)
-    qtl_direction[positiveEffects==-1] <- -qtl_direction[positiveEffects==-1]
+  # qtl_direction[unit=="-"] <- 0.5*(runif(1)>0)
+  # qtl_direction[positiveEffects==-1] <- -qtl_direction[positiveEffects==-1]
     qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
   # efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
     efoTraits <- paste0(trait_shown)
   })
   # all beta's are NAs when unit=="-"
   subset(mat[c("study","pmid","unit","beta","Keep")],unit=="-")
-  # all studies with risk difference were UKBB, so take the pragmatic decision to award increase in cases
+  # all studies with risk difference were UKBB,
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","Keep")],unit=="risk diff")
 
   rxc <- with(mat,table(efoTraits,rsidProts))
@@ -183,11 +187,12 @@ imd <- function()
   # pedantic implementation but take advantage of indexed by character names
   for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
      s <- subset(indices,efoTraits==rn & rsidProts==cn)
+     if(nrow(s)==0) next
   # there should be a unique cn and rn combination so only one direction
      qd <- s[["qtl_direction"]]
      if(length(qd)>1) stop("duplicates")
      class(qd) <- "numeric"
-     if(nrow(s)>0 & !is.na(qd[1])) rxc[rn,cn] <- qd[1]
+     if(!is.na(qd[1])) rxc[rn,cn] <- qd[1]
   }
   rxc
 }
@@ -206,7 +211,7 @@ SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", h=13, w=18, ylab="Immune-mediated 
   png(file.path(INF,f),res=300,width=w,height=h,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
-  pheatmap(rxc, legend=FALSE, angle_col="315", color=col, width=18, height=13, cellwidth=21, cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
+  pheatmap(rxc, legend=FALSE, angle_col="315", color=col, cellwidth=21, cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
   setHook("grid.newpage", NULL, "replace")
   grid.text("pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
   grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
@@ -218,74 +223,64 @@ SF(rxc)
 
 gwas <- function()
 {
-  inf1_targetshort <- vector()
-  for(i in 1:92) inf1_targetshort[inf1[i,"prot"]] <- inf1[i,"target.short"]
-
+  inf1_gene <- vector()
+  for(i in 1:92) inf1_gene[inf1[i,"prot"]] <- inf1[i,"target.short"]
   short <- merge(aggr,ps,by="hg19_coordinates") %>%
-           filter(efo %in% efo_diseases)
+           filter(efo %in% pull(efo_diseases,efo))
   for(i in 1:nrow(short))
   {
     nprots <- short[i,"nprots"]
     aa <- short[i,"prots"]
     ij <- unlist(strsplit(short[i,"prots"],";"))
-    for(j in 1:nprots) aa <- gsub(ij[j],inf1_targetshort[ij[j]],aa)
+    for(j in 1:nprots) aa <- gsub(ij[j],inf1_gene[ij[j]],aa)
     short[i, "target.short"] <- aa
   }
+  short <- left_join(short,efo_diseases)
   v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
-         "HLA","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study")
+         "HLA","beta","se","p","disease","n_cases","n_controls","unit","ancestry","pmid","study")
   mat <- within(short[v],
   {
     flag <- (HLA==1)
-    prefix <- rsid
+    prefix <- paste0(target.short,"-",rsid)
     prefix[flag] <- paste0(rsid[flag],"*")
     rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-",
                         prefix," (",hgnc,")")
-    trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
-    trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
-    trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
-    trait_shown <- gsub("malabsorption or coeliac disease","malasorption or celiac disease",trait_shown)
-    trait_shown <- gsub("systemic lupus erythematosis or sle|Systemic lupus erythematosus SLE","systemic lupus erythematosus",trait_shown)
-    trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
-    positiveEffects <- sign(as.numeric(Effects))
-  # it happened that all NA's have beta>0 from multiple proteins
-    positiveEffects[is.na(as.numeric(Effects))] <- 1
+    trait_shown <- gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE)
     qtl_direction <- sign(as.numeric(beta))
-  # we have >1 with beta=NA, so settle on either side of zero
-    qtl_direction[unit=="-"] <- 0.5*(runif(1)>0)
-    qtl_direction[positiveEffects==-1] <- -qtl_direction[positiveEffects==-1]
-  # qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
-  # efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
     efoTraits <- paste0(trait_shown)
   })
-  # all beta's are NAs when unit=="-"
-  subset(mat[c("study","pmid","unit","beta")],unit=="-")
-  # all studies with risk difference were UKBB, so take the pragmatic decision to award increase in cases
-  subset(mat[c("study","pmid","unit","beta","n_cases","n_controls")],unit=="risk diff")
-  write.table(mat,file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
-
-  rxc <- with(mat,table(efoTraits,rsidProts))
+  combined <- mat %>%
+              group_by(efoTraits,rsidProts) %>%
+              summarize(direction=paste(qtl_direction,collapse=";"),
+                        betas=paste(beta,collapse=";"),
+                        units=paste(unit,collapse=";"),
+                        studies=paste(study,collapse=";"),
+                       ) %>%
+              data.frame()
   indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
-  if (FALSE) {
-    add_entry <- data.frame(efoTraits="Multiple sclerosis",rsidProts="12-rs2364485 [TNFB](LTA)",qtl_direction=1)
-    indices_new <- rbind(indices,add_entry)
-    rxc <- with(indices_new,table(efoTraits,rsidProts))
-  }
-  # pedantic implementation but take advantage of indexed by character names
+  rxc <- with(combined,table(efoTraits,rsidProts))
   for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
-     s <- subset(indices,efoTraits==rn & rsidProts==cn)
-  # there should be a unique cn and rn combination so only one direction
-     qd <- s[["qtl_direction"]]
-     class(qd) <- "numeric"
-     if(nrow(s)>0 & !is.na(qd[1])) rxc[rn,cn] <- qd[1]
+     s <- subset(combined,efoTraits==rn & rsidProts==cn)
+     if(nrow(s)==0) next
+     print(s)
+     qd <- s[["direction"]]
+     if(!is.na(qd[1])) rxc[rn,cn] <- as.numeric(unlist(strsplit(qd,";"))[1])
+     cat(cn,rn,s[["direction"]],"\n")
   }
+  # all beta's are NAs when unit=="-"
+  subset(mat[c("study","pmid","unit","beta","qtl_direction")],unit=="-")
+  # all studies with risk difference were UKBB
+  subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","qtl_direction")],unit=="risk diff")
+  write.table(select(mat,-disease,-trait_shown),file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(combined,file=file.path(INF,"work","pQTL-disease-GWAS-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
   rxc
 }
 
 rxc <- gwas()
 
 # dummy for GWAS traits and diseases
-SF(rxc,f="SF-pQTL-GWAS.png",h=30,w=20,ylab="GWAS traits and diseases")
+SF(rxc,f="SF-pQTL-GWAS.png",h=25,w=20,ylab="GWAS traits and diseases")
 
 obsolete <- function()
 {

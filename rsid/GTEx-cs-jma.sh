@@ -132,9 +132,9 @@ function cs()
     suppressMessages(library(dplyr))
     eqtl_file <- Sys.getenv("cs95")
     eqtls <- read.table(eqtl_file,sep="\t", col.names=c("rsid","prot","ensGene","chrpos","GTExSNP","tissue_p")) %>%
-             left_join(gap.datasets::inf1[c("prot","target.short")]) %>%
+             left_join(gap.datasets::inf1[c("prot","gene")]) %>%
              mutate(chr=stringr::str_pad(gsub("chr|_[0-9]*","",chrpos), width=2, side="left", pad="0"),
-                    rsidProt=paste0(chr,"-",rsid," (",target.short,")"),tissue_p=sub("^ ","",tissue_p)) %>%
+                    rsidProt=paste0(chr,"-",rsid," (",gene,")"),tissue_p=sub("^ ","",tissue_p)) %>%
              arrange(rsidProt)
     tissue_file <- Sys.getenv("cs95tissue")
     tissues <- with(read.table(tissue_file,header=TRUE),sort(unique(tissue)))
@@ -169,7 +169,7 @@ function cs()
     pal <- colorRampPalette(c("white","red"))
     col <- pal(3)
     library(grid)
-    png(file.path(INF,"coloc-jma","cis_eQTL.png"),res=300,width=15,height=10,units="in")
+    png(file.path(INF,"coloc-jma","SF-eQTLs.png"),res=300,width=15,height=10,units="in")
     setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
     pheatmap(tbl, legend=FALSE, angle_col="315", color=col, width=12, height=40, cluster_rows=FALSE, cluster_cols=FALSE, fontsize=18)
     setHook("grid.newpage", NULL, "replace")
