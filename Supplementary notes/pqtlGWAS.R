@@ -4,6 +4,8 @@ suppressMessages(library(dplyr))
 suppressMessages(library(gap))
 suppressMessages(library(pQTLtools))
 
+inf1_prot <- vector()
+for(i in 1:92) inf1_prot[inf1[i,"prot"]] <- mutate(inf1[i,],target.short=if_else(!is.na(alt_name),alt_name,target.short))[["target.short"]]
 INF <- Sys.getenv("INF")
 INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
                     hg19_coordinates=paste0("chr",Chromosome,":",Position)}) %>%
@@ -135,22 +137,18 @@ imd <- function()
   view("chr6:32424882_C_T","EFO_0004268")
 
   xlsx <- "work/pqtl-immune_infection_edited.xlsx"
-  pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220)) %>%
-                           mutate(target.short=prots)
-  inf1_gene <- vector()
-  for(i in 1:92) inf1_gene[inf1[i,"prot"]] <- inf1[i,"target.short"]
-  for(i in 1:nrow(pqtl_immune_infection))
+  short <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220)) %>%
+           mutate(target.short=prots)
+  for(i in 1:nrow(short))
   {
-    nprots <- pqtl_immune_infection[i,"nprots"]
-    aa <- pqtl_immune_infection[i,"prots"]
-    ij <- unlist(strsplit(pqtl_immune_infection[i,"prots"],";"))
-    for(j in 1:nprots) aa <- gsub(ij[j],inf1_gene[ij[j]],aa)
-    pqtl_immune_infection[i, "prots"] <- aa
+    nprots <- short[i,"nprots"]
+    ij <- unlist(strsplit(short[i,"prots"],";"))
+    for(j in 1:nprots) short[i, "prots"] <- gsub(ij[j],inf1_prot[ij[j]],short[i,"prots"])
   }
   v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
          "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
-  mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
+  mat <- within(subset(short,infection==0 & Keep==1)[v],
   {
     flag <- (HLA==1)
     prefix <- paste0(prots,"-",rsid)
@@ -200,7 +198,7 @@ imd <- function()
 
 rxc <- imd()
 
-SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", h=13, w=18, ylab="Immune-mediated outcomes")
+SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", h=13, w=16, ylab="Immune-mediated outcomes")
 {
   library(pheatmap)
   col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
@@ -212,7 +210,7 @@ SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", h=13, w=18, ylab="Immune-mediated 
   png(file.path(INF,f),res=300,width=w,height=h,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
-  pheatmap(rxc, legend=FALSE, angle_col="315", color=col, cellwidth=21, cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
+  pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellwidth=21, cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
   setHook("grid.newpage", NULL, "replace")
   grid.text("pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
   grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
@@ -228,15 +226,11 @@ gwas <- function()
            filter(efo %in% pull(efo_diseases,efo)) %>%
            left_join(efo_diseases) %>%
            mutate(target.short=prots)
-  inf1_gene <- vector()
-  for(i in 1:92) inf1_gene[inf1[i,"prot"]] <- inf1[i,"target.short"]
   for(i in 1:nrow(short))
   {
     nprots <- short[i,"nprots"]
-    aa <- short[i,"prots"]
     ij <- unlist(strsplit(short[i,"prots"],";"))
-    for(j in 1:nprots) aa <- gsub(ij[j],inf1_gene[ij[j]],aa)
-    short[i, "prots"] <- aa
+#   for(j in 1:nprots) short[i, "prots"] <- gsub(ij[j],inf1_prot[ij[j]],short[i,"prots"])
   }
   v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
@@ -280,8 +274,8 @@ gwas <- function()
 
 rxc <- gwas()
 
-# dummy for GWAS traits and diseases
-SF(rxc,f="SF-pQTL-GWAS.png",h=25,w=20,ylab="GWAS traits and diseases")
+# GWAS traits and diseases
+SF(rxc,f="SF-pQTL-GWAS.png",h=25,w=18,ylab="GWAS traits and diseases")
 
 obsolete <- function()
 {
