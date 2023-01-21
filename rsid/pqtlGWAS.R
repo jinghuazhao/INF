@@ -2,6 +2,7 @@ options(width=200)
 
 suppressMessages(library(dplyr))
 suppressMessages(library(gap))
+suppressMessages(library(pQTLtools))
 
 INF <- Sys.getenv("INF")
 INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
@@ -40,6 +41,7 @@ if (FALSE) {
   ps <- subset(snps_results,select=-c(hg38_coordinates,ref_hg38_coordinates,pos_hg38,ref_pos_hg38,dprime))
   sarcoidosis <- with(ps,grep("sarcoidosis",trait))
   ps[sarcoidosis,"efo"] <- "Orphanet_797"
+  INF1_aggr <- INF1_aggr_save
   save(INF1_aggr,r,ps,file=file.path(INF,"work","INF1.merge.GWAS"))
 } else {
   load(file.path(INF,"work","INF1.merge.GWAS"))
@@ -132,28 +134,17 @@ imd <- function()
   # Primary sclerosing cholangitis
   view("chr6:32424882_C_T","EFO_0004268")
 
-  inf1_gene <- vector()
-  for(i in 1:92) inf1_gene[inf1[i,"prot"]] <- inf1[i,"target.short"]
-
   xlsx <- "work/pqtl-immune_infection_edited.xlsx"
   pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220)) %>%
                            mutate(target.short=prots)
-  for(i in 1:nrow(pqtl_immune_infection))
-  {
-    nprots <- pqtl_immune_infection[i,"nprots"]
-    aa <- pqtl_immune_infection[i,"prots"]
-    ij <- unlist(strsplit(pqtl_immune_infection[i,"prots"],";"))
-    for(j in 1:nprots) aa <- gsub(ij[j],inf1_gene[ij[j]],aa)
-    pqtl_immune_infection[i, "target.short"] <- aa
-  }
   v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
          "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
   mat <- within(subset(pqtl_immune_infection,infection==0 & Keep==1)[v],
   {
     flag <- (HLA==1)
-    prefix <- paste0(target.short,"-",rsid)
-    prefix[flag] <- paste0(rsid[flag],"*")
+    prefix <- paste0(prots,"-",rsid)
+    prefix[flag] <- paste0(prefix[flag],"*")
     rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-", prefix," (",hgnc,")")
     trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
     trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
@@ -161,7 +152,7 @@ imd <- function()
     trait_shown <- gsub("malabsorption or coeliac disease","malasorption or celiac disease",trait_shown)
     trait_shown <- gsub("systemic lupus erythematosis or sle|Systemic lupus erythematosus SLE","systemic lupus erythematosus",trait_shown)
     trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
-    positiveEffects <- sign(as.numeric(Effects))
+  # positiveEffects <- sign(as.numeric(Effects))
   # it happened that all NA's have beta>0 from multiple proteins
   # positiveEffects[is.na(as.numeric(Effects))] <- 1
     qtl_direction <- sign(as.numeric(beta))
@@ -223,29 +214,19 @@ SF(rxc)
 
 gwas <- function()
 {
-  inf1_gene <- vector()
-  for(i in 1:92) inf1_gene[inf1[i,"prot"]] <- inf1[i,"target.short"]
   short <- merge(aggr,ps,by="hg19_coordinates") %>%
-           filter(efo %in% pull(efo_diseases,efo))
-  for(i in 1:nrow(short))
-  {
-    nprots <- short[i,"nprots"]
-    aa <- short[i,"prots"]
-    ij <- unlist(strsplit(short[i,"prots"],";"))
-    for(j in 1:nprots) aa <- gsub(ij[j],inf1_gene[ij[j]],aa)
-    short[i, "target.short"] <- aa
-  }
-  short <- left_join(short,efo_diseases)
+           filter(efo %in% pull(efo_diseases,efo)) %>%
+           left_join(efo_diseases) %>%
+           mutate(target.short=prots)
   v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
          "HLA","beta","se","p","disease","n_cases","n_controls","unit","ancestry","pmid","study")
   mat <- within(short[v],
   {
     flag <- (HLA==1)
-    prefix <- paste0(target.short,"-",rsid)
-    prefix[flag] <- paste0(rsid[flag],"*")
-    rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-",
-                        prefix," (",hgnc,")")
+    prefix <- paste0(prots,"-",rsid)
+    prefix[flag] <- paste0(prefix[flag],"*")
+    rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-", prefix," (",hgnc,")")
     trait_shown <- gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE)
     qtl_direction <- sign(as.numeric(beta))
     efoTraits <- paste0(trait_shown)
