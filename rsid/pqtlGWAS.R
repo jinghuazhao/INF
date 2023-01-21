@@ -198,7 +198,7 @@ imd <- function()
 
 rxc <- imd()
 
-SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", h=13, w=16, ylab="Immune-mediated outcomes")
+SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", h=13, w=18, ylab="Immune-mediated outcomes")
 {
   library(pheatmap)
   col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
@@ -224,15 +224,8 @@ gwas <- function()
 {
   short <- merge(aggr,ps,by="hg19_coordinates") %>%
            filter(efo %in% pull(efo_diseases,efo)) %>%
-           left_join(efo_diseases) %>%
-           mutate(target.short=prots)
-  for(i in 1:nrow(short))
-  {
-    nprots <- short[i,"nprots"]
-    ij <- unlist(strsplit(short[i,"prots"],";"))
-#   for(j in 1:nprots) short[i, "prots"] <- gsub(ij[j],inf1_prot[ij[j]],short[i,"prots"])
-  }
-  v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
+           left_join(efo_diseases)
+  v <- c("prots","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
          "HLA","beta","se","p","disease","n_cases","n_controls","unit","ancestry","pmid","study")
   mat <- within(short[v],
@@ -245,8 +238,7 @@ gwas <- function()
     qtl_direction <- sign(as.numeric(beta))
     efoTraits <- paste0(trait_shown)
   })
-  combined <- mat %>%
-              group_by(efoTraits,rsidProts) %>%
+  combined <- group_by(mat, efoTraits,rsidProts) %>%
               summarize(direction=paste(qtl_direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
                         units=paste(unit,collapse=";"),
@@ -258,10 +250,8 @@ gwas <- function()
   for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
      s <- subset(combined,efoTraits==rn & rsidProts==cn)
      if(nrow(s)==0) next
-     print(s)
      qd <- s[["direction"]]
      if(!is.na(qd[1])) rxc[rn,cn] <- as.numeric(unlist(strsplit(qd,";"))[1])
-     cat(cn,rn,s[["direction"]],"\n")
   }
   # all beta's are NAs when unit=="-"
   subset(mat[c("study","pmid","unit","beta","qtl_direction")],unit=="-")
@@ -275,7 +265,7 @@ gwas <- function()
 rxc <- gwas()
 
 # GWAS traits and diseases
-SF(rxc,f="SF-pQTL-GWAS.png",h=25,w=18,ylab="GWAS traits and diseases")
+SF(rxc,f="SF-pQTL-GWAS.png",h=25,w=20,ylab="GWAS traits and diseases")
 
 obsolete <- function()
 {
