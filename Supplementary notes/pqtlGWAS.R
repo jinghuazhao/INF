@@ -137,6 +137,16 @@ imd <- function()
   xlsx <- "work/pqtl-immune_infection_edited.xlsx"
   pqtl_immune_infection <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220)) %>%
                            mutate(target.short=prots)
+  inf1_gene <- vector()
+  for(i in 1:92) inf1_gene[inf1[i,"prot"]] <- inf1[i,"target.short"]
+  for(i in 1:nrow(pqtl_immune_infection))
+  {
+    nprots <- pqtl_immune_infection[i,"nprots"]
+    aa <- pqtl_immune_infection[i,"prots"]
+    ij <- unlist(strsplit(pqtl_immune_infection[i,"prots"],";"))
+    for(j in 1:nprots) aa <- gsub(ij[j],inf1_gene[ij[j]],aa)
+    pqtl_immune_infection[i, "prots"] <- aa
+  }
   v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
          "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
@@ -218,6 +228,16 @@ gwas <- function()
            filter(efo %in% pull(efo_diseases,efo)) %>%
            left_join(efo_diseases) %>%
            mutate(target.short=prots)
+  inf1_gene <- vector()
+  for(i in 1:92) inf1_gene[inf1[i,"prot"]] <- inf1[i,"target.short"]
+  for(i in 1:nrow(short))
+  {
+    nprots <- short[i,"nprots"]
+    aa <- short[i,"prots"]
+    ij <- unlist(strsplit(short[i,"prots"],";"))
+    for(j in 1:nprots) aa <- gsub(ij[j],inf1_gene[ij[j]],aa)
+    short[i, "prots"] <- aa
+  }
   v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
          "HLA","beta","se","p","disease","n_cases","n_controls","unit","ancestry","pmid","study")
