@@ -137,15 +137,14 @@ imd <- function()
   view("chr6:32424882_C_T","EFO_0004268")
 
   xlsx <- "work/pqtl-immune_infection_edited.xlsx"
-  short <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220)) %>%
-           mutate(target.short=prots)
+  short <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220))
   for(i in 1:nrow(short))
   {
     nprots <- short[i,"nprots"]
     ij <- unlist(strsplit(short[i,"prots"],";"))
     for(j in 1:nprots) short[i, "prots"] <- gsub(ij[j],inf1_prot[ij[j]],short[i,"prots"])
   }
-  v <- c("prots","target.short","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
+  v <- c("prots","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
          "HLA","infection","beta","se","p","trait","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
   mat <- within(subset(short,infection==0 & Keep==1)[v],
@@ -171,11 +170,6 @@ imd <- function()
   # efoTraits <- paste0(gsub("_",":",efo)," (",trait_shown,")")
     efoTraits <- paste0(trait_shown)
   })
-  # all beta's are NAs when unit=="-"
-  subset(mat[c("study","pmid","unit","beta","Keep")],unit=="-")
-  # all studies with risk difference were UKBB,
-  subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","Keep")],unit=="risk diff")
-
   rxc <- with(mat,table(efoTraits,rsidProts))
   indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
   if (FALSE) {
@@ -183,15 +177,12 @@ imd <- function()
     indices_new <- rbind(indices,add_entry)
     rxc <- with(indices_new,table(efoTraits,rsidProts))
   }
-  # pedantic implementation but take advantage of indexed by character names
   for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
      s <- subset(indices,efoTraits==rn & rsidProts==cn)
      if(nrow(s)==0) next
-  # there should be a unique cn and rn combination so only one direction
-     qd <- s[["qtl_direction"]]
+     qd <- as.numeric(s[["qtl_direction"]])
      if(length(qd)>1) stop("duplicates")
-     class(qd) <- "numeric"
-     if(!is.na(qd[1])) rxc[rn,cn] <- qd[1]
+     rxc[rn,cn] <- qd[1]
   }
   rxc
 }
@@ -202,10 +193,6 @@ SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", h=13, w=18, ylab="Immune-mediated 
 {
   library(pheatmap)
   col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
-  n1 <- round(nrow(rxc)/2)
-  n2 <- nrow(rxc)-n1
-  annotation_row <- data.frame(c(rep("cis", n1), rep("trans", n2)), row.names=rownames(rxc))
-  colnames(annotation_row) <- c("Cell")
   library(grid)
   png(file.path(INF,f),res=300,width=w,height=h,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
@@ -245,7 +232,6 @@ gwas <- function()
                         studies=paste(study,collapse=";"),
                        ) %>%
               data.frame()
-  indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
   rxc <- with(combined,table(efoTraits,rsidProts))
   for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
      s <- subset(combined,efoTraits==rn & rsidProts==cn)
