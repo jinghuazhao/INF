@@ -178,9 +178,9 @@ imd <- function()
     rxc <- with(indices_new,table(efoTraits,rsidProts))
   }
   for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
-     s <- subset(indices,efoTraits==rn & rsidProts==cn)
-     if(nrow(s)==0) next
-     qd <- as.numeric(s[["qtl_direction"]])
+     cnrn <- subset(indices,efoTraits==rn & rsidProts==cn)
+     if(nrow(cnrn)==0) next
+     qd <- as.numeric(cnrn[["qtl_direction"]])
      if(length(qd)>1) stop("duplicates")
      rxc[rn,cn] <- qd[1]
   }
@@ -189,7 +189,7 @@ imd <- function()
 
 rxc <- imd()
 
-SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", h=13, w=18, ylab="Immune-mediated outcomes")
+SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=13, w=18, ylab="Immune-mediated outcomes")
 {
   library(pheatmap)
   col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
@@ -197,7 +197,7 @@ SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", h=13, w=18, ylab="Immune-mediated 
   png(file.path(INF,f),res=300,width=w,height=h,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
-  pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellwidth=21, cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
+  pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw, cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
   setHook("grid.newpage", NULL, "replace")
   grid.text("pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
   grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
@@ -220,30 +220,29 @@ gwas <- function()
     flag <- (HLA==1)
     prefix <- paste0(prots,"-",rsid)
     prefix[flag] <- paste0(prefix[flag],"*")
-    rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-", prefix," (",hgnc,")")
-    trait_shown <- gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE)
+    rsidProts <- paste0(prefix," (",hgnc,")")
+    efoTraits <- gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE)
     qtl_direction <- sign(as.numeric(beta))
-    efoTraits <- paste0(trait_shown)
   })
-  combined <- group_by(mat, efoTraits,rsidProts) %>%
+  combined <- group_by(mat,efoTraits,rsidProts) %>%
               summarize(direction=paste(qtl_direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
                         units=paste(unit,collapse=";"),
                         studies=paste(study,collapse=";"),
+                        diseases=paste(disease,collapse=";")
                        ) %>%
               data.frame()
   rxc <- with(combined,table(efoTraits,rsidProts))
   for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
-     s <- subset(combined,efoTraits==rn & rsidProts==cn)
-     if(nrow(s)==0) next
-     qd <- s[["direction"]]
-     if(!is.na(qd[1])) rxc[rn,cn] <- as.numeric(unlist(strsplit(qd,";"))[1])
+     cnrn <- subset(combined,efoTraits==rn & rsidProts==cn)
+     if(nrow(cnrn)==0) next
+     rxc[rn,cn] <- as.numeric(unlist(strsplit(cnrn[["direction"]],";"))[1])
   }
   # all beta's are NAs when unit=="-"
   subset(mat[c("study","pmid","unit","beta","qtl_direction")],unit=="-")
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","qtl_direction")],unit=="risk diff")
-  write.table(select(mat,-disease,-trait_shown),file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(mat,file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
   write.table(combined,file=file.path(INF,"work","pQTL-disease-GWAS-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
   rxc
 }
@@ -251,7 +250,7 @@ gwas <- function()
 rxc <- gwas()
 
 # GWAS traits and diseases
-SF(rxc,f="SF-pQTL-GWAS.png",h=25,w=20,ylab="GWAS traits and diseases")
+SF(rxc,f="SF-pQTL-GWAS.png",ch=21,cw=21,h=30,w=20,ylab="GWAS traits and diseases")
 
 obsolete <- function()
 {
