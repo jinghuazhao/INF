@@ -224,12 +224,13 @@ gwas <- function()
     efoTraits <- gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE)
     qtl_direction <- sign(as.numeric(beta))
   })
-  combined <- group_by(mat,efoTraits,rsidProts) %>%
+  combined <- group_by(mat,efoTraits,rsidProts,desc(n_cases)) %>%
               summarize(direction=paste(qtl_direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
                         units=paste(unit,collapse=";"),
                         studies=paste(study,collapse=";"),
-                        diseases=paste(disease,collapse=";")
+                        diseases=paste(disease,collapse=";"),
+                        cases=paste(n_cases,collapse=";")
                        ) %>%
               data.frame()
   rxc <- with(combined,table(efoTraits,rsidProts))
