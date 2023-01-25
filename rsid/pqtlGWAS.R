@@ -184,6 +184,7 @@ imd <- function()
      if(length(qd)>1) stop("duplicates")
      rxc[rn,cn] <- qd[1]
   }
+  rxc[is.na(rxc)] <- 0
   rxc
 }
 
@@ -199,7 +200,7 @@ SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=13, w=18, ylab="Im
   colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
   pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw, cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
   setHook("grid.newpage", NULL, "replace")
-  grid.text("pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
+  grid.text("Protein(s)-pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
   grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
   dev.off()
 }
@@ -239,6 +240,7 @@ gwas <- function()
      if(nrow(cnrn)==0) next
      rxc[rn,cn] <- as.numeric(unlist(strsplit(cnrn[["direction"]],";"))[1])
   }
+  rxc[is.na(rxc)] <- 0
   # all beta's are NAs when unit=="-"
   subset(mat[c("study","pmid","unit","beta","qtl_direction")],unit=="-")
   # all studies with risk difference were UKBB
@@ -251,7 +253,7 @@ gwas <- function()
 rxc <- gwas()
 
 # GWAS traits and diseases
-SF(rxc,f="SF-pQTL-GWAS.png",ch=21,cw=21,h=30,w=20,ylab="GWAS traits and diseases")
+SF(rxc,f="SF-pQTL-GWAS.png",ch=21,cw=21,h=30,w=20,ylab="GWAS diseases")
 
 obsolete <- function()
 {
