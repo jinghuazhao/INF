@@ -11,8 +11,8 @@
       INF <- Sys.getenv(\"INF\")
       protein___uniprot <- Sys.getenv(\"protein___uniprot\")
       eps <- 0.02
-      U <- as.mcmc(scan(file.path(INF,\"h2\",paste0(protein___uniprot,\".BLR_varU.dat\")))[-(1:10000)])
-      E <- as.mcmc(scan(file.path(INF,\"h2\",paste0(protein___uniprot,\".BLR_varE.dat\")))[-(1:10000)])
+      U <- as.mcmc(scan(file.path(INF,\"h2\",\"BLR\",paste0(protein___uniprot,\".BLR_varU.dat\")))[-(1:10000)])
+      E <- as.mcmc(scan(file.path(INF,\"h2\",\"BLR\",paste0(protein___uniprot,\".BLR_varE.dat\")))[-(1:10000)])
       e <- as.mcmc(cbind(U, E, h2 = U / ((1 + eps) * U + E)))
       summary(e)$statistics
       HPDinterval(e)
@@ -27,24 +27,24 @@
 
 (
   echo prot uniprot h2_BLR se_BLR h2_GCTA se_GCTA
-  join <(grep h2 ${INF}/h2/*___*txt | sed 's|'"${INF}/h2/"'||;s/___/ /;s/.BLR.txt:h2//' | cut -d' ' -f1-4 | sort -k1,1) \
+  join <(grep h2 ${INF}/h2/*___*txt | sed 's|'"${INF}/h2/BLR/"'||;s/___/ /;s/.BLR.txt:h2//' | cut -d' ' -f1-4 | sort -k1,1) \
        <(sed '1d' ${INF}/h2/h2.dat | sort -k1,1) \
 ) > ${INF}/h2/BLR_GCTA.dat
 
 Rscript -e '
   library(dplyr)
   library(data.table)
+  library(ggplot2)
   INF <- Sys.getenv("INF")
-  BLR_GCTA <- read.table(file.path(INF,"h2","BLR_GCTA.dat"),as.is=TRUE,header=TRUE) %>% arrange(desc(h2_GCTA)) %>% mutate(x=1:n())
-  h2 <- data.table::melt(BLR_GCTA[c("prot","uniprot","h2_GCTA","h2_BLR")],id.vars=c("prot","uniprot"),variable.name=c("source")) %>%
+  BLR_GCTA <- read.table(file.path(INF,"h2","BLR_GCTA.dat"),as.is=TRUE,header=TRUE) %>% arrange(desc(h2_BLR)) %>% mutate(x=1:n())
+  h2 <- data.table::melt(BLR_GCTA[c("prot","uniprot","h2_BLR","h2_GCTA")],id.vars=c("prot","uniprot"),variable.name=c("source")) %>%
         rename(h2=value) %>%
         mutate(source=gsub("h2_","",source))
-  se <- data.table::melt(BLR_GCTA[c("prot","uniprot","se_GCTA","se_BLR")],id.vars=c("prot","uniprot"),variable.name=c("source")) %>%
+  se <- data.table::melt(BLR_GCTA[c("prot","uniprot","se_BLR","se_GCTA")],id.vars=c("prot","uniprot"),variable.name=c("source")) %>%
         rename(se=value) %>%
         mutate(source=gsub("se_","",source))
   dat <- left_join(h2,se) %>%
          left_join(select(BLR_GCTA,prot,x))
-  library(ggplot2)
   p <- ggplot(dat,aes(y = x, x = h2))+
        theme_bw()+
        theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
@@ -61,7 +61,7 @@ Rscript -e '
        geom_vline(lty=2, aes(xintercept=1), colour = "red")+
        scale_y_continuous(breaks=dat$x,labels=dat$prot,position="left")+
        geom_point(size=2)+
-       xlab("Heritability estimates based on GCTA and BLR")+
+       xlab("Heritability estimates based on BLR and GCTA")+
        ylab("Ordered protein")
-  ggplot2::ggsave(file.path(INF,"h2","h2_GCTA_BLR.png"),height=20,width=10)
+  ggplot2::ggsave(file.path(INF,"h2","h2_BLR_GCTA.png"),height=20,width=10)
 '

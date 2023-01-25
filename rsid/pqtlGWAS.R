@@ -184,7 +184,6 @@ imd <- function()
      if(length(qd)>1) stop("duplicates")
      rxc[rn,cn] <- qd[1]
   }
-  rxc[is.na(rxc)] <- 0
   rxc
 }
 
@@ -240,7 +239,6 @@ gwas <- function()
      if(nrow(cnrn)==0) next
      rxc[rn,cn] <- as.numeric(unlist(strsplit(cnrn[["direction"]],";"))[1])
   }
-  rxc[is.na(rxc)] <- 0
   # all beta's are NAs when unit=="-"
   subset(mat[c("study","pmid","unit","beta","qtl_direction")],unit=="-")
   # all studies with risk difference were UKBB
