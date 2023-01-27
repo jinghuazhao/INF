@@ -630,3 +630,17 @@ Rscript -e '
   dev.off()
 '
 }
+
+function gene_annotation()
+{
+Rscrtip -e '
+  library(dplyr)
+  genes_trans <- read.delim("~/INF/work/genes_trans.tsv") %>%
+                 setNames(c("rsid","causal_gene"))
+  inf1_metal <- read.delim("~/INF/work/INF1.METAL",as.is=TRUE) %>%
+                left_join(pQTLdata::inf1[c("prot","gene")]) %>%
+                left_join(genes_trans) %>%
+                mutate(causal_gene=if_else(cis.trans=="cis",gene,causal_gene))
+  write.table(inf1_metal,file="inf1_metal.tsv",row.names=FALSE,quote=FALSE,sep="\t")
+'
+}
