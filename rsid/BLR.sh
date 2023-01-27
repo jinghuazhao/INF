@@ -27,7 +27,7 @@
 
 (
   echo prot uniprot h2_BLR se_BLR h2_GCTA se_GCTA
-  join <(grep h2 ${INF}/h2/*___*txt | sed 's|'"${INF}/h2/BLR/"'||;s/___/ /;s/.BLR.txt:h2//' | cut -d' ' -f1-4 | sort -k1,1) \
+  join <(grep h2 ${INF}/h2/*___*txt | sed 's|'"${INF}/h2/"'||;s/___/ /;s/.BLR.txt:h2//' | cut -d' ' -f1-4 | sort -k1,1) \
        <(sed '1d' ${INF}/h2/h2.dat | sort -k1,1) \
 ) > ${INF}/h2/BLR_GCTA.dat
 

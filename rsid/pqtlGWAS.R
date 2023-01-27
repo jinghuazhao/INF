@@ -7,6 +7,10 @@ suppressMessages(library(pQTLtools))
 inf1_prot <- vector()
 for(i in 1:92) inf1_prot[inf1[i,"prot"]] <- mutate(inf1[i,],target.short=if_else(!is.na(alt_name),alt_name,target.short))[["target.short"]]
 INF <- Sys.getenv("INF")
+
+signs <- c(-1,0,1)
+symbols <- c("-","0","+")
+
 INF1_metal <- within(read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE),{
                     hg19_coordinates=paste0("chr",Chromosome,":",Position)}) %>%
                     rename(INF1_rsid=rsid, Total=N) %>%
@@ -23,6 +27,7 @@ INF1_aggr <- INF1_metal %>%
             EAF=paste(Freq1,collapse=";"),
             Effects=paste(Effect,collapse=";"),
             SEs=paste(StdErr,collapse=";"),
+            directions=paste(sapply(Effect, function(x) {symbols[signs==sign(x)]}),collapse=";"),
             log10P=paste(log.P.,collapse=";"),
             cistrans=paste(cis.trans,collapse=";")) %>% data.frame()
 INF1_aggr_save <- INF1_aggr
@@ -33,8 +38,11 @@ proxies <- "EUR"
 p <- 5e-8
 r2 <- 0.8
 build <- 37
+imd_diseases <- read.table(file.path(INF,"ebi","efo-3.26.0","efo_0000540.csv"),col.names=c("efo","disease"),as.is=TRUE,sep=",") %>%
+                mutate(efo=gsub(":", "_", efo))
 efo_diseases <- read.table(file.path(INF,"ebi","efo-3.26.0","efo_diseases.csv"),col.names=c("efo","disease"),as.is=TRUE,sep=",") %>%
                 mutate(efo=gsub(":", "_", efo))
+iid_diseases <- read.delim(file.path(INF,"doc","immune.efos.txt"),as.is=TRUE)
 
 if (FALSE) {
   r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
@@ -53,8 +61,60 @@ metal <- subset(within(INF1_metal,{HLA <- as.numeric(Chromosome==6 & Position >=
                 select=-c(Chromosome,Position,INF1_rsid,Direction))
 aggr <- subset(within(INF1_aggr,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)}),
                select=-c(Chromosome,Position,INF1_rsid))
-immune_infection <- read.delim("doc/immune.efos.txt",as.is=TRUE)
-immune_infection_efo <- with(immune_infection,gsub(":","_",id))
+immune_infection_efo <- with(iid_diseases,gsub(":","_",id))
+ps_filter <- ps %>%
+             filter(!grepl("INVT|IVNT|SDS|Z-score|bpm|crease|g/l|kg|lu|mg|ml|mmHg|mol|years|ug|unit|%",unit)) %>%
+             filter(!(unit=="-"&(pmid=="UKBB"|grepl("Tonsillectomy|Cholesterol ldl|Intercellular adhesion molecule 1",trait)))) %>%
+             filter(!(unit=="-"&grepl("Protein quantitative trait loci|Receptors interleukin 6|Monocyte chemoattractant protein 1",trait))) %>%
+             filter(!(unit=="-"&grepl("Blood proteins|Chemokine ccl2|Monocyte chemoattractant protein 1|Uric acid",trait))) %>%
+             filter(!(unit=="-"&grepl("Alkaline phosphatase|selectin|Lipid metabolism|Vascular endothelial growth factor a",trait))) %>%
+             filter(!(unit=="-"&grepl("Cholesterol|Cholesterol hdl|Vitamin B12|Cystatin c|Interleukin 18|Phospholipids|Metabolism",trait))) %>%
+             filter(!(unit=="-"&grepl("Inflammatory biomarkers|Paraoxonase activity|Waist circumference and related phenotypes",trait))) %>%
+             filter(!(unit=="-"&grepl("Age related disease endophenotypes|Age related diseases mortality and associated endophenotypes",trait))) %>%
+             filter(!(unit=="-"&grepl("Glucose transporter type 2|Glucose tolerance test|Type 1 diabetes autoantibodies",trait))) %>%
+             filter(!(unit=="-"&grepl("Angiotensin converting enzyme inhibitors|Celiac disease or Rheumatoid arthritis",trait))) %>%
+             filter(!(unit=="-"&grepl("Coronary artery disease or ischemic stroke|Coronary artery disease or large artery stroke",trait))) %>%
+             filter(!(unit=="-"&grepl("kidney stone or ureter stone/bladder stone",trait))) %>%
+             filter(!grepl("Thyroid peroxidase antibody positivity|Smoking status: previous",trait)) %>%
+             filter(!grepl("Started insulin within one year diagnosis of diabetes|No blood clot",trait)) %>%
+             filter(!grepl("Medication for pain relief|Pain type experienced in last month",trait)) %>%
+             filter(!grepl("Qualifications: college or university degree",trait)) %>%
+             filter(!grepl("Medication for cholesterol, blood pressure or diabetes:",dataset)) %>%
+             filter(!grepl("Astle|GIANT|GLGC|GRASP|MAGIC",dataset)) %>%
+             filter(!grepl("Illnesses of siblings: none|Treatment|Taking other prescription medications",trait)) %>%
+             filter(!grepl("Body Mass index|Blood pressure|Fibrinogen|Fasting|Gamma glutamyltransferase",trait)) %>%
+             filter(!grepl("Eosinophils|Gamma glutamyltransferase|mass index",trait)) %>%
+             filter(!grepl("Lipid metabolism phenotypes|Triglycerides|C reactive protein",trait)) %>%
+             filter(!grepl("Diabetes diagnosed by doctor|Types of physical activity|Cause of death: alcoholic hepatic failure",trait)) %>%
+             filter(!grepl("Medication for cholesterol, blood pressure or diabetes|No treatment with medication for cholesterol",trait)) %>%
+             filter(!grepl("Neovascularization No treatment with medication|Autism spectrum disorder or schizophrenia",trait)) %>%
+             filter(!grepl("Qualifications: none",trait)) %>%
+             filter(!grepl("Vascular or heart problems diagnosed by doctor: none of the above",trait)) %>%
+             filter(!grepl("count|density|education|intake|levels|weight",trait))
+ps_mutate <- ps_filter %>%
+             mutate(trait=if_else(unit=="-"&grepl("Arthritis rheumatoid|Rheumatoid arthritis",trait),"rheumatoid arthritis",trait)) %>%
+             mutate(trait=if_else(unit=="-"&grepl("Diabetes mellitus type 1|Type 1 diabetes",trait),"Type I diabetes",trait)) %>%
+             mutate(trait=if_else(unit=="-"&grepl("Inflammatory bowel disease",trait),"inflammatory bowel disease",trait)) %>%
+             mutate(trait=if_else(unit=="-"&grepl("Crohns disease",trait),"Crohn's disease",trait)) %>%
+             mutate(trait=gsub("Advanced age related macular degeneration","Age-related macular degeneration",trait)) %>%
+             mutate(trait=gsub("Renal overload gout|Renal underexcretion gout","Gout",trait)) %>%
+             mutate(trait=gsub("Hayfever, allergic rhinitis or eczema|Allergic disease|Allergic disease asthma hay fever or eczema","allergy",trait)) %>%
+             mutate(trait=gsub("High grade serous ovarian cancer|Invasive ovarian cancer","ovarian cancer",trait)) %>%
+             mutate(trait=gsub("Serous invasive ovarian cancer|Serous boarderline ovarian cancer","ovarian cancer",trait)) %>%
+             mutate(trait=gsub("Other rheumatoid arthritis","rheumatoid arthritis",trait)) %>%
+             mutate(trait=if_else(trait=="ankylosing spondylitis Antineutrophil cytoplasmic antibody associated vasculitis",
+                                         "anti-neutrophil antibody associated vasculitis",trait)) %>%
+             mutate(trait=if_else(trait=="systemic lupus erythematosis","systemic lupus erythematosus",trait)) %>%
+             mutate(trait=if_else(trait=="hypothyroidism or myxoedema","hypothyroidism",trait)) %>%
+             mutate(trait=if_else(trait=="hyperthyroidism or thyrotoxicosis","hyperthyroidism",trait)) %>%
+             mutate(trait=if_else(trait=="Type 2 diabetes","Type II diabetes",trait)) %>%
+             mutate(trait=if_else(trait=="Colorectal or endometrial cancer","Colorectal cancer",trait)) %>%
+             mutate(trait=gsub("Doctor diagnosed |heart attack or |Self-reported |Illnesses of father: |Illnesses of mother: ","",trait)) %>%
+             mutate(trait=gsub("Illnesses of siblings: ","",trait)) %>%
+             mutate(trait=gsub("malabsorption or |Low grade and borderline serous |Mouth or teeth dental problems: ","",trait)) %>%
+             mutate(trait=gsub("Unspecified |Vascular or heart problems diagnosed by doctor: ","",trait)) %>%
+             mutate(trait=if_else(trait=="systemic lupus erythematosis or sle","systemic lupus erythematosis", trait)) %>%
+             mutate(trait=gsub("\\b(^[A-Z])","\\L\\1",trait,perl=TRUE))
 long <- cbind(merge(metal,subset(ps,efo%in%immune_infection_efo),by="hg19_coordinates"),infection=0)
 short <- cbind(merge(aggr,subset(ps,efo%in%immune_infection_efo),by="hg19_coordinates"),infection=0)
 infection_efo <- with(subset(immune_infection,infection==1),gsub(":","_",id))
@@ -187,38 +247,59 @@ imd <- function()
   rxc
 }
 
-rxc <- imd()
-
-SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=13, w=18, ylab="Immune-mediated outcomes")
-{
-  library(pheatmap)
-  col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
-  library(grid)
-  png(file.path(INF,f),res=300,width=w,height=h,units="in")
-  setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
-  colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
-  pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw, cluster_rows=TRUE, cluster_cols=FALSE, fontsize=16)
-  setHook("grid.newpage", NULL, "replace")
-  grid.text("Protein(s)-pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
-  grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
-  dev.off()
-}
-
-# INF1_pQTL_immune_qtl_unclustered.png
-SF(rxc)
-
-gwas <- function()
+imd2 <- function()
 {
   short <- merge(aggr,ps,by="hg19_coordinates") %>%
-           filter(efo %in% pull(efo_diseases,efo)) %>%
-           left_join(efo_diseases)
-  v <- c("prots","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
+           filter(efo %in% pull(imd_diseases,efo)) %>%
+           left_join(imd_diseases)
+  v <- c("prots","hgnc","MarkerName","cistrans","Effects","directions","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
          "HLA","beta","se","p","disease","n_cases","n_controls","unit","ancestry","pmid","study")
   mat <- within(short[v],
   {
     flag <- (HLA==1)
-    prefix <- paste0(prots,"-",rsid)
+    prefix <- paste0(prots,"-",rsid, " [",directions,"]")
+    prefix[flag] <- paste0(prefix[flag],"*")
+    rsidProts <- paste0(prefix," (",hgnc,")")
+    efoTraits <- gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE)
+    qtl_direction <- sign(as.numeric(beta))
+  })
+  combined <- group_by(mat,efoTraits,rsidProts,desc(n_cases)) %>%
+              summarize(direction=paste(qtl_direction,collapse=";"),
+                        betas=paste(beta,collapse=";"),
+                        units=paste(unit,collapse=";"),
+                        studies=paste(study,collapse=";"),
+                        diseases=paste(disease,collapse=";"),
+                        cases=paste(n_cases,collapse=";")
+                       ) %>%
+              data.frame()
+  rxc <- with(combined,table(efoTraits,rsidProts))
+  for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
+     cnrn <- subset(combined,efoTraits==rn & rsidProts==cn)
+     if(nrow(cnrn)==0) next
+     rxc[rn,cn] <- as.numeric(unlist(strsplit(cnrn[["direction"]],";"))[1])
+  }
+  # all beta's are NAs when unit=="-"
+  subset(mat[c("study","pmid","unit","beta","qtl_direction")],unit=="-")
+  # all studies with risk difference were UKBB
+  subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","qtl_direction")],unit=="risk diff")
+  write.table(mat,file=file.path(INF,"work","pQTL-IMD-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(combined,file=file.path(INF,"work","pQTL-IMD-GWAS-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  rxc
+}
+
+gwas <- function()
+{
+  short <- merge(aggr,ps_filter,by="hg19_coordinates") %>% 
+           left_join(efo_diseases)
+#          filter(efo %in% pull(efo_diseases,efo)) %>%
+  v <- c("prots","hgnc","MarkerName","cistrans","Effects","directions","Allele1","Allele2","rsid","a1","a2","efo",
+         "ref_rsid","ref_a1","ref_a2","proxy","r2",
+         "HLA","beta","se","p","disease","n_cases","n_controls","unit","ancestry","pmid","study")
+  mat <- within(short[v],
+  {
+    flag <- (HLA==1)
+    prefix <- paste0(prots,"-",rsid, " [",directions,"]")
     prefix[flag] <- paste0(prefix[flag],"*")
     rsidProts <- paste0(prefix," (",hgnc,")")
     efoTraits <- gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE)
@@ -248,10 +329,36 @@ gwas <- function()
   rxc
 }
 
-rxc <- gwas()
+SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=13, w=18, ylab="Immune-mediated outcomes")
+{
+  library(pheatmap)
+  col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
+  library(grid)
+  png(file.path(INF,f),res=300,width=w,height=h,units="in")
+  setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
+  colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
+  pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
+           cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
+  setHook("grid.newpage", NULL, "replace")
+  grid.text("Protein(s)-pQTL [directions] (gene)", y=-0.07, gp=gpar(fontsize=15))
+  grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
+  dev.off()
+}
 
-# GWAS traits and diseases
-SF(rxc,f="SF-pQTL-GWAS.png",ch=21,cw=21,h=30,w=20,ylab="GWAS diseases")
+# INF1_pQTL_immune_qtl_unclustered.png
+rxc <- imd()
+print(rownames(rxc))
+print(dim(rxc))
+SF(rxc)
+rxc <- imd2()
+print(rownames(rxc))
+print(dim(rxc))
+SF(rxc,f="SF-pQTL-IMD.png",ch=21,cw=21,h=30,w=20)
+# GWAS diseases
+rxc <- gwas()
+print(rownames(rxc))
+print(dim(rxc))
+SF(rxc,f="SF-pQTL-GWAS.png",ch=21,cw=21,h=30,w=25,ylab="GWAS diseases")
 
 obsolete <- function()
 {
