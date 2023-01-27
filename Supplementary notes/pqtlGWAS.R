@@ -95,26 +95,28 @@ ps_mutate <- ps_filter %>%
              mutate(trait=if_else(unit=="-"&grepl("Arthritis rheumatoid|Rheumatoid arthritis",trait),"rheumatoid arthritis",trait)) %>%
              mutate(trait=if_else(unit=="-"&grepl("Diabetes mellitus type 1|Type 1 diabetes",trait),"Type I diabetes",trait)) %>%
              mutate(trait=if_else(unit=="-"&grepl("Inflammatory bowel disease",trait),"inflammatory bowel disease",trait)) %>%
-             mutate(trait=if_else(unit=="-"&grepl("Crohns disease",trait),"Crohn's disease",trait)) %>%
+             mutate(trait=gsub("Crohns","Crohn's",trait)) %>%
              mutate(trait=gsub("Advanced age related macular degeneration","Age-related macular degeneration",trait)) %>%
              mutate(trait=gsub("Renal overload gout|Renal underexcretion gout","Gout",trait)) %>%
              mutate(trait=gsub("Hayfever, allergic rhinitis or eczema|Allergic disease|Allergic disease asthma hay fever or eczema","allergy",trait)) %>%
              mutate(trait=gsub("High grade serous ovarian cancer|Invasive ovarian cancer","ovarian cancer",trait)) %>%
              mutate(trait=gsub("Serous invasive ovarian cancer|Serous boarderline ovarian cancer","ovarian cancer",trait)) %>%
              mutate(trait=gsub("Other rheumatoid arthritis","rheumatoid arthritis",trait)) %>%
-             mutate(trait=if_else(trait=="ankylosing spondylitis Antineutrophil cytoplasmic antibody associated vasculitis",
-                                         "anti-neutrophil antibody associated vasculitis",trait)) %>%
-             mutate(trait=if_else(trait=="systemic lupus erythematosis","systemic lupus erythematosus",trait)) %>%
-             mutate(trait=if_else(trait=="hypothyroidism or myxoedema","hypothyroidism",trait)) %>%
-             mutate(trait=if_else(trait=="hyperthyroidism or thyrotoxicosis","hyperthyroidism",trait)) %>%
-             mutate(trait=if_else(trait=="Type 2 diabetes","Type II diabetes",trait)) %>%
-             mutate(trait=if_else(trait=="Colorectal or endometrial cancer","Colorectal cancer",trait)) %>%
-             mutate(trait=gsub("Doctor diagnosed |heart attack or |Self-reported |Illnesses of father: |Illnesses of mother: ","",trait)) %>%
+             mutate(trait=gsub("erythematosis","erythematosus",trait)) %>%
+             mutate(trait=gsub(" or myxoedema","",trait)) %>%
+             mutate(trait=gsub(" or thyrotoxicosis","",trait)) %>%
+             mutate(trait=gsub("Type 2 diabetes","Type II diabetes",trait)) %>%
+             mutate(trait=gsub(" or endometrial","",trait)) %>%
+             mutate(trait=gsub(" [+] or [-] dvt","",trait)) %>%
              mutate(trait=gsub("Illnesses of siblings: ","",trait)) %>%
+             mutate(trait=gsub("Selective IgA deficiency","Selective IgA deficiency disease",trait)) %>%
+             mutate(trait=gsub("Doctor diagnosed |heart attack or |Self-reported |Illnesses of father: |Illnesses of mother: ","",trait)) %>%
              mutate(trait=gsub("malabsorption or |Low grade and borderline serous |Mouth or teeth dental problems: ","",trait)) %>%
              mutate(trait=gsub("Unspecified |Vascular or heart problems diagnosed by doctor: ","",trait)) %>%
-             mutate(trait=if_else(trait=="systemic lupus erythematosis or sle","systemic lupus erythematosis", trait)) %>%
-             mutate(trait=gsub("\\b(^[A-Z])","\\L\\1",trait,perl=TRUE))
+             mutate(trait=gsub(" or sle","", trait)) %>%
+             mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
+             rename(disease=trait)
+#            mutate(trait=gsub("\\b(^[A-Z])","\\L\\1",trait,perl=TRUE))
 long <- cbind(merge(metal,subset(ps,efo%in%immune_infection_efo),by="hg19_coordinates"),infection=0)
 short <- cbind(merge(aggr,subset(ps,efo%in%immune_infection_efo),by="hg19_coordinates"),infection=0)
 infection_efo <- with(subset(immune_infection,infection==1),gsub(":","_",id))
@@ -290,23 +292,21 @@ imd2 <- function()
 
 gwas <- function()
 {
-  short <- merge(aggr,ps_filter,by="hg19_coordinates") %>% 
-           left_join(efo_diseases)
-#          filter(efo %in% pull(efo_diseases,efo)) %>%
-  v <- c("prots","hgnc","MarkerName","cistrans","Effects","directions","Allele1","Allele2","rsid","a1","a2","efo",
+  short <- merge(metal,ps_mutate,by="hg19_coordinates") # %>% filter(efo %in% pull(efo_diseases,efo)) %>% left_join(efo_diseases)
+  v <- c("prots","hgnc","MarkerName","cistrans","Effects","direction","Allele1","Allele2","rsid","a1","a2","efo",
          "ref_rsid","ref_a1","ref_a2","proxy","r2",
          "HLA","beta","se","p","disease","n_cases","n_controls","unit","ancestry","pmid","study")
   mat <- within(short[v],
   {
     flag <- (HLA==1)
-    prefix <- paste0(prots,"-",rsid, " [",directions,"]")
+    prefix <- paste0(prots,"-",rsid)
     prefix[flag] <- paste0(prefix[flag],"*")
     rsidProts <- paste0(prefix," (",hgnc,")")
     efoTraits <- gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE)
-    qtl_direction <- sign(as.numeric(beta))
+#   qtl_direction <- sign(as.numeric(beta))
   })
   combined <- group_by(mat,efoTraits,rsidProts,desc(n_cases)) %>%
-              summarize(direction=paste(qtl_direction,collapse=";"),
+              summarize(direction=paste(direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
                         units=paste(unit,collapse=";"),
                         studies=paste(study,collapse=";"),
@@ -318,7 +318,7 @@ gwas <- function()
   for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
      cnrn <- subset(combined,efoTraits==rn & rsidProts==cn)
      if(nrow(cnrn)==0) next
-     rxc[rn,cn] <- as.numeric(unlist(strsplit(cnrn[["direction"]],";"))[1])
+     rxc[rn,cn] <- unlist(strsplit(cnrn[["direction"]],";"))[1]
   }
   # all beta's are NAs when unit=="-"
   subset(mat[c("study","pmid","unit","beta","qtl_direction")],unit=="-")
@@ -338,7 +338,7 @@ SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=13, w=18, ylab="Im
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
   pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
-           cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
+           cluster_rows=FALSE, cluster_cols=FALSE, fontsize=16)
   setHook("grid.newpage", NULL, "replace")
   grid.text("Protein(s)-pQTL [directions] (gene)", y=-0.07, gp=gpar(fontsize=15))
   grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
@@ -359,6 +359,7 @@ rxc <- gwas()
 print(rownames(rxc))
 print(dim(rxc))
 SF(rxc,f="SF-pQTL-GWAS.png",ch=21,cw=21,h=30,w=25,ylab="GWAS diseases")
+# f="SF-pQTL-GWAS.png";ch=21;cw=21;h=30;w=25;ylab="GWAS diseases"
 
 obsolete <- function()
 {
