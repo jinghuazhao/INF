@@ -200,7 +200,7 @@ imd <- function()
   # Primary sclerosing cholangitis
   view("chr6:32424882_C_T","EFO_0004268")
 
-  xlsx <- "work/pqtl-immune_infection_edited.xlsx"
+  xlsx <- file.path(INF,"work","pqtl-immune_infection_edited.xlsx")
   short <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220))
   for(i in 1:nrow(short))
   {
@@ -295,37 +295,37 @@ imd2 <- function()
 gwas <- function()
 {
   long <- merge(metal,ps_mutate,by="hg19_coordinates")
-  mat <- select(long, prot,hgnc,MarkerName,cis.trans,Effect,qtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
+  mat <- select(long, prot,target.short,hgnc,MarkerName,cis.trans,Effect,qtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
                       ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
-         mutate(prefix=if_else(HLA==1,paste0(prot,"-",rsid,"*"),paste0(prot,"-",rsid)),
-                rsidProt=paste0(prefix," (",hgnc,")"),
-                Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
-                trait_direction=if_else(qtl_direction=="+",direction,if_else(direction=="-","+","-")))
+         mutate(prefix=if_else(HLA==1,paste0(target.short,"-",rsid,"*"),paste0(target.short,"-",rsid)),
+                rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
+                pqtl_trait_direction=paste0(qtl_direction,direction),
+                trait_direction=case_when(pqtl_trait_direction=="++" ~ "1",  pqtl_trait_direction=="+-" ~ "-1",
+                                          pqtl_trait_direction=="-+" ~ "-1", pqtl_trait_direction=="--" ~ "1",
+                                          pqtl_trait_direction=="-NA" ~ "NA",
+                                          TRUE ~ as.character(direction)))
   combined <- group_by(mat,Trait,rsidProt,desc(n_cases)) %>%
-              summarize(directions=paste(direction,collapse=";"),
+              summarize(directions=paste(trait_direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
                         units=paste(unit,collapse=";"),
                         studies=paste(study,collapse=";"),
                         diseases=paste(disease,collapse=";"),
                         cases=paste(n_cases,collapse=";")
-                       ) %>%
-              data.frame()
+                       ) %>% data.frame()
   rxc <- with(combined,table(Trait,rsidProt))
   for(rn in rownames(rxc)) for(cn in colnames(rxc)) {
      cnrn <- subset(combined,Trait==rn & rsidProt==cn)
      if(nrow(cnrn)==0) next
-     rxc[rn,cn] <- unlist(strsplit(cnrn[["directions"]],";"))[1]
+     rxc[rn,cn] <- as.numeric(unlist(strsplit(cnrn[["directions"]],";"))[1])
 # sapply(unlist(strsplit(cnrn[["directions"]],";"))[1],function(x){signs[symbols==x]})
   }
-  rxc[rxc=="+"] <- 1
-  rxc[rxc=="-"] <- -1
   # all beta's are NAs when unit=="-"
   subset(mat[c("study","pmid","unit","beta","qtl_direction","direction")],unit=="-")
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","qtl_direction","direction")],unit=="risk diff")
-# write.table(mat,file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
-# write.table(combined,file=file.path(INF,"work","pQTL-disease-GWAS-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
-  as.matrix(rxc)
+  write.table(mat,file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(combined,file=file.path(INF,"work","pQTL-disease-GWAS-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  rxc
 }
 
 SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=13, w=18, ylab="Immune-mediated outcomes")
@@ -337,7 +337,7 @@ SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=13, w=18, ylab="Im
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
   pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
-           cluster_rows=FALSE, cluster_cols=FALSE, fontsize=16)
+           cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
   setHook("grid.newpage", NULL, "replace")
   grid.text("Protein-pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
   grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
@@ -358,7 +358,7 @@ SF(rxc,f="SF-pQTL-IMD.png",ch=21,cw=21,h=30,w=20)
 rxc <- gwas()
 print(rownames(rxc))
 print(dim(rxc))
-SF(rxc,f="SF-pQTL-GWAS.png",ch=21,cw=21,h=30,w=25,ylab="GWAS diseases")
+SF(rxc,f="SF-pQTL-GWAS.png",ch=21,cw=21,h=27,w=28,ylab="GWAS diseases")
 
 obsolete <- function()
 {
