@@ -119,9 +119,9 @@ ps_mutate <- ps_filter %>%
              mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
              rename(disease=trait)
 #            mutate(trait=gsub("\\b(^[A-Z])","\\L\\1",trait,perl=TRUE))
-long <- cbind(merge(metal,subset(ps,efo%in%immune_infection_efo),by="hg19_coordinates"),infection=0)
-short <- cbind(merge(aggr,subset(ps,efo%in%immune_infection_efo),by="hg19_coordinates"),infection=0)
-infection_efo <- with(subset(immune_infection,infection==1),gsub(":","_",id))
+long <- cbind(merge(metal,subset(ps,efo%in%iid_diseases[["id"]]),by="hg19_coordinates"),infection=0)
+short <- cbind(merge(aggr,subset(ps,efo%in%iid_diseases[["id"]]),by="hg19_coordinates"),infection=0)
+infection_efo <- with(subset(iid_diseases,infection==1),gsub(":","_",id))
 long[with(long,efo)%in%infection_efo,"infection"] <- 1
 short[with(short,efo)%in%infection_efo,"infection"] <- 1
 
@@ -296,10 +296,11 @@ gwas <- function()
 {
   long <- merge(metal,ps_mutate,by="hg19_coordinates")
   mat <- select(long, prot,hgnc,MarkerName,cis.trans,Effect,qtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
-                      ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
+                      ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
          mutate(prefix=if_else(HLA==1,paste0(prot,"-",rsid,"*"),paste0(prot,"-",rsid)),
                 rsidProt=paste0(prefix," (",hgnc,")"),
-                Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE))
+                Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
+                trait_direction=if_else(qtl_direction=="+",direction,if_else(direction=="-","+","-")))
   combined <- group_by(mat,Trait,rsidProt,desc(n_cases)) %>%
               summarize(directions=paste(direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
@@ -310,18 +311,21 @@ gwas <- function()
                        ) %>%
               data.frame()
   rxc <- with(combined,table(Trait,rsidProt))
-  for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
+  for(rn in rownames(rxc)) for(cn in colnames(rxc)) {
      cnrn <- subset(combined,Trait==rn & rsidProt==cn)
      if(nrow(cnrn)==0) next
-     rxc[rn,cn] <- sapply(unlist(strsplit(cnrn[["directions"]],";"))[1],function(x){signs[symbols==x]})
+     rxc[rn,cn] <- unlist(strsplit(cnrn[["directions"]],";"))[1]
+# sapply(unlist(strsplit(cnrn[["directions"]],";"))[1],function(x){signs[symbols==x]})
   }
+  rxc[rxc=="+"] <- 1
+  rxc[rxc=="-"] <- -1
   # all beta's are NAs when unit=="-"
-  subset(mat[c("study","pmid","unit","beta","qtl_direction")],unit=="-")
+  subset(mat[c("study","pmid","unit","beta","qtl_direction","direction")],unit=="-")
   # all studies with risk difference were UKBB
-  subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","qtl_direction")],unit=="risk diff")
+  subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","qtl_direction","direction")],unit=="risk diff")
 # write.table(mat,file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
 # write.table(combined,file=file.path(INF,"work","pQTL-disease-GWAS-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
-  rxc
+  as.matrix(rxc)
 }
 
 SF <- function(rxc, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=13, w=18, ylab="Immune-mediated outcomes")
