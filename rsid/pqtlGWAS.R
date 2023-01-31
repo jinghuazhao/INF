@@ -258,10 +258,12 @@ imd2 <- function()
            set_int <- intersect(long_set,iid_diseases[["id"]])
            paste0(iid_diseases[["id"]][iid_diseases[["id"]]==set_int],collapse="")!=""
          })
-  mat <- select(filter(long,sel), prot,target.short,hgnc,MarkerName,cis.trans,Effect,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
+  mat <- select(filter(long,sel), prot,target.short,hgnc,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
                       ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
          mutate(prefix=if_else(HLA==1,paste0(target.short,"-",rsid,"*"),paste0(target.short,"-",rsid)),
                 rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
+                Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
+                beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
                 pqtl_trait_direction=paste0(pqtl_direction,direction),
                 trait_direction=case_when(pqtl_trait_direction=="++" ~ "1",  pqtl_trait_direction=="+-" ~ "-1",
                                           pqtl_trait_direction=="-+" ~ "-1", pqtl_trait_direction=="--" ~ "1",
@@ -271,8 +273,11 @@ imd2 <- function()
   combined <- group_by(mat,Trait,rsidProt,desc(n_cases)) %>%
               summarize(directions=paste(trait_direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
+                        ses=paste(se,collapse=";"),
+                        p=paste(p,collapse=";"),
                         units=paste(unit,collapse=";"),
                         studies=paste(study,collapse=";"),
+                        PMIDs=paste(pmid,collapse=";"),
                         diseases=paste(disease,collapse=";"),
                         cases=paste(n_cases,collapse=";"),
                         efos=paste(efo,collapse="+")
@@ -293,18 +298,22 @@ imd2 <- function()
   subset(mat[c("study","pmid","unit","beta","pqtl_direction","direction")],unit=="-")
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
-  write.table(mat,file=file.path(INF,"work","pQTL-IMD.csv"),row.names=FALSE,quote=FALSE,sep=",")
-  write.table(combined,file=file.path(INF,"work","pQTL-IMD-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(select(mat,-prot,-MarkerName,-a1,-a2,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
+              rename(Protein=target.short,Gene=hgnc,Proxy=proxy,PMID=pmid,Study=study),
+              file=file.path(INF,"work","pQTL-IMD.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","pQTL-IMD-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
 }
 
 gwas <- function()
 {
   long <- merge(metal,ps_mutate,by="hg19_coordinates")
-  mat <- select(long, prot,target.short,hgnc,MarkerName,cis.trans,Effect,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
+  mat <- select(long, prot,target.short,hgnc,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
                       ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
          mutate(prefix=if_else(HLA==1,paste0(target.short,"-",rsid,"*"),paste0(target.short,"-",rsid)),
                 rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
+                Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
+                beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
                 pqtl_trait_direction=paste0(pqtl_direction,direction),
                 trait_direction=case_when(pqtl_trait_direction=="++" ~ "1",  pqtl_trait_direction=="+-" ~ "-1",
                                           pqtl_trait_direction=="-+" ~ "-1", pqtl_trait_direction=="--" ~ "1",
@@ -314,8 +323,11 @@ gwas <- function()
   combined <- group_by(mat,Trait,rsidProt,desc(n_cases)) %>%
               summarize(directions=paste(trait_direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
+                        ses=paste(se,collapse=";"),
+                        p=paste(p,collapse=";"),
                         units=paste(unit,collapse=";"),
                         studies=paste(study,collapse=";"),
+                        PMIDs=paste(pmid,collapse=";"),
                         diseases=paste(disease,collapse=";"),
                         cases=paste(n_cases,collapse=";"),
                         efos=paste(efo,collapse="+")
@@ -336,8 +348,10 @@ gwas <- function()
   subset(mat[c("study","pmid","unit","beta","pqtl_direction","direction")],unit=="-")
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
-  write.table(mat,file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
-  write.table(combined,file=file.path(INF,"work","pQTL-disease-GWAS-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(select(mat,-prot,-MarkerName,-a1,-a2,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
+              rename(Protein=target.short,Gene=hgnc,Proxy=proxy,PMID=pmid,Study=study),
+              file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","pQTL-disease-GWAS-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
 }
 
