@@ -78,6 +78,7 @@ ps_filter <- ps %>%
              filter(!(unit=="-"&grepl("Coronary artery disease or ischemic stroke|Coronary artery disease or large artery stroke",trait))) %>%
              filter(!(unit=="-"&grepl("kidney stone or ureter stone/bladder stone",trait))) %>%
              filter(!trait=="Self-reported diabetes") %>%
+             filter(!trait=="Illnesses of father: chronic bronchitis or emphysema") %>%
              filter(!grepl("Thyroid peroxidase antibody positivity|Smoking status: previous",trait)) %>%
              filter(!grepl("Started insulin within one year diagnosis of diabetes|No blood clot",trait)) %>%
              filter(!grepl("Medication for pain relief|Pain type experienced in last month",trait)) %>%
@@ -105,6 +106,7 @@ ps_mutate <- ps_filter %>%
              mutate(trait=gsub("High grade serous ovarian cancer|Invasive ovarian cancer","ovarian cancer",trait)) %>%
              mutate(trait=gsub("Serous invasive ovarian cancer|Serous boarderline ovarian cancer","ovarian cancer",trait)) %>%
              mutate(trait=gsub("Other rheumatoid arthritis","rheumatoid arthritis",trait)) %>%
+             mutate(trait=gsub("Self-reported cholelithiasis or gall stones","cholelithiasis",trait)) %>%
              mutate(trait=gsub("erythematosis","erythematosus",trait)) %>%
              mutate(trait=gsub(" or myxoedema","",trait)) %>%
              mutate(trait=gsub(" or thyrotoxicosis","",trait)) %>%
@@ -299,7 +301,7 @@ imd2 <- function()
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
   write.table(select(mat,-prot,-MarkerName,-a1,-a2,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
-              rename(Protein=target.short,Gene=hgnc,Proxy=proxy,PMID=pmid,Study=study),
+              rename(Protein=target.short,Gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
               file=file.path(INF,"work","pQTL-IMD.csv"),row.names=FALSE,quote=FALSE,sep=",")
   write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","pQTL-IMD-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
@@ -349,7 +351,7 @@ gwas <- function()
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
   write.table(select(mat,-prot,-MarkerName,-a1,-a2,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
-              rename(Protein=target.short,Gene=hgnc,Proxy=proxy,PMID=pmid,Study=study),
+              rename(Protein=target.short,Gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
               file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
   write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","pQTL-disease-GWAS-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
@@ -365,7 +367,8 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=12, w=15, ylab
   png(file.path(INF,f),res=300,width=w,height=h,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
-  pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw, display_numbers=dn,
+  pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
+           display_numbers=dn, number_color = "darkgreen",
            cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
   setHook("grid.newpage", NULL, "replace")
   grid.text("Protein-pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
