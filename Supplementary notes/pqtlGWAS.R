@@ -10,7 +10,7 @@ INF <- Sys.getenv("INF")
 
 signs <- c(-1,0,1)
 symbols <- c("-","0","+")
-unicodes <- c("\u2605","\u21F5","\u26AB","\u25EF")
+unicodes <- c("\u25E8","\u2605","\u21F5","\u26AB","\u25EF")
 
 INF1_metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE) %>%
               mutate(hg19_coordinates=paste0("chr",Chromosome,":",Position)) %>%
@@ -64,6 +64,64 @@ metal <- subset(within(INF1_metal,{HLA <- as.numeric(Chromosome==6 & Position >=
 aggr <- subset(within(INF1_aggr,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)}),
                select=-c(Chromosome,Position,INF1_rsid))
 immune_infection_efo <- with(iid_diseases,gsub(":","_",id))
+# crude processing
+ps_na_direction <- subset(ps,direction=="NA") %>%
+                   filter(!grepl("FVII|HDL|IFT172|IgG|LDL|Albumin|Fasting|NFATotal|Plasma|Serum|Triglycerides|Vitamin",trait)) %>%
+                   filter(!grepl("levels|plasma|reactive",trait))
+write.table(unique(sort(ps_na_direction[["trait"]])),file=file.path(INF,"work","ps_na_direction.txt"),col.names=FALSE,quote=FALSE,row.names=FALSE)
+# manually entered and can be modified lexicographically
+na_selected <- c(
+"Advanced age related macular degeneration",
+"Age related disease",
+"Allergy",
+"Alopecia areata",
+"Antineutrophil cytoplasmic antibody associated vasculitis",
+"Arthritis rheumatoid",
+"Asthma",
+"Autism spectrum disorder or schizophrenia",
+"Breast cancer",
+"Breast cancer",
+"Cancer pleiotropy",
+"Celiac disease",
+"Childhood ear infection",
+"Chronic hepatitis B infection",
+"Coronary artery disease",
+"Depression",
+"Diabetes mellitus type 1",
+"Extreme obesity with early age of onset",
+"Generalized vitiligo",
+"Glaucoma primary open angle",
+"Gout",
+"Hypertension",
+"Hypothyroidism",
+"Idiopathic membranous nephropathy",
+"IgA nephropathy",
+"Inflammatory bowel disease",
+"Insulin resistance",
+"Ischemic stroke",
+"Juvenile idiopathic arthritis including oligoarticular and rheumatoid factor negative polyarticular JIA",
+"Kidney diseases",
+"Liver cirrhosis biliary",
+"Metabolic syndrome x",
+"Myocardial infarction",
+"Primary biliary cirrhosis",
+"Primary sclerosing cholangitis",
+"Prostate cancer",
+"Rheumatoid arthritis",
+"Rheumatoid arthritis cyclic citrullinated peptide CCP positive",
+"Schizophrenia",
+"Selective IgA deficiency",
+"Systemic lupus erythematosus SLE",
+"Tonsillectomy",
+"Type 1 diabetes",
+"Type 2 diabetes",
+"Venous thrombo",
+"Vitiligo")
+
+ps_na_grep <- paste(na_selected,collapse="|")
+ps_na_disease <- filter(ps_na_direction,grepl(ps_na_grep,trait))
+write.table(ps_na_disease,file=file.path(INF,"work","ps_na_disease.csv"),quote=FALSE,row.names=FALSE,sep=",")
+
 ps_filter <- ps %>%
              filter(!grepl("INVT|IVNT|SDS|Z-score|bpm|crease|g/l|kg|lu|mg|ml|mmHg|mol|years|ug|unit|%",unit)) %>%
              filter(!(unit=="-"&(pmid=="UKBB"|grepl("Tonsillectomy|Cholesterol ldl|Intercellular adhesion molecule 1",trait)))) %>%
@@ -99,6 +157,7 @@ ps_mutate <- ps_filter %>%
              mutate(trait=if_else(unit=="-"&grepl("Arthritis rheumatoid|Rheumatoid arthritis",trait),"rheumatoid arthritis",trait)) %>%
              mutate(trait=if_else(unit=="-"&grepl("Diabetes mellitus type 1|Type 1 diabetes",trait),"Type I diabetes",trait)) %>%
              mutate(trait=if_else(unit=="-"&grepl("Inflammatory bowel disease",trait),"inflammatory bowel disease",trait)) %>%
+             mutate(trait=gsub("Coronary heart disease","Coronary artery disease",trait)) %>%
              mutate(trait=gsub("Crohns","Crohn's",trait)) %>%
              mutate(trait=gsub("Advanced age related macular degeneration","Age-related macular degeneration",trait)) %>%
              mutate(trait=gsub("Renal overload gout|Renal underexcretion gout","Gout",trait)) %>%
@@ -116,6 +175,7 @@ ps_mutate <- ps_filter %>%
              mutate(trait=gsub("Illnesses of siblings: ","",trait)) %>%
              mutate(trait=gsub("Selective IgA deficiency","Selective IgA deficiency disease",trait)) %>%
              mutate(trait=gsub("Doctor diagnosed |heart attack or |Self-reported |Illnesses of father: |Illnesses of mother: ","",trait)) %>%
+             mutate(trait=gsub("heart attack","myocardioal infarction",trait)) %>%
              mutate(trait=gsub("malabsorption or |Low grade and borderline serous |Mouth or teeth dental problems: ","",trait)) %>%
              mutate(trait=gsub("Unspecified |Vascular or heart problems diagnosed by doctor: ","",trait)) %>%
              mutate(trait=gsub(" or sle","", trait)) %>%
@@ -260,9 +320,9 @@ imd2 <- function()
            set_int <- intersect(long_set,iid_diseases[["id"]])
            paste0(iid_diseases[["id"]][iid_diseases[["id"]]==set_int],collapse="")!=""
          })
-  mat <- select(filter(long,sel), prot,target.short,hgnc,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
+  mat <- select(filter(long,sel),prot,target.short,gene,hgnc,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
                       ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
-         mutate(prefix=if_else(HLA==1,paste0(target.short,"-",rsid,"*"),paste0(target.short,"-",rsid)),
+         mutate(prefix=if_else(HLA==1,paste0(gene,"-",rsid,"*"),paste0(gene,"-",rsid)),
                 rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
                 Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
                 beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
@@ -302,17 +362,17 @@ imd2 <- function()
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
   write.table(select(mat,-prot,-MarkerName,-a1,-a2,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
               rename(Protein=target.short,Gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
-              file=file.path(INF,"work","pQTL-IMD.csv"),row.names=FALSE,quote=FALSE,sep=",")
-  write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","pQTL-IMD-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
+              file=file.path(INF,"work","ST-pQTL-IMD-overlap.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","ST-pQTL-IMD-overlap-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
 }
 
 gwas <- function()
 {
   long <- merge(metal,ps_mutate,by="hg19_coordinates")
-  mat <- select(long, prot,target.short,hgnc,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
+  mat <- select(long, prot,target.short,gene,hgnc,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
                       ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
-         mutate(prefix=if_else(HLA==1,paste0(target.short,"-",rsid,"*"),paste0(target.short,"-",rsid)),
+         mutate(prefix=if_else(HLA==1,paste0(gene,"-",rsid,"*"),paste0(gene,"-",rsid)),
                 rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
                 Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
                 beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
@@ -352,8 +412,8 @@ gwas <- function()
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
   write.table(select(mat,-prot,-MarkerName,-a1,-a2,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
               rename(Protein=target.short,Gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
-              file=file.path(INF,"work","pQTL-disease-GWAS.csv"),row.names=FALSE,quote=FALSE,sep=",")
-  write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","pQTL-disease-GWAS-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
+              file=file.path(INF,"work","ST-pQTL-disease-overlapS.csv"),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","ST-pQTL-disease-overlap-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
 }
 
@@ -368,10 +428,10 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=12, w=15, ylab
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
   pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
-           display_numbers=dn, number_color = "darkgreen",
+           display_numbers=dn, number_color = "brown",
            cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
   setHook("grid.newpage", NULL, "replace")
-  grid.text("Protein-pQTL (gene)", y=-0.07, gp=gpar(fontsize=15))
+  grid.text("Protein-pQTL (Nearest gene)", y=-0.07, gp=gpar(fontsize=15))
   grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
   dev.off()
 }
@@ -381,7 +441,7 @@ rxc_imd <- imd()
 with(rxc_imd,SF(rxc,dn))
 # All EFOs for IMD but somehow smaller number of rows
 rxc_imd2 <- imd2()
-with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD.png",ch=21,cw=21,h=13,w=17))
+with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=21,cw=21,h=13,w=17))
 # GWAS diseases
 rxc_gwas <- gwas()
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-GWAS.png",ch=21,cw=21,h=25,w=27,ylab="GWAS diseases"))
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=25,w=27,ylab="GWAS diseases"))
