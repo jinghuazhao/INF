@@ -11,6 +11,7 @@ INF <- Sys.getenv("INF")
 signs <- c(-1,0,1)
 symbols <- c("-","0","+")
 unicodes <- c("\u25E8","\u2605","\u21F5","\u26AB","\u25EF")
+ctcols <- c("red","blue")
 
 INF1_metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE) %>%
               mutate(hg19_coordinates=paste0("chr",Chromosome,":",Position)) %>%
@@ -322,7 +323,7 @@ imd2 <- function()
          })
   mat <- select(filter(long,sel),prot,target.short,gene,hgnc,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
                       ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
-         mutate(prefix=if_else(HLA==1,paste0(gene,"-",rsid,"*"),paste0(gene,"-",rsid)),
+         mutate(prefix=if_else(HLA==1,paste0(gene,"-",rsid,"-",cis.trans,"*"),paste0(gene,"-",rsid,"-",cis.trans)),
                 rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
                 Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
                 beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
@@ -372,7 +373,7 @@ gwas <- function()
   long <- merge(metal,ps_mutate,by="hg19_coordinates")
   mat <- select(long, prot,target.short,gene,hgnc,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
                       ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
-         mutate(prefix=if_else(HLA==1,paste0(gene,"-",rsid,"*"),paste0(gene,"-",rsid)),
+         mutate(prefix=if_else(HLA==1,paste0(gene,"-",rsid,"-",cis.trans,"*"),paste0(gene,"-",rsid,"-",cis.trans)),
                 rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
                 Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
                 beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
@@ -421,16 +422,27 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=12, w=15, ylab
 {
   print(rownames(rxc))
   print(dim(rxc))
+  library(grid)
   library(pheatmap)
   col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
-  library(grid)
   png(file.path(INF,f),res=300,width=w,height=h,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
-  colnames(rxc) <- gsub("^[0-9]*-","",colnames(rxc))
-  pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
-           display_numbers=dn, number_color = "brown",
-           cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
+  p <- pheatmap(rxc, legend=FALSE, angle_col="270", border_color="black", color=col, cellheight=ch, cellwidth=cw,
+                 display_numbers=dn, number_color = "brown",
+                 cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
+  ccols <- if_else(grepl("-cis",p$gtable$grobs[[4]]$label),1,2)
+  print(cbind(ccols,ctcols[ccols],p$tree_col$labels,p$gtable$grobs[[4]]$label))
+  p$tree_col$labels <- gsub("^[0-9]*-|-cis|-trans","",p$tree_col$labels)
+  p$gtable$grobs[[4]]$label <- gsub("^[0-9]*-|-cis|-trans","",p$gtable$grobs[[4]]$label)
+  png(file.path(INF,f),res=300,width=w,height=h,units="in")
+  setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
+  colnames(rxc) <- gsub("^[0-9]*-|-cis|-trans","",colnames(rxc))
+  p <- pheatmap(rxc, legend=FALSE, angle_col="270", border_color="black", color=col, cellheight=ch, cellwidth=cw,
+                 display_numbers=dn, number_color = "brown",
+                 cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
+  p$gtable$grobs[[4]]$gp=gpar(col=ctcols[ccols])
   setHook("grid.newpage", NULL, "replace")
+  grid.draw(p)
   grid.text("Protein-pQTL (Nearest gene)", y=-0.07, gp=gpar(fontsize=15))
   grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
   dev.off()
@@ -441,7 +453,7 @@ rxc_imd <- imd()
 with(rxc_imd,SF(rxc,dn))
 # All EFOs for IMD but somehow smaller number of rows
 rxc_imd2 <- imd2()
-with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=21,cw=21,h=13,w=17))
+with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=21,cw=21,h=13,w=19))
 # GWAS diseases
 rxc_gwas <- gwas()
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=25,w=27,ylab="GWAS diseases"))
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=23,w=30,ylab="GWAS diseases"))
