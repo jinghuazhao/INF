@@ -154,35 +154,44 @@ ps_filter <- ps %>%
              filter(!grepl("Qualifications: none",trait)) %>%
              filter(!grepl("Vascular or heart problems diagnosed by doctor: none of the above",trait)) %>%
              filter(!grepl("count|density|education|intake|levels|weight",trait))
-ps_mutate <- ps_filter %>%
-             mutate(trait=if_else(unit=="-"&grepl("Arthritis rheumatoid|Rheumatoid arthritis",trait),"rheumatoid arthritis",trait)) %>%
-             mutate(trait=if_else(unit=="-"&grepl("Diabetes mellitus type 1|Type 1 diabetes",trait),"Type I diabetes",trait)) %>%
-             mutate(trait=if_else(unit=="-"&grepl("Inflammatory bowel disease",trait),"inflammatory bowel disease",trait)) %>%
-             mutate(trait=gsub("Coronary heart disease","Coronary artery disease",trait)) %>%
-             mutate(trait=gsub("Crohns","Crohn's",trait)) %>%
-             mutate(trait=gsub("Advanced age related macular degeneration","Age-related macular degeneration",trait)) %>%
-             mutate(trait=gsub("Renal overload gout|Renal underexcretion gout","Gout",trait)) %>%
-             mutate(trait=gsub("Hayfever, allergic rhinitis or eczema|Allergic disease|Allergic disease asthma hay fever or eczema","allergy",trait)) %>%
-             mutate(trait=gsub("High grade serous ovarian cancer|Invasive ovarian cancer","ovarian cancer",trait)) %>%
-             mutate(trait=gsub("Serous invasive ovarian cancer|Serous boarderline ovarian cancer","ovarian cancer",trait)) %>%
-             mutate(trait=gsub("Other rheumatoid arthritis","rheumatoid arthritis",trait)) %>%
-             mutate(trait=gsub("Self-reported cholelithiasis or gall stones","cholelithiasis",trait)) %>%
-             mutate(trait=gsub("erythematosis","erythematosus",trait)) %>%
-             mutate(trait=gsub(" or myxoedema","",trait)) %>%
-             mutate(trait=gsub(" or thyrotoxicosis","",trait)) %>%
-             mutate(trait=gsub("Type 2 diabetes","Type II diabetes",trait)) %>%
-             mutate(trait=gsub(" or endometrial","",trait)) %>%
-             mutate(trait=gsub(" [+] or [-] dvt","",trait)) %>%
-             mutate(trait=gsub("Illnesses of siblings: ","",trait)) %>%
-             mutate(trait=gsub("Selective IgA deficiency","Selective IgA deficiency disease",trait)) %>%
-             mutate(trait=gsub("Doctor diagnosed |heart attack or |Self-reported |Illnesses of father: |Illnesses of mother: ","",trait)) %>%
-             mutate(trait=gsub("heart attack","myocardioal infarction",trait)) %>%
-             mutate(trait=gsub("malabsorption or |Low grade and borderline serous |Mouth or teeth dental problems: ","",trait)) %>%
-             mutate(trait=gsub("Unspecified |Vascular or heart problems diagnosed by doctor: ","",trait)) %>%
-             mutate(trait=gsub(" or sle","", trait)) %>%
-             mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
-             rename(disease=trait)
-#            mutate(trait=gsub("\\b(^[A-Z])","\\L\\1",trait,perl=TRUE))
+ps_gsub <- ps_filter %>%
+           mutate(trait=if_else(unit=="-"&grepl("Arthritis rheumatoid|Rheumatoid arthritis",trait),"rheumatoid arthritis",trait)) %>%
+           mutate(trait=if_else(unit=="-"&grepl("Diabetes mellitus type 1|Type 1 diabetes",trait),"Type I diabetes",trait)) %>%
+           mutate(trait=if_else(unit=="-"&grepl("Inflammatory bowel disease",trait),"inflammatory bowel disease",trait)) %>%
+           mutate(trait=gsub("Coronary heart disease","Coronary artery disease",trait)) %>%
+           mutate(trait=gsub("Crohns","Crohn's",trait)) %>%
+           mutate(trait=gsub("Advanced age related macular degeneration","Age-related macular degeneration",trait)) %>%
+           mutate(trait=gsub("Renal overload gout|Renal underexcretion gout","Gout",trait)) %>%
+           mutate(trait=gsub("Hayfever, allergic rhinitis or eczema|Allergic disease|Allergic disease asthma hay fever or eczema","allergy",trait)) %>%
+           mutate(trait=gsub("High grade serous ovarian cancer|Invasive ovarian cancer","ovarian cancer",trait)) %>%
+           mutate(trait=gsub("Serous invasive ovarian cancer|Serous boarderline ovarian cancer","ovarian cancer",trait)) %>%
+           mutate(trait=gsub("Other rheumatoid arthritis","rheumatoid arthritis",trait)) %>%
+           mutate(trait=gsub("Self-reported cholelithiasis or gall stones","cholelithiasis",trait)) %>%
+           mutate(trait=gsub("erythematosis","erythematosus",trait)) %>%
+           mutate(trait=gsub(" or myxoedema","",trait)) %>%
+           mutate(trait=gsub(" or thyrotoxicosis","",trait)) %>%
+           mutate(trait=gsub("Type 2 diabetes","Type II diabetes",trait)) %>%
+           mutate(trait=gsub(" or endometrial","",trait)) %>%
+           mutate(trait=gsub(" [+] or [-] dvt","",trait)) %>%
+           mutate(trait=gsub("Illnesses of siblings: ","",trait)) %>%
+           mutate(trait=gsub("Selective IgA deficiency","Selective IgA deficiency disease",trait)) %>%
+           mutate(trait=gsub("Doctor diagnosed |heart attack or |Self-reported |Illnesses of father: |Illnesses of mother: ","",trait)) %>%
+           mutate(trait=gsub("heart attack","myocardioal infarction",trait)) %>%
+           mutate(trait=gsub("malabsorption or |Low grade and borderline serous |Mouth or teeth dental problems: ","",trait)) %>%
+           mutate(trait=gsub("Unspecified |Vascular or heart problems diagnosed by doctor: ","",trait)) %>%
+           mutate(trait=gsub(" or sle","", trait)) %>%
+           mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
+           rename(disease=trait)
+#          mutate(trait=gsub("\\b(^[A-Z])","\\L\\1",trait,perl=TRUE))
+ps_opt1 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")],1,sort))),] %>%
+           group_by(snp,disease,proxy) %>%
+           slice_head(n=1)
+ps_opt2 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")],1,sort))),] %>%
+           slice_min(order=proxy,n=1)
+ps_opt3 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")],1,sort))),] %>%
+           group_by(snp,disease) %>%
+           slice_min(order=proxy,n=1)
+ps_mutate <- ps_opt3
 long <- cbind(merge(metal,subset(ps,efo%in%iid_diseases[["id"]]),by="hg19_coordinates"),infection=0)
 short <- cbind(merge(aggr,subset(ps,efo%in%iid_diseases[["id"]]),by="hg19_coordinates"),infection=0)
 infection_efo <- with(subset(iid_diseases,infection==1),gsub(":","_",id))
@@ -413,7 +422,7 @@ gwas <- function()
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
   write.table(select(mat,-prot,-MarkerName,-a1,-a2,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
               rename(Protein=target.short,Gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
-              file=file.path(INF,"work","ST-pQTL-disease-overlapS.csv"),row.names=FALSE,quote=FALSE,sep=",")
+              file=file.path(INF,"work","ST-pQTL-disease-overlap.csv"),row.names=FALSE,quote=FALSE,sep=",")
   write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","ST-pQTL-disease-overlap-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
 }
