@@ -120,7 +120,22 @@ na_selected <- c(
 "Vitiligo")
 
 ps_na_grep <- paste(na_selected,collapse="|")
-ps_na_disease <- filter(ps_na_direction,grepl(ps_na_grep,trait))
+ps_na_disease <- filter(ps_na_direction,grepl(ps_na_grep,trait)) %>%
+                 mutate(trait=gsub("including oligoarticular and rheumatoid factor negative polyarticular JIA","",trait)) %>%
+                 mutate(direction=if_else(snp=="rs2228145" & pmid=="24390342","+",direction)) # risk=A
+ps_na_disease[c("snp","rsid","proxy","r2","trait","pmid","study")]
+
+gwascat <- function()
+{
+  GCST <- gwasrapidd::get_associations(variant_id = c(unique(ps_na_disease)$rsid))
+  save(GCST, file=file.path(INF,"work","GCST.rda"))
+  GCST_id <- pull(GCST@associations,association_id)
+  GCST_studies <- association_to_study(GCST_id)
+  GCST_traits <- get_traits(GCST_id)
+}
+
+ps_na_pmid <- unique(ps_na_disease$pmid) %>%
+              paste(collapse=" ")
 write.table(ps_na_disease,file=file.path(INF,"work","ps_na_disease.csv"),quote=FALSE,row.names=FALSE,sep=",")
 
 ps_filter <- ps %>%
@@ -288,7 +303,7 @@ imd <- function()
   mat <- within(subset(short,infection==0 & Keep==1 & !is.na(direction))[v],
   {
     flag <- (HLA==1)
-    prefix <- paste0(prots,"-",rsid)
+    prefix <- paste0(prots,"-",rsid,"-",cistrans)
     prefix[flag] <- paste0(prefix[flag],"*")
     rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-", prefix," (",hgnc,")")
     trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
@@ -321,21 +336,19 @@ imd <- function()
   list(rxc=rxc,dn=dn)
 }
 
-imd2 <- function()
+overlap <- function(dat,f1,f2)
 # Now on individual proteins
 {
-  long <- merge(metal,ps_mutate,by="hg19_coordinates")
-  sel <- sapply(gsub("_",":",long[["efo"]]),function(x) {
-           long_set <- unlist(strsplit(x,";"))
-           set_int <- intersect(long_set,iid_diseases[["id"]])
-           paste0(iid_diseases[["id"]][iid_diseases[["id"]]==set_int],collapse="")!=""
-         })
-  mat <- select(filter(long,sel),prot,target.short,gene,hgnc,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
-                      ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
-         mutate(prefix=if_else(HLA==1,paste0(gene,"-",rsid,"-",cis.trans,"*"),paste0(gene,"-",rsid,"-",cis.trans)),
+  mat <- select(dat,prot,target.short,gene,hgnc,snp,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,
+                      rsid,a1,a2,efo,ref_rsid,ref_a1,ref_a2,proxy,r2,
+                      HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
+         mutate(prefix=if_else(HLA==1,paste0(gene,"-",snp,"-",cis.trans,"*"),paste0(gene,"-",snp,"-",cis.trans)),
                 rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
                 Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
                 beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
+                Allele1=toupper(Allele1), Allele2=toupper(Allele2),
+                switch=case_when(proxy==0 & Allele1==a1 ~ "0", proxy==0 & Allele1!=a1 ~ "1", TRUE ~ "0"),
+                direction=case_when(switch=="1" & direction=="-" ~ "+", switch=="1" & direction=="+" ~ "-", TRUE ~ direction),
                 pqtl_trait_direction=paste0(pqtl_direction,direction),
                 trait_direction=case_when(pqtl_trait_direction=="++" ~ "1",  pqtl_trait_direction=="+-" ~ "-1",
                                           pqtl_trait_direction=="-+" ~ "-1", pqtl_trait_direction=="--" ~ "1",
@@ -370,64 +383,14 @@ imd2 <- function()
   subset(mat[c("study","pmid","unit","beta","pqtl_direction","direction")],unit=="-")
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
-  write.table(select(mat,-prot,-MarkerName,-a1,-a2,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
+  write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
               rename(Protein=target.short,Gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
-              file=file.path(INF,"work","ST-pQTL-IMD-overlap.csv"),row.names=FALSE,quote=FALSE,sep=",")
-  write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","ST-pQTL-IMD-overlap-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
+              file=file.path(INF,"work",f1),row.names=FALSE,quote=FALSE,sep=",")
+  write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work",f2),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
 }
 
-gwas <- function()
-{
-  long <- merge(metal,ps_mutate,by="hg19_coordinates")
-  mat <- select(long, prot,target.short,gene,hgnc,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,rsid,a1,a2,efo,
-                      ref_rsid,ref_a1,ref_a2,proxy,r2,HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
-         mutate(prefix=if_else(HLA==1,paste0(gene,"-",rsid,"-",cis.trans,"*"),paste0(gene,"-",rsid,"-",cis.trans)),
-                rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
-                Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
-                beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
-                pqtl_trait_direction=paste0(pqtl_direction,direction),
-                trait_direction=case_when(pqtl_trait_direction=="++" ~ "1",  pqtl_trait_direction=="+-" ~ "-1",
-                                          pqtl_trait_direction=="-+" ~ "-1", pqtl_trait_direction=="--" ~ "1",
-                                          pqtl_trait_direction=="-NA" ~ "NA",
-                                          TRUE ~ as.character(direction))) %>%
-         filter(direction%in%c("-","+"))
-  combined <- group_by(mat,Trait,rsidProt,desc(n_cases)) %>%
-              summarize(directions=paste(trait_direction,collapse=";"),
-                        betas=paste(beta,collapse=";"),
-                        ses=paste(se,collapse=";"),
-                        p=paste(p,collapse=";"),
-                        units=paste(unit,collapse=";"),
-                        studies=paste(study,collapse=";"),
-                        PMIDs=paste(pmid,collapse=";"),
-                        diseases=paste(disease,collapse=";"),
-                        cases=paste(n_cases,collapse=";"),
-                        efos=paste(efo,collapse="+")
-                       ) %>% data.frame()
-  efo_Traits <- with(combined,unique(Trait))
-  rsid_Prots <- with(combined,unique(rsidProt))
-  rxc <- matrix(0, length(efo_Traits), length(rsid_Prots), dimnames=list(efo_Traits,rsid_Prots))
-  dn <- matrix("", length(efo_Traits), length(rsid_Prots), dimnames=list(efo_Traits,rsid_Prots))
-  for(rn in rownames(rxc)) for(cn in colnames(rxc)) {
-     cnrn <- subset(combined,Trait==rn & rsidProt==cn)
-     if(nrow(cnrn)==0) next
-     val <- unlist(strsplit(cnrn[["directions"]],";"))
-     tab <- table(val)
-     sym <- sapply(unlist(strsplit(cnrn[["directions"]],";"))[1],function(x){signs[symbols==x]})
-     if (length(tab)==1) rxc[rn,cn] <- as.numeric(val[1]) else dn[rn,cn] <- unicodes[1]
-  }
-  # all beta's are NAs when unit=="-"
-  subset(mat[c("study","pmid","unit","beta","pqtl_direction","direction")],unit=="-")
-  # all studies with risk difference were UKBB
-  subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
-  write.table(select(mat,-prot,-MarkerName,-a1,-a2,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
-              rename(Protein=target.short,Gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
-              file=file.path(INF,"work","ST-pQTL-disease-overlap.csv"),row.names=FALSE,quote=FALSE,sep=",")
-  write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work","ST-pQTL-disease-overlap-combined.csv"),row.names=FALSE,quote=FALSE,sep=",")
-  list(rxc=rxc,dn=dn)
-}
-
-SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=12, w=15, ylab="Immune-mediated outcomes")
+SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=16, w=17, ylab="Immune-mediated outcomes")
 {
   print(rownames(rxc))
   print(dim(rxc))
@@ -436,7 +399,7 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=12, w=15, ylab
   col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
   png(file.path(INF,f),res=300,width=w,height=h,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
-  p <- pheatmap(rxc, legend=FALSE, angle_col="270", border_color="black", color=col, cellheight=ch, cellwidth=cw,
+  p <- pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
                  display_numbers=dn, number_color = "brown",
                  cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
   ccols <- if_else(grepl("-cis",p$gtable$grobs[[4]]$label),1,2)
@@ -446,7 +409,7 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=12, w=15, ylab
   png(file.path(INF,f),res=300,width=w,height=h,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   colnames(rxc) <- gsub("^[0-9]*-|-cis|-trans","",colnames(rxc))
-  p <- pheatmap(rxc, legend=FALSE, angle_col="270", border_color="black", color=col, cellheight=ch, cellwidth=cw,
+  p <- pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
                  display_numbers=dn, number_color = "brown",
                  cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
   p$gtable$grobs[[4]]$gp=gpar(col=ctcols[ccols])
@@ -461,8 +424,19 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=12, w=15, ylab
 rxc_imd <- imd()
 with(rxc_imd,SF(rxc,dn))
 # All EFOs for IMD but somehow smaller number of rows
-rxc_imd2 <- imd2()
-with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=21,cw=21,h=13,w=19))
+
+long <- merge(metal,ps_mutate,by="hg19_coordinates")
+sel <- sapply(gsub("_",":",long[["efo"]]),function(x) {
+             long_set <- unlist(strsplit(x,";"))
+             set_int <- intersect(long_set,iid_diseases[["id"]])
+             paste0(iid_diseases[["id"]][iid_diseases[["id"]]==set_int],collapse="")!=""
+             })
+f1 <- "ST-pQTL-IMD-overlap.csv"
+f2 <- "ST-pQTL-IMD-overlap-combined.csv"
+rxc_imd2 <- overlap(filter(long,sel),f1,f2)
+with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=21,cw=21,h=13,w=22))
 # GWAS diseases
-rxc_gwas <- gwas()
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=23,w=30,ylab="GWAS diseases"))
+f1 <- "ST-pQTL-disease-overlap.csv"
+f2 <- "ST-pQTL-disease-overlap-combined.csv"
+rxc_gwas <- overlap(long,f1,f2)
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=26,w=44,ylab="GWAS diseases"))
