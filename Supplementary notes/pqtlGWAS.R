@@ -124,16 +124,6 @@ ps_na_disease <- filter(ps_na_direction,grepl(ps_na_grep,trait)) %>%
                  mutate(trait=gsub("including oligoarticular and rheumatoid factor negative polyarticular JIA","",trait)) %>%
                  mutate(direction=if_else(snp=="rs2228145" & pmid=="24390342","+",direction)) # risk=A
 ps_na_disease[c("snp","rsid","proxy","r2","trait","pmid","study")]
-
-gwascat <- function()
-{
-  GCST <- gwasrapidd::get_associations(variant_id = c(unique(ps_na_disease)$rsid))
-  save(GCST, file=file.path(INF,"work","GCST.rda"))
-  GCST_id <- pull(GCST@associations,association_id)
-  GCST_studies <- association_to_study(GCST_id)
-  GCST_traits <- get_traits(GCST_id)
-}
-
 ps_na_pmid <- unique(ps_na_disease$pmid) %>%
               paste(collapse=" ")
 write.table(ps_na_disease,file=file.path(INF,"work","ps_na_disease.csv"),quote=FALSE,row.names=FALSE,sep=",")
