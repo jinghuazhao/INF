@@ -340,21 +340,28 @@ overlap <- function(dat,f1,f2)
 # Now on individual proteins
 {
   mat <- select(dat,prot,target.short,gene,hgnc,snp,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,
-                      rsid,a1,a2,efo,ref_rsid,ref_a1,ref_a2,proxy,r2,
+                      chr,rsid,a1,a2,efo,ref_rsid,ref_a1,ref_a2,proxy,r2,
                       HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
          mutate(prefix=if_else(HLA==1,paste0(gene,"-",snp,"-",cis.trans,"*"),paste0(gene,"-",snp,"-",cis.trans)),
                 rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
                 Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
                 beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
                 Allele1=toupper(Allele1), Allele2=toupper(Allele2),
-                switch=case_when(proxy==0 & Allele1==a1 ~ "0", proxy==0 & Allele1!=a1 ~ "1", TRUE ~ "0"),
+                snp_rsid_chr=paste(snp,rsid,chr,sep="_")) %>%
+                left_join(haps) %>%
+         mutate(hap11=paste0(Allele1,a1),hap12=paste0(Allele1,a2),hap21=paste0(Allele2,a1),hap22=paste0(Allele2,a2),
+                switch=case_when(proxy==0 & Allele1==a1 ~ "0", proxy==0 & Allele1!=a1 ~ "1",
+                                 proxy==1 & hap==hap11 ~ "0", proxy==1 & hap==hap12 ~ "1",
+                                 proxy==1 & hap==hap21 ~ "1", proxy==1 & hap==hap22 ~ "0",
+                                 TRUE ~ "0"),
                 direction=case_when(switch=="1" & direction=="-" ~ "+", switch=="1" & direction=="+" ~ "-", TRUE ~ direction),
                 pqtl_trait_direction=paste0(pqtl_direction,direction),
                 trait_direction=case_when(pqtl_trait_direction=="++" ~ "1",  pqtl_trait_direction=="+-" ~ "-1",
                                           pqtl_trait_direction=="-+" ~ "-1", pqtl_trait_direction=="--" ~ "1",
                                           pqtl_trait_direction=="-NA" ~ "NA",
                                           TRUE ~ as.character(direction))) %>%
-         filter(direction%in%c("-","+"))
+         filter(direction%in%c("-","+")) %>%
+         select(-c(snp_rsid_chr,hap,hap11,hap12,hap21,hap22,switch))
   combined <- group_by(mat,Trait,rsidProt,desc(n_cases)) %>%
               summarize(directions=paste(trait_direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
@@ -423,20 +430,38 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=16, w=17, ylab
 # INF1_pQTL_immune_qtl_unclustered.png
 rxc_imd <- imd()
 with(rxc_imd,SF(rxc,dn))
-# All EFOs for IMD but somehow smaller number of rows
 
+# GWAS diseases
 long <- merge(metal,ps_mutate,by="hg19_coordinates")
+dat <- long
+ldpairs <- filter(long,snp!=rsid) %>%
+           select(snp,rsid,chr) %>%
+           mutate(snp_rsid_chr=paste0(snp,"_",rsid,"_",chr)) %>%
+           distinct()
+z <- sapply(pull(ldpairs,snp_rsid_chr),function(x) {
+     print(x)
+     s <- unlist(strsplit(x,"_"))
+     cmd <- sprintf("plink --bfile %s/INTERVAL/per_chr/interval.imputed.olink.chr_%s --ld %s %s|\
+                     awk '/Haplotype/,/phase/'|sed '$d'|sed '$d'|awk '!/-/{print $1,$2}' > %s",INF,s[3],s[1],s[2],x)
+     if (!file.exists(x)) system(cmd)
+     assign(x,read.table(x,header=TRUE)%>%arrange(desc(Frequency))%>%slice_head(n=1)%>%pull(Haplotype),envir=.GlobalEnv)
+     f <- paste0(s[1],"_",s[2],".",s[3])
+     if (FALSE) LDlinkR::LDhap(s[1:2],file=paste0(f,".ld"),token=Sys.getenv("LDLINK_TOKEN"))
+     })
+haps <- data.frame(snp_rsid_chr=names(z),hap=sapply(1:length(z),function(x) get(names(z)[x])))
+f1 <- "ST-pQTL-disease-overlap.csv"
+f2 <- "ST-pQTL-disease-overlap-combined.csv"
+rxc_gwas <- overlap(dat,f1,f2)
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=26,w=44,ylab="GWAS diseases"))
+
+# All EFOs for IMD but somehow smaller number of rows
 sel <- sapply(gsub("_",":",long[["efo"]]),function(x) {
              long_set <- unlist(strsplit(x,";"))
              set_int <- intersect(long_set,iid_diseases[["id"]])
-             paste0(iid_diseases[["id"]][iid_diseases[["id"]]==set_int],collapse="")!=""
+             paste0(iid_diseases[["id"]][iid_diseases[["id"]]%in%set_int],collapse="")!=""
              })
+dat <- filter(long,sel)
 f1 <- "ST-pQTL-IMD-overlap.csv"
 f2 <- "ST-pQTL-IMD-overlap-combined.csv"
-rxc_imd2 <- overlap(filter(long,sel),f1,f2)
+rxc_imd2 <- overlap(dat,f1,f2)
 with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=21,cw=21,h=13,w=22))
-# GWAS diseases
-f1 <- "ST-pQTL-disease-overlap.csv"
-f2 <- "ST-pQTL-disease-overlap-combined.csv"
-rxc_gwas <- overlap(long,f1,f2)
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=26,w=44,ylab="GWAS diseases"))
