@@ -381,7 +381,7 @@ overlap <- function(dat,f1,f2)
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
   write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
-              rename(Protein=target.short,Gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
+              rename(Protein=target.short,Target_gene=gene,Nearest_gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
               file=file.path(INF,"work",f1),row.names=FALSE,quote=FALSE,sep=",")
   write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work",f2),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
