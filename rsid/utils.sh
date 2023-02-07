@@ -644,3 +644,39 @@ Rscrtip -e '
   write.table(inf1_metal,file="inf1_metal.tsv",row.names=FALSE,quote=FALSE,sep="\t")
 '
 }
+
+function GCST()
+{
+#!/usr/bin/bash
+
+#SBATCH --job-name=gsmr
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1
+#SBATCH --mem=28800
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/GCST_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/GCST_%A_%a.err
+#SBATCH --export ALL
+
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+
+Rscript -e '
+gwascat <- function()
+{
+  INF <- Sys.getenv("INF")
+  library(dplyr)
+  library(gwasrapidd)
+# GCST <- gwasrapidd::get_associations(variant_id = c(unique(ps_na_disease)$rsid))
+# save(GCST, file=file.path(INF,"work","GCST.rda"))
+  load(file.path(INF,"work","GCST.rda"))
+  GCST_id <- pull(GCST@associations,association_id)
+  GCST_studies <- association_to_study(GCST_id)
+  GCST_traits <- get_traits(GCST_id)
+  save(GCST_studies,GCST_traits,file=file.path(INF,"GCST2.rda"))
+}
+
+gwascat()
+'
+}
