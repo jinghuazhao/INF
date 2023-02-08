@@ -120,9 +120,7 @@ na_selected <- c(
 "Vitiligo")
 
 ps_na_grep <- paste(na_selected,collapse="|")
-ps_na_disease <- filter(ps_na_direction,grepl(ps_na_grep,trait)) %>%
-                 mutate(trait=gsub("including oligoarticular and rheumatoid factor negative polyarticular JIA","",trait)) %>%
-                 mutate(direction=if_else(snp=="rs2228145" & pmid=="24390342","+",direction)) # risk=A
+ps_na_disease <- filter(ps_na_direction,grepl(ps_na_grep,trait))
 ps_na_disease[c("snp","rsid","proxy","r2","trait","pmid","study")]
 ps_na_pmid <- unique(ps_na_disease$pmid) %>%
               paste(collapse=" ")
@@ -138,14 +136,19 @@ ps_na_gcst <- function(rsid,PMID)
   sources <- left_join(publications,studies)
   risk_alleles <- select(GCST@risk_alleles, association_id, variant_id, risk_allele, risk_frequency) %>%
                   filter(variant_id==rsid)
-  associations <- select(GCST@associations, association_id, range, beta_unit, beta_direction, beta_number, standard_error, pvalue) %>%
-                  filter(association_id %in% risk_alleles$association_id)
-  id <- filter(assoc_study,association_id %in% associations$association_id)
+  associations <- select(GCST@associations, association_id, range, beta_unit, beta_direction, beta_number, standard_error, pvalue)
+  id <- filter(assoc_study,association_id %in% associations$association_id) %>% distinct()
+  r <- left_join(id,publications) %>% filter(!is.na(pubmed_id)) %>% distinct()
+  risk_allels <- risk_alleles %>% filter(association_id %in% r$association_id) %>% distinct()
+  associations <- associations %>% filter(association_id %in% r$association_id) %>% distinct()
 # get_variants(variant_id=rsid,pubmed_id=PMID)
-  list(sources=sources,id=id,risk_alleles=risk_alleles,associations=associations)
+  left_join(r,associations) %>% left_join(risk_alleles)
 }
+for(i in 1:nrow(ps_na_disease)) print(ps_na_gcst(ps_na_disease[["rsid"]][i],ps_na_disease[["pmid"]][i]))
 
 ps_filter <- ps %>%
+             mutate(trait=gsub("including oligoarticular and rheumatoid factor negative polyarticular JIA","",trait)) %>%
+             mutate(direction=if_else(snp=="rs2228145" & pmid=="24390342","+",direction)) %>%
              filter(!grepl("INVT|IVNT|SDS|Z-score|bpm|crease|g/l|kg|lu|mg|ml|mmHg|mol|years|ug|unit|%",unit)) %>%
              filter(!(unit=="-"&(pmid=="UKBB"|grepl("Tonsillectomy|Cholesterol ldl|Intercellular adhesion molecule 1",trait)))) %>%
              filter(!(unit=="-"&grepl("Protein quantitative trait loci|Receptors interleukin 6|Monocyte chemoattractant protein 1",trait))) %>%
