@@ -140,7 +140,9 @@ ps_na_gcst <- function(rsid,PMID)
                   filter(variant_id==rsid)
   associations <- select(GCST@associations, association_id, range, beta_unit, beta_direction, beta_number, standard_error, pvalue) %>%
                   filter(association_id %in% risk_alleles$association_id)
-  list(sources=sources,risk_alleles=risk_alleles,associations=associations)
+  id <- filter(assoc_study,association_id %in% associations$association_id)
+# get_variants(variant_id=rsid,pubmed_id=PMID)
+  list(sources=sources,id=id,risk_alleles=risk_alleles,associations=associations)
 }
 
 ps_filter <- ps %>%
