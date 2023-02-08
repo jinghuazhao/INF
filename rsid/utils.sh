@@ -665,13 +665,12 @@ Rscript -e '
   library(dplyr)
   library(gwasrapidd)
   INF <- Sys.getenv("INF")
-# GCST <- gwasrapidd::get_associations(variant_id = c(unique(ps_na_disease)$rsid))
-# save(GCST, file=file.path(INF,"work","GCST.rda"))
-  load(file.path(INF,"work","GCST.rda"))
+  GCST <- gwasrapidd::get_associations(variant_id = c(unique(ps_na_disease)$rsid))
   GCST_id <- pull(GCST@associations,association_id)
-  GCST_studies <- association_to_study(GCST_id)
-  study_id <- pull(GCST_studies, study_id)
+  assoc_study <- association_to_study(GCST_id)
+  study_id <- pull(assoc_study, study_id)
   GCST_traits <- get_traits(study_id)
-  save(GCST_studies,GCST_traits,file=file.path(INF,"GCST2.rda"))
+  GCST_studies <- get_studies(study_id)
+  save(GCST,assoc_study,GCST_studies,GCST_traits,file=file.path(INF,"work","GCST.rda"))
 '
 }
