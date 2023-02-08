@@ -23,7 +23,7 @@ INF1_metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE) %>%
 INF1_aggr <- INF1_metal %>%
   select(Chromosome,Position,target.short,gene,hg19_coordinates,MarkerName,Allele1,Allele2,Freq1,Effect,StdErr,log.P.,cis.trans,INF1_rsid) %>%
   group_by(Chromosome,Position,MarkerName,INF1_rsid,hg19_coordinates) %>%
-  summarise(nprots=n(),
+  summarise(nprots=dplyr::n(),
             prots=paste(target.short,collapse=";"),
             Allele1=paste(toupper(Allele1),collapse=";"),
             Allele2=paste(toupper(Allele2),collapse=";"),
@@ -128,6 +128,21 @@ ps_na_pmid <- unique(ps_na_disease$pmid) %>%
               paste(collapse=" ")
 write.table(ps_na_disease,file=file.path(INF,"work","ps_na_disease.csv"),quote=FALSE,row.names=FALSE,sep=",")
 
+load(file.path(INF,"work","GCST.rda"))
+ps_na_gcst <- function(rsid,PMID)
+{
+  publications <- select(GCST_studies@publications, study_id, pubmed_id) %>%
+                  filter(pubmed_id %in% PMID)
+  studies <- select(GCST_studies@studies, study_id, reported_trait) %>%
+             filter(study_id %in% publications$study_id)
+  sources <- left_join(publications,studies)
+  risk_alleles <- select(GCST@risk_alleles, association_id, variant_id, risk_allele, risk_frequency) %>%
+                  filter(variant_id==rsid)
+  associations <- select(GCST@associations, association_id, range, beta_unit, beta_direction, beta_number, standard_error, pvalue) %>%
+                  filter(association_id %in% risk_alleles$association_id)
+  list(sources=sources,risk_alleles=risk_alleles,associations=associations)
+}
+
 ps_filter <- ps %>%
              filter(!grepl("INVT|IVNT|SDS|Z-score|bpm|crease|g/l|kg|lu|mg|ml|mmHg|mol|years|ug|unit|%",unit)) %>%
              filter(!(unit=="-"&(pmid=="UKBB"|grepl("Tonsillectomy|Cholesterol ldl|Intercellular adhesion molecule 1",trait)))) %>%
@@ -142,6 +157,7 @@ ps_filter <- ps %>%
              filter(!(unit=="-"&grepl("Coronary artery disease or ischemic stroke|Coronary artery disease or large artery stroke",trait))) %>%
              filter(!(unit=="-"&grepl("kidney stone or ureter stone/bladder stone",trait))) %>%
              filter(!trait=="Self-reported diabetes") %>%
+             filter(!trait=="Self-reported eczema or dermatitis") %>%
              filter(!trait=="Illnesses of father: chronic bronchitis or emphysema") %>%
              filter(!grepl("Thyroid peroxidase antibody positivity|Smoking status: previous",trait)) %>%
              filter(!grepl("Started insulin within one year diagnosis of diabetes|No blood clot",trait)) %>%
@@ -163,6 +179,9 @@ ps_gsub <- ps_filter %>%
            mutate(trait=if_else(unit=="-"&grepl("Arthritis rheumatoid|Rheumatoid arthritis",trait),"rheumatoid arthritis",trait)) %>%
            mutate(trait=if_else(unit=="-"&grepl("Diabetes mellitus type 1|Type 1 diabetes",trait),"Type I diabetes",trait)) %>%
            mutate(trait=if_else(unit=="-"&grepl("Inflammatory bowel disease",trait),"inflammatory bowel disease",trait)) %>%
+           mutate(trait=gsub("Blood clot in the leg|Self-reported deep venous thrombosis","deep vein thrombosis",trait)) %>%
+           mutate(trait=gsub("Blood clot in the lung","pulmonary embolism",trait)) %>%
+           mutate(trait=gsub("Celiac disease","Coeliac disease",trait)) %>%
            mutate(trait=gsub("Coronary heart disease","Coronary artery disease",trait)) %>%
            mutate(trait=gsub("Crohns","Crohn's",trait)) %>%
            mutate(trait=gsub("Advanced age related macular degeneration","Age-related macular degeneration",trait)) %>%
@@ -181,9 +200,11 @@ ps_gsub <- ps_filter %>%
            mutate(trait=gsub("Illnesses of siblings: ","",trait)) %>%
            mutate(trait=gsub("Selective IgA deficiency","Selective IgA deficiency disease",trait)) %>%
            mutate(trait=gsub("Doctor diagnosed |heart attack or |Self-reported |Illnesses of father: |Illnesses of mother: ","",trait)) %>%
-           mutate(trait=gsub("heart attack","myocardioal infarction",trait)) %>%
+           mutate(trait=gsub("high blood pressure","hypertension",trait)) %>%
            mutate(trait=gsub("malabsorption or |Low grade and borderline serous |Mouth or teeth dental problems: ","",trait)) %>%
            mutate(trait=gsub("Unspecified |Vascular or heart problems diagnosed by doctor: ","",trait)) %>%
+           mutate(trait=gsub("Acute myocardial infarction|Myocardial infarction|myocardial infarction","cardiovascular diseases",trait)) %>%
+           mutate(trait=gsub("Coronary artery disease|heart attack|heart disease","cardiovascular diseases",trait)) %>%
            mutate(trait=gsub(" or sle","", trait)) %>%
            mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
            rename(disease=trait)
@@ -381,7 +402,7 @@ overlap <- function(dat,f1,f2)
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
   write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
-              rename(Protein=target.short,Gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
+              rename(Protein=target.short,Target_gene=gene,Nearest_gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
               file=file.path(INF,"work",f1),row.names=FALSE,quote=FALSE,sep=",")
   write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work",f2),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
