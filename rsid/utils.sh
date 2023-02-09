@@ -680,8 +680,8 @@ function CXCL5()
   export cis_full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
   export eQTLGen_tabix=${eQTLGen}/tabix
   export chr=4
-  export start==74861359
-  export end==74864496
+  export start=74861359
+  export end=74864496
   export M=1e6
 # SCALLOP/INF
   for prot in CXCL5
@@ -708,20 +708,20 @@ function CXCL5()
   awk -vOFS="\t" '{
          if (NR==1) print "snpid","rsid","chr","pos","a1","a2","z";
          else {
-           if ($4<$5) snpid="chr"$1":"$2"_"$4"_"$5; else snpid="chr"$1":"$2"_"$4"_"$5;
+           if ($4<$5) snpid="chr"$1":"$2"_"$4"_"$5; else snpid="chr"$1":"$2"_"$5"_"$4;
            split($6,a,":"); z=a[1]/a[2];
            print snpid, $3, $1, $2, $5, $4, z
          }
        }' | \
   gzip -f > ${INF}/work/CD.tsv.gz
   export UC=${INF}/OpenGWAS/ebi-a-GCST004133.vcf.gz
-  cat <(tabix -H ${CD} ${region} | tail -n -1) \
-      <(tabix ${CD} ${region}) | \
+  cat <(tabix -H ${UC} ${region} | tail -n -1) \
+      <(tabix ${UC} ${region}) | \
   cut -f1-5,10 | \
   awk  -vOFS="\t" '{
          if (NR==1) print "snpid","rsid","chr","pos","a1","a2","z";
          else {
-           if ($4<$5) snpid="chr"$1":"$2"_"$4"_"$5; else snpid="chr"$1":"$2"_"$4"_"$5;
+           if ($4<$5) snpid="chr"$1":"$2"_"$4"_"$5; else snpid="chr"$1":"$2"_"$5"_"$4;
            split($6,a,":"); z=a[1]/a[2];
            print snpid, $3, $1, $2, $5, $4, z
          }
@@ -738,11 +738,11 @@ function CXCL5()
   awk -vOFS="\t" '{
          if (NR==1) print "snpid","rsid","chr","pos","a1","a2","z";
          else {
-           if ($5<$6) snpid="chr"$2":"$3"_"$5"_"$6; else snpid="chr"$2":"$3"_"$5"_"$6;
+           if ($5<$6) snpid="chr"$2":"$3"_"$5"_"$6; else snpid="chr"$2":"$3"_"$6"_"$5;
            print snpid, $1, $2, $3, $5, $6, $4
          }
        }' | \
-  gzip -f > ${INF}/work/eQTLGen-CXCL5.tsv.gz
+  gzip -f > ${INF}/work/eQTLGen.tsv.gz
 
   Rscript -e '
   library(dplyr)
@@ -751,42 +751,39 @@ function CXCL5()
   INF <- Sys.getenv("INF")
   gsmr <- read.delim(file.path(INF,"mr/gsmr/","gsmr-efo-reduce.txt")) %>%
             left_join(pQTLdata::inf1[c("target.short","gene")],by=c('protein'='target.short')) %>%
-            select(gene,bxy,se,p,Disease)
+            select(Disease,bxy,se,p,p_qtl,gene) %>%
+            filter(grepl("CXCL5",gene)&grepl("Crohn\'s disease|Inflammatory bowel disease|Ulcerative colitis",Disease))
 
-  forest_plot <- function(dat,f,title)
-  {
-    pdf(file.path(INF,f),height=8,width=8)
-    mr_forestplot(dat,title=title,colgap.forest.left="0.05cm", fontsize=14,
-                  leftcols=c("studlab"), leftlabs=c("Protein"),
-                  plotwidth="3inch", sm="OR", sortvar=dat[["bxy"]],
-                  rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
-                  digits=3, digits.pval=2, scientific.pval=TRUE,
-                  common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
-                  addrow=TRUE, backtransf=TRUE, spacing=1.6)
-    grid::grid.text(title, 0.5, 0.9)
-    dev.off()
-  }
-
-  dat <- filter(gsmr,Disease=="Crohn's disease" & !is.na(p) & p<=0.05)
-  forest_plot(dat,"CD.pdf",title="GSMR for Crohn's disease")
-  dat <- filter(gsmr,Disease=="Ulcerative colitis" & !is.na(p) & p<=.05)
-  forest_plot(dat,"UC.pdf",title="GSMR for ulcerative colitis")
+   pdf(file.path(INF,"CXCL5-MR.pdf"),height=5,width=9)
+   mr_forestplot(gsmr,colgap.forest.left="0.05cm", fontsize=14,
+                 leftcols=c("studlab"), leftlabs=c("Protein"),
+                 plotwidth="3inch", sm="OR", sortvar=dat[["bxy"]],
+                 rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
+                 digits=3, digits.pval=2, scientific.pval=TRUE,
+                 common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
+                 addrow=TRUE, backtransf=TRUE, spacing=1.6)
+   grid::grid.text("GSMR results on CXCL5-CD/IBD/UC", 0.5, 0.9)
+   dev.off()
 
   vars <- c("snpid","rsid","chr","pos","a1","a2","z")
   cxcl5 <- read.delim(file.path(INF,"work","CXCL5.tsv.gz")) %>% setNames(vars)
-  cd <- read.delim(file.path(INF,"work","CD.tsv.gz")) %>% setNames(vars)
   uc <- read.delim(file.path(INF,"work","UC.tsv.gz")) %>% setNames(vars)
-  eqtl <- read.delim(file.path(INF,"work","eQTLGen-CXCL5.tsv.gz")) %>% setNames(vars)
+  cd <- read.delim(file.path(INF,"work","CD.tsv.gz")) %>% setNames(vars)
+  eqtl <- read.delim(file.path(INF,"work","eQTLGen.tsv.gz")) %>% setNames(vars)
 
-  cxcl5_z <- cxcl5 %>% select(snpid,rsid,z,chr,pos) %>% rename(marker=rsid,cxcl5=z)
-  cd_z <- cd %>% mutate(cd=z) %>% select(snpid,cd)
-  uc_z <- uc %>% mutate(uc=z) %>% select(snpid,uc)
-  eqtl_z <- eqtl %>% mutate(eqtl=z) %>% select(snpid,eqtl)
+  cxcl5_z <- select(cxcl5,snpid,rsid,z,chr,pos) %>% rename(marker=rsid,cxcl5=z)
+  eqtl_z <- rename(eqtl,eqtl=z) %>% select(snpid,eqtl)
+  uc_z <- rename(uc,uc=z) %>% select(snpid,uc)
+  cd_z <- rename(cd,cd=z) %>% select(snpid,cd)
 
-  traits <- cxcl5_z %>% left_join(cd_z) %>% left_join(uc_z) %>% left_join(eqtl_z) %>%
-            filter(marker!="rs6413465") %>% select(chr,pos,marker,cxcl5,cd,uc,eqtl)
+  traits <- cxcl5_z %>% left_join(eqtl_z) %>% left_join(uc_z) %>% left_join(cd_z) %>%
+            select(chr,pos,marker,cxcl5,uc,cd,eqtl)
+  library(data.table)
+  dt <- data.table(traits)
+  dup <- dt[duplicated(marker), cbind(.SD[1], number = .N), by = marker] %>% pull(marker)
+  traits <- filter(traits,!marker %in% dup)
   plink_bin <- "/rds/user/jhz22/hpc-work/bin/plink"
-  chr <- 4
+  chr <- Sys.getenv("chr")
   bfile <- file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr))
   r <- ieugwasr::ld_matrix(select(traits,marker),with_alleles=TRUE,pop="EUR",bfile=bfile,plink_bin=plink_bin)
   rnames <- gsub("_[A-Z]*","",colnames(r))
@@ -796,12 +793,13 @@ function CXCL5()
   colnames(ld) <- rownames(ld) <- rnames
   ld <- ld[rsids,rsids]
   d <- subset(traits,marker %in% rsids)
-  z <- d[c("cxcl5","cd","uc","eqtl")] %>% setNames(c("CXCL5","Crohn's disease","Ulcerative colitis", "eQTL"))
+  z <- d[c("cxcl5","eqtl","uc","cd")] %>% setNames(c("CXCL5","Gene expression","Ulcerative colitis","Crohn's disease"))
   rownames(z) <- with(d,marker)
   library(gassocplot)
-  pdf(file.path(INF,"SF-rs450373-traits-gassoc.pdf"),height=20,width=8)
+  pdf(file.path(INF,"CXCL5-gassoc.pdf"),height=20,width=8)
   sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits=names(z), ylab="-log10(P)", top.marker="rs450373",legend=TRUE)
   grid::grid.draw(sap)
   dev.off()
+  system("qpdf CXCL5-gassoc.pdf --pages . 2 -- --replace-input")
   '
 }
