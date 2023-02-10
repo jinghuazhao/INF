@@ -645,6 +645,53 @@ Rscrtip -e '
 '
 }
 
+function gsmr3()
+{
+  export efo=ebi-a-GCST004133
+  export prot=CXCL5
+  gunzip -c ${INF}/mr/gsmr/out/${prot}-${efo}.eff_plot.gz | awk '/effect_begin/,/effect_end/' | grep -v effect | cut -d' ' -f1 | \
+  grep -f - ${INF}/work/INTERVAL.rsid > ${INF}/${prot}-${efo}.rsid
+  Rscript -e '
+    options(width=200)
+    INF <- Sys.getenv("INF")
+    efo <- Sys.getenv("efo")
+    p <- Sys.getenv("prot")
+    trait <- "Ulcerative colitis"
+    r <- "rs450373"
+    gene <- "CXCL5"
+    rt <- paste0(INF,"/",p,"-",efo)
+    snpid_rsid <- read.table(paste0(rt,".rsid"),col.names=c("snpid","SNP"))
+    suppressMessages(require(dplyr))
+    suppressMessages(require(MendelianRandomization))
+    source(file.path(INF,"rsid","gsmr_plot.r"))
+    eff_dat <- paste0(INF,"/mr/gsmr/out/",p,"-",efo,".eff_plot.gz")
+    gsmr_data <- read_gsmr_data(eff_dat)
+    gsmr_summary(gsmr_data)
+    attach(gsmr_data)
+    gsmr_snp_effect <- as.data.frame(snp_effect[,-(2:3)]) %>%
+                       setNames(c("snpid","effect_allele","other_allele","eaf","bx","bxse","by","byse")) %>%
+                       mutate(bx=as.numeric(bx),bxse=as.numeric(bxse),by=as.numeric(by),byse=as.numeric(byse))
+    detach(gsmr_data)
+    gsmr_snp_effect <- snpid_rsid %>%
+                       left_join(gsmr_snp_effect)
+    attach(gsmr_snp_effect)
+    png(paste0(INF,"/SF-",p,"-",trait,".png"),res=300,height=5,width=4,units="in")
+    mr_dat <- mr_input(bx = bx, bxse = bxse, by = by, byse = byse, exposure = gene, outcome = trait, snps = SNP,
+              effect_allele = effect_allele, other_allele = other_allele, eaf = eaf)
+    mr_plot(mr_dat, interactive = FALSE, labels = FALSE)
+    dev.off()
+    detach(gsmr_snp_effect)
+    j <- left_join(gsmr_snp_effect,snpid_rsid) %>% pull(SNP)
+    rsids <- c(r,j)
+    ldr <- ieugwasr::ld_matrix(rsids,pop="EUR",with_alleles=FALSE)
+    write.table(ldr,file=paste0(p,"-",r,".r"),quote=FALSE,sep="\t")
+  # pdf(paste0(INF,"/",p,"-",trait,".eff_plot.pdf"))
+  # par(mar=c(6,6,5,1),mgp=c(4,1,0),xpd=TRUE)
+  # plot_gsmr_effect(gsmr_data, p, efo, colors()[75])
+  # dev.off()
+  '
+}
+
 function GCST()
 {
 #!/usr/bin/bash
@@ -815,16 +862,16 @@ function CXCL5()
     gsmr <- read.delim(file.path(INF,"mr/gsmr/","gsmr-efo-reduce.txt")) %>%
             left_join(pQTLdata::inf1[c("target.short","gene")],by=c('protein'='target.short')) %>%
             select(Disease,bxy,se,p,p_qtl,gene) %>%
-            filter(grepl("CXCL5",gene)&grepl("Crohn\'s disease|Inflammatory bowel disease|Ulcerative colitis",Disease))
-    pdf(file.path(INF,"CXCL5-MR.pdf"),height=5,width=9)
+            filter(grepl("CXCL5",gene)&grepl("Crohn\'s disease|Ulcerative colitis",Disease))
+    pdf(file.path(INF,"CXCL5-MR.pdf"),height=3,width=7)
     mr_forestplot(gsmr,colgap.forest.left="0.05cm", fontsize=14,
-                  leftcols=c("studlab"), leftlabs=c("Protein"),
+                  leftcols=c("studlab"), leftlabs=c("Disease"),
                   plotwidth="3inch", sm="OR", sortvar=dat[["bxy"]],
                   rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
-                  digits=3, digits.pval=2, scientific.pval=TRUE,
+                  digits=2, digits.pval=2, scientific.pval=TRUE,
                   common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
                   addrow=TRUE, backtransf=TRUE, spacing=1.6)
-    grid::grid.text("GSMR results on CXCL5-CD/IBD/UC", 0.5, 0.9)
+    grid::grid.text("GSMR results", 0.5, 0.9)
     dev.off()
     vars <- c("snpid","rsid","chr","pos","a1","a2","z")
     cxcl5 <- read.delim(file.path(INF,"work","CXCL5.tsv.gz")) %>% setNames(vars)
@@ -894,5 +941,30 @@ function CXCL5()
     grid::grid.draw(sap)
     dev.off()
     system("qpdf CXCL5-gassoc2.pdf --pages . 2 -- --replace-input")
+    traits <- cxcl5_z %>% left_join(eqtl_z) %>% left_join(ct_z) %>% left_join(uc_z) %>% left_join(cd_z) %>%
+              select(chr,pos,marker,cxcl5,eqtl,ct,uc,cd)
+    library(data.table)
+    dt <- data.table(traits)
+    dup <- dt[duplicated(marker), cbind(.SD[1], number = .N), by = marker] %>% pull(marker)
+    traits <- filter(traits,!marker %in% dup)
+    plink_bin <- "/rds/user/jhz22/hpc-work/bin/plink"
+    chr <- Sys.getenv("chr")
+    bfile <- file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr))
+    r <- ieugwasr::ld_matrix(select(traits,marker),with_alleles=TRUE,pop="EUR",bfile=bfile,plink_bin=plink_bin)
+    rnames <- gsub("_[A-Z]*","",colnames(r))
+    traits <- subset(traits,marker %in% rnames)
+    rsids <- intersect(rnames,with(traits,marker))
+    ld <- r
+    colnames(ld) <- rownames(ld) <- rnames
+    ld <- ld[rsids,rsids]
+    d <- subset(traits,marker %in% rsids)
+    z <- d[c("cxcl5","eqtl","ct","uc","cd")] %>% setNames(c("CXCL5","Whole blood","Colon transverse","Ulcerative colitis","Crohn's disease"))
+    rownames(z) <- with(d,marker)
+    library(gassocplot)
+    pdf(file.path(INF,"CXCL5-WB-CT-UC-CD.pdf"),height=20,width=6)
+    sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits=names(z), ylab="-log10(P)", top.marker="rs450373",legend=TRUE)
+    grid::grid.draw(sap)
+    dev.off()
+    system("qpdf CXCL5-WB-CT-UC-CD.pdf --pages . 2 -- --replace-input")
   '
 }

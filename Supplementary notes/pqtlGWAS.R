@@ -142,13 +142,40 @@ ps_na_gcst <- function(rsid,PMID)
   risk_allels <- risk_alleles %>% filter(association_id %in% r$association_id) %>% distinct()
   associations <- associations %>% filter(association_id %in% r$association_id) %>% distinct()
 # get_variants(variant_id=rsid,pubmed_id=PMID)
-  left_join(r,associations) %>% left_join(risk_alleles)
+  left_join(r,associations) %>% left_join(risk_alleles) %>% data.frame() %>% select(-association_id,-study_id)
 }
 for(i in 1:nrow(ps_na_disease)) print(ps_na_gcst(ps_na_disease[["rsid"]][i],ps_na_disease[["pmid"]][i]))
 
+ps_gcst <- ps %>%
+           filter(!(pmid=="23143596")) %>%
+           filter(!(pmid=="24390342" & efo=="EFO_0000685" & is.na(beta))) %>%
+           filter(!(pmid=="21907864" & is.na(beta))) %>%
+           filter(!(pmid=="25646370")) %>%
+           filter(!(pmid=="20383146" & direction=="NA")) %>%
+           filter(!(pmid=="20081858")) %>%
+           filter(!(pmid=="27790247")) %>%
+           filter(!(pmid=="22399527" & direction=="NA")) %>%
+           filter(!(pmid=="21386085")) %>%
+           filter(!(pmid=="20453842" & direction=="NA")) %>%
+           filter(!(pmid=="27618447")) %>%
+           filter(!(pmid=="19430483"|pmid=="27117709"|pmid=="27197191")) %>%
+           filter(!(pmid=="25305756"|pmid=="24262325"|pmid=="20167578"|pmid=="27997041")) %>%
+           filter(!(pmid=="27182965"|pmid=="27618447"|pmid=="21383967"|pmid=="22057235")) %>%
+           filter(!(pmid=="22561518"|pmid=="22961000"|pmid=="23603763"|pmid=="21383967")) %>%
+           filter(!(pmid=="20453842" & direction=="NA")) %>%
+           filter(!(pmid=="26691988" & direction=="NA")) %>%
+           filter(!(pmid=="22399527" & direction=="NA")) %>%
+           filter(!(pmid=="21378990" & direction=="NA")) %>%
+           filter(!(pmid=="22672568" & direction=="NA")) %>%
+           filter(!(pmid=="22434691" & direction=="NA"))
+
+ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","a1"] <- "G"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="23603763" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
+
 ps_filter <- ps %>%
              mutate(trait=gsub("including oligoarticular and rheumatoid factor negative polyarticular JIA","",trait)) %>%
-             mutate(direction=if_else(snp=="rs2228145" & pmid=="24390342","+",direction)) %>%
              filter(!grepl("INVT|IVNT|SDS|Z-score|bpm|crease|g/l|kg|lu|mg|ml|mmHg|mol|years|ug|unit|%",unit)) %>%
              filter(!(unit=="-"&(pmid=="UKBB"|grepl("Tonsillectomy|Cholesterol ldl|Intercellular adhesion molecule 1",trait)))) %>%
              filter(!(unit=="-"&grepl("Protein quantitative trait loci|Receptors interleukin 6|Monocyte chemoattractant protein 1",trait))) %>%
