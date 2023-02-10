@@ -54,7 +54,8 @@ sort -k3,3n -k4,4n > work/${prot}.gassoc
 cut -f1 work/${prot}.gassoc > work/${prot}.snpid
 plink --bfile INTERVAL/cardio/INTERVAL --extract work/${prot}.snpid --r square --out work/${prot}
 
-R --no-save -q <<END
+Rscript -e '
+  INF <- Sys.getenv("INF")
   prot <- Sys.getenv("prot")
   d <- read.table(paste0(file.path("work",prot),".gassoc"),col.names=c("snpid","marker","chr","pos","pQTL","eQTL","QTL"))
   markers <- d[c("marker","chr","pos")]
@@ -62,9 +63,12 @@ R --no-save -q <<END
   rownames(z) <- with(d,marker)
   ld <- read.table(paste0(file.path("work",prot),".ld"),col.names=with(d,marker),row.names=with(d,marker))
   library(gassocplot)
-  sap <- stack_assoc_plot(markers, z, ld, traits = c("pQTL","eQTL"), ylab = "-log10(P)", legend=TRUE)
-  stack_assoc_plot_save(sap, paste0(file.path("work",prot),"-rs385076.png"), 2, width=8, height=13, dpi=300)
-END
+  sap <- stack_assoc_plot(markers, z, ld, traits = c("pQTL","eQTL"), ylab = "-log10(P)", legend=FALSE)
+  pdf(file.path(INF,"work",paste0(prot,"-rs385076.pdf")),height=13,width=8)
+  grid::grid.draw(sap)
+  dev.off()
+  system("qpdf ~/INF/work/IL.18-rs385076.pdf --pages . 2 -- --replace-input")
+'
 
 # pQTL
 # Chromosome	Position	MarkerName	Allele1	Allele2	Freq1	FreqSE	MinFreq	MaxFreq	Effect	StdErr	log(P)	Direction	HetISq	HetChiSq	HetDf	logHetP	N
