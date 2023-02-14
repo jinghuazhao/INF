@@ -149,7 +149,13 @@ for(i in 1:nrow(ps_na_disease)) print(ps_na_gcst(ps_na_disease[["rsid"]][i],ps_n
 # filter(ps[c("snp","rsid","proxy","a1","a2","beta","direction","p","trait","unit","pmid","study")],pmid=="26192919")
 # https://www.ebi.ac.uk/gwas/
 ps_gcst <- ps
-# PhenoScanner appears to have the better guess than GCST
+# PhenoScanner and GCST agree
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
+# PhenoScanner and GCST disagree on risk allele
+ps_gcst[ps_gcst$pmid=="23603763" & ps_gcst$rsid=="rs3184504","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="23603763" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
+# PhenoScanner provides a guess than GCST
 ps_gcst[ps_gcst$pmid=="27182965" & ps_gcst$rsid=="rs635634","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="27182965" & ps_gcst$rsid=="rs635634","direction"] <- "+"
 # PhenoScanner/GCST definitions (G/T) of risk allele are different
@@ -208,7 +214,7 @@ ps_filter <- ps_gcst %>%
              filter(!(pmid=="19430483"|pmid=="27117709"|pmid=="27197191")) %>%
              filter(!(pmid=="25305756"|pmid=="20167578"|pmid=="27997041")) %>%
              filter(!(pmid=="27182965"|pmid=="27618447"|pmid=="21383967"|pmid=="22057235")) %>%
-             filter(!(pmid=="22561518"|pmid=="22961000"|pmid=="23603763"|pmid=="21383967")) %>%
+             filter(!(pmid=="22561518"|pmid=="22961000"|pmid=="21383967")) %>%
              filter(!(pmid=="18794853"|pmid=="26752265"|pmid=="19430480"|pmid=="28067908")) %>%
              filter(!(pmid=="21383967"|pmid==""|pmid==""|pmid=="")) %>%
              filter(!(pmid=="20453842" & direction=="NA")) %>%

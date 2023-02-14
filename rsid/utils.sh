@@ -971,3 +971,36 @@ function CXCL5()
     system("qpdf CXCL5-WB-CT-UC-CD.pdf --pages . 2 -- --replace-input")
   '
 }
+
+function SCALLOP_MRC()
+{
+  module load ceuadmin/stata
+  cd ~/INF
+  stata <<\ \ END
+  insheet using INTERVAL/o5000-inf1-outlier_in-r2.sample, delim(" ")
+  format id* %15.0g
+  gen AGE=real(age)
+  sum AGE
+  END
+  cd ~/COVID-19/HGI
+  stata <<\ \ END
+  insheet using "20210317/INTERVALdata_17MAR2021.csv", case clear
+  sort identifier
+  keep identifier sexPulse agePulse ht_bl wt_bl
+  rename sexPulse sex
+  save a
+  insheet using "20210317/INTERVAL_OmicsMap_20210317.csv", case clear
+  keep identifier Affymetrix_QC_bl Affymetrix_gwasQC_bl Olink_inf_gwasQC_24m
+  format Affymetrix_QC_bl %15.0g
+  format Affymetrix_gwasQC_bl %15.0g
+  format Olink_inf_gwasQC_24m %15.0g
+  merge 1:1 identifier using a, gen(omics_data)
+  l Affymetrix_gwasQC_bl sex age ht_bl wt_bl if wt_bl!=. & wt_bl>200, ab(15) linesize(150)
+  replace wt_bl=. if wt_bl==777
+  gen bmi=wt_bl/ht_bl/ht_bl
+  sum bmi if Olink_inf_gwasQC_24m!=.
+  l Affymetrix_gwasQC_bl sex age ht_bl wt_bl bmi if bmi!=. & bmi>50, ab(15) linesize(150)
+  erase a.dta
+  END
+  cd -
+}
