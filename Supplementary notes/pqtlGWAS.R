@@ -146,48 +146,33 @@ ps_na_gcst <- function(rsid,PMID)
 }
 for(i in 1:nrow(ps_na_disease)) print(ps_na_gcst(ps_na_disease[["rsid"]][i],ps_na_disease[["pmid"]][i]))
 
-# filter(ps[c("snp","rsid","proxy","a1","a2","beta","direction","p","trait","unit","pmid")],pmid=="26192919")
-ps_gcst <- ps %>%
-           filter(!(pmid=="23143596")) %>%
-           filter(!(pmid=="24390342" & efo=="EFO_0000685" & is.na(beta))) %>%
-           filter(!(pmid=="21907864" & is.na(beta))) %>%
-           filter(!(pmid=="25646370")) %>%
-           filter(!(pmid=="20383146" & direction=="NA")) %>%
-           filter(!(pmid=="20081858")) %>%
-           filter(!(pmid=="27790247")) %>%
-           filter(!(pmid=="22399527" & direction=="NA")) %>%
-           filter(!(pmid=="21386085")) %>%
-           filter(!(pmid=="20453842" & direction=="NA")) %>%
-           filter(!(pmid=="19430483"|pmid=="27117709"|pmid=="27197191")) %>%
-           filter(!(pmid=="25305756"|pmid=="24262325"|pmid=="20167578"|pmid=="27997041")) %>%
-           filter(!(pmid=="27182965"|pmid=="27618447"|pmid=="21383967"|pmid=="22057235")) %>%
-           filter(!(pmid=="22561518"|pmid=="22961000"|pmid=="23603763"|pmid=="21383967")) %>%
-           filter(!(pmid=="18794853"|pmid=="26752265"|pmid=="19430480"|pmid=="28067908")) %>%
-           filter(!(pmid=="21383967"|pmid==""|pmid==""|pmid=="")) %>%
-           filter(!(pmid=="20453842" & direction=="NA")) %>%
-           filter(!(pmid=="26691988" & direction=="NA")) %>%
-           filter(!(pmid=="22399527" & direction=="NA")) %>%
-           filter(!(pmid=="21378990" & direction=="NA")) %>%
-           filter(!(pmid=="22672568" & direction=="NA")) %>%
-           filter(!(pmid=="22434691" & direction=="NA")) %>%
-           filter(!(pmid=="21399635" & direction=="NA")) %>%
-           filter(!(pmid=="24390342" & direction=="NA")) %>%
-           filter(!(pmid=="22493691" & direction=="NA")) %>%
-           filter(!(pmid=="26192919" & direction=="NA")) %>%
-           filter(!(pmid=="20190752" & direction=="NA"))
-
-#          filter(!(pmid=="" & direction=="NA")) %>%
-
-ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","direction"] <- "+"
+# filter(ps[c("snp","rsid","proxy","a1","a2","beta","direction","p","trait","unit","pmid","study")],pmid=="26192919")
+# https://www.ebi.ac.uk/gwas/
+ps_gcst <- ps
+# PhenoScanner appears to have the better guess than GCST
+ps_gcst[ps_gcst$pmid=="27182965" & ps_gcst$rsid=="rs635634","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="27182965" & ps_gcst$rsid=="rs635634","direction"] <- "+"
+# PhenoScanner/GCST definitions (G/T) of risk allele are different
+# but the paper indicates T as minor allele and using PLINK therefore GCST is correct
+ps_gcst[ps_gcst$pmid=="22672568" & ps_gcst$rsid=="rs495828","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="22672568" & ps_gcst$rsid=="rs495828","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="24262325" & ps_gcst$rsid=="rs579459","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="24262325" & ps_gcst$rsid=="rs579459","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","a1"] <- "G"
+ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
-# According to rs3184504 risk/other (T/C), PhenoScanner is correct to indicate rs653178 risk allele to be "C"
+# According to rs3184504 risk/other (T/C),
+# PhenoScanner is correct to indicate rs653178 risk allele to be "C" but rs3184504 should have risk allele "T"
 # since LDhap (https://ldlink.nci.nih.gov/?tab=ldhap) indicates rs3184504/rs653178 TC=0.5278, r2=0.9449
 # However, GWAS catalogue appears to be wrong about beta/se since it treats Tonsillectomy OR as log(OR)
 #'         where 0.035-0.067 has beta/se=0.0507/0.0081 rather than -3.03/0.166
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs653178","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs653178","direction"] <- "-"
-# Read from PLoS Genet paper according to P value, fixing a1 by GWAS catalogue and adding direction
+# The GWAS Catalog is correctly in line with Nat Comm paper.
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs3184504","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
+# Read from PLoS Genet paper according to P value, fixing a1 by GWAS catalog and adding direction
+# GWAS Catalog indicates OR=1.3(4) but misses beta/se
 ps_gcst[ps_gcst$pmid=="21829393" & ps_gcst$rsid=="rs3184504","a1"] <- "T"
 ps_gcst[ps_gcst$pmid=="21829393" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="22493691" & ps_gcst$rsid=="rs3184504","a1"] <- "T"
@@ -210,6 +195,33 @@ ps_gcst[ps_gcst$pmid=="22232737" & ps_gcst$rsid=="rs3784099","a1"] <- "A"
 ps_gcst[ps_gcst$pmid=="22232737" & ps_gcst$rsid=="rs3784099","direction"] <- "+"
 
 ps_filter <- ps_gcst %>%
+             filter(!(pmid=="23143596")) %>%
+             filter(!(pmid=="24390342" & efo=="EFO_0000685" & is.na(beta))) %>%
+             filter(!(pmid=="21907864" & is.na(beta))) %>%
+             filter(!(pmid=="25646370")) %>%
+             filter(!(pmid=="20383146" & direction=="NA")) %>%
+             filter(!(pmid=="20081858")) %>%
+             filter(!(pmid=="27790247")) %>%
+             filter(!(pmid=="22399527" & direction=="NA")) %>%
+             filter(!(pmid=="21386085")) %>%
+             filter(!(pmid=="20453842" & direction=="NA")) %>%
+             filter(!(pmid=="19430483"|pmid=="27117709"|pmid=="27197191")) %>%
+             filter(!(pmid=="25305756"|pmid=="20167578"|pmid=="27997041")) %>%
+             filter(!(pmid=="27182965"|pmid=="27618447"|pmid=="21383967"|pmid=="22057235")) %>%
+             filter(!(pmid=="22561518"|pmid=="22961000"|pmid=="23603763"|pmid=="21383967")) %>%
+             filter(!(pmid=="18794853"|pmid=="26752265"|pmid=="19430480"|pmid=="28067908")) %>%
+             filter(!(pmid=="21383967"|pmid==""|pmid==""|pmid=="")) %>%
+             filter(!(pmid=="20453842" & direction=="NA")) %>%
+             filter(!(pmid=="26691988" & direction=="NA")) %>%
+             filter(!(pmid=="22399527" & direction=="NA")) %>%
+             filter(!(pmid=="21378990" & direction=="NA")) %>%
+             filter(!(pmid=="22672568" & direction=="NA")) %>%
+             filter(!(pmid=="22434691" & direction=="NA")) %>%
+             filter(!(pmid=="21399635" & direction=="NA")) %>%
+             filter(!(pmid=="24390342" & direction=="NA")) %>%
+             filter(!(pmid=="22493691" & direction=="NA")) %>%
+             filter(!(pmid=="26192919" & direction=="NA")) %>%
+             filter(!(pmid=="20190752" & direction=="NA")) %>%
              mutate(trait=gsub("including oligoarticular and rheumatoid factor negative polyarticular JIA","",trait)) %>%
              filter(!grepl("INVT|IVNT|SDS|Z-score|bpm|crease|g/l|kg|lu|mg|ml|mmHg|mol|years|ug|unit|%",unit)) %>%
              filter(!(unit=="-"&(pmid=="UKBB"|grepl("Cholesterol ldl|Intercellular adhesion molecule 1",trait)))) %>%
