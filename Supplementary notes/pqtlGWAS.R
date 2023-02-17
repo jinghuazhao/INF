@@ -60,8 +60,10 @@ if (FALSE) {
   load(file.path(INF,"work","INF1.merge.GWAS"))
   INF1_aggr <- INF1_aggr_save
 }
+ps <- ps %>%
+      mutate(a1_ps=a1,a2_ps=a2)
 metal <- subset(within(INF1_metal,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)}),
-                select=-c(Chromosome,Position,INF1_rsid,Direction))
+                select=-c(Chromosome,Position,Direction))
 aggr <- subset(within(INF1_aggr,{HLA <- as.numeric(Chromosome==6 & Position >= 25392021 & Position <= 33392022)}),
                select=-c(Chromosome,Position,INF1_rsid))
 immune_infection_efo <- with(iid_diseases,gsub(":","_",id))
@@ -144,11 +146,20 @@ ps_na_gcst <- function(rsid,PMID)
 # get_variants(variant_id=rsid,pubmed_id=PMID)
   left_join(r,associations) %>% left_join(risk_alleles) %>% data.frame() %>% select(-association_id,-study_id)
 }
-for(i in 1:nrow(ps_na_disease)) print(ps_na_gcst(ps_na_disease[["rsid"]][i],ps_na_disease[["pmid"]][i]))
+# for(i in 1:nrow(ps_na_disease)) print(ps_na_gcst(ps_na_disease[["rsid"]][i],ps_na_disease[["pmid"]][i]))
 
-# filter(ps[c("snp","rsid","proxy","a1","a2","beta","direction","p","trait","unit","pmid","study")],pmid=="26192919")
+  left_join(ps,INF1_metal[c("MarkerName","INF1_rsid")],by=c('snpid'='MarkerName')) %>%
+  filter(pmid=="28928442") %>%
+  select(INF1_rsid,snp,rsid,proxy,a1,a2,beta,direction,p,trait,unit,pmid,study)
+  select(ps,snp,rsid,proxy,a1,a2,beta,direction,p,trait,unit,pmid,study) %>%
+  filter(pmid=="28928442")
 # https://www.ebi.ac.uk/gwas/
 ps_gcst <- ps
+# PhenoScanner has multiple entries
+ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs597808","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs597808","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$trait=="Inflammatory bowel disease","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$trait=="Inflammatory bowel disease","direction"] <- "+"
 # PhenoScanner and GCST agree
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
@@ -172,11 +183,20 @@ ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+
 # since LDhap (https://ldlink.nci.nih.gov/?tab=ldhap) indicates rs3184504/rs653178 TC=0.5278, r2=0.9449
 # However, GWAS catalogue appears to be wrong about beta/se since it treats Tonsillectomy OR as log(OR)
 #'         where 0.035-0.067 has beta/se=0.0507/0.0081 rather than -3.03/0.166
-ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs653178","a1"] <- "C"
-ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs653178","direction"] <- "-"
 # The GWAS Catalog is correctly in line with Nat Comm paper.
+# PhenoScanner has C allele to be +
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs635634","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs635634","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs3184504","a1"] <- "T"
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs653178","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs653178","direction"] <- "-"
+# PhenoScanner has multiple conflicting entries
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs681343","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs681343","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs516316","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs516316","direction"] <- "+"
+# T1D
 # Read from PLoS Genet paper according to P value, fixing a1 by GWAS catalog and adding direction
 # GWAS Catalog indicates OR=1.3(4) but misses beta/se
 ps_gcst[ps_gcst$pmid=="21829393" & ps_gcst$rsid=="rs3184504","a1"] <- "T"
@@ -302,6 +322,8 @@ ps_opt2 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")
 ps_opt3 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")],1,sort))),] %>%
            group_by(snp,disease) %>%
            slice_min(order=proxy,n=1)
+ps_opt3[ps_opt3$pmid=="26192919" & ps_opt3$rsid=="rs516246" & ps_opt3$disease=="Inflammatory bowel disease","a1"] <- "A"
+ps_opt3[ps_opt3$pmid=="26192919" & ps_opt3$rsid=="rs516246" & ps_opt3$disease=="Inflammatory bowel disease","direction"] <- "+"
 ps_mutate <- ps_opt3
 long <- cbind(merge(metal,subset(ps,efo%in%iid_diseases[["id"]]),by="hg19_coordinates"),infection=0)
 short <- cbind(merge(aggr,subset(ps,efo%in%iid_diseases[["id"]]),by="hg19_coordinates"),infection=0)
@@ -435,10 +457,11 @@ imd <- function()
 overlap <- function(dat,f1,f2)
 # Now on individual proteins
 {
-  mat <- select(dat,prot,target.short,gene,hgnc,snp,MarkerName,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,
-                      chr,rsid,a1,a2,efo,ref_rsid,ref_a1,ref_a2,proxy,r2,
-                      HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
-         mutate(prefix=if_else(HLA==1,paste0(gene,"-",snp,"-",cis.trans,"*"),paste0(gene,"-",snp,"-",cis.trans)),
+  mat <- select(dat,prot,target.short,gene,hgnc,snp,MarkerName,INF1_rsid,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,
+                    chr,rsid,a1,a2,a1_ps,a2_ps,efo,ref_rsid,ref_a1,ref_a2,proxy,r2,
+                    HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
+         mutate(a2=if_else(a1==a1_ps,a2_ps,a1_ps)) %>%
+         mutate(prefix=if_else(HLA==1,paste0(gene,"-",INF1_rsid,"-",cis.trans,"*"),paste0(gene,"-",INF1_rsid,"-",cis.trans)),
                 rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
                 Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
                 beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
@@ -458,7 +481,7 @@ overlap <- function(dat,f1,f2)
                                           TRUE ~ as.character(direction))) %>%
          filter(direction%in%c("-","+")) %>%
          select(-c(snp_rsid_chr,hap,hap11,hap12,hap21,hap22,switch))
-  combined <- group_by(mat,Trait,rsidProt,desc(n_cases)) %>%
+  combined <- group_by(mat,hgnc,rsidProt,Trait,desc(n_cases)) %>%
               summarize(directions=paste(trait_direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
                         ses=paste(se,collapse=";"),
@@ -486,7 +509,7 @@ overlap <- function(dat,f1,f2)
   subset(mat[c("study","pmid","unit","beta","pqtl_direction","direction")],unit=="-")
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
-  write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-pqtl_trait_direction,-trait_direction,-Trait) %>%
+  write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-a1_ps,-a2_ps,-pqtl_trait_direction,-trait_direction,-Trait) %>%
               rename(Protein=target.short,Target_gene=gene,Nearest_gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
               file=file.path(INF,"work",f1),row.names=FALSE,quote=FALSE,sep=",")
   write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work",f2),row.names=FALSE,quote=FALSE,sep=",")
@@ -548,7 +571,7 @@ haps <- data.frame(snp_rsid_chr=names(z),hap=sapply(1:length(z),function(x) get(
 f1 <- "ST-pQTL-disease-overlap.csv"
 f2 <- "ST-pQTL-disease-overlap-combined.csv"
 rxc_gwas <- overlap(dat,f1,f2)
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=26,w=45,ylab="GWAS diseases"))
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=23,w=32,ylab="GWAS diseases"))
 
 # All EFOs for IMD but somehow smaller number of rows
 sel <- sapply(gsub("_",":",long[["efo"]]),function(x) {
@@ -560,4 +583,4 @@ dat <- filter(long,sel)
 f1 <- "ST-pQTL-IMD-overlap.csv"
 f2 <- "ST-pQTL-IMD-overlap-combined.csv"
 rxc_imd2 <- overlap(dat,f1,f2)
-with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=21,cw=21,h=13,w=35))
+with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=21,cw=21,h=12,w=23))
