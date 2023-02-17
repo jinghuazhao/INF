@@ -861,7 +861,7 @@ function CXCL5_prep()
     library(grid)
     INF <- Sys.getenv("INF")
     gsmr <- read.delim(file.path(INF,"mr/gsmr/","gsmr-efo-reduce.txt")) %>%
-            left_join(pQTLdata::inf1[c("target.short","gene")],by=c('protein'='target.short')) %>%
+            left_join(pQTLdata::inf1[c("target.short","gene")],by=c("protein"="target.short")) %>%
             select(Disease,bxy,se,p,p_qtl,gene) %>%
             filter(grepl("CXCL5",gene)&grepl("Crohn\'s disease|Ulcerative colitis",Disease))
     pdf(file.path(INF,"SF-CXCL5-MR.pdf"),height=3,width=7)
@@ -871,7 +871,7 @@ function CXCL5_prep()
                   rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
                   digits=2, digits.pval=2, scientific.pval=TRUE,
                   common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
-                  addrow=TRUE, backtransf=TRUE, spacing=1.6, xlim=c(0.7,1.1))
+                  addrow=TRUE, backtransf=TRUE, spacing=1.6, at=c(0.7,0.8,0.9,1,1.1),xlim=c(0.7,1.1))
     grid::grid.text("GSMR results", 0.5, 0.9)
     dev.off()
     vars <- c("snpid","rsid","chr","pos","a1","a2","z")
@@ -1040,3 +1040,37 @@ function SCALLOP_MRC()
   END
   cd -
 }
+
+function CXCL5_wb_ct()
+{
+  cat <(head -1 ${INF}/work/INF1.METAL) <(grep -w rs450373 ${INF}/work/INF1.METAL) | cut -f2,6,7,9,10
+# beta se ref alt rsid
+  cat <(gunzip -c ~/rds/public_databases/GTEx/csv/Stomach.tsv.gz | head -1) \
+      <(zgrep -w rs450373 ~/rds/public_databases/GTEx/csv/Colon_Transverse.tsv.gz | grep ENSG00000163735) \
+      <(zgrep -w rs450373 ~/rds/public_databases/GTEx/csv/Whole_Blood.tsv.gz | grep ENSG00000163735) | cut -f9,10,15,16,18
+  R --no-save <<\ \ END
+  CXCL5 <- '
+       "Plasma protein" -0.5115   0.0183
+     "Whole blood mRNA" -0.546318 0.0542992
+           "Colon mRNA" -0.407191 0.0858433
+  '
+  CXCL5 <- as.data.frame(scan(file=textConnection(CXCL5),what=list("",0,0))) %>%
+           setNames(c("outcome","Effect","StdErr")) %>%
+           mutate(outcome=gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))
+  library(gap)
+  pdf(file.path(INF,"SF-CXCL5-WB-CT.pdf"),height=3,width=9)
+  mr_forestplot(CXCL5,colgap.forest.left="0.05cm", fontsize=14,
+                leftcols=c("studlab"), leftlabs=c("CXCL5 measurement"),
+                plotwidth="3inch", sm="OR",
+                rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
+                digits=2, digits.pval=2, scientific.pval=TRUE,
+                common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
+                addrow=TRUE, backtransf=TRUE, at=5:11/10, spacing=1.5, xlim=c(0.5,1.1))
+  dev.off()
+  END
+}
+# rs450373 (A/G)
+#           Source    Effect    StdErr
+#            CXCL5 -0.5115   0.0183
+#      Whole blood -0.546318 0.0542992
+# Colon transverse -0.407191 0.0858433
