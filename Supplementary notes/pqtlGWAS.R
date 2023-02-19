@@ -177,8 +177,6 @@ ps_gcst[ps_gcst$pmid=="26151821" & ps_gcst$rsid=="rs3184504","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="26151821" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs597808","a1"] <- "A"
 ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs597808","direction"] <- "+"
-ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$trait=="Inflammatory bowel disease","a1"] <- "A"
-ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$trait=="Inflammatory bowel disease","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="27992413" & ps_gcst$rsid=="rs3184504","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="27992413" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
 # PhenoScanner and GCST agree
@@ -241,6 +239,12 @@ ps_gcst[ps_gcst$pmid=="22232737" & ps_gcst$rsid=="rs3784099","a1"] <- "A"
 ps_gcst[ps_gcst$pmid=="22232737" & ps_gcst$rsid=="rs3784099","direction"] <- "+"
 
 ps_filter <- ps_gcst %>%
+             filter(!(pmid=="21829393" & proxy==1 & trait=="Type 1 diabetes")) %>%
+             filter(!(pmid=="26151821" & proxy==1 & trait=="Colorectal cancer")) %>%
+             filter(!(pmid=="27992413" & proxy==1 & trait=="Primary sclerosing cholangitis")) %>%
+             filter(!(pmid=="26192919" & rsid=="rs516246" & proxy==1 & trait=="Inflammatory bowel disease")) %>%
+             filter(!(pmid=="26192919" & rsid=="rs601338" & trait=="Inflammatory bowel disease")) %>%
+             filter(!(pmid=="UKBB" & efo=="EFO_0000676" & proxy==1)) %>%
              filter(!(pmid=="23143596")) %>%
              filter(!(pmid=="24390342" & efo=="EFO_0000685" & is.na(beta))) %>%
              filter(!(pmid=="21907864" & is.na(beta))) %>%
@@ -256,7 +260,7 @@ ps_filter <- ps_gcst %>%
              filter(!(pmid=="27182965"|pmid=="27618447"|pmid=="21383967"|pmid=="22057235")) %>%
              filter(!(pmid=="22561518"|pmid=="22961000"|pmid=="21383967")) %>%
              filter(!(pmid=="18794853"|pmid=="26752265"|pmid=="19430480"|pmid=="28067908")) %>%
-             filter(!(pmid=="21383967"|pmid==""|pmid==""|pmid=="")) %>%
+             filter(!(pmid=="21383967"|pmid=="26621817"|pmid==""|pmid==""|pmid=="")) %>%
              filter(!(pmid=="20453842" & direction=="NA")) %>%
              filter(!(pmid=="26691988" & direction=="NA")) %>%
              filter(!(pmid=="22399527" & direction=="NA")) %>%
@@ -484,17 +488,19 @@ overlap <- function(dat,f1,f2)
          mutate(a2=if_else(a1==a1_ps,a2_ps,a1_ps)) %>%
          mutate(prefix=if_else(HLA==1,paste0(gene,"-",INF1_rsid,"-",cis.trans,"*"),paste0(gene,"-",INF1_rsid,"-",cis.trans)),
                 rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
-                Effect=round(Effect,3), StdErr=round(StdErr,3), r2=round(as.numeric(r2),3),
-                beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
-                Allele1=toupper(Allele1), Allele2=toupper(Allele2),
+         #      Effect=round(Effect,3), StdErr=round(StdErr,3),
+                r2=round(as.numeric(r2),3),
+         #      beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
+                Allele1=toupper(Allele1), Allele2=toupper(Allele2), a1=toupper(a1), a2=toupper(a2),
                 snp_rsid_chr=paste(snp,rsid,chr,sep="_")) %>%
-                left_join(haps) %>%
+         #      left_join(haps) %>%
+         mutate(hap=paste0(Allele1,a1)) %>%
          mutate(hap11=paste0(Allele1,a1),hap12=paste0(Allele1,a2),hap21=paste0(Allele2,a1),hap22=paste0(Allele2,a2),
-         #      switch=case_when(proxy==0 & Allele1==a1 ~ "0", proxy==0 & Allele1!=a1 ~ "1",
-         #                       proxy==1 & hap==hap11 ~ "0", proxy==1 & hap==hap12 ~ "1",
-         #                       proxy==1 & hap==hap21 ~ "1", proxy==1 & hap==hap22 ~ "0",
-         #                       TRUE ~ "0"),
-         #      direction=case_when(switch=="1" & direction=="-" ~ "+", switch=="1" & direction=="+" ~ "-", TRUE ~ direction),
+                switch=case_when(proxy==0 & Allele1==a1 ~ "0", proxy==0 & Allele1!=a1 ~ "1",
+                                 proxy==1 &  hap==hap11 ~ "0", proxy==1 &  hap==hap12 ~ "1",
+                                 proxy==1 &  hap==hap21 ~ "1", proxy==1 &  hap==hap22 ~ "0",
+                                 TRUE ~ "0"),
+                direction=case_when(switch=="1" & direction=="-" ~ "+", switch=="1" & direction=="+" ~ "-", TRUE ~ direction),
                 pqtl_trait_direction=paste0(pqtl_direction,direction),
                 trait_direction=case_when(pqtl_trait_direction=="++" ~ "1",  pqtl_trait_direction=="+-" ~ "-1",
                                           pqtl_trait_direction=="-+" ~ "-1", pqtl_trait_direction=="--" ~ "1",
@@ -504,9 +510,6 @@ overlap <- function(dat,f1,f2)
          select(-c(snp_rsid_chr,hap,hap11,hap12,hap21,hap22))
   combined <- group_by(mat,hgnc,rsidProt,Trait,desc(n_cases)) %>%
               summarize(directions=paste(trait_direction,collapse=";"),
-                        betas=paste(beta,collapse=";"),
-                        ses=paste(se,collapse=";"),
-                        p=paste(p,collapse=";"),
                         units=paste(unit,collapse=";"),
                         studies=paste(study,collapse=";"),
                         PMIDs=paste(pmid,collapse=";"),
@@ -530,7 +533,8 @@ overlap <- function(dat,f1,f2)
   subset(mat[c("study","pmid","unit","beta","pqtl_direction","direction")],unit=="-")
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
-  write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-a1_ps,-a2_ps,-pqtl_trait_direction,-trait_direction,-Trait) %>%
+  write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-snp,-a1_ps,-a2_ps,-Effect,-StdErr,-rsid,-beta,-se,-p,
+                         -n_cases,-n_controls,-pqtl_trait_direction,-trait_direction,-Trait) %>%
               rename(Protein=target.short,Target_gene=gene,Nearest_gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
               file=file.path(INF,"work",f1),row.names=FALSE,quote=FALSE,sep=",")
   write.table(select(combined,-desc.n_cases.),file=file.path(INF,"work",f2),row.names=FALSE,quote=FALSE,sep=",")
