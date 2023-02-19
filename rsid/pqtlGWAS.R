@@ -151,15 +151,36 @@ ps_na_gcst <- function(rsid,PMID)
   left_join(ps,INF1_metal[c("MarkerName","INF1_rsid")],by=c('snpid'='MarkerName')) %>%
   filter(pmid=="28928442") %>%
   select(INF1_rsid,snp,rsid,proxy,a1,a2,beta,direction,p,trait,unit,pmid,study)
-  select(ps,snp,rsid,proxy,a1,a2,beta,direction,p,trait,unit,pmid,study) %>%
-  filter(pmid=="28928442")
+  select(ps,snp,rsid,proxy,a1,a2,beta,direction,p,trait,unit,pmid,study) %>% filter(pmid=="28928442")
 # https://www.ebi.ac.uk/gwas/
 ps_gcst <- ps
-# PhenoScanner has multiple entries
+# PMID 23128233 (heatmap has a gray cell/NA) which requires API, but gwasrapidd cames handy
+# PhenoScanner list rs601338 a1/a2 (A/G)
+# P=2.1e-09 is recongnised and the following gives [0.086-0.169] though treated as continuous outcome
+rs601338 <- gwasrapidd::get_associations(variant_id = "rs601338")
+filter(rs601338@risk_alleles,association_id=="100045013")
+print(gap::ci2ms("0.086-0.169")) # b/SE=-2.12/0.17
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs601338","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs601338","direction"] <- "-"
+# rs516246 is done similarly but there are many duplicates from GWAS Catalog so we resort to paper/ST2
+# P=1e-15, CI=1.071-1.143, b/SE=0.101/0.0166
+rs516246 <- gwasrapidd::get_associations(variant_id = "rs516246")
+filter(rs516246@risk_alleles,association_id=="35848328")
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs516246","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs516246","direction"] <- "+"
+
+# PhenoScanner has multiple entries but OpenGWAS is ready for check REF/ALT (C/G) ES:SE:LP=0.00143911:0.000261552:7.42556
+# https://gwas.mrcieu.ac.uk/files/ukb-a-100/ukb-a-100.vcf.gz
+ps_gcst[ps_gcst$pmid=="UKBB" & ps_gcst$rsid=="rs7310615" & ps_gcst$p=="3.754e-08","a1"] <- "G"
+ps_gcst[ps_gcst$pmid=="UKBB" & ps_gcst$rsid=="rs7310615" & ps_gcst$p=="3.754e-08","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="26151821" & ps_gcst$rsid=="rs3184504","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="26151821" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs597808","a1"] <- "A"
 ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs597808","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$trait=="Inflammatory bowel disease","a1"] <- "A"
 ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$trait=="Inflammatory bowel disease","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="27992413" & ps_gcst$rsid=="rs3184504","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="27992413" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
 # PhenoScanner and GCST agree
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
@@ -177,7 +198,6 @@ ps_gcst[ps_gcst$pmid=="24262325" & ps_gcst$rsid=="rs579459","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="24262325" & ps_gcst$rsid=="rs579459","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","a1"] <- "G"
 ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","direction"] <- "+"
-ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
 # According to rs3184504 risk/other (T/C),
 # PhenoScanner is correct to indicate rs653178 risk allele to be "C" but rs3184504 should have risk allele "T"
 # since LDhap (https://ldlink.nci.nih.gov/?tab=ldhap) indicates rs3184504/rs653178 TC=0.5278, r2=0.9449
@@ -248,6 +268,7 @@ ps_filter <- ps_gcst %>%
              filter(!(pmid=="22493691" & direction=="NA")) %>%
              filter(!(pmid=="26192919" & direction=="NA")) %>%
              filter(!(pmid=="20190752" & direction=="NA")) %>%
+             filter(!(pmid=="27723758" & direction=="NA")) %>%
              mutate(trait=gsub("including oligoarticular and rheumatoid factor negative polyarticular JIA","",trait)) %>%
              filter(!grepl("INVT|IVNT|SDS|Z-score|bpm|crease|g/l|kg|lu|mg|ml|mmHg|mol|years|ug|unit|%",unit)) %>%
              filter(!(unit=="-"&(pmid=="UKBB"|grepl("Cholesterol ldl|Intercellular adhesion molecule 1",trait)))) %>%
@@ -469,18 +490,18 @@ overlap <- function(dat,f1,f2)
                 snp_rsid_chr=paste(snp,rsid,chr,sep="_")) %>%
                 left_join(haps) %>%
          mutate(hap11=paste0(Allele1,a1),hap12=paste0(Allele1,a2),hap21=paste0(Allele2,a1),hap22=paste0(Allele2,a2),
-                switch=case_when(proxy==0 & Allele1==a1 ~ "0", proxy==0 & Allele1!=a1 ~ "1",
-                                 proxy==1 & hap==hap11 ~ "0", proxy==1 & hap==hap12 ~ "1",
-                                 proxy==1 & hap==hap21 ~ "1", proxy==1 & hap==hap22 ~ "0",
-                                 TRUE ~ "0"),
-                direction=case_when(switch=="1" & direction=="-" ~ "+", switch=="1" & direction=="+" ~ "-", TRUE ~ direction),
+         #      switch=case_when(proxy==0 & Allele1==a1 ~ "0", proxy==0 & Allele1!=a1 ~ "1",
+         #                       proxy==1 & hap==hap11 ~ "0", proxy==1 & hap==hap12 ~ "1",
+         #                       proxy==1 & hap==hap21 ~ "1", proxy==1 & hap==hap22 ~ "0",
+         #                       TRUE ~ "0"),
+         #      direction=case_when(switch=="1" & direction=="-" ~ "+", switch=="1" & direction=="+" ~ "-", TRUE ~ direction),
                 pqtl_trait_direction=paste0(pqtl_direction,direction),
                 trait_direction=case_when(pqtl_trait_direction=="++" ~ "1",  pqtl_trait_direction=="+-" ~ "-1",
                                           pqtl_trait_direction=="-+" ~ "-1", pqtl_trait_direction=="--" ~ "1",
                                           pqtl_trait_direction=="-NA" ~ "NA",
                                           TRUE ~ as.character(direction))) %>%
-         filter(direction%in%c("-","+")) %>%
-         select(-c(snp_rsid_chr,hap,hap11,hap12,hap21,hap22,switch))
+       # filter(direction%in%c("-","+")) %>%
+         select(-c(snp_rsid_chr,hap,hap11,hap12,hap21,hap22))
   combined <- group_by(mat,hgnc,rsidProt,Trait,desc(n_cases)) %>%
               summarize(directions=paste(trait_direction,collapse=";"),
                         betas=paste(beta,collapse=";"),
@@ -523,7 +544,7 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=16, w=17, ylab
   library(grid)
   library(pheatmap)
   col <- colorRampPalette(c("#4287f5","#ffffff","#e32222"))(3)
-  png(file.path(INF,f),res=300,width=w,height=h,units="in")
+  png(file.path(INF,"work",f),res=300,width=w,height=h,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   p <- pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
                  display_numbers=dn, number_color = "brown",
@@ -532,7 +553,7 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=16, w=17, ylab
   print(cbind(ccols,ctcols[ccols],p$tree_col$labels,p$gtable$grobs[[4]]$label))
   p$tree_col$labels <- gsub("^[0-9]*-|-cis|-trans","",p$tree_col$labels)
   p$gtable$grobs[[4]]$label <- gsub("^[0-9]*-|-cis|-trans","",p$gtable$grobs[[4]]$label)
-  png(file.path(INF,f),res=300,width=w,height=h,units="in")
+  png(file.path(INF,"work",f),res=300,width=w,height=h,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))), action="prepend")
   colnames(rxc) <- gsub("^[0-9]*-|-cis|-trans","",colnames(rxc))
   p <- pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
@@ -541,8 +562,8 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=16, w=17, ylab
   p$gtable$grobs[[4]]$gp=gpar(col=ctcols[ccols])
   setHook("grid.newpage", NULL, "replace")
   grid.draw(p)
-  grid.text("Protein-pQTL (Nearest gene)", y=-0.07, gp=gpar(fontsize=15))
-  grid.text(ylab, x=-0.07, rot=90, gp=gpar(fontsize=15))
+  grid.text("Protein-pQTL (Nearest gene)", y=0.01, gp=gpar(fontsize=15))
+  grid.text(ylab, x=0.01, rot=90, gp=gpar(fontsize=15))
   dev.off()
 }
 
@@ -561,10 +582,10 @@ z <- sapply(pull(ldpairs,snp_rsid_chr),function(x) {
      print(x)
      s <- unlist(strsplit(x,"_"))
      cmd <- sprintf("plink --bfile %s/INTERVAL/per_chr/interval.imputed.olink.chr_%s --ld %s %s|\
-                     awk '/Haplotype/,/phase/'|sed '$d'|sed '$d'|awk '!/-/{print $1,$2}' > %s",INF,s[3],s[1],s[2],x)
-     if (!file.exists(x)) system(cmd)
-     assign(x,read.table(x,header=TRUE)%>%arrange(desc(Frequency))%>%slice_head(n=1)%>%pull(Haplotype),envir=.GlobalEnv)
-     f <- paste0(s[1],"_",s[2],".",s[3])
+                     awk '/Haplotype/,/phase/'|sed '$d'|sed '$d'|awk '!/-/{print $1,$2}' > %s",INF,s[3],s[1],s[2],file.path(INF,"work",x))
+     if (!file.exists(file.path(INF,"work",x))) system(cmd)
+     assign(x,read.table(file.path(INF,"work",x),header=TRUE)%>%arrange(desc(Frequency))%>%slice_head(n=1)%>%pull(Haplotype),envir=.GlobalEnv)
+     f <- file.path(INF,"work",paste0(s[1],"_",s[2],".",s[3]))
      if (FALSE) LDlinkR::LDhap(s[1:2],file=paste0(f,".ld"),token=Sys.getenv("LDLINK_TOKEN"))
      })
 haps <- data.frame(snp_rsid_chr=names(z),hap=sapply(1:length(z),function(x) get(names(z)[x])))
