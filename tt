@@ -1,0 +1,258 @@
+na_selected <- c(
+"Advanced age related macular degeneration",
+"Age related disease",
+"Allergy",
+"Alopecia areata",
+"Antineutrophil cytoplasmic antibody associated vasculitis",
+"Arthritis rheumatoid",
+"Asthma",
+"Autism spectrum disorder or schizophrenia",
+"Breast cancer",
+"Breast cancer",
+"Cancer pleiotropy",
+"Celiac disease",
+"Childhood ear infection",
+"Chronic hepatitis B infection",
+"Coronary artery disease",
+"Depression",
+"Diabetes mellitus type 1",
+"Extreme obesity with early age of onset",
+"Generalized vitiligo",
+"Glaucoma primary open angle",
+"Gout",
+"Hypertension",
+"Hypothyroidism",
+"Idiopathic membranous nephropathy",
+"IgA nephropathy",
+"Inflammatory bowel disease",
+"Insulin resistance",
+"Ischemic stroke",
+"Juvenile idiopathic arthritis including oligoarticular and rheumatoid factor negative polyarticular JIA",
+"Kidney diseases",
+"Liver cirrhosis biliary",
+"Metabolic syndrome x",
+"Myocardial infarction",
+"Primary biliary cirrhosis",
+"Primary sclerosing cholangitis",
+"Prostate cancer",
+"Rheumatoid arthritis",
+"Rheumatoid arthritis cyclic citrullinated peptide CCP positive",
+"Schizophrenia",
+"Selective IgA deficiency",
+"Systemic lupus erythematosus SLE",
+"Tonsillectomy",
+"Type 1 diabetes",
+"Type 2 diabetes",
+"Venous thrombo",
+"Vitiligo")
+
+ps_na_grep <- paste(na_selected,collapse="|")
+ps_na_disease <- filter(ps_na_direction,grepl(ps_na_grep,trait))
+ps_na_disease[c("snp","rsid","proxy","r2","trait","pmid","study")]
+ps_na_pmid <- unique(ps_na_disease$pmid) %>%
+              paste(collapse=" ")
+write.table(ps_na_disease,file=file.path(INF,"work","ps_na_disease.csv"),quote=FALSE,row.names=FALSE,sep=",")
+
+load(file.path(INF,"work","GCST.rda"))
+ps_na_gcst <- function(rsid,PMID)
+{
+  publications <- select(GCST_studies@publications, study_id, pubmed_id) %>%
+                  filter(pubmed_id %in% PMID)
+  studies <- select(GCST_studies@studies, study_id, reported_trait) %>%
+             filter(study_id %in% publications$study_id)
+  sources <- left_join(publications,studies)
+  risk_alleles <- select(GCST@risk_alleles, association_id, variant_id, risk_allele, risk_frequency) %>%
+                  filter(variant_id==rsid)
+  associations <- select(GCST@associations, association_id, range, beta_unit, beta_direction, beta_number, standard_error, pvalue)
+  id <- filter(assoc_study,association_id %in% associations$association_id) %>% distinct()
+  r <- left_join(id,publications) %>% filter(!is.na(pubmed_id)) %>% distinct()
+  risk_allels <- risk_alleles %>% filter(association_id %in% r$association_id) %>% distinct()
+  associations <- associations %>% filter(association_id %in% r$association_id) %>% distinct()
+# get_variants(variant_id=rsid,pubmed_id=PMID)
+  left_join(r,associations) %>% left_join(risk_alleles) %>% data.frame() %>% select(-association_id,-study_id)
+}
+# for(i in 1:nrow(ps_na_disease)) print(ps_na_gcst(ps_na_disease[["rsid"]][i],ps_na_disease[["pmid"]][i]))
+
+  left_join(ps,INF1_metal[c("MarkerName","INF1_rsid")],by=c('snpid'='MarkerName')) %>%
+  filter(pmid=="28928442") %>%
+  select(INF1_rsid,snp,rsid,proxy,a1,a2,beta,direction,p,trait,unit,pmid,study)
+  select(ps,snp,rsid,proxy,a1,a2,beta,direction,p,trait,unit,pmid,study) %>%
+  filter(pmid=="28928442")
+# https://www.ebi.ac.uk/gwas/
+ps_gcst <- ps
+# PhenoScanner has multiple entries
+ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs597808","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs597808","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$trait=="Inflammatory bowel disease","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$trait=="Inflammatory bowel disease","direction"] <- "+"
+# PhenoScanner and GCST agree
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
+# PhenoScanner and GCST disagree on risk allele
+ps_gcst[ps_gcst$pmid=="23603763" & ps_gcst$rsid=="rs3184504","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="23603763" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
+# PhenoScanner provides a guess than GCST
+ps_gcst[ps_gcst$pmid=="27182965" & ps_gcst$rsid=="rs635634","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="27182965" & ps_gcst$rsid=="rs635634","direction"] <- "+"
+# PhenoScanner/GCST definitions (G/T) of risk allele are different
+# but the paper indicates T as minor allele and using PLINK therefore GCST is correct
+ps_gcst[ps_gcst$pmid=="22672568" & ps_gcst$rsid=="rs495828","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="22672568" & ps_gcst$rsid=="rs495828","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="24262325" & ps_gcst$rsid=="rs579459","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="24262325" & ps_gcst$rsid=="rs579459","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","a1"] <- "G"
+ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
+# According to rs3184504 risk/other (T/C),
+# PhenoScanner is correct to indicate rs653178 risk allele to be "C" but rs3184504 should have risk allele "T"
+# since LDhap (https://ldlink.nci.nih.gov/?tab=ldhap) indicates rs3184504/rs653178 TC=0.5278, r2=0.9449
+# However, GWAS catalogue appears to be wrong about beta/se since it treats Tonsillectomy OR as log(OR)
+#'         where 0.035-0.067 has beta/se=0.0507/0.0081 rather than -3.03/0.166
+# The GWAS Catalog is correctly in line with Nat Comm paper.
+# PhenoScanner has C allele to be +
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs635634","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs635634","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs3184504","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs653178","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs653178","direction"] <- "-"
+# PhenoScanner has multiple conflicting entries
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs681343","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs681343","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs516316","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs516316","direction"] <- "+"
+# T1D
+# Read from PLoS Genet paper according to P value, fixing a1 by GWAS catalog and adding direction
+# GWAS Catalog indicates OR=1.3(4) but misses beta/se
+ps_gcst[ps_gcst$pmid=="21829393" & ps_gcst$rsid=="rs3184504","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="21829393" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="22493691" & ps_gcst$rsid=="rs3184504","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="22493691" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="23603761" & ps_gcst$rsid=="rs7137828","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="23603761" & ps_gcst$rsid=="rs7137828","direction"] <- "+"
+# See correction below
+ps_gcst[ps_gcst$pmid=="24390342" & ps_gcst$rsid=="rs1950897","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="24390342" & ps_gcst$rsid=="rs1950897","direction"] <- "+"
+# correction needed on PhenoScanner, https://www.nature.com/articles/ng.789
+#       snp      rsid a1   beta direction                     trait     pmid
+# rs1950897  rs911263  C 0.2546         + Primary biliary cirrhosis 21399635
+ps_gcst[ps_gcst$pmid=="21399635" & ps_gcst$rsid=="rs911263","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="21399635" & ps_gcst$rsid=="rs911263","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="28029757" & ps_gcst$rsid=="rs28929474","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="28029757" & ps_gcst$rsid=="rs28929474","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="25802187" & ps_gcst$rsid=="rs1883832","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="25802187" & ps_gcst$rsid=="rs1883832","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="22232737" & ps_gcst$rsid=="rs3784099","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="22232737" & ps_gcst$rsid=="rs3784099","direction"] <- "+"
+
+ps_filter <- ps_gcst %>%
+             filter(!(pmid=="23143596")) %>%
+             filter(!(pmid=="24390342" & efo=="EFO_0000685" & is.na(beta))) %>%
+             filter(!(pmid=="21907864" & is.na(beta))) %>%
+             filter(!(pmid=="25646370")) %>%
+             filter(!(pmid=="20383146" & direction=="NA")) %>%
+             filter(!(pmid=="20081858")) %>%
+             filter(!(pmid=="27790247")) %>%
+             filter(!(pmid=="22399527" & direction=="NA")) %>%
+             filter(!(pmid=="21386085")) %>%
+             filter(!(pmid=="20453842" & direction=="NA")) %>%
+             filter(!(pmid=="19430483"|pmid=="27117709"|pmid=="27197191")) %>%
+             filter(!(pmid=="25305756"|pmid=="20167578"|pmid=="27997041")) %>%
+             filter(!(pmid=="27182965"|pmid=="27618447"|pmid=="21383967"|pmid=="22057235")) %>%
+             filter(!(pmid=="22561518"|pmid=="22961000"|pmid=="21383967")) %>%
+             filter(!(pmid=="18794853"|pmid=="26752265"|pmid=="19430480"|pmid=="28067908")) %>%
+             filter(!(pmid=="21383967"|pmid==""|pmid==""|pmid=="")) %>%
+             filter(!(pmid=="20453842" & direction=="NA")) %>%
+             filter(!(pmid=="26691988" & direction=="NA")) %>%
+             filter(!(pmid=="22399527" & direction=="NA")) %>%
+             filter(!(pmid=="21378990" & direction=="NA")) %>%
+             filter(!(pmid=="22672568" & direction=="NA")) %>%
+             filter(!(pmid=="22434691" & direction=="NA")) %>%
+             filter(!(pmid=="21399635" & direction=="NA")) %>%
+             filter(!(pmid=="24390342" & direction=="NA")) %>%
+             filter(!(pmid=="22493691" & direction=="NA")) %>%
+             filter(!(pmid=="26192919" & direction=="NA")) %>%
+             filter(!(pmid=="20190752" & direction=="NA")) %>%
+             mutate(trait=gsub("including oligoarticular and rheumatoid factor negative polyarticular JIA","",trait)) %>%
+             filter(!grepl("INVT|IVNT|SDS|Z-score|bpm|crease|g/l|kg|lu|mg|ml|mmHg|mol|years|ug|unit|%",unit)) %>%
+             filter(!(unit=="-"&(pmid=="UKBB"|grepl("Cholesterol ldl|Intercellular adhesion molecule 1",trait)))) %>%
+             filter(!(unit=="-"&grepl("Protein quantitative trait loci|Receptors interleukin 6|Monocyte chemoattractant protein 1",trait))) %>%
+             filter(!(unit=="-"&grepl("Blood proteins|Chemokine ccl2|Monocyte chemoattractant protein 1|Uric acid",trait))) %>%
+             filter(!(unit=="-"&grepl("Alkaline phosphatase|selectin|Lipid metabolism|Vascular endothelial growth factor a",trait))) %>%
+             filter(!(unit=="-"&grepl("Cholesterol|Cholesterol hdl|Vitamin B12|Cystatin c|Interleukin 18|Phospholipids|Metabolism",trait))) %>%
+             filter(!(unit=="-"&grepl("Inflammatory biomarkers|Paraoxonase activity|Waist circumference and related phenotypes",trait))) %>%
+             filter(!(unit=="-"&grepl("Age related disease endophenotypes|Age related diseases mortality and associated endophenotypes",trait))) %>%
+             filter(!(unit=="-"&grepl("Glucose transporter type 2|Glucose tolerance test|Type 1 diabetes autoantibodies",trait))) %>%
+             filter(!(unit=="-"&grepl("Angiotensin converting enzyme inhibitors|Celiac disease or Rheumatoid arthritis",trait))) %>%
+             filter(!(unit=="-"&grepl("Coronary artery disease or ischemic stroke|Coronary artery disease or large artery stroke",trait))) %>%
+             filter(!(unit=="-"&grepl("kidney stone or ureter stone/bladder stone",trait))) %>%
+             filter(!trait=="Self-reported diabetes") %>%
+             filter(!trait=="Self-reported eczema or dermatitis") %>%
+             filter(!trait=="Illnesses of father: chronic bronchitis or emphysema") %>%
+             filter(!grepl("Thyroid peroxidase antibody positivity|Smoking status: previous",trait)) %>%
+             filter(!grepl("Started insulin within one year diagnosis of diabetes|No blood clot",trait)) %>%
+             filter(!grepl("Medication for pain relief|Pain type experienced in last month",trait)) %>%
+             filter(!grepl("Qualifications: college or university degree",trait)) %>%
+             filter(!grepl("Medication for cholesterol, blood pressure or diabetes:",dataset)) %>%
+             filter(!grepl("Astle|GIANT|GLGC|GRASP|MAGIC",dataset)) %>%
+             filter(!grepl("Illnesses of siblings: none|Treatment|Taking other prescription medications",trait)) %>%
+             filter(!grepl("Body Mass index|Blood pressure|Fibrinogen|Fasting|Gamma glutamyltransferase",trait)) %>%
+             filter(!grepl("Eosinophils|Gamma glutamyltransferase|mass index",trait)) %>%
+             filter(!grepl("Lipid metabolism phenotypes|Triglycerides|C reactive protein",trait)) %>%
+             filter(!grepl("Diabetes diagnosed by doctor|Types of physical activity|Cause of death: alcoholic hepatic failure",trait)) %>%
+             filter(!grepl("Medication for cholesterol, blood pressure or diabetes|No treatment with medication for cholesterol",trait)) %>%
+             filter(!grepl("Neovascularization No treatment with medication|Autism spectrum disorder or schizophrenia",trait)) %>%
+             filter(!grepl("Qualifications: none",trait)) %>%
+             filter(!grepl("Vascular or heart problems diagnosed by doctor: none of the above",trait)) %>%
+             filter(!grepl("count|density|education|intake|levels|weight",trait))
+ps_gsub <- ps_filter %>%
+           mutate(trait=if_else(unit=="-"&grepl("Arthritis rheumatoid|Rheumatoid arthritis",trait),"rheumatoid arthritis",trait)) %>%
+           mutate(trait=if_else(unit=="-"&grepl("Diabetes mellitus type 1|Type 1 diabetes",trait),"Type I diabetes",trait)) %>%
+           mutate(trait=if_else(unit=="-"&grepl("Inflammatory bowel disease",trait),"inflammatory bowel disease",trait)) %>%
+           mutate(trait=gsub("Blood clot in the leg|Self-reported deep venous thrombosis","deep vein thrombosis",trait)) %>%
+           mutate(trait=gsub("Blood clot in the lung","pulmonary embolism",trait)) %>%
+           mutate(trait=gsub("Celiac disease","Coeliac disease",trait)) %>%
+           mutate(trait=gsub("Coronary heart disease","Coronary artery disease",trait)) %>%
+           mutate(trait=gsub("Crohns","Crohn's",trait)) %>%
+           mutate(trait=gsub("Advanced age related macular degeneration","Age-related macular degeneration",trait)) %>%
+           mutate(trait=gsub("Renal overload gout|Renal underexcretion gout","Gout",trait)) %>%
+           mutate(trait=gsub("Hayfever, allergic rhinitis or eczema|Allergic disease|Allergic disease asthma hay fever or eczema","allergy",trait)) %>%
+           mutate(trait=gsub("High grade serous ovarian cancer|Invasive ovarian cancer","ovarian cancer",trait)) %>%
+           mutate(trait=gsub("Serous invasive ovarian cancer|Serous boarderline ovarian cancer","ovarian cancer",trait)) %>%
+           mutate(trait=gsub("Other rheumatoid arthritis","rheumatoid arthritis",trait)) %>%
+           mutate(trait=gsub("Self-reported cholelithiasis or gall stones","cholelithiasis",trait)) %>%
+           mutate(trait=gsub("erythematosis","erythematosus",trait)) %>%
+           mutate(trait=gsub(" or myxoedema","",trait)) %>%
+           mutate(trait=gsub(" or thyrotoxicosis","",trait)) %>%
+           mutate(trait=gsub("Type 2 diabetes","Type II diabetes",trait)) %>%
+           mutate(trait=gsub(" or endometrial","",trait)) %>%
+           mutate(trait=gsub(" [+] or [-] dvt","",trait)) %>%
+           mutate(trait=gsub("Illnesses of siblings: ","",trait)) %>%
+           mutate(trait=gsub("Selective IgA deficiency","Selective IgA deficiency disease",trait)) %>%
+           mutate(trait=gsub("Doctor diagnosed |heart attack or |Self-reported |Illnesses of father: |Illnesses of mother: ","",trait)) %>%
+           mutate(trait=gsub("high blood pressure","hypertension",trait)) %>%
+           mutate(trait=gsub("malabsorption or |Low grade and borderline serous |Mouth or teeth dental problems: ","",trait)) %>%
+           mutate(trait=gsub("Unspecified |Vascular or heart problems diagnosed by doctor: ","",trait)) %>%
+           mutate(trait=gsub("Acute myocardial infarction|Myocardial infarction|myocardial infarction","cardiovascular diseases",trait)) %>%
+           mutate(trait=gsub("Coronary artery disease|heart attack|heart disease","cardiovascular diseases",trait)) %>%
+           mutate(trait=gsub(" or sle","", trait)) %>%
+           mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
+           rename(disease=trait)
+#          mutate(trait=gsub("\\b(^[A-Z])","\\L\\1",trait,perl=TRUE))
+ps_opt1 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")],1,sort))),] %>%
+           group_by(snp,disease,proxy) %>%
+           slice_head(n=1)
+ps_opt2 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")],1,sort))),] %>%
+           slice_min(order=proxy,n=1)
+ps_opt3 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")],1,sort))),] %>%
+           group_by(snp,disease) %>%
+           slice_min(order=proxy,n=1)
+ps_opt3[ps_opt3$pmid=="26192919" & ps_opt3$rsid=="rs516246" & ps_opt3$disease=="Inflammatory bowel disease","a1"] <- "A"
+ps_opt3[ps_opt3$pmid=="26192919" & ps_opt3$rsid=="rs516246" & ps_opt3$disease=="Inflammatory bowel disease","direction"] <- "+"
+ps_mutate <- ps_opt3
+long <- cbind(merge(metal,subset(ps,efo%in%iid_diseases[["id"]]),by="hg19_coordinates"),infection=0)
+short <- cbind(merge(aggr,subset(ps,efo%in%iid_diseases[["id"]]),by="hg19_coordinates"),infection=0)
+infection_efo <- with(subset(iid_diseases,infection==1),gsub(":","_",id))
+long[with(long,efo)%in%infection_efo,"infection"] <- 1
+short[with(short,efo)%in%infection_efo,"infection"] <- 1
+
