@@ -494,11 +494,11 @@ overlap <- function(dat,f1,f2)
                 Allele1=toupper(Allele1), Allele2=toupper(Allele2), a1=toupper(a1), a2=toupper(a2),
                 snp_rsid_chr=paste(snp,rsid,chr,sep="_")) %>%
          #      left_join(haps) %>%
-         mutate(hap=paste0(Allele1,a1)) %>%
-         mutate(hap11=paste0(Allele1,a1),hap12=paste0(Allele1,a2),hap21=paste0(Allele2,a1),hap22=paste0(Allele2,a2),
+         mutate(hap=paste0(Allele1,a1),pah=paste0(Allele2,a2),
+                h11=paste0(Allele1,a1),h12=paste0(Allele1,a2),h21=paste0(Allele2,a1),h22=paste0(Allele2,a2),
                 switch=case_when(proxy==0 & Allele1==a1 ~ "0", proxy==0 & Allele1!=a1 ~ "1",
-                                 proxy==1 &  hap==hap11 ~ "0", proxy==1 &  hap==hap12 ~ "1",
-                                 proxy==1 &  hap==hap21 ~ "1", proxy==1 &  hap==hap22 ~ "0",
+                                 proxy==1 & hap==h11 & pah %in% c(h12,h21,h22) ~ "0", proxy==1 & hap==h12 & pah %in% c(h11,h21,h22) ~ "1",
+                                 proxy==1 & hap==h21 & pah %in% c(h11,h12,h22) ~ "1", proxy==1 & hap==h22 & pah %in% c(h11,h12,h21) ~ "0",
                                  TRUE ~ "0"),
                 direction=case_when(switch=="1" & direction=="-" ~ "+", switch=="1" & direction=="+" ~ "-", TRUE ~ direction),
                 pqtl_trait_direction=paste0(pqtl_direction,direction),
@@ -507,7 +507,7 @@ overlap <- function(dat,f1,f2)
                                           pqtl_trait_direction=="-NA" ~ "NA",
                                           TRUE ~ as.character(direction))) %>%
        # filter(direction%in%c("-","+")) %>%
-         select(-c(snp_rsid_chr,hap,hap11,hap12,hap21,hap22))
+         select(-c(snp_rsid_chr,hap,pah,h11,h12,h21,h22))
   combined <- group_by(mat,hgnc,rsidProt,Trait,desc(n_cases)) %>%
               summarize(directions=paste(trait_direction,collapse=";"),
                         units=paste(unit,collapse=";"),
@@ -533,7 +533,7 @@ overlap <- function(dat,f1,f2)
   subset(mat[c("study","pmid","unit","beta","pqtl_direction","direction")],unit=="-")
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
-  write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-snp,-a1_ps,-a2_ps,-Effect,-StdErr,-rsid,-beta,-se,-p,
+  write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-snp,-a1_ps,-a2_ps,-Effect,-StdErr,rsid,-beta,-se,-p,
                          -ref_rsid,-ref_a1,-ref_a2,
                          -n_cases,-n_controls,-pqtl_trait_direction,-trait_direction,-Trait) %>%
               rename(Protein=target.short,Target_gene=gene,Nearest_gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
