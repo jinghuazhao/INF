@@ -53,27 +53,12 @@ iid_diseases <- read.delim(file.path(INF,"doc","immune.efos.txt"),as.is=TRUE)
 immune_infection_efo <- with(iid_diseases,gsub(":","_",id))
 
 if (FALSE) {
-# queries by block as in pQTLtools
   r <- snpqueries(rsid, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
   lapply(r,dim)
   snps_results <- with(r,right_join(snps,results))
   ps <- subset(snps_results,select=-c(hg38_coordinates,ref_hg38_coordinates,pos_hg38,ref_pos_hg38,dprime))
   sarcoidosis <- with(ps,grep("sarcoidosis",trait))
   ps[sarcoidosis,"efo"] <- "Orphanet_797"
-  save(INF1_aggr,r,ps,file=file.path(INF,"ps","INF1.merge.GWAS"))
-# bulk results from the Web interface
-  snps <- read.delim(file.path(INF,"ps","SNP.tsv"))
-  ref_rsid <- pull(snps,ref_rsid) %>% unique
-  write.table(ref_rsid,file=file.path(INF,"ps","INF1_ref_rsid.txt"),col.names=FALSE,row.names=FALSE,quote=FALSE)
-  results <- read.delim(file.path(INF,"ps","GWAS.tsv")) # %>% mutate(chr=gsub("chr","",lapply(strsplit(results$hg19_coordinates,":"),"[",1)))
-  ps <- right_join(snps,results)
-# inidividual SNP queries from R
-  r <- snpqueries(ref_rsid, block_size=1, waiting_time=1, catalogue=catalogue, proxies=proxies, p=p, r2=r2, build=build)
-  ps <- with(r,right_join(snps,results))
-# individual SNP queries from the command-line.
-  snps <- read.delim(file.path(INF,"ps","SNP-single.tsv"))
-  results <- read.delim(file.path(INF,"ps","GWAS-single.tsv"))
-  ps <- right_join(snps,results)
   save(INF1_aggr,r,ps,file=file.path(INF,"ps","INF1.merge.GWAS"))
 } else load(file.path(INF,"ps","INF1.merge.GWAS"))
 
@@ -168,16 +153,10 @@ ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$efo=="EFO_
 ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$efo=="EFO_0003767","direction"] <- "+"
 
 ps_filter <- ps_gcst %>%
-             filter(!(rsid=="rs66530140" & grepl("Deep vein thrombosis|Pulmonary embolism",efo) & proxy=="1")) %>%
-#            filter(!(snp=="rs635634" & grepl("EFO_0001360|EFO_0003827|EFO_0003907",efo) & proxy=="1")) %>%
-#            filter(!(snp=="rs579459" & grepl("EFO_0008111|EFO_1001395|EFO_0004325|Pulmonary embolism|Deep vein thrombosis",efo) & proxy=="1")) %>%
-#            filter(!(snp=="rs579459" & grepl("EFO_1001516|EFO_0003827|Pulmonary embolism|Phlebitis and thrombophlebitis",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs597808" & efo=="EFO_0004705;EFO_1001055" & proxy=="1")) %>%
-             filter(!(snp=="rs601338" & grepl("Crohn's disease|Cholelithiasis|Bring up phlegm|High cholesterol|Hypertension",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs601338" & pmid=="23128233")) %>%
              filter(!(rsid=="rs516246" & pmid!="26192919")) %>%
              filter(!(rsid=="rs653178" & grepl("EFO_0000378|EFO_0000612|EFO_0001060",efo) & direction=="NA")) %>%
-             filter(!(rsid=="rs653178" & grepl("EFO_0001060|EFO_0003956;EFO_0005854;EFO_0000274|EFO_0004705;EFO_1001055",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs7137828" & grepl("EFO_0003785|EFO_0004705",efo) & proxy=="1")) %>%
              filter(!(rsid %in% c("rs516246","rs516316") & grepl("ring up phlegm",trait))) %>%
              filter(!(rsid %in% c("rs516246","rs516316") & grepl("EFO_0000384|EFO_0004799|EFO_0008111",efo) & proxy=="1")) %>%
@@ -186,7 +165,7 @@ ps_filter <- ps_gcst %>%
              filter(!(rsid=="rs7310615" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs3184504" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs597808" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
-             filter(!(rsid=="rs653178" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003767|EFO_0003777",efo) & proxy=="1")) %>%
+             filter(!(rsid=="rs653178" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs7137828" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs579459" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="0" & direction=="NA")) %>%
              filter(!(rsid=="rs579459" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
@@ -316,7 +295,6 @@ overlap <- function(dat,f1,f2)
                 r2=round(as.numeric(r2),3),
          #      beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
                 Allele1=toupper(Allele1), Allele2=toupper(Allele2), a1=toupper(a1), a2=toupper(a2),
-                ref_rsid_a1_a2=paste0(ref_rsid,":",ref_a1,":",ref_a2),
                 snp_rsid_chr=paste(snp,rsid,chr,sep="_")) %>%
          #      left_join(haps) %>%
          mutate(hap=paste0(Allele1,a1),pah=paste0(Allele2,a2),
@@ -332,12 +310,9 @@ overlap <- function(dat,f1,f2)
                                           pqtl_trait_direction=="-NA" ~ "NA",
                                           TRUE ~ as.character(direction))) %>%
        # filter(direction%in%c("-","+")) %>%
-         select(-c(snp_rsid_chr,hap,pah,h11,h12,h21,h22)) %>%
-         filter(!grepl("^NA",rsidProt))
+         select(-c(snp_rsid_chr,hap,pah,h11,h12,h21,h22))
   combined <- group_by(mat,hgnc,rsidProt,Trait,desc(n_cases)) %>%
-              summarize(ref_rsids=paste(ref_rsid_a1_a2,collapse=";"),
-                        proxies=paste(proxy,collapse=";"),
-                        directions=paste(trait_direction,collapse=";"),
+              summarize(directions=paste(trait_direction,collapse=";"),
                         units=paste(unit,collapse=";"),
                         studies=paste(study,collapse=";"),
                         PMIDs=paste(pmid,collapse=";"),
@@ -361,6 +336,7 @@ overlap <- function(dat,f1,f2)
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
   write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-snp,-a1_ps,-a2_ps,-Effect,-StdErr,rsid,-beta,-se,-p,
+                         -ref_rsid,-ref_a1,-ref_a2,
                          -n_cases,-n_controls,-pqtl_trait_direction,-trait_direction,-Trait) %>%
               rename(Protein=target.short,Target_gene=gene,Nearest_gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
               file=file.path(INF,"ps",f1),row.names=FALSE,quote=FALSE,sep=",")
@@ -392,18 +368,33 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=16, w=17, ylab
   p$gtable$grobs[[4]]$gp=gpar(col=ctcols[ccols])
   setHook("grid.newpage", NULL, "replace")
   grid.draw(p)
-  grid.text("Protein-pQTL (Nearest gene)", y=-0.02, gp=gpar(fontsize=15))
+  grid.text("Protein-pQTL (Nearest gene)", y=0.01, gp=gpar(fontsize=15))
   grid.text(ylab, x=0.01, rot=90, gp=gpar(fontsize=15))
   dev.off()
 }
 
 # GWAS diseases
-long <- merge(metal,ps_mutate,by="hg19_coordinates",all.y=TRUE)
+long <- merge(metal,ps_mutate,by="hg19_coordinates")
 dat <- long
+ldpairs <- filter(long,snp!=rsid) %>%
+           select(snp,rsid,chr) %>%
+           mutate(snp_rsid_chr=paste0(snp,"_",rsid,"_",chr)) %>%
+           distinct()
+z <- sapply(pull(ldpairs,snp_rsid_chr),function(x) {
+     print(x)
+     s <- unlist(strsplit(x,"_"))
+     cmd <- sprintf("plink --bfile %s/INTERVAL/per_chr/interval.imputed.olink.chr_%s --ld %s %s|\
+                     awk '/Haplotype/,/phase/'|sed '$d'|sed '$d'|awk '!/-/{print $1,$2}' > %s",INF,s[3],s[1],s[2],file.path(INF,"work",x))
+     if (!file.exists(file.path(INF,"work",x))) system(cmd)
+     assign(x,read.table(file.path(INF,"work",x),header=TRUE)%>%arrange(desc(Frequency))%>%slice_head(n=1)%>%pull(Haplotype),envir=.GlobalEnv)
+     f <- file.path(INF,"work",paste0(s[1],"_",s[2],".",s[3]))
+     if (FALSE) LDlinkR::LDhap(s[1:2],file=paste0(f,".ld"),token=Sys.getenv("LDLINK_TOKEN"))
+     })
+haps <- data.frame(snp_rsid_chr=names(z),hap=sapply(1:length(z),function(x) get(names(z)[x])))
 f1 <- "ST-pQTL-disease-overlap.csv"
 f2 <- "ST-pQTL-disease-overlap-combined.csv"
 rxc_gwas <- overlap(dat,f1,f2)
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=24,w=32,ylab="GWAS diseases"))
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=23,w=32,ylab="GWAS diseases"))
 
 # All EFOs for IMD but somehow smaller number of rows
 sel <- sapply(gsub("_",":",long[["efo"]]),function(x) {
@@ -416,3 +407,245 @@ f1 <- "ST-pQTL-IMD-overlap.csv"
 f2 <- "ST-pQTL-IMD-overlap-combined.csv"
 rxc_imd2 <- overlap(dat,f1,f2)
 with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=21,cw=21,h=12,w=23))
+
+# Obsolete since proteins are lumped together
+# -------------------------------------------
+# Check on single SNP is OK with both phenoscanner(snpquery=) and snpqueries()
+# rs3184504 <- phenoscanner::phenoscanner(snpquery="rs3184504",catalogue="GWAS",proxies="EUR",p=5e-8,r2=0.8,build=37)
+# rs3184504$results[c("snp","ref_rsid","rsid","r2","trait")] %>% filter(grepl("Rheumat|Infl|System|Coronary|Hayfever|Celiac|Diabetes",trait))
+# %>%pull(trait)%>%unique
+# rs3184504$results %>% filter(snp=="rs3184504") %>% pull(trait) %>% unique()
+# rs3184504$results %>% filter(trait=="Systemic lupus erythematosus")
+# rs3184504r <- pQTLtools::snpqueries("rs3184504",catalogue="GWAS",proxies="EUR", p=5e-8,r2=0.8,build=37)
+# rs3184504r$results %>% filter(snp=="rs3184504") %>% pull(trait) %>% unique()
+# rs3184504r$results %>% filter(trait=="Systemic lupus erythematosus")
+# We resort to Web version instead
+# write.table(INF1_aggr[["INF1_rsid"]],file="rsid.txt",quote=FALSE,col.names=FALSE,row.names=FALSE)
+
+require(openxlsx)
+if (FALSE)
+{
+  xlsx <- file.path(INF,"work","pqtl-immune_infection.xlsx")
+  wb <- createWorkbook(xlsx)
+  addWorksheet(wb, "METAL")
+  writeDataTable(wb, "METAL", subset(INF1_metal,select=-c(INF1_rsid,hg19_coordinates)))
+  addWorksheet(wb, "ps")
+  writeDataTable(wb, "ps", ps)
+  addWorksheet(wb, "EFO")
+  writeDataTable(wb, "EFO", immune_infection)
+  addWorksheet(wb, "long")
+  writeDataTable(wb, "long",
+                 subset(long,select=-c(hg19_coordinates,ref_hg19_coordinates,ref_protein_position,ref_amino_acids,
+                      snp,snpid,protein_position,amino_acids)))
+  addWorksheet(wb, "short")
+  writeDataTable(wb, "short",
+                 subset(short,select=-c(hg19_coordinates,ref_hg19_coordinates,ref_protein_position,ref_amino_acids,
+                        snp,snpid,protein_position,amino_acids)))
+  saveWorkbook(wb, file=xlsx, overwrite=TRUE)
+}
+
+ps_opt1 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")],1,sort))),] %>%
+           group_by(snp,disease,proxy) %>%
+           slice_head(n=1)
+ps_opt2 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")],1,sort))),] %>%
+           slice_min(order=proxy,n=1)
+ps_opt3 <- ps_gsub[!duplicated(t(apply(ps_gsub[c("snp","rsid","proxy","disease")],1,sort))),] %>%
+           group_by(snp,disease) %>%
+           slice_min(order=proxy,n=1)
+
+# crude processing
+ps_na_direction <- subset(ps,direction=="NA") %>%
+                   filter(!grepl("FVII|HDL|IFT172|IgG|LDL|Albumin|Fasting|NFATotal|Plasma|Serum|Triglycerides|Vitamin",trait)) %>%
+                   filter(!grepl("levels|plasma|reactive",trait))
+write.table(unique(sort(ps_na_direction[["trait"]])),file=file.path(INF,"ps","ps_na_direction.txt"),col.names=FALSE,quote=FALSE,row.names=FALSE)
+# manually entered and can be modified lexicographically
+na_selected <- c(
+"Advanced age related macular degeneration",
+"Age related disease",
+"Allergy",
+"Alopecia areata",
+"Antineutrophil cytoplasmic antibody associated vasculitis",
+"Arthritis rheumatoid",
+"Asthma",
+"Autism spectrum disorder or schizophrenia",
+"Breast cancer",
+"Breast cancer",
+"Cancer pleiotropy",
+"Celiac disease",
+"Childhood ear infection",
+"Chronic hepatitis B infection",
+"Coronary artery disease",
+"Depression",
+"Diabetes mellitus type 1",
+"Extreme obesity with early age of onset",
+"Generalized vitiligo",
+"Glaucoma primary open angle",
+"Gout",
+"Hypertension",
+"Hypothyroidism",
+"Idiopathic membranous nephropathy",
+"IgA nephropathy",
+"Inflammatory bowel disease",
+"Insulin resistance",
+"Ischemic stroke",
+"Juvenile idiopathic arthritis including oligoarticular and rheumatoid factor negative polyarticular JIA",
+"Kidney diseases",
+"Liver cirrhosis biliary",
+"Metabolic syndrome x",
+"Myocardial infarction",
+"Primary biliary cirrhosis",
+"Primary sclerosing cholangitis",
+"Prostate cancer",
+"Rheumatoid arthritis",
+"Rheumatoid arthritis cyclic citrullinated peptide CCP positive",
+"Schizophrenia",
+"Selective IgA deficiency",
+"Systemic lupus erythematosus SLE",
+"Tonsillectomy",
+"Type 1 diabetes",
+"Type 2 diabetes",
+"Venous thrombo",
+"Vitiligo")
+
+ps_na_grep <- paste(na_selected,collapse="|")
+ps_na_disease <- filter(ps_na_direction,grepl(ps_na_grep,trait))
+# ps_na_disease[c("snp","rsid","proxy","r2","trait","pmid","study")]
+ps_na_pmid <- unique(ps_na_disease$pmid) %>%
+              paste(collapse=" ")
+write.table(ps_na_disease,file=file.path(INF,"ps","ps_na_disease.csv"),quote=FALSE,row.names=FALSE,sep=",")
+
+load(file.path(INF,"work","GCST.rda"))
+ps_na_gcst <- function(rsid,PMID)
+{
+  publications <- select(GCST_studies@publications, study_id, pubmed_id) %>%
+                  filter(pubmed_id %in% PMID)
+  studies <- select(GCST_studies@studies, study_id, reported_trait) %>%
+             filter(study_id %in% publications$study_id)
+  sources <- left_join(publications,studies)
+  risk_alleles <- select(GCST@risk_alleles, association_id, variant_id, risk_allele, risk_frequency) %>%
+                  filter(variant_id==rsid)
+  associations <- select(GCST@associations, association_id, range, beta_unit, beta_direction, beta_number, standard_error, pvalue)
+  id <- filter(assoc_study,association_id %in% associations$association_id) %>% distinct()
+  r <- left_join(id,publications) %>% filter(!is.na(pubmed_id)) %>% distinct()
+  risk_allels <- risk_alleles %>% filter(association_id %in% r$association_id) %>% distinct()
+  associations <- associations %>% filter(association_id %in% r$association_id) %>% distinct()
+# get_variants(variant_id=rsid,pubmed_id=PMID)
+  left_join(r,associations) %>% left_join(risk_alleles) %>% data.frame() %>% select(-association_id,-study_id)
+}
+# for(i in 1:nrow(ps_na_disease)) print(ps_na_gcst(ps_na_disease[["rsid"]][i],ps_na_disease[["pmid"]][i]))
+
+  left_join(ps,INF1_metal[c("MarkerName","INF1_rsid")],by=c('snpid'='MarkerName')) %>%
+  filter(pmid=="28928442") %>%
+  select(INF1_rsid,snp,rsid,proxy,a1,a2,beta,direction,p,trait,unit,pmid,study)
+  select(ps,snp,rsid,proxy,a1,a2,beta,direction,p,trait,unit,pmid,study) %>% filter(pmid=="28928442")
+# https://www.ebi.ac.uk/gwas/
+
+long <- cbind(merge(metal,subset(ps,efo%in%iid_diseases[["id"]]),by="hg19_coordinates"),infection=0)
+short <- cbind(merge(aggr,subset(ps,efo%in%iid_diseases[["id"]]),by="hg19_coordinates"),infection=0)
+infection_efo <- with(subset(iid_diseases,infection==1),gsub(":","_",id))
+long[with(long,efo)%in%infection_efo,"infection"] <- 1
+short[with(short,efo)%in%infection_efo,"infection"] <- 1
+view <- function(id,efoid,
+                 v=c("MarkerName","Allele1","Allele2","a1","a2","efo","ref_a1","ref_a2","proxy","r2",
+                     "beta","se","p","trait","ancestry","pmid","study"))
+{
+  options(width=200)
+  cat(id,efoid,"\n")
+  d <- subset(short[v],MarkerName==id & efo==efoid)
+  subset(d,select=-c(MarkerName,efo))
+}
+
+imd <- function()
+# Proteins are collapsed so no longer in use
+{
+  # Rheumatoid arthritis
+  view("chr1:154426970_A_C","EFO_0000685")
+  # T1D
+  view("chr12:111884608_C_T", "EFO_0001359")
+  # Primary sclerosing cholangitis
+  view("chr12:111884608_C_T", "EFO_0004268")
+  # celiac
+  view("chr12:111884608_C_T", "EFO_0001060")
+  # Hypothyroidism
+  view("chr12:111884608_C_T", "EFO_0004705")
+  # Inflammatory bowel disease
+  view("chr12:111884608_C_T", "EFO_0003767")
+  # Primary biliary cirrhosis
+  view("chr12:111884608_C_T", "EFO_1001486")
+  # Allergic disease asthma hay fever or eczema
+  view("chr12:111932800_C_T", "EFO_0003785")
+  # Celiac
+  view("chr12:112007756_C_T","EFO_0001060")
+  # Crohn's
+  view("chr19:49206172_C_T","EFO_0000384")
+  # IBD
+  view("chr19:49206172_C_T","EFO_0003767")
+  # Rheumatoid arthritis
+  view("chr6:32424882_C_T","EFO_0000685")
+  # Self-reported ankylosing spondylitis
+  view("chr6:32424882_C_T","EFO_0003898")
+  # Multiple sclerosis
+  view("chr6:32424882_C_T","EFO_0003885")
+  # Self-reported psoriasis
+  view("chr6:32424882_C_T","EFO_0000676")
+  # Systemic lupus erythematosus SLE
+  view("chr6:32424882_C_T","EFO_0002690")
+  # Self-reported malabsorption or coeliac disease
+  view("chr6:32424882_C_T","EFO_0001060")
+  # IgA nephropathy
+  view("chr6:32424882_C_T","EFO_0004194")
+  # Self-reported sarcoidosis
+  view("chr6:32424882_C_T","Orphanet_797")
+  # Primary sclerosing cholangitis
+  view("chr6:32424882_C_T","EFO_0004268")
+
+  xlsx <- file.path(INF,"work","pqtl-immune_infection_edited.xlsx")
+  short <- openxlsx::read.xlsx(xlsx, sheet=5, colNames=TRUE, skipEmptyRows=TRUE, cols=c(1:51), rows=c(1:220))
+  for(i in 1:nrow(short))
+  {
+    nprots <- short[i,"nprots"]
+    ij <- unlist(strsplit(short[i,"prots"],";"))
+    for(j in 1:nprots) short[i, "prots"] <- gsub(ij[j],inf1_prot[ij[j]],short[i,"prots"])
+  }
+  v <- c("prots","hgnc","MarkerName","cistrans","Effects","Allele1","Allele2","rsid","a1","a2","efo",
+         "ref_rsid","ref_a1","ref_a2","proxy","r2",
+         "HLA","infection","beta","se","p","trait","direction","n_cases","n_controls","unit","ancestry","pmid","study","Keep","Switch")
+  mat <- within(subset(short,infection==0 & Keep==1 & !is.na(direction))[v],
+  {
+    flag <- (HLA==1)
+    prefix <- paste0(prots,"-",rsid,"-",cistrans)
+    prefix[flag] <- paste0(prefix[flag],"*")
+    rsidProts <- paste0(stringr::str_pad(gsub("chr|:[0-9]*|_[A-Z]*","",MarkerName), width=2, side="left", pad="0"),"-", prefix," (",hgnc,")")
+    trait_shown <- gsub("Self-reported |Other |Doctor diagnosed ","",trait)
+    trait_shown <- gsub("asthma |Allergic disease asthma hay fever or eczema","Allergic disease",trait_shown)
+    trait_shown <- gsub("celiac disease|Celiac disease","malasorption or celiac disease",trait_shown)
+    trait_shown <- gsub("malabsorption or coeliac disease","malasorption or celiac disease",trait_shown)
+    trait_shown <- gsub("systemic lupus erythematosis or sle|Systemic lupus erythematosus SLE","systemic lupus erythematosus",trait_shown)
+    trait_shown <- gsub("\\b(^[a-z])","\\U\\1",trait_shown, perl=TRUE)
+    qtl_direction <- sign(as.numeric(beta))
+    qtl_direction[!is.na(Switch)] <- -qtl_direction[!is.na(Switch)]
+    efoTraits <- paste0(trait_shown)
+  })
+  efo_Traits <- with(mat,unique(efoTraits))
+  rsid_Prots <- with(mat,unique(rsidProts))
+  rxc <- matrix(0, length(efo_Traits), length(rsid_Prots), dimnames=list(efo_Traits,rsid_Prots))
+  dn <- matrix("", length(efo_Traits), length(rsid_Prots), dimnames=list(efo_Traits,rsid_Prots))
+  indices <- mat[c("efoTraits","rsidProts","qtl_direction")]
+  if (FALSE) {
+    add_entry <- data.frame(efoTraits="Multiple sclerosis",rsidProts="12-rs2364485 [TNFB](LTA)",qtl_direction=1)
+    indices_new <- rbind(indices,add_entry)
+    rxc <- with(indices_new,table(efoTraits,rsidProts))
+  }
+  for(cn in colnames(rxc)) for(rn in rownames(rxc)) {
+     cnrn <- subset(indices,efoTraits==rn & rsidProts==cn)
+     if(nrow(cnrn)==0) next
+     qd <- as.numeric(cnrn[["qtl_direction"]])
+     if(length(qd)>1) stop("duplicates")
+     if (length(qd)==1) rxc[rn,cn] <- qd[1] else dn[rn,cn] <- unicodes[1]
+  }
+  list(rxc=rxc,dn=dn)
+}
+
+# INF1_pQTL_immune_qtl_unclustered.png
+# rxc_imd <- imd()
+# with(rxc_imd,SF(rxc,dn))
