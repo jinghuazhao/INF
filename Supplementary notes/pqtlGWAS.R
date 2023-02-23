@@ -392,12 +392,12 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=16, w=17, ylab
   colnames(rxc) <- gsub("^[0-9]*-|-cis|-trans","",colnames(rxc))
   p <- pheatmap(rxc, legend=FALSE, angle_col="315", border_color="black", color=col, cellheight=ch, cellwidth=cw,
                  display_numbers=dn, number_color = "brown",
-                 cluster_rows=TRUE, cluster_cols=TRUE, fontsize=16)
+                 cluster_rows=TRUE, cluster_cols=TRUE, fontsize=24)
   p$gtable$grobs[[4]]$gp=gpar(col=ctcols[ccols])
   setHook("grid.newpage", NULL, "replace")
   grid.draw(p)
-  grid.text("Protein-pQTL (Nearest gene)", y=0.02, gp=gpar(fontsize=28))
-  grid.text(ylab, x=0.0, rot=90, gp=gpar(fontsize=28))
+  grid.text("Protein-pQTL (Nearest gene)", y=0.01, gp=gpar(fontsize=28))
+  grid.text(ylab, x=-0.01, rot=90, gp=gpar(fontsize=28))
   dev.off()
 }
 
@@ -407,7 +407,7 @@ dat <- long
 f1 <- "ST-pQTL-disease-overlap.csv"
 f2 <- "ST-pQTL-disease-overlap-combined.csv"
 rxc_gwas <- overlap(dat,f1,f2)
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=21,cw=21,h=25,w=32,ylab="GWAS diseases"))
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=35,cw=35,h=42,w=52,ylab="GWAS diseases"))
 
 # All EFOs for IMD but somehow smaller number of rows
 imd_list <- imd_diseases[["efo"]]
@@ -421,4 +421,4 @@ dat <- filter(long,sel)
 f1 <- "ST-pQTL-IMD-overlap.csv"
 f2 <- "ST-pQTL-IMD-overlap-combined.csv"
 rxc_imd2 <- overlap(dat,f1,f2)
-with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=21,cw=21,h=13,w=23))
+with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=35,cw=35,h=20,w=36))
