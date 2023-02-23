@@ -165,15 +165,52 @@ ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$efo=="EFO_
 ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$efo=="EFO_0003767","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$efo=="EFO_0003767","direction"] <- "+"
 
-ps_filter <- ps_gcst %>%
-             filter(!(snp=="rs635634" & grepl("Cardiovascular diseases|Deep vein thrombosis|Hypertension|Pulmonary embolism|Type II diabetes",trait) & proxy=="1")) %>%
+ps_gsub <- ps_gcst %>%
+           mutate(trait=gsub("Coronary artery disease age 50|Coronary artery disease males","Cardiovascular diseases",trait)) %>%
+           mutate(trait=if_else(unit=="-"&grepl("Arthritis rheumatoid|Rheumatoid arthritis",trait),"rheumatoid arthritis",trait)) %>%
+           mutate(trait=if_else(unit=="-"&grepl("Diabetes mellitus type 1|Type 1 diabetes",trait),"Type I diabetes",trait)) %>%
+           mutate(trait=if_else(unit=="-"&grepl("Inflammatory bowel disease",trait),"inflammatory bowel disease",trait)) %>%
+           mutate(trait=gsub("including oligoarticular and rheumatoid factor negative polyarticular JIA","",trait)) %>%
+           mutate(trait=gsub("Blood clot in the leg|Self-reported deep venous thrombosis","deep vein thrombosis",trait)) %>%
+           mutate(trait=gsub("Blood clot in the lung","pulmonary embolism",trait)) %>%
+           mutate(trait=gsub("Celiac disease","Coeliac disease",trait)) %>%
+           mutate(trait=gsub("Coronary heart disease","Coronary artery disease",trait)) %>%
+           mutate(trait=gsub("Crohns","Crohn's",trait)) %>%
+           mutate(trait=gsub("Advanced age related macular degeneration","Age-related macular degeneration",trait)) %>%
+           mutate(trait=gsub("Renal overload gout|Renal underexcretion gout","Gout",trait)) %>%
+           mutate(trait=gsub("Hayfever, allergic rhinitis or eczema|Allergic disease|Allergic disease asthma hay fever or eczema","allergy",trait)) %>%
+           mutate(trait=gsub("High grade serous ovarian cancer|Invasive ovarian cancer","ovarian cancer",trait)) %>%
+           mutate(trait=gsub("Serous invasive ovarian cancer|Serous boarderline ovarian cancer","ovarian cancer",trait)) %>%
+           mutate(trait=gsub("Other rheumatoid arthritis","rheumatoid arthritis",trait)) %>%
+           mutate(trait=gsub("Self-reported cholelithiasis or gall stones","cholelithiasis",trait)) %>%
+           mutate(trait=gsub("erythematosis","erythematosus",trait)) %>%
+           mutate(trait=gsub(" or myxoedema","",trait)) %>%
+           mutate(trait=gsub(" or thyrotoxicosis","",trait)) %>%
+           mutate(trait=gsub("Type 2 diabetes","Type II diabetes",trait)) %>%
+           mutate(trait=gsub(" or endometrial","",trait)) %>%
+           mutate(trait=gsub(" [+] or [-] dvt","",trait)) %>%
+           mutate(trait=gsub("Illnesses of siblings: ","",trait)) %>%
+           mutate(trait=gsub("Selective IgA deficiency","Selective IgA deficiency disease",trait)) %>%
+           mutate(trait=gsub("Doctor diagnosed |heart attack or |Self-reported |Illnesses of father: |Illnesses of mother: ","",trait)) %>%
+           mutate(trait=gsub("high blood pressure","hypertension",trait)) %>%
+           mutate(trait=gsub("malabsorption or |Low grade and borderline serous |Mouth or teeth dental problems: ","",trait)) %>%
+           mutate(trait=gsub("Unspecified |Vascular or heart problems diagnosed by doctor: ","",trait)) %>%
+           mutate(trait=gsub("Acute myocardial infarction|Myocardial infarction|myocardial infarction","cardiovascular diseases",trait)) %>%
+           mutate(trait=gsub("Coronary artery disease|heart attack|heart disease","cardiovascular diseases",trait)) %>%
+           mutate(trait=gsub(" or sle| or large artery stroke| or ischemic stroke","", trait)) %>%
+           mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE))
+ps_filter <- ps_gsub %>%
+             filter(!grepl("None of the above",trait)) %>%
+             filter(!(rsid=="rs635634" & snp=="rs579459" & grepl("Cardiovascular diseases|High cholesterol|Hypertension|Type II diabetes",trait))) %>%
+             filter(!(snp=="rs635634" & grepl("Deep vein thrombosis|Pulmonary embolism",trait) & proxy=="1")) %>%
              filter(!(snp=="rs579459" & grepl("Pulmonary embolism|Phlebitis and thrombophlebitis|Deep vein thrombosis|Ovarian cancer|Phlebitis and thrombophlebitis",trait) & proxy=="1")) %>%
-             filter(!(snp=="rs579459" & grepl("High cholesterol|Hypertension",trait) & proxy=="0" & direction=="NA")) %>%
+             filter(!(snp=="rs579459" & (grepl("Cardiovascular diseases|Hypertension",trait) & proxy=="0" | direction=="NA"))) %>%
+             filter(!(rsid=="rs579459" & snp=="rs635634" & grepl("High cholesterol|Ovarian cancer|Phlebitis and thrombophlebitis",trait))) %>%
              filter(!(rsid=="rs597808" & efo=="EFO_0004705;EFO_1001055" & proxy=="1")) %>%
              filter(!(rsid=="rs597808" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs516246" & pmid!="26192919")) %>%
              filter(!(rsid=="rs66530140" & grepl("Deep vein thrombosis|Pulmonary embolism",trait) & proxy=="1")) %>%
-             filter(!(rsid=="rs653178" & grepl("hypertension",trait) & proxy=="1")) %>%
+             filter(!(rsid=="rs653178" & grepl("Hypertension",trait) & proxy=="1")) %>%
              filter(!(rsid=="rs653178" & grepl("EFO_0000378|EFO_0000612|EFO_0001060",efo) & direction=="NA")) %>%
              filter(!(rsid=="rs653178" & grepl("EFO_0001060|EFO_0003956;EFO_0005854;EFO_0000274|EFO_0004705;EFO_1001055",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs653178" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003767|EFO_0003777",efo) & proxy=="1")) %>%
@@ -265,44 +302,10 @@ ps_filter <- ps_gcst %>%
              filter(!grepl("Vascular or heart problems diagnosed by doctor: none of the above",trait)) %>%
              filter(!grepl("count|density|education|intake|levels|weight",trait)) %>%
              filter(!(dataset=="GRASP" & !grepl("Celiac disease|Coronary artery disease|Hypertension|Hypothyroidism|JIA|Myocardial infarction|Primary biliary cirrhosis|Primary sclerosing cholangitis|Type 1 diabetes|Generalized vitiligo|Rheumatoid arthritis and celiac disease",trait))) %>%
-             filter(!(pmid=="21980299" & efo=="EFO_0001359"))
-ps_gsub <- ps_filter %>%
-           mutate(trait=gsub("Coronary artery disease age 50|Coronary artery disease males","Cardiovascular diseases",trait)) %>%
-           mutate(trait=if_else(unit=="-"&grepl("Arthritis rheumatoid|Rheumatoid arthritis",trait),"rheumatoid arthritis",trait)) %>%
-           mutate(trait=if_else(unit=="-"&grepl("Diabetes mellitus type 1|Type 1 diabetes",trait),"Type I diabetes",trait)) %>%
-           mutate(trait=if_else(unit=="-"&grepl("Inflammatory bowel disease",trait),"inflammatory bowel disease",trait)) %>%
-           mutate(trait=gsub("including oligoarticular and rheumatoid factor negative polyarticular JIA","",trait)) %>%
-           mutate(trait=gsub("Blood clot in the leg|Self-reported deep venous thrombosis","deep vein thrombosis",trait)) %>%
-           mutate(trait=gsub("Blood clot in the lung","pulmonary embolism",trait)) %>%
-           mutate(trait=gsub("Celiac disease","Coeliac disease",trait)) %>%
-           mutate(trait=gsub("Coronary heart disease","Coronary artery disease",trait)) %>%
-           mutate(trait=gsub("Crohns","Crohn's",trait)) %>%
-           mutate(trait=gsub("Advanced age related macular degeneration","Age-related macular degeneration",trait)) %>%
-           mutate(trait=gsub("Renal overload gout|Renal underexcretion gout","Gout",trait)) %>%
-           mutate(trait=gsub("Hayfever, allergic rhinitis or eczema|Allergic disease|Allergic disease asthma hay fever or eczema","allergy",trait)) %>%
-           mutate(trait=gsub("High grade serous ovarian cancer|Invasive ovarian cancer","ovarian cancer",trait)) %>%
-           mutate(trait=gsub("Serous invasive ovarian cancer|Serous boarderline ovarian cancer","ovarian cancer",trait)) %>%
-           mutate(trait=gsub("Other rheumatoid arthritis","rheumatoid arthritis",trait)) %>%
-           mutate(trait=gsub("Self-reported cholelithiasis or gall stones","cholelithiasis",trait)) %>%
-           mutate(trait=gsub("erythematosis","erythematosus",trait)) %>%
-           mutate(trait=gsub(" or myxoedema","",trait)) %>%
-           mutate(trait=gsub(" or thyrotoxicosis","",trait)) %>%
-           mutate(trait=gsub("Type 2 diabetes","Type II diabetes",trait)) %>%
-           mutate(trait=gsub(" or endometrial","",trait)) %>%
-           mutate(trait=gsub(" [+] or [-] dvt","",trait)) %>%
-           mutate(trait=gsub("Illnesses of siblings: ","",trait)) %>%
-           mutate(trait=gsub("Selective IgA deficiency","Selective IgA deficiency disease",trait)) %>%
-           mutate(trait=gsub("Doctor diagnosed |heart attack or |Self-reported |Illnesses of father: |Illnesses of mother: ","",trait)) %>%
-           mutate(trait=gsub("high blood pressure","hypertension",trait)) %>%
-           mutate(trait=gsub("malabsorption or |Low grade and borderline serous |Mouth or teeth dental problems: ","",trait)) %>%
-           mutate(trait=gsub("Unspecified |Vascular or heart problems diagnosed by doctor: ","",trait)) %>%
-           mutate(trait=gsub("Acute myocardial infarction|Myocardial infarction|myocardial infarction","cardiovascular diseases",trait)) %>%
-           mutate(trait=gsub("Coronary artery disease|heart attack|heart disease","cardiovascular diseases",trait)) %>%
-           mutate(trait=gsub(" or sle","", trait)) %>%
-           mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
-           rename(disease=trait)
+             filter(!(pmid=="21980299" & efo=="EFO_0001359")) %>%
+             rename(disease=trait)
 #          mutate(trait=gsub("\\b(^[A-Z])","\\L\\1",trait,perl=TRUE))
-ps_mutate <- ps_gsub
+ps_mutate <- ps_filter
 
 overlap <- function(dat,f1,f2)
 # Now on individual proteins
