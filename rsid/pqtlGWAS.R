@@ -119,17 +119,8 @@ ps_gcst[ps_gcst$pmid=="24262325" & ps_gcst$rsid=="rs579459","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="24262325" & ps_gcst$rsid=="rs579459","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","a1"] <- "G"
 ps_gcst[ps_gcst$pmid=="25939597" & ps_gcst$rsid=="rs7725218","direction"] <- "+"
-# According to rs3184504 risk/other (T/C),
-# PhenoScanner is correct to indicate rs653178 risk allele to be "C" but rs3184504 should have risk allele "T"
-# since LDhap (https://ldlink.nci.nih.gov/?tab=ldhap) indicates rs3184504/rs653178 TC=0.5278, r2=0.9449
-# However, GWAS catalogue appears to be wrong about beta/se since it treats Tonsillectomy OR as log(OR)
-#'         where 0.035-0.067 has beta/se=0.0507/0.0081 rather than -3.03/0.166
-# The GWAS Catalog is correctly in line with Nat Comm paper.
-# PhenoScanner has C allele to be +
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs635634","a1"] <- "T"
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs635634","direction"] <- "+"
-ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs3184504","a1"] <- "T"
-ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs653178","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs653178","direction"] <- "-"
 # PhenoScanner has multiple conflicting entries
@@ -137,6 +128,9 @@ ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs681343","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs681343","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs516316","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="28928442" & ps_gcst$rsid=="rs516316","direction"] <- "+"
+# IBD, rs651378 a1/a2 (C/T) from Supplementary table is in line with PhenoScanner
+ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs3184504" & ps_gcst$trait=="Inflammatory bowel disease","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs3184504" & ps_gcst$trait=="Inflammatory bowel disease","direction"] <- "+"
 # T1D
 # Read from PLoS Genet paper according to P value, fixing a1 by GWAS catalog and adding direction
 # GWAS Catalog indicates OR=1.3(4) but misses beta/se
@@ -220,10 +214,11 @@ ps_filter <- ps_gsub %>%
              filter(!(rsid %in% c("rs516246","rs516316") & grepl("EFO_0000384|EFO_0004799|EFO_0008111",efo) & proxy=="1")) %>%
              filter(!(efo%in%c("EFO_0004211","EFO_0004530") & direction=="NA")) %>%
              filter(!(rsid=="rs7310615" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
-             filter(!(rsid=="rs3184504" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="0" & direction=="NA")) %>%
-             filter(!(rsid=="rs3184504" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs3184504" & efo=="EFO_0004268" & proxy=="1")) %>%
-             filter(!(rsid=="rs3184504" & grepl("EFO_0004705",efo) & proxy=="1")) %>%
+             filter(!(rsid=="rs3184504" & grepl("Hypothyroidism",trait) & proxy=="1")) %>%
+             filter(!(rsid=="rs3184504" & grepl("Cardiovascular diseases",trait) & proxy=="1")) %>%
+             filter(!(rsid=="rs3184504" & grepl("Inflammatory bowel disease",trait) & proxy=="1")) %>%
+             filter(!(rsid=="rs3184504" & grepl("Tonsillectomy",trait) & proxy=="1")) %>%
              filter(!(rsid %in% c("rs3184504","rs597808","rs7137828","rs7310615") & grepl("EFO_0003956|EFO_0005854|EFO_0000274",efo) & proxy=="1")) %>%
              filter(!(rsid %in% c("rs3184504","rs653178") & efo=="EFO_0000537" & direction=="NA")) %>%
              filter(!(rsid %in% c("rs516246","rs516316","rs597808","rs3184504","rs7137828","rs7310615") & efo=="EFO_0000537" & proxy=="1")) %>%
