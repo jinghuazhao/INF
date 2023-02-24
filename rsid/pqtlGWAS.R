@@ -165,6 +165,13 @@ ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563" & ps_gcst$efo=="EF
 ## PhenoScanner and GCST agree
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="21829393" & ps_gcst$rsid=="rs3087243","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="21829393" & ps_gcst$rsid=="rs3087243","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="22446961" & ps_gcst$rsid=="rs1569723","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="22446961" & ps_gcst$rsid=="rs1569723","direction"] <- "+"
+# Only partially available from PhenoScanner/GWAS Catalog but confirmed from Table 2 of paper
+ps_gcst[ps_gcst$pmid=="21743469" & ps_gcst$rsid=="rs6556416","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="21743469" & ps_gcst$rsid=="rs6556416","direction"] <- "+"
 
 ps_gsub <- ps_gcst %>%
            mutate(trait=gsub("Coronary artery disease age 50|Coronary artery disease males","Cardiovascular diseases",trait)) %>%
@@ -246,6 +253,7 @@ ps_filter <- ps_gsub %>%
              filter(!(snp=="rs653178" & grepl("Allergy",trait) & proxy=="1")) %>%
              filter(!(snp=="rs7310615" & grepl("Psoriasis",trait) & proxy=="1")) %>%
              filter(!(snp=="rs3130510" & grepl("Psoriasis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs2074227" & grepl("Inflammatory bowel disease",trait) & direction=="-")) %>%
              filter(!(rsid %in% c("rs3184504","rs597808","rs7137828","rs7310615") & grepl("EFO_0003956|EFO_0005854|EFO_0000274",efo) & proxy=="1")) %>%
              filter(!(rsid %in% c("rs3184504","rs653178") & efo=="EFO_0000537" & direction=="NA")) %>%
              filter(!(rsid %in% c("rs516246","rs516316","rs597808","rs3184504","rs7137828","rs7310615") & efo=="EFO_0000537" & proxy=="1")) %>%
@@ -263,6 +271,7 @@ ps_filter <- ps_gsub %>%
              filter(!(rsid=="rs601338" & pmid=="23128233")) %>%
              filter(!(rsid=="rs601338" & pmid=="26192919" & proxy=="1")) %>%
              filter(!(rsid=="rs7137828" & (direction=="NA" | proxy=="1" & grepl("Juvenile",trait)))) %>%
+             filter(!(rsid=="rs602662" & trait=="Pediatric autoimmune diseases")) %>%
              filter(!(snp=="rs601338" & pmid=="22482804")) %>%
              filter(!(pmid=="23143596")) %>%
              filter(!(pmid=="24390342" & efo=="EFO_0000685" & is.na(beta))) %>%
@@ -273,6 +282,7 @@ ps_filter <- ps_gsub %>%
              filter(!(pmid=="27790247")) %>%
              filter(!(pmid=="22399527" & direction=="NA")) %>%
              filter(!(pmid=="21386085")) %>%
+             filter(!(pmid=="18978792")) %>%
              filter(!(pmid=="20453842" & direction=="NA")) %>%
              filter(!(pmid=="19430483"|pmid=="27117709"|pmid=="27197191")) %>%
              filter(!(pmid=="25305756"|pmid=="20167578"|pmid=="27997041")) %>%
@@ -323,10 +333,10 @@ ps_filter <- ps_gsub %>%
              filter(!grepl("Qualifications: none",trait)) %>%
              filter(!grepl("Vascular or heart problems diagnosed by doctor: none of the above",trait)) %>%
              filter(!grepl("count|density|education|intake|levels|weight",trait)) %>%
-             filter(!(dataset=="GRASP" & !grepl("Asthma|Celiac disease|Coronary artery disease|Crohns disease|Graves disease|Hypertriglyceridemia|Hypertension|Hypothyroidism|Idiopathic membranous nephropathy|IgA nephropathy|JIA|Kawasaki disease|Myocardial infarction|Primary biliary cirrhosis|Primary sclerosing cholangitis|Type 1 diabetes|Type 2 diabetes|Generalized vitiligo|Rheumatoid arthritis|Primary sclerosing cholangitis|Retinal venular caliber|Selective immunoglobulin A deficiency IgAD",trait))) %>%
+             filter(!(dataset=="GRASP" & !grepl("Asthma|Celiac disease|Coronary artery disease|Crohns disease|Graves disease|Hypertriglyceridemia|Hypertension|Hypothyroidism|Idiopathic membranous nephropathy|IgA nephropathy|JIA|Kawasaki disease|Myocardial infarction|Primary biliary cirrhosis|Primary sclerosing cholangitis|Type 1 diabetes|Type 2 diabetes|Generalized vitiligo|Rheumatoid arthritis|Primary sclerosing cholangitis|Retinal venular caliber",trait))) %>%
              filter(!(pmid=="22003152" & rsid=="rs247616")) %>%
              filter(!(pmid=="21980299" & efo=="EFO_0001359")) %>%
-             filter(!(trait=="Hematocrit")) %>%
+             filter(!(trait=="Hematocrit"|trait=="Crohn disease"|trait=="Erythrocyte indices")) %>%
              rename(disease=trait)
 #          mutate(trait=gsub("\\b(^[A-Z])","\\L\\1",trait,perl=TRUE))
 ps_mutate <- ps_filter
