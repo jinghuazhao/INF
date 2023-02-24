@@ -100,9 +100,6 @@ ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs597808","a1"] <- "A"
 ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs597808","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="27992413" & ps_gcst$rsid=="rs3184504","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="27992413" & ps_gcst$rsid=="rs3184504","direction"] <- "+"
-# PhenoScanner and GCST agree
-ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","a1"] <- "C"
-ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
 # PhenoScanner and GCST disagree on risk allele -- the latter has "A" (in A/G) in line with the paper (on - strand)
 ps_gcst[ps_gcst$pmid=="22961000" & ps_gcst$rsid=="rs3184504" & ps_gcst$efo=="EFO_1001486","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="22961000" & ps_gcst$rsid=="rs3184504" & ps_gcst$efo=="EFO_1001486","direction"] <- "+"
@@ -158,6 +155,16 @@ ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$efo=="EFO_
 ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$efo=="EFO_0000384","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$efo=="EFO_0003767","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="26192919" & ps_gcst$rsid=="rs516246" & ps_gcst$efo=="EFO_0003767","direction"] <- "+"
+# Adjustment by GWAS Catalog
+ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs10774625" & ps_gcst$efo=="EFO_0002690","a1"] <- "A"
+ps_gcst[ps_gcst$pmid=="26502338" & ps_gcst$rsid=="rs10774625" & ps_gcst$efo=="EFO_0002690","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs4246215" & ps_gcst$efo=="EFO_0003767","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs4246215" & ps_gcst$efo=="EFO_0003767","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563" & ps_gcst$efo=="EFO_0003767","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563" & ps_gcst$efo=="EFO_0003767","direction"] <- "+"
+## PhenoScanner and GCST agree
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","a1"] <- "C"
+ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
 
 ps_gsub <- ps_gcst %>%
            mutate(trait=gsub("Coronary artery disease age 50|Coronary artery disease males","Cardiovascular diseases",trait)) %>%
@@ -215,10 +222,30 @@ ps_filter <- ps_gsub %>%
              filter(!(efo%in%c("EFO_0004211","EFO_0004530") & direction=="NA")) %>%
              filter(!(rsid=="rs7310615" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs3184504" & efo=="EFO_0004268" & proxy=="1")) %>%
-             filter(!(rsid=="rs3184504" & grepl("Hypothyroidism",trait) & proxy=="1")) %>%
-             filter(!(rsid=="rs3184504" & grepl("Cardiovascular diseases",trait) & proxy=="1")) %>%
-             filter(!(rsid=="rs3184504" & grepl("Inflammatory bowel disease",trait) & proxy=="1")) %>%
-             filter(!(rsid=="rs3184504" & grepl("Tonsillectomy",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs3184504" & grepl("Allergy",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs3184504" & grepl("Hypertension",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs3184504" & grepl("Hypothyroidism",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs3184504" & grepl("Cardiovascular diseases",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs3184504" & grepl("Inflammatory bowel disease",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs3184504" & grepl("Tonsillectomy",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs7763262" & grepl("Ankylosing spondylitis|Coeliac disease|Multiple sclerosis|Rheumatoid arthritis|Systemic lupus erythematosus",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs1883832" & grepl("Inflammatory bowel disease|Kawasaki disease",trait) & direction=="NA")) %>%
+             filter(!(snp=="rs1883832" & grepl("Rheumatoid arthritis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs1950897" & grepl("Allergy",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs9469127" & grepl("Rheumatoid arthritis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs1866051" & grepl("Rheumatoid arthritis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs13107325" & grepl("Crohn's disease",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs9272226" & grepl("Allergy|IgA deficiency|Rheumatoid arthritis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs2270297" & grepl("Atopic dermatitis|Crohn's disease|Inflammatory bowel disease",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs2270297" & grepl("Coeliac disease",trait) & direction=="NA")) %>%
+             filter(!(snp=="rs516246" & grepl("Crohn's disease",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs516316" & grepl("Crohn's disease",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs601338" & grepl("Crohn's disease",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs7763262" & grepl("Ankylosing spondylitis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs7137828" & grepl("Allergy",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs653178" & grepl("Allergy",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs7310615" & grepl("Psoriasis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs3130510" & grepl("Psoriasis",trait) & proxy=="1")) %>%
              filter(!(rsid %in% c("rs3184504","rs597808","rs7137828","rs7310615") & grepl("EFO_0003956|EFO_0005854|EFO_0000274",efo) & proxy=="1")) %>%
              filter(!(rsid %in% c("rs3184504","rs653178") & efo=="EFO_0000537" & direction=="NA")) %>%
              filter(!(rsid %in% c("rs516246","rs516316","rs597808","rs3184504","rs7137828","rs7310615") & efo=="EFO_0000537" & proxy=="1")) %>%
@@ -296,8 +323,10 @@ ps_filter <- ps_gsub %>%
              filter(!grepl("Qualifications: none",trait)) %>%
              filter(!grepl("Vascular or heart problems diagnosed by doctor: none of the above",trait)) %>%
              filter(!grepl("count|density|education|intake|levels|weight",trait)) %>%
-             filter(!(dataset=="GRASP" & !grepl("Celiac disease|Coronary artery disease|Hypertension|Hypothyroidism|JIA|Myocardial infarction|Primary biliary cirrhosis|Primary sclerosing cholangitis|Type 1 diabetes|Generalized vitiligo|Rheumatoid arthritis and celiac disease",trait))) %>%
+             filter(!(dataset=="GRASP" & !grepl("Asthma|Celiac disease|Coronary artery disease|Crohns disease|Graves disease|Hypertriglyceridemia|Hypertension|Hypothyroidism|Idiopathic membranous nephropathy|IgA nephropathy|JIA|Kawasaki disease|Myocardial infarction|Primary biliary cirrhosis|Primary sclerosing cholangitis|Type 1 diabetes|Type 2 diabetes|Generalized vitiligo|Rheumatoid arthritis|Primary sclerosing cholangitis|Retinal venular caliber|Selective immunoglobulin A deficiency IgAD",trait))) %>%
+             filter(!(pmid=="22003152" & rsid=="rs247616")) %>%
              filter(!(pmid=="21980299" & efo=="EFO_0001359")) %>%
+             filter(!(trait=="Hematocrit")) %>%
              rename(disease=trait)
 #          mutate(trait=gsub("\\b(^[A-Z])","\\L\\1",trait,perl=TRUE))
 ps_mutate <- ps_filter
@@ -305,12 +334,12 @@ ps_mutate <- ps_filter
 overlap <- function(dat,f1,f2)
 # Now on individual proteins
 {
-  mat <- select(dat,prot,target.short,gene,hgnc,snp,MarkerName,INF1_rsid,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,
+  mat <- select(dat,prot,target.short,gene,ref_hgnc,snp,MarkerName,INF1_rsid,cis.trans,Effect,StdErr,pqtl_direction,Allele1,Allele2,
                     chr,rsid,a1,a2,a1_ps,a2_ps,efo,ref_rsid,ref_a1,ref_a2,proxy,r2,
                     HLA,beta,se,p,direction,disease,n_cases,n_controls,unit,ancestry,pmid,study) %>%
          mutate(a2=if_else(a1==a1_ps,a2_ps,a1_ps)) %>%
          mutate(prefix=if_else(HLA==1,paste0(gene,"-",INF1_rsid,"-",cis.trans,"*"),paste0(gene,"-",INF1_rsid,"-",cis.trans)),
-                rsidProt=paste0(prefix," (",hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
+                rsidProt=paste0(prefix," (",ref_hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
          #      Effect=round(Effect,3), StdErr=round(StdErr,3),
                 r2=round(as.numeric(r2),3),
          #      beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
@@ -333,7 +362,7 @@ overlap <- function(dat,f1,f2)
        # filter(direction%in%c("-","+")) %>%
          select(-c(snp_rsid_chr,hap,pah,h11,h12,h21,h22)) %>%
          filter(!grepl("^NA",rsidProt))
-  combined <- group_by(mat,hgnc,rsidProt,Trait,desc(n_cases)) %>%
+  combined <- group_by(mat,ref_hgnc,rsidProt,Trait,desc(n_cases)) %>%
               summarize(ref_rsids=paste(ref_rsid_a1_a2,collapse=";"),
                         proxies=paste(proxy,collapse=";"),
                         directions=paste(trait_direction,collapse=";"),
@@ -359,9 +388,10 @@ overlap <- function(dat,f1,f2)
   subset(mat[c("study","pmid","unit","beta","pqtl_direction","direction")],unit=="-")
   # all studies with risk difference were UKBB
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
-  write.table(select(mat,-prot,-MarkerName,-prefix,-rsidProt,-INF1_rsid,-a1_ps,-a2_ps,-Effect,-StdErr,rsid,-beta,-se,-p,
-                         -n_cases,-n_controls,-pqtl_trait_direction,-trait_direction,-Trait) %>%
-              rename(Protein=target.short,Target_gene=gene,Nearest_gene=hgnc,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study),
+  write.table(select(mat,-prot,-target.short,-MarkerName,-prefix,-rsidProt,-INF1_rsid,-a1_ps,-a2_ps,-Effect,-StdErr,rsid,-beta,-se,-p,
+                         -n_cases,-n_controls,-pqtl_trait_direction,-trait_direction,-Trait,
+                         -ref_rsid_a1_a2,-ref_rsid,-ref_a1,-ref_a2,-switch) %>%
+              rename(Protein=gene,Nearest_gene=ref_hgnc,pQTL=snp,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study) %>% distinct(),
               file=file.path(INF,"ps",f1),row.names=FALSE,quote=FALSE,sep=",")
   write.table(select(combined,-desc.n_cases.),file=file.path(INF,"ps",f2),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
@@ -397,23 +427,57 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=16, w=17, ylab
 }
 
 # GWAS diseases
-long <- merge(metal,ps_mutate,by="hg19_coordinates",all.y=TRUE)
+snplist <- pull(ps_mutate,snp) %>% unique
+# hg19_coordinates
+metal_to_use <- filter(metal,INF1_rsid %in% snplist)
+check <- right_join(metal_to_use,ps_mutate,multiple="all") %>%
+         select(INF1_rsid,ref_rsid,rsid,proxy,disease,pmid,study)
+dim(check)
+dim(filter(check,!is.na(INF1_rsid) & INF1_rsid!=ref_rsid))
+long <- merge(metal_to_use,ps_mutate,by="hg19_coordinates",all.y=TRUE)
 dat <- long
 f1 <- "ST-pQTL-disease-overlap.csv"
 f2 <- "ST-pQTL-disease-overlap-combined.csv"
 rxc_gwas <- overlap(dat,f1,f2)
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=35,cw=35,h=42,w=52,ylab="GWAS diseases"))
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=35,cw=35,h=42,w=55,ylab="GWAS diseases"))
 
-# All EFOs for IMD but somehow smaller number of rows
+# IMDs
 imd_list <- imd_diseases[["efo"]]
 imd_list <- iid_diseases[["id"]]
-sel <- sapply(gsub("_",":",long[["efo"]]),function(x) {
-             long_set <- unlist(strsplit(x,";"))
-             set_int <- intersect(long_set,imd_list)
-             paste0(imd_list[imd_list%in%set_int],collapse="")!=""
-             })
+sel <- sapply(gsub("_",":",long[["efo"]]),function(x)
+              {
+                long_set <- unlist(strsplit(x,";"))
+                set_int <- intersect(long_set,imd_list)
+                paste0(imd_list[imd_list%in%set_int],collapse="")!=""
+              }
+             )
 dat <- filter(long,sel)
 f1 <- "ST-pQTL-IMD-overlap.csv"
 f2 <- "ST-pQTL-IMD-overlap-combined.csv"
 rxc_imd2 <- overlap(dat,f1,f2)
-with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=35,cw=35,h=20,w=36))
+with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=35,cw=35,h=20,w=40))
+
+# SNPs
+long <- merge(select(metal_to_use,-hg19_coordinates),
+              select(ps_mutate,-hg19_coordinates) %>% mutate(SNP=snp),
+              by.x="INF1_rsid",by.y="SNP",all.y=TRUE)
+dim(long)
+dim(filter(long,!is.na(INF1_rsid) & INF1_rsid!=ref_rsid))
+dat <- long
+f1 <- "ST-pQTL-disease-long.csv"
+f2 <- "ST-pQTL-disease-long-combined.csv"
+rxc_gwas <- overlap(dat,f1,f2)
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-long.png",ch=35,cw=35,h=64,w=60,ylab="GWAS diseases"))
+imd_list <- imd_diseases[["efo"]]
+sel <- sapply(gsub("_",":",long[["efo"]]),function(x)
+              {
+                long_set <- unlist(strsplit(x,";"))
+                set_int <- intersect(long_set,imd_list)
+                paste0(imd_list[imd_list%in%set_int],collapse="")!=""
+              }
+             )
+dat <- filter(long,sel)
+f1 <- "ST-pQTL-IMD-long.csv"
+f2 <- "ST-pQTL-IMD-long-combined.csv"
+rxc_imd2 <- overlap(dat,f1,f2)
+with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-long.png",ch=35,cw=35,h=22,w=38))
