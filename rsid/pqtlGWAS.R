@@ -218,7 +218,6 @@ ps_filter <- ps_gsub %>%
              filter(!(rsid=="rs597808" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs516246" & pmid!="26192919")) %>%
              filter(!(rsid=="rs66530140" & grepl("Deep vein thrombosis|Pulmonary embolism",trait) & proxy=="1")) %>%
-             filter(!(rsid=="rs653178" & grepl("Hypertension",trait) & proxy=="1")) %>%
              filter(!(rsid=="rs653178" & grepl("EFO_0000378|EFO_0000612|EFO_0001060",efo) & direction=="NA")) %>%
              filter(!(rsid=="rs653178" & grepl("EFO_0001060|EFO_0003956;EFO_0005854;EFO_0000274|EFO_0004705;EFO_1001055",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs653178" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003767|EFO_0003777",efo) & proxy=="1")) %>%
@@ -229,6 +228,7 @@ ps_filter <- ps_gsub %>%
              filter(!(efo%in%c("EFO_0004211","EFO_0004530") & direction=="NA")) %>%
              filter(!(rsid=="rs7310615" & grepl("EFO_0000612|EFO_0000378|EFO_1000883|EFO_0001645|EFO_0003777",efo) & proxy=="1")) %>%
              filter(!(rsid=="rs3184504" & efo=="EFO_0004268" & proxy=="1")) %>%
+             filter(!(snp=="rs653178" & grepl("Cardiovascular diseases|Hypertension|Hypothyroidism",trait) & proxy=="1")) %>%
              filter(!(snp=="rs3184504" & grepl("Allergy",trait) & proxy=="1")) %>%
              filter(!(snp=="rs3184504" & grepl("Hypertension",trait) & proxy=="1")) %>%
              filter(!(snp=="rs3184504" & grepl("Hypothyroidism",trait) & proxy=="1")) %>%
@@ -248,12 +248,28 @@ ps_filter <- ps_gsub %>%
              filter(!(snp=="rs516246" & grepl("Crohn's disease",trait) & proxy=="1")) %>%
              filter(!(snp=="rs516316" & grepl("Crohn's disease",trait) & proxy=="1")) %>%
              filter(!(snp=="rs601338" & grepl("Crohn's disease",trait) & proxy=="1")) %>%
-             filter(!(snp=="rs7763262" & grepl("Ankylosing spondylitis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs7763262" & grepl("Ankylosing spondylitis|Haematuria|Hypothyroidism|Intestinal malabsorption|Mouth ulcers|Sarcoidosis",trait) & proxy=="1")) %>%
              filter(!(snp=="rs7137828" & grepl("Allergy",trait) & proxy=="1")) %>%
              filter(!(snp=="rs653178" & grepl("Allergy",trait) & proxy=="1")) %>%
              filter(!(snp=="rs7310615" & grepl("Psoriasis",trait) & proxy=="1")) %>%
              filter(!(snp=="rs3130510" & grepl("Psoriasis",trait) & proxy=="1")) %>%
              filter(!(snp=="rs2074227" & grepl("Inflammatory bowel disease",trait) & direction=="-")) %>%
+             filter(!(snp=="rs2228145" & grepl("Asthma",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs3859189" & grepl("Asthma",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs1950897" & grepl("Asthma",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs1950897" & grepl("Hypothyroidism",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs1260326" & grepl("Type II diabetes",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs13107325" & grepl("Schizophrenia",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs16840522" & grepl("Geographic atrophy",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs13010492" & grepl("Graves disease",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs28929474" & grepl("Emphysema",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs28929474" & grepl("Chronic bronchitis or emphysema",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs28929474" & grepl("Cardiovascular diseases",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs67020211" & grepl("Dentures",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs16840522" & grepl("Age-related macular degeneration",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs12149545" & grepl("Cardiovascular diseases",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs12509595" & grepl("Cardiovascular diseases",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs7137828" & grepl("Cardiovascular diseases|Hypertension|Hypothyroidism",trait) & proxy=="1")) %>%
              filter(!(rsid %in% c("rs3184504","rs597808","rs7137828","rs7310615") & grepl("EFO_0003956|EFO_0005854|EFO_0000274",efo) & proxy=="1")) %>%
              filter(!(rsid %in% c("rs3184504","rs653178") & efo=="EFO_0000537" & direction=="NA")) %>%
              filter(!(rsid %in% c("rs516246","rs516316","rs597808","rs3184504","rs7137828","rs7310615") & efo=="EFO_0000537" & proxy=="1")) %>%
@@ -287,7 +303,7 @@ ps_filter <- ps_gsub %>%
              filter(!(pmid=="19430483"|pmid=="27117709"|pmid=="27197191")) %>%
              filter(!(pmid=="25305756"|pmid=="20167578"|pmid=="27997041")) %>%
              filter(!(pmid=="27182965"|pmid=="27618447"|pmid=="21383967"|pmid=="22057235")) %>%
-             filter(!(pmid=="22561518"|pmid=="21383967")) %>%
+             filter(!(pmid=="22561518"|pmid=="21383967"|pmid=="21060863")) %>%
              filter(!(pmid=="18794853"|pmid=="26752265"|pmid=="19430480"|pmid=="28067908")) %>%
              filter(!(pmid=="21383967"|pmid=="26621817"|pmid==""|pmid==""|pmid=="")) %>%
              filter(!(pmid=="20453842" & direction=="NA")) %>%
