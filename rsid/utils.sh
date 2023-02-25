@@ -1074,3 +1074,32 @@ function CXCL5_wb_ct()
 #            CXCL5 -0.5115   0.0183
 #      Whole blood -0.546318 0.0542992
 # Colon transverse -0.407191 0.0858433
+
+function CXCL4_rs450373()
+# CXCL5___P42830
+{
+  cd ${INF}/CXCL5
+  plink --bfile ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_4 --snp rs450373 --recode --out rs450374
+  plink --bfile ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_4 --snp rs450373 --recode A --out rs450374
+  sed 's/ID_1/FID/;s/ID_2/IID/;2d' ${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample > rs450374.pheno
+  plink --bfile ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_4 \
+        --pheno rs450374.pheno --pheno-name CXCL5___P42830 --snp rs450373 --recode A include-alt --out rs450374
+  head rs450374.raw rs450374.ped
+  Rscript -e '
+    p <- read.delim("rs450374.pheno",sep=" ")
+    head(p[c("FID","IID","CXCL5___P42830")])
+    library(dplyr)
+    r <- read.delim("rs450374.raw",na.strings="-9", sep=" ") %>%
+         rename(rs450374=rs450373_G..A.,CXCL5=PHENOTYPE) %>%
+         filter(rs450374!="NA")
+    s <- group_by(r,rs450374) %>%
+         summarise(
+             Mean=mean(CXCL5,na.rm=TRUE)%>%round(digits=2),
+             SD=sd(CXCL5,na.rm=TRUE)%>%round(digits=2),
+             N=n()) %>%
+         data.frame
+    row.names(s) <- c("AA","AG","GG")
+    print(s)
+  '
+  cd -
+}
