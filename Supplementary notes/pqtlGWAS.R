@@ -211,7 +211,7 @@ ps_gsub <- ps_gcst %>%
            mutate(trait=gsub("Unspecified |Vascular or heart problems diagnosed by doctor: ","",trait)) %>%
            mutate(trait=gsub("Acute myocardial infarction|Myocardial infarction|myocardial infarction","cardiovascular diseases",trait)) %>%
            mutate(trait=gsub("Coronary artery disease|heart attack|heart disease","cardiovascular diseases",trait)) %>%
-           mutate(trait=gsub(" or sle| or large artery stroke| or ischemic stroke","", trait)) %>%
+           mutate(trait=gsub(" or sle| or large artery stroke| or ischemic stroke| diagnosed by doctor","", trait)) %>%
            mutate(trait=gsub("Asthma childhood and later onset","Asthma",trait)) %>%
            mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE))
 ps_filter <- ps_gsub %>%
@@ -478,7 +478,7 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=16, w=17, ylab
   setHook("grid.newpage", NULL, "replace")
   grid.draw(p)
   grid.text("Protein-pQTL (Nearest gene)", y=0.01, gp=gpar(fontsize=28))
-  grid.text(ylab, x=-0.01, rot=90, gp=gpar(fontsize=28))
+  grid.text(ylab, x=-0.03, rot=90, gp=gpar(fontsize=28))
   dev.off()
 }
 
@@ -520,10 +520,10 @@ long <- merge(select(metal_to_use,-hg19_coordinates),
 dim(long)
 dim(filter(long,!is.na(INF1_rsid) & INF1_rsid!=ref_rsid))
 dat <- long
-f1 <- "ST-pQTL-disease-long.csv"
-f2 <- "ST-pQTL-disease-long-combined.csv"
+f1 <- "ST-pQTL-disease-overlap.csv"
+f2 <- "ST-pQTL-disease-overlap-combined.csv"
 rxc_gwas <- overlap(dat,f1,f2)
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-long.png",ch=35,cw=35,h=53,w=58,ylab="GWAS diseases"))
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=35,cw=35,h=53,w=54,ylab="GWAS diseases"))
 imd_list <- imd_diseases[["efo"]]
 sel <- sapply(gsub("_",":",long[["efo"]]),function(x)
               {
@@ -533,7 +533,7 @@ sel <- sapply(gsub("_",":",long[["efo"]]),function(x)
               }
              )
 dat <- filter(long,sel)
-f1 <- "ST-pQTL-IMD-long.csv"
-f2 <- "ST-pQTL-IMD-long-combined.csv"
+f1 <- "ST-pQTL-IMD-overlap.csv"
+f2 <- "ST-pQTL-IMD-overlap-combined.csv"
 rxc_imd2 <- overlap(dat,f1,f2)
-with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-long.png",ch=35,cw=35,h=22,w=38))
+with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=35,cw=35,h=22,w=38))
