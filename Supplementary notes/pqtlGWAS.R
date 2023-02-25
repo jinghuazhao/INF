@@ -162,6 +162,10 @@ ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs4246215" & ps_gcst$efo=="EFO
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs4246215" & ps_gcst$efo=="EFO_0003767","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563" & ps_gcst$efo=="EFO_0003767","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563" & ps_gcst$efo=="EFO_0003767","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="21323541" & ps_gcst$rsid=="rs1265159" & ps_gcst$efo=="EFO_0004254","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="21323541" & ps_gcst$rsid=="rs1265159" & ps_gcst$efo=="EFO_0004254","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="25194280" & ps_gcst$rsid=="rs174549" & ps_gcst$efo=="EFO_0006352","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="25194280" & ps_gcst$rsid=="rs174549" & ps_gcst$efo=="EFO_0006352","direction"] <- "+"
 ## PhenoScanner and GCST agree
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="23128233" & ps_gcst$rsid=="rs11230563","direction"] <- "+"
@@ -169,6 +173,8 @@ ps_gcst[ps_gcst$pmid=="21829393" & ps_gcst$rsid=="rs3087243","a1"] <- "A"
 ps_gcst[ps_gcst$pmid=="21829393" & ps_gcst$rsid=="rs3087243","direction"] <- "+"
 ps_gcst[ps_gcst$pmid=="22446961" & ps_gcst$rsid=="rs1569723","a1"] <- "A"
 ps_gcst[ps_gcst$pmid=="22446961" & ps_gcst$rsid=="rs1569723","direction"] <- "+"
+ps_gcst[ps_gcst$pmid=="27322543" & ps_gcst$rsid=="rs7544256","a1"] <- "T"
+ps_gcst[ps_gcst$pmid=="27322543" & ps_gcst$rsid=="rs7544256","direction"] <- "+"
 # Only partially available from PhenoScanner/GWAS Catalog but confirmed from Table 2 of paper
 ps_gcst[ps_gcst$pmid=="21743469" & ps_gcst$rsid=="rs6556416","a1"] <- "C"
 ps_gcst[ps_gcst$pmid=="21743469" & ps_gcst$rsid=="rs6556416","direction"] <- "+"
@@ -206,6 +212,7 @@ ps_gsub <- ps_gcst %>%
            mutate(trait=gsub("Acute myocardial infarction|Myocardial infarction|myocardial infarction","cardiovascular diseases",trait)) %>%
            mutate(trait=gsub("Coronary artery disease|heart attack|heart disease","cardiovascular diseases",trait)) %>%
            mutate(trait=gsub(" or sle| or large artery stroke| or ischemic stroke","", trait)) %>%
+           mutate(trait=gsub("Asthma childhood and later onset","Asthma",trait)) %>%
            mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE))
 ps_filter <- ps_gsub %>%
              filter(!grepl("None of the above",trait)) %>%
@@ -238,7 +245,7 @@ ps_filter <- ps_gsub %>%
              filter(!(snp=="rs7763262" & grepl("Ankylosing spondylitis|Coeliac disease|Multiple sclerosis|Rheumatoid arthritis|Systemic lupus erythematosus",trait) & proxy=="1")) %>%
              filter(!(snp=="rs1883832" & grepl("Inflammatory bowel disease|Kawasaki disease",trait) & direction=="NA")) %>%
              filter(!(snp=="rs1883832" & grepl("Rheumatoid arthritis",trait) & proxy=="1")) %>%
-             filter(!(snp=="rs1950897" & grepl("Allergy",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs1950897" & grepl("Age-related macular degeneration|Allergy",trait) & proxy=="1")) %>%
              filter(!(snp=="rs9469127" & grepl("Rheumatoid arthritis",trait) & proxy=="1")) %>%
              filter(!(snp=="rs1866051" & grepl("Rheumatoid arthritis",trait) & proxy=="1")) %>%
              filter(!(snp=="rs13107325" & grepl("Crohn's disease",trait) & proxy=="1")) %>%
@@ -251,7 +258,7 @@ ps_filter <- ps_gsub %>%
              filter(!(snp=="rs7763262" & grepl("Ankylosing spondylitis|Haematuria|Hypothyroidism|Intestinal malabsorption|Mouth ulcers|Sarcoidosis",trait) & proxy=="1")) %>%
              filter(!(snp=="rs7137828" & grepl("Allergy",trait) & proxy=="1")) %>%
              filter(!(snp=="rs653178" & grepl("Allergy",trait) & proxy=="1")) %>%
-             filter(!(snp=="rs7310615" & grepl("Psoriasis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs7310615" & grepl("Cardiovascular diseases|Psoriasis",trait) & proxy=="1")) %>%
              filter(!(snp=="rs3130510" & grepl("Psoriasis",trait) & proxy=="1")) %>%
              filter(!(snp=="rs2074227" & grepl("Inflammatory bowel disease",trait) & direction=="-")) %>%
              filter(!(snp=="rs2228145" & grepl("Asthma",trait) & proxy=="1")) %>%
@@ -264,12 +271,33 @@ ps_filter <- ps_gsub %>%
              filter(!(snp=="rs13010492" & grepl("Graves disease",trait) & proxy=="1")) %>%
              filter(!(snp=="rs28929474" & grepl("Emphysema",trait) & proxy=="1")) %>%
              filter(!(snp=="rs28929474" & grepl("Chronic bronchitis or emphysema",trait) & proxy=="1")) %>%
-             filter(!(snp=="rs28929474" & grepl("Cardiovascular diseases",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs28929474" & grepl("Cardiovascular diseases|Cholelithiasis",trait) & proxy=="1")) %>%
              filter(!(snp=="rs67020211" & grepl("Dentures",trait) & proxy=="1")) %>%
              filter(!(snp=="rs16840522" & grepl("Age-related macular degeneration",trait) & proxy=="1")) %>%
              filter(!(snp=="rs12149545" & grepl("Cardiovascular diseases",trait) & proxy=="1")) %>%
              filter(!(snp=="rs12509595" & grepl("Cardiovascular diseases",trait) & proxy=="1")) %>%
              filter(!(snp=="rs7137828" & grepl("Cardiovascular diseases|Hypertension|Hypothyroidism",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs66530140" & grepl("Deep vein thrombosis|Pulmonary embolism",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs34790908" & grepl("Hypertension",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs1491961" & grepl("Mouth ulcers",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs7763262" & grepl("Hyperthyroidism",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs12509595" & grepl("Hypertension",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs1260326" & grepl("Diabetes|High cholesterol|Nonalcoholic fatty liver disease",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs16840522" & grepl("Neovascularization",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs16840522" & (pmid=="20385819" | pmid=="21399633"))) %>%
+             filter(!(snp=="rs635634" & grepl("Cardiovascular diseases|Hypertension|High cholesterol|Ovarian cancer|Phlebitis and thrombophlebitis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs13107325" & grepl("Osteoarthritis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs579459" & grepl("High cholesterol",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs1260326" & grepl("Diabetes|Gout|Hypertriglyceridemia|Nonalcoholic fatty liver disease",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs9469127" & grepl("Primary biliary cirrhosis",trait))) %>%
+             filter(!(snp=="rs3130510" & pmid=="20860503")) %>%
+             filter(!(snp=="rs10733789" & pmid=="20526338")) %>%
+             filter(!(snp=="rs55781197" & pmid=="19060910")) %>%
+             filter(!(snp=="rs174533" & pmid=="20639392")) %>%
+             filter(!(snp=="rs174533" & trait=="Electrocardiography")) %>%
+             filter(!(snp=="rs12149545" & trait=="Age-related macular degeneration" & proxy=="1")) %>%
+             filter(!(snp=="rs12149545" & grepl("Exudative age related macular degeneration|Lipoproteins hdl",trait))) %>%
+             filter(!(snp=="rs12149545" & pmid=="21665990")) %>%
              filter(!(rsid %in% c("rs3184504","rs597808","rs7137828","rs7310615") & grepl("EFO_0003956|EFO_0005854|EFO_0000274",efo) & proxy=="1")) %>%
              filter(!(rsid %in% c("rs3184504","rs653178") & efo=="EFO_0000537" & direction=="NA")) %>%
              filter(!(rsid %in% c("rs516246","rs516316","rs597808","rs3184504","rs7137828","rs7310615") & efo=="EFO_0000537" & proxy=="1")) %>%
@@ -293,6 +321,7 @@ ps_filter <- ps_gsub %>%
              filter(!(pmid=="24390342" & efo=="EFO_0000685" & is.na(beta))) %>%
              filter(!(pmid=="21907864" & is.na(beta))) %>%
              filter(!(pmid=="25646370")) %>%
+             filter(!(snp=="rs3130510" & pmid=="21323541" & direction=="NA")) %>%
              filter(!(pmid=="20383146" & direction=="NA")) %>%
              filter(!(pmid=="20081858")) %>%
              filter(!(pmid=="27790247")) %>%
@@ -318,6 +347,7 @@ ps_filter <- ps_gsub %>%
              filter(!(pmid=="26192919" & direction=="NA")) %>%
              filter(!(pmid=="20190752" & direction=="NA")) %>%
              filter(!(pmid=="27723758" & direction=="NA")) %>%
+             filter(!(pmid=="21323541" & snp=="rs7564243" & direction=="NA")) %>%
              filter(!grepl("INVT|IVNT|SDS|Z-score|bpm|crease|g/l|kg|lu|mg|ml|mmHg|mol|years|ug|unit|%",unit)) %>%
              filter(!(unit=="-"&(pmid=="UKBB"|grepl("Cholesterol ldl|Intercellular adhesion molecule 1",trait)))) %>%
              filter(!(unit=="-"&grepl("Protein quantitative trait loci|Receptors interleukin 6|Monocyte chemoattractant protein 1",trait))) %>%
@@ -464,8 +494,8 @@ long <- merge(metal_to_use,ps_mutate,by="hg19_coordinates",all.y=TRUE)
 dat <- long
 f1 <- "ST-pQTL-disease-overlap.csv"
 f2 <- "ST-pQTL-disease-overlap-combined.csv"
-rxc_gwas <- overlap(dat,f1,f2)
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=35,cw=35,h=42,w=55,ylab="GWAS diseases"))
+# rxc_gwas <- overlap(dat,f1,f2)
+# with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=35,cw=35,h=42,w=55,ylab="GWAS diseases"))
 
 # IMDs
 imd_list <- imd_diseases[["efo"]]
@@ -480,8 +510,8 @@ sel <- sapply(gsub("_",":",long[["efo"]]),function(x)
 dat <- filter(long,sel)
 f1 <- "ST-pQTL-IMD-overlap.csv"
 f2 <- "ST-pQTL-IMD-overlap-combined.csv"
-rxc_imd2 <- overlap(dat,f1,f2)
-with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=35,cw=35,h=20,w=40))
+# rxc_imd2 <- overlap(dat,f1,f2)
+# with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=35,cw=35,h=20,w=40))
 
 # SNPs
 long <- merge(select(metal_to_use,-hg19_coordinates),
@@ -493,7 +523,7 @@ dat <- long
 f1 <- "ST-pQTL-disease-long.csv"
 f2 <- "ST-pQTL-disease-long-combined.csv"
 rxc_gwas <- overlap(dat,f1,f2)
-with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-long.png",ch=35,cw=35,h=64,w=60,ylab="GWAS diseases"))
+with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-long.png",ch=35,cw=35,h=53,w=58,ylab="GWAS diseases"))
 imd_list <- imd_diseases[["efo"]]
 sel <- sapply(gsub("_",":",long[["efo"]]),function(x)
               {
