@@ -1091,7 +1091,8 @@ function CXCL4_rs450373()
     library(dplyr)
     r <- read.delim("rs450374.raw",na.strings="-9", sep=" ") %>%
          rename(rs450374=rs450373_G..A.,CXCL5=PHENOTYPE) %>%
-         filter(rs450374!="NA")
+         filter(rs450374!="NA") %>%
+         mutate(Genotype=case_when(rs450374==0 ~ "AA", rs450374==1 ~ "AG", rs450374==2 ~ "GG", TRUE ~ "NA"))
     s <- group_by(r,rs450374) %>%
          summarise(
              Mean=mean(CXCL5,na.rm=TRUE)%>%round(digits=2),
@@ -1100,6 +1101,20 @@ function CXCL4_rs450373()
          data.frame
     row.names(s) <- c("AA","AG","GG")
     print(s)
+    require(ggplot2)
+    require(ggpubr)
+    v <- ggplot(r, aes(x=Genotype, y=CXCL5, fill=Genotype)) +
+                geom_violin() +
+                geom_boxplot(width=0.1) +
+                xlab("rs450374 genotype") +
+                theme_bw() + theme_minimal()
+    m <- ggtexttable(s %>%
+                     mutate(Genotype=case_when(rs450374==0 ~ "AA", rs450374==1 ~ "AG", rs450374==2 ~ "GG", TRUE ~ "NA"),
+                            N=format(N,big.mark=",")) %>%
+                     select(Genotype, Mean, SD, N),
+                     rows = NULL, theme = ttheme("lBlueWhite")) + theme_bw() + theme_minimal()
+    p <- ggarrange(v,m,ncol=1,nrow=2)
+    ggsave(p,file=file.path(INF,"CXCL5","SF-CXCL5-rs450374.png"),dpi=300,height=8,width=8,units="in")
   '
   cd -
 }
