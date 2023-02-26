@@ -1107,14 +1107,15 @@ function CXCL4_rs450373()
                 geom_violin() +
                 geom_boxplot(width=0.1) +
                 xlab("rs450374 genotype") +
-                theme_bw() + theme_minimal()
+                ylab("CXCL5 level") +
+                theme_bw(base_rect_size=0) + theme(legend.position = "none")
     m <- ggtexttable(s %>%
                      mutate(Genotype=case_when(rs450374==0 ~ "AA", rs450374==1 ~ "AG", rs450374==2 ~ "GG", TRUE ~ "NA"),
                             N=format(N,big.mark=",")) %>%
                      select(Genotype, Mean, SD, N),
-                     rows = NULL, theme = ttheme("lBlueWhite")) + theme_bw() + theme_minimal()
+                     rows = NULL, theme = ttheme("lBlueWhite")) + theme_bw(base_rect_size=0)
     p <- ggarrange(v,m,ncol=1,nrow=2)
-    ggsave(p,file=file.path(INF,"CXCL5","SF-CXCL5-rs450374.png"),dpi=300,height=8,width=8,units="in")
+    ggsave(p,file=file.path(INF,"CXCL5","SF-CXCL5-rs450374.png"),dpi=300,height=4,width=5,units="in")
   '
   cd -
 }
