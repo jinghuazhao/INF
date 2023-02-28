@@ -484,42 +484,37 @@ SF <- function(rxc, dn, f="SF-pQTL-IMD-GWAS.png", ch=21, cw=21, h=16, w=17, ylab
 
 # GWAS diseases
 snplist <- pull(ps_mutate,snp) %>% unique
-# hg19_coordinates
 metal_to_use <- filter(metal,INF1_rsid %in% snplist)
 check <- right_join(metal_to_use,ps_mutate,multiple="all") %>%
          select(INF1_rsid,ref_rsid,rsid,proxy,disease,pmid,study)
 dim(check)
 dim(filter(check,!is.na(INF1_rsid) & INF1_rsid!=ref_rsid))
-long <- merge(metal_to_use,ps_mutate,by="hg19_coordinates",all.y=TRUE)
-dat <- long
-f1 <- "ST-pQTL-disease-overlap.csv"
-f2 <- "ST-pQTL-disease-overlap-combined.csv"
-# rxc_gwas <- overlap(dat,f1,f2)
-# with(rxc_gwas,SF(rxc,dn,f="SF-pQTL-disease-overlap.png",ch=35,cw=35,h=42,w=55,ylab="GWAS diseases"))
-
-# IMDs
-imd_list <- imd_diseases[["efo"]]
-imd_list <- iid_diseases[["id"]]
-sel <- sapply(gsub("_",":",long[["efo"]]),function(x)
-              {
-                long_set <- unlist(strsplit(x,";"))
-                set_int <- intersect(long_set,imd_list)
-                paste0(imd_list[imd_list%in%set_int],collapse="")!=""
-              }
-             )
-dat <- filter(long,sel)
-f1 <- "ST-pQTL-IMD-overlap.csv"
-f2 <- "ST-pQTL-IMD-overlap-combined.csv"
-# rxc_imd2 <- overlap(dat,f1,f2)
-# with(rxc_imd2,SF(rxc,dn,f="SF-pQTL-IMD-overlap.png",ch=35,cw=35,h=20,w=40))
-
-# SNPs
 long <- merge(select(metal_to_use,-hg19_coordinates),
               select(ps_mutate,-hg19_coordinates) %>% mutate(SNP=snp),
               by.x="INF1_rsid",by.y="SNP",all.y=TRUE)
 dim(long)
 dim(filter(long,!is.na(INF1_rsid) & INF1_rsid!=ref_rsid))
 dat <- long
+ldpairs <- filter(long,snp!=rsid) %>%
+           select(snp,rsid,chr) %>%
+           mutate(snp_rsid_chr=paste0(snp,"_",rsid,"_",chr)) %>%
+           distinct()
+z <- sapply(pull(ldpairs,snp_rsid_chr),function(x) {
+     print(x)
+     s <- unlist(strsplit(x,"_"))
+     cmd <- sprintf("plink --bfile %s/INTERVAL/per_chr/interval.imputed.olink.chr_%s --ld %s %s|\
+                     awk '/Haplotype/,/phase/'|sed '$d'|sed '$d'|awk '!/-/{print $1,$2}' > %s",
+                     INF,s[3],s[1],s[2],file.path(INF,"ps",x))
+     if (!file.exists(file.path(INF,"ps",x))) system(cmd)
+     assign(x,read.table(file.path(INF,"ps",x),header=TRUE) %>%
+              arrange(desc(Frequency)) %>% slice_head(n=1) %>%
+              pull(Haplotype),
+            envir=.GlobalEnv)
+     f <- file.path(INF,"ps",paste0(s[1],"_",s[2],".",s[3]))
+     if (FALSE) LDlinkR::LDhap(s[1:2],file=paste0(f,".ld"),token=Sys.getenv("LDLINK_TOKEN"))
+     })
+haps <- data.frame(snp_rsid_chr=names(z),hap=sapply(1:length(z),function(x) get(names(z)[x])))
+
 f1 <- "ST-pQTL-disease-overlap.csv"
 f2 <- "ST-pQTL-disease-overlap-combined.csv"
 rxc_gwas <- overlap(dat,f1,f2)
