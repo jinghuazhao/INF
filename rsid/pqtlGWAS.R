@@ -12,7 +12,7 @@ signs <- c(-1,0,1)
 symbols <- c("-","0","+")
 unicodes <- c("\u25E8","\u2605","\u21F5","\u26AB","\u25EF")
 ctcols <- c("red","blue")
-
+file.empty <- function(filenames) file.info(filenames)$size == 0
 INF1_metal <- read.delim(file.path(INF,"work","INF1.METAL"),as.is=TRUE) %>%
               mutate(hg19_coordinates=paste0("chr",Chromosome,":",Position)) %>%
               rename(INF1_rsid=rsid, Total=N) %>%
@@ -499,19 +499,32 @@ ldpairs <- filter(long,snp!=rsid) %>%
            select(snp,rsid,chr) %>%
            mutate(snp_rsid_chr=paste0(snp,"_",rsid,"_",chr)) %>%
            distinct()
-z <- sapply(pull(ldpairs,snp_rsid_chr),function(x) {
-     print(x)
-     s <- unlist(strsplit(x,"_"))
-     cmd <- sprintf("plink --bfile %s/INTERVAL/per_chr/interval.imputed.olink.chr_%s --ld %s %s|\
-                     awk '/Haplotype/,/phase/'|sed '$d'|sed '$d'|awk '!/-/{print $1,$2}' > %s",
-                     INF,s[3],s[1],s[2],file.path(INF,"ps",x))
-     if (!file.exists(file.path(INF,"ps",x))) system(cmd)
-     assign(x,read.table(file.path(INF,"ps",x),header=TRUE) %>%
-              arrange(desc(Frequency)) %>% slice_head(n=1) %>%
-              pull(Haplotype),
-            envir=.GlobalEnv)
-     f <- file.path(INF,"ps",paste0(s[1],"_",s[2],".",s[3]))
-     if (FALSE) LDlinkR::LDhap(s[1:2],file=paste0(f,".ld"),token=Sys.getenv("LDLINK_TOKEN"))
+z <- sapply(pull(ldpairs,snp_rsid_chr),function(x)
+     {
+       print(x)
+       s <- unlist(strsplit(x,"_"))
+       s1 <- if_else(s[1]!="chr6:31214354",s[1],"rs527864796")
+       s2 <- if_else(s[2]!="chr6:31214354",s[2],"rs527864796")
+       s1 <- if_else(s[1]!="chr6:32453467",s[1],"rs55996437")
+       s2 <- if_else(s[2]!="chr6:32453467",s[2],"rs55996437")
+       s1 <- if_else(s[1]!="chr6:32453238",s[1],"rs575694449")
+       s2 <- if_else(s[2]!="chr6:32453238",s[2],"rs575694449")
+       s1 <- if_else(s[1]!="chr9:136149399",s[1],"rs507666")
+       s2 <- if_else(s[2]!="chr9:136149399",s[2],"rs507666")
+       s1 <- if_else(s[1]!="chr9:136141870",s[1],"rs2519093")
+       s2 <- if_else(s[2]!="chr9:136141870",s[2],"rs2519093")
+       cmd <- sprintf("plink --bfile %s/INTERVAL/per_chr/interval.imputed.olink.chr_%s --ld %s %s --allow-no-sex|\
+                       awk '/Haplotype/,/phase/'|sed '$d'|sed '$d'|awk '!/-/{print $1,$2}' > %s",
+                       INF,s[3],s1,s2,file.path(INF,"ps",x))
+       if (!file.exists(file.path(INF,"ps",x))) system(cmd)
+       if (file.empty(file.path(INF,"ps",x))) {u <- NA; cat("empty\n")} else
+       u <- read.table(file.path(INF,"ps",x),header=TRUE) %>%
+            arrange(desc(Frequency)) %>%
+            slice_head(n=1) %>%
+            pull(Haplotype)
+       assign(x,u,envir=.GlobalEnv)
+       f <- file.path(INF,"ps",paste0(s[1],"_",s[2],".",s[3]))
+       if (FALSE) LDlinkR::LDhap(s[1:2],file=paste0(f,".ld"),token=Sys.getenv("LDLINK_TOKEN"))
      })
 haps <- data.frame(snp_rsid_chr=names(z),hap=sapply(1:length(z),function(x) get(names(z)[x])))
 
