@@ -298,6 +298,9 @@ ps_filter <- ps_gsub %>%
              filter(!(snp=="rs12149545" & trait=="Age-related macular degeneration" & proxy=="1")) %>%
              filter(!(snp=="rs12149545" & grepl("Exudative age related macular degeneration|Lipoproteins hdl",trait))) %>%
              filter(!(snp=="rs12149545" & pmid=="21665990")) %>%
+             filter(!(snp=="rs653178" & grepl("Inflammatory bowel disease",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs3184504" & grepl("Primary biliary cirrhosis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs3184504" & efo=="EFO_0004705;EFO_1001055" & proxy=="0")) %>%
              filter(!(rsid %in% c("rs3184504","rs597808","rs7137828","rs7310615") & grepl("EFO_0003956|EFO_0005854|EFO_0000274",efo) & proxy=="1")) %>%
              filter(!(rsid %in% c("rs3184504","rs653178") & efo=="EFO_0000537" & direction=="NA")) %>%
              filter(!(rsid %in% c("rs516246","rs516316","rs597808","rs3184504","rs7137828","rs7310615") & efo=="EFO_0000537" & proxy=="1")) %>%
@@ -396,20 +399,25 @@ overlap <- function(dat,f1,f2)
          mutate(a2=if_else(a1==a1_ps,a2_ps,a1_ps)) %>%
          mutate(prefix=if_else(HLA==1,paste0(gene,"-",INF1_rsid,"-",cis.trans,"*"),paste0(gene,"-",INF1_rsid,"-",cis.trans)),
                 rsidProt=paste0(prefix," (",ref_hgnc,")"), Trait=gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE),
-         #      Effect=round(Effect,3), StdErr=round(StdErr,3),
-                r2=round(as.numeric(r2),3),
-         #      beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
                 Allele1=toupper(Allele1), Allele2=toupper(Allele2), a1=toupper(a1), a2=toupper(a2),
+                r2=round(as.numeric(r2),3),
+         #      Effect=round(Effect,3), StdErr=round(StdErr,3),
+         #      beta=round(as.numeric(beta),3), se=round(as.numeric(se),3), p=format(as.numeric(p),digits=3,scientific=TRUE),
                 ref_rsid_a1_a2=paste0(ref_rsid,":",ref_a1,":",ref_a2),
                 snp_rsid_chr=paste(snp,rsid,chr,sep="_")) %>%
-         #      left_join(haps) %>%
+         # either sentinels or proxies with same alleles
          mutate(hap=paste0(Allele1,a1),pah=paste0(Allele2,a2),
                 h11=paste0(Allele1,a1),h12=paste0(Allele1,a2),h21=paste0(Allele2,a1),h22=paste0(Allele2,a2),
                 switch=case_when(proxy==0 & Allele1==a1 ~ "0", proxy==0 & Allele1!=a1 ~ "1",
                                  proxy==1 & hap==h11 & pah %in% c(h12,h21,h22) ~ "0", proxy==1 & hap==h12 & pah %in% c(h11,h21,h22) ~ "1",
                                  proxy==1 & hap==h21 & pah %in% c(h11,h12,h22) ~ "1", proxy==1 & hap==h22 & pah %in% c(h11,h12,h21) ~ "0",
-                                 TRUE ~ "0"),
-                direction=case_when(switch=="1" & direction=="-" ~ "+", switch=="1" & direction=="+" ~ "-", TRUE ~ direction),
+                                 TRUE ~ "0")) %>%
+         # neither sentinels nor proxies with identical alleles
+         left_join(haps) %>%
+         mutate(hapin=(pah %in% c(h11,h12,h21,h22)),
+                switch=case_when(proxy==1 & h11==haps & !hapin ~ "0", proxy==1 & h12==haps & !hapin ~ "1",
+                                 proxy==1 & h21==haps & !hapin ~ "1", proxy==1 & h22==haps & !hapin ~ "0", TRUE ~ "0")) %>%
+         mutate(direction=case_when(switch=="1" & direction=="-" ~ "+", switch=="1" & direction=="+" ~ "-", TRUE ~ direction),
                 pqtl_trait_direction=paste0(pqtl_direction,direction),
                 trait_direction=case_when(pqtl_trait_direction=="++" ~ "1",  pqtl_trait_direction=="+-" ~ "-1",
                                           pqtl_trait_direction=="-+" ~ "-1", pqtl_trait_direction=="--" ~ "1",
@@ -526,7 +534,7 @@ z <- sapply(pull(ldpairs,snp_rsid_chr),function(x)
        f <- file.path(INF,"ps",paste0(s[1],"_",s[2],".",s[3]))
        if (FALSE) LDlinkR::LDhap(s[1:2],file=paste0(f,".ld"),token=Sys.getenv("LDLINK_TOKEN"))
      })
-haps <- data.frame(snp_rsid_chr=names(z),hap=sapply(1:length(z),function(x) get(names(z)[x])))
+haps <- data.frame(snp_rsid_chr=names(z),haps=sapply(1:length(z),function(x) get(names(z)[x])))
 
 f1 <- "ST-pQTL-disease-overlap.csv"
 f2 <- "ST-pQTL-disease-overlap-combined.csv"
