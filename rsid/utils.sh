@@ -299,6 +299,7 @@ R --no-save -q <<END
   {
      p <- tbl[i,"prot"]
      target <- dplyr::filter(gap.datasets::inf1,prot==p) %>% select(target.short)
+     gene <- dplyr::filter(gap.datasets::inf1,prot==p) %>% select(gene)
      m <- tbl[i,"MarkerName"]
      A1 <- toupper(tbl[i,"Allele1"])
      A2 <- toupper(tbl[i,"Allele2"])
@@ -316,11 +317,11 @@ R --no-save -q <<END
        c[j] <- -1
        print(cbind(A1,A2,EFFECT_ALLELE,REFERENCE_ALLELE,a1,a2,format(BETA,digits=3),format(BETA*c,digits=3)))
        BETA <- BETA * c
-       title <- sprintf("%s [%s (%s) (%s/%s) N=%.0f]",target,m,t[i,"rsid"],A1,A2,tbl[i,"N"])
+       title <- sprintf("%s (%s) [%s (%s) (%s/%s) N=%.0f]",target,gene,m,t[i,"rsid"],A1,A2,tbl[i,"N"])
        if (split) pdf(paste0(p,"-",m,".pdf"),...)
        requireNamespace("meta")
        mg <- meta::metagen(BETA,SE,sprintf("%s (%.0f)",study,N),title=title)
-       meta::forest(mg,colgap.forest.left = "1cm")
+       meta::forest(mg,colgap.forest.left = "0.5cm",digits.TE=3,digits.se=2)
        requireNamespace("grid")
        grid::grid.text(title,0.5,0.9)
        with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q, "I2 =", I2, "lower.I2 =", lower.I2, "upper.I2 =", upper.I2, "\n"))
@@ -337,7 +338,7 @@ R --no-save -q <<END
              filter(!(prot=="CCL25" & MarkerName=="chr19:49206145_C_G")) %>%
              arrange(prot,Chromosome,Position)
 # 180 forest plots
-  METAL_forestplot(tbl_ord,all,rsid,split=TRUE,width=8.75,height=5)
+  METAL_forestplot(tbl_ord,all,rsid,split=TRUE,width=9,height=5)
 END
 }
 
@@ -346,7 +347,7 @@ function pdf()
   cd ${INF}/ds/latest
   if [ ! -d work ]; then mkdir work; fi
 # forest/locuszoom top-down format
-  qpdf --empty --pages $(ls lz/*.pdf | grep -v CCL25-chr19:49206145_C_G.lz.pdf) -- lz2.pdf
+  qpdf --empty --pages $(ls *_*.pdf | grep -v CCL25-chr19:49206145_C_G.lz.pdf) -- lz2.pdf
   qpdf -show-npages lz2.pdf
   qpdf --pages . 1-360:odd -- lz2.pdf lz.pdf
   rm lz2.pdf
@@ -383,30 +384,33 @@ function pdf_test()
   rm -f temp-*-*.pdf
   source ~/COVID-19/py37/bin/activate
 # pip install img2pdf
-  awk -vFS="\t" 'NR>1 {print $5,$6}' ${INF}/work/INF1.merge | \
+  awk -vFS="\t" 'NR>1 {print $3,$1,$2}' ${INF}/work/INF1.METAL | sort -k1,1 -k2,2 | \
   parallel -C' ' '
     export rt={1}-{2}
+    export r_t={1}_{3}
     export suffix=$(printf "%06d\n" 1)
-    if [ ! -f work/fp-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 work/${rt}.pdf work/fp-${rt}; fi
-    if [ ! -f work/lz-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 lz/${rt}.lz.pdf work/lz-${rt}; fi
-    convert work/fp-${rt}-${suffix}.png work/lz-${rt}-${suffix}.png -density 300 +append work/fp-lz-${rt}.png
-    convert work/fp-lz-${rt}.png -quality 0 work/fp-lz-${rt}.jp2
-    img2pdf -o work/fp-lz-${rt}.pdf work/fp-lz-${rt}.jp2
-    rm work/fp-${rt}-${suffix}.png work/lz-${rt}-${suffix}.png work/fp-lz-${rt}.jp2
+    if [ ! -f fp-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 fp/${rt}.pdf fp-${rt}; fi
+    if [ ! -f lz-${rt}.png ]; then
+       pdftopng -r 300 -f 1 -l 1 qqmanhattanlz/${r_t}.pdf lz-${r_t}; convert -density 300 -size 5x9 lz-${r_t}-${suffix}.png lz-${rt}.png;
+    fi
+    convert +append fp-${rt}-${suffix}.png lz-${rt}.png -resize x500 -density 300 fp-lz-${rt}.png
+    convert fp-lz-${rt}.png -quality 0 fp-lz-${rt}.jp2
+    img2pdf -o fp-lz-${rt}.pdf fp-lz-${rt}.jp2
+    rm fp-${rt}-${suffix}.png lz-${r_t}-${suffix}.png lz-${rt}.png fp-lz-${rt}.jp2
   '
-  qpdf --empty --pages $(ls work/fp-lz-*.pdf) -- fp+lz.pdf
+  qpdf --empty --pages $(ls fp-lz-*.pdf) -- SF-fp-lz.pdf
+  rm fp-lz-*.*
 # convert fp+lz.pdf -density 300 tiff64:fp+lz.tiff
 # qml/
 # 91 Q-Q/Manhattan (left+right collation dropping cis-locuszoom) and tif via PDF-viewer
-  rm -f work/*pdf
-  ls qml/*qq*png | xargs -l basename -s .qq.png | grep -v BDNF | \
+  ls qqmanhattanlz/*qq*png | xargs -l basename -s _qq.png | grep -v BDNF | \
   parallel -C' ' '
-    convert qml/{}.manhattan.png qml/{}.qq.png -density 300 +append work/{}.png
-    convert work/{}.png -quality 0 work/{}.jp2
-    img2pdf -o work/{}.pdf work/{}.jp2
-    rm work/{}.jp2
+    convert +append qqmanhattanlz/{}_manhattan.png qqmanhattanlz/{}_qq.png -resize x500 -density 300 {}.png
+    convert {}.png -quality 0 {}.jp2
+    img2pdf -o {}.pdf {}.jp2
+    rm {}.jp2
   '
-  qpdf --empty --pages $(ls work/*.pdf) -- qq+manhattan.pdf
+  qpdf --empty --pages $(ls *.pdf) -- SF-manhattan-qq.pdf
 # Not working very well
 # see https://legacy.imagemagick.org/Usage/layers/
   convert $(paste -d ' ' <(ls *qq*) <(ls *manhattan*) | xargs -l -I {} echo '\(' {} +append '\)' '\')

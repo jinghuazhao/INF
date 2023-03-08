@@ -454,9 +454,9 @@ overlap <- function(dat,f1,f2)
   subset(mat[c("study","pmid","unit","beta","n_cases","n_controls","pqtl_direction","direction")],unit=="risk diff")
   write.table(select(mat,-prot,-target.short,-MarkerName,-prefix,-rsidProt,-INF1_rsid,-a1_ps,-a2_ps,-Effect,-StdErr,rsid,-beta,-se,-p,
                          -n_cases,-n_controls,-pqtl_trait_direction,-trait_direction,-Trait,
-                         -ref_rsid_a1_a2,-ref_rsid,-ref_a1,-ref_a2,-switch) %>%
+                         -ref_rsid_a1_a2,-ref_rsid,-ref_a1,-ref_a2,-switch,-haps,-hapin) %>%
               rename(Protein=gene,Nearest_gene=ref_hgnc,pQTL=snp,Proxy=proxy,EFO=efo,Disease=disease,PMID=pmid,Study=study) %>% distinct(),
-              file=file.path(INF,"ps",f1),row.names=FALSE,quote=FALSE,sep=",")
+              file=file.path(INF,"ps",f1),row.names=FALSE,sep=",")
   write.table(select(combined,-desc.n_cases.),file=file.path(INF,"ps",f2),row.names=FALSE,quote=FALSE,sep=",")
   list(rxc=rxc,dn=dn)
 }

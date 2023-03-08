@@ -23,13 +23,20 @@ export TMPDIR=${HPC_WORK}/work
 
 function qqmanhattan()
 {
-  export phenoname=$(awk '!/BDNF/' ${INF}/work/inf1.tmp | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]&&$1!="BDNF"{print $1}')
+# export phenoname=$(awk '!/BDNF/' ${INF}/work/inf1.tmp | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]&&$1!="BDNF"{print $1}')
+  export phenoname=$(Rscript -e 'wrie.table(subset(pQTLdata::inf1["prot"],prot!="BDNF"),col.names=FALSE,row.names=FALSE,quote=FALSE)' | \
+                     awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}')
+  export gene=$(Rscript -e 'write.table(subset(pQTLdata::inf1["gene"],gene!="BDNF"),col.names=FALSE,row.names=FALSE,quote=FALSE)' | \
+                awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}')
+  export target=$(Rscript -e 'write.table(subset(pQTLdata::inf1["target.short"],target.short!="BDNF"),
+                                          col.names=FALSE,row.names=FALSE,quote=FALSE)' | \
+                  awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}')
   gunzip -c ${INF}/METAL/${phenoname}-1.tbl.gz | \
   awk '{if (NR==1) print "chromsome","position","log_pvalue","beta","se"; else print $1,$2,-$12,$10,$11}' > ${INF}/work/${phenoname}.txt
   R --slave --vanilla --args \
       input_data_path=${INF}/work/${phenoname}.txt \
       output_data_rootname=${INF}/METAL/qqmanhattanlz/${phenoname}_qq \
-      plot_title="${phenoname}" < ~/cambridge-ceu/turboqq/turboqq.r
+      plot_title="${target} (${gene})" < ~/cambridge-ceu/turboqq/turboqq.r
   grep -w ${phenoname} ${INF}/work/INF1.METAL > ${INF}/work/${phenoname}.annotate
   if [ ! -f ${INF}/work/${phenoname} ]; then
      R --slave --vanilla --args \
@@ -37,7 +44,7 @@ function qqmanhattan()
        output_data_rootname=${INF}/METAL/qqmanhattanlz/${phenoname}_manhattan \
        reference_file_path=~/cambridge-ceu/turboman/turboman_hg19_reference_data.rda \
        pvalue_sign=5e-10 \
-       plot_title="${phenoname}" < ~/cambridge-ceu/turboman/turboman.r
+       plot_title="${target} (${gene})" < ~/cambridge-ceu/turboman/turboman.r
   else
     cat <(echo chromosome position) \
         <(awk 'NR>1{print $4,$5}' ${INF}/work/INF1.METAL) \
@@ -48,7 +55,7 @@ function qqmanhattan()
       custom_peak_annotation_file_path=${INF}/work/${phenoname}.annotate \
       reference_file_path=~/cambridge-ceu/turboman/turboman_hg19_reference_data.rda \
       pvalue_sign=5e-10 \
-      plot_title="${phenoname}" < ~/cambridge-ceu/turboman/turboman.r
+      plot_title="${target} (${gene})" < ~/cambridge-ceu/turboman/turboman.r
     rm ${INF}/work/${phenoname}.annotate
   fi
   rm ${INF}/work/${phenoname}.txt
@@ -57,7 +64,11 @@ function qqmanhattan()
 function lz()
 {
   module load python/2.7
-  awk -v job=${SLURM_ARRAY_TASK_ID} 'NR==job+1 {print $4,$5-5e5,$5+5e5,$2,$3}' ${INF}/work/INF1.METAL | \
+# awk -v job=${SLURM_ARRAY_TASK_ID} 'NR==job+1 {print $4,$5-5e5,$5+5e5,$2,$3}' ${INF}/work/INF1.METAL | \
+  join -12 <(sed '1d' ${INF}/work/INF1.METAL | cut -f2-5 | sort -k2,2) \
+           <(Rscript -e 'write.table(subset(pQTLdata::inf1[c("prot","target.short","gene")],gene!="BDNF"),
+                                     col.names=FALSE,row.names=FALSE,quote=FALSE)' | sort -k1,1) | \
+  awk -v job=${SLURM_ARRAY_TASK_ID} 'NR==job{print $3,$4-5e5,$4+5e5,$2,$1,$5,$6}' | \
   parallel -j1 -C' ' --env INF '
      (
         gunzip -c ${INF}/METAL/{5}-1.tbl.gz | \
@@ -67,7 +78,7 @@ function lz()
         sort -k1,1n -k2,2n
      ) > ${INF}/work/{5}-{4}.lz
      locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/work/{5}-{4}.lz \
-               --delim tab title="{5}-{4}" \
+               --delim tab title="{6} ({7})-{4}" \
                --markercol MarkerName --pvalcol log10P --no-transform --chr {1} --start {2} --end {3} --cache None \
                --no-date --plotonly --prefix={5} --rundir ${INF}/METAL/qqmanhattanlz --svg --refsnp {4}
      rm ${INF}/work/{5}-{4}.lz
@@ -76,4 +87,5 @@ function lz()
 
 if [ ! -d ${INF}/METAL/qqmanhattanlz ]; then mkdir ${INF}/METAL/qqmanhattanlz; fi
 
-qqmanhattan
+# qqmanhattan
+lz
