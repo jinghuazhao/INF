@@ -1,0 +1,319 @@
+---
+title: "TNFB/LTA (GS/TwoSample)MR analysis"
+date: "`r Sys.Date()`"
+toc: true
+number_sections: true
+output: word_document
+bibliography: [packages.bib]
+link-citations: yes
+csl: /home/jhz22/R/gap/vignettes/nature-genetics.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE,fig.path="")
+```
+
+```{r varpkgs, echo=FALSE, message=FALSE, warning=FALSE}
+library(bookdown)
+library(knitr)
+library(png)
+library(tinytex)
+library(lattice)
+library(TwoSampleMR)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(openxlsx)
+library(pQTLtools)
+
+options(width=200)
+HPC_WORK <- Sys.getenv("HPC_WORK")
+INF <- Sys.getenv("INF")
+rt <- file.path(INF,"mr","gsmr")
+prot <- "TNFB"
+ids <- scan("efo","")
+knitr::write_bib(file = 'packages.bib')
+efo <- read.xlsx("efo.xlsx",sheet="EFO",startRow=2,colNames=TRUE,skipEmptyRows=TRUE) %>%
+       mutate(trait=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
+       select(-c(Zhengetal,uri))
+efo_old <- filter(efo,is.na(Replacement) & grepl("ieu|ebi",MRBASEID)) %>%
+           select(-c(Controls,Cases))
+efo_new <- filter(efo,Replacement!="") %>%
+           select(-c(MRBASEID,Ncontrols,Ncases)) %>%
+           rename(MRBASEID=Replacement,Ncontrols=Controls,Ncases=Cases)
+efo_update <- bind_rows(efo_old,efo_new) %>%
+              rename(id.outcome=MRBASEID,Cases=Ncases,Controls=Ncontrols) %>%
+              select(-Replacement)
+```
+
+## GSMR results
+
+```{r gsmr, echo=FALSE, fig.cap="Figure 1. GSMR results on TNFB", fig.height=24, fig.width=35, message=FALSE, warning=FALSE}
+gsmr <- read.delim(file.path(INF,"TNFB","gsmr-efo.txt")) %>%
+        mutate(outcome=paste0(trait),
+               exposure=protein,
+               z=bxy/se,
+               group=as.numeric(cut(z,breaks=quantile(z,seq(0,1,0.3333))))) %>%
+        left_join(gap.datasets::inf1[c("target.short","gene")],by=c('exposure'='target.short')) %>%
+        select(gene,outcome,z,bxy,se,p,nsnp,fdr,group)
+gene <- unique(with(gsmr,gene))
+outcome <- unique(with(gsmr,outcome))
+n <- length(gene)
+m <- length(outcome)
+gsmr_mat <- matrix(NA,m,n)
+colnames(gsmr_mat) <- gene
+rownames(gsmr_mat) <- outcome
+for(k in 1:nrow(gsmr))
+{
+   t <- gsmr[k,c('gene','outcome','z','group','fdr')]
+   i <- t[['outcome']]
+   j <- t[['gene']]
+   gsmr_mat[i,j] <- t[['z']]
+}
+rownames(gsmr_mat) <- gsub("\\b(^[a-z])","\\U\\1",rownames(gsmr_mat),perl=TRUE)
+rm(gene,outcome)
+library(grid)
+library(pheatmap)
+setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
+        action="prepend")
+pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=30,fontsize_col=30,
+         display_numbers = matrix(ifelse(!is.na(gsmr_mat) & abs(gsmr_mat) > 2.72, "*", ""), nrow(gsmr_mat)), fontsize_number=20)
+setHook("grid.newpage", NULL, "replace")
+grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
+grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
+knitr::kable(filter(gsmr,fdr<=0.05) %>% mutate(OR=exp(bxy)) %>% select(gene,outcome,OR,nsnp,fdr),
+             caption="Table 1. GSMR results for TNFB (fdr<=0.05)",digits=4)
+```
+
+```{r forestplot, echo=FALSE, fig.cap="Figure 2. GSMR forest plot", fig.height=12, fig.width=20, message=FALSE, warning=FALSE}
+tnfb <- filter(gsmr,gene=="LTA" & fdr<=0.05) %>% rename(Effect=bxy,StdErr=se)
+attach(tnfb)
+requireNamespace("meta")
+mg <- meta::metagen(Effect,StdErr,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))),sm="OR",title="TNFB")
+meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
+             leftcols=c("studlab"),leftlabs=c("Outcome"),
+             rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","GSMR P"),digits=2,digits.pval=2,scientific.pval=TRUE,
+             plotwidth="8inch",sortvar=Effect,
+             common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
+detach(tnfb)
+```
+
+## Single-SNP results
+
+```{r wald, echo=FALSE, fig.cap="Figure 3. Single-SNP results", fig.height=15, fig.width=30, message=FALSE, warning=FALSE}
+exposure_dat <- read_exposure_data(
+ filename = file.path(INF,"TNFB","TNFB.csv"),
+ sep = ',',
+ snp_col = 'SNP',
+ beta_col = 'beta',
+ se_col = 'se',
+ effect_allele_col = 'effect_allele',
+ phenotype_col = 'Phenotype',
+ units_col = 'units',
+ other_allele_col = 'other_allele',
+ eaf_col = 'eaf',
+ samplesize_col = 'samplesize',
+ ncase_col = 'ncase',
+ ncontrol_col = 'ncontrol',
+ gene_col = 'gene',
+ pval_col = 'pval'
+) %>%
+mutate(SNP="rs2229092")
+outcome_dat <- extract_outcome_data(exposure_dat$SNP, ids,
+               proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3) %>%
+               distinct()
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+knitr::kable(mutate(dat, disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+             left_join(select(efo_update,id.outcome,Cases,Controls)) %>%
+             select(beta.outcome, se.outcome, pval.outcome, samplesize.outcome, Cases, Controls, disease) %>%
+             setNames(c("b","se","p","N","Cases","Controls","disease")),
+             caption="Table 2. Harmonised data on TNFB/LTA cis-pQTL (rs2229092, 6:31540757_A_C, b/se=1.356/0.026)", digits=3)
+mr_results <- mr(dat) %>%
+              mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+              select(id.outcome,b,se,pval,disease)
+knitr::kable(select(mr_results,disease,b,se,pval), caption="Table 3. MR results based on Wald statistics", digits=4)
+write.table(mr_results,file=file.path(INF,"work","TNFB.txt"),row.names=FALSE,sep="\t")
+attach(mr_results)
+mg <- meta::metagen(b,se,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE))),sm="OR",title="TNFB")
+meta::forest(mg,colgap.forest.left="0.5cm",fontsize=32,
+             leftcols=c("studlab"),leftlabs=c("Outcome"),
+             rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","Wald P"),digits=2,digits.pval=2,scientific.pval=TRUE,
+             plotwidth="8inch",sortvar=b,
+             common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
+detach(mr_results)
+```
+
+## IVW results
+
+```{r ivw, echo=FALSE, fig.cap="Figure 4. IVW results", fig.height=15, fig.width=30, message=FALSE, warning=FALSE}
+exposure_dat <- read_exposure_data(filename = file.path(rt,"prot",paste0(prot,".gz")), sep = ' ',
+  snp_col = 'SNP',
+  effect_allele_col = 'A1',
+  other_allele_col = 'A2',
+  eaf_col = 'freq',
+  beta_col = 'b',
+  se_col = 'se',
+  pval_col = 'p',
+  samplesize_col = 'N'
+) %>%
+mutate(region=gsub("chr|_|[a-z]","",SNP),snpid=gsub("(_[a-z])","\\U\\1",SNP,perl=TRUE)) %>%
+select(-SNP)
+if (FALSE)
+{
+  d <- rename(exposure_dat,SNP=snpid,P=pval.exposure)
+  # not working with INTERVAL reference
+  exposure_dat <- ieugwasr::ld_clump_local(d,clump_kb=10000,clump_r2=0.001,clump_p=0.99,
+                                           bfile=file.path(INF,"INTERVAL","cardio","INTERVAL"),
+                                           plink_bin=file.path(HPC_WORK,"bin","plink-1.9"))
+  # working with PLINK 1.9 directly under Bash
+  res <- read.table(paste(prot, ".clumped", sep = ""), header = T)
+  y <- subset(d, !d[["SNP"]] %in% res[["SNP"]])
+  if (nrow(y) > 0) {
+      message("Removing ", length(y[["SNP"]]), " of ", nrow(d),
+            " variants due to LD with other variants or absence from LD reference panel")
+  }
+  rsids <- read.table("TNFB.rsid",col.names=c("snpid","SNP"))
+  exposure_dat <- left_join(rsids,subset(d, d[["SNP"]] %in% res[["SNP"]])%>%rename(snpid=SNP))
+}
+
+# working but with MR Base reference
+rsids <- read.delim("TNFB-rsid.txt",header=TRUE) %>%
+         distinct()
+exposure_dat <- clump_data(left_join(exposure_dat,rsids))
+outcome_dat <- extract_outcome_data(exposure_dat$region, ids,
+               proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.3)
+outcome_dat <- outcome_dat %>% distinct() %>%
+               mutate(snpid=gap::chr_pos_a1_a2(chr,pos,effect_allele.outcome,other_allele.outcome),SNP,
+                      effect_allele.outcome=toupper(effect_allele.outcome),
+                      other_allele.outcome=toupper(other_allele.outcome)) %>%
+               select(snpid,SNP,effect_allele.outcome,other_allele.outcome,eaf.outcome,
+                      beta.outcome,se.outcome,pval.outcome,samplesize.outcome,id.outcome,outcome) %>%
+               group_by(id.outcome,SNP) %>%
+               slice(which.min(pval.outcome)) %>%
+               data.frame()
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+knitr::kable(mutate(dat, disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+             select(SNP,beta.exposure, se.exposure, beta.outcome, se.outcome, pval.outcome, samplesize.outcome, disease) %>%
+             setNames(c("SNP","bX", "seX", "bY","seY","pY","NY","disease")),
+             caption="Table 4. Harmonised data on TNFB/LTA (X=protein, Y=disease)", digits=3)
+mr_ivw_results <- mr(dat,method="mr_ivw") %>%
+                  mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+                  left_join(select(efo_update,id.outcome,Cases,Controls)) %>%
+                  select(id.outcome,b,se,pval,nsnp,Cases,Controls,disease)
+attach(mr_ivw_results)
+mg <- meta::metagen(b,se,sprintf("%s",gsub("IGA","IgA",gsub("\\b(^[a-z])","\\U\\1",disease,perl=TRUE))),sm="OR",title="TNFB")
+meta::forest(mg,colgap.forest.left = "0.5cm",fontsize=32,
+             leftcols=c("studlab"),leftlabs=c("Outcome"),
+             rightcols=c("effect","ci","pval"),rightlabs=c("OR","95% CI","IVW P"),digits=2,digits.pval=2,scientific.pval=TRUE,
+             plotwidth="8inch",sortvar=b,
+             common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,addrow=TRUE,backtransf=TRUE,spacing=1.6)
+detach(mr_ivw_results)
+knitr::kable(select(mr_ivw_results,disease,b,se,pval,nsnp,Cases,Controls), caption="Table 5. MR results based on IVW", digits=4)
+write.table(mr_ivw_results,file="TNFB-ivw.txt",row.names=FALSE,quote=FALSE,sep="\t")
+mr_heterogeneity_results <- mr_heterogeneity(dat, method_list = "mr_egger_regression") %>%
+                            mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+                            select(disease,method,Q,Q_df,Q_pval,-id.exposure,-id.outcome,-exposure)
+knitr::kable(mr_heterogeneity_results,caption="Table 6. Heterogeneity analysis")
+mr_pleiotropy_results <- mr_pleiotropy_test(dat) %>%
+                         mutate(disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+                         select(disease,egger_intercept,se,pval)
+knitr::kable(mr_pleiotropy_results,caption="Table 7. Pleiotropy analysis")
+```
+
+```{r ms, echo=FALSE, fig.cap="Figure 5. Forest plot for MS", fig.height=15, fig.with=10, message=FALSE, warning=FALSE}
+id <- "ieu-b-18"
+{
+  d <- filter(dat, id.outcome==id) %>% distinct()
+  res <- mr(d, method_list = c("mr_egger_regression", "mr_ivw"))
+  p1 <- mr_scatter_plot2(res, d)
+  res_single <- mr_singlesnp(d)
+  print(mr_forest_plot2(res_single))
+# with(d, mr_steiger(p_exp=pval.exposure,p_out=pval.outcome,n_exp=samplesize.exposure,n_out=samplesize.outcome,r_xxo=1,r_yyo=1,r_exp=0,r_out=0.8))
+  lor <- with(d,beta.outcome)
+  af <- with(d,eaf.outcome)
+  ncase <- 68374
+  ncontrol <- 47429
+  prevalence <- 0.02
+# r <- get_r_from_lor(lor, af, ncase, ncontrol, prevalence, model = "logit", correction = FALSE)
+# directionality_test(d)
+}
+```
+
+## Comparison with single-SNP MRs
+
+```{r comparison, echo=FALSE, message=FALSE, warning=FALSE}
+mr_all <- full_join(setNames(mr_results,c("id.outcome","b_single","se_single","p_single","disease")),
+                    setNames(mr_ivw_results,c("id.outcome","b_IVW", "se_IVW", "p_IVW", "N_IVW", "Cases", "Controls","disease"))) %>%
+          mutate(x=sign(b_single)*sign(b_IVW)) %>%
+          select(disease,b_single,se_single,p_single,b_IVW,se_IVW,p_IVW,N_IVW,x,Cases,Controls)
+knitr::kable(mr_all,caption="Table 8. Comparison of single and IVW MR",digits=4)
+gsmr <- read.delim(file.path(INF,"TNFB","gsmr-efo.txt")) %>%
+        filter(protein=="TNFB") %>%
+        mutate(disease=gsub("\\b(^[a-z])","\\U\\1",trait,perl=TRUE)) %>%
+        rename(id.outcome=MRBASEID)
+single_gsmr <- full_join(setNames(select(mr_results,-disease),c("id.outcome","b_single","se_single","p_single")),
+                         select(gsmr,id.outcome,bxy,se,p,Ncases,Ncontrols,disease) %>%
+                         setNames(c("id.outcome","b_GSMR", "se_GSMR", "p_GSMR","Cases","Controls","Disease")))
+knitr::kable(single_gsmr,caption="Table 9. Effect size comparison between single/GS MR results")
+```
+
+An `x` flag is set when the effects have the same (`x`=1) or different directions (`x`=-1).
+
+```{r x, echo=FALSE, message=FALSE, warning=FALSE}
+mr_all_x <- filter(mr_all,x==-1)[["disease"]]
+knitr::kable(mutate(outcome_dat,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+             filter(disease %in% mr_all_x) %>%
+             select(SNP,snpid,effect_allele.outcome,
+                    beta.outcome,se.outcome,pval.outcome,samplesize.outcome,disease) %>%
+             setNames(c("SNP","SNPid","A1","b","se","p","N","disease")),
+                      caption="Table 10. SNP information on inconsistent single/IVW MR results",digits=3)
+```
+
+## Comments
+
+Sepsis (ieu-b-69) is an infectious disease.
+
+From the definition of cis regions at the Appendix, LTA was the only gene in the HLA region. One expects
+that this was also where LD has the strongest impact; from the harmonised data it is apparent that the
+LD pruning was somewhat too harsh and it is more appropriate to utilise LD information directly (to follow).
+
+## Appendix
+
+```{r appendix, echo=FALSE}
+cis <- read.table("cis.dat",col.names=c("UniProt","gene","prot","chr","start","end")) %>%
+       select(UniProt,prot,gene,chr,start,end) %>%
+       arrange(chr)
+knitr::kable(cis,caption="Definition of cis regions by chromosome")
+```
+
+```{r outcome, echo=FALSE, message=FALSE, warning=FALSE}
+region <- filter(cis,gene=="LTA") %>%
+          mutate(region=paste0(chr,":",start,"-",end))
+for(id in ids)
+{
+  extracted_outcome <- pQTLtools::import_OpenGWAS(id,region$region,method="TwoSampleMR")
+  write.table(extracted_outcome,file=paste0(prot,"-",id,".txt"),row.names=FALSE,quote=FALSE,sep="\t")
+  if (!is.null(extracted_outcome))
+  write.table(select(extracted_outcome,SNP,pval.outcome,samplesize.outcome) %>%
+              mutate(pval.outcome=-log10(pval.outcome)) %>%
+              setNames(c("SNP","log10p","N")),
+              file=paste0(prot,"-",id,".lz"),row.names=FALSE,quote=FALSE,sep="\t")
+}
+```
+
+![Sepsis](TNFB-ieu-b-69.png)
+![Juvenile idiopathi carthritis](TNFB-ebi-a-GCST005528.png)
+![Systemic lupus erythematosus](TNFB-ebi-a-GCST003156.png)
+![Inflammatory bowel disease](TNFB-ieu-a-31.png)
+![Multiple sclerosis](TNFB-ieu-b-18.png)
+![IgA glomerulonephritis](TNFB-ieu-a-1081.png)
+![Sclerosing cholangitis](TNFB-ieu-a-1112.png)
+![Primary biliary cirrhosis](TNFB-ebi-a-GCST005581.png)
+![Asthma](TNFB-ebi-a-GCST005212.png)
+![Atopic eczema](TNFB-ieu-a-996.png)
+![Crohn's disease](TNFB-ebi-a-GCST004132.png)
+![Psoriasis](TNFB-finn-b-L12_PSORIASIS.png)
+![Rheumatoid arthritis](TNFB-ieu-a-833.png)
+![Ulcerative colitis](TNFB-ebi-a-GCST004133.png)
+![Ankylosing spondylitis](TNFB-ebi-a-GCST005529.png)
+![Gout](TNFB-ebi-a-GCST001790.png)

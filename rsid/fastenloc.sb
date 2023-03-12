@@ -1,0 +1,62 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=_fastenloc
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1-41,43-92
+#SBATCH --mem=28800
+#SBATCH --time=5-00:00:00
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_fastenloc_%A_%a.err
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_fastenloc_%A_%a.out
+#SBATCH --export ALL
+
+export job=${SLURM_ARRAY_TASK_ID}
+export trait=$(awk -v job=${job} 'NR==job {print $1}' ${INF}/work/inf1.tmp)
+export eQTL=${HOME}/genetics/VCF-liftover
+
+cd work
+(
+  awk -v OFS='\t' 'BEGIN{print "#chrom","chromStart","chromEnd","MarkerName","z"}'
+  gunzip -c ${INF}/METAL/${trait}-1.tbl.gz | \
+  awk -v OFS='\t' 'NR>1 {print "chr" $1,$2-1,$2,$3,$10/$11}'
+) | \
+bedtools intersect -a ${HOME}/FM-pipeline/1KG/EUR.bed -b - -wa -wb | \
+awk -v OFS='\t' 'NR>1{print $8,$4,$9}' | \
+sort -k1,1 | \
+join <(cat INTERVAL.rsid | tr ' ' '\t') - -t$'\t'| \
+cut -f2,3,4 | \
+awk '{gsub(/region/,"",$2)};1' | \
+sort -k2,2n | \
+awk -vOFS='\t' '{print $1,"loc" $2,$3}' | \
+gzip -f > fastenloc/${trait}.torus.zval.gz
+
+torus -d fastenloc/${trait}.torus.zval.gz --load_zval -dump_pip fastenloc/${trait}.gwas.pip
+gzip -f fastenloc/${trait}.gwas.pip
+
+cd work
+for tissue in Whole_Blood
+do
+  export tissue=${tissue}
+  fastenloc -eqtl ${eQTL}/gtex_v8.eqtl_annot_rsid.hg19.vcf.gz \
+            -gwas fastenloc/${trait}.gwas.pip.gz -tissue ${tissue} -prefix fastenloc/${trait}-${tissue}
+  for o in sig snp
+  do
+    export o=${o}
+    cp fastenloc/${trait}-${tissue}.enloc.${o}.out fastenloc/${trait}-${tissue}.${o}.out
+    join -12 <(awk 'NR>1' fastenloc/${trait}-${tissue}.enloc.${o}.out | \
+               awk '{split($1,a,":");print a[1]}' | \
+               zgrep -w -f - ensGtp.txt.gz | cut -f1,2 | \
+               sort -k2,2) \
+             <(gunzip -c ensemblToGeneName.txt.gz | sort -k1,1) | \
+    cut -d' ' -f2,3 | \
+    sort -k1 -k2 | \
+    uniq | \
+    parallel -j1 --env tissue --env o -C' ' 'sed -i "s/{1}/{1}-{2}/;s/:[1-9]//" fastenloc/${trait}-${tissue}.${o}.out'
+  done
+done
+
+cd -
+
+# wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ensemblToGeneName.txt.gz
+# wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ensGtp.txt.gz

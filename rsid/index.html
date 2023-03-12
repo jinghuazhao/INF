@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>Supplementary notes - SCALLOP-INF</title>
+<link href="../css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../css/font-awesome.min.css" rel="stylesheet"/>
+<link href="../css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script defer="" src="../js/jquery-1.10.2.min.js"></script>
+<script defer="" src="../js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/JavaScript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Perl.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/rust.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+<div class="container">
+<a class="navbar-brand" href="..">SCALLOP-INF</a>
+<!-- Expander button -->
+<button class="navbar-toggler" data-target="#navbar-collapse" data-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<!-- Main navigation -->
+<ul class="nav navbar-nav">
+<li class="navitem">
+<a class="nav-link" href=".."></a>
+</li>
+<li class="navitem">
+<a class="nav-link" href="../doc/SCALLOP_INF1_analysis_plan/">Analysis plan</a>
+</li>
+<li class="dropdown">
+<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Implementation <b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li>
+<a class="dropdown-item" href="../tryggve/">Tryggve</a>
+</li>
+<li>
+<a class="dropdown-item" href="../cardio/">Cardio</a>
+</li>
+<li>
+<a class="dropdown-item" href="../csd3/">CSD3</a>
+</li>
+<li>
+<a class="dropdown-item" href="../Supplementary%20notes/">Supplementary notes</a>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="nav navbar-nav ml-auto">
+<li class="nav-item">
+<a class="nav-link" data-target="#mkdocs_search_modal" data-toggle="modal" href="#">
+<i class="fa fa-search"></i> Search
+                            </a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="https://github.com/jinghuazhao/INF"><i class="fa fa-github"></i> GitHub</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-target="#toc-collapse" data-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-secondary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-level="1"><a class="nav-link" href="#supplementary_notes">Supplementary notes</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-level="2"><a class="nav-link" href="#signal_selection">Signal selection</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#conditional_analysis_and_fine-mapping">Conditional analysis and fine-mapping</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#variant_annotation">Variant annotation</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#known_pqtls">Known pQTLs</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#colocalization_analysis">Colocalization analysis</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#linear_regression">Linear regression</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#mendelian_randomization">Mendelian Randomization</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#nested_pgs_model">Nested PGS model</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#pwas">PWAS</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#summary_statistics">Summary statistics</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#somalogic_overlap">SomaLogic overlap</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#drug_relevance">Drug relevance</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#uniprot_ids">UniProt IDs</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#auxiliary_files">Auxiliary files</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#related_links">Related links</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#references">References</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div></div>
+<div class="col-md-9" role="main">
+<h1 id="supplementary_notes">Supplementary notes<a class="headerlink" href="#supplementary_notes" title="Permanent link">¶</a></h1>
+<p>This page was initiated with conditional analysis and fine-mapping, and now expanded with many other threads of the analysis.</p>
+<h2 id="signal_selection">Signal selection<a class="headerlink" href="#signal_selection" title="Permanent link">¶</a></h2>
+<p>This is illustrated with <code>neale.sh</code> for Neale UKB data (HbA1c).</p>
+<h2 id="conditional_analysis_and_fine-mapping">Conditional analysis and fine-mapping<a class="headerlink" href="#conditional_analysis_and_fine-mapping" title="Permanent link">¶</a></h2>
+<p>The INTERVAL data is used as reference panel. The logic of this specific directory is a simple solution of the dilemma that the reference data, possibly like others, uses reference sequence ID (rsid) whenever possible. However, during meta-analysis the practice of using rsids is undesirable so SNPID, i.e., chr:pos_A1_A2, (A1&lt;=A2) is necessary.</p>
+<p>After a rather long and laborious process involving many software, it turned out a simple way out is to obtain sentinels using SNPID but return to rsids at this stage and forward. The implementation here reflects this. The file INTERVAL.rsid contains SNPID-rsid mapping and could be generated from programs such as <code>qctool/bgenix/plink</code>. A related file is <code>snp_pos</code> containing rsid -- chr:pos mappings; for instance this could be built from dbSNP.</p>
+<p>A note on regions is ready. It is attractive to use the last genomic region from iterative merging for analysis and perhaps a flanking version. This is more appropriate than genome-wide hard and fast 10MB windows or approximately independent LD blocks. For the latter, we found that the boundaries from the distributed 1000Genomes project were often inappropriate and one may not attempt to compute them for specific reference panel. Nevertheless, the iterative procedure actually just does empirically. Again the HLA region is condensed.</p>
+<p>The last point regards software <code>finemap</code>, which uses summary statistics associated with the reference panel rather than that from meta-analysis.</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NLRP2.sh</td>
+<td>the exclusion list</td>
+</tr>
+<tr>
+<td>cs.sh</td>
+<td>Credible sets</td>
+</tr>
+<tr>
+<td>ma.sh</td>
+<td>INF1 sumstats</td>
+</tr>
+<tr>
+<td>INTERVAL-ma.sh</td>
+<td>INTERVAL sumstats</td>
+</tr>
+<tr>
+<td>prune.sh</td>
+<td>pruning</td>
+</tr>
+<tr>
+<td>slct.sh</td>
+<td>GCTA --cojo-slct analysis</td>
+</tr>
+<tr>
+<td>finemap.sh</td>
+<td><code>finemap</code> analysis</td>
+</tr>
+<tr>
+<td>jam.sh</td>
+<td><code>JAM</code> analysis</td>
+</tr>
+<tr>
+<td>st.sh</td>
+<td>batch command file</td>
+</tr>
+<tr>
+<td>cs/, finemap/, jam/, prune/, work/</td>
+<td>working directories</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Steps</strong></p>
+<p><code>st.sh</code> conceptually executes the following elements,</p>
+<div class="mermaid">graph TB
+sumstats("sumstats from METAL") --&gt; |"variants from prune.sh"| slct.sh
+utils.sh("INTERVAL sumstats from standardized residuals ~ genotypes") --&gt; |"variants from prune.sh"| cs.sh
+utils.sh --&gt; |"internal prune" | jam.sh
+utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
+</div>
+<p>Note that the <code>GCTA</code> .ma, jma.cojo, .ldr.cojo become -rsid.ma, -rsid.jma.cojo, -rsid.ldr.cojo, respectively; the same are true for files related to <code>finemap</code>.</p>
+<p>Unlike GCTA with a pruned set of variants, <code>finemap</code> used all variants in a region that reached a given P value threshold thus involved a larger set of variants in the analysis. It implements a model which considers a configuration of m variants as a binary factor <span class="arithmatex">\(\gamma\)</span> taking values of 0 and 1 for being noncausal and causal, respectively. The causal effect <span class="arithmatex">\(\lambda\)</span>, which is the effect size from a variant-trait regression, has a prior that <span class="arithmatex">\(P(\lambda|\gamma)=N(\lambda|0,s_\lambda^2\sigma^2\Delta_\lambda)\)</span> where <span class="arithmatex">\(s_\lambda^2\)</span> is a user-supplied prior variance in units of <span class="arithmatex">\(\sigma^2\)</span> which takes a value of 1 for quantitative traits, and <span class="arithmatex">\(\Delta_\lambda\)</span> is a matrix. Information from <code>finemap</code> 1.3.1 is contained in several types of outputs: log_sss, snp, config and cred. The prior probability for <span class="arithmatex">\(i\)</span> out of <span class="arithmatex">\(m\)</span> variants is causal, is obtained as a binomial probability, <span class="arithmatex">\(p(i)={m\choose{i}}{\left(\frac{i}{m}\right)^i\left(1-\frac{i}{m}\right)^{m-i}}\)</span>. For instance, when m = 3,164, we have from R, signif(dbinom(1:10,m,1/m),3) = <span class="arithmatex">\(0.368\)</span>, <span class="arithmatex">\(0.184\)</span>, <span class="arithmatex">\(0.0613\)</span>, <span class="arithmatex">\(0.0153\)</span>, <span class="arithmatex">\(0.00306\)</span>, <span class="arithmatex">\(0.00051,\)</span> <span class="arithmatex">\(7.28\times 10^{-5}\)</span>, <span class="arithmatex">\(9.09\times 10^{-6}\)</span>, <span class="arithmatex">\(1.01\times 10^{-6}\)</span> and <span class="arithmatex">\(1.01\times 10^{-7}\)</span>. For <code>finemap</code> 1.3.1, these are rescaled so that <span class="arithmatex">\(\sum_{i=1}^kp(i)=1\)</span>. The posterior number of causal signals in the genomic region is obtained as the expectation <span class="arithmatex">\(\sum_{i}p(i|data) \times i\)</span>. The search of total number of configurations <span class="arithmatex">\(\sum_{i=1}^k{m\choose{i}}\)</span> is furnished with shotgun stochastic search. In cases when only one causal variant is used, the config and cred results give configuration and credible set the same probabilities.</p>
+<p>We used individual level data from the study (N=4,994), the largest among contributing studies, as LD reference. On the meta-analysis summary statistics, we found the INTERVAL LD reference panel does not necessary correspond to the true LD so several approaches were implemented to address these issues: by instructing –n-causal-snps to be independent signals reported from GCTA joint/conditional analysis, by lowering threshold for correlated groups from 0.99 to 0.7, by pruning variants/excluding variants below certain significance level, by restricting variants to those reaching given number of individuals and last and most importantly by confining to INTERVAL summary statistics (the largest contributing study in the meta-analysis) alone using the regions linking each sentinels.</p>
+<h2 id="variant_annotation">Variant annotation<a class="headerlink" href="#variant_annotation" title="Permanent link">¶</a></h2>
+<p>This is exemplified with <code>vep.sh</code>. GARFIELD analysis is furnsihed with <code>garfield.sh</code>. Specific and collective enrichment can be found in <code>magma.sh</code> and <code>rGREAT.sh</code>.</p>
+<h2 id="known_pqtls">Known pQTLs<a class="headerlink" href="#known_pqtls" title="Permanent link">¶</a></h2>
+<p>Program <code>cvd1.sh</code> was used to obtain SCALLOP-CVD1 summary statistics. <code>pQTL.R</code> was used for QTL lookup.</p>
+<h2 id="colocalization_analysis">Colocalization analysis<a class="headerlink" href="#colocalization_analysis" title="Permanent link">¶</a></h2>
+<p>eQTL lookup is done with PhenoScanner via <code>eQTL.R</code>, <code>eQTLGen.sh</code> and GTEx via <code>GTEx-ps.R</code>, <code>GTEx-ps.sh</code> and <code>GTEx-ps-jma.sh</code>.</p>
+<p>Credible set lookup from GTEx v8 is furnished with <code>GTEx-cs.sh</code> and <code>GTEx-cs-jma.sh</code>.</p>
+<p>Eearlier experiments were done with <code>coloc.sb</code> (clumsy) and <code>coloc.R</code> (with pQTLtools) as well as <code>fastenloc.sb</code>.</p>
+<p>Multitrait counterparts were also done with HyPrColoc as in <code>rs12075.sh</code> and <code>LTBR.sh</code> (stack_assoc_plot + HyPrColoc/PWCoCo) and <code>LTBR.sh</code> contains a routine to generate tabix-indexed blood cell traits. Stacked association plots were done with <code>IL.18-rs385076.sh</code> and <code>OPG-TRANCE.sh</code>.</p>
+<h2 id="linear_regression">Linear regression<a class="headerlink" href="#linear_regression" title="Permanent link">¶</a></h2>
+<p>This is related to estimates of proprotion of variance explained (PVE), effect sizes and their standard errors, see <a href="https://jinghuazhao.github.io/R/vignettes/gap.html">https://jinghuazhao.github.io/R/vignettes/gap.html</a>.</p>
+<h2 id="mendelian_randomization">Mendelian Randomization<a class="headerlink" href="#mendelian_randomization" title="Permanent link">¶</a></h2>
+<p>There has been a major overhaul by refocusing on cis-pQTLs using GSMR involving both immune-mediated traits and COVID outcomes. These have been implemented in <code>mr.sh</code> and <code>mr.sb</code>. To get around the mishap with rsids we switched back to SNPids; we found the options <code>--clump-r2 0.1 --gsmr-snp-min 10</code> make more sense for instance with IL-12B it would retain the sentinel and also the significant MR results on inflammatory bowel disease. Earlier we coded specifically for HGI analysis, in particular aiming for four test statistics and better quality graphics.</p>
+<p>It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.</p>
+<p>The GSMR implementation started with CAD/FEV1 (now with <code>gsmr.sh</code>, <code>gsmr.sb</code>, <code>gsmr.R</code>) and then HGI as <code>gsmr_HGI.*</code> and pQTLMR/MR (<code>HGI.sh</code>, <code>HGI.R</code>), and +/- 1MB (<code>rs635634.sh</code>).</p>
+<p>Earlier on, a pQTL-based MR analysis is furnished with <code>pqtlMR.sh</code>.</p>
+<p>Immune-mediatd diseases (IMDs) from OpenGWAS is obtained via <code>OpenGWAS.sh</code>, while <code>pqtlGWAS.R</code> was used for pQTL-disease GWAS lookup based on PhenoScanner v2 which used the following scheme.</p>
+<ol>
+<li>When pQTL is the disease QTL itself, decide if a switch is needed for effect direction.</li>
+<li>When pQTL and QTL has the same alleles, do as in Step 1.</li>
+<li>When QTL is a proxy for pQTL, infer the most likely haplotype to decide the swtich.</li>
+<li>Align the pQTL-disease effect direction according to ++, +-, -+, -- for increasing (+) or decreasing (-) pQTL allele (first sign) or disease risk (second sign).</li>
+<li>Obtain heatmaps for all and IMDs based on information from Step 4.</li>
+</ol>
+<h2 id="nested_pgs_model">Nested PGS model<a class="headerlink" href="#nested_pgs_model" title="Permanent link">¶</a></h2>
+<p>A nested predictive model based on genotype data G, which link with proteins P1, P2, ..., Pn as predictors for outcome y.</p>
+<div class="mermaid">graph TD;
+  G --&gt; P1
+  G --&gt; P2
+  G --&gt; ...
+  G --&gt; Pn
+  P1 --&gt; y
+  P2 --&gt; y
+  ... --&gt; y
+  Pn --&gt; y
+</div>
+<p>Without loss of generality, we have a more explicit figure<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> linking genotype data G, proteins P1, P2, P3 and outcome y.</p>
+<p align="left"><img src="grViz.png"/></p>
+<p>Alternative routes are T(P)WAS with <a href="http://gusevlab.org/projects/fusion/">fusion_twas</a> and EWAS with <a href="https://jinghuazhao.github.io/EWAS-fusion/">EWAS-
+fusion</a>.</p>
+<div class="mermaid">graph TD;
+  SNP["LD reference panel (bed,bim,fam)"] --&gt; |"EWAS reference panel(top1, blup, lasso, enet, bslmm)"| Methylation;
+  Methylation --&gt; Protein;
+  SNP --&gt; |"GWAS summary statistics (SNP, A1, A2, Z)"| Protein;
+</div>
+<p>File <code>fusion_twas.sb</code> initiated a FUSION TWAS experiment. Shown below is an example for IL-12B, (EWAS, joint/conditional) Q-Q and Manhattan plots from <code>ewas-plot.R</code>.</p>
+<p align="center"><img src="ewas-plot.png"/></p>
+<h2 id="pwas">PWAS<a class="headerlink" href="#pwas" title="Permanent link">¶</a></h2>
+<p>A separate but closely related approach only rely on GWAS summary statistics analogous to a transcriptomewide association statistic (Gusev, 2016),
+as inspired from studies of gene expression data. For a given Protein of interest <strong>P</strong> for which GWAS summary statistics <span class="arithmatex">\(z_P\)</span> is available, the
+corresponding Wald statistic for PWAS is defined such that</p>
+<p><span class="arithmatex">\(z_{PWAS} = \frac{w^T_{P}z_P}{\sqrt{w^T_{P}Vw_{P}}}\)</span></p>
+<p>where <span class="arithmatex">\(w_{P}\)</span> is a weight associated with protein abundance level and <strong>V</strong> covariance matrix for <span class="arithmatex">\(z_P\)</span>, respectively. The weights were generated for pQTLs using individual level data from INTERVAL and then used to infer protein-trait association based on a GWAS. The relevant implementation was done with <strong>FUSION.compute_weights.R</strong> and <strong>FUSION.assoc_test.R</strong> from fusion_twas. For regions linking multiple proteins, a multivariable counterpart could be considered. This framework could also be restricted to proteins showing a satisfactory level of heritability/PVE and/or limited to tagging SNPs such as those from HapMap.</p>
+<p>This also mirrors the EWAS-fusion software for methylation data using epigenomewide association statistics.</p>
+<p><img align="right" height="300" src="../doc/Olink-SomaLogic-Venn-diagram.png" width="300"/></p>
+<h2 id="summary_statistics">Summary statistics<a class="headerlink" href="#summary_statistics" title="Permanent link">¶</a></h2>
+<p>This is implemented with <code>gwasvcf.sh</code> and <code>gwas2vcf.sb</code> which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.</p>
+<p>A drawback of this approach is a reduction in number of mapped variants in the VCF files, so eventually this is done pragmattically as follows,</p>
+<pre><code class="language-bash">  ls *-1.tbl.gz | sed 's/.gz//' | grep -v BDNF | parallel -j10 -C' ' '
+  gunzip {}.gz;
+# cat &lt;(head -1 {}) &lt;(sed "1d" {} | sort -k1,1n -k2,2n) | bgzip -f &gt; {}.gz
+  (
+    head -1 {}
+    for chr in {1..22}
+    do
+      awk -vchr=${chr} "\$1==chr" {} | sort -k2,2n
+    done
+  ) | bgzip -f &gt; {}.gz
+  tabix -f -S1 -s1 -b2 -e2 {}.gz
+  '
+</code></pre>
+<p>The looping is not used unless there is memory issue from the commented line (#).</p>
+<h2 id="somalogic_overlap">SomaLogic overlap<a class="headerlink" href="#somalogic_overlap" title="Permanent link">¶</a></h2>
+<p>The overlap is characterised with <a href="../doc/Olink.R">Olink.R</a> which also gives a Venn diagram.</p>
+<h2 id="drug_relevance">Drug relevance<a class="headerlink" href="#drug_relevance" title="Permanent link">¶</a></h2>
+<p>The relevant data as derived from the drug gene interaction database (DGIdb) (https://dgidb.genome.wustl.edu/downloads) and earlier report, were also curated in the R package MRInstruments, containing 38,116 and 19,085 entries, corresponding to 430 and 784 entries associated with the 91 proteins, respectively. For instance PLAU, which encodes uPA, was also discussed. Queries were also made through EpiGraphDB. The pQTL associate genes and their relevance with Drugbank according to FUMA is contained in Supplementary Table geneDrugbank. Relevant information was also obtained from Drug repurposing hub (https://clue.io/repurposing#download-data) and ChEMBL web resource client (https://github.com/chembl/chembl_webresource_client).</p>
+<p>81% of the pQTL-generating proteins were in GDIdb according to CoffeeProt. Pi database is shown in Supplementary Table ST9-Pi drug. For instance, IL12B links to Briakinumab (https://go.drugbank.com/drugs/DB05459) and Ustekinumab (https://go.drugbank.com/drugs/DB05679) for psoriasis, type I diabetes, ulcerative colitis, Crohn’s disease, Sarcoidosis, multiple sclerosis and systemic lupus erythematosus. The critical role of the PD-1/PD-L1 pathway in many cancers is well-recognized including lung cancer (https://www.lung.org/) whose immunotherapy is informed through immunohistochemical staining test and high amounts (50% or greater) of PD-L1 may respond particularly well to checkpoint inhibitors. PD-L1 expression was also shown association with progression to active tuberculosis and treatment response.</p>
+<h2 id="uniprot_ids">UniProt IDs<a class="headerlink" href="#uniprot_ids" title="Permanent link">¶</a></h2>
+<p>The list of proteins on inflammation is within one of the <a href="https://www.olink.com/products/">Olink</a> panels (as in <a href="../doc/Olink%20validation%20data%20all%20panels.xlsx">Olink validation data all panels.xlsx</a>) each containing 92 proteins. Information contained in these panels can be retrieved into R via <a href="../doc/Olink.R">Olink.R</a>, which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.</p>
+<p>BDNF has recently been removed from the assay and replaced with CD8A, <a href="https://www.olink.com/bdnf-info/">https://www.olink.com/bdnf-info/</a>, and there are also changes on TNF and IFN.gamma, <a href="https://www.olink.com/inflammation-upgrade/">https://www.olink.com/inflammation-upgrade/</a>.</p>
+<p>A <a href="https://www.uniprot.org/">UniProt</a> ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While <a href="../doc/inf1.csv">inf1.csv</a> 
+edits Q4ACW9, <a href="../doc/inf2.csv">inf2.csv</a> is inline with UCSC with respect to P12034 and P30203.</p>
+<p>The use of uniprot IDs is noted in two aspects,</p>
+<ol>
+<li>
+<p>The protein list in <a href="../doc/inf1.csv">inf1.csv</a> notes both O43508 and Q4ACW9.</p>
+</li>
+<li>
+<p>Q8NF90 and Q8WWJ7 were not listed at the UCSC, their availability on UniProt seem to be for backward compatibility as on query they 
+point to P12034 and P30203 (Q8WWJ7_HUMAN should have been CD6_HUMAN). <a href="../doc/hgTables.tsv">hgTables.tsv</a> is based on UCSC, checked over
+UniProt IDs as follows,</p>
+</li>
+</ol>
+<pre><code class="language-bash">grep inf1 doc/olink.prot.list.txt | \
+sed 's/inf1_//g;s/___/\t/g' &gt; inf1.list
+join -t$'\t' -12 -24 \
+     &lt;(sort -k2,2 inf1.list) \
+     &lt;(awk '{split($4,f,"-"); $4=f[1]; if(!index($1,"_")) print}' OFS='\t' doc/hgTables.tsv | sort -k4,4) \
+     &gt; 12
+# 90 lines
+wc -l 12
+# Q8NF90 (FGF.5), Q8WWJ7 (CD6) are missing
+join -v2 -22 12 &lt;(sort -k2,2 inf1.list)
+rm 12
+</code></pre>
+<p>Likewise, <a href="../doc/olink.inf.panel.annot.tsv">olink.inf.panel.annot.tsv</a> from <a href="../doc/olink.annotation.R">olink.annotation.R</a> also has the following two entries</p>
+<table>
+<thead>
+<tr>
+<th>"target"</th>
+<th>"target.short"</th>
+<th>"uniprot"</th>
+<th>"panel"</th>
+<th>"prot.on.multiple.panel"</th>
+<th>"panels.with.prot"</th>
+<th>"hgnc_symbol"</th>
+<th>UniProt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Fibroblast growth factor 5 (FGF-5)"</td>
+<td>"FGF-5"</td>
+<td>"Q8NF90"</td>
+<td>"inf"</td>
+<td>FALSE</td>
+<td>NA</td>
+<td>FGF5</td>
+<td>P12034</td>
+</tr>
+<tr>
+<td>"T-cell surface glycoprotein CD6 isoform (CD6)"</td>
+<td>"CD6"</td>
+<td>"Q8WWJ7"</td>
+<td>"inf"</td>
+<td>FALSE</td>
+<td>NA</td>
+<td>CD6</td>
+<td>P30203</td>
+</tr>
+</tbody>
+</table>
+<p>where the hgnc_symbol and UniProt ID are amended.</p>
+<h2 id="auxiliary_files">Auxiliary files<a class="headerlink" href="#auxiliary_files" title="Permanent link">¶</a></h2>
+<p>The following table lists various other aspects not documented above; many can be seen as a skeleton for further work.</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>chembl.sh</td>
+<td>toy CHEMBL queries</td>
+</tr>
+<tr>
+<td>CRP.sh</td>
+<td>an inflammation score</td>
+</tr>
+<tr>
+<td>circos.*</td>
+<td>circos/circlize scripts</td>
+</tr>
+<tr>
+<td>cytoscape.R</td>
+<td>Cytoscape and Network Analysis</td>
+</tr>
+<tr>
+<td>efo.R</td>
+<td>experimental factor ontology</td>
+</tr>
+<tr>
+<td>epigraphdb-pleiotropy.R</td>
+<td>horizontal and vertical pleiotropy</td>
+</tr>
+<tr>
+<td>epigraphdb-ppi.R</td>
+<td>PPI using EpiGraphDB</td>
+</tr>
+<tr>
+<td>gdigt.R</td>
+<td>GDI and gene-trials</td>
+</tr>
+<tr>
+<td>GREP.sh</td>
+<td>GREP script</td>
+</tr>
+<tr>
+<td>h2pve.*</td>
+<td>h2/pve summary</td>
+</tr>
+<tr>
+<td>inbio-discover.R</td>
+<td>gene lists</td>
+</tr>
+<tr>
+<td>pheweb.Rmd</td>
+<td>Data extraction from pheweb.jp</td>
+</tr>
+<tr>
+<td>qqman.sb</td>
+<td>Q-Q/Manhattan plots under CSD3</td>
+</tr>
+<tr>
+<td>rentrez.sh</td>
+<td>reuse of rentrez</td>
+</tr>
+<tr>
+<td>Somascan-Olink.*</td>
+<td>Somascan/Olink overlap</td>
+</tr>
+<tr>
+<td>stringdb.R</td>
+<td>STRINGdb exercise</td>
+</tr>
+<tr>
+<td>tables.R</td>
+<td>Excel tables</td>
+</tr>
+<tr>
+<td>uniprot.R</td>
+<td>UniProt IDs to others</td>
+</tr>
+<tr>
+<td>utils.sh</td>
+<td>utilties</td>
+</tr>
+</tbody>
+</table>
+<h2 id="related_links">Related links<a class="headerlink" href="#related_links" title="Permanent link">¶</a></h2>
+<ul>
+<li><a href="https://olinkproteomics.shinyapps.io/OlinkInsightsStatAnalysis/">Olink Insights Stat Analysis</a></li>
+<li><a href="https://github.com/Olink-Proteomics/OlinkRPackage">Olink R package</a> (CRAN <a href="https://CRAN.R-project.org/package=OlinkAnalyze">OlinkAnalyze</a>)</li>
+<li><a href="https://www.olink.com/scallop/">Olink location</a>, <a href="https://www.olink.com/question/what-is-npx/">What is NPX</a>, <a href="https://www.olink.com/scallop-f2f-2019/">F2F London meeting</a>, <a href="https://www.olink.com/data-science-workshop-2019/">Data Science Workshop 2019</a>.</li>
+<li><a href="https://www.olink.com/data-you-can-trust/publications/">Olink publications</a>.</li>
+<li><a href="https://github.com/lassefolkersen/scallop">GitHub repository</a> for the 2017 <em>PLoS Genetics</em> paper.</li>
+<li><a href="http://www.scallop-consortium.com/">SCALLOP consortium</a> (<a href="https://secureremote.dtu.dk/vpn/index.html">securecloud</a>).</li>
+</ul>
+<hr/>
+<ul>
+<li><a href="https://twc-stanford.shinyapps.io/aging_plasma_proteome/">Aging Plasma Proteome</a> (<a href="https://github.com/lehallib/DEswan">DEswan</a>).</li>
+<li><a href="https://bgee.org/">Bgee</a>.</li>
+<li><a href="https://bioplex.hms.harvard.edu/">BIOPLEX</a>.</li>
+<li><a href="https://maayanlab.cloud/Enrichr/">Enrichr</a>.</li>
+<li><a href="https://modelarchive.org/doi/10.5452/ma-bak-cepc">Computed structures of core eukaryotic protein complexes</a></li>
+<li><a href="https://genetics.opentargets.org/immunobase">ImmunoBase</a>.</li>
+<li><a href="https://www.ebi.ac.uk/intact/home">IntAct</a>.</li>
+<li><a href="http://bioinformatics.sdstate.edu/go/">ShinyGO</a>.</li>
+<li><a href="http://www.phpc.cam.ac.uk/ceu/proteins">SomaLogic plasma protein GWAS summary statistics</a>.</li>
+<li>Search Tool for the Retrieval of Interacting Genes/Proteins database, <a href="https://string-db.org/">STRINGdb</a></li>
+<li><a href="https://www.proteinatlas.org/">The human protein atlas</a></li>
+<li><a href="http://www.wwpdb.org/">Worldwide PDB</a></li>
+</ul>
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">¶</a></h2>
+<p>Benner C. et al. FINEMAP: efficient variable selection using summary data from genome-wide association studies. <em>Bioinformatics</em> 32, 1493-501 (2016).</p>
+<p>Choi SW, Mak TS, O'Reilly PF Tutorial: a guide to performing polygenic risk score analyses. <em>Nat Protoc</em> 15, 2759-2772 (2020), <a href="https://github.com/choishingwan/PRSice">GitHub</a> <a href="https://choishingwan.github.io/PRS-Tutorial/">documentation</a>.</p>
+<p>Folkersen L, et al. (2017). Mapping of 79 loci for 83 plasma protein biomarkers in cardiovascular disease. <em>PLoS Genetics</em> 13(4), doi.org/10.1371/journal.pgen.1006706.</p>
+<p>Kwan JSH, et al. (2014). Meta-analysis of genome-wide association studies identiﬁes two loci associated with circulating osteoprotegerin levels. <em>Hum Mol Genet</em> 23(24): 6684–6693.</p>
+<p>Niewczas MA, et al. (2019). A signature of circulating inflammatory proteins and development of end-stage renal disease in diabetes. <em>Nat Med</em>. https://doi.org/10.1038/s41591-019-0415-5</p>
+<p>Suhre K et al. (2017). Connecting genetic risk to disease endpoints through the human blood plasma proteome. <em>Nat Comm</em> doi:10.1038/ncomms14357. <a href="http://metabolomics.helmholtz-muenchen.de/pgwas/">Integrated web server</a>.</p>
+<p>Sun BB, et al. (2018). Genomic atlas of the human plasma proteome. <em>Nature</em> 558: 73–79.</p>
+<p><em>Date last changed:</em> <strong>1/3/2022</strong></p>
+<div class="footnote">
+<hr/>
+<ol>
+<li id="fn:1">
+<p>The figure is obtained with <code>dot -Tpng grViz.gv -ogrViz.png</code> which also be obtained from RStudio for somewhat larger size. <a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+</ol>
+</div></div>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+<script defer="" src="../js/base.js"></script>
+<script defer="" src="../javascripts/config.js"></script>
+<script defer="" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script defer="" src="../search/main.js"></script>
+<div aria-hidden="true" aria-labelledby="searchModalLabel" class="modal" id="mkdocs_search_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="searchModalLabel">Search</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+<form>
+<div class="form-group">
+<input class="form-control" id="mkdocs-search-query" placeholder="Search..." title="Type search term here" type="search"/>
+</div>
+</form>
+<div id="mkdocs-search-results"></div>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div><div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+<script src="https://unpkg.com/mermaid@8.8.0/dist/mermaid.min.js"></script><script>mermaid.initialize({});</script></body>
+</html>

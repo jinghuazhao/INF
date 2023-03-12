@@ -1,0 +1,68 @@
+#!/bin/bash
+
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --ntasks=1
+#SBATCH --job-name=_h2
+#SBATCH --time=8:00:00
+#SBATCH --cpus-per-task=1
+#SBATCH --partition=cardio
+#SBATCH --mem=128800
+#SBATCH --array=1-22
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_prune_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_prune_%A_%a.err
+#SBATCH --export ALL
+
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --ntasks=1
+#SBATCH --job-name=_h2
+#SBATCH --time=8:00:00
+#SBATCH --cpus-per-task=1
+#SBATCH --partition=cardio
+#SBATCH --mem=128800
+#SBATCH --array=1-92
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_h2_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_h2_%A_%a.err
+#SBATCH --export ALL
+
+. /etc/profile.d/modules.sh
+
+export chr=${SLURM_ARRAY_TASK_ID}
+
+function prune()
+{
+  module load plink/2.00-alpha
+  cd ${INF}/h2
+  plink2 --bfile ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr} \
+         --chr ${chr} \
+         --geno 0.1 --mind 0.1 --maf 0.005 --indep-pairwise 1000kb 1 0.8 --out ${chr}
+  if [ ${chr} -eq 19 ]; then
+     sort ${chr}.prune.in | \
+     join -v1 - ${INF}/work/NLRP2 > ${chr}.prune
+  else
+     sort ${chr}.prune.in > ${chr}.prune
+  fi
+# rm ${chr}.prune.in ${chr}.prune.out
+  plink2 --bfile ${INF}/INTERVAL/per_chr/interval.imputed.olink.chr_${chr} --extract ${chr}.prune --make-bed --out ${chr}
+  cd -
+}
+
+function h2()
+# --reml-alg 1 for 47,91
+{
+  export s=${INF}/INTERVAL/o5000-inf1-outlier_in-r2.sample
+  export p=$(cut -d' ' -f29- ${s} | head -1 | sed 's/ /\n/g' | awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{split($1,a,"__"); print a[1]}')
+
+  cd ${INF}/h2
+  gcta64 --reml \
+         --grm INTERVAL \
+         --pheno INTERVAL.pheno \
+         --covar INTERVAL.covar \
+         --qcovar INTERVAL.qcovar \
+         --mpheno ${SLURM_ARRAY_TASK_ID} \
+         --thread-num 2 \
+         --out ${p}
+  cd -
+}
+
+#prune
+h2
