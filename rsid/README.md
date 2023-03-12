@@ -79,7 +79,11 @@ The GSMR implementation started with CAD/FEV1 (now with `gsmr.sh`, `gsmr.sb`, `g
 
 Earlier on, a pQTL-based MR analysis is furnished with `pqtlMR.sh`.
 
-Immune-mediatd diseases (IMDs) from OpenGWAS is obtained via `OpenGWAS.sh`, while `pqtlGWAS.R` was used for pQTL-disease GWAS lookup based on PhenoScanner v2 which used the following scheme.
+Immune-mediatd diseases (IMDs) from OpenGWAS is obtained via `OpenGWAS.sh`.
+
+## pQTL-disease QTL overlap
+
+File `pqtlGWAS.R` was used for pQTL-disease GWAS lookup based on PhenoScanner v2 which used the following scheme.
 
 1. When pQTL is the disease QTL itself, decide if a switch is needed for effect direction.
 2. When pQTL and QTL has the same alleles, do as in Step 1.
