@@ -79,7 +79,13 @@ The GSMR implementation started with CAD/FEV1 (now with `gsmr.sh`, `gsmr.sb`, `g
 
 Earlier on, a pQTL-based MR analysis is furnished with `pqtlMR.sh`.
 
-Immune-mediatd traits from OpenGWAS is obtained via `OpenGWAS.sh`. `pqtlGWAS.R` was used for pQTL-GWAS lookup.
+Immune-mediatd diseases (IMDs) from OpenGWAS is obtained via `OpenGWAS.sh`, while `pqtlGWAS.R` was used for pQTL-disease GWAS lookup based on PhenoScanner v2 which used the following scheme.
+
+1. When pQTL is the disease QTL itself, decide if a switch is needed for effect direction.
+2. When pQTL and QTL has the same alleles, do as in Step 1.
+3. When QTL is a proxy for pQTL, infer the most likely haplotype to decide the swtich.
+4. Align the pQTL-disease effect direction according to ++, +-, -+, -- for increasing (+) or decreasing (-) pQTL allele (first sign) or disease risk (second sign).
+5. Obtain heatmaps for all and IMDs based on information from Step 4.
 
 ## Nested PGS model
 
@@ -131,6 +137,25 @@ This also mirrors the EWAS-fusion software for methylation data using epigenomew
 ## Summary statistics
 
 This is implemented with `gwasvcf.sh` and `gwas2vcf.sb` which includes some operations on VCF files. However, we found there is loss of information if enforcing use of RSid.
+
+A drawback of this approach is a reduction in number of mapped variants in the VCF files, so eventually this is done pragmattically as follows,
+
+```bash
+  ls *-1.tbl.gz | sed 's/.gz//' | grep -v BDNF | parallel -j10 -C' ' '
+  gunzip {}.gz;
+# cat <(head -1 {}) <(sed "1d" {} | sort -k1,1n -k2,2n) | bgzip -f > {}.gz
+  (
+    head -1 {}
+    for chr in {1..22}
+    do
+      awk -vchr=${chr} "\$1==chr" {} | sort -k2,2n
+    done
+  ) | bgzip -f > {}.gz
+  tabix -f -S1 -s1 -b2 -e2 {}.gz
+  '
+```
+
+The looping is not used unless there is memory issue from the commented line (#).
 
 ## SomaLogic overlap
 
