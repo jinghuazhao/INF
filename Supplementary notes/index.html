@@ -124,6 +124,10 @@
 <ul class="nav flex-column">
 </ul>
 </li>
+<li class="nav-item" data-level="2"><a class="nav-link" href="#pqtl-disease_qtl_overlap">pQTL-disease QTL overlap</a>
+<ul class="nav flex-column">
+</ul>
+</li>
 <li class="nav-item" data-level="2"><a class="nav-link" href="#nested_pgs_model">Nested PGS model</a>
 <ul class="nav flex-column">
 </ul>
@@ -252,7 +256,9 @@ utils.sh  --&gt; |"--n-causal-snps k"| finemap.sh
 <p>It turned to be more efficient in cis-pQTL analyses to extract the relevant variants involving in the analysis, rather than using whole-genome reference files. This led to ref/, prot/, /trait directories for reference, protein and trait data, respectively.</p>
 <p>The GSMR implementation started with CAD/FEV1 (now with <code>gsmr.sh</code>, <code>gsmr.sb</code>, <code>gsmr.R</code>) and then HGI as <code>gsmr_HGI.*</code> and pQTLMR/MR (<code>HGI.sh</code>, <code>HGI.R</code>), and +/- 1MB (<code>rs635634.sh</code>).</p>
 <p>Earlier on, a pQTL-based MR analysis is furnished with <code>pqtlMR.sh</code>.</p>
-<p>Immune-mediatd diseases (IMDs) from OpenGWAS is obtained via <code>OpenGWAS.sh</code>, while <code>pqtlGWAS.R</code> was used for pQTL-disease GWAS lookup based on PhenoScanner v2 which used the following scheme.</p>
+<p>Immune-mediatd diseases (IMDs) from OpenGWAS is obtained via <code>OpenGWAS.sh</code>.</p>
+<h2 id="pqtl-disease_qtl_overlap">pQTL-disease QTL overlap<a class="headerlink" href="#pqtl-disease_qtl_overlap" title="Permanent link">¶</a></h2>
+<p>File <code>pqtlGWAS.R</code> was used for pQTL-disease GWAS lookup based on PhenoScanner v2 which used the following scheme.</p>
 <ol>
 <li>When pQTL is the disease QTL itself, decide if a switch is needed for effect direction.</li>
 <li>When pQTL and QTL has the same alleles, do as in Step 1.</li>
