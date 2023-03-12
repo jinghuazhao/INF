@@ -1123,3 +1123,20 @@ function CXCL4_rs450373()
   '
   cd -
 }
+
+function tbi()
+# manageable sort
+{
+  ls *-1.tbl.gz | sed 's/.gz//' | grep -v BDNF | parallel -j10 -C' ' '
+  gunzip {}.gz;
+# cat <(head -1 {}) <(sed "1d" {} | sort -k1,1n -k2,2n) | bgzip -f > {}.gz
+  (
+    head -1 {}
+    for chr in {1..22}
+    do
+      awk -vchr=${chr} "\$1==chr" {} | sort -k2,2n
+    done
+  ) | bgzip -f > {}.gz
+  tabix -f -S1 -s1 -b2 -e2 {}.gz
+  '
+}
