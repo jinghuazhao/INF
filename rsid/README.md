@@ -53,7 +53,7 @@ This is exemplified with `vep.sh`. GARFIELD analysis is furnsihed with `garfield
 
 ## Known pQTLs
 
-Program `cvd1.sh` was used to obtain SCALLOP-CVD1 summary statistics. `pQTL.R` was used for QTL lookup.
+Program `cvd1.sh` was used to obtain SCALLOP-CVD1 summary statistics. `pQTL.R` was used for QTL lookup. More recent studies were implemented separately, e.g., `AGES.sh`, `deCODE.sh`, `Fenland.sh`.
 
 ## Colocalization analysis
 
