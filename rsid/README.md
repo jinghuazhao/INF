@@ -67,7 +67,7 @@ Multitrait counterparts were also done with HyPrColoc as in `rs12075.sh` and `LT
 
 ## Linear regression
 
-This is related to estimates of proprotion of variance explained (PVE), effect sizes and their standard errors, see [https://jinghuazhao.github.io/R/vignettes/gap.html](https://jinghuazhao.github.io/R/vignettes/gap.html).
+This is related to estimates of proprotion of variance explained (PVE), effect sizes and their standard errors, see <https://jinghuazhao.github.io/R/vignettes/gap.html>.
 
 ## Mendelian Randomization
 
@@ -167,15 +167,15 @@ The overlap is characterised with [Olink.R](../doc/Olink.R) which also gives a V
 
 ## Drug relevance
 
-The relevant data as derived from the drug gene interaction database (DGIdb) (https://dgidb.genome.wustl.edu/downloads) and earlier report, were also curated in the R package MRInstruments, containing 38,116 and 19,085 entries, corresponding to 430 and 784 entries associated with the 91 proteins, respectively. For instance PLAU, which encodes uPA, was also discussed. Queries were also made through EpiGraphDB. The pQTL associate genes and their relevance with Drugbank according to FUMA is contained in Supplementary Table geneDrugbank. Relevant information was also obtained from Drug repurposing hub (https://clue.io/repurposing#download-data) and ChEMBL web resource client (https://github.com/chembl/chembl_webresource_client).
+The relevant data as derived from the drug gene interaction database (DGIdb) (<https://dgidb.genome.wustl.edu/downloads>) and earlier report, were also curated in the R package MRInstruments, containing 38,116 and 19,085 entries, corresponding to 430 and 784 entries associated with the 91 proteins, respectively. For instance PLAU, which encodes uPA, was also discussed. Queries were also made through EpiGraphDB. The pQTL associate genes and their relevance with Drugbank according to FUMA is contained in Supplementary Table geneDrugbank. Relevant information was also obtained from Drug repurposing hub (<https://clue.io/repurposing#download-data>) and ChEMBL web resource client (<https://github.com/chembl/chembl_webresource_client>).
 
-81% of the pQTL-generating proteins were in GDIdb according to CoffeeProt. Pi database is shown in Supplementary Table ST9-Pi drug. For instance, IL12B links to Briakinumab (https://go.drugbank.com/drugs/DB05459) and Ustekinumab (https://go.drugbank.com/drugs/DB05679) for psoriasis, type I diabetes, ulcerative colitis, Crohn’s disease, Sarcoidosis, multiple sclerosis and systemic lupus erythematosus. The critical role of the PD-1/PD-L1 pathway in many cancers is well-recognized including lung cancer (https://www.lung.org/) whose immunotherapy is informed through immunohistochemical staining test and high amounts (50% or greater) of PD-L1 may respond particularly well to checkpoint inhibitors. PD-L1 expression was also shown association with progression to active tuberculosis and treatment response.
+81% of the pQTL-generating proteins were in GDIdb according to CoffeeProt. Pi database is shown in Supplementary Table ST15. For instance, IL12B links to Briakinumab (<https://go.drugbank.com/drugs/DB05459>) and Ustekinumab (<https://go.drugbank.com/drugs/DB05679>) for psoriasis, type I diabetes, ulcerative colitis, Crohn’s disease, Sarcoidosis, multiple sclerosis and systemic lupus erythematosus. The critical role of the PD-1/PD-L1 pathway in many cancers is well-recognized including lung cancer (<https://www.lung.org/>) whose immunotherapy is informed through immunohistochemical staining test and high amounts (50% or greater) of PD-L1 may respond particularly well to checkpoint inhibitors. PD-L1 expression was also shown association with progression to active tuberculosis and treatment response.
 
 ## UniProt IDs
 
 The list of proteins on inflammation is within one of the [Olink](https://www.olink.com/products/) panels (as in [Olink validation data all panels.xlsx](../doc/Olink%20validation%20data%20all%20panels.xlsx)) each containing 92 proteins. Information contained in these panels can be retrieved into R via [Olink.R](../doc/Olink.R), which also attempts to compromise earlier version and annotations. Nevertheless O43508 is replaced with Q4ACW9 for TWEAK.
 
-BDNF has recently been removed from the assay and replaced with CD8A, [https://www.olink.com/bdnf-info/](https://www.olink.com/bdnf-info/), and there are also changes on TNF and IFN.gamma, [https://www.olink.com/inflammation-upgrade/](https://www.olink.com/inflammation-upgrade/).
+BDNF has recently been removed from the assay and replaced with CD8A, <https://www.olink.com/bdnf-info/>, and there are also changes on TNF and IFN.gamma, <https://www.olink.com/inflammation-upgrade/>.
 
 A [UniProt](https://www.uniprot.org/) ID may be associated with multiple chromosomes, e.g., Q6IEY1 with chromosomes 1 and 5. While [inf1.csv](../doc/inf1.csv) 
 edits Q4ACW9, [inf2.csv](../doc/inf2.csv) is inline with UCSC with respect to P12034 and P30203.
