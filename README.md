@@ -1,7 +1,7 @@
 # SCALLOP-INF meta-analysis
+<img src="https://connect.medrxiv.org/qr/qr_img.php?id=2023.03.24.23287680" width=80 height=80>.
 
 A companion web site for this paper, 
-<img src="https://connect.medrxiv.org/qr/qr_img.php?id=2023.03.24.23287680" width=80 height=80>.
 
 Jing Hua Zhao, David Stacey, Niclas Eriksson, Erin Macdonald-Dunlop, Asa H Hedman, Anette Kalnapenkis, Stefan Enroth, Domenico Cozzetto, Jonathan Digby-Bell, Jonanthan Marten, Lasse Folkersen, Christian Herder, Lina Jonsson, Sarah E. Bergen, Christian Gieger, Elise J Needham, Praveen Surendran, Estonia Biobank Research Team, Dirk S Paul, Ozren Polasek, Barbara Thorand, Harald Grallert, Michael Roden, Urmo Vosa, Tonu Esko, Caroline Hayward, Asa Johansson, Ulf Gyllensten, Nicholas Powell, Oskar Hansson, Niklas Mattsson-Carlgren, Peter K Joshi, John Danesh, Leonid Padyukov, Lars Klareskog, Mikael Landen, James F Wilson, Agneta Siegbahn, Lars Wallentin, Anders Malarstig, Adam S Butterworth, James E. Peters
 medRxiv 2023.03.24.23287680; doi: <https://doi.org/10.1101/2023.03.24.23287680>.
