@@ -1,5 +1,5 @@
-# SCALLOP-INF meta-analysis
 <img src="https://connect.medrxiv.org/qr/qr_img.php?id=2023.03.24.23287680" width=80 height=80>.
+# SCALLOP-INF meta-analysis
 
 A companion web site for this paper, 
 
