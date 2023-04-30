@@ -1,11 +1,10 @@
 #!/usr/bin/bash
 
 export eQTLGen=~/rds/public_databases/eQTLGen
+export TMPDIR=${HPC_WORK}/work
 
 function eQTLGen_tabix()
 {
-  export TMPDIR=${HPC_WORK}/work
-  export eQTLGen=~/rds/public_databases/eQTLGen
   export eQTLGen_tabix=tabix
 # MAF
   gunzip -c ${eQTLGen}/2018-07-18_SNP_AF_for_AlleleB_combined_allele_counts_and_MAF_pos_added.txt.gz | \
@@ -235,7 +234,7 @@ function run_coloc()
    }
    res <- run_coloc()
    write.table(res,file=file.path(INF,"eQTLGen",paste0(r,"-",prot,"-",gene,".out")))
- ' 
+ '
 }
 
 function coloc()
@@ -260,7 +259,52 @@ function coloc()
 
 if [ ! -d ${INF}/eQTLGen/log ]; then mkdir -p ${INF}/eQTLGen/log; fi
 
+function lz()
+{
+  export cis_full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
+  export eQTLGen_tabix=${eQTLGen}/tabix
+  export M=1e6
+  Rscript -e '
+  suppressMessages(library(dplyr))
+  INF <- Sys.getenv("INF")
+  M <- Sys.getenv("M") %>% as.integer
+  INF1_METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+                left_join(select(pQTLdata::inf1,prot,gene,chr,start,end)) %>%
+                filter(cis.trans=="cis") %>%
+                mutate(start=if_else(start-M<0,0,start-M),end=end+M,region=paste0(chr,":",start,"-",end)) %>%
+                select(uniprot,prot,gene,region,chr)
+  write.table(INF1_METAL,file=file.path(INF,"eQTLGen","cis.lst"),row.names=FALSE,col.names=FALSE,quote=FALSE)
+  cat ${INF}/eQTLGen/cis.lst | \
+  parallel -C' ' '
+# eQTLGen
+  cat <(echo -e "snpid\trsid\tchr\tpos\ta1\ta2\tz") \
+      <(tabix ${eQTLGen_tabix}/cis_full.txt.gz {4} | \
+        awk -vgene={3} "\$9==gene" | \
+        cut -f2-7 | \
+        awk -vOFS="\t" "
+        {
+           if (\$5<\$6) snpid=\"chr\"\$2\":\"\$3\"_\"\$5\"_\"\$6;
+           else snpid=\"chr\"\$2\":\"\$3\"_\"\$6\"_\"\$5
+           print snpid, \$1, \$2, \$3, \$5, \$6, \$4
+         }") | \
+       gzip -f > ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.tsv.gz
+# SCALLOP/INF
+  cat <(echo -e "snpid\trsid\tchr\tpos\ta1\ta2\tz") \
+      <(tabix ${INF}/METAL/{2}-1.tbl.gz {4} | \
+        awk -vOFS="\t" "
+        {
+          split(\$3,a,\"_\")
+          print a[1],\$1,\$2,\$10/\$11,\$3,toupper(\$4),toupper(\$5)
+        }" | \
+        sort -k1,1 | \
+        join -12 -21 <(grep chr{5} ${INF}/work/snp_pos) - | \
+        awk -vOFS="\t" "{print \$6, \$2, \$3, \$4, \$7, \$8, \$5}") | \
+        gzip -f > ${INF}/eQTLGen/INF-{1}-{2}-{3}.tsv.gz
+  '
+}
+
 # lookup_merge
 # lookup_jma
+# coloc
 
-coloc
+lz
