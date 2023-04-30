@@ -29,6 +29,7 @@ function replication()
     '
   ) > ${INF}/deCODE/replication38.tsv
   Rscript -e '
+    optinos(width=200)
     INF <- Sys.getenv("INF")
     suppressMessages(library(dplyr))
     rep38 <- read.delim(file.path(INF,"deCODE","replication38.tsv")) %>%
@@ -47,9 +48,48 @@ function replication()
           full_join(rep38) %>%
           mutate(snpid=if_else(effectAllele>otherAllele,paste0(chr,":",pos37,"_",otherAllele,"_",effectAllele),
                                                         paste0(chr,":",pos37,"_",effectAllele,"_",otherAllele)),
-                 pval=gap::pvalue(Beta/SE)) %>%
-          select(snpid,prot,pval)
-    write.table(df,file=file.path(INF,"deCODE","replication.tsv"),row.names=FALSE,col.names=FALSE,quote=FALSE,sep="\t")
+                 pval=gap::pvalue(Beta/SE))
+    write.table(select(df,snpid,prot,pval),file=file.path(INF,"deCODE","replication.tsv"),row.names=FALSE,col.names=FALSE,quote=FALSE,sep="\t")
+    deCODE <- read.table(file.path(INF,"deCODE","olink_inf.full"),col.names=c("uniprot","prot","gene","chrpos","rsid","snpid")) %>%
+              mutate(Protein=paste0(gene,"-",rsid)) %>%
+              left_join(df) %>%
+              select(Protein,effectAllele,otherAllele,Beta,SE,pval,ImpMAF) %>% mutate(mlog10p=-gap::log10p(Beta/SE))
+    INF <- Sys.getenv("INF")
+    INF1_METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+                  left_join(select(pQTLdata::inf1,prot,gene)) %>%
+                  mutate(Allele1=toupper(Allele1), Allele2=toupper(Allele2),INF1_METAL,Protein=paste0(gene,"-",rsid))
+    INF1_deCODE <- left_join(INF1_METAL,deCODE) %>%
+                   select(Protein,Allele1,Allele2,effectAllele,otherAllele,Freq1,Effect,StdErr,log.P.,,Beta,SE,pval,mlog10p,cis.trans) %>%
+                   mutate(sw=if_else(Allele1==effectAllele,1,-1),Beta=sw*Beta,sw2=(sign(Effect)==sign(Beta))+0) %>%
+                   filter(!is.na(Beta))
+    subset(INF1_deCODE[c("Effect","Beta","log.P.","pval","cis.trans")],cis.trans=="cis") %>% arrange(Effect)
+    nrow(INF1_deCODE)
+    filter(INF1_deCODE, mlog10p>=-log10(5e-8)) %>% nrow()
+    filter(INF1_deCODE, mlog10p>=-log10(0.05)) %>% nrow()
+    table(INF1_deCODE$sw2)
+    png(file=file.path(INF,"deCODE","SF-INF-deCODE.png"),res=300,width=15,height=15,units="in")
+    attach(INF1_deCODE)
+    par(mar=c(5,5,1,1))
+    plot(Effect,Beta,pch=19,cex=2,col=ifelse(cis.trans=="trans","blue","red"),xaxt="n",ann=FALSE,cex.axis=2)
+    axis(1,cex.axis=2,lwd.tick=0.5)
+    legend(x=1.5,y=-0.5,c("cis","trans"),box.lwd=0,cex=2,col=c("red","blue"),pch=19)
+    mtext("deCODE",side=2,line=3,cex=2)
+    mtext("Meta-analysis",side=1,line=3,cex=2)
+    abline(h=0,v=0)
+    detach(INF1_deCODE)
+    dev.off()
+    all <- INF1_deCODE %>%
+           filter(!is.na(Beta)) %>%
+           select(Effect,Beta)
+    cor(all,use="everything")
+    cis <- INF1_deCODE %>%
+           filter(!is.na(Beta) & cis.trans=="cis") %>%
+           select(Effect,Beta)
+    cor(cis,use="everything")
+    trans <- INF1_deCODE %>%
+             filter(!is.na(Beta) & cis.trans=="trans") %>%
+             select(Effect,Beta)
+    cor(trans,use="everything")
   '
 }
 
