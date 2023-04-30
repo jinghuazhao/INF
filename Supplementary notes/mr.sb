@@ -347,8 +347,8 @@ function mr2()
                                 select(prot,id.outcome,disease,method,Q,Q_df,Q_pval,-id.exposure,-exposure)
     write.table(mr_heterogeneity_results,file=file.path(rt,"mr",paste0(prot,".het")),row.names=FALSE,quote=FALSE,sep="\t")
     mr_single_results <- mr_singlesnp(dat) %>%
-                      mutate(prot=prot,id.outcome=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
-                      select(prot,id.exposure,id.outcome,SNP,b,se,p)
+                         mutate(prot=prot,id.outcome=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
+                         select(prot,id.exposure,id.outcome,SNP,b,se,p)
     fp <- mr_forest_plot(mr_single_results)
     fp_outcome <- gsub("^.","",gsub(prot,"",names(fp)))
     for(i in 1:length(fp))
