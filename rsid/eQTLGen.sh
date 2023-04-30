@@ -274,6 +274,7 @@ function lz()
                 mutate(start=if_else(start-M<0,0,start-M),end=end+M,region=paste0(chr,":",start,"-",end)) %>%
                 select(uniprot,prot,gene,region,chr)
   write.table(INF1_METAL,file=file.path(INF,"eQTLGen","cis.lst"),row.names=FALSE,col.names=FALSE,quote=FALSE)
+  '
   cat ${INF}/eQTLGen/cis.lst | \
   parallel -C' ' '
 # eQTLGen
