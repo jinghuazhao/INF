@@ -237,6 +237,7 @@ utils.sh | utilties
 
 ## Related links
 
+* A Table of all published GWAS with proteomics by Karsten Suhre, <http://www.metabolomix.com/a-table-of-all-published-gwas-with-proteomics/>
 * [Olink Insights Stat Analysis](https://olinkproteomics.shinyapps.io/OlinkInsightsStatAnalysis/)
 * [Olink R package](https://github.com/Olink-Proteomics/OlinkRPackage) (CRAN [OlinkAnalyze](https://CRAN.R-project.org/package=OlinkAnalyze))
 * [Olink location](https://www.olink.com/scallop/), [What is NPX](https://www.olink.com/question/what-is-npx/), [F2F London meeting](https://www.olink.com/scallop-f2f-2019/), [Data Science Workshop 2019](https://www.olink.com/data-science-workshop-2019/).
