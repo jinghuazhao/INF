@@ -259,7 +259,7 @@ function coloc()
 
 if [ ! -d ${INF}/eQTLGen/log ]; then mkdir -p ${INF}/eQTLGen/log; fi
 
-function lz()
+function lzdat()
 {
   export cis_full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
   export eQTLGen_tabix=${eQTLGen}/tabix
@@ -272,27 +272,31 @@ function lz()
                 left_join(select(pQTLdata::inf1,prot,gene,chr,start,end)) %>%
                 filter(cis.trans=="cis") %>%
                 mutate(start=if_else(start-M<0,0,start-M),end=end+M,region=paste0(chr,":",start,"-",end)) %>%
-                select(uniprot,prot,gene,region,chr)
+                select(uniprot,prot,gene,region,chr,rsid)
   write.table(INF1_METAL,file=file.path(INF,"eQTLGen","cis.lst"),row.names=FALSE,col.names=FALSE,quote=FALSE)
   '
   cat ${INF}/eQTLGen/cis.lst | \
   parallel -C' ' '
 # eQTLGen
-  cat <(echo -e "snpid\trsid\tchr\tpos\ta1\ta2\tz") \
+  cat <(echo -e "snpid rsid chr pos a1 a2 mlog10p") \
       <(tabix ${eQTLGen_tabix}/cis_full.txt.gz {4} | \
         awk -vgene={3} "\$9==gene" | \
         cut -f2-7 | \
-        awk -vOFS="\t" "
+        awk "
         {
            if (\$5<\$6) snpid=\"chr\"\$2\":\"\$3\"_\"\$5\"_\"\$6;
            else snpid=\"chr\"\$2\":\"\$3\"_\"\$6\"_\"\$5
            print snpid, \$1, \$2, \$3, \$5, \$6, \$4
          }") | \
-       gzip -f > ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.tsv.gz
+        Rscript -e "
+          z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p)});
+          write.table(z,row.names=FALSE,quote=FALSE,sep=\"\t\")
+        " | \
+        gzip -f > ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.tsv.gz
 # SCALLOP/INF
-  cat <(echo -e "snpid\trsid\tchr\tpos\ta1\ta2\tz") \
+  cat <(echo -e "snpid rsid chr pos a1 a2 mlog10p") \
       <(tabix ${INF}/METAL/{2}-1.tbl.gz {4} | \
-        awk -vOFS="\t" "
+        awk "
         {
           split(\$3,a,\"_\")
           print a[1],\$1,\$2,\$10/\$11,\$3,toupper(\$4),toupper(\$5)
@@ -300,12 +304,51 @@ function lz()
         sort -k1,1 | \
         join -12 -21 <(grep chr{5} ${INF}/work/snp_pos) - | \
         awk -vOFS="\t" "{print \$6, \$2, \$3, \$4, \$7, \$8, \$5}") | \
+        Rscript -e "
+          z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p)});
+          write.table(z,row.names=FALSE,quote=FALSE,sep=\"\t\")
+        " | \
         gzip -f > ${INF}/eQTLGen/INF-{1}-{2}-{3}.tsv.gz
+  '
+}
+# ls -l eQTLGen/eQTLGen* -S | awk -vOFS="\t" '$(NF-4)==45 {split($NF,a,"-");split(a[3],b,".");print a[2],a[3],b[1]}' | xsel -i
+
+function lzplot()
+{
+  module load python/2.7
+  ls -l eQTLGen/eQTLGen* -S | awk -vOFS="\t" '$(NF-4)!=45 {split($NF,a,"-");print a[3]}' | \
+  grep -w -f - ${INF}/eQTLGen/cis.lst | cut -d ' ' -f1-4,6 | awk '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5}' | \
+  parallel -j5 -C ' ' --env INF '
+    (
+      echo -e "chr\tpos\trsid\tmlog10P"
+      gunzip -c ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.tsv.gz | \
+      awk -v OFS="\t" "NR>1 {print \$3,\$4,\$2,\$7}" | \
+      sort -k1,1n -k2,2n
+    ) > ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.lz
+    mkdir -p ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}
+    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.lz \
+              --delim tab title="{2}-{7}" \
+              --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
+              --no-date --plotonly --prefix={2}-{7} --rundir ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3} --svg --refsnp {7}
+    rm ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.lz
+    (
+      echo -e "chr\tpos\trsid\tmlog10P"
+      gunzip -c ${INF}/eQTLGen/INF-{1}-{2}-{3}.tsv.gz | \
+      awk -v OFS="\t" "NR>1 {print \$3,\$4,\$2,\$7}" | \
+      sort -k1,1n -k2,2n
+    ) > ${INF}/eQTLGen/INF-{1}-{2}-{3}.lz
+    mkdir -p ${INF}/eQTLGen/INF-{1}-{2}-{3}
+    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/eQTLGen/INF-{1}-{2}-{3}.lz \
+              --delim tab title="{2}-{7}" \
+              --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
+              --no-date --plotonly --prefix={2}-{7} --rundir ${INF}/eQTLGen/INF-{1}-{2}-{3} --svg --refsnp {7}
+    rm ${INF}/eQTLGen/INF-{1}-{2}-{3}.lz
   '
 }
 
 # lookup_merge
 # lookup_jma
 # coloc
+# lzdat
 
-lz
+lzplot
