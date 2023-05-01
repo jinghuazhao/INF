@@ -257,69 +257,64 @@ function coloc()
   cd -
 }
 
-if [ ! -d ${INF}/eQTLGen/log ]; then mkdir -p ${INF}/eQTLGen/log; fi
-
-function lzdat()
+function lz()
 {
   export cis_full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
   export eQTLGen_tabix=${eQTLGen}/tabix
   export M=1e6
   Rscript -e '
-  suppressMessages(library(dplyr))
-  INF <- Sys.getenv("INF")
-  M <- Sys.getenv("M") %>% as.integer
-  INF1_METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
-                left_join(select(pQTLdata::inf1,prot,gene,chr,start,end)) %>%
-                filter(cis.trans=="cis") %>%
-                mutate(start=if_else(start-M<0,0,start-M),end=end+M,region=paste0(chr,":",start,"-",end)) %>%
-                select(uniprot,prot,gene,region,chr,rsid)
-  write.table(INF1_METAL,file=file.path(INF,"eQTLGen","cis.lst"),row.names=FALSE,col.names=FALSE,quote=FALSE)
+    suppressMessages(library(dplyr))
+    INF <- Sys.getenv("INF")
+    M <- Sys.getenv("M") %>% as.integer
+    INF1_METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+                  left_join(select(pQTLdata::inf1,prot,gene,chr,start,end)) %>%
+                  filter(cis.trans=="cis") %>%
+                  mutate(start=if_else(start-M<0,0,start-M),end=end+M,region=paste0(chr,":",start,"-",end)) %>%
+                  select(uniprot,prot,gene,region,chr,rsid)
+    write.table(INF1_METAL,file=file.path(INF,"eQTLGen","cis.lst"),row.names=FALSE,col.names=FALSE,quote=FALSE)
   '
-  cat ${INF}/eQTLGen/cis.lst | \
-  parallel -C' ' '
+  module load python/2.7
+  export dir=${INF}/eQTLGen
+  cut -d ' ' -f1-4,6 ${dir}/cis.lst | awk '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5}' | \
+  parallel -j8 -C ' ' --env dir '
+  echo "{1}-{2}-{3}"
 # eQTLGen
   cat <(echo -e "snpid rsid chr pos a1 a2 mlog10p") \
-      <(tabix ${eQTLGen_tabix}/cis_full.txt.gz {4} | \
+      <(tabix ${eQTLGen_tabix}/cis_full.txt.gz {4}:{5}-{6} | \
         awk -vgene={3} "\$9==gene" | \
         cut -f2-7 | \
         awk "
         {
-           if (\$5<\$6) snpid=\"chr\"\$2\":\"\$3\"_\"\$5\"_\"\$6;
-           else snpid=\"chr\"\$2\":\"\$3\"_\"\$6\"_\"\$5
-           print snpid, \$1, \$2, \$3, \$5, \$6, \$4
-         }") | \
-        Rscript -e "
-          z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p)});
-          write.table(z,row.names=FALSE,quote=FALSE,sep=\"\t\")
-        " | \
-        gzip -f > ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.tsv.gz
+          if (\$5<\$6) snpid=\"chr\"\$2\":\"\$3\"_\"\$5\"_\"\$6;
+          else snpid=\"chr\"\$2\":\"\$3\"_\"\$6\"_\"\$5
+          print snpid, \$1, \$2, \$3, \$5, \$6, \$4
+        }") | \
+  Rscript -e "
+     z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p)});
+     write.table(z,row.names=FALSE,quote=FALSE,sep=\"\t\")
+  " | \
+  gzip -f > ${dir}/eQTLGen-{1}-{2}-{3}.tsv.gz
 # SCALLOP/INF
   cat <(echo -e "snpid rsid chr pos a1 a2 mlog10p") \
-      <(tabix ${INF}/METAL/{2}-1.tbl.gz {4} | \
+      <(tabix ${INF}/METAL/{2}-1.tbl.gz {4}:{5}-{6} | \
         awk "
         {
           split(\$3,a,\"_\")
           print a[1],\$1,\$2,\$10/\$11,\$3,toupper(\$4),toupper(\$5)
         }" | \
         sort -k1,1 | \
-        join -12 -21 <(grep chr{5} ${INF}/work/snp_pos) - | \
+        join -12 -21 <(grep chr{4} ${INF}/work/snp_pos) - | \
         awk -vOFS="\t" "{print \$6, \$2, \$3, \$4, \$7, \$8, \$5}") | \
-        Rscript -e "
-          z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p)});
-          write.table(z,row.names=FALSE,quote=FALSE,sep=\"\t\")
-        " | \
-        gzip -f > ${INF}/eQTLGen/INF-{1}-{2}-{3}.tsv.gz
-  '
-}
-
-function lzplot()
-{
-  module load python/2.7
-  export dir=${INF}/eQTLGen
-  ls -l eQTLGen/eQTLGen*gz -S | awk -vOFS="\t" '$(NF-4)>51 {split($NF,a,"-");print a[3]}' | \
-  grep -w -f - ${dir}/cis.lst | cut -d ' ' -f1-4,6 | awk '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5}' | \
-  parallel -j8 -C ' ' --env dir '
-    echo "{1}-{2}-{3}"
+  Rscript -e "
+     z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p)});
+     write.table(z,row.names=FALSE,quote=FALSE,sep=\"\t\")
+  " | \
+  gzip -f > ${dir}/INF-{1}-{2}-{3}.tsv.gz
+  export nlines=$(gunzip -c ${dir}/eQTLGen-{1}-{2}-{3}.tsv.gz | wc -l | cut -d" " -f1)
+  if [ ${nlines} -eq 1 ]; then
+    echo -e "{1}\t{2}\t{3}\tremoved"
+    rm ${dir}/eQTLGen-{1}-{2}-{3}.tsv.gz ${dir}/INF-{1}-{2}-{3}.tsv.gz
+  else
     (
       echo -e "chr\tpos\trsid\tmlog10P"
       gunzip -c ${dir}//eQTLGen-{1}-{2}-{3}.tsv.gz | \
@@ -351,6 +346,7 @@ function lzplot()
     rm ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/INF-{3}_{7}.pdf
     rm ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png
     rm ${dir}/{1}-{2}-{3}.jp2 ${dir}/{1}-{2}-{3}.png
+  fi
   '
   qpdf --empty --pages $(ls ${dir}/*-lz.pdf) -- ${dir}/lz.pdf
   rm ${dir}/*-lz.pdf
@@ -361,9 +357,10 @@ function lzplot()
 # gs -sDEVICE=jpeg -r300 -dNOPAUSE -dBATCH -sOutputFile=eQTLGen-{2}_{7}.jpg -dFirstPage=1 -dLastPage=1 eQTLGen-{2}_{7}.pdf
 # gs -sDEVICE=jpeg -r300 -dNOPAUSE -dBATCH -sOutputFile=INF-{2}_{7}.jpg -dFirstPage=1 -dLastPage=1 INF-{2}_{7}.pdf
 
+if [ ! -d ${INF}/eQTLGen/log ]; then mkdir -p ${INF}/eQTLGen/log; fi
+
 # lookup_merge
 # lookup_jma
 # coloc
-# lzdat
 
-lzplot
+lz
