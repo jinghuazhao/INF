@@ -327,9 +327,9 @@ function lzplot()
       sort -k1,1n -k2,2n
     ) > ${dir}/eQTLGen-{1}-{2}-{3}.lz
     locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/eQTLGen-{1}-{2}-{3}.lz \
-              --delim tab title="{2}-{7}" \
+              --delim tab title="eQTLGen: {3}-{7}" \
               --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
-              --no-date --plotonly --prefix=eQTLGen-{2} --rundir ${dir} --refsnp {7}
+              --no-date --plotonly --prefix=eQTLGen-{3} --rundir ${dir} --refsnp {7}
     (
       echo -e "chr\tpos\trsid\tmlog10P"
       gunzip -c ${INF}/eQTLGen/INF-{1}-{2}-{3}.tsv.gz | \
@@ -337,27 +337,23 @@ function lzplot()
       sort -k1,1n -k2,2n
     ) > ${dir}/INF-{1}-{2}-{3}.lz
     locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/INF-{1}-{2}-{3}.lz \
-              --delim tab title="{2}-{7}" \
+              --delim tab title="SCALLOP: {3}-{7}" \
               --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
-              --no-date --plotonly --prefix=INF-{2} --rundir ${dir} --refsnp {7}
-    pdftopng -f 1 -l 1 -r 300 ${dir}/eQTLGen-{2}_{7}.pdf ${dir}/eQTLGen-{2}_{7}
-    pdftopng -f 1 -l 1 -r 300 ${dir}/INF-{2}_{7}.pdf ${dir}/INF-{2}_{7}
-    mv ${dir}/eQTLGen-{2}_{7}-000001.png ${dir}/eQTLGen-{2}_{7}.png
-    mv ${dir}/INF-{2}_{7}-000001.png ${dir}/INF-{2}_{7}.png
-    convert +append ${dir}/eQTLGen-{2}_{7}.png ${dir}/INF-{2}_{7}.png -resize x500 -density 300 ${dir}/{1}-{2}-{3}.png
+              --no-date --plotonly --prefix=INF-{3} --rundir ${dir} --refsnp {7}
+    pdftopng -f 1 -l 1 -r 300 ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/eQTLGen-{3}_{7}
+    pdftopng -f 1 -l 1 -r 300 ${dir}/INF-{3}_{7}.pdf ${dir}/INF-{3}_{7}
+    mv ${dir}/eQTLGen-{3}_{7}-000001.png ${dir}/eQTLGen-{3}_{7}.png
+    mv ${dir}/INF-{3}_{7}-000001.png ${dir}/INF-{3}_{7}.png
+    convert +append ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png -resize x500 -density 300 ${dir}/{1}-{2}-{3}.png
     convert ${dir}/{1}-{2}-{3}.png -quality 0 ${dir}/{1}-{2}-{3}.jp2
-    module load python/3.7
-    source ~/COVID-19/py37/bin/activate
-#   img2pdf -o ${dir}/{1}-{2}-{3}-lz.pdf ${dir}/{1}-{2}-{3}.jp2
-    deactivate
-    module unload python/3.7
     convert ${dir}/{1}-{2}-{3}.jp2 ${dir}/{1}-{2}-{3}-lz.pdf
     rm ${dir}/eQTLGen-{1}-{2}-{3}.lz ${dir}/INF-{1}-{2}-{3}.lz
-    rm ${dir}/eQTLGen-{2}_{7}.pdf ${dir}/INF-{2}_{7}.pdf
-    rm ${dir}/eQTLGen-{2}_{7}.png ${dir}/INF-{2}_{7}.png
+    rm ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/INF-{3}_{7}.pdf
+    rm ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png
     rm ${dir}/{1}-{2}-{3}.jp2 ${dir}/{1}-{2}-{3}.png
   '
   qpdf --empty --pages $(ls ${dir}/*-lz.pdf) -- ${dir}/lz.pdf
+  rm ${dir}/*-lz.pdf
 }
 # ls -l eQTLGen/eQTLGen* -S | awk -vOFS="\t" '$(NF-4)==51 {split($NF,a,"-");split(a[3],b,".");print a[2],a[3],b[1]}' | xsel -i
 # convert -density 300 ${dir}/eQTLGen-{2}_{7}.pdf[0] ${dir}/eQTLGen-{2}_{7}.png
