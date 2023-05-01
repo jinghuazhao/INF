@@ -340,17 +340,19 @@ function lzplot()
               --delim tab title="{2}-{7}" \
               --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
               --no-date --plotonly --prefix=INF-{2} --rundir ${dir} --refsnp {7}
-    convert -density 300 ${dir}/eQTLGen-{2}_{7}.pdf[0] ${dir}/eQTLGen-{2}_{7}.png
-    convert -density 300 ${dir}/INF-{2}_{7}.pdf[0] ${dir}/INF-{2}_{7}.png
+    pdftopng -f 1 -l 1 -r 300 ${dir}/eQTLGen-{2}_{7}.pdf ${dir}/eQTLGen-{2}_{7}
+    pdftopng -f 1 -l 1 -r 300 ${dir}/INF-{2}_{7}.pdf ${dir}/INF-{2}_{7}
+    mv ${dir}/eQTLGen-{2}_{7}-000001.png ${dir}/eQTLGen-{2}_{7}.png
+    mv ${dir}/INF-{2}_{7}-000001.png ${dir}/INF-{2}_{7}.png
     convert +append ${dir}/eQTLGen-{2}_{7}.png ${dir}/INF-{2}_{7}.png -resize x500 -density 300 ${dir}/{1}-{2}-{3}.png
     convert ${dir}/{1}-{2}-{3}.png -quality 0 ${dir}/{1}-{2}-{3}.jp2
     module load python/3.7
     source ~/COVID-19/py37/bin/activate
-    img2pdf -o ${dir}/{1}-{2}-{3}-lz.pdf ${dir}/{1}-{2}-{3}.jp2
+#   img2pdf -o ${dir}/{1}-{2}-{3}-lz.pdf ${dir}/{1}-{2}-{3}.jp2
     deactivate
     module unload python/3.7
+    convert ${dir}/{1}-{2}-{3}.jp2 ${dir}/{1}-{2}-{3}-lz.pdf
     rm ${dir}/eQTLGen-{1}-{2}-{3}.lz ${dir}/INF-{1}-{2}-{3}.lz
-    rm ${dir}/eQTLGen-{2}_{7}.jpg ${dir}/INF-{2}_{7}.jpg
     rm ${dir}/eQTLGen-{2}_{7}.pdf ${dir}/INF-{2}_{7}.pdf
     rm ${dir}/eQTLGen-{2}_{7}.png ${dir}/INF-{2}_{7}.png
     rm ${dir}/{1}-{2}-{3}.jp2 ${dir}/{1}-{2}-{3}.png
@@ -358,6 +360,8 @@ function lzplot()
   qpdf --empty --pages $(ls ${dir}/*-lz.pdf) -- ${dir}/lz.pdf
 }
 # ls -l eQTLGen/eQTLGen* -S | awk -vOFS="\t" '$(NF-4)==51 {split($NF,a,"-");split(a[3],b,".");print a[2],a[3],b[1]}' | xsel -i
+# convert -density 300 ${dir}/eQTLGen-{2}_{7}.pdf[0] ${dir}/eQTLGen-{2}_{7}.png
+# convert -density 300 ${dir}/INF-{2}_{7}.pdf[0] ${dir}/INF-{2}_{7}.png
 # gs -sDEVICE=jpeg -r300 -dNOPAUSE -dBATCH -sOutputFile=eQTLGen-{2}_{7}.jpg -dFirstPage=1 -dLastPage=1 eQTLGen-{2}_{7}.pdf
 # gs -sDEVICE=jpeg -r300 -dNOPAUSE -dBATCH -sOutputFile=INF-{2}_{7}.jpg -dFirstPage=1 -dLastPage=1 INF-{2}_{7}.pdf
 
