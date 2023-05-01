@@ -311,40 +311,55 @@ function lzdat()
         gzip -f > ${INF}/eQTLGen/INF-{1}-{2}-{3}.tsv.gz
   '
 }
-# ls -l eQTLGen/eQTLGen* -S | awk -vOFS="\t" '$(NF-4)==45 {split($NF,a,"-");split(a[3],b,".");print a[2],a[3],b[1]}' | xsel -i
 
 function lzplot()
 {
   module load python/2.7
-  ls -l eQTLGen/eQTLGen* -S | awk -vOFS="\t" '$(NF-4)!=45 {split($NF,a,"-");print a[3]}' | \
-  grep -w -f - ${INF}/eQTLGen/cis.lst | cut -d ' ' -f1-4,6 | awk '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5}' | \
-  parallel -j5 -C ' ' --env INF '
+  export dir=${INF}/eQTLGen
+  ls -l eQTLGen/eQTLGen*gz -S | awk -vOFS="\t" '$(NF-4)>51 {split($NF,a,"-");print a[3]}' | \
+  grep -w -f - ${dir}/cis.lst | cut -d ' ' -f1-4,6 | awk '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5}' | \
+  parallel -j8 -C ' ' --env dir '
+    echo "{1}-{2}-{3}"
     (
       echo -e "chr\tpos\trsid\tmlog10P"
-      gunzip -c ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.tsv.gz | \
+      gunzip -c ${dir}//eQTLGen-{1}-{2}-{3}.tsv.gz | \
       awk -v OFS="\t" "NR>1 {print \$3,\$4,\$2,\$7}" | \
       sort -k1,1n -k2,2n
-    ) > ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.lz
-    mkdir -p ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}
-    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.lz \
+    ) > ${dir}/eQTLGen-{1}-{2}-{3}.lz
+    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/eQTLGen-{1}-{2}-{3}.lz \
               --delim tab title="{2}-{7}" \
               --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
-              --no-date --plotonly --prefix={2}-{7} --rundir ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3} --svg --refsnp {7}
-    rm ${INF}/eQTLGen/eQTLGen-{1}-{2}-{3}.lz
+              --no-date --plotonly --prefix=eQTLGen-{2} --rundir ${dir} --refsnp {7}
     (
       echo -e "chr\tpos\trsid\tmlog10P"
       gunzip -c ${INF}/eQTLGen/INF-{1}-{2}-{3}.tsv.gz | \
       awk -v OFS="\t" "NR>1 {print \$3,\$4,\$2,\$7}" | \
       sort -k1,1n -k2,2n
-    ) > ${INF}/eQTLGen/INF-{1}-{2}-{3}.lz
-    mkdir -p ${INF}/eQTLGen/INF-{1}-{2}-{3}
-    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/eQTLGen/INF-{1}-{2}-{3}.lz \
+    ) > ${dir}/INF-{1}-{2}-{3}.lz
+    locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/INF-{1}-{2}-{3}.lz \
               --delim tab title="{2}-{7}" \
               --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
-              --no-date --plotonly --prefix={2}-{7} --rundir ${INF}/eQTLGen/INF-{1}-{2}-{3} --svg --refsnp {7}
-    rm ${INF}/eQTLGen/INF-{1}-{2}-{3}.lz
+              --no-date --plotonly --prefix=INF-{2} --rundir ${dir} --refsnp {7}
+    convert -density 300 ${dir}/eQTLGen-{2}_{7}.pdf[0] ${dir}/eQTLGen-{2}_{7}.png
+    convert -density 300 ${dir}/INF-{2}_{7}.pdf[0] ${dir}/INF-{2}_{7}.png
+    convert +append ${dir}/eQTLGen-{2}_{7}.png ${dir}/INF-{2}_{7}.png -resize x500 -density 300 ${dir}/{1}-{2}-{3}.png
+    convert ${dir}/{1}-{2}-{3}.png -quality 0 ${dir}/{1}-{2}-{3}.jp2
+    module load python/3.7
+    source ~/COVID-19/py37/bin/activate
+    img2pdf -o ${dir}/{1}-{2}-{3}-lz.pdf ${dir}/{1}-{2}-{3}.jp2
+    deactivate
+    module unload python/3.7
+    rm ${dir}/eQTLGen-{1}-{2}-{3}.lz ${dir}/INF-{1}-{2}-{3}.lz
+    rm ${dir}/eQTLGen-{2}_{7}.jpg ${dir}/INF-{2}_{7}.jpg
+    rm ${dir}/eQTLGen-{2}_{7}.pdf ${dir}/INF-{2}_{7}.pdf
+    rm ${dir}/eQTLGen-{2}_{7}.png ${dir}/INF-{2}_{7}.png
+    rm ${dir}/{1}-{2}-{3}.jp2 ${dir}/{1}-{2}-{3}.png
   '
+  qpdf --empty --pages $(ls ${dir}/*-lz.pdf) -- ${dir}/lz.pdf
 }
+# ls -l eQTLGen/eQTLGen* -S | awk -vOFS="\t" '$(NF-4)==51 {split($NF,a,"-");split(a[3],b,".");print a[2],a[3],b[1]}' | xsel -i
+# gs -sDEVICE=jpeg -r300 -dNOPAUSE -dBATCH -sOutputFile=eQTLGen-{2}_{7}.jpg -dFirstPage=1 -dLastPage=1 eQTLGen-{2}_{7}.pdf
+# gs -sDEVICE=jpeg -r300 -dNOPAUSE -dBATCH -sOutputFile=INF-{2}_{7}.jpg -dFirstPage=1 -dLastPage=1 INF-{2}_{7}.pdf
 
 # lookup_merge
 # lookup_jma
