@@ -349,6 +349,7 @@ function mr2()
     mr_single_results <- mr_singlesnp(dat) %>%
                          mutate(prot=prot,id.outcome=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%
                          select(prot,id.exposure,id.outcome,SNP,b,se,p)
+    write.table(mr_single_results,file=file.path(rt,"mr",paste0(prot,".single")),row.names=FALSE,quote=FALSE,sep="\t")
     fp <- mr_forest_plot(mr_single_results)
     fp_outcome <- gsub("^.","",gsub(prot,"",names(fp)))
     for(i in 1:length(fp))
@@ -403,7 +404,8 @@ function gsmr_trait()
 # mr2
 # gsmr2
 # gsmr_trait
-gsmr3
+mr2
+# gsmr3
 
 function gsmr_hgi()
 {
