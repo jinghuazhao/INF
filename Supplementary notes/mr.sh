@@ -951,7 +951,12 @@ function mr_recollect()
     cat ${rt}/mr/*het | head -1
     ls ${rt}/mr/*het | grep -v TNFB | xargs -l -I {} sed '1d' {}
   ) > $rt/mr-efo.het
+  (
+    cat ${rt}/mr/*single | head -1
+    ls ${rt}/mr/*single | grep -v TNFB | xargs -l -I {} sed '1d' {}
+  ) > $rt/mr-efo.single
   Rscript -e '
+    options(width=200)
     library(dplyr)
     library(openxlsx)
     rt <- Sys.getenv("rt")
@@ -967,6 +972,9 @@ function mr_recollect()
                      select(gene,id.outcome,method,Q,Q_df,Q_pval,fdr,disease)
     cat(nrow(filter(Heterogeneity,fdr<=0.05)),"\n")
     write.table(Heterogeneity,file.path(rt,"mr-efo-het.tsv"),quote=FALSE,row.names=FALSE,sep="\t")
+    Single <- read.delim(file.path(rt,"mr-efo.single")) %>%
+             left_join(select(pQTLdata::inf1,prot,gene)) %>%
+             select(gene,id.outcome,SNP,b,se,p)
 #   GSMR <- read.delim(file.path(rt,"out","gsmr-efo.txt")) %>%
 #           rename(target.short=protein) %>%
 #           left_join(select(pQTLdata::inf1,target.short,gene)) %>%
@@ -974,10 +982,14 @@ function mr_recollect()
     GSMR <- read.delim(file.path(rt,"gsmr-efo.txt")) %>%
             rename(target.short=protein) %>%
             left_join(select(pQTLdata::inf1,target.short,gene))
+    GSMR_genes <- filter(GSMR,fdr<=0.05) %>% pull(gene) %>% unique
+    IVW_genes <- filter(IVW,gene%in%GSMR_genes)
+    Heterogeneity_genes <- filter(Heterogeneity,gene%in%GSMR_genes)
+    Single_genes <- filter(Single,gene%in%GSMR_genes)
     xlsx <- file.path(rt,"gsmr-mr.xlsx")
     wb <- createWorkbook(xlsx)
     hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
-    for (sheet in c("GSMR","IVW","Heterogeneity"))
+    for (sheet in c("GSMR","IVW","Heterogeneity","Single","IVW_genes","Heterogeneity_genes","Single_genes"))
     {
       addWorksheet(wb,sheet,zoom=150)
       writeData(wb,sheet,sheet,xy=c(1,1),headerStyle=createStyle(textDecoration="BOLD",
