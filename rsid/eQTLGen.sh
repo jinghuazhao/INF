@@ -261,7 +261,7 @@ function lz()
 {
   export cis_full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
   export eQTLGen_tabix=${eQTLGen}/tabix
-  export M=1e6
+  export M=250000
   Rscript -e '
     suppressMessages(library(dplyr))
     INF <- Sys.getenv("INF")
@@ -290,7 +290,8 @@ function lz()
           print snpid, \$1, \$2, \$3, \$5, \$6, \$4
         }") | \
   Rscript -e "
-     z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p)});
+     suppressMessages(library(dplyr))
+     z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p)})# ;mlog10p=if_else(mlog10p>20,20,mlog10p)});
      write.table(z,row.names=FALSE,quote=FALSE,sep=\"\t\")
   " | \
   gzip -f > ${dir}/eQTLGen-{1}-{2}-{3}.tsv.gz
@@ -339,9 +340,9 @@ function lz()
     pdftopng -f 1 -l 1 -r 300 ${dir}/INF-{3}_{7}.pdf ${dir}/INF-{3}_{7}
     mv ${dir}/eQTLGen-{3}_{7}-000001.png ${dir}/eQTLGen-{3}_{7}.png
     mv ${dir}/INF-{3}_{7}-000001.png ${dir}/INF-{3}_{7}.png
-    convert +append ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png -resize x500 -density 300 ${dir}/{1}-{2}-{3}.png
+    convert -append ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png -resize x500 -density 300 ${dir}/{1}-{2}-{3}.png
     convert ${dir}/{1}-{2}-{3}.png -quality 0 ${dir}/{1}-{2}-{3}.jp2
-    convert ${dir}/{1}-{2}-{3}.jp2 ${dir}/{1}-{2}-{3}-lz.pdf
+    convert ${dir}/{1}-{2}-{3}.jp2 ${dir}/{2}-{1}-{3}-lz.pdf
     rm ${dir}/eQTLGen-{1}-{2}-{3}.lz ${dir}/INF-{1}-{2}-{3}.lz
     rm ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/INF-{3}_{7}.pdf
     rm ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png
@@ -349,7 +350,7 @@ function lz()
   fi
   '
   qpdf --empty --pages $(ls ${dir}/*-lz.pdf) -- ${dir}/lz.pdf
-  rm ${dir}/*-lz.pdf
+# rm ${dir}/*-lz.pdf
 }
 # ls -l eQTLGen/eQTLGen* -S | awk -vOFS="\t" '$(NF-4)==51 {split($NF,a,"-");split(a[3],b,".");print a[2],a[3],b[1]}' | xsel -i
 # convert -density 300 ${dir}/eQTLGen-{2}_{7}.pdf[0] ${dir}/eQTLGen-{2}_{7}.png
