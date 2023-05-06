@@ -336,7 +336,7 @@ function mr2()
                           ) %>% mutate(id.outcome=gwas_id,outcome=gwas_trait)
     outcome_dat <- data.frame()
     for (gwas_id in pull(gwas,id)) outcome_dat <- bind_rows(outcome_dat,user_dat(gwas_id,filter(gwas,id==gwas_id)%>%pull(trait)))
-    dat <- harmonise_data(clump_data(exposure_dat), outcome_dat, action=2)
+    dat <- harmonise_data(clump_data(exposure_dat), outcome_dat, clump_r2 = 0.1, action=2)
   # run_TwoSampleMR(harmonise, mr_plot="pQTLtools", prefix=prefix)
     mr_ivw_results <- mr(dat,method="mr_ivw") %>%
                       mutate(prot=prot,disease=gsub("[ |]* id:[a-z]*-[a-z]-[A-Z]*[0-9]*|","",outcome)) %>%

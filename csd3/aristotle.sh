@@ -29,10 +29,10 @@ do
   "
   ) | bash
 done
-for p in 5e-10 5e-8 1e-5 5e-2
+for p in 5e-10 5e-8 1e-5 3.9e-4 5e-2
 do
   echo ${p}
-  cut -f12 ${INF}/aristotle/INF1.merge.replication.txt-rsid | awk -v p=${p} '$1<p{print $1}' | wc -l
+  awk 'NF>1' ${INF}/aristotle/INF1.merge.replication.txt-rsid | cut -f12 | awk -v p=${p} '$1<p{print $1}' | wc -l
 done
 cd -
 awk -vOFS="\t" '{if(NR>1) {split($1,a,"-");$1=a[1]};print}' ${INF}/aristotle/INF1.merge.replication.txt-rsid | xsel -i

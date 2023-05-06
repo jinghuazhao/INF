@@ -960,6 +960,7 @@ function mr_recollect()
     library(dplyr)
     library(openxlsx)
     rt <- Sys.getenv("rt")
+    genes <- c("IL12B","CD40","IL18R1","CD6","CD5","CXCL5")
     IVW <- read.delim(file.path(rt,"mr-efo.mr")) %>%
            mutate(fdr=p.adjust(pval,method="fdr")) %>%
            left_join(select(pQTLdata::inf1,prot,gene)) %>%
@@ -983,9 +984,9 @@ function mr_recollect()
             rename(target.short=protein) %>%
             left_join(select(pQTLdata::inf1,target.short,gene))
     GSMR_genes <- filter(GSMR,fdr<=0.05) %>% pull(gene) %>% unique
-    IVW_genes <- filter(IVW,gene%in%GSMR_genes)
-    Heterogeneity_genes <- filter(Heterogeneity,gene%in%GSMR_genes)
-    Single_genes <- filter(Single,gene%in%GSMR_genes)
+    IVW_genes <- filter(IVW,gene%in%genes)
+    Heterogeneity_genes <- filter(Heterogeneity,gene%in%genes)
+    Single_genes <- filter(Single,gene%in%genes)
     xlsx <- file.path(rt,"gsmr-mr.xlsx")
     wb <- createWorkbook(xlsx)
     hs <- createStyle(textDecoration="BOLD", fontColour="#FFFFFF", fontSize=12, fontName="Arial Narrow", fgFill="#4F80BD")
