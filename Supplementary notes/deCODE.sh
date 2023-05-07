@@ -71,7 +71,6 @@ function replication()
     df_ids <- read.table(file.path(INF,"deCODE","olink_inf.full"),col.names=c("uniprot","prot","gene","chrpos","rsid","snpid")) %>%
               left_join(df) %>%
               select(-c(group,rsids,chrpos)) %>%
-              filter(!is.na(Pval)) %>%
               select(gene,rsid,chr,pos,effectAllele,otherAllele,ImpMAF,Beta,SE,mlog10p,Pval) %>%
               left_join(select(pQTLdata::inf1,gene,target.short)) %>%
               arrange(gene,rsid,Pval) %>%
@@ -83,17 +82,23 @@ function replication()
     INF1_METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
                   left_join(select(pQTLdata::inf1,prot,gene)) %>%
                   mutate(Allele1=toupper(Allele1), Allele2=toupper(Allele2),Protein=paste0(gene,"-",rsid))
+    tbl <- select(INF1_METAL,prot,rsid,Chromosome,Position,cis.trans) %>%
+           left_join(select(pQTLdata::inf1,gene,prot,target.short)) %>%
+           left_join(select(deCODE,gene,rsid,effectAllele,otherAllele,ImpMAF,Beta,SE,Pval)) %>%
+           mutate(Protein=target.short,Pval=gap::pvalue(Beta/SE),Pval=if_else(Pval=="NAeNA","NA",Pval)) %>%
+           select(Protein,Chromosome,Position,rsid,effectAllele,otherAllele,ImpMAF,Beta,SE,Pval)
+    write.table(tbl,file=file.path(INF,"deCODE","deCODE.csv"),row.names=FALSE,quote=FALSE,sep=",")
     INF1_aristotle <- read.delim(file.path(INF,"aristotle","INF1.merge.replication.txt-rsid")) %>%
                       select(Protein,SNPID,EFFECT_ALLELE,REFERENCE_ALLELE,PVAL)%>%
                       mutate(prot=unlist(lapply(strsplit(Protein,"-"),"[",1))) %>%
                       left_join(select(pQTLdata::inf1,prot,gene)) %>%
                       mutate(Protein=paste(gene,SNPID,sep="-"))
     INF1_deCODE <- left_join(INF1_METAL,deCODE) %>%
-                   select(Protein,Allele1,Allele2,effectAllele,otherAllele,Freq1,Effect,StdErr,log.P.,Beta,SE,Pval,mlog10p,cis.trans) %>%
+                   select(Protein,rsid,Allele1,Allele2,effectAllele,otherAllele,Freq1,Effect,StdErr,log.P.,Beta,SE,Pval,mlog10p,cis.trans) %>%
                    mutate(sw=if_else(Allele1==effectAllele,1,-1),Beta=sw*Beta,sw2=(sign(Effect)==sign(Beta))+0,
                    col=case_when(
                             mlog10p >= -log10(5e-8) ~ "red",
-                            mlog10p >= -log10(0.05/180) & mlog10p <=-log10(5e-8) ~ "orange",
+                            mlog10p >= -log10(0.05/180) & mlog10p <= -log10(5e-8) ~ "orange",
                             mlog10p  < -log10(0.05/180) ~ "grey",
                             TRUE ~ "white" )) %>%
                    filter(!is.na(Beta))
