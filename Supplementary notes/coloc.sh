@@ -4,9 +4,9 @@ function coloc()
 {
 cat << 'EOL' > ${INF}/work/st14.tsv
 Protein	ID	Disease	P	FDR	pQTL	Cognate disease QTL	Secondary disease signal 	Disease P-val	r2 (pQTL-disease QTL)	Elimination	Reason
-IL-12B	ebi-a-GCST004132	Crohn's disease	1.2E-21	3.4E-19	rs10076557	rs10046001	TRUE	6.2E-22	0.88	FALSE
-CD40	ebi-a-GCST004132	Crohn's disease	2.2E-08	1.2E-06	rs1883832	rs6032664	TRUE	1.3E-07	0.99	FALSE
-IL-18R1	ebi-a-GCST004132	Crohn's disease	1.9E-05	6.2E-04	rs2270297	rs11378157	FALSE	1.2E-13	0.95	FALSE
+IL-12B	ebi-a-GCST004132	Crohns disease	1.2E-21	3.4E-19	rs10076557	rs10046001	TRUE	6.2E-22	0.88	FALSE
+CD40	ebi-a-GCST004132	Crohns disease	2.2E-08	1.2E-06	rs1883832	rs6032664	TRUE	1.3E-07	0.99	FALSE
+IL-18R1	ebi-a-GCST004132	Crohns disease	1.9E-05	6.2E-04	rs2270297	rs11378157	FALSE	1.2E-13	0.95	FALSE
 IL-18R1	ieu-a-996	Eczema	2.1E-10	1.3E-08	rs2270297	rs6419573	FALSE	2.9E-10	0.98	FALSE
 IL-12B	ebi-a-GCST004131	Inflammatory bowel disease	1.5E-30	8.2E-28	rs10076557	rs10045431	TRUE	4.4E-32	0.88	FALSE
 CD6	ebi-a-GCST004131	Inflammatory bowel disease	2.1E-07	1.1E-05	rs2074227	rs11230563	FALSE	2.0E-06	0.99	FALSE
@@ -96,9 +96,11 @@ function lz()
   cut -f5 --complement ${dir}/cis.lst | \
   awk -vFS="\t" -vOFS="\t" '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6,$7,$8,$9}' | \
   parallel -j12 --env dir -C '\t' '
+  export prot_efo={1}-{2}-{3}-{9}
+  export gene_efo_pqtl={3}-{9}_{7}
 # GWAS
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/mr/gsmr/trait/{2}-{9}-rsid.txt \
-            --delim space title="{9}-{7}" \
+            --delim space title="{9}-{10}-{7}" \
             --markercol SNP --pvalcol p --chr {4} --start {5} --end {6} --cache None \
             --no-date --plotonly --prefix=GWAS-{3}-{9} --rundir ${dir} --refsnp {7}
 # SCALLOP/INF
@@ -112,41 +114,33 @@ function lz()
         sort -k1,1 | \
         join -12 -21 <(grep chr{4} ${INF}/work/snp_pos) - | \
         awk -vOFS="\t" "{print \$6, \$2, \$3, \$4, \$7, \$8, \$5}") | \
-  gzip -f > ${dir}/INF-{1}-{2}-{3}.tsv.gz
+  gzip -f > ${dir}/INF-${prot_efo}.tsv.gz
   (
     echo -e "chr\tpos\trsid\tmlog10P"
-    gunzip -c ${dir}/INF-{1}-{2}-{3}.tsv.gz | \
+    gunzip -c ${dir}/INF-${prot_efo}.tsv.gz | \
     awk -v OFS="\t" "NR>1 {print \$3,\$4,\$2,\$7}" | \
     sort -k1,1n -k2,2n
-  ) > ${dir}/INF-{1}-{2}-{3}.lz
-  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/INF-{1}-{2}-{3}.lz \
+  ) > ${dir}/INF-${prot_efo}.lz
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/INF-${prot_efo}.lz \
             --delim tab title="SCALLOP: {3}-{7}" \
             --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
             --no-date --plotonly --prefix=INF-{3}-{9} --rundir ${dir} --refsnp {7}
-  rm ${dir}/INF-{1}-{2}-{3}.lz
+  rm ${dir}/INF-${prot_efo}.lz
   for src in GWAS INF
   do
-     pdftopng -f 1 -l 1 -r 300 ${dir}/${src}-{3}-{9}_{7}.pdf ${dir}/${src}-{3}-{9}_{7}
-     mv ${dir}/${src}-{3}-{9}_{7}-000001.png ${dir}/${src}-{3}-{9}_{7}.png
+     pdftopng -f 1 -l 1 -r 300 ${dir}/${src}-${gene_efo_pqtl}.pdf ${dir}/${src}-${gene_efo_pqtl}
+     mv ${dir}/${src}-${gene_efo_pqtl}-000001.png ${dir}/${src}-${gene_efo_pqtl}.png
   done
+    convert -append ${dir}/GWAS-${gene_efo_pqtl}.png ${dir}/INF-${gene_efo_pqtl}.png \
+            -resize x500 -density 300 ${dir}/combine-${gene_efo_pqtl}.png
+    convert ${dir}/combine-${gene_efo_pqtl}.png -quality 0 ${dir}/combine-${gene_efo_pqtl}.jp2
+    convert ${dir}/combine-${gene_efo_pqtl}.jp2 ${dir}/combine-${gene_efo_pqtl}.pdf
+    rm -f ${dir}/combine-${gene_efo_pqtl}.png
+    rm -f ${dir}/combine-${gene_efo_pqtl}.jp2
+    rm ${dir}/GWAS-${gene_efo_pqtl}.png
+    rm ${dir}/INF-${gene_efo_pqtl}.png
   '
-}
-
-function lz_combine()
-{
-  export dir=${INF}/coloc
-  source ~/COVID-19/py37/bin/activate
-  cut -f5 --complement ${dir}/cis.lst | \
-  awk -vFS="\t" -vOFS="\t" '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6,$7,$8,$9}' | \
-  parallel -j1 --env dir -C '\t' '
-    echo {1}-{2}-{3}-{4}-{5}-{6}-{7}-{8}-{9}
-    rm -f ${dir}/combine-{1}-{2}-{3}.png
-    convert -append ${dir}/GWAS-{3}-{9}_{7}.png ${dir}/INF-{3}-{9}_{7}.png -resize x500 -density 300 ${dir}/combine-{1}-{2}-{3}.png
-    convert ${dir}/combine-{1}-{2}-{3}.png -quality 0 ${dir}/combine-{1}-{2}-{3}.jp2
-    img2pdf -o ${dir}/combine-{1}-{2}-{3}.pdf ${dir}/combine-{1}-{2}-{3}.jp2
-  '
-  qpdf --empty --pages $(ls ${dir}/combine*.pdf) -- ${dir}/coloc.pdf
+  qpdf --empty --pages $(ls ${dir}/combine*.pdf) -- ${dir}/protein-disease-lz.pdf
 }
 
 lz
-lz_combine
