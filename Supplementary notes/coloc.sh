@@ -143,4 +143,46 @@ function lz()
   qpdf --empty --pages $(ls ${dir}/combine*.pdf) -- ${dir}/protein-disease-lz.pdf
 }
 
-lz
+function run_PWCoCo()
+{
+export dir=${INF}/coloc
+cat <<'EOL'> ${dir}/pwcoco.sb
+#!/usr/bin/bash
+
+#SBATCH --job-name=_pwcoco
+#SBATCH --mem=28800
+#SBATCH --time=12:00:00
+
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+
+#SBATCH --export ALL
+#SBATCH --output=DIR/_pwcoco.o
+#SBATCH --error=DIR/_pwcoco.e
+
+module load ceuadmin/PWCoCo/1.0
+export dir=DIR
+
+cut -f5 --complement ${dir}/cis.lst | \
+awk -vFS="\t" -vOFS="\t" '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6,$7,$8,$9}' | \
+parallel -j1 --env dir -C '\t' '
+  export prot_efo={1}-{2}-{3}-{9}
+  export gene_efo_pqtl={3}-{9}_{7}
+  gunzip -c ${INF}/mr/gsmr/trait/{2}-{9}.gz > ${dir}/${gene_efo_pqtl}-pwcoco.txt
+  gunzip -c ${INF}/mr/gsmr/prot/{2}.gz > ${dir}/{2}-pwcoco.txt
+  pwcoco --bfile ${INF}/INTERVAL/cardio/INTERVAL \
+         --chr {4} \
+         --sum_stats1 ${dir}/${gene_efo_pqtl}-pwcoco.txt \
+         --sum_stats2 ${dir}/{2}-pwcoco.txt \
+         --p_cutoff1 1e-6 --p_cutoff2 5e-8 \
+         --log ${dir}/{2}-{9}-pwcoco \
+         --out ${dir}/{2}-{9}-pwcoco --out-cond
+'
+EOL
+
+sed -i "s|DIR|${dir}|" ${dir}/pwcoco.sb
+sbatch --wait ${dir}/pwcoco.sb
+}
+
+run_PWCoCo
