@@ -113,6 +113,12 @@ function replication()
     filter(INF1_deCODE[c("Protein","Effect","Beta","Allele1","Allele2","effectAllele","otherAllele","sw","log.P.","mlog10p")],
            mlog10p>=-log10(5e-2/180)) %>%
     filter(sign(Effect)!=sign(Beta))
+    sig_aristotle <- filter(INF1_aristotle,PVAL<=5e-8) %>% pull(Protein)
+    INF1_aristotle_deCODE <- filter(INF1_deCODE,Protein%in%sig_aristotle)
+    filter(select(INF1_aristotle_deCODE,-rsid,-Freq1,-Effect,-StdErr,-log.P.,-mlog10p,-sw,-sw2,-col), -log10(Pval) < -log10(5e-8)) %>%
+    format(digits=2,scientific=FALSE)
+    filter(select(INF1_aristotle_deCODE,-rsid,-Freq1,-Effect,-StdErr,-log.P.,-mlog10p,-sw,-sw2,-col), -log10(Pval) < -log10(0.05/180)) %>%
+    format(digits=2,scientific=FALSE)
     not_sig_aristotle <- filter(INF1_aristotle,PVAL>5e-8) %>% pull(Protein)
     INF1_aristotle_deCODE <- filter(INF1_deCODE,Protein%in%not_sig_aristotle)
     filter(INF1_aristotle_deCODE, mlog10p>=-log10(5e-8)) %>% nrow
