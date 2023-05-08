@@ -1,4 +1,7 @@
 #!/usr/bin/bash
+
+function coloc()
+{
 cat << 'EOL' > ${INF}/work/st14.tsv
 Protein	ID	Disease	P	FDR	pQTL	Cognate disease QTL	Secondary disease signal 	Disease P-val	r2 (pQTL-disease QTL)	Elimination	Reason
 IL-12B	ebi-a-GCST004132	Crohn's disease	1.2E-21	3.4E-19	rs10076557	rs10046001	TRUE	6.2E-22	0.88	FALSE
@@ -20,7 +23,8 @@ Rscript -e '
   suppressMessages(library(dplyr))
   INF <- Sys.getenv("INF")
   st14 <- read.delim(file.path(INF,"work","st14.tsv")) %>%
-          left_join(pQTLdata::inf1[c("prot","target.short","gene")],by=c("Protein"="target.short"))
+          left_join(pQTLdata::inf1[c("prot","target.short","gene")],
+                    by=c("Protein"="target.short"))
   res_formatted <- list()
   for(index in 1:12)
   {
@@ -30,22 +34,119 @@ Rscript -e '
     efo <- st14[index,"ID"]
     label <- st14[index,"Disease"]
     pgwas <- read.table(file.path(INF,"mr","gsmr","prot",paste0(prot,".gz")),header=TRUE) %>%
-             left_join(read.table(file.path(INF,"mr","gsmr","prot",paste0(prot,"-rsid.txt")),col.names=c("SNP","rsid")))
-    d1 <- with(pgwas,list(beta=b,varbeta=se^2,N=N,MAF=if_else(freq<0.5,freq,1-freq),type="quant",snp=SNP))
-    tgwas <- read.table(file.path(INF,"mr","gsmr","trait",paste0(prot,"-",efo,".gz")),header=TRUE) %>%
+             left_join(read.table(file.path(INF,"mr","gsmr","prot",paste0(prot,"-rsid.txt")),
+                                  col.names=c("SNP","rsid")))
+    d1 <- with(pgwas,list(beta=b,varbeta=se^2,N=N,MAF=if_else(freq<0.5,freq,1-freq),
+               type="quant",snp=SNP))
+    tgwas <- read.table(file.path(INF,"mr","gsmr","trait",paste0(prot,"-",efo,".gz")),
+                        header=TRUE) %>%
              mutate(freq=if_else(freq==".",0.5,as.numeric(freq))) %>%
              rename(ALT=A1,REF=A2) %>%
              left_join(select(pgwas,SNP,A1,A2)) %>%
              mutate(sw=if_else(A1==ALT,1,-1),b=sw*b) %>%
              filter(!is.na(b) & !is.na(freq))
-    d2 <- with(tgwas,list(beta=b,varbeta=se^2,N=N,MAF=if_else(freq<0.5,freq,1-freq),type="quant",snp=SNP))
+    tgwas <- read.table(file.path(INF,"mr","gsmr","trait",paste0(prot,"-",efo,".gz")),
+                        header=TRUE) %>%
+             mutate(freq=if_else(freq==".",0.5,as.numeric(freq))) %>%
+             rename(ALT=A1,REF=A2) %>%
+             left_join(select(pgwas,SNP,A1,A2)) %>%
+             mutate(sw=if_else(A1==ALT,1,-1),b=sw*b) %>%
+             filter(!is.na(b) & !is.na(freq))
+    d2 <- with(tgwas,list(beta=b,varbeta=se^2,N=N,MAF=if_else(freq<0.5,freq,1-freq),
+               type="quant",snp=SNP))
     coloc_res <- coloc::coloc.abf(dataset1=d1, dataset2=d2, p1=1e-4, p2=1e-4, p12=1e-5)
-    res_formatted[[index]] <- data.frame(Protein,efo,label,dplyr::as_tibble(t(as.data.frame(coloc_res$summary))))
+    res_formatted[[index]] <- data.frame(Protein,efo,label,
+                                         dplyr::as_tibble(t(as.data.frame(coloc_res$summary))))
     print(res_formatted[[index]])
   }
   res <- as.data.frame(do.call(rbind,res_formatted)) %>%
          setNames(c("Protein","ID","Disease","nsnps","PP0","PP1","PP2","PP3","PP4"))
-  write.table(res,file=file.path(INF,"coloc","gwas-coloc.tsv"),row.names=FALSE,quote=FALSE,sep="\t")
+  write.table(res,file=file.path(INF,"coloc","gwas-coloc.tsv"),
+              row.names=FALSE,quote=FALSE,sep="\t")
   library(scales)
   for(col in 5:9) res[,col] <- percent(res[,col])
 '
+}
+
+function cis_lst()
+{
+  export M=250000
+  Rscript -e '
+    suppressMessages(library(dplyr))
+    INF <- Sys.getenv("INF")
+    M <- Sys.getenv("M") %>% as.integer
+    st14 <- read.delim(file.path(INF,"work","st14.tsv")) %>%
+            select(Protein,ID,Disease,pQTL)
+    INF1_METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+                  left_join(select(pQTLdata::inf1,prot,target.short,gene,chr,start,end)) %>%
+                  left_join(st14,by=c("target.short"="Protein","rsid"="pQTL")) %>%
+                  filter(cis.trans=="cis",!is.na(Disease)) %>%
+                  mutate(start=if_else(start-M<0,0,start-M),end=end+M,
+                         region=paste0(chr,":",start,"-",end)) %>%
+                  select(uniprot,prot,gene,region,chr,rsid,target.short,ID,Disease)
+    write.table(INF1_METAL,file=file.path(INF,"coloc","cis.lst"),
+                row.names=FALSE,col.names=FALSE,quote=FALSE,sep="\t")
+  '
+}
+
+function lz()
+{
+  module load python/2.7
+  export dir=${INF}/coloc
+  cut -f5 --complement ${dir}/cis.lst | \
+  awk -vFS="\t" -vOFS="\t" '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6,$7,$8,$9}' | \
+  parallel -j12 --env dir -C '\t' '
+# GWAS
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/mr/gsmr/trait/{2}-{9}-rsid.txt \
+            --delim space title="{9}-{7}" \
+            --markercol SNP --pvalcol p --chr {4} --start {5} --end {6} --cache None \
+            --no-date --plotonly --prefix=GWAS-{3}-{9} --rundir ${dir} --refsnp {7}
+# SCALLOP/INF
+  cat <(echo -e "snpid rsid chr pos a1 a2 mlog10p") \
+      <(tabix ${INF}/METAL/{2}-1.tbl.gz {4}:{5}-{6} | \
+        awk "
+        {
+          split(\$3,a,\"_\")
+          print a[1],\$1,\$2,-\$12,\$3,toupper(\$4),toupper(\$5)
+        }" | \
+        sort -k1,1 | \
+        join -12 -21 <(grep chr{4} ${INF}/work/snp_pos) - | \
+        awk -vOFS="\t" "{print \$6, \$2, \$3, \$4, \$7, \$8, \$5}") | \
+  gzip -f > ${dir}/INF-{1}-{2}-{3}.tsv.gz
+  (
+    echo -e "chr\tpos\trsid\tmlog10P"
+    gunzip -c ${dir}/INF-{1}-{2}-{3}.tsv.gz | \
+    awk -v OFS="\t" "NR>1 {print \$3,\$4,\$2,\$7}" | \
+    sort -k1,1n -k2,2n
+  ) > ${dir}/INF-{1}-{2}-{3}.lz
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/INF-{1}-{2}-{3}.lz \
+            --delim tab title="SCALLOP: {3}-{7}" \
+            --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
+            --no-date --plotonly --prefix=INF-{3}-{9} --rundir ${dir} --refsnp {7}
+  rm ${dir}/INF-{1}-{2}-{3}.lz
+  for src in GWAS INF
+  do
+     pdftopng -f 1 -l 1 -r 300 ${dir}/${src}-{3}-{9}_{7}.pdf ${dir}/${src}-{3}-{9}_{7}
+     mv ${dir}/${src}-{3}-{9}_{7}-000001.png ${dir}/${src}-{3}-{9}_{7}.png
+  done
+  '
+}
+
+function lz_combine()
+{
+  export dir=${INF}/coloc
+  source ~/COVID-19/py37/bin/activate
+  cut -f5 --complement ${dir}/cis.lst | \
+  awk -vFS="\t" -vOFS="\t" '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6,$7,$8,$9}' | \
+  parallel -j1 --env dir -C '\t' '
+    echo {1}-{2}-{3}-{4}-{5}-{6}-{7}-{8}-{9}
+    rm -f ${dir}/combine-{1}-{2}-{3}.png
+    convert -append ${dir}/GWAS-{3}-{9}_{7}.png ${dir}/INF-{3}-{9}_{7}.png -resize x500 -density 300 ${dir}/combine-{1}-{2}-{3}.png
+    convert ${dir}/combine-{1}-{2}-{3}.png -quality 0 ${dir}/combine-{1}-{2}-{3}.jp2
+    img2pdf -o ${dir}/combine-{1}-{2}-{3}.pdf ${dir}/combine-{1}-{2}-{3}.jp2
+  '
+  qpdf --empty --pages $(ls ${dir}/combine*.pdf) -- ${dir}/coloc.pdf
+}
+
+lz
+lz_combine
