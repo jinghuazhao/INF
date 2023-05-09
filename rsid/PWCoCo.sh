@@ -67,6 +67,44 @@ pwcoco --bfile ${INF}/INTERVAL/cardio/INTERVAL \
        --out ieu-a-1025-LTA-pwcoco
 }
 
+Rscript -e '
+
+run_pwcoco <- function(id1,id2,region,path_to_pwcoco,type1="quant",type2="cc",workdir)
+{
+  bfile <- with(region,file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",chr)))
+# region
+  chrompos <- with(region,paste0("chr",chr,":",start-M,"-",end+M))
+  workdir <- Sys.getenv("HPC_WORK")
+  suppressMessages(library(gwasglue))
+  res <- pwcoco(id1,id2,bfile,chrompos,path_to_pwcoco,type1=type1,type2=type2,workdir=workdir)
+  print(res)
+}
+
+test_pwcoco <- function()
+{
+  INF <- Sys.getenv("INF")
+  M <- 100000
+  path_to_pwcoco <- "/usr/local/Cluster-Apps/ceuadmin/PWCoCo/1.0/build"
+
+# Multiple sclerosis
+  ms <- "ieu-b-18"
+# CD40
+  cd40 <- "ebi-a-GCST90011997"
+  chr <- 20
+  start <- 44746911
+  end <- 44758502
+  run_pwcoco(cd40,ms,list(chr,start,end,M),path_to_pwcoco,type1,type2,workdir)
+# CD5
+  cd5 <- "ebi-a-GCST90000452"
+  chr <- 11
+  start <- 60869867
+  end <- 60895324
+  run_pwcoco(cd5,ms,list(chr,start,end,M),path_to_pwcoco,type1,type2,workdir)
+}
+
+test_pwcoco()
+'
+
 # --bfile - specifies the location of the reference dataset, normally from Plink, in the bed/bim/fam formats. Each of the bed/bim/fam files should have the same name and in the same directory.
 # --sum_stats1 - first file or folder containing summary statistics. Please see below "Input" section.
 # --sum_stats2 - second file or folder containing summary statistics. Please see below "Input" section.
