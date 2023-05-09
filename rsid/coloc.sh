@@ -167,17 +167,16 @@ export dir=DIR
 cut -f5 --complement ${dir}/cis.lst | \
 awk -vFS="\t" -vOFS="\t" '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6,$7,$8,$9}' | \
 parallel -j1 --env dir -C '\t' '
-  export prot_efo={1}-{2}-{3}-{9}
   export gene_efo_pqtl={3}-{9}_{7}
-  gunzip -c ${INF}/mr/gsmr/trait/{2}-{9}.gz > ${dir}/${gene_efo_pqtl}-pwcoco.txt
-  gunzip -c ${INF}/mr/gsmr/prot/{2}.gz > ${dir}/{2}-pwcoco.txt
+  gunzip -c ${INF}/mr/gsmr/trait/{2}-{9}.gz | awk "{if(\$4==\".\") \$4=0.5};1" > ${dir}/${gene_efo_pqtl}-pwcoco.sst1
+  gunzip -c ${INF}/mr/gsmr/prot/{2}.gz > ${dir}/${gene_efo_pqtl}-pwcoco.sst2
   pwcoco --bfile ${INF}/INTERVAL/cardio/INTERVAL \
          --chr {4} \
-         --sum_stats1 ${dir}/${gene_efo_pqtl}-pwcoco.txt \
-         --sum_stats2 ${dir}/{2}-pwcoco.txt \
+         --sum_stats1 ${dir}/${gene_efo_pqtl}-pwcoco.sst1 \
+         --sum_stats2 ${dir}/${gene_efo_pqtl}-pwcoco.sst2 \
          --p_cutoff1 1e-6 --p_cutoff2 5e-8 \
-         --log ${dir}/{2}-{9}-pwcoco \
-         --out ${dir}/{2}-{9}-pwcoco --out-cond
+         --log ${dir}/${gene_efo_pqtl}-pwcoco \
+         --out ${dir}/${gene_efo_pqtl}-pwcoco --out-cond
 '
 EOL
 
