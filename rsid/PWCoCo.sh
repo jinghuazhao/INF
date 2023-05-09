@@ -18,7 +18,6 @@ cat << 'EOL' > ${INF}/coloc/gwasglue.sb
 #SBATCH --error=DIR/_gwasglue.e
 
 Rscript -e '
-
 run_pwcoco <- function(id1,id2,region,
                        path_to_pwcoco="/usr/local/Cluster-Apps/ceuadmin/PWCoCo/1.0/build/pwcoco",
                        type1="quant",type2="cc",
@@ -36,17 +35,55 @@ run_pwcoco <- function(id1,id2,region,
   res <- pwcoco(id1,id2,bfile,chrompos,path_to_pwcoco,type1=type1,type2=type2,workdir=workdir)
   print(res)
 }
-
 {
   M <- 100000
 # CD5 - Primary sclerosing cholangitis
   region <- list(chr=11,start=60869867,end=60895324,M=M)
+  chrompos <- with(region,paste0(chr,":",start-M,"-",end+M))
   run_pwcoco("ebi-a-GCST90000452","ieu-a-1112",region)
 # CD40 - Multiple sclerosis
   region <- list(chr=20,start=44746911,end=44758502,M=M)
+  chrompos <- with(region,paste0(chr,":",start-M,"-",end+M))
   run_pwcoco("ebi-a-GCST90011997","ieu-b-18",region)
 }
 '
+
+Rscript -e '
+  suppressMessages(library(dplyr))
+  INF <- Sys.getenv("INF")
+  st14 <- read.delim(file.path(INF,"work","st14.tsv")) %>%
+          select(Protein,ID,Disease) %>%
+          left_join(pQTLdata::inf1[c("prot","target.short","chr","start","end")],by=c("Protein"="target.short"))
+  write.table(st14,row.names=FALSE,quote=FALSE,sep="\t",col.names=FALSE)
+' | \
+parallel -C '\t' '
+  export Protein={1}
+  export ID={2}
+  export Disease="{3}"
+  export prot={4}
+  export chr={5}
+  export start={6}
+  export end={7}
+  export M=1000000
+  Rscript -e "
+    Protein <- Sys.getenv(\"Protein\")
+    ID <- Sys.getenv(\"ID\")
+    Disease <- Sys.getenv(\"Disease\")
+    prot <- Sys.getenv(\"prot\")
+    chr <- Sys.getenv(\"chr\")
+    start <- as.integer(Sys.getenv(\"start\"))
+    end <- as.integer(Sys.getenv(\"end\"))
+    M <- as.integer(Sys.getenv(\"M\"))
+    chrompos <- paste0(chr,\":\",start-M,\"-\",end+M)
+    prot_vcf <- paste0(\"~/INF/METAL/gwas2vcf/\",prot,\".vcf.gz\")
+    trait_vcf <- paste0(\"~/INF/OpenGWAS/\",ID,\".vcf.gz\")
+    out_dir <- paste0(\"~/hpc-work/work/\",prot,\"-\",ID)
+    cat(Protein,ID,Disease,prot,chr,start,end,\"\n\")
+    gwasvcf::set_bcftools(path=\"/rds/user/jhz22/hpc-work/bin/bcftools\")
+    gwasglue::gwasvcf_to_pwcoco(prot_vcf, trait_vcf, chrompos, type1 = \"quant\", type2 = \"cc\", out_dir)
+  "
+'
+
 EOL
 
 sed -i "s|DIR|${INF}/coloc|" ${INF}/coloc/gwasglue.sb
