@@ -39,7 +39,6 @@ run_pwcoco <- function(id1,id2,region,
 
 {
   M <- 100000
-
 # CD5 - Primary sclerosing cholangitis
   region <- list(chr=11,start=60869867,end=60895324,M=M)
   run_pwcoco("ebi-a-GCST90000452","ieu-a-1112",region)
@@ -47,7 +46,6 @@ run_pwcoco <- function(id1,id2,region,
   region <- list(chr=20,start=44746911,end=44758502,M=M)
   run_pwcoco("ebi-a-GCST90011997","ieu-b-18",region)
 }
-
 '
 EOL
 
