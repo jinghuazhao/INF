@@ -168,7 +168,21 @@ cut -f5 --complement ${dir}/cis.lst | \
 awk -vFS="\t" -vOFS="\t" '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6,$7,$8,$9}' | \
 parallel -j1 --env dir -C '\t' '
   export gene_efo_pqtl={3}-{9}_{7}
-  gunzip -c ${INF}/mr/gsmr/trait/{2}-{9}.gz | awk "{if(\$4==\".\") \$4=0.5};1" > ${dir}/${gene_efo_pqtl}-pwcoco.sst1
+  export ref=~/rds/public_databases/1000G/ALL.chr{4}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
+  if [ ! -f ${dir}/${gene_efo_pqtl}.freq ]; then
+     bcftools query -f "%CHROM\t%POS\t%ID\t%REF\t%ALT\t%INFO/EUR_AF\n" -r {4}:{5}-{6} ${ref} | \
+     awk "{if(\$4<\$5) snpid=\"chr\"\$1\":\"\$2\"_\"\$4\"_\"\$5;
+                  else snpid=\"chr\"\$1\":\"\$2\"_\"\$5\"_\"\$4;
+           print snpid,\$3,\$4,\$5,\$6}" | \
+     sort -k1,1 > ${dir}/${gene_efo_pqtl}.freq
+  fi
+  cat <(gunzip -c ${INF}/mr/gsmr/trait/{2}-{9}.gz | head -1) \
+      <(gunzip -c ${INF}/mr/gsmr/trait/{2}-{9}.gz | sed "1d" | \
+        join - ${dir}/${gene_efo_pqtl}.freq | \
+        awk "NF>8" | \
+        awk "{if(\$4==\".\") {if(\$2==\$10) \$4=1-\$12;else \$4=\$12}; print}") | \
+        cut -d" " -f1-8 \
+      > ${dir}/${gene_efo_pqtl}-pwcoco.sst1
   gunzip -c ${INF}/mr/gsmr/prot/{2}.gz > ${dir}/${gene_efo_pqtl}-pwcoco.sst2
   pwcoco --bfile ${INF}/INTERVAL/cardio/INTERVAL \
          --chr {4} \
@@ -182,6 +196,28 @@ EOL
 
 sed -i "s|DIR|${dir}|" ${dir}/pwcoco.sb
 sbatch --wait ${dir}/pwcoco.sb
+
+Rscript -e '
+  suppressMessages(library(dplyr))
+  st14 <- read.delim("~/INF/work/st14.tsv") %>%
+          select(Protein,ID,Disease,pQTL)
+  coloc <- data.frame()
+  for (f in dir("~/INF/coloc/",pattern="-pwcoco.coloc"))
+  {
+     ids=unlist(strsplit(f,"-|_"))
+     d <- read.delim(file.path("~/INF/coloc/",f)) %>%
+          mutate(Dataset1=paste(ids[2],ids[3],ids[4],sep="-"),Dataset2=ids[1],pQTL=ids[5]) %>%
+          rename(ID=Dataset1,Gene=Dataset2) %>%
+          select(ID,Gene,pQTL,SNP1,SNP2,H0,H1,H2,H3,H4,log_abf_all)
+     coloc <- bind_rows(coloc,d)
+  }
+  coloc <- left_join(st14,coloc)
+  coloc.names <- names(coloc)
+  H.names <- coloc.names[grepl("^H",coloc.names)]
+  coloc[c(H.names,"log_abf_all")] <- round(coloc[c(H.names,"log_abf_all")],digits=2)
+  write.table(coloc,file="~/INF/coloc/coloc-all.txt",row.names=FALSE,quote=FALSE,sep="\t")
+  write.table(subset(coloc,H4>=0.8),file="~/INF/coloc/coloc.txt",row.names=FALSE,quote=FALSE,sep="\t")
+'
 }
 
 run_PWCoCo
