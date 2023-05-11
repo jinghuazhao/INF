@@ -28,26 +28,28 @@ Rscript -e '
   res_formatted <- list()
   for(index in 1:12)
   {
-    rm(d1,d2)
-    Protein <- st14[index,"Protein"]
-    prot <- st14[index,"prot"]
-    efo <- st14[index,"ID"]
-    label <- st14[index,"Disease"]
+    d <- slice(st14,index)
+    Protein <- d[["Protein"]]
+    prot <- d[["prot"]]
+    gene <- d[["gene"]]
+    efo <- d[["ID"]]
+    pqtl <- d[["pQTL"]]
+    label <- d[["Disease"]]
     pgwas <- read.table(file.path(INF,"mr","gsmr","prot",paste0(prot,".gz")),header=TRUE) %>%
              left_join(read.table(file.path(INF,"mr","gsmr","prot",paste0(prot,"-rsid.txt")),
                                   col.names=c("SNP","rsid")))
     d1 <- with(pgwas,list(beta=b,varbeta=se^2,N=N,MAF=if_else(freq<0.5,freq,1-freq),
-               type="quant",snp=SNP))
+               type="cc",snp=SNP))
+    af <- read.table(file.path(INF,"coloc",paste0(gene,"-",efo,"_",pqtl,".freq")),
+                     col.names=c("snpid","rsid","ref","alt","af")) %>%
+                     filter(af!="0" & af!=1 & grepl(",",af)==0) %>%
+                     mutate(af=as.numeric(af))
     tgwas <- read.table(file.path(INF,"mr","gsmr","trait",paste0(prot,"-",efo,".gz")),
                         header=TRUE) %>%
-             mutate(freq=if_else(freq==".",0.5,as.numeric(freq))) %>%
-             rename(ALT=A1,REF=A2) %>%
-             left_join(select(pgwas,SNP,A1,A2)) %>%
-             mutate(sw=if_else(A1==ALT,1,-1),b=sw*b) %>%
-             filter(!is.na(b) & !is.na(freq))
-    tgwas <- read.table(file.path(INF,"mr","gsmr","trait",paste0(prot,"-",efo,".gz")),
-                        header=TRUE) %>%
-             mutate(freq=if_else(freq==".",0.5,as.numeric(freq))) %>%
+             left_join(af,by=c("SNP"="snpid")) %>%
+             mutate(freq_imp=if_else(A1==ref,1-af,af)) %>%
+             mutate(freq=if_else(freq==".",freq_imp,as.numeric(freq))) %>%
+             select(-c(rsid,ref,alt,af,freq_imp)) %>%
              rename(ALT=A1,REF=A2) %>%
              left_join(select(pgwas,SNP,A1,A2)) %>%
              mutate(sw=if_else(A1==ALT,1,-1),b=sw*b) %>%
@@ -61,10 +63,11 @@ Rscript -e '
   }
   res <- as.data.frame(do.call(rbind,res_formatted)) %>%
          setNames(c("Protein","ID","Disease","nsnps","PP0","PP1","PP2","PP3","PP4"))
+  res.names <- names(res)
+  H.names <- res.names[grepl("^PP",res.names)]
+  res[H.names] <- round(res[H.names],digits=2)
   write.table(res,file=file.path(INF,"coloc","gwas-coloc.tsv"),
               row.names=FALSE,quote=FALSE,sep="\t")
-  library(scales)
-  for(col in 5:9) res[,col] <- percent(res[,col])
 '
 }
 
@@ -220,4 +223,6 @@ Rscript -e '
 '
 }
 
-run_PWCoCo
+# run_PWCoCo
+
+coloc
