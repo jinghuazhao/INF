@@ -257,25 +257,29 @@ function coloc()
   cd -
 }
 
-function lz()
+function cis_lst()
 {
-  export cis_full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
-  export eQTLGen_tabix=${eQTLGen}/tabix
   export M=250000
   Rscript -e '
     suppressMessages(library(dplyr))
     INF <- Sys.getenv("INF")
     M <- Sys.getenv("M") %>% as.integer
     INF1_METAL <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
-                  left_join(select(pQTLdata::inf1,prot,gene,chr,start,end)) %>%
+                  left_join(select(pQTLdata::inf1,prot,gene,chr,start,end,target.short)) %>%
                   filter(cis.trans=="cis") %>%
                   mutate(start=if_else(start-M<0,0,start-M),end=end+M,region=paste0(chr,":",start,"-",end)) %>%
-                  select(uniprot,prot,gene,region,chr,rsid)
+                  select(uniprot,prot,gene,region,chr,rsid,target.short)
     write.table(INF1_METAL,file=file.path(INF,"eQTLGen","cis.lst"),row.names=FALSE,col.names=FALSE,quote=FALSE)
   '
+}
+
+function lz()
+{
+  export cis_full=${eQTLGen}/cis-eQTLs_full_20180905.txt.gz
+  export eQTLGen_tabix=${eQTLGen}/tabix
   module load python/2.7
   export dir=${INF}/eQTLGen
-  cut -d ' ' -f1-4,6 ${dir}/cis.lst | awk '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5}' | \
+  cut -d ' ' -f1-4,6,7 ${dir}/cis.lst | awk '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6}' | \
   parallel -j8 -C ' ' --env dir '
   echo "{1}-{2}-{3}"
 # eQTLGen
@@ -291,7 +295,7 @@ function lz()
         }") | \
   Rscript -e "
      suppressMessages(library(dplyr))
-     z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p)})# ;mlog10p=if_else(mlog10p>20,20,mlog10p)});
+     z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p);mlog10p=if_else(mlog10p>20,20,mlog10p)});
      write.table(z,row.names=FALSE,quote=FALSE,sep=\"\t\")
   " | \
   gzip -f > ${dir}/eQTLGen-{1}-{2}-{3}.tsv.gz
@@ -323,7 +327,7 @@ function lz()
       sort -k1,1n -k2,2n
     ) > ${dir}/eQTLGen-{1}-{2}-{3}.lz
     locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/eQTLGen-{1}-{2}-{3}.lz \
-              --delim tab title="eQTLGen: {3}-{7}" \
+              --delim tab title="eQTLGen: {8} ({3})-{7}" \
               --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
               --no-date --plotonly --prefix=eQTLGen-{3} --rundir ${dir} --refsnp {7}
     (
@@ -333,7 +337,7 @@ function lz()
       sort -k1,1n -k2,2n
     ) > ${dir}/INF-{1}-{2}-{3}.lz
     locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/INF-{1}-{2}-{3}.lz \
-              --delim tab title="SCALLOP: {3}-{7}" \
+              --delim tab title="SCALLOP: {8} ({3})-{7}" \
               --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
               --no-date --plotonly --prefix=INF-{3} --rundir ${dir} --refsnp {7}
     pdftopng -f 1 -l 1 -r 300 ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/eQTLGen-{3}_{7}
@@ -349,7 +353,7 @@ function lz()
     rm ${dir}/{1}-{2}-{3}.jp2 ${dir}/{1}-{2}-{3}.png
   fi
   '
-  qpdf --empty --pages $(ls ${dir}/*-lz.pdf) -- ${dir}/lz.pdf
+  qpdf --empty --pages $(ls ${dir}/*-lz.pdf) -- ${dir}/eQTLGen-protein-lz-20.pdf
 # rm ${dir}/*-lz.pdf
 }
 # ls -l eQTLGen/eQTLGen* -S | awk -vOFS="\t" '$(NF-4)==51 {split($NF,a,"-");split(a[3],b,".");print a[2],a[3],b[1]}' | xsel -i

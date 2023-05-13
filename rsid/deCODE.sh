@@ -104,8 +104,10 @@ function replication()
                    filter(!is.na(Beta))
     subset(INF1_deCODE[c("Effect","Beta","log.P.","Pval","cis.trans")],cis.trans=="cis") %>% arrange(Effect)
     nrow(INF1_deCODE)
+    filter(INF1_deCODE, mlog10p>=-log10(5e-10)) %>% nrow()
     filter(INF1_deCODE, mlog10p>=-log10(5e-8)) %>% nrow()
     filter(INF1_deCODE, mlog10p>=-log10(0.05/180)) %>% nrow()
+    filter(INF1_deCODE, mlog10p>=-log10(5e-2)) %>% nrow()
     table(INF1_deCODE$sw2)
     filter(INF1_deCODE[c("Protein","Effect","Beta","Allele1","Allele2","effectAllele","otherAllele","sw","log.P.","mlog10p")],
            mlog10p>=-log10(5e-8)) %>%

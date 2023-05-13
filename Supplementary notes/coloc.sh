@@ -100,12 +100,13 @@ function lz()
   awk -vFS="\t" -vOFS="\t" '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6,$7,$8,$9}' | \
   parallel -j12 --env dir -C '\t' '
   export prot_efo={1}-{2}-{3}-{9}
-  export gene_efo_pqtl={3}-{9}_{7}
+  export gene_efo_pqtl="{3}-{10}_{7}"
+  export combine=$(echo "combine-${gene_efo_pqtl}"|sed "s/ /-/g")
 # GWAS
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${INF}/mr/gsmr/trait/{2}-{9}-rsid.txt \
-            --delim space title="{9}-{10}-{7}" \
+            --delim space title="{10}({9})-{7}" \
             --markercol SNP --pvalcol p --chr {4} --start {5} --end {6} --cache None \
-            --no-date --plotonly --prefix=GWAS-{3}-{9} --rundir ${dir} --refsnp {7}
+            --no-date --plotonly --prefix=GWAS-"{3}-{10}" --rundir ${dir} --refsnp {7}
 # SCALLOP/INF
   cat <(echo -e "snpid rsid chr pos a1 a2 mlog10p") \
       <(tabix ${INF}/METAL/{2}-1.tbl.gz {4}:{5}-{6} | \
@@ -127,23 +128,23 @@ function lz()
   locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/INF-${prot_efo}.lz \
             --delim tab title="SCALLOP: {3}-{7}" \
             --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
-            --no-date --plotonly --prefix=INF-{3}-{9} --rundir ${dir} --refsnp {7}
+            --no-date --plotonly --prefix=INF-"{3}-{10}" --rundir ${dir} --refsnp {7}
   rm ${dir}/INF-${prot_efo}.lz
   for src in GWAS INF
   do
-     pdftopng -f 1 -l 1 -r 300 ${dir}/${src}-${gene_efo_pqtl}.pdf ${dir}/${src}-${gene_efo_pqtl}
-     mv ${dir}/${src}-${gene_efo_pqtl}-000001.png ${dir}/${src}-${gene_efo_pqtl}.png
+     pdftopng -f 1 -l 1 -r 300 ${dir}/"${src}-${gene_efo_pqtl}".pdf ${dir}/"${src}-${gene_efo_pqtl}"
+     mv ${dir}/"${src}-${gene_efo_pqtl}"-000001.png ${dir}/"${src}-${gene_efo_pqtl}".png
   done
-    convert -append ${dir}/GWAS-${gene_efo_pqtl}.png ${dir}/INF-${gene_efo_pqtl}.png \
-            -resize x500 -density 300 ${dir}/combine-${gene_efo_pqtl}.png
-    convert ${dir}/combine-${gene_efo_pqtl}.png -quality 0 ${dir}/combine-${gene_efo_pqtl}.jp2
-    convert ${dir}/combine-${gene_efo_pqtl}.jp2 ${dir}/combine-${gene_efo_pqtl}.pdf
-    rm -f ${dir}/combine-${gene_efo_pqtl}.png
-    rm -f ${dir}/combine-${gene_efo_pqtl}.jp2
-    rm ${dir}/GWAS-${gene_efo_pqtl}.png
-    rm ${dir}/INF-${gene_efo_pqtl}.png
+    convert -append ${dir}/"INF-${gene_efo_pqtl}".png ${dir}/"GWAS-${gene_efo_pqtl}".png \
+            -resize x500 -density 300 ${dir}/"combine-${gene_efo_pqtl}".png
+    convert ${dir}/"combine-${gene_efo_pqtl}".png -quality 0 ${dir}/"combine-${gene_efo_pqtl}".jp2
+    convert ${dir}/"combine-${gene_efo_pqtl}".jp2 ${dir}/${combine}.pdf
+    rm -f ${dir}/combine-"${gene_efo_pqtl}".png
+    rm -f ${dir}/combine-"${gene_efo_pqtl}".jp2
+    rm ${dir}/GWAS-"${gene_efo_pqtl}".png
+    rm ${dir}/INF-"${gene_efo_pqtl}".png
   '
-  qpdf --empty --pages $(ls ${dir}/combine*.pdf) -- ${dir}/protein-disease-lz.pdf
+  qpdf --empty --pages $(ls ${dir}/combine*pdf) -- ${dir}/protein-disease-lz.pdf
 }
 
 function run_PWCoCo()
@@ -193,7 +194,7 @@ parallel -j1 --env dir -C '\t' '
          --sum_stats2 ${dir}/${gene_efo_pqtl}-pwcoco.sst2 \
          --p_cutoff1 1e-6 --p_cutoff2 5e-8 \
          --log ${dir}/${gene_efo_pqtl}-pwcoco \
-         --out ${dir}/${gene_efo_pqtl}-pwcoco --out-cond
+         --out ${dir}/${gene_efo_pqtl}-pwcoco --out_cond
 '
 EOL
 
@@ -219,10 +220,30 @@ Rscript -e '
   H.names <- coloc.names[grepl("^H",coloc.names)]
   coloc[c(H.names,"log_abf_all")] <- round(coloc[c(H.names,"log_abf_all")],digits=2)
   write.table(coloc,file="~/INF/coloc/coloc-all.txt",row.names=FALSE,quote=FALSE,sep="\t")
-  write.table(subset(coloc,H4>=0.8),file="~/INF/coloc/coloc.txt",row.names=FALSE,quote=FALSE,sep="\t")
+  write.table(subset(coloc,H4>=0.8),file="~/INF/coloc/pwcoco.txt",row.names=FALSE,quote=FALSE,sep="\t")
 '
 }
 
+lz
 # run_PWCoCo
+# coloc
 
-coloc
+function cojo()
+{
+  export dir=${INF}/coloc
+  export sel=${INF}/coloc/IL12B-ebi-a-GCST004133_rs10076557-pwcoco.IL12B-ebi-a-GCST004133_rs10076557-pwcoco.sst1.chr5:158774965_A_C.cojo
+  export dir=${INF}/coloc
+  cat <(head -1 ${sel} | cut -f2 --complement | awk -vFS="\t" -vOFS="\t" '{print "SNP","rsid",$0}') \
+      <(sed '1d' ${sel} | sort -k2,2 | join -22 <(grep chr5 ${INF}/work/INTERVAL.rsid) - | tr ' ' '\t') \
+   > ${sel}-rsid
+# GWAS
+  module load python/2.7
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${sel}-rsid \
+            --delim tab title="IL12B-ebi-a-GCST004133_rs10076557-rs983825" \
+            --markercol rsid --pvalcol pC --chr 5 --start 158491791 --end 159007895 --cache None \
+            --no-date --plotonly --prefix=GWAS-IL12B-ebi-a-GCST004133_rs10076557-rs983825 --rundir ${dir} --refsnp rs983825
+  locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${sel}-rsid \
+            --delim tab title="IL12B-ebi-a-GCST004133_rs10076557-rs4921223" \
+            --markercol rsid --pvalcol pC --chr 5 --start 158491791 --end 159007895 --cache None \
+            --no-date --plotonly --prefix=GWAS-IL12B-ebi-a-GCST004133_rs10076557-rs4921223 --rundir ${dir} --refsnp rs4921223
+}
