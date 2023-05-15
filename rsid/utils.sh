@@ -666,7 +666,7 @@ function gsmr3()
     rt <- paste0(INF,"/",p,"-",efo)
     snpid_rsid <- read.table(paste0(rt,".rsid"),col.names=c("snpid","SNP"))
     suppressMessages(require(dplyr))
-    suppressMessages(require(MendelianRandomization))
+    suppressMessages(require(MendelianRandomization,lib.loc="~/cambridge-ceu/"))
     source(file.path(INF,"rsid","gsmr_plot.r"))
     eff_dat <- paste0(INF,"/mr/gsmr/out/",p,"-",efo,".eff_plot.gz")
     gsmr_data <- read_gsmr_data(eff_dat)
@@ -679,7 +679,7 @@ function gsmr3()
     gsmr_snp_effect <- snpid_rsid %>%
                        left_join(gsmr_snp_effect)
     attach(gsmr_snp_effect)
-    png(paste0(INF,"/SF-",p,"-",trait,".png"),res=300,height=5,width=4,units="in")
+    png(paste0(INF,"/SF-",p,"-",trait,".png"),res=300,height=8,width=8.3,units="in")
     mr_dat <- mr_input(bx = bx, bxse = bxse, by = by, byse = byse, exposure = gene, outcome = trait, snps = SNP,
               effect_allele = effect_allele, other_allele = other_allele, eaf = eaf)
     mr_plot(mr_dat, interactive = FALSE, labels = FALSE)
@@ -868,7 +868,7 @@ function CXCL5_prep()
             left_join(pQTLdata::inf1[c("target.short","gene")],by=c("protein"="target.short")) %>%
             select(Disease,bxy,se,p,p_qtl,gene) %>%
             filter(grepl("CXCL5",gene)&grepl("Crohn\'s disease|Ulcerative colitis",Disease))
-    pdf(file.path(INF,"SF-CXCL5-MR.pdf"),height=3,width=7)
+    pdf(file.path(INF,"SF-CXCL5-MR.pdf"),height=3,width=9)
     mr_forestplot(gsmr,colgap.forest.left="0.05cm", fontsize=14,
                   leftcols=c("studlab"), leftlabs=c("Disease"),
                   plotwidth="3inch", sm="OR", sortvar=dat[["bxy"]],
@@ -1053,6 +1053,7 @@ function CXCL5_wb_ct()
       <(zgrep -w rs450373 ~/rds/public_databases/GTEx/csv/Colon_Transverse.tsv.gz | grep ENSG00000163735) \
       <(zgrep -w rs450373 ~/rds/public_databases/GTEx/csv/Whole_Blood.tsv.gz | grep ENSG00000163735) | cut -f9,10,15,16,18
   R --no-save <<\ \ END
+  suppressMessages(library(dplyr))
   CXCL5 <- '
        "Plasma protein" -0.5115   0.0183
      "Whole blood mRNA" -0.546318 0.0542992
@@ -1062,6 +1063,7 @@ function CXCL5_wb_ct()
            setNames(c("outcome","Effect","StdErr")) %>%
            mutate(outcome=gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))
   library(gap)
+  INF <- Sys.getenv("INF")
   pdf(file.path(INF,"SF-CXCL5-WB-CT.pdf"),height=3,width=9)
   mr_forestplot(CXCL5,colgap.forest.left="0.05cm", fontsize=14,
                 leftcols=c("studlab"), leftlabs=c("CXCL5 measurement"),
