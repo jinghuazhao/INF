@@ -137,10 +137,12 @@ function lz()
   done
     convert -append ${dir}/"INF-${gene_efo_pqtl}".png ${dir}/"GWAS-${gene_efo_pqtl}".png \
             -resize x500 -density 300 ${dir}/"combine-${gene_efo_pqtl}".png
-    convert ${dir}/"combine-${gene_efo_pqtl}".png -quality 0 ${dir}/"combine-${gene_efo_pqtl}".jp2
-    convert ${dir}/"combine-${gene_efo_pqtl}".jp2 ${dir}/${combine}.pdf
+    convert ${dir}/"combine-${gene_efo_pqtl}".png ${dir}/"combine-${gene_efo_pqtl}".jp2
+    mogrify -path ${dir} -format jpg -quality 100 -verbose ${dir}/"combine-${gene_efo_pqtl}".jp2
+    convert ${dir}/"combine-${gene_efo_pqtl}".jpg ${dir}/${combine}.pdf
     rm -f ${dir}/combine-"${gene_efo_pqtl}".png
     rm -f ${dir}/combine-"${gene_efo_pqtl}".jp2
+    rm -f ${dir}/combine-"${gene_efo_pqtl}".jpg
     rm ${dir}/GWAS-"${gene_efo_pqtl}".png
     rm ${dir}/INF-"${gene_efo_pqtl}".png
   '
