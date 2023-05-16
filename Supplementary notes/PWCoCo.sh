@@ -99,14 +99,13 @@ gwasglue
 # --out - prefix for the result files, default is "pwcoco_out".
 # --p_cutoff - P value cutoff for SNPs to be selected by the stepwise selection process, default is 5e-8. Alternatively, the flags --p_cutoff1 and --p_cutoff2 may be used to specify dataset-specific P value cutoffs, relative to the order of the data given in the --sum_stats flags.
 # --chr - when reading the reference files, the program will limit the analysis to those SNPs on this chromosome.
-# --top_snp - maximum number of SNPs that may be selected by the stepwise selection process, default is 1e10, i.e. a lot.
-# --ld_window - distance (in kb) that, when exceeded, is assumed for SNPs to be in total LE, default is 1e7.
-# --collinear - threshold that, when exceeded, determines if SNPs are collinear, default is 0.9.
-# --maf - filters SNPs from the reference dataset according to this threshold, default is 0.1.
-# --freq_threshold - SNPs in the phenotype datasets which differ by more than this amount in the reference dataset will be excluded, default is 0.2.
-# --init_h4 - PWCoCo will run an initial colocalisation on the unconditioned dataset. If the H4 for this analysis reaches this threshold, the program will terminate early. Default is 80 (i.e. 80%). Set to 0 if you would like the program to always continue regardless of the initial colocalisation result.
-# --out_cond - would you like for the conditioned data to be saved as text files as well? Just including this flag will work (no extra argument following this flag is necessary).
-# --coloc_pp - specify the three prior probability Ps: the next **three** arguments must be the P values, default is 1e-4, 1e-4 and 1e-5.
+# --top_snp 1e10 maximum number of variants subject to the stepwise selection process
+# --ld_window 1e7 (kb) beyond which variants are considered no linkage disequilibrium.
+# --collinear 0.9, collinearity threshold for variants
+# --maf 0.1 variant filter for the reference dataset according to this threshold
+# --freq_threshold 0.2, exclusion threshold for variants with allele frequency difference between the phenotype and the reference datasets
+# --init_h4 80 (i.e. 80%). stop criteria.
+# --coloc_pp 1e-4, 1e-4 and 1e-5, the three prior probability Ps.
 # --n1 - also --n2, specify the sample size (see also next flag) for the corresponding summary statistics.
 # --n1_case - also --n2_case, specify the number of cases for the corresponding summary statistics.
 # --threads - sets number of threads available for OpenMP multi-threaded functions, default is 8.

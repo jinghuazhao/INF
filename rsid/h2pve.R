@@ -43,12 +43,12 @@ pve_order <- filter(pve,!is.na(h2)) %>%
              mutate(xtick=1:n())
 attach(pve_order)
 png(file.path(INF,"h2","SF-h2-PVE.png"),width=15,height=8,units="in",pointsize=8,res=300)
-    par(mar=c(10,5,1,1))
+    par(mar=c(10,5,1,2))
     plot(h2,cex=2,pch=19,xaxt="n",xlab="",ylab="",cex.axis=1.2)
     segments(xtick,h2-1.96*h2se,xtick,h2+1.96*h2se)
     axis(1, at=xtick, labels=gene, lwd.tick=0.5, lwd=0, las=2, hadj=1, cex.axis=1.2)
-    mtext("PVE",side=2,line=2.5,cex=1.5)
-    mtext("Ordered protein",side=1,line=8.5,cex=1.5,font=1)
+    mtext("PVE",side=2,line=3.5,cex=2)
+    mtext("Ordered protein",side=1,line=8.5,cex=2,font=1)
 dev.off()
 detach(pve_order)
 
@@ -56,12 +56,12 @@ p <- ggplot(pve_order,aes(xtick, h2))+
      theme_bw()+
      theme(
            panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-           axis.title.x = element_text(size=20),
-           axis.title.y = element_text(size=20),
+           axis.title.x = element_text(size=25),
+           axis.title.y = element_text(size=25),
            axis.line = element_line(colour = "black"),
            axis.ticks.length=unit(.3, "cm"),
            axis.text.x = element_text(angle=90,color=if_else(pve_order$MissDataProp>=80, "red", "black"), size=16, hjust=1),
-           axis.text.y = element_text(size=16)
+           axis.text.y = element_text(angle=90,size=20)
           )+
      geom_point(size=4)+
      geom_errorbar(aes(ymin=h2-1.96*h2se,ymax=h2+1.96*h2se),position=position_dodge(0.05),width=0.3)+

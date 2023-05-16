@@ -598,8 +598,9 @@ R --no-save -q <<END
 #   plot(MAF,abs(Effect),cex.axis=1.3,cex.lab=1.3,pch=19,main="a",xlab="MAF", ylab="Effect size",col=col)
     library(scatterplot3d)
     scatterplot3d(MAF,abs(Effect),v,color=col, pch=16, type="h",
-                  xlab="MAF", ylab="Effect", zlab=expression(italic(2*MAF(1-MAF)*Effect^2)), cex.axis=1.3, cex.lab=1.3)
-    legend("right", legend=levels(as.factor(cis.trans)), box.lwd=0, col=c("red", "blue"), pch=16)
+                  xlab="MAF", ylab="Effect", zlab=expression(italic(2*MAF(1-MAF)*Effect^2)),
+                  cex.axis=2, cex.lab=2, mar=c(3,5,3,3))
+    legend("right", legend=levels(as.factor(cis.trans)), box.lwd=0, cex=2.5, col=c("red", "blue"), pch=16)
   })
   dev.off()
 END
