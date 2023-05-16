@@ -583,7 +583,7 @@ function pve()
 {
 R --no-save -q <<END
   INF <- Sys.getenv("INF")
-  png(file.path(INF,"h2","SF-Effect-size-PVE.png"), res=300, units="cm", width=30, height=30)
+  png(file.path(INF,"h2","SF-Effect-size-PVE.png"), res=300, units="in", width=20, height=15)
   jma <- read.delim(file.path(INF,"work","INF1.jma-rsid"))
   jma.cistrans <- read.csv(file.path(INF,"work","INF1.jma-rsid.cis.vs.trans"))[c("prot","cis.trans")]
   INF1_jma <- merge(jma,jma.cistrans,by="prot")
