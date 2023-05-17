@@ -194,7 +194,7 @@ parallel -j1 --env dir -C '\t' '
          --chr {4} \
          --sum_stats1 ${dir}/${gene_efo_pqtl}-pwcoco.sst1 \
          --sum_stats2 ${dir}/${gene_efo_pqtl}-pwcoco.sst2 \
-         --p_cutoff1 1e-6 --p_cutoff2 5e-8 \
+         --p_cutoff1 5e-8 --p_cutoff2 5e-8 \
          --log ${dir}/${gene_efo_pqtl}-pwcoco \
          --out ${dir}/${gene_efo_pqtl}-pwcoco --out_cond
 '
@@ -221,14 +221,14 @@ Rscript -e '
   coloc.names <- names(coloc)
   H.names <- coloc.names[grepl("^H",coloc.names)]
   coloc[c(H.names,"log_abf_all")] <- round(coloc[c(H.names,"log_abf_all")],digits=2)
-  write.table(coloc,file="~/INF/coloc/coloc-all.txt",row.names=FALSE,quote=FALSE,sep="\t")
+  write.table(coloc,file="~/INF/coloc/pwcoco-all.txt",row.names=FALSE,quote=FALSE,sep="\t")
   write.table(subset(coloc,H4>=0.8),file="~/INF/coloc/pwcoco.txt",row.names=FALSE,quote=FALSE,sep="\t")
 '
 }
 
-lz
-# run_PWCoCo
+# lz
 # coloc
+run_PWCoCo
 
 function cojo()
 {
