@@ -279,6 +279,8 @@ function lz()
   export eQTLGen_tabix=${eQTLGen}/tabix
   module load python/2.7
   export dir=${INF}/eQTLGen
+# 500kb for CCL4
+# echo P13236 CCL4 CCL4 17 33930983 34933014 rs8064426 CCL4 | \
   cut -d ' ' -f1-4,6,7 ${dir}/cis.lst | awk '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6}' | \
   parallel -j8 -C ' ' --env dir '
   echo "{1}-{2}-{3}"
@@ -367,5 +369,12 @@ if [ ! -d ${INF}/eQTLGen/log ]; then mkdir -p ${INF}/eQTLGen/log; fi
 # lookup_merge
 # lookup_jma
 # coloc
+# lz
 
-lz
+function check_lz()
+{
+  cd ${INF}/eQTLGen
+  join -11 -22 -v2 \
+       <(ls *pdf | grep -v protein | sed 's/-lz.pdf//;s/-/\t/g' | sort -k1,1) \
+       <(ls eQTLGen*tsv.gz | sed 's/eQTLGen-//;s/-/\t/g;s/.tsv.gz//'| sort -k2,2)
+}
