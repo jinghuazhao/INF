@@ -194,7 +194,7 @@ parallel -j1 --env dir -C '\t' '
          --chr {4} \
          --sum_stats1 ${dir}/${gene_efo_pqtl}-pwcoco.sst1 \
          --sum_stats2 ${dir}/${gene_efo_pqtl}-pwcoco.sst2 \
-         --p_cutoff1 5e-8 --p_cutoff2 5e-8 \
+         --p_cutoff1 5e-8 --p_cutoff2 5e-8 --maf 0.001 \
          --log ${dir}/${gene_efo_pqtl}-pwcoco \
          --out ${dir}/${gene_efo_pqtl}-pwcoco --out_cond
 '
@@ -249,3 +249,68 @@ function cojo()
             --markercol rsid --pvalcol pC --chr 5 --start 158491791 --end 159007895 --cache None \
             --no-date --plotonly --prefix=GWAS-IL12B-ebi-a-GCST004133_rs10076557-rs4921223 --rundir ${dir} --refsnp rs4921223
 }
+
+
+function recollect()
+{
+  export dir=${1}
+  export out=${2}
+  (
+  ls ${dir}/*RDS | \
+  parallel -C' ' '
+    export rds=$(basename {});
+    Rscript -e "
+      options(width=200)
+      suppressMessages(library(dplyr))
+      dir <- Sys.getenv(\"dir\")
+      rds <- Sys.getenv(\"rds\")
+      l <- unlist(strsplit(gsub(\".RDS\",\"\",rds),\"-\"))
+      d <- readRDS(file.path(dir,rds)) %>%
+           mutate(prot=l[1],snpid=l[2]) %>%
+           data.frame
+      n <- names(d)
+      pp <- grepl(\"PP\",n)
+      d[pp] <- round(d[pp],2)
+      write.table(d,row.names=FALSE,col.names=FALSE,quote=FALSE,sep=\"\t\")
+    "
+  '
+  ) > ${dir}/${out}-all.tsv
+}
+
+# recollect coloc GTEx
+# recollect eQTLCatalogue eQTLCatalogue
+
+function setdiff()
+{
+  Rscript -e '
+    l <- read.delim("~/INF/eQTLCatalogue/eQTLCatalogue-all.tsv")
+    p <- unique(l$prot)
+    METAL <- read.delim("~/INF/work/INF1.METAL")
+    p2 <- subset(METAL,cis.trans=="cis")$prot
+    df <- setdiff(p2,p)
+    df <- c("CD6","CCL23","MIP.1.alpha","CCL4","TNFSF14","CCL25","FGF.5")
+    write.table(pQTLdata::inf1[pQTLdata::inf1$prot%in%df,c("prot","gene","ensembl_gene_id")],quote=FALSE,row.names=FALSE,sep="\t")
+  '
+}
+    h <- c("variant","r2","pvalue","molecular_trait_object_id","molecular_trait_id",
+           "maf","gene_id","median_tpm","beta","se","an","ac","chromosome","position",
+           "ref","alt","type","rsid")
+
+export csv=~/rds/public_databases/GTEx/csv
+for tissue in $(ls ${csv}/*gz | xargs -l -I{} basename {} .tsv.gz)
+do
+export tissue=${tissue}
+echo ${tissue}
+(
+echo "variant	r2	pvalue	molecular_trait_object_id	molecular_trait_id	maf	gene_id	median_tpm	beta	se	an	ac	chromosome	position	ref	alt	type	rsid"
+cat << 'EOL' | parallel -j10 -C' ' --env csv --env tissue 'awk -vgene_id={3} "\$7==gene_id"  ${csv}/${tissue}.tsv.gz'
+CCL23 CCL23 ENSG00000167236
+CCL25 CCL25 ENSG00000131142
+CCL4 CCL4 ENSG00000129277
+CD6 CD6 ENSG00000138675
+FGF.5 FGF5 ENSG00000013725
+MIP.1.alpha CCL3 ENSG00000006075
+TNFSF14 TNFSF14 ENSG00000125735
+EOL
+) | gzip -f > ${tissue}.gz
+done

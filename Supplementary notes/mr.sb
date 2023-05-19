@@ -404,8 +404,7 @@ function gsmr_trait()
 # mr2
 # gsmr2
 # gsmr_trait
-mr2
-# gsmr3
+gsmr3
 
 function gsmr_hgi()
 {

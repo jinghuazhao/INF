@@ -289,12 +289,12 @@ function deCODE()
   cut -d' ' -f1,2 --complement | \
   sort -k4,4 | \
   tr ' ' '\t'| \
-  join -24 <(Rscript -e 'write.table(pQTLtools::inf1[c("prot","target.short")],col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")' | \
+  join -24 <(Rscript -e 'write.table(pQTLdata::inf1[c("prot","target.short")],col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")' | \
              sort -t$'\t' -k1,1) - | \
   awk -vOFS='\t' '{print $2,$6,$5,$3,$7,"as sentinels",1,$4}' | \
   sort -t$'\t' -k1,1 | \
   join -t$'\t' - \
-               <(Rscript -e 'write.table(data.frame(pQTLtools::inf1[c("target.short","target")],Source="Ferkingstad et al. (2021)",PMID="",Comment=""),
+               <(Rscript -e 'write.table(data.frame(pQTLdata::inf1[c("target.short","target")],Source="Ferkingstad et al. (2021)",PMID="",Comment=""),
                                          col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")' | \
                  sort -t$'\t' -k1,1)
 )
@@ -310,4 +310,6 @@ function run_deCODE()
   }' > ${INF}/deCODE/deCODE.tsv
 }
 
-replication
+# replication
+
+run_deCODE
