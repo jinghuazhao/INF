@@ -196,40 +196,47 @@ function run_coloc()
    gwasvcf::set_bcftools(file.path(HPC_WORK,"bin","bcftools"))
    sentinels <- subset(read.csv(cvt),cis)
    sentinel <- sentinels[r,]
-   ensRegion <- with(subset(pQTLtools::inf1,prot==sentinel[["prot"]]),
+   ensRegion <- with(subset(pQTLdata::inf1,prot==sentinel[["prot"]]),
                      {
                        start <- start-M
                        if (start<0) start <- 0
                        end <- end+M
                        paste0(chr,":",start,"-",end)
                      })
-   gene <- subset(pQTLtools::inf1,prot==sentinel[["prot"]])[["gene"]]
+   gene <- subset(pQTLdata::inf1,prot==sentinel[["prot"]])[["gene"]]
    # "GWAS sumstats
    vcf <- file.path(INF,"METAL","gwas2vcf",paste0(sentinel[["prot"]],".vcf.gz"))
    gs <- gwasvcf::query_gwas(vcf, chrompos = ensRegion)
    gwas_stats <- gwasvcf::vcf_to_tibble(gs) %>%
                  filter(!is.na(ES)) %>%
-                 mutate(SNP=ID,chr=as.integer(seqnames),pos=end,MAF=if_else(AF<0.5,AF,1-AF),sdY=1)
-   dup1 <- duplicated(with(gwas_stats,SNP))
+                 mutate(SNP=ID,chr=as.integer(seqnames),pos=end,MAF=if_else(AF<0.5,AF,1-AF),sdY=1,
+                        snpid=gap::chr_pos_a1_a2(chr,pos,ALT,REF))
    # eQTLGen
    cis_eQTL <- Sys.getenv("cis_eQTL")
-   eqtl_info <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"AF_AC_MAF_pos.txt.gz"),tabixRange=ensRegion,stringsAsFactors=FALSE)
-   names(eqtl_info) <- c("SNP","chr","pos","AlleleA","AlleleB","allA_total","allAB_total","allB_total","f")
-   es <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"cis_full.txt.gz"),tabixRange=ensRegion,stringsAsFactors=FALSE)
-   names(es) <- c("Pvalue","SNP","chr","pos","z","A1","A2","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR")
-   es <- left_join(select(es,SNP,chr,pos,A1,A2,z,GeneSymbol,N),select(eqtl_info,SNP,chr,pos,f)) %>%
+   eqtl_info <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"AF_AC_MAF_pos.txt.gz"),
+                                           tabixRange=ensRegion,stringsAsFactors=FALSE) %>%
+                setNames(c("SNP","chr","pos","AlleleA","AlleleB","allA_total","allAB_total","allB_total","f")) %>%
+                filter(!is.na(AlleleA) & !is.na(AlleleB)) %>%
+                mutate(snpid=gap::chr_pos_a1_a2(chr,pos,AlleleA,AlleleB))
+   es <- seqminer::tabix.read.table(tabixFile=file.path(cis_eQTL,"cis_full.txt.gz"),tabixRange=ensRegion,stringsAsFactors=FALSE) %>%
+         setNames(c("Pvalue","SNP","chr","pos","z","A1","A2","Gene","GeneSymbol","GeneChr","GenePos","NrCohorts","N","FDR")) %>%
+         mutate(snpid=gap::chr_pos_a1_a2(chr,pos,A1,A2)) %>%
+         select(SNP,chr,pos,A1,A2,z,GeneSymbol,N,snpid) %>%
+         filter(GeneSymbol==gene) %>%
+         left_join(select(eqtl_info,SNP,chr,pos,f,snpid)) %>%
          mutate(maf=if_else(f<0.5,f,1-f),d=sqrt(2*f*(1-f)*(z^2+N)),beta=z/d,se=1/d) %>%
          select(-d,-f) %>%
-         left_join(select(gwas_stats,SNP,chr,pos,REF,ALT)) %>%
+         left_join(select(gwas_stats,SNP,chr,pos,REF,ALT,snpid)) %>%
          distinct() %>%
          mutate(sign=if_else(A1==ALT,1,-1),beta=sign*beta,sdY=1)
    eqtl_stats <- subset(es, GeneSymbol==gene & !is.na(beta) & !is.na(maf))
-   dup2 <- duplicated(with(eqtl_stats,SNP))
-   run_coloc <- function(eqtl_sumstats=eqtl_stats[!dup2,], gwas_sumstats=gwas_stats[!dup1,])
+   dup1 <- duplicated(with(gwas_stats,snpid))
+   dup2 <- duplicated(with(eqtl_stats,snpid))
+   run_coloc <- function(gwas_sumstats=gwas_stats[!dup1,],eqtl_sumstats=eqtl_stats[!dup2,])
    {
-     eQTL_dataset <- with(eqtl_sumstats, list(beta=beta,varbeta=se^2,N=N,MAF=maf,type="quant",snp=SNP))
-     gwas_dataset <- with(gwas_sumstats, list(beta=ES,varbeta=SE^2,type="quant",snp=ID,MAF=MAF,N=SS))
-     coloc_res <- coloc::coloc.abf(dataset1=eQTL_dataset, dataset2=gwas_dataset, p1=1e-4, p2=1e-4, p12=1e-5)
+     eQTL_dataset <- with(eqtl_sumstats, list(beta=beta,varbeta=se^2,N=N,MAF=maf,type="quant",snp=snpid))
+     gwas_dataset <- with(gwas_sumstats, list(beta=ES,varbeta=SE^2,type="quant",snp=snpid,MAF=MAF,N=SS))
+     coloc_res <- coloc::coloc.abf(dataset1=gwas_dataset, dataset2=eQTL_dataset, p1=1e-4, p2=1e-4, p12=1e-5)
      res_formatted <- dplyr::as_tibble(t(as.data.frame(coloc_res$summary)))
    }
    res <- run_coloc()
@@ -287,7 +294,7 @@ function lz()
 # eQTLGen
   cat <(echo -e "snpid rsid chr pos a1 a2 mlog10p") \
       <(tabix ${eQTLGen_tabix}/cis_full.txt.gz {4}:{5}-{6} | \
-        awk -vgene={3} "\$9==gene" | \
+        awk -vgene={3} "\$9==gene' \| \
         cut -f2-7 | \
         awk "
         {
@@ -369,7 +376,7 @@ if [ ! -d ${INF}/eQTLGen/log ]; then mkdir -p ${INF}/eQTLGen/log; fi
 # lookup_merge
 # lookup_jma
 # coloc
-# lz
+lz
 
 function check_lz()
 {
@@ -377,4 +384,28 @@ function check_lz()
   join -11 -22 -v2 \
        <(ls *pdf | grep -v protein | sed 's/-lz.pdf//;s/-/\t/g' | sort -k1,1) \
        <(ls eQTLGen*tsv.gz | sed 's/eQTLGen-//;s/-/\t/g;s/.tsv.gz//'| sort -k2,2)
+}
+
+function addition()
+{
+# 20 22 25 34
+cat << 'EOL' > ll
+CCL23 CCL23
+CCL4 CCL4
+IL.10 IL10
+MIP.1.alpha CCL3
+EOL
+(
+  cd ${INF}/eQTLGen
+  for r in {1..59}
+  do
+     export r=${r}
+     export cvt=${INF}/work/INF1.merge.cis.vs.trans
+     export cis_eQTL=~/rds/public_databases/eQTLGen
+     read prot MarkerName < <(awk -vFS="," '$14=="cis"' ${cvt} | awk -vFS="," -vr=${r} 'NR==r{print $2,$5}')
+     echo ${r} - ${prot} - ${MarkerName}
+     export prot=${prot}
+     export MarkerName=${MarkerName}
+  done
+) | grep -f <(cut -d' ' -f1 ll) - -w
 }

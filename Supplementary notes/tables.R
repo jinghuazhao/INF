@@ -109,7 +109,7 @@ garfield <- read.table(file.path(INF,"garfield-data","output","INF1-cis","garfie
     gsmr <- merge(d, gap_inf1[c("prot","target.short")],by.x="Exposure1",by.y="prot") %>%
             mutate(Exposure1=target.short,Exposure2=target.short) %>% rename(Protein1=Exposure1,Protein2=Exposure2) %>%
             select(-target.short)
-    gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo.txt")) %>%
+    gsmr_efo <- read.delim(file.path(INF,"mr","gsmr","gsmr-efo-reduce.txt")) %>%
                 mutate(protein=gsub("MCP-1","CCL2",protein),
                        protein=gsub("MCP-2","CCL8",protein),
                        protein=gsub("MCP-3","CCL7",protein),
@@ -300,7 +300,7 @@ prefix <- c(paste0(toupper(substr(outsheets, 1, 1)), substr(outsheets, 2, nchar(
           )
 summary <- data.frame(Sheetnames=prefix,Description=description)[1:(n0+n1),]
 summary2 <- data.frame(Sheetnames=prefix,Description=description)[-(1:(n0+n1)),]
-xlsx <- file.path(INF,"NG","Supplementary-Tables.xlsx")
+xlsx <- file.path(INF,"NG","STs.xlsx")
 wb <- createWorkbook(xlsx)
 xlsx2 <- file.path(INF,"NG","Additional-Tables.xlsx")
 wb2 <- createWorkbook(xlsx2)
