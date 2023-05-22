@@ -40,7 +40,7 @@ suppressMessages(library(catalogueR))
 INF <- Sys.getenv("INF")
 HOME <- Sys.getenv("HOME")
 hgnc <- read.table(file.path(INF,"work","INF1.merge-cis.genes"),col.names=c("prot","uniprot","chr","start","end","cis.trans")) %>%
-        left_join(pQTLtools::inf1) %>%
+        left_join(pQTLdata::inf1) %>%
         select(-cis.trans) %>%
         arrange(chr,start,end)
 if(!dir.exists(file.path(INF,"eQTLCatalogue"))) dir.create(file.path(INF,"eQTLCatalogue"))
