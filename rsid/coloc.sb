@@ -11,11 +11,8 @@
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_coloc_%A_%a.out
 #SBATCH --export ALL
 
-export job=${SLURM_ARRAY_TASK_ID}
-export trait=$(awk -v job=${job} 'NR==job {print $1}' ${INF}/work/inf1.tmp)
-export FUSION=${HPC_WORK}/fusion_twas
-
-function gtex()
+function coloc()
+# GTEx, eQTL-Catalogue
 {
   export r=${SLURM_ARRAY_TASK_ID}
   export cvt=${INF}/work/INF1.merge.cis.vs.trans
@@ -34,56 +31,12 @@ function gtex()
   fi
 }
 
-function ge()
-# eQTL-Catalogue ge
-{
-  export r=${SLURM_ARRAY_TASK_ID}
-  export cvt=${INF}/work/INF1.merge.cis.vs.trans
-  read prot MarkerName < \
-                       <(awk -vFS="," '$14=="cis"' ${cvt} | \
-                         awk -vFS="," -vr=${r} 'NR==r{print $2,$5}')
-  echo ${r} - ${prot} - ${MarkerName}
-  export prot=${prot}
-  export MarkerName=${MarkerName}
-  if [ ! -f ${INF}/coloc/${prot}-${MarkerName}.pdf ] || \
-     [ ! -f ${INF}/coloc/${prot}-${MarkerName}.RDS ]; then
-    cd ${INF}/eQTLCatalogue
-    R --no-save < ${INF}/rsid/coloc.R 2>&1 | \
-    tee ${prot}-${MarkerName}.log
-    cd -
-  fi
-}
+coloc
 
-function no_slurm()
 # CCL23 CCL25 CCL4 CD6 FGF.5 MIP.1.alpha TNFSF14
 # 4 6 20 22 34 50 52
-{
-for r in {1..59}
-do
-   export r=${r}
-   export cvt=${INF}/work/INF1.merge.cis.vs.trans
-   read prot MarkerName < \
-                        <(awk -vFS="," '$14=="cis"' ${cvt} | \
-                          awk -vFS="," -vr=${r} 'NR==r{print $2,$5}')
-   echo ${r} - ${prot} - ${MarkerName}
-   export prot=${prot}
-   export MarkerName=${MarkerName}
-   if [ ! -f ${INF}/coloc/${prot}-${MarkerName}.pdf ] || \
-      [ ! -f ${INF}/coloc/${prot}-${MarkerName}.RDS ]; then
-     cd ${INF}/coloc
-     R --no-save < ${INF}/rsid/coloc.R 2>&1 | \
-     tee ${prot}-${MarkerName}.log
-#    ls *tbi | xargs -I {} bash -c "rm {}"
-     cd -
-   fi
-done
-}
 
-gtex
-# ge
-# no_slurm
-
-#   ls *tbi | xargs -I {} bash -c "rm {}"
+# --- legacy ---
 
 function coloc_gene()
 {
@@ -186,6 +139,8 @@ done
 function fusion()
 {
 cd work
+export FUSION=${HPC_WORK}/fusion_twas
+export trait=$(awk -v 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"] {print $1}' ${INF}/work/inf1.tmp)
 (
   awk -v OFS='\t' 'BEGIN{print "SNP","A1","A2","N","CHISQ","Z"}'
   gunzip -c ${INF}/METAL/${trait}-1.tbl.gz | \
