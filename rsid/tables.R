@@ -81,7 +81,7 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
                          H4=round(H4,2)) %>%
                   rename(Protein=prot,UniProt=uniprot) %>%
                   select(ID,UniProt,Protein,Gene,nSNP,H0,H1,H2,H3,H4)
- eQTLCatalogue <- read.delim(file.path(INF,"eQTLCatalogue","eQTLCatalogue-all.tsv"),header=TRUE) %>%
+ eQTLCatalogue <- read.delim(file.path(INF,"eQTLCatalogue","ensGene","eQTLCatalogue-all.tsv"),header=TRUE) %>%
                   left_join(gap_inf1) %>%
                   mutate(prot=target.short,
                          nSNP=nsnps,
