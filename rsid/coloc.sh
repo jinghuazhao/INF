@@ -4,7 +4,7 @@
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
-#SBATCH --array=1-59
+#SBATCH --array=4,6,20,22,34,50,52
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_coloc_%A_%a.err
@@ -112,7 +112,8 @@ function run_coloc()
   do
     export src=${src}
     ls ${INF}/coloc/${src}/${gene}* | \
-    parallel -C' ' --dry-run '
+    grep -e CCL23 -e CCL25 -e CCL4 -e CD6 -e FGF5 -e CCL3 -e TNFSF14 | \
+    parallel -C' ' '
       export tissue=$(echo {} | xargs -l basename -s .tsv)
       Rscript -e "
         suppressMessages(library(dplyr))
@@ -124,7 +125,7 @@ function run_coloc()
         eqtl_stats <- read.delim(paste0(\"~/INF/coloc/\",src,\"/\",tissue,\".tsv\")) %>%
                       mutate(snpid=gap::chr_pos_a1_a2(chromosome,position,ref,alt)) %>%
                       left_join(select(gwas_stats,snpid,REF,ALT),by=\"snpid\") %>%
-                      mutate(sign=if_else(alt==ALT,1,-1),beta=sign*beta) %>%
+                      mutate(maf=as.numeric(maf),sign=if_else(alt==ALT,1,-1),beta=sign*beta) %>%
                       filter(!is.na(beta))
         dup1 <- duplicated(with(gwas_stats,snpid))
         dup2 <- duplicated(with(eqtl_stats,snpid))

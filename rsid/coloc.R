@@ -72,9 +72,10 @@ gtex <- function(gwas_stats_hg38,ensGene,region38)
           f <- lapply(strsplit(ftp_path,"/csv/|/ge/"),"[",3);
           ftp_path <- paste0("~/rds/public_databases/GTEx/csv/",f)
         })
-  rnaseq_df <- dplyr::filter(imported_tabix_paths, quant_method == "ge") %>%
-               dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
-  ftp_path_list <- setNames(as.list(rnaseq_df$ftp_path), rnaseq_df$qtl_id)
+  imported_tabix_paths <- read.delim(fp, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
+  gtex_df <- dplyr::filter(imported_tabix_paths, quant_method == "ge") %>%
+             dplyr::mutate(qtl_id = paste(study, qtl_group, sep = "_"))
+  ftp_path_list <- setNames(as.list(grex_df$ftp_path), gtex_df$qtl_id)
   hdr <- file.path(find.package("pQTLtools"),"eQTL-Catalogue","column_names.GTEx")
   column_names <- names(read.delim(hdr))
   safe_import <- purrr::safely(import_eQTLCatalogue)
@@ -91,6 +92,7 @@ ge <- function(gwas_stats_hg38,ensGene,region38)
 {
   cat("d. eQTL datasets\n")
   fp <- file.path(find.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths_ge.tsv")
+  imported_tabix_paths <- read.delim(fp, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
   imported_tabix_paths <- within(read.delim(fp, stringsAsFactors = FALSE) %>% dplyr::as_tibble(),
         {
           f <- lapply(strsplit(ftp_path,"/csv/|/ge/"),"[",3)
@@ -112,57 +114,45 @@ ge <- function(gwas_stats_hg38,ensGene,region38)
 gtex_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
 {
   gwas_stats_hg38 <- sumstats(prot,chr,region37)
-  if (run_all)
-  {
-    df_microarray <- microarray(gwas_stats_hg38,ensGene,region38)
-    df_rnaseq <- rnaseq(gwas_stats_hg38,ensGene,region38)
-    df_gtex <- gtex(gwas_stats_hg38,ensGene,region38)
-    if (exists("df_microarray") & exits("df_rnaseq") & exists("df_gtex"))
-    {
-      coloc_df = dplyr::bind_rows(df_microarray, df_rnaseq, df_gtex)
-      saveRDS(coloc_df, file=paste0(out,".RDS"))
-      dplyr::arrange(coloc_df, -PP.H4.abf)
-      p <- ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
-    }
-  } else {
-    df_gtex <- gtex(gwas_stats_hg38,ensGene,region38)
-    if (exists("df_gtex"))
-    {
-      saveRDS(df_gtex,file=paste0(out,".RDS"))
-#     dplyr::arrange(df_gtex, -PP.H4.abf)
-#     p <- ggplot(df_gtex, aes(x = PP.H4.abf)) + geom_histogram()
-    }
-  }
+  df_gtex <- gtex(gwas_stats_hg38,ensGene,region38)
+  if (!exists("df_gtex")) return
+  saveRDS(df_gtex,file=paste0(out,".RDS"))
+  dplyr::arrange(df_gtex, -PP.H4.abf)
+  p <- ggplot(df_gtex, aes(x = PP.H4.abf)) + geom_histogram()
   s <- ggplot(gwas_stats_hg38, aes(x = position, y = LP)) + geom_point()
   ggsave(plot = s, filename = paste0(out, "-assoc.pdf"), path = "", device = "pdf",
          height = 15, width = 15, units = "cm", dpi = 300)
-# ggsave(plot = p, filename = paste0(out, "-hist.pdf"), path = "", device = "pdf",
-#        height = 15, width = 15, units = "cm", dpi = 300)
+  ggsave(plot = p, filename = paste0(out, "-hist.pdf"), path = "", device = "pdf",
+         height = 15, width = 15, units = "cm", dpi = 300)
 }
 
 ge_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
 {
   gwas_stats_hg38 <- sumstats(prot,chr,region37)
-  if (run_all)
+  df_ge <- ge(gwas_stats_hg38,ensGene,region38)
+  if (!exists("df_ge")) return
+  saveRDS(df_ge,file=paste0(out,".RDS"))
+  dplyr::arrange(df_ge, -PP.H4.abf)
+  p <- ggplot(df_ge, aes(x = PP.H4.abf)) + geom_histogram()
+  s <- ggplot(gwas_stats_hg38, aes(x = position, y = LP)) + geom_point()
+  ggsave(plot = s, filename = paste0(out, "-assoc.pdf"), path = "", device = "pdf",
+         height = 15, width = 15, units = "cm", dpi = 300)
+  ggsave(plot = p, filename = paste0(out, "-hist.pdf"), path = "", device = "pdf",
+         height = 15, width = 15, units = "cm", dpi = 300)
+}
+
+all_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
+{
+  gwas_stats_hg38 <- sumstats(prot,chr,region37)
+  df_microarray <- microarray(gwas_stats_hg38,ensGene,region38)
+  df_rnaseq <- rnaseq(gwas_stats_hg38,ensGene,region38)
+  df_ge <- ge(gwas_stats_hg38,ensGene,region38)
+  if (exists("df_microarray") & exits("df_rnaseq") & exists("df_gtex") & exists("df_ge"))
   {
-    df_microarray <- microarray(gwas_stats_hg38,ensGene,region38)
-    df_rnaseq <- rnaseq(gwas_stats_hg38,ensGene,region38)
-    df_ge <- ge(gwas_stats_hg38,ensGene,region38)
-    if (exists("df_microarray") & exits("df_rnaseq") & exists("df_gtex"))
-    {
-      coloc_df = dplyr::bind_rows(df_microarray, df_rnaseq, df_gtex)
-      saveRDS(coloc_df, file=paste0(out,".RDS"))
-      dplyr::arrange(coloc_df, -PP.H4.abf)
-      p <- ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
-    }
-  } else {
-    df_ge <- ge(gwas_stats_hg38,ensGene,region38)
-    if (exists("df_ge"))
-    {
-      saveRDS(df_ge,file=paste0(out,".RDS"))
-#     dplyr::arrange(df_ge, -PP.H4.abf)
-#     p <- ggplot(df_ge, aes(x = PP.H4.abf)) + geom_histogram()
-    }
+    coloc_df = dplyr::bind_rows(df_microarray, df_rnaseq, df_gtex, df_ge)
+    saveRDS(coloc_df, file=paste0(out,".RDS"))
+    dplyr::arrange(coloc_df, -PP.H4.abf)
+    p <- ggplot(coloc_df, aes(x = PP.H4.abf)) + geom_histogram()
   }
   s <- ggplot(gwas_stats_hg38, aes(x = position, y = LP)) + geom_point()
   ggsave(plot = s, filename = paste0(out, "-assoc.pdf"), path = "", device = "pdf",
@@ -174,16 +164,7 @@ ge_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
 single_run <- function(r, batch="GTEx")
 {
   sentinel <- sentinels[r,]
-  isnpid <- within(gap::inv_chr_pos_a1_a2(sentinel[["SNP"]]),
-  {
-    chr <- gsub("chr","",chr)
-    pos <- as.integer(pos)
-    start <- pos-M
-    if (start<0) start <- 0
-    end <- pos+M
-  })
-  chr <- with(isnpid,chr)
-  region37 <- with(isnpid, paste0(chr,":",start,"-",end))
+  chr <- with(sentinel,Chr)
   ensRegion37 <- with(subset(inf1,prot==sentinel[["prot"]]),
                       {
                         start <- start-M
@@ -191,19 +172,16 @@ single_run <- function(r, batch="GTEx")
                         end <- end+M
                         paste0(chr,":",start,"-",end)
                       })
-  region38 <- with(liftRegion(isnpid,chain),region)
   ensGene <- subset(inf1,prot==sentinel[["prot"]])[["ensembl_gene_id"]]
   ensRegion38 <- with(liftRegion(subset(inf1,prot==sentinel[["prot"]]),chain),region)
-  cat(chr,region37,region38,ensGene,ensRegion37,ensRegion38,"\n")
+  cat(chr,ensGene,ensRegion37,ensRegion38,"\n")
   if (batch=="GTEx")
   {
     f <- file.path(INF,"coloc",with(sentinel,paste0(prot,"-",SNP)))
-    gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,region37,region38,f)
-  # gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
+    gtex_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
   } else {
     f <- file.path(INF,"eQTLCatalogue",with(sentinel,paste0(prot,"-",SNP)))
-    ge_coloc(sentinel[["prot"]],chr,ensGene,chain,region37,region38,f)
-  # ge_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
+    ge_coloc(sentinel[["prot"]],chr,ensGene,chain,ensRegion37,ensRegion38,f)
   }
 }
 
