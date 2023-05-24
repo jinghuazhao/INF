@@ -1143,3 +1143,19 @@ function tbi()
   tabix -f -S1 -s1 -b2 -e2 {}.gz
   '
 }
+
+function eQTLCatalog()
+# This gives rsid/qtl_context_mapping.txt
+{
+cat << 'EOL' > SumStatsMeta.sql
+.tables
+.separator "\t"
+.header on
+.output qtl_context_mapping.txt
+select * from qtl_context_mapping;
+.output SumStatsMeta.txt
+select * from study;
+EOL
+wget https://ftp.ebi.ac.uk/pub/databases/spot/eQTL/SumStatsMeta.db
+sqlite3 SumStatsMeta.db < SumStatsMeta.sql
+}
