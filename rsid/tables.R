@@ -70,7 +70,7 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
             mutate(prot=target.short,flag=if_else(P_eqtl<5e-8,"x","")) %>%
             rename(Protein=prot) %>% select(-target.short)
  eQTLGen_coloc <- read.table(file.path(INF,"eQTLGen","coloc.txt"),header=TRUE) %>%
-                  rename(Gene=gene,H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf) %>%
+                  rename(GeneSymbol=gene,H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf) %>%
                   left_join(gap_inf1) %>%
                   mutate(prot=target.short,
                          nSNP=nsnps,
@@ -80,7 +80,7 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
                          H3=round(H3,2),
                          H4=round(H4,2)) %>%
                   rename(Protein=prot,UniProt=uniprot) %>%
-                  select(ID,UniProt,Protein,Gene,nSNP,H0,H1,H2,H3,H4)
+                  select(ID,UniProt,Protein,GeneSymbol,nSNP,H0,H1,H2,H3,H4)
  eQTLCatalogue <- read.delim(file.path(INF,"eQTLCatalogue","ensGene","eQTLCatalogue-all.tsv"),header=TRUE) %>%
                   left_join(gap_inf1) %>%
                   mutate(prot=target.short,
@@ -90,8 +90,8 @@ aristotl <- merge(read.sheet("ARISTOTLE", 1:14, 2:182), gap_inf1[c("prot","targe
                          H2=round(H2,2),
                          H3=round(H3,2),
                          H4=round(H4,2)) %>%
-                  rename(UniProt=uniprot,Protein=prot,SNPid=snpid,Study=unique_id) %>%
-                  select(UniProt,Protein,rsid,Study,nSNP,H0,H1,H2,H3,H4)
+                  rename(UniProt=uniprot,Protein=prot,GeneSymbol=gene,SNPid=snpid,Study=unique_id) %>%
+                  select(UniProt,Protein,GeneSymbol,rsid,Study,nSNP,H0,H1,H2,H3,H4)
 reactome <- read.sheet("Reactome", 1:19, 2:589)
 garfield <- read.table(file.path(INF,"garfield-data","output","INF1-cis","garfield.test.INF1.out"),header=TRUE) %>%
             rename(P=Pvalue,cellType=Celltype,b=Beta,LCL=CI95_lower,UCL=CI95_upper) %>%
@@ -259,8 +259,8 @@ coloc <- merge(read.delim(file.path(INF,"coloc","GTEx-all.tsv")),gap_inf1,by="pr
                 H2=round(H2,2),
                 H3=round(H3,2),
                 H4=round(H4,2)) %>%
-         rename(UniProt=uniprot,Protein=prot,SNPid=snpid,Tissue=qtl_id) %>%
-         select(UniProt,Protein,rsid,Tissue,nSNP,H0,H1,H2,H3,H4)
+         rename(UniProt=uniprot,Protein=prot,GeneSymbol=gene,SNPid=snpid,Tissue=qtl_id) %>%
+         select(UniProt,Protein,GeneSymbol,rsid,Tissue,nSNP,H0,H1,H2,H3,H4)
 cs95 <- read.delim(file.path(INF,"coloc-jma","cis-eQTL_table.tsv"))
 cs95 <- data.frame(rsidProt=str_replace(rownames(cs95),"[.]","-"),cs95)
 HOME <- Sys.getenv("HOME")

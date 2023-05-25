@@ -204,17 +204,46 @@ collect <- function(coloc_dir="coloc")
     if (nrow(rds)==0) next
     df_coloc <- rbind(df_coloc,data.frame(prot=prot,rsid=rsid,snpid=snpid,rds))
   }
-  df <- dplyr::rename(df_coloc,H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf)
+  df <- dplyr::rename(df_coloc,H0=PP.H0.abf,H1=PP.H1.abf,H2=PP.H2.abf,H3=PP.H3.abf,H4=PP.H4.abf) %>%
+        dplyr::left_join(gap.datasets::inf1[c("prot","gene")])
+  gap_inf1 <- gap.datasets::inf1[c("uniprot", "prot", "target.short")] %>%
+              mutate(target.short=gsub("MCP-1","CCL2",target.short)) %>%
+              mutate(target.short=gsub("MCP-2","CCL8",target.short)) %>%
+              mutate(target.short=gsub("MCP-3","CCL7",target.short)) %>%
+              mutate(target.short=gsub("MCP-4","CCL13",target.short))
   if (coloc_dir=="coloc") {
     df_coloc <- within(df,{qtl_id <- gsub("GTEx_V8_","",qtl_id)})
-    write.table(subset(df,+H4>=0.8),file=file.path(INF,coloc_dir,"GTEx.tsv"),
+    write.table(subset(df,H4>=0.8),file=file.path(INF,coloc_dir,"GTEx.tsv"),
                 quote=FALSE,row.names=FALSE,sep="\t")
     write.table(df,file=file.path(INF,coloc_dir,"GTEx-all.tsv"),
                 quote=FALSE,row.names=FALSE,sep="\t")
+    coloc <- merge(df_coloc,gap_inf1) %>%
+             mutate(prot=target.short,
+                    H0=round(H0,2),
+                    H1=round(H1,2),
+                    H2=round(H2,2),
+                    H3=round(H3,2),
+                    H4=round(H4,2)) %>%
+             setNames(c("Protein","rsid","SNPid","Tissue","nSNP","H0","H1","H2","H3","H4","GeneSymbol","UniProt","trget.short")) %>%
+             select(UniProt,Protein,GeneSymbol,rsid,Tissue,nSNP,H0,H1,H2,H3,H4)
+    write.table(coloc,file=file.path(INF,coloc_dir,"GTEx-ST.tsv"),
+                quote=FALSE,row.names=FALSE,sep="\t")
+
   } else {
     write.table(subset(df,H4>=0.8),file=file.path(INF,coloc_dir,"eQTLCatalogue.tsv"),
                 quote=FALSE,row.names=FALSE,sep="\t")
     write.table(df,file=file.path(INF,coloc_dir,"eQTLCatalogue-all.tsv"),
+                quote=FALSE,row.names=FALSE,sep="\t")
+    eQTLCatalogue <- left_join(df,gap_inf1) %>%
+                     mutate(prot=target.short,
+                            H0=round(H0,2),
+                            H1=round(H1,2),
+                            H2=round(H2,2),
+                            H3=round(H3,2),
+                            H4=round(H4,2)) %>%
+                     setNames(c("Protein","rsid","SNPid","Study","nSNP","H0","H1","H2","H3","H4","GeneSymbol","UniProt","trget.short")) %>%
+                     select(UniProt,Protein,GeneSymbol,rsid,Study,nSNP,H0,H1,H2,H3,H4)
+    write.table(eQTLCatalogue,file=file.path(INF,coloc_dir,"eQTLCatalogue-ST.tsv"),
                 quote=FALSE,row.names=FALSE,sep="\t")
   }
 }
