@@ -7,11 +7,12 @@ read.sheet <- function(sheet,cols,rows) read.xlsx(url,sheet=sheet,colNames=TRUE,
 suppressMessages(library(dplyr))
 suppressMessages(library(gap))
 require(stringr)
-gap_inf1 <- gap.datasets::inf1[c("uniprot", "prot", "target.short")] %>%
-            mutate(target.short=gsub("MCP-1","CCL2",target.short)) %>%
-            mutate(target.short=gsub("MCP-2","CCL8",target.short)) %>%
-            mutate(target.short=gsub("MCP-3","CCL7",target.short)) %>%
-            mutate(target.short=gsub("MCP-4","CCL13",target.short))
+gap_inf <- gap.datasets::inf1[c("uniprot", "prot", "target.short", "gene")] %>%
+           mutate(target.short=gsub("MCP-1","CCL2",target.short)) %>%
+           mutate(target.short=gsub("MCP-2","CCL8",target.short)) %>%
+           mutate(target.short=gsub("MCP-3","CCL7",target.short)) %>%
+           mutate(target.short=gsub("MCP-4","CCL13",target.short))
+gap_inf1 <- select(gap_inf,-gene)
  summary <- read.sheet("Summary", 1:2, 2:36)
     inf1 <- subset(read.sheet("INF1", 1:12, 2:94),uniprot!="P23560") %>%
             select(-panel) %>%
@@ -25,7 +26,7 @@ gap_inf1 <- gap.datasets::inf1[c("uniprot", "prot", "target.short")] %>%
             filter(Name!="MadCam")
  studies <- bind_rows(studies,data.frame(Name="Total",Design="",Size=sum(studies$Size))) %>%
             mutate(Size=formatC(Size,format="f",big.mark=",",digits=0,width=11))
-   pqtls <- merge(read.sheet("pQTLs", 1:21, 2:182),gap_inf1[c("prot","target.short")],by="prot")
+   pqtls <- merge(read.sheet("pQTLs", 1:21, 2:182),gap_inf[c("prot","target.short","gene")],by="prot")
 interval <- merge(within(read.sheet("INTERVAL", 1:12, 2:29),{Protein <- gsub(" ", "", Protein)}),
                   gap_inf1[c("prot","target.short")],by.x="Protein",by.y="prot") %>%
             mutate(Protein=target.short,r2=as.character(r2),p=as.character(p),PMID=as.character(PMID)) %>% select(-target.short)
@@ -224,7 +225,7 @@ pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName
          merge(credibleppa,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
          merge(credibleset_unprune,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
          merge(credibleppa_unprune,by.x=c("prot","rsid"),by.y=c("prot","MarkerName")) %>%
-         rename(Protein=prot,SNPid=MarkerName,cistrans=cis.trans,EAF=Freq1,b=Effect,SE=StdErr,logP=log.P.) %>%
+         rename(Protein=prot,Protein_gene_symbol=gene,SNPid=MarkerName,cistrans=cis.trans,EAF=Freq1,b=Effect,SE=StdErr,logP=log.P.) %>%
          mutate(prots=Protein,
                 UniProt=uniprot,
                 Protein=target.short,
@@ -238,7 +239,7 @@ pqtls <- merge(pqtls,credibleset,by.x=c("prot","rsid"),by.y=c("prot","MarkerName
                 N=formatC(N,format="f",big.mark=",",digits=0,width=5),
                 lengthCS=unlist(lapply(sapply(CredibleSet,function(x) strsplit(x," ")),length)),
                 lengthCS_unpruned=unlist(lapply(sapply(CredibleSet_unpruned,function(x) strsplit(x," ")),length))) %>%
-         select(UniProt,Protein,Chromosome,Position,Start,End,cistrans,rsid,SNPid,Allele1,Allele2,EAF,
+         select(UniProt,Protein,Protein_gene_symbol,Chromosome,Position,Start,End,cistrans,rsid,SNPid,Allele1,Allele2,EAF,
                 b,SE,logP,Direction,HetISq,HetChiSq,HetDf,logHetP,N,
                 CredibleSet,PPA,lengthCS,CredibleSet_unpruned,PPA_unpruned,lengthCS_unpruned,prots,uniprot,-target.short,-Start,-End)
 metal <- read.delim(file.path(INF,"work","INF1.METAL"))
