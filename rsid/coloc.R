@@ -111,7 +111,7 @@ ge <- function(gwas_stats_hg38,ensGene,region38)
   purrr::map_df(result_filtered, ~run_coloc(., gwas_stats_hg38), .id = "unique_id")
 }
 
-gtex_coloc <- function(prot,chr,ensGene,chain,region37,region38,outE)
+gtex_coloc <- function(prot,chr,ensGene,chain,region37,region38,out)
 {
   gwas_stats_hg38 <- sumstats(prot,chr,region37)
   df_gtex <- gtex(gwas_stats_hg38,ensGene,region38)
