@@ -69,7 +69,7 @@ gtex <- function(gwas_stats_hg38,ensGene,region38)
   fp <- file.path(find.package("pQTLtools"),"eQTL-Catalogue","tabix_ftp_paths_gtex.tsv")
   imported_tabix_paths <- within(read.delim(fp, stringsAsFactors = FALSE) %>% dplyr::as_tibble(),
         {
-          f <- lapply(strsplit(ftp_path,"/csv/|/ge/"),"[",3);
+          f <- lapply(strsplit(ftp_path,"/imported/|/ge/"),"[",3);
           ftp_path <- paste0("~/rds/public_databases/GTEx/csv/",f)
         })
   imported_tabix_paths <- read.delim(fp, stringsAsFactors = FALSE) %>% dplyr::as_tibble()
@@ -111,7 +111,7 @@ ge <- function(gwas_stats_hg38,ensGene,region38)
   purrr::map_df(result_filtered, ~run_coloc(., gwas_stats_hg38), .id = "unique_id")
 }
 
-gtex_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
+gtex_coloc <- function(prot,chr,ensGene,chain,region37,region38,outE)
 {
   gwas_stats_hg38 <- sumstats(prot,chr,region37)
   df_gtex <- gtex(gwas_stats_hg38,ensGene,region38)
@@ -126,7 +126,7 @@ gtex_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALS
          height = 15, width = 15, units = "cm", dpi = 300)
 }
 
-ge_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
+ge_coloc <- function(prot,chr,ensGene,chain,region37,region38,out)
 {
   gwas_stats_hg38 <- sumstats(prot,chr,region37)
   df_ge <- ge(gwas_stats_hg38,ensGene,region38)
@@ -141,7 +141,7 @@ ge_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
          height = 15, width = 15, units = "cm", dpi = 300)
 }
 
-all_coloc <- function(prot,chr,ensGene,chain,region37,region38,out,run_all=FALSE)
+all_coloc <- function(prot,chr,ensGene,chain,region37,region38,out)
 {
   gwas_stats_hg38 <- sumstats(prot,chr,region37)
   df_microarray <- microarray(gwas_stats_hg38,ensGene,region38)
