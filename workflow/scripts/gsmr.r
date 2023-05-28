@@ -32,8 +32,8 @@ gsmr_efo <- function(root="gsmr-efo")
   rm(gene,outcome)
   options(width=200)
   gsmr_fdr01 <- subset(gsmr,fdr<=0.01)
-  deprioritise <- c(FALSE,FALSE,TRUE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,TRUE,
-                    FALSE,FALSE,TRUE,TRUE,FALSE,TRUE,FALSE,TRUE,TRUE,TRUE)
+  deprioritise <- c(FALSE,TRUE,TRUE,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,TRUE,
+                    FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE)
   alist <- (1:nrow(gsmr_fdr01))[!deprioritise]
   blist <- (1:nrow(gsmr_fdr01))[deprioritise]
   library(grid)
