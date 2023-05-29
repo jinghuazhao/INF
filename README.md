@@ -8,36 +8,36 @@ medRxiv 2023.03.24.23287680; doi: <https://doi.org/10.1101/2023.03.24.23287680>.
 
 Quick links to codes
 
-- Figure 1, <https://github.com/jinghuazhao/INF/blob/master/rsid/circos2.R>
-- Figure 2, <https://github.com/jinghuazhao/INF/blob/master/csd3/IL.12B.sh>, <https://github.com/jinghuazhao/INF/blob/master/csd3/TRAIL.sh>
-- Figure 3, <https://github.com/jinghuazhao/INF/blob/master/rsid/IL.18-rs385076.sh>
+- Figure 1, [circos2.R](https://github.com/jinghuazhao/INF/blob/master/rsid/circos2.R)
+- Figure 2, [IL.12B.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/IL.12B.sh), [TRAIL.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/TRAIL.sh)
+- Figure 3, [IL.18-rs385076.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.18-rs385076.sh)
 - Figure 4,
-- Figure 5, <https://github.com/jinghuazhao/INF/blob/master/workflow/scripts/gsmr.r>
+- Figure 5, [gsmr.r](https://github.com/jinghuazhao/INF/blob/master/workflow/scripts/gsmr.r)
 
 - Extended Data Figure 1,
-- Extended Data Figure 2, <https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>, <https://github.com/jinghuazhao/INF/blob/master/rsid/IL.17C.R>
-- Extended Data Figure 3, <https://github.com/jinghuazhao/INF/blob/master/csd3/aristotle.sh>
-- Extended Data Figure 4, <https://github.com/jinghuazhao/INF/blob/master/rsid/h2pve.R>
-- Extended Data Figure 5, <https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>
-- Extended Data Figure 6, <https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R>
+- Extended Data Figure 2, [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh), [IL.17C.R](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.17C.R)
+- Extended Data Figure 3, [aristotle.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/aristotle.sh)
+- Extended Data Figure 4, [h2pve.R](https://github.com/jinghuazhao/INF/blob/master/rsid/h2pve.R)
+- Extended Data Figure 5, [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
+- Extended Data Figure 6, [rs12075.R](https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R
 - Extended Data Figure 7,
-- Extended Data Figure 8, <https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R>
-- Extended Data Figure 9, <https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R>
-- Extended Data Figure 10,<https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>
+- Extended Data Figure 8, [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
+- Extended Data Figure 9, [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
+- Extended Data Figure 10,[utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
 
-- Supplementary Figure 1, <https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>
-- Supplementary Figure 2, <https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>
-- Supplementary Figure 3, <https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh>
-- Supplementary Figure 4, <https://github.com/jinghuazhao/INF/blob/master/rsid/coloc-disease.sh>
+- Supplementary Figure 1, [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
+- Supplementary Figure 2, [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
+- Supplementary Figure 3, [eQTLGen.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh)
+- Supplementary Figure 4, [coloc-disease.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/coloc-disease.sh)
 
 - Supplementary item
 
-- Supplementary Tables, <https://github.com/jinghuazhao/INF/blob/master/rsid/tables.R>
+- Supplementary Tables, [tables.R](https://github.com/jinghuazhao/INF/blob/master/rsid/tables.R)
 
 
 ## Flow of analysis
 
-(When the diagram is not rendered, view it from [Mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor/))
+The diagram can also be rendered via [Mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor/))
 
 ```mermaid
 graph TB;
