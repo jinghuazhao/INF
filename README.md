@@ -8,7 +8,7 @@ medRxiv 2023.03.24.23287680; doi: <https://doi.org/10.1101/2023.03.24.23287680>.
 
 Quick links to codes
 
-- Figure 1,
+- Figure 1, <https://github.com/jinghuazhao/INF/blob/master/rsid/circos2.R>
 - Figure 2,
 - Figure 3,
 - Figure 4,
@@ -16,7 +16,7 @@ Quick links to codes
 
 - Extended Data Figure 1,
 - Extended Data Figure 2,
-- Extended Data Figure 3,
+- Extended Data Figure 3, <https://github.com/jinghuazhao/INF/blob/master/csd3/aristotle.sh>
 - Extended Data Figure 4,
 - Extended Data Figure 5,
 - Extended Data Figure 6,
