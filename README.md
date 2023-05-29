@@ -6,6 +6,32 @@ A companion web site for this paper,
 Jing Hua Zhao, David Stacey, Niclas Eriksson, Erin Macdonald-Dunlop, Asa H Hedman, Anette Kalnapenkis, Stefan Enroth, Domenico Cozzetto, Jonathan Digby-Bell, Jonanthan Marten, Lasse Folkersen, Christian Herder, Lina Jonsson, Sarah E. Bergen, Christian Gieger, Elise J Needham, Praveen Surendran, Estonia Biobank Research Team, Dirk S Paul, Ozren Polasek, Barbara Thorand, Harald Grallert, Michael Roden, Urmo Vosa, Tonu Esko, Caroline Hayward, Asa Johansson, Ulf Gyllensten, Nicholas Powell, Oskar Hansson, Niklas Mattsson-Carlgren, Peter K Joshi, John Danesh, Leonid Padyukov, Lars Klareskog, Mikael Landen, James F Wilson, Agneta Siegbahn, Lars Wallentin, Anders Malarstig, Adam S Butterworth, James E. Peters
 medRxiv 2023.03.24.23287680; doi: <https://doi.org/10.1101/2023.03.24.23287680>.
 
+Quick links to codes
+
+- Figure 1,
+- Figure 2,
+- Figure 3,
+- Figure 4,
+- Figure 5, <https://github.com/jinghuazhao/INF/blob/master/workflow/scripts/gsmr.r>
+
+- Extended Data Figure 1,
+- Extended Data Figure 2,
+- Extended Data Figure 3,
+- Extended Data Figure 4,
+- Extended Data Figure 5,
+- Extended Data Figure 6,
+- Extended Data Figure 7,
+- Extended Data Figure 8,
+- Extended Data Figure 9,
+- Extended Data Figure 10,
+
+- Supplementary Figure 1,
+- Supplementary Figure 2,
+- Supplementary Figure 3,
+- Supplementary Figure 4,
+
+- Supplementary item
+
 ## Flow of analysis
 
 (When the diagram is not rendered, view it from [Mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor/))
