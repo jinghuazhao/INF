@@ -19,7 +19,7 @@ Quick links to codes
 - Extended Data Figure 3, [aristotle.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/aristotle.sh)
 - Extended Data Figure 4, [h2pve.R](https://github.com/jinghuazhao/INF/blob/master/rsid/h2pve.R)
 - Extended Data Figure 5, [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
-- Extended Data Figure 6, [rs12075.R](https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R
+- Extended Data Figure 6, [rs12075.R](https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R)
 - Extended Data Figure 7,
 - Extended Data Figure 8, [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
 - Extended Data Figure 9, [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
@@ -30,14 +30,14 @@ Quick links to codes
 - Supplementary Figure 3, [eQTLGen.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh)
 - Supplementary Figure 4, [coloc-disease.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/coloc-disease.sh)
 
-- Supplementary item
+- Supplementary item, [js.R](js.R/https://github.com/jinghuazhao/INF/blob/master/csd3/), [merge.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/merge.sh)
 
 - Supplementary Tables, [tables.R](https://github.com/jinghuazhao/INF/blob/master/rsid/tables.R)
 
 
 ## Flow of analysis
 
-The diagram can also be rendered via [Mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor/))
+The diagram can also be rendered via [Mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor/).
 
 ```mermaid
 graph TB;
