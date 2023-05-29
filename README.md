@@ -9,7 +9,7 @@ medRxiv 2023.03.24.23287680; doi: <https://doi.org/10.1101/2023.03.24.23287680>.
 Quick links to codes
 
 - Figure 1, [circos2.R](https://github.com/jinghuazhao/INF/blob/master/rsid/circos2.R)
-- Figure 2, [IL.12B.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/IL.12B.sh), [TRAIL.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/TRAIL.sh)
+- Figure 2, [IL.12B.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/IL.12B.sh), [TRAIL.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/TRAIL.sh), [rs12075.R](https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
 - Figure 3, [IL.18-rs385076.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.18-rs385076.sh)
 - Figure 4,
 - Figure 5, [gsmr.r](https://github.com/jinghuazhao/INF/blob/master/workflow/scripts/gsmr.r)
