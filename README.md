@@ -9,8 +9,8 @@ medRxiv 2023.03.24.23287680; doi: <https://doi.org/10.1101/2023.03.24.23287680>.
 Quick links to codes
 
 - Figure 1, <https://github.com/jinghuazhao/INF/blob/master/rsid/circos2.R>
-- Figure 2,
-- Figure 3,
+- Figure 2, <https://github.com/jinghuazhao/INF/blob/master/csd3/IL.12B.sh>, <https://github.com/jinghuazhao/INF/blob/master/csd3/TRAIL.sh>
+- Figure 3, <https://github.com/jinghuazhao/INF/blob/master/rsid/IL.18-rs385076.sh>
 - Figure 4,
 - Figure 5, <https://github.com/jinghuazhao/INF/blob/master/workflow/scripts/gsmr.r>
 
@@ -18,17 +18,17 @@ Quick links to codes
 - Extended Data Figure 2, <https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>, <https://github.com/jinghuazhao/INF/blob/master/rsid/IL.17C.R>
 - Extended Data Figure 3, <https://github.com/jinghuazhao/INF/blob/master/csd3/aristotle.sh>
 - Extended Data Figure 4, <https://github.com/jinghuazhao/INF/blob/master/rsid/h2pve.R>
-- Extended Data Figure 5,
-- Extended Data Figure 6,
+- Extended Data Figure 5, <https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>
+- Extended Data Figure 6, <https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R>
 - Extended Data Figure 7,
-- Extended Data Figure 8,
-- Extended Data Figure 9,
+- Extended Data Figure 8, <https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R>
+- Extended Data Figure 9, <https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R>
 - Extended Data Figure 10,<https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>
 
-- Supplementary Figure 1,
-- Supplementary Figure 2,
-- Supplementary Figure 3,
-- Supplementary Figure 4,
+- Supplementary Figure 1, <https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>
+- Supplementary Figure 2, <https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>
+- Supplementary Figure 3, <https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh>
+- Supplementary Figure 4, <https://github.com/jinghuazhao/INF/blob/master/rsid/coloc-disease.sh>
 
 - Supplementary item
 
