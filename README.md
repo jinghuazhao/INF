@@ -15,15 +15,15 @@ Quick links to codes
 - Figure 5, <https://github.com/jinghuazhao/INF/blob/master/workflow/scripts/gsmr.r>
 
 - Extended Data Figure 1,
-- Extended Data Figure 2,
+- Extended Data Figure 2, <https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>, <https://github.com/jinghuazhao/INF/blob/master/rsid/IL.17C.R>
 - Extended Data Figure 3, <https://github.com/jinghuazhao/INF/blob/master/csd3/aristotle.sh>
-- Extended Data Figure 4,
+- Extended Data Figure 4, <https://github.com/jinghuazhao/INF/blob/master/rsid/h2pve.R>
 - Extended Data Figure 5,
 - Extended Data Figure 6,
 - Extended Data Figure 7,
 - Extended Data Figure 8,
 - Extended Data Figure 9,
-- Extended Data Figure 10,
+- Extended Data Figure 10,<https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh>
 
 - Supplementary Figure 1,
 - Supplementary Figure 2,
@@ -31,6 +31,9 @@ Quick links to codes
 - Supplementary Figure 4,
 
 - Supplementary item
+
+- Supplementary Tables, <https://github.com/jinghuazhao/INF/blob/master/rsid/tables.R>
+
 
 ## Flow of analysis
 
