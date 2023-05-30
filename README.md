@@ -70,6 +70,6 @@ This proves to be a positive control. The stacked image below shows Manhattan, Q
 
 ## Summary statistics
 
-The link will be added here when made available.
+They will be available from <https://www.phpc.cam.ac.uk/ceu/proteins> and the GWAS catalog.
 
 <p align="center"><img src="doc/circos.png"></p>
