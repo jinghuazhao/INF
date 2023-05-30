@@ -175,7 +175,7 @@ mhtplot.trunc <- function (x, chr = "CHR", bp = "BP", p = NULL, log10p = NULL, z
     if (!annotateTop) {
       toHighlight <- subset(topHits,SNP %in% highlight)
       toLift1 <- c("SH2B3;TRAFD1")
-      toLift2 <- c("TARF3")
+      toLift2 <- c("TRAF3")
       toLift3 <- c("MHC","RAD51B")
       toLift4 <- c("FLT3")
       part1 <- subset(toHighlight, ! SNP %in% c(toLift1,toLift2,toLift3,toLift4,"IL12B","PLAUR"))

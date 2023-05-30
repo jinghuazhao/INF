@@ -4,7 +4,7 @@ Rscript -e '
   suppressMessages(library(dplyr))
   INF <- Sys.getenv("INF")
   gz <- gzfile(file.path(INF,"METAL","IL.12B-1.tbl.gz"))
-  IL.12B <- within(read.delim(gz,as.is=TRUE), {Z <- Effect/StdErr; P <- pvalue(Z); log10P <- -log10p(Z)}) %>%
+  IL.12B <- within(read.delim(gz,as.is=TRUE), {Z <- Effect/StdErr; P <- gap::pvalue(Z); log10P <- -gap::log10p(Z)}) %>%
             select(Chromosome,Position,MarkerName,Z,P,log10P)
   genes <- data.frame(chr=c("chr3","chr3","chr5","chr6","chr12","chr13","chr14","chr14"),
                       snpid=c("chr3:5026008_A_G",
@@ -16,8 +16,7 @@ Rscript -e '
                               "chr14:68760141_C_T",
                               "chr14:103230758_C_G"),
                       snp=c("rs11130215","rs9815073","rs10076557","rs3130510","rs3184504","rs76428106","rs12588969","rs1950897"),
-INF
-                      gene=c("BHLHE40","LPP","IL12B","MHC","SH2B3;TRAFD1","FLT3","RAD51B","TARF3")
+                      gene=c("BHLHE40","LPP","IL12B","MHC","SH2B3;TRAFD1","FLT3","RAD51B","TRAF3")
            )
   IL.12B <- left_join(IL.12B,genes,by=c("MarkerName"="snpid"),keep=TRUE) %>%
              mutate(MarkerName=ifelse(!is.na(snpid),gene,MarkerName)) %>%
@@ -52,4 +51,4 @@ INF
 # chr12 chr12:111884608_C_T rs3184504  SH2B3;TRAFD1
 # chr13 chr13:28604007_C_T  rs76428106 FLT3
 # chr14 chr14:68760141_C_T  rs12588969 RAD51B
-# chr14 chr14:103230758_C_G rs1950897  TARF3
+# chr14 chr14:103230758_C_G rs1950897  TRAF3
