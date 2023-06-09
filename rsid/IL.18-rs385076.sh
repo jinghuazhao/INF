@@ -65,11 +65,11 @@ Rscript -e '
   rownames(z) <- with(d,marker)
   ld <- read.table(paste0(file.path("work",prot),".ld"),col.names=with(d,marker),row.names=with(d,marker))
   library(gassocplot2)
-  sap <- stack_assoc_plot(markers, z, ld, traits = n, ylab = "-log10(P)", legend=TRUE)
   pdf(file.path(INF,"work",paste0(prot,"-rs385076.pdf")),height=13,width=8)
+  sap <- stack_assoc_plot(markers, z, ld, traits = n, ylab = "-log10(P)", legend=TRUE)
   grid::grid.draw(sap)
   dev.off()
-# system("qpdf ~/INF/work/IL.18-rs385076.pdf --pages . 1 -- --replace-input")
+  system("qpdf ~/INF/work/IL.18-rs385076.pdf --pages . 2 -- --replace-input")
 '
 
 # pQTL
