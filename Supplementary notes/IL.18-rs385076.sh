@@ -57,18 +57,19 @@ plink --bfile INTERVAL/cardio/INTERVAL --extract work/${prot}.snpid --r square -
 Rscript -e '
   INF <- Sys.getenv("INF")
   prot <- Sys.getenv("prot")
+  n <- c("trans-pQTL for IL18","cis-eQTL for NLRC4")
   d <- read.table(paste0(file.path("work",prot),".gassoc"),check.names=FALSE,
-                  col.names=c("snpid","marker","chr","pos","trans-pQTL for IL18","cis-eQTL for NLRC4","QTL"))
+                  col.names=c("snpid","marker","chr","pos",n,"QTL"))
   markers <- d[c("marker","chr","pos")]
-  z <- d[c("trans-pQTL for IL18","cis-eQTL for NLRC4")]
+  z <- d[n]
   rownames(z) <- with(d,marker)
   ld <- read.table(paste0(file.path("work",prot),".ld"),col.names=with(d,marker),row.names=with(d,marker))
   library(gassocplot2)
-  sap <- stack_assoc_plot(markers, z, ld, traits = c("trans-pQTL for IL18","cis-eQTL for NLRC4"), ylab = "-log10(P)", legend=FALSE)
+  sap <- stack_assoc_plot(markers, z, ld, traits = n, ylab = "-log10(P)", legend=TRUE)
   pdf(file.path(INF,"work",paste0(prot,"-rs385076.pdf")),height=13,width=8)
   grid::grid.draw(sap)
   dev.off()
-  system("qpdf ~/INF/work/IL.18-rs385076.pdf --pages . 1 -- --replace-input")
+# system("qpdf ~/INF/work/IL.18-rs385076.pdf --pages . 1 -- --replace-input")
 '
 
 # pQTL
