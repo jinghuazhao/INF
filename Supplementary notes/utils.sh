@@ -1006,10 +1006,11 @@ function CXCL5()
     rownames(z) <- with(d,marker)
     library(gassocplot)
     pdf(file.path(INF,"SF-CXCL5-WB-CT-UC-CD.pdf"),height=20,width=6)
-    sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits=names(z), ylab="-log10(P)", top.marker="rs450373",legend=FALSE)
+    sap <- stack_assoc_plot(d[c("marker","chr","pos")], z, ld, traits=names(z), ylab="-log10(P)", top.marker="rs450373",legend=TRUE)
     grid::grid.draw(sap)
     dev.off()
   '
+  qpdf SF-CXCL5-WB-CT-UC-CD.pdf --pages . 2 -- --replace-input
   # setNames(c("CXCL5","Whole blood","Colon transverse","Ulcerative colitis","Crohn's disease"))
 }
 
