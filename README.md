@@ -13,6 +13,7 @@ Quick links to codes
 - Figure 3, [IL.18-rs385076.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.18-rs385076.sh)
 - Figure 4,
 - Figure 5, [gsmr.r](https://github.com/jinghuazhao/INF/blob/master/workflow/scripts/gsmr.r)
+- Figure 6, [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
 
 - Extended Data Figure 1,
 - Extended Data Figure 2, [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh), [IL.17C.R](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.17C.R)
