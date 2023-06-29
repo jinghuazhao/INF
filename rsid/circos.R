@@ -104,7 +104,7 @@ circlize <- function()
   suppressMessages(library(gridBase))
   suppressMessages(library("circlize"))
   setEPS()
-  postscript(file=file.path(INF,"circos","circlize.eps"), width=7.08, height=7.08, horizontal=FALSE, paper="special", colormodel="rgb")
+  postscript(file=file.path(INF,"circlize.eps"), width=7.08, height=7.08, horizontal=FALSE, paper="special", colormodel="rgb")
   col_fun <- colorRamp2(c(-1, 1), c("red", "blue"))
   circle_size <- unit(1, "snpc")
   llabels <- Legend(at=c("cis","trans"), type="points", legend_gp=gpar(col=c("red","blue")), title_position="topleft",
@@ -113,7 +113,10 @@ circlize <- function()
                     title="2. -log10(P) [ceiling=150]", nrow=1)
   llinks <- Legend(at="trans", type="lines", legend_gp=gpar(col="blue", lwd=2), title_position="topleft",
                     title="3. trans-pQTL connections", nrow=1)
-  llist_horizontal = packLegend(llabels, lpoints, llinks, direction = "horizontal")
+  cis.trans <- Legend(at=c("cis","trans"), type="points", legend_gp=gpar(col=c("red","blue")), title_position="leftcenter",
+                      title="cis/trans", nrow=1)
+  llist_vertical = packLegend(llabels, lpoints, llinks, direction = "vertical")
+  llist_horizontal = packLegend(cis.trans, direction = "horizontal")
   plot.new()
   pushViewport(viewport(x=0.5, y=1, width=circle_size, height=circle_size, just=c("center", "top")))
   pQTLs <- read.table(file.path(INF,"circos","pQTLs.txt"),col.names=c("chr","start","end","value1","value2")) %>%
@@ -150,9 +153,9 @@ circlize <- function()
   circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col=pQTL_links[[7]], border=NA, directional=1, arr.length=0.05,
                      arr.width=0.03, arr.lwd=0.05)
   upViewport()
-  draw(llist_horizontal, y=circle_size, just="top")
+  draw(llist_horizontal, x=circle_size*0.96, y=circle_size/12, just="right")
   dev.off()
-  system("convert -density 300 ${INF}/circos/circlize.eps ${INF}/circos/circlize.png")
+  system("convert -density 300 ${INF}/circlize.eps ${INF}/circlize.png")
 }
 
 # https://www.rapidtables.com/web/color/RGB_Color.html
