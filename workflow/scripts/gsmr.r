@@ -44,7 +44,7 @@ gsmr_efo <- function(root="gsmr-efo")
   dn <- matrix(ifelse(!is.na(gsmr_mat) & abs(gsmr_mat_fdr) <= 0.01,
                ifelse(gsmr_mat_id%in%alist,unicode2[1],unicode2[2]), ""), nrow(gsmr_mat))
   pheatmap(gsmr_mat,cluster_rows=FALSE,cluster_cols=FALSE,angle_col="315",fontsize_row=45,fontsize_col=23,
-           display_numbers = dn, fontsize_number=15)
+           display_numbers = dn, fontsize_number=15, legend_breaks = c(0.5, 1, 1.5))
   setHook("grid.newpage", NULL, "replace")
   grid.text("Proteins", y=-0.07, gp=gpar(fontsize=48))
   grid.text("Immune-mediated outcomes", x=-0.07, rot=90, gp=gpar(fontsize=48))
