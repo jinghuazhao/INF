@@ -256,6 +256,7 @@ ps_filter <- ps_gsub %>%
              filter(!(snp=="rs516316" & grepl("Crohn's disease",trait) & proxy=="1")) %>%
              filter(!(snp=="rs601338" & grepl("Crohn's disease",trait) & proxy=="1")) %>%
              filter(!(snp=="rs7763262" & grepl("Ankylosing spondylitis|Haematuria|Hypothyroidism|Intestinal malabsorption|Mouth ulcers|Sarcoidosis",trait) & proxy=="1")) %>%
+             filter(!(snp=="rs10076557" & trait=="Spondylitis ankylosing")) %>%
              filter(!(snp=="rs7137828" & grepl("Allergy",trait) & proxy=="1")) %>%
              filter(!(snp=="rs653178" & grepl("Allergy",trait) & proxy=="1")) %>%
              filter(!(snp=="rs7310615" & grepl("Cardiovascular diseases|Psoriasis",trait) & proxy=="1")) %>%

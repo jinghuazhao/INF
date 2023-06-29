@@ -1160,3 +1160,15 @@ EOL
 wget https://ftp.ebi.ac.uk/pub/databases/spot/eQTL/SumStatsMeta.db
 sqlite3 SumStatsMeta.db < SumStatsMeta.sql
 }
+
+function INTERVAL_summary()
+{
+  Rscript -e '
+  suppressMessages(library(dplyr))
+  INF <- Sys.getenv("INF")
+  f <- file.path(INF,"INTERVAL","o5000-inf1-outlier_in-r2.sample")
+  ph <- read.delim(f,sep=" ",nrows=1)
+  p <- read.table(f,col.names=names(ph),skip=2)
+  table(p[["sexPulse"]])
+  '
+}
