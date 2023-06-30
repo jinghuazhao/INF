@@ -19,8 +19,8 @@ Quick links to codes
 - Extended Data Figure 2, [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh), [IL.17C.R](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.17C.R)
 - Extended Data Figure 3, [aristotle.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/aristotle.sh)
 - Extended Data Figure 4, [h2pve.R](https://github.com/jinghuazhao/INF/blob/master/rsid/h2pve.R)
-- Extended Data Figure 5, [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
-- Extended Data Figure 6, [rs12075.R](https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R)
+- Extended Data Figure 5, [rs12075.R](https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R)
+- Extended Data Figure 6, [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
 - Extended Data Figure 7,
 - Extended Data Figure 8, [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
 - Extended Data Figure 9, [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
