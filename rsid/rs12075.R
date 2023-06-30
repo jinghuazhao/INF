@@ -215,5 +215,5 @@ mr_forestplot(d, colgap.forest.left="0.05cm", fontsize=14, digits=3,
               leftlabs=c("Outcome","b","SE"),
               rightcols=c("ci","pval"), rightlabs=c("95%CI","P"),digits.pval=2,scientific.pval=TRUE,
               common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
-              spacing=1.6,digits.TE=3,digits.se=3,xlab="Effect size")
+              spacing=1.6,digits.TE=3,digits.se=3,xlab="Effect size",type.study="square",col.inside="black",col.square="white")
 dev.off()
