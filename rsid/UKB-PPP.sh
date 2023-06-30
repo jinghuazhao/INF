@@ -2,17 +2,18 @@
 
 Rscript -e '
   options(width=2000)
+  INF <- Sys.getenv("INF")
   require(dplyr)
   METAL <- read.delim("~/INF/work/INF1.METAL") %>%
            mutate(prot_rsid=paste0(uniprot,"-",rsid),start=if_else(Position-1e6<0,0,Position-1e6),end=Position+1e6)
   require(openxlsx)
-  url <- "~/rds/results/public/proteomics/UKB-PPP/sun22.xlsx"
+  url <- "~/rds/results/public/proteomics/UKB-PPP/doc/sun22.xlsx"
   ST10 <- read.xlsx(url,"ST10",startRow=3) %>%
           mutate(prot_rsid=paste0(Target.UniProt,"-",rsID))
   sentinels <- left_join(METAL,ST10,by="prot_rsid") %>%
                select(prot_rsid,cis.trans,rsID) %>%
                filter(!is.na(rsID))
-  inf1 <- c(with(pQTLtools::inf1,uniprot),with(METAL,uniprot)) %>%
+  inf1 <- c(with(pQTLdata::inf1,uniprot),with(METAL,uniprot)) %>%
           unique()
   overlap <- filter(ST10,Target.UniProt %in% inf1)
   dim(overlap)
@@ -32,8 +33,18 @@ Rscript -e '
   b <- bind_cols(data.frame(ov1),data.frame(ov2))
   names(b) <- c(paste("UKB",names(ov1),sep="."),paste("SCALLOP",names(ov2),sep="."))
   token <- Sys.getenv("LDLINK_TOKEN")
-  variant_list <- c(b[["UKB.rsid"]],b[["SCALLOP.rsid"]])
-  r <- ieugwasr::ld_matrix(variant_list,pop="EUR",with_alleles=FALSE)
+  variant_list <- b[c("UKB.seqnames","UKB.rsid","SCALLOP.rsid")]
+  for (i in 1:nrow(variant_list))
+  {
+      z <- variant_list[i,]
+      r <- ieugwasr::ld_matrix_local(z[c("UKB.rsid","SCALLOP.rsid")],with_alleles=TRUE,
+                                     bfile=file.path(INF,"INTERVAL","per_chr",paste0("interval.imputed.olink.chr_",z$UKB.seqnames)),
+                                     plink_bin="/rds/user/jhz22/hpc-work/bin/plink")
+      r <- ifelse(nrow(r)==2,r[1,2],r)
+      variant_list[i,"r"] <- round(r,3)
+  }
+# variant_list <- c(b[["UKB.rsid"]],b[["SCALLOP.rsid"]])
+# r <- ieugwasr::ld_matrix(variant_list,pop="EUR",with_alleles=FALSE)
   excluded <- setdiff(variant_list,colnames(r))
   UKB.keep <- intersect(b$UKB.rsid,colnames(r))
   SCALLOP.keep <- intersect(b$SCALLOP.rsid,colnames(r))
