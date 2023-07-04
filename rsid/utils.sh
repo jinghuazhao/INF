@@ -476,8 +476,8 @@ f2 hotspot-rs3184504.png
 function pdf_final()
 # Rework
 {
+  module load gcc/6
   cd ${INF}/METAL/qqmanhattanlz
-# qpdf --empty --pages $(ls *_rs*.pdf) -- lz2.pdf
   qpdf --empty --pages $(ls *_rs*.pdf | \
                          xargs -l basename -s .pdf | \
                          join - <(awk 'NR>1{print $3"_"$2,$1}' ${INF}/work/INF1.METAL | sort -k1,1) | \
