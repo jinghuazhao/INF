@@ -26,8 +26,8 @@ Quick links to codes
 - Extended Data Figure 9, [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
 - Extended Data Figure 10,[utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
 
-- [Supplementary Figure 1](doc/qq+manhattan.pdf), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
-- [Supplementary Figure 2](doc/fp+lz.pdf), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
+- [Supplementary Figure 1](doc/qq-manhattan.pdf), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
+- [Supplementary Figure 2](doc/fp-lz.pdf), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
 - Supplementary Figure 3, [eQTLGen.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh)
 - Supplementary Figure 4, [coloc-disease.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/coloc-disease.sh)
 
