@@ -490,7 +490,7 @@ function pdf_final()
   pdfseparate ${INF}/ds/latest/fp.pdf temp-%04d-fp.pdf
   pdfseparate lz.pdf temp-%04d-lz.pdf
 # Combine the final pdf
-  pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile fp+lz.pdf
+  pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile fp-lz.pdf
   rm temp*pdf
   ls *_qq.png | xargs -l basename -s _qq.png | \
   parallel -C' ' 'convert -resize 150% {}_qq.png {}_qq.pdf;convert {}_manhattan.png {}_manhattan.pdf'
