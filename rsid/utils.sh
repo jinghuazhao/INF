@@ -499,6 +499,7 @@ function pdf_final()
   pdfseparate qq.pdf temp-%04d-qq.pdf
   pdfseparate manhattan.pdf temp-%04d-manhattan.pdf
   pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile qq-manhattan.pdf
+  rm temp*
 }
 
 function cis_info()
