@@ -1,8 +1,6 @@
 gsmr_efo <- function(root="gsmr-efo")
 {
   INF <- Sys.getenv("INF")
-  suppressMessages(library(dplyr))
-  library(stringr)
   gsmr <- read.delim(file.path(INF,"mr","gsmr",paste0(root,".txt"))) %>%
           mutate(outcome=paste0(Disease),
                  exposure=protein,
@@ -36,8 +34,12 @@ gsmr_efo <- function(root="gsmr-efo")
                     FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE)
   alist <- (1:nrow(gsmr_fdr01))[!deprioritise]
   blist <- (1:nrow(gsmr_fdr01))[deprioritise]
-  library(grid)
-  library(pheatmap)
+  write.csv(filter(gsmr_fdr01,!deprioritise) %>%
+            mutate(bse=sprintf("%.2f (%.2f-%.2f)",exp(bxy),exp(bxy-1.96*se),exp(bxy+1.96*se)),p=format(p,digits=2,scientific=TRUE)) %>%
+            select(gene,outcome,bse,p) %>%
+            rename(Protein=gene,Disease=outcome,OR=bse,P=p) %>%
+            arrange(Protein),
+            file=file.path(INF,"mr","gsmr",paste0(root,".csv")),quote=FALSE,row.names=FALSE)
   png(file.path(INF,"mr","gsmr",paste0(root,".png")),res=300,width=30,height=18,units="in")
   setHook("grid.newpage", function() pushViewport(viewport(x=1,y=1,width=0.9, height=0.9, name="vp", just=c("right","top"))),
           action="prepend")
@@ -51,6 +53,11 @@ gsmr_efo <- function(root="gsmr-efo")
   dev.off()
   write.table(colnames(gsmr_mat),quote=FALSE,row.names=FALSE)
 }
+
+suppressMessages(library(dplyr))
+library(stringr)
+library(grid)
+library(pheatmap)
 
 # https://www.rapidtables.com/code/text/unicode-characters.html (Page 38)
 unicode1 <- c("\u25FC","\u25FB")
