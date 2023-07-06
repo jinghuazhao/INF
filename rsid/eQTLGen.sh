@@ -292,22 +292,23 @@ function lz()
   parallel -j8 -C ' ' --env dir '
   echo "{1}-{2}-{3}"
 # eQTLGen
-  cat <(echo -e "snpid rsid chr pos a1 a2 mlog10p") \
-      <(tabix ${eQTLGen_tabix}/cis_full.txt.gz {4}:{5}-{6} | \
-        awk -vgene={3} "\$9==gene' \| \
-        cut -f2-7 | \
-        awk "
-        {
-          if (\$5<\$6) snpid=\"chr\"\$2\":\"\$3\"_\"\$5\"_\"\$6;
-          else snpid=\"chr\"\$2\":\"\$3\"_\"\$6\"_\"\$5
-          print snpid, \$1, \$2, \$3, \$5, \$6, \$4
-        }") | \
+  tabix ${eQTLGen_tabix}/cis_full.txt.gz {4}:{5}-{6} | \
+  awk -vgene={3} "\$9==gene" \| \
+  cut -f2-7 | \
+  awk "
+      {
+        if (\$5<\$6) snpid=\"chr\"\$2\":\"\$3\"_\"\$5\"_\"\$6;
+        else snpid=\"chr\"\$2\":\"\$3\"_\"\$6\"_\"\$5
+        print snpid, \$1, \$2, \$3, \$5, \$6, \$4
+      }" | \
   Rscript -e "
      suppressMessages(library(dplyr))
-     z <- within(read.table(\"stdin\",header=TRUE),{mlog10p <- -gap::log10p(mlog10p);mlog10p=if_else(mlog10p>20,20,mlog10p)});
+     vars <- c("snpid", "rsid", "chr", "pos", "a1", "a2", "mlog10p")
+     z <- within(read.table(\"stdin\",col.names=vars),{mlog10p <- -gap::log10p(mlog10p)})
      write.table(z,row.names=FALSE,quote=FALSE,sep=\"\t\")
   " | \
   gzip -f > ${dir}/eQTLGen-{1}-{2}-{3}.tsv.gz
+# mlog10p=if_else(mlog10p>20,20,mlog10p)
 # SCALLOP/INF
   cat <(echo -e "snpid rsid chr pos a1 a2 mlog10p") \
       <(tabix ${INF}/METAL/{2}-1.tbl.gz {4}:{5}-{6} | \
@@ -357,12 +358,12 @@ function lz()
     convert ${dir}/{1}-{2}-{3}.png -quality 0 ${dir}/{1}-{2}-{3}.jp2
     convert ${dir}/{1}-{2}-{3}.jp2 ${dir}/{2}-{1}-{3}-lz.pdf
     rm ${dir}/eQTLGen-{1}-{2}-{3}.lz ${dir}/INF-{1}-{2}-{3}.lz
-    rm ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/INF-{3}_{7}.pdf
+#   rm ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/INF-{3}_{7}.pdf
     rm ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png
     rm ${dir}/{1}-{2}-{3}.jp2 ${dir}/{1}-{2}-{3}.png
   fi
   '
-  qpdf --empty --pages $(ls ${dir}/*-lz.pdf) -- ${dir}/eQTLGen-protein-lz-20.pdf
+  qpdf --empty --pages $(ls ${dir}/*-lz.pdf) -- ${dir}/eQTLGen-protein-lz.pdf
 # rm ${dir}/*-lz.pdf
 }
 # ls -l eQTLGen/eQTLGen* -S | awk -vOFS="\t" '$(NF-4)==51 {split($NF,a,"-");split(a[3],b,".");print a[2],a[3],b[1]}' | xsel -i

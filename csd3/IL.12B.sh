@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
 Rscript -e '
+  options(width=200)
   suppressMessages(library(dplyr))
   INF <- Sys.getenv("INF")
   gz <- gzfile(file.path(INF,"METAL","IL.12B-1.tbl.gz"))
@@ -25,9 +26,10 @@ Rscript -e '
   log10p <- gap::log10p
   load(file.path(INF,"work","IL.12B.rda"))
   subset(IL.12B,!is.na(gene))
-  png("IL.12B-mhtplot.trunc.png", res=300, units="in", width=9, height=6)
+  png("IL.12B-mhtplot.trunc-blank.png", res=300, units="in", width=9, height=6)
+# pdf("IL.12B-mhtplot.trunc-blank.pdf", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
-  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc.R"))
+  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc-blank.R"))
   mhtplot.trunc(IL.12B, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=1.2,

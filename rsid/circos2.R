@@ -81,9 +81,8 @@ circlize <- function()
   col_fun <- colorRamp2(c(-1, 1), c("red", "blue"))
   circle_size <- unit(1, "snpc")
   cis.trans <- Legend(at=c("cis","trans"), pch=19, legend_gp=gpar(col=c("red","blue")), title_position="topcenter",
-                      title="cis/trans", type="points", nrow=2)
+                      title="", type="points", nrow=2)
   llist_horizontal = packLegend(cis.trans, direction = "horizontal")
-  plot.new()
   pushViewport(viewport(x=0.5, y=1, width=circle_size, height=circle_size, just=c("center", "bottom")))
   pQTLs <- read.table(file.path(INF,"circos","pQTLs.txt"),col.names=c("chr","start","end","value1","value2")) %>%
            mutate(chr=gsub("hs","chr",chr),value2=gsub("color=vd","",value2))
@@ -126,7 +125,7 @@ circlize <- function()
   circos.genomicLink(pQTL_links[,1:3], pQTL_links[,4:6], col=pQTL_links[[7]], border=NA, directional=1, arr.length=0.05,
                      arr.width=0.03, arr.lwd=0.05)
   upViewport()
-  draw(llist_horizontal, x=circle_size*0.9, y=circle_size, just="right")
+  draw(llist_horizontal, x=circle_size*0.3, y=circle_size, just="right")
   dev.off()
   system("convert -density 300 ${INF}/circos/circlize.eps ${INF}/circos/circlize.png")
 }

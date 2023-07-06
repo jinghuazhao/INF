@@ -7,9 +7,10 @@ post <- function(regions)
   job = submitGreatJob(get(regions), species="hg19", version="3.0.0")
   et = getEnrichmentTables(job,download_by = "tsv")
   tb <- do.call("rbind",et)
+  rga <- getRegionGeneAssociations(job)
   write.table(tb,file=file.path(INF,"GREAT",paste0(regions,".tsv")),
               quote=FALSE,row.names=FALSE,sep="\t")
-  invisible(list(job=job,tb=tb))
+  invisible(list(job=job,tb=tb,rga=rga))
 }
 
 all_regions <- function()
@@ -45,7 +46,7 @@ M <- 1e+6
 INF <- Sys.getenv("INF")
 INF1_merge <- read.delim(file.path(INF,"work","INF1.merge")) %>%
               mutate(chr=Chrom, start=POS-M, end=POS+M) %>%
-              mutate(start=if_else(start<0,0,start)) %>%
+              mutate(start=if_else(start<0,1,start)) %>%
               select(prot,MarkerName,chr,start,end)
 cistrans <- INF1_merge %>% select(chr,start,end) %>% arrange(chr,start,end) %>% distinct()
 

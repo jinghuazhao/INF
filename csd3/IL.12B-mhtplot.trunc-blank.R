@@ -170,38 +170,4 @@ mhtplot.trunc <- function (x, chr = "CHR", bp = "BP", p = NULL, log10p = NULL, z
     print(nrow(d.column))
     with(d.column,points(pos, log10P, col = "red", pch = 20, ...))
   }
-  return
-  if (!is.null(annotatelog10P)) {
-    topHits = subset(d, log10P >= annotatelog10P)
-    if (!annotateTop) {
-      toHighlight <- subset(topHits,SNP %in% highlight)
-      toLift1 <- c("SH2B3;TRAFD1")
-      toLift2 <- c("TRAF3")
-      toLift3 <- c("MHC","RAD51B")
-      toLift4 <- c("FLT3")
-      part1 <- subset(toHighlight, ! SNP %in% c(toLift1,toLift2,toLift3,toLift4,"IL12B","PLAUR"))
-      part2 <- subset(toHighlight, SNP %in% toLift1)
-      part3 <- subset(toHighlight, SNP %in% toLift2)
-      part4 <- subset(toHighlight, SNP %in% toLift3)
-      part5 <- subset(toHighlight, SNP %in% toLift4)
-      part6 <- subset(toHighlight, SNP %in% "IL12B")
-      part7 <- subset(toHighlight, SNP %in% "PLAUR")
-      with(part1, calibrate::textxy(pos, log10P, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-      with(part2, calibrate::textxy(pos, log10P+30, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-      with(part3, calibrate::textxy(pos, log10P+20, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-      with(part4, calibrate::textxy(pos+1000000, log10P+15, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-      with(part5, calibrate::textxy(pos+150000, log10P, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-      with(part6, calibrate::textxy(pos, log10P-15, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-      with(part7, calibrate::textxy(pos, log10P-15, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-    }
-    else {
-      topHits <- topHits[order(with(topHits,log10P)), ]
-      topSNPs <- NULL
-      for (i in unique(with(topHits,CHR))) {
-        chrSNPs <- topHits[with(topHits,CHR) == i, ]
-        topSNPs <- rbind(topSNPs, chrSNPs[1, ])
-      }
-      with(topSNPs,calibrate::textxy(pos, log10P, offset = 0.625, pos = 3, labs = SNP, cex = cex.text, font = 4))
-    }
-  }
 }
