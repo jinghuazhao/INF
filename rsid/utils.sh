@@ -54,10 +54,9 @@ END
 Rscript -e '
   cvt <- read.table("work/INF1.merge.out",as.is=TRUE,header=TRUE,nrows=70)
   H <- with(cvt,table(total))
-  M <- names(H)
   png(file = "work/signals_by_protein.png",width=7,height=5,units="in",res=300)
-  barplot(H,names.arg=M,xlab="No. of pQTL regions",ylab="No. of proteins",
-          ylim=c(0,25),col="darkgrey",border="black",cex=0.8,cex.axis=1.5,cex.names=1.5)
+  barplot(H,xlab="No. of pQTL regions",ylab="No. of proteins",
+          ylim=c(0,25),col="darkgrey",border="black",cex=0.8,cex.axis=2,cex.names=2,las=1)
   dev.off()
 '
 
@@ -870,14 +869,14 @@ function CXCL5_prep()
             left_join(pQTLdata::inf1[c("target.short","gene")],by=c("protein"="target.short")) %>%
             select(Disease,bxy,se,p,p_qtl,gene) %>%
             filter(grepl("CXCL5",gene)&grepl("Crohn\'s disease|Ulcerative colitis",Disease))
-    pdf(file.path(INF,"SF-CXCL5-MR.pdf"),height=3,width=9)
+    png(file.path(INF,"CXCL5","SF-CXCL5-MR.png"),height=3,width=9,units="in",res=300)
     mr_forestplot(gsmr,colgap.forest.left="0.05cm", fontsize=14,
                   leftcols=c("studlab"), leftlabs=c("Disease"),
-                  plotwidth="3inch", sm="OR", sortvar=dat[["bxy"]],
+                  plotwidth="3inch", sm="OR", sortvar=gsmr[["bxy"]],
                   rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
                   digits=2, digits.pval=2, scientific.pval=TRUE,
                   common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
-                  addrow=TRUE, backtransf=TRUE, spacing=1.6, at=c(0.7,0.8,0.9,1,1.1),xlim=c(0.7,1.1))
+                  addrow=TRUE, backtransf=TRUE, spacing=1.6, at=c(0.7,0.8,0.9,1,1.1),xlim=c(0.7,1.1),col.inside="black",col.square="white")
     grid::grid.text("GSMR results", 0.5, 0.9)
     dev.off()
     vars <- c("snpid","rsid","chr","pos","a1","a2","z")
