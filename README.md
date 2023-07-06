@@ -28,7 +28,7 @@ Quick links to codes for [final figures](https://jhz22.user.srcf.net/SCALLOP-INF
 
 - [Supplementary Figure 1](doc/qq-manhattan.pdf), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
 - [Supplementary Figure 2](doc/fp-lz.pdf), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
-- Supplementary Figure 3, [eQTLGen.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh)
+- [Supplementary Figure 3](doc/eQTLGen-protein-lz.pdf), [eQTLGen.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh)
 - [Supplementary Figure 4](doc/protein-disease-lz.pdf), [coloc-disease.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/coloc-disease.sh)
 
 - Supplementary item, [js.R](https://github.com/jinghuazhao/INF/blob/master/csd3/js.R), [merge.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/merge.sh)
