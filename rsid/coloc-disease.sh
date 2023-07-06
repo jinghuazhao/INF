@@ -136,7 +136,7 @@ function lz()
      mv ${dir}/"${src}-${gene_efo_pqtl}"-000001.png ${dir}/"${src}-${gene_efo_pqtl}".png
   done
     convert -append ${dir}/"INF-${gene_efo_pqtl}".png ${dir}/"GWAS-${gene_efo_pqtl}".png \
-            -resize x500 -density 300 ${dir}/"combine-${gene_efo_pqtl}".png
+            -density 400 ${dir}/"combine-${gene_efo_pqtl}".png
     convert ${dir}/"combine-${gene_efo_pqtl}".png ${dir}/"combine-${gene_efo_pqtl}".jp2
     mogrify -path ${dir} -format jpg -quality 100 -verbose ${dir}/"combine-${gene_efo_pqtl}".jp2
     convert ${dir}/"combine-${gene_efo_pqtl}".jpg ${dir}/${combine}.pdf
@@ -226,9 +226,9 @@ Rscript -e '
 '
 }
 
-# lz
+lz
 # coloc
-run_PWCoCo
+# run_PWCoCo
 
 function cojo()
 {

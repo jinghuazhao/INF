@@ -85,7 +85,7 @@ function lookup_jma()
 {
   export jma=${INF}/sentinels/INF1.jma-rsid.cis.vs.trans
   cd ${INF}
-  module load ceuadmin/stata 
+  module load ceuadmin/stata
   stata <<\ \ END
   local jma : env jma
   insheet using "`jma'.", case clear delim(" ")
@@ -350,12 +350,12 @@ function lz()
               --delim tab title="SCALLOP: {8} ({3})-{7}" \
               --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
               --no-date --plotonly --prefix=INF-{3} --rundir ${dir} --refsnp {7}
-    pdftopng -f 1 -l 1 -r 300 ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/eQTLGen-{3}_{7}
-    pdftopng -f 1 -l 1 -r 300 ${dir}/INF-{3}_{7}.pdf ${dir}/INF-{3}_{7}
+    pdftopng -f 1 -l 1 -r 400 ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/eQTLGen-{3}_{7}
+    pdftopng -f 1 -l 1 -r 400 ${dir}/INF-{3}_{7}.pdf ${dir}/INF-{3}_{7}
     mv ${dir}/eQTLGen-{3}_{7}-000001.png ${dir}/eQTLGen-{3}_{7}.png
     mv ${dir}/INF-{3}_{7}-000001.png ${dir}/INF-{3}_{7}.png
-    convert -append ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png -resize x500 -density 300 ${dir}/{1}-{2}-{3}.png
-    convert ${dir}/{1}-{2}-{3}.png -quality 0 ${dir}/{1}-{2}-{3}.jp2
+    convert -append ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png -density 400 ${dir}/{1}-{2}-{3}.png
+    convert ${dir}/{1}-{2}-{3}.png -quality 100 ${dir}/{1}-{2}-{3}.jp2
     convert ${dir}/{1}-{2}-{3}.jp2 ${dir}/{2}-{1}-{3}-lz.pdf
     rm ${dir}/eQTLGen-{1}-{2}-{3}.lz ${dir}/INF-{1}-{2}-{3}.lz
 #   rm ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/INF-{3}_{7}.pdf
