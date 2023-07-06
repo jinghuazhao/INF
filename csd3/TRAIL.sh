@@ -47,6 +47,7 @@ function turboman()
 # cut -f1 | grep -f - work/INF1.METAL | sort -k4,4n -k5,5n | cut -f1,2
 
 Rscript -e '
+  options(width=200)
   suppressMessages(library(dplyr))
   INF <- Sys.getenv("INF")
   gz <- gzfile(file.path(INF,"METAL","TRAIL-1.tbl.gz"))
@@ -64,11 +65,13 @@ Rscript -e '
             select(-c(chr,snpid,snp))
   save(TRAIL, genes, file=file.path(INF,"work","TRAIL.rda"))
   load(file.path(INF,"work","TRAIL.rda"))
-  subset(TRAIL,!is.na(gene))
+  subset(TRAIL,!is.na(gene)) %>%
+  arrange(Chromosome,Position)
   log10p <- gap::log10p
-  png("TRAIL-mhtplot.trunc.png", res=300, units="in", width=9, height=6)
+  png("TRAIL-mhtplot.trunc-blank.png", res=300, units="in", width=9, height=6)
+# pdf("TRAIL-mhtplot.trunc-blank.pdf", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
-  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc.R"))
+  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc-blank.R"))
   mhtplot.trunc(TRAIL, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=1.2,
