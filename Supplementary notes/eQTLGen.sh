@@ -3,7 +3,7 @@
 export eQTLGen=~/rds/public_databases/eQTLGen
 export TMPDIR=${HPC_WORK}/work
 
-function eQTLGen_tabix()
+function eQTLGen_setup()
 {
   export eQTLGen_tabix=tabix
 # MAF
@@ -293,7 +293,7 @@ function lz()
   echo "{1}-{2}-{3}"
 # eQTLGen
   tabix ${eQTLGen_tabix}/cis_full.txt.gz {4}:{5}-{6} | \
-  awk -vgene={3} "\$9==gene" \| \
+  awk -vgene={3} "\$9==gene" | \
   cut -f2-7 | \
   awk "
       {
@@ -303,8 +303,10 @@ function lz()
       }" | \
   Rscript -e "
      suppressMessages(library(dplyr))
-     vars <- c("snpid", "rsid", "chr", "pos", "a1", "a2", "mlog10p")
-     z <- within(read.table(\"stdin\",col.names=vars),{mlog10p <- -gap::log10p(mlog10p)})
+     vars <- c(\"snpid\", \"rsid\", \"chr\", \"pos\", \"a1\", \"a2\", \"mlog10p\")
+     z <- read.table(\"stdin\") %>%
+          setNames(vars) %>%
+          mutate(mlog10p=-gap::log10p(mlog10p))
      write.table(z,row.names=FALSE,quote=FALSE,sep=\"\t\")
   " | \
   gzip -f > ${dir}/eQTLGen-{1}-{2}-{3}.tsv.gz
