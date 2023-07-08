@@ -286,7 +286,7 @@ function lz()
   export eQTLGen_tabix=${eQTLGen}/tabix
   module load python/2.7
   export dir=${INF}/eQTLGen
-# 500kb for CCL4
+# CCL$ has a single run with 500kb by uncommenting and swapping with the cut statement below
 # echo P13236 CCL4 CCL4 17 33930983 34933014 rs8064426 CCL4 | \
   cut -d ' ' -f1-4,6,7 ${dir}/cis.lst | awk '{split($4,a,":|-");print $1,$2,$3,a[1],a[2],a[3],$5,$6}' | \
   parallel -j8 -C ' ' --env dir '
@@ -338,25 +338,31 @@ function lz()
       awk -v OFS="\t" "NR>1 {print \$3,\$4,\$2,\$7}" | \
       sort -k1,1n -k2,2n
     ) > ${dir}/eQTLGen-{1}-{2}-{3}.lz
+    if [ ! -f ${dir}/eQTLGen-{3}_{7}.pdf ]; then
     locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/eQTLGen-{1}-{2}-{3}.lz \
               --delim tab title="eQTLGen: {8} ({3})-{7}" \
               --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
               --no-date --plotonly --prefix=eQTLGen-{3} --rundir ${dir} --refsnp {7}
+    fi
     (
       echo -e "chr\tpos\trsid\tmlog10P"
       gunzip -c ${INF}/eQTLGen/INF-{1}-{2}-{3}.tsv.gz | \
       awk -v OFS="\t" "NR>1 {print \$3,\$4,\$2,\$7}" | \
       sort -k1,1n -k2,2n
     ) > ${dir}/INF-{1}-{2}-{3}.lz
+    if [ ! -f ${dir}/INF-{3}_{7}.pdf ]; then
     locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal ${dir}/INF-{1}-{2}-{3}.lz \
               --delim tab title="SCALLOP: {8} ({3})-{7}" \
               --markercol rsid --pvalcol mlog10P --no-transform --chr {4} --start {5} --end {6} --cache None \
               --no-date --plotonly --prefix=INF-{3} --rundir ${dir} --refsnp {7}
+    fi
     pdftopng -f 1 -l 1 -r 400 ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/eQTLGen-{3}_{7}
     pdftopng -f 1 -l 1 -r 400 ${dir}/INF-{3}_{7}.pdf ${dir}/INF-{3}_{7}
     mv ${dir}/eQTLGen-{3}_{7}-000001.png ${dir}/eQTLGen-{3}_{7}.png
     mv ${dir}/INF-{3}_{7}-000001.png ${dir}/INF-{3}_{7}.png
-    convert -append ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png -density 400 ${dir}/{1}-{2}-{3}.png
+    if [ -f ${dir}/eQTLGen-{3}_{7}.png ]; then
+       convert -append ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png -density 400 ${dir}/{1}-{2}-{3}.png
+    fi
     convert ${dir}/{1}-{2}-{3}.png -quality 100 ${dir}/{1}-{2}-{3}.jp2
     convert ${dir}/{1}-{2}-{3}.jp2 ${dir}/{2}-{1}-{3}-lz.pdf
     rm ${dir}/eQTLGen-{1}-{2}-{3}.lz ${dir}/INF-{1}-{2}-{3}.lz
