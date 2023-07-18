@@ -54,7 +54,7 @@ END
 Rscript -e '
   cvt <- read.table("work/INF1.merge.out",as.is=TRUE,header=TRUE,nrows=70)
   H <- with(cvt,table(total))
-  png(file = "work/signals_by_protein.png",width=7,height=5,units="in",res=300)
+  pdf(file = "work/signals_by_protein.pdf",width=7,height=5)
   barplot(H,xlab="No. of pQTL regions",ylab="No. of proteins",
           ylim=c(0,25),col="darkgrey",border="black",cex=0.8,cex.axis=2,cex.names=2,las=1)
   dev.off()
@@ -402,18 +402,20 @@ function pdf_test()
 # convert fp+lz.pdf -density 300 tiff64:fp+lz.tiff
 # qml/
 # 91 Q-Q/Manhattan (left+right collation dropping cis-locuszoom) and tif via PDF-viewer
+# The following script will be killed by CSD3 when working on pdf so an interactive run is used
+# srun -A PETERS-SL3-CPU -p cclake -t 12:0:0 --pty bash -i
   ls qqmanhattanlz/*qq*png | xargs -l basename -s _qq.png | grep -v BDNF | \
   parallel -C' ' '
-    convert +append qqmanhattanlz/{}_manhattan.png qqmanhattanlz/{}_qq.png -resize x500 -density 300 {}.png
-    convert {}.png -quality 0 {}.jp2
+    convert +append qqmanhattanlz/{}_manhattan.png qqmanhattanlz/{}_qq.png -density 600 {}.png
+    convert {}.png -quality 100 {}.jp2
     img2pdf -o {}.pdf {}.jp2
     rm {}.jp2
   '
   qpdf --empty --pages $(ls *.pdf) -- SF-manhattan-qq.pdf
 # Not working very well
 # see https://legacy.imagemagick.org/Usage/layers/
-  convert $(paste -d ' ' <(ls *qq*) <(ls *manhattan*) | xargs -l -I {} echo '\(' {} +append '\)' '\')
-          -append qq_manhattan.pdf
+# convert $(paste -d ' ' <(ls qqmanhattanlz/*qq*png) <(ls qqmanhattanlz/**manhattan*png) | \
+#         xargs -l -I {} echo '\(' {} +append '\)' '\') -append qq_manhattan.pdf
 # convert qq_manhattan.pdf -density 300 tiff64:qq+manhattan.tiff
 # locuszoom plots for 91 cis-regions are possible with pdfunite but got complaints from qpdf
 # pdfunite *.pdf ~/lz.pdf
@@ -458,10 +460,10 @@ function f2()
 {
   cd ${INF}/work
   export figure2a=${INF}/hotspots/$1
-  convert ${figure2a} -resize 80% 2a.png
-  convert signals_by_protein.png -resize 110% 2b.png
-  convert IL.12B-mhtplot.trunc.png -resize 80% 2c.png
-  convert TRAIL-mhtplot.trunc.png -resize 80% 2d.png
+  convert ${figure2a} -density 600 -resize 80% 2a.png
+  convert signals_by_protein.png -density 600 -resize 110% 2b.png
+  convert IL.12B-mhtplot.trunc.png -density 600 -resize 80% 2c.png
+  convert TRAIL-mhtplot.trunc.png -density 600 -resize 80% 2d.png
   convert +append 2a.png 2b.png f2-1.png
   ln -sf 2a.png f2-1.png
   convert +append 2c.png 2d.png f2-2.png
@@ -680,7 +682,8 @@ function gsmr3()
     gsmr_snp_effect <- snpid_rsid %>%
                        left_join(gsmr_snp_effect)
     attach(gsmr_snp_effect)
-    png(paste0(INF,"/SF-",p,"-",trait,".png"),res=300,height=8,width=8.3,units="in")
+#   png(paste0(INF,"/SF-",p,"-",trait,".png"),res=300,height=8,width=8.3,units="in")
+    pdf(paste0(INF,"/SF-",p,"-",trait,".pdf"),height=8,width=8.3)
     mr_dat <- mr_input(bx = bx, bxse = bxse, by = by, byse = byse, exposure = gene, outcome = trait, snps = SNP,
               effect_allele = effect_allele, other_allele = other_allele, eaf = eaf)
     mr_plot(mr_dat, interactive = FALSE, labels = FALSE)
@@ -869,7 +872,8 @@ function CXCL5_prep()
             left_join(pQTLdata::inf1[c("target.short","gene")],by=c("protein"="target.short")) %>%
             select(Disease,bxy,se,p,p_qtl,gene) %>%
             filter(grepl("CXCL5",gene)&grepl("Crohn\'s disease|Ulcerative colitis",Disease))
-    png(file.path(INF,"CXCL5","SF-CXCL5-MR.png"),height=3,width=9,units="in",res=300)
+#   png(file.path(INF,"CXCL5","SF-CXCL5-MR.png"),height=3,width=9,units="in",res=300)
+    pdf(file.path(INF,"CXCL5","SF-CXCL5-MR.pdf"),height=3,width=9)
     mr_forestplot(gsmr,colgap.forest.left="0.05cm", fontsize=14,
                   leftcols=c("studlab"), leftlabs=c("Disease"),
                   plotwidth="3inch", sm="OR", sortvar=gsmr[["bxy"]],

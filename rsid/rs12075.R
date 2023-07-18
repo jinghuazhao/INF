@@ -124,7 +124,8 @@ circos_plot <- function()
              transmute(t.chr=chr,t.start=start,t.end=end,t.gene=from) %>%
              bind_rows(t.genes)
    suppressMessages(library(circlize))
-   png(file.path(INF,"hotspots","hotspot-rs12075.png"),res=300,width=10,height=10,units="in")
+#  png(file.path(INF,"hotspots","hotspot-rs12075.png"),res=600,width=10,height=10,units="in")
+   pdf(file.path(INF,"hotspots","hotspot-rs12075.pdf"),width=10,height=10)
    circos.clear()
    circos.par(start.degree = 90, track.height = 0.1, cell.padding = c(0, 0, 0, 0))
    circos.initializeWithIdeogram(species="hg19", track.height = 0.05, ideogram.height = 0.06, labels.cex=2, chromosome.index=paste0("chr",1:22))
@@ -202,7 +203,7 @@ if (run_gassoc)
   dev.off()
 }
 
-# stack_assoc_plot_save(sap, paste0("rs12075-gassoc.png"), 7, width=8, dpi=300)
+# stack_assoc_plot_save(sap, paste0("rs12075-gassoc.png"), 7, width=8, dpi=600)
 # ggsave("rs12075-gassoc.png", plot=grid::grid.draw(sap), dpi=300, height=20, width=8, units="in", limitsize=FALSE)
 
 wbc_rs12075 <- filter(wbc,pos==159175354) %>% mutate(track="WBC") %>% select(track, b,se)
@@ -210,7 +211,7 @@ mono_rs12075 <- filter(mono,pos==159175354) %>% mutate(track="Monocyte count") %
 baso_rs12075 <- filter(baso,pos==159175354) %>% mutate(track="Basophil count") %>% select(track, b,se)
 d <- bind_rows(filter(rs12075[c("track","b","se")],track!="Monocytes"), wbc_rs12075, mono_rs12075, baso_rs12075)
 library(gap)
-png(file.path(INF,"hotspots","SF-rs12075-forest.png"),height=7,width=7.5,units="in",res=300)
+pdf(file.path(INF,"hotspots","SF-rs12075-forest.pdf"),height=7,width=7.5)
 mr_forestplot(d, colgap.forest.left="0.05cm", fontsize=14, digits=3,
               leftlabs=c("Outcome","b","SE"),
               rightcols=c("ci","pval"), rightlabs=c("95%CI","P"),digits.pval=2,scientific.pval=TRUE,

@@ -77,7 +77,7 @@ circlize <- function()
   suppressMessages(library(gridBase))
   suppressMessages(library("circlize"))
   setEPS()
-  postscript(file=file.path(INF,"circos","circlize.eps"), width=7.08, height=8.07, horizontal=FALSE, paper="special", colormodel="rgb")
+  postscript(file=file.path(INF,"circos","circlize.ps"), width=7.08, height=8.07, horizontal=FALSE, paper="special", colormodel="rgb")
   col_fun <- colorRamp2(c(-1, 1), c("red", "blue"))
   circle_size <- unit(1, "snpc")
   cis.trans <- Legend(at=c("cis","trans"), pch=19, legend_gp=gpar(col=c("red","blue")), title_position="topcenter",
@@ -127,12 +127,14 @@ circlize <- function()
   upViewport()
   draw(llist_horizontal, x=circle_size*0.3, y=circle_size, just="right")
   dev.off()
-  system("convert -density 300 ${INF}/circos/circlize.eps ${INF}/circos/circlize.png")
+  system("ps2eps ${INF}/circos/circlize.ps")
+  system("convert -density 600 ${INF}/circos/circlize.ps ${INF}/circos/circlize.png")
 }
 
 options(width=200)
 INF <- Sys.getenv("INF")
 suppressMessages(library(dplyr))
 
+module load texlive/2015
 setup()
 circlize()
