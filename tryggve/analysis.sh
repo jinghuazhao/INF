@@ -459,13 +459,13 @@ function lambda()
       gz <- gzfile(paste0("~/INF/work/INF1.",protein,".p.gz"))
       p <- read.delim(gz,as.is=TRUE)
       cat(protein,"snpStats.lambda=",snpStats::gq.chisq(with(p,(Effect/StdErr)^2)),"\n")
-      cat(protein,"GC.lambda=",gap::gc.lambda(with(p,-log.P.),logscale=TRUE),"\n")
+      cat(protein,"GC.lambda=",gap::gc.lambda(with(p,Effect/StdErr),z=TRUE),"\n")
     END
   '
   ) > work/INF1.lambda.log
   grep GC.lambda ~/INF/work/INF1.lambda.log | \
   grep -v gc.lambda | \
-  sed 's/GC.lambda=//g' > work/INF1.lambda-p.dat
+  sed 's/GC.lambda=//g' > work/INF1.lambda-z.dat
   grep snpStats.lambda ~/INF/work/INF1.lambda.log | \
   grep -v cat | \
   sed 's/snpStats.lambda=//g' > work/INF1.lambda.dat
