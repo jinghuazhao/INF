@@ -68,11 +68,10 @@ Rscript -e '
   subset(TRAIL,!is.na(gene)) %>%
   arrange(Chromosome,Position)
   log10p <- gap::log10p
-  png("TRAIL-mhtplot.trunc-blank.png", res=300, units="in", width=9, height=6)
-# pdf("TRAIL-mhtplot.trunc-blank.pdf", width=9, height=6)
+  pdf("TRAIL-mhtplot.trunc.pdf", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
-  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc-blank.R"))
-  mhtplot.trunc(TRAIL, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
+  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc.R"))
+  mhtplot.trunc(filter(TRAIL,log10P>=2), chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=1.2,
                 annotatelog10P=-log10(5e-10), annotateTop = FALSE, highlight=with(genes,gene),

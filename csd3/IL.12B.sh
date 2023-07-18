@@ -23,18 +23,17 @@ Rscript -e '
              mutate(MarkerName=ifelse(!is.na(snpid),gene,MarkerName)) %>%
              select(-c(chr,snp,snpid))
   save(IL.12B, genes, file=file.path(INF,"work","IL.12B.rda"))
-  log10p <- gap::log10p
   load(file.path(INF,"work","IL.12B.rda"))
   subset(IL.12B,!is.na(gene))
-  png("IL.12B-mhtplot.trunc-blank.png", res=300, units="in", width=9, height=6)
-# pdf("IL.12B-mhtplot.trunc-blank.pdf", width=9, height=6)
+  log10p <- gap::log10p
+  pdf("IL.12B-mhtplot.trunc.pdf", width=9, height=6)
   par(oma=c(0,0,0,0), mar=c(5,6.5,1,1))
-  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc-blank.R"))
-  mhtplot.trunc(IL.12B, chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
+  source(file.path(INF,"csd3","IL.12B-mhtplot.trunc.R"))
+  mhtplot.trunc(filter(IL.12B,log10P>=2), chr="Chromosome", bp="Position", z="Z", snp="MarkerName",
                 suggestiveline=FALSE, genomewideline=-log10(5e-10),
                 cex.mtext=1.2, cex.text=1.2,
                 annotatelog10P=-log10(5e-10), annotateTop = FALSE, highlight=with(genes,gene),
-                mtext.line=3, y.brk1=115, y.brk2=300, delta=0.01, cex.axis=1.5, cex=1.48, font=3, font.axis=1.5,
+                mtext.line=3, y.brk1=115, y.brk2=300, delta=0.01, cex.axis=1.5, cex=0.8, font=3, font.axis=1.5,
                 y.ax.space=20,
                 col = c("blue4", "skyblue")
   )
