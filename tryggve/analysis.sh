@@ -2,8 +2,8 @@
 
 source tryggve/analysis.ini
 
-gunzip -c sumstats/INTERVAL/INTERVAL.4E.BP1.gz | head -1 > work/sumstats.hdr
-gunzip -c METAL/4E.BP1-1.tbl.gz | head -1 > work/METAL.hdr
+gunzip -c sumstats/INTERVAL/INTERVAL.4E.BP1.gz | head -1 > ~/INF/work/sumstats.hdr
+gunzip -c METAL/4E.BP1-1.tbl.gz | head -1 > ~/INF/work/METAL.hdr
 
 function qml()
 {
@@ -451,32 +451,40 @@ function lambda()
   sed 's|METAL/||g;s/-1.tbl.gz//g' | \
   parallel -j4 --env rt -C' ' '
     gunzip -c METAL/{}-1.tbl.gz | \
-    cut -f3,12 | \
+    cut -f3,10-12 | \
     gzip -f > work/INF1.{}.p.gz
     export protein={}
     R --no-save -q <<\ \ END
-      library(gap)
       protein <- Sys.getenv("protein")
-      gz <- gzfile(paste0("work/INF1.",protein,".p.gz"))
+      gz <- gzfile(paste0("~/INF/work/INF1.",protein,".p.gz"))
       p <- read.delim(gz,as.is=TRUE)
-      cat(protein,"GC.lambda=",gc.lambda(with(p,10^log.P.)),"\n")
-  END'
+      cat(protein,"snpStats.lambda=",snpStats::gq.chisq(with(p,(Effect/StdErr)^2)),"\n")
+      cat(protein,"GC.lambda=",gap::gc.lambda(with(p,-log.P.),logscale=TRUE),"\n")
+    END
+  '
   ) > work/INF1.lambda.log
-  grep GC.lambda work/INF1.lambda.log | \
+  grep GC.lambda ~/INF/work/INF1.lambda.log | \
   grep -v gc.lambda | \
-  sed 's/GC.lambda=//g' > work/INF1.lambda.dat
+  sed 's/GC.lambda=//g' > work/INF1.lambda-p.dat
+  grep snpStats.lambda ~/INF/work/INF1.lambda.log | \
+  grep -v cat | \
+  sed 's/snpStats.lambda=//g' > work/INF1.lambda.dat
   R --no-save -q <<\ \ END
-    t <- subset(read.table("INF1.lambda.dat",as.is=TRUE, col.names=c("prot","lambda")),!is.na(lambda)&prot!="BDNF")
+    t <- subset(read.table("~/INF/work/INF1.lambda.dat",as.is=TRUE,
+                           col.names=c("prot","N","missing","lambda")),
+                !is.na(lambda)&prot!="BDNF")
     summary(t)
     ord <- with(t, order(lambda))
     print(t[ord, c("prot","lambda")], row.names=FALSE)
-    png("INF1.lambda.png", res=300, units="cm", width=12, height=8)
+    pdf("~/INF/work/INF1.lambda.pdf", width=8, height=25)
+    par(mar=c(5,8,1,1))
     np <- nrow(t)
     with(t[ord,], {
-        plot(lambda, cex=0.4, pch=16, xaxt="n", xlab="protein", ylab=expression(lambda))
-        xtick <- seq(1, np, by=1)
-        axis(side=1, at=xtick, labels = FALSE)
-        text(x=xtick, par("usr")[3],labels = prot, srt = 75, pos = 1, xpd = TRUE, cex=0.5)
+        xtick <- seq(1, np)
+        plot(lambda, xtick, cex=1.2, pch=16, xlim=c(0.99,1.03),
+             xlab=expression(lambda[GC]),axes=FALSE,ylab="Protein")
+        axis(2, at=xtick, labels = prot, line=-2, cex.axis=0.8, las=1)
+        axis(1)
     })
     dev.off()
   END
