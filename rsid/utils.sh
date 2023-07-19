@@ -320,7 +320,7 @@ R --no-save -q <<END
        if (split) pdf(paste0(p,"-",m,".pdf"),...)
        requireNamespace("meta")
        mg <- meta::metagen(BETA,SE,sprintf("%s (%.0f)",study,N),title=title)
-       meta::forest(mg,colgap.forest.left = "0.5cm",digits.TE=3,digits.se=2)
+       meta::forest(mg,colgap.forest.left = "0.5cm",leftlabs = c("Study", "b", "SE"),digits.TE=3,digits.se=2)
        requireNamespace("grid")
        grid::grid.text(title,0.5,0.9)
        with(mg,cat("prot =", p, "MarkerName =", m, "Q =", Q, "df =", df.Q, "p =", pval.Q, "I2 =", I2, "lower.I2 =", lower.I2, "upper.I2 =", upper.I2, "\n"))
@@ -349,15 +349,19 @@ function pdf()
   qpdf --empty --pages $(ls *_*.pdf | grep -v CCL25-chr19:49206145_C_G.lz.pdf) -- lz2.pdf
   qpdf -show-npages lz2.pdf
   qpdf --pages . 1-360:odd -- lz2.pdf lz.pdf
-  rm lz2.pdf
   rm -f work/*pdf
   cd work; fp; cd -
   qpdf --empty --pages $(ls work/*pdf) -- fp.pdf
+# cd ~/INF/METAL/qqmanhattanlz
+  qpdf --empty --pages $(ls *_rs*.pdf) -- lz2.pdf
+  qpdf --pages . 1-360:odd -- lz2.pdf lz.pdf
+  rm lz2.pdf
 # left-right with very small file size
 # Split files, note the naming scheme
   pdfseparate fp.pdf temp-%04d-fp.pdf
   pdfseparate lz.pdf temp-%04d-lz.pdf
 # Combine the final pdf
+  module load ceuadmin/pdfjam
   pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile fp+lz.pdf
 # Clean up
 # Images for the GitHub page using output from qqman.sb (no border for Q-Q plot)
@@ -387,16 +391,13 @@ function pdf_test()
   parallel -C' ' '
     export rt={1}-{2}
     export r_t={1}_{3}
-    export suffix=$(printf "%06d\n" 1)
-    if [ ! -f fp-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 fp/${rt}.pdf fp-${rt}; fi
-    if [ ! -f lz-${rt}.png ]; then
-       pdftopng -r 300 -f 1 -l 1 qqmanhattanlz/${r_t}.pdf lz-${r_t}
-       convert -density 300 -size 5x9 lz-${r_t}-${suffix}.png lz-${rt}.png;
-    fi
-    convert +append fp-${rt}-${suffix}.png lz-${rt}.png -resize x500 -density 300 fp-lz-${rt}.png
-    convert fp-lz-${rt}.png -quality 100 fp-lz-${rt}.jp2
+    convert -density 600 ~/INF/fp/${rt}.pdf fp-${rt}.png
+    gs -r600 -sDEVICE=jpeg -sOutputFile=lz-${rt}.png -dLastPage=1 qqmanhattanlz/${r_t}.pdf
+    convert +append fp-${rt}.png lz-${rt}.png -resize x500 -density 600 fplz-${rt}.png
+    convert -density 600 fplz-${rt}.png -background white -alpha remove -alpha off fp-lz-${rt}.png
+    convert fp-lz-${rt}.png -quality 0 fp-lz-${rt}.jp2
     img2pdf -o fp-lz-${rt}.pdf fp-lz-${rt}.jp2
-    rm fp-${rt}-${suffix}.png lz-${r_t}-${suffix}.png lz-${rt}.png fp-lz-${rt}.jp2
+    rm fp-${rt}.png lz-${rt}.png fplz-${rt}.png fp-lz-${rt}.jp2
   '
   qpdf --empty --pages $(ls fp-lz-*.pdf) -- SF-fp-lz.pdf
   rm fp-lz-*.*
