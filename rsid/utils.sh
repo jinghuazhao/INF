@@ -406,10 +406,11 @@ function pdf_test()
 # srun -A PETERS-SL3-CPU -p cclake -t 12:0:0 --pty bash -i
   ls qqmanhattanlz/*qq*png | xargs -l basename -s _qq.png | grep -v BDNF | \
   parallel -C' ' '
-    convert +append qqmanhattanlz/{}_manhattan.png qqmanhattanlz/{}_qq.png -density 600 {}.png
+    convert -density 450 -resize 130% qqmanhattanlz/{}_qq.png {}_qq.png
+    convert +append qqmanhattanlz/{}_manhattan.png {}_qq.png -density 450 {}.png
     convert {}.png -quality 100 {}.jp2
     img2pdf -o {}.pdf {}.jp2
-    rm {}.jp2
+    rm {}_qq.png {}.jp2
   '
   qpdf --empty --pages $(ls *.pdf) -- SF-manhattan-qq.pdf
 # Not working very well
