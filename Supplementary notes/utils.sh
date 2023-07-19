@@ -390,10 +390,11 @@ function pdf_test()
     export suffix=$(printf "%06d\n" 1)
     if [ ! -f fp-${rt}.png ]; then pdftopng -r 300 -f 1 -l 1 fp/${rt}.pdf fp-${rt}; fi
     if [ ! -f lz-${rt}.png ]; then
-       pdftopng -r 300 -f 1 -l 1 qqmanhattanlz/${r_t}.pdf lz-${r_t}; convert -density 300 -size 5x9 lz-${r_t}-${suffix}.png lz-${rt}.png;
+       pdftopng -r 300 -f 1 -l 1 qqmanhattanlz/${r_t}.pdf lz-${r_t}
+       convert -density 300 -size 5x9 lz-${r_t}-${suffix}.png lz-${rt}.png;
     fi
     convert +append fp-${rt}-${suffix}.png lz-${rt}.png -resize x500 -density 300 fp-lz-${rt}.png
-    convert fp-lz-${rt}.png -quality 0 fp-lz-${rt}.jp2
+    convert fp-lz-${rt}.png -quality 100 fp-lz-${rt}.jp2
     img2pdf -o fp-lz-${rt}.pdf fp-lz-${rt}.jp2
     rm fp-${rt}-${suffix}.png lz-${r_t}-${suffix}.png lz-${rt}.png fp-lz-${rt}.jp2
   '
@@ -417,7 +418,7 @@ function pdf_test()
 # see https://legacy.imagemagick.org/Usage/layers/
 # convert $(paste -d ' ' <(ls qqmanhattanlz/*qq*png) <(ls qqmanhattanlz/**manhattan*png) | \
 #         xargs -l -I {} echo '\(' {} +append '\)' '\') -append qq_manhattan.pdf
-# convert qq_manhattan.pdf -density 300 tiff64:qq+manhattan.tiff
+# convert qq_manhattan.pdf -density 300 tiff64:manhattan+qq.tiff
 # locuszoom plots for 91 cis-regions are possible with pdfunite but got complaints from qpdf
 # pdfunite *.pdf ~/lz.pdf
 }
