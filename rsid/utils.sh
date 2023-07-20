@@ -341,40 +341,8 @@ R --no-save -q <<END
 END
 }
 
-function pdf()
-{
-  cd ${INF}/ds/latest
-  if [ ! -d work ]; then mkdir work; fi
-# forest/locuszoom top-down format
-  qpdf --empty --pages $(ls *_*.pdf | grep -v CCL25-chr19:49206145_C_G.lz.pdf) -- lz2.pdf
-  qpdf -show-npages lz2.pdf
-  qpdf --pages . 1-360:odd -- lz2.pdf lz.pdf
-  rm -f work/*pdf
-  cd work; fp; cd -
-  qpdf --empty --pages $(ls work/*pdf) -- fp.pdf
-# cd ~/INF/METAL/qqmanhattanlz
-  qpdf --empty --pages $(ls *_rs*.pdf) -- lz2.pdf
-  qpdf --pages . 1-360:odd -- lz2.pdf lz.pdf
-  rm lz2.pdf
-# left-right with very small file size
-# Split files, note the naming scheme
-  pdfseparate fp.pdf temp-%04d-fp.pdf
-  pdfseparate lz.pdf temp-%04d-lz.pdf
-# Combine the final pdf
-  module load ceuadmin/pdfjam
-  pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile fp+lz.pdf
-# Clean up
-# Images for the GitHub page using output from qqman.sb (no border for Q-Q plot)
-  convert -density 300 -resize 110% work/fp-lz-OPG-chr17:26694861_A_G.png OPG.png
-  convert ${INF}/plots/work/OPG-qqman.png OPG.png -append -density 300 ~/INF/doc/OPG.png
-  rm OPG.png
-  cd ~/EWAS-fusion/IL.12B.tmp
-  pdftopng -r 300 ewas-plot.pdf ewas-plot
-  export rt=ewas-plot-00000
-  convert \( ${rt}1.png ${rt}2.png +append \) \( ${rt}3.png ${rt}4.png +append \) -append ewas-plot.png
-}
-
 function pdf_test()
+# quality not optimal so resort to pedjam instead.
 {
 # OCR/resolution is poor (though layout is nice) with the following:
   qpdf fp-lz.pdf --pages . 1 -- 1.pdf
@@ -391,6 +359,7 @@ function pdf_test()
   parallel -C' ' '
     export rt={1}-{2}
     export r_t={1}_{3}
+    cp ${INF}/METAL/qqmanhattanlz/${r_t}.pdf ${INF}/lz/${rt}.pdf
     convert -density 600 ~/INF/fp/${rt}.pdf fp-${rt}.png
     gs -r600 -sDEVICE=jpeg -sOutputFile=lz-${rt}.png -dLastPage=1 qqmanhattanlz/${r_t}.pdf
     convert +append fp-${rt}.png lz-${rt}.png -resize x500 -density 600 fplz-${rt}.png
@@ -422,6 +391,43 @@ function pdf_test()
 # convert qq_manhattan.pdf -density 300 tiff64:manhattan+qq.tiff
 # locuszoom plots for 91 cis-regions are possible with pdfunite but got complaints from qpdf
 # pdfunite *.pdf ~/lz.pdf
+}
+
+function pdf()
+{
+  module load ceuadmin/pdfjam
+  cd ${INF}
+  qpdf --empty --pages $(ls ${INF}/METAL/qqmanhattanlz/*_qq.pdf) -- qq.pdf
+  qpdf --empty --pages $(ls ${INF}/METAL/qqmanhattanlz/*_manhattan.pdf) -- manhattan.pdf
+  pdfseparate qq.pdf temp-%04d-qq.pdf
+  pdfseparate manhattan.pdf temp-%04d-manhattan.pdf
+  pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile manhattan+qq.pdf
+  rm temp*
+  cd ${INF}/ds/latest
+  if [ ! -d work ]; then mkdir work; fi
+# forest/locuszoom top-down format
+  qpdf --empty --pages $(ls *_*.pdf | grep -v CCL25-chr19:49206145_C_G.lz.pdf) -- lz2.pdf
+  qpdf -show-npages lz2.pdf
+  qpdf --pages . 1-360:odd -- lz2.pdf lz.pdf
+  rm -f work/*pdf
+  cd work; fp; cd -
+  qpdf --empty --pages $(ls work/*pdf) -- fp.pdf
+# cd ~/INF/METAL/qqmanhattanlz
+  qpdf --empty --pages $(ls *_rs*.pdf) -- lz2.pdf
+  qpdf --pages . 1-360:odd -- lz2.pdf lz.pdf
+  rm lz2.pdf
+  pdfseparate fp.pdf temp-%04d-fp.pdf
+  pdfseparate lz.pdf temp-%04d-lz.pdf
+  pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile fp+lz.pdf
+  rm temp*
+# Images for the GitHub page using output from qqman.sb (no border for Q-Q plot)
+  convert -density 300 -resize 110% work/fp-lz-OPG-chr17:26694861_A_G.png OPG.png
+  convert ${INF}/plots/work/OPG-qqman.png OPG.png -append -density 300 ~/INF/doc/OPG.png
+  rm OPG.png
+  cd ~/EWAS-fusion/IL.12B.tmp
+  pdftopng -r 300 ewas-plot.pdf ewas-plot
+  export rt=ewas-plot-00000
+  convert \( ${rt}1.png ${rt}2.png +append \) \( ${rt}3.png ${rt}4.png +append \) -append ewas-plot.png
 }
 
 function ppi()
