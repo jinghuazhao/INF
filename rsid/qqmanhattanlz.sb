@@ -33,6 +33,7 @@ function txt()
                   awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}')
   gunzip -c ${INF}/METAL/${phenoname}-1.tbl.gz | \
   awk '{if (NR==1) print "chromsome","position","log_pvalue","beta","se"; else print $1,$2,-$12,$10,$11}' > ${INF}/work/${phenoname}.txt
+  awk 'NR==1||$3>=2' ${INF}/work/${phenoname}.txt > ${INF}/work/${phenoname}.01
 }
 
 function qq()
@@ -48,7 +49,7 @@ function manhattan()
   grep -w ${phenoname} ${INF}/work/INF1.METAL > ${INF}/work/${phenoname}.annotate
   if [ ! -f ${INF}/work/${phenoname} ]; then
      R --slave --vanilla --args \
-       input_data_path=${INF}/work/${phenoname}.txt \
+       input_data_path=${INF}/work/${phenoname}.01 \
        output_data_rootname=${INF}/METAL/qqmanhattanlz/${phenoname}_manhattan \
        reference_file_path=~/cambridge-ceu/turboman/turboman_hg19_reference_data.rda \
        pvalue_sign=5e-10 \
@@ -58,7 +59,7 @@ function manhattan()
         <(awk 'NR>1{print $4,$5}' ${INF}/work/INF1.METAL) \
         > ${INF}/work/${phenoname}.annotate
     R --slave --vanilla --args \
-      input_data_path=${INF}/work/${phenoname}.txt \
+      input_data_path=${INF}/work/${phenoname}.01 \
       output_data_rootname=${INF}/METAL/qqmanhattanlz/${phenoname}_manhattan \
       custom_peak_annotation_file_path=${INF}/work/${phenoname}.annotate \
       reference_file_path=~/cambridge-ceu/turboman/turboman_hg19_reference_data.rda \
@@ -74,6 +75,7 @@ function qqmanhattan()
   qq
   manhattan
   rm ${INF}/work/${phenoname}.txt
+  rm ${INF}/work/${phenoname}.01
 }
 
 function lz()

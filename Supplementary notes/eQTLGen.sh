@@ -380,12 +380,25 @@ function lz()
 # gs -sDEVICE=jpeg -r300 -dNOPAUSE -dBATCH -sOutputFile=eQTLGen-{2}_{7}.jpg -dFirstPage=1 -dLastPage=1 eQTLGen-{2}_{7}.pdf
 # gs -sDEVICE=jpeg -r300 -dNOPAUSE -dBATCH -sOutputFile=INF-{2}_{7}.jpg -dFirstPage=1 -dLastPage=1 INF-{2}_{7}.pdf
 
+function combine()
+{
+  cd ${INF}
+  qpdf --empty --pages ${INF}/eQTLGen/eQTLGen*pdf -- eQTLGen.pdf
+  qpdf --pages . 1-86:odd -- eQTLGen.pdf eQTLGen1.pdf
+  qpdf --empty --pages $(ls ${INF}/eQTLGen/eQTLGen*pdf|sed 's/eQTLGen/INF/2') -- INF.pdf
+  qpdf --pages . 1-86:odd -- INF.pdf INF1.pdf
+  pdfseparate eQTLGen1.pdf temp-%04d-a.pdf
+  pdfseparate INF1.pdf temp-%04d-b.pdf
+  pdfjam temp-*-*.pdf --nup 1x2  --outfile eQTLGen-INF.pdf
+  rm temp* eQTLGen.pdf INF.pdf eQTLGen1.pdf INF1.pdf
+}
+
 if [ ! -d ${INF}/eQTLGen/log ]; then mkdir -p ${INF}/eQTLGen/log; fi
 
 # lookup_merge
 # lookup_jma
 # coloc
-lz
+# lz
 
 function check_lz()
 {
