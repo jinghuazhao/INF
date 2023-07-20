@@ -149,6 +149,20 @@ function lz()
   qpdf --empty --pages $(ls ${dir}/combine*pdf) -- ${dir}/protein-disease-lz.pdf
 }
 
+function combine()
+{
+  module load ceuadmin/pdfjam
+  cd ${INF}
+  qpdf --empty --pages ${INF}/coloc/GWAS*pdf -- ..GWAS.pdf
+  qpdf --pages . 1-24:odd -- GWAS.pdf GWAS1.pdf
+  qpdf --empty --pages ${INF}/coloc/INF*pdf -- ..INF.pdf
+  qpdf --pages . 1-24:odd -- INF.pdf INF1.pdf
+  pdfseparate INF1.pdf temp-%04d-a.pdf
+  pdfseparate GWAS1.pdf temp-%04d-b.pdf
+  pdfjam temp-*-*.pdf --nup 1x2  --outfile GWAS-INF.pdf
+  rm temp* GWAS.pdf INF.pdf GWAS.pdf INF1.pdf GWAS1.pdf
+}
+
 function run_PWCoCo()
 {
 export dir=${INF}/coloc
@@ -226,7 +240,7 @@ Rscript -e '
 '
 }
 
-lz
+# lz
 # coloc
 # run_PWCoCo
 
