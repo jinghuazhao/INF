@@ -375,11 +375,11 @@ function pdf_test()
 # 91 Q-Q/Manhattan (left+right collation dropping cis-locuszoom) and tif via PDF-viewer
 # The following script will be killed by CSD3 when working on pdf so an interactive run is used
 # srun -A PETERS-SL3-CPU -p cclake -t 12:0:0 --pty bash -i
-  ls qqmanhattanlz/*qq*png | xargs -l basename -s _qq.png | grep -v BDNF | \
+  ls ${INF}/METAL/qqmanhattanlz/*qq*png | xargs -l basename -s _qq.png | grep -v BDNF | \
   parallel -C' ' '
-    convert -density 450 -resize 130% qqmanhattanlz/{}_qq.png {}_qq.png
-    convert +append qqmanhattanlz/{}_manhattan.png {}_qq.png -density 450 {}.png
-    convert {}.png -quality 100 {}.jp2
+    convert -density 450 -resize 130% ${INF}/METAL/qqmanhattanlz/{}_qq.png {}_qq.png
+    convert +append ${INF}/METAL/qqmanhattanlz/{}_manhattan.png {}_qq.png -density 450 {}.png
+    convert {}.png -quality 0 {}.jp2
     img2pdf -o {}.pdf {}.jp2
     rm {}_qq.png {}.jp2
   '
