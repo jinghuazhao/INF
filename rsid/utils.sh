@@ -377,8 +377,8 @@ function pdf_test()
 # srun -A PETERS-SL3-CPU -p cclake -t 12:0:0 --pty bash -i
   ls ${INF}/METAL/qqmanhattanlz/*qq*png | xargs -l basename -s _qq.png | grep -v BDNF | \
   parallel -C' ' '
-    convert -density 600 -resize 130% ${INF}/METAL/qqmanhattanlz/{}_qq.png {}_qq.png
-    convert +append ${INF}/METAL/qqmanhattanlz/{}_manhattan.png {}_qq.png -density 600 {}.png
+    convert -density 500 -resize 155% ${INF}/METAL/qqmanhattanlz/{}_qq.png {}_qq.png
+    convert +append ${INF}/METAL/qqmanhattanlz/{}_manhattan.png {}_qq.png -density 500 {}.png
     convert {}.png -quality 0 {}.jp2
     img2pdf -o {}.pdf {}.jp2
     rm {}_qq.png {}.jp2
