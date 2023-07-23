@@ -363,7 +363,7 @@ function lz()
     if [ -f ${dir}/eQTLGen-{3}_{7}.png ]; then
        convert -append ${dir}/eQTLGen-{3}_{7}.png ${dir}/INF-{3}_{7}.png -density 400 ${dir}/{1}-{2}-{3}.png
     fi
-    convert ${dir}/{1}-{2}-{3}.png -quality 100 ${dir}/{1}-{2}-{3}.jp2
+    convert ${dir}/{1}-{2}-{3}.png -quality 0 ${dir}/{1}-{2}-{3}.jp2
     convert ${dir}/{1}-{2}-{3}.jp2 ${dir}/{2}-{1}-{3}-lz.pdf
     rm ${dir}/eQTLGen-{1}-{2}-{3}.lz ${dir}/INF-{1}-{2}-{3}.lz
 #   rm ${dir}/eQTLGen-{3}_{7}.pdf ${dir}/INF-{3}_{7}.pdf
