@@ -72,6 +72,6 @@ This proves to be a positive control. The stacked image below shows Manhattan, Q
 
 ## Summary statistics
 
-They will be available from <https://www.phpc.cam.ac.uk/ceu/proteins> and the GWAS catalog (accession GCST90270765-GCST90270855, [summary](doc/scallop-inf1.xlsx), <https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90270001-GCST90271000/>).
+They will be available from <https://www.phpc.cam.ac.uk/ceu/proteins> and the GWAS catalog (accession GCST90274758-GCST90274848, [summary](doc/scallop-inf1.xlsx), <https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/>).
 
 <p align="center"><img src="doc/circos.png"></p>
