@@ -76,7 +76,7 @@ They will be available from
 
 * Cardiovascular Epidemiology Unit (CEU), <https://www.phpc.cam.ac.uk/ceu/proteins>
 * GWAS catalog (accession GCST90274758-GCST90274848)
-  - <https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90274001-GCST90275000/>
-  - <https://www.ebi.ac.uk/gwas/studies/[GCST90274758-GCST90274848]>
+    - <https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90274001-GCST90275000/>
+    - <https://www.ebi.ac.uk/gwas/studies/[GCST90274758-GCST90274848]>
 
 <p align="center"><img src="doc/circos.png"></p>
