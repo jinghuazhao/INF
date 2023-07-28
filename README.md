@@ -75,7 +75,7 @@ This proves to be a positive control. The stacked image below shows Manhattan, Q
 They will be available from 
 
 * Cardiovascular Epidemiology Unit (CEU), <https://www.phpc.cam.ac.uk/ceu/proteins>
-* GWAS catalog (accession GCST90274758-GCST90274848)
+* GWAS catalog (accession GCST90274758-GCST90274848, [mapping](doc/prot_target_gene.tsv))
     - <https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90274001-GCST90275000/>
     - <https://www.ebi.ac.uk/gwas/studies/GCST90274758><pre>&#x2026;</pre><https://www.ebi.ac.uk/gwas/studies/GCST90274848>
 
