@@ -127,7 +127,7 @@ circlize <- function()
   upViewport()
   draw(llist_horizontal, x=circle_size*0.3, y=circle_size, just="right")
   dev.off()
-  system("ps2eps ${INF}/circos/circlize.ps")
+  system("module load texlive;ps2eps ${INF}/circos/circlize.ps")
   system("convert -density 600 ${INF}/circos/circlize.ps ${INF}/circos/circlize.png")
 }
 
@@ -135,6 +135,5 @@ options(width=200)
 INF <- Sys.getenv("INF")
 suppressMessages(library(dplyr))
 
-module load texlive/2015
 setup()
 circlize()
