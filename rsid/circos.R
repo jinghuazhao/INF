@@ -77,7 +77,7 @@ setup <- function(simplify=TRUE)
                        value1=paste0(gene," [",prots,"]"),
                        value2=paste0("color=vd",if_else(cistrans=="cis","red","blue")))
     write.table(collapse[c("chr","start","end","value1","value2")],file=file.path(INF,"circos","pQTL_labels.txt"),
-                col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+                col.names=FALSE,row.names=FALSE,quote=TRUE,sep="\t")
   }
   pQTL_links <- filter(INF1_merge_cvt,cis.trans=="trans") %>%
                 select(p.chrom,p.start,p.end,chrom,start,end,lcolor)
@@ -104,7 +104,7 @@ circlize <- function()
   suppressMessages(library(gridBase))
   suppressMessages(library("circlize"))
   setEPS()
-  postscript(file=file.path(INF,"circlize.eps"), width=7.08, height=7.08, horizontal=FALSE, paper="special", colormodel="rgb")
+  postscript(file=file.path(INF,"circlize-old.ps"), width=7.08, height=7.08, horizontal=FALSE, paper="special", colormodel="rgb")
   col_fun <- colorRamp2(c(-1, 1), c("red", "blue"))
   circle_size <- unit(1, "snpc")
   llabels <- Legend(at=c("cis","trans"), type="points", legend_gp=gpar(col=c("red","blue")), title_position="topleft",
@@ -155,7 +155,8 @@ circlize <- function()
   upViewport()
   draw(llist_horizontal, x=circle_size*0.96, y=circle_size/12, just="right")
   dev.off()
-  system("convert -density 300 ${INF}/circlize.eps ${INF}/circlize.png")
+  system("ps2pdf ${INF}/circlize-old.ps")
+  system("convert -density 300 ${INF}/circlize-old.ps ${INF}/circlize-old.png")
 }
 
 # https://www.rapidtables.com/web/color/RGB_Color.html
