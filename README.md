@@ -79,4 +79,4 @@ They will be available from
     - <https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90274001-GCST90275000/>
     - <https://www.ebi.ac.uk/gwas/studies/GCST90274758><pre>&#x2026;</pre><https://www.ebi.ac.uk/gwas/studies/GCST90274848>
 
-<p align="center"><img src="doc/circos.png"></p>
+<p align="center"><img src="doc/circos.svg"></p>
