@@ -68,7 +68,7 @@ The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are a
 
 This proves to be a positive control. The stacked image below shows Manhattan, Q-Q, forest and LocusZoom plots.
 
-<p align="center"><img src="doc/OPG.png"></p>
+<p align="center"><img src="doc/OPG.pdf"></p>
 
 ## Summary statistics
 
@@ -80,3 +80,5 @@ They will be available from
     - <https://www.ebi.ac.uk/gwas/studies/GCST90274758><pre>&#x2026;</pre><https://www.ebi.ac.uk/gwas/studies/GCST90274848>
 
 <p align="center"><img src="doc/circos.svg"></p>
+
+The plot highlights trans-pQTLs and associate causal genes; the extent of association can be seen from the inner scatter plot whose ceiling for -log10(P) is set to be 150.
