@@ -421,9 +421,15 @@ function pdf()
   pdfjam temp-*-*.pdf --nup 2x1 --landscape --papersize '{5in,16in}' --outfile fp+lz.pdf
   rm temp*
 # Images for the GitHub page using output from qqman.sb (no border for Q-Q plot)
-  convert -density 300 -resize 110% work/fp-lz-OPG-chr17:26694861_A_G.png OPG.png
-  convert ${INF}/plots/work/OPG-qqman.png OPG.png -append -density 300 ~/INF/doc/OPG.png
-  rm OPG.png
+# convert -density 300 -resize 110% work/fp-lz-OPG-chr17:26694861_A_G.png OPG.png
+# convert ${INF}/plots/work/OPG-qqman.png OPG.png -append -density 300 ~/INF/doc/OPG.png
+# rm OPG.png
+  module load ceuadmin/pdfjam
+  qpdf ${INF}/lz/OPG-chr17:26694861_A_G.pdf --pages . 1 -- lz.pdf
+  pdfjam ${INF}/fp/OPG-chr17:26694861_A_G.pdf lz.pdf \
+         --nup 2x1 --landscape --papersize '{5in,16in}' --outfile fp-lz.pdf
+  pdfjam fp-lz.pdf ${INF}/METAL/qqmanhattanlz/OPG.pdf --nup 1x2 --papersize '{8in,12in}' --outfile ${INF}/doc/OPG.pdf
+  rm lz.pdf fp-lz.pdf
   cd ~/EWAS-fusion/IL.12B.tmp
   pdftopng -r 300 ewas-plot.pdf ewas-plot
   export rt=ewas-plot-00000
