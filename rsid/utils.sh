@@ -429,7 +429,7 @@ function pdf()
   pdfjam ${INF}/fp/OPG-chr17:26694861_A_G.pdf lz.pdf \
          --nup 2x1 --landscape --papersize '{25in,80in}' --outfile fp-lz.pdf
   pdfjam ${INF}/METAL/qqmanhattanlz/OPG.pdf fp-lz.pdf \
-         --nup 1x2 --landscape --papersize '{4.5in,5in}' --outfile ${INF}/doc/OPG.pdf
+         --nup 1x2 --landscape --papersize '{4in,5in}' --outfile ${INF}/doc/OPG.pdf
   rm lz.pdf fp-lz.pdf
   cd ~/EWAS-fusion/IL.12B.tmp
   pdftopng -r 300 ewas-plot.pdf ewas-plot
