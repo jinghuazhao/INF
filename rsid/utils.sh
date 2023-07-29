@@ -426,10 +426,9 @@ function pdf()
 # rm OPG.png
   module load ceuadmin/pdfjam
   qpdf ${INF}/lz/OPG-chr17:26694861_A_G.pdf --pages . 1 -- lz.pdf
-  pdfjam ${INF}/fp/OPG-chr17:26694861_A_G.pdf lz.pdf \
-         --nup 2x1 --landscape --papersize '{4in,8in}' --outfile fp-lz.pdf
-  pdfjam fp-lz.pdf ${INF}/METAL/qqmanhattanlz/OPG.pdf --nup 1x2 --landscape --papersize '{5in,16in}' --outfile ${INF}/doc/OPG.pdf
-  rm lz.pdf fp-lz.pdf
+  pdfjam ${INF}/METAL/qqmanhattanlz/OPG.pdf ${INF}/fp/OPG-chr17:26694861_A_G.pdf lz.pdf \
+         --nup 3x1 --landscape --papersize '{6in,16in}' --outfile ${INF}/doc/OPG.pdf
+  rm lz.pdf
   cd ~/EWAS-fusion/IL.12B.tmp
   pdftopng -r 300 ewas-plot.pdf ewas-plot
   export rt=ewas-plot-00000
