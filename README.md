@@ -66,9 +66,7 @@ The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are a
 
 ## The OPG example
 
-This proves to be a positive control. The stacked image below shows Manhattan, Q-Q, forest and LocusZoom plots.
-
-<p align="center"><img src="doc/OPG.pdf"></p>
+This proves to be a positive control. The stacked image below shows Manhattan, Q-Q, forest and LocusZoom plots, [OPG.pdf](doc/OPG.pdf).
 
 ## Summary statistics
 
