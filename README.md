@@ -66,7 +66,7 @@ The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are a
 
 ## The OPG example
 
-This proves to be a positive control. The stacked image below shows Manhattan, Q-Q, forest and LocusZoom plots, [OPG.pdf](doc/OPG.pdf).
+This proves to be a positive control. There are both a cis and a trans pQTLs, with the cis-pQTL showing stronger association. The stacked image below shows Manhattan, Q-Q, forest and LocusZoom plots, [OPG.pdf](doc/OPG.pdf).
 
 ## Summary statistics
 
