@@ -18,5 +18,6 @@ cd ${infdir}
 cp ${inf_circos}/* .
 sed 's/"//g;s/ //g' ${inf_circos}/pQTL_labels.txt | \
 awk -vFS="\t" '{split($4,a,"/");$4=a[1]};1' > pQTL_labels.txt
+cut -d' ' -f4-6 pQTL_links.txt | awk '{print $0,0}' > pQTL_ends.txt
 
 ${circos_dir}/bin/circos --conf circos.conf
