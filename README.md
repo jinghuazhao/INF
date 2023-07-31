@@ -62,7 +62,7 @@ The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are a
 
 3. We prototyped our analysis on cardio with INTERVAL such as [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](cardio/cardio.sh) as well as individual level data analysis for the KORA study. Most analyses were done locally on CSD3.
 
-4. Many functions are now part of R/gap ([CRAN](https://CRAN.R-project.org/package=gap), [GitHub](https://github.com/jinghuazhao/R/), [vignette](https://jinghuazhao.github.io/R/vignettes/gap.html)) ) or pQTLtools ([Web page](https://jinghuazhao.github.io/pQTLtools/)).
+4. Many functions are now part of two R packages, gap ([CRAN](https://CRAN.R-project.org/package=gap), [GitHub](https://github.com/jinghuazhao/R/), [vignette](https://jinghuazhao.github.io/R/vignettes/gap.html)) ) and pQTLtools ([Web page](https://jinghuazhao.github.io/pQTLtools/)).
 
 ## The OPG example
 
