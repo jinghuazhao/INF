@@ -12,7 +12,8 @@ circos/
 clinicaltrials/
 clump/
 coffeeprot/
-coloc/
+coloc/circlize.*
+coloc/dec-13
 coloc.1M/
 coloc-jma/
 cross_platform_pGWAS/
