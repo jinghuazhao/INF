@@ -79,4 +79,4 @@ They will be available from
 
 <p align="center"><img src="doc/circos.svg"></p>
 
-The diagram highlights trans-pQTLs and their likely causal genes; the significance levels of association can be seen from the inner scatter plot whose ceiling for -log10(P) is set to be 150.
+The diagram highlights pQTLs and their causal genes; the significance levels of association can be seen from the inner scatter plot whose ceiling for -log10(P) is set to be 150.
