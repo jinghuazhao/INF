@@ -83,7 +83,6 @@ The diagram highlights pQTLs [causal genes]; the significance levels of associat
 
 ## References
 
-[^OPG]: Kwan, J.S. et al. Meta-analysis of genome-wide association studies identifies two loci associated with circulating osteoprotegerin levels. Hum Mol Genet 23, 6684-6693 (2014).
-
 [^phenoscanner]: Kamat, M.A. et al. PhenoScanner V2: an expanded tool for searching human genotype-phenotype associations. Bioinformatics 35, 4851-4853 (2019).
 
+[^OPG]: Kwan, J.S. et al. Meta-analysis of genome-wide association studies identifies two loci associated with circulating osteoprotegerin levels. Hum Mol Genet 23, 6684-6693 (2014).
