@@ -66,7 +66,7 @@ The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are a
 
 ## A benchmark
 
-pQTLs for OPG as identified by PhenoScanner[^phenoscanner] proves to be a positive control[^OPG] involving both a cis and a trans pQTLs, with the cis-pQTL showing stronger association. The stacked image below shows Manhattan, Q-Q, forest and LocusZoom plots, [OPG.pdf](doc/OPG.pdf).
+As identified by PhenoScanner[^phenoscanner], pQTLs for OPG proves to be a positive control[^OPG] involving both a cis and a trans pQTLs, with the cis-pQTL showing stronger association. The stacked image below shows Manhattan, Q-Q, forest and LocusZoom plots, [OPG.pdf](doc/OPG.pdf).
 
 ## Summary statistics
 
