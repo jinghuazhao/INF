@@ -62,7 +62,7 @@ The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are a
 
 3. We prototyped our analysis on cardio with INTERVAL such as [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](cardio/cardio.sh) as well as individual level data analysis for the KORA study. Most analyses were done locally on CSD3.
 
-4. In alphabetical order, the `ci2ms`, `circos.cis.vs.trans.plot`, `circos.mhtplot2`, `cs`, `log10p`, `logp`, `gc.lambda`, `get_b_se`, `get_sdy`, `get_pve_se`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `mhtplot2d`, `miamiplot2`, `mr`, `mr_forestplot`, `qtl2dplot/qtl2dplotly/qtl3dplotly`, `pvalue`, `qtlClassifier` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) or [GitHub](https://github.com/jinghuazhao/R/). Some aspects of the downstream analyses links colocalisation and Mendelian randomisation are also available from [gap vignette](https://jinghuazhao.github.io/R/vignettes/gap.html) and [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
+4. In alphabetical order, the `ci2ms`, `circos.cis.vs.trans.plot`, `circos.mhtplot2`, `cs`, `log10p`, `logp`, `gc.lambda`, `get_b_se`, `get_sdy`, `get_pve_se`, `invnormal`, `METAL_forestplot`, `mhtplot.trunc`, `miamiplot2`, `mr`, `mr_forestplot`, `qtl2dplot/qtl2dplotly/qtl3dplotly`, `pvalue`, `qtlClassifier` functions are now part of R/gap at [CRAN](https://CRAN.R-project.org/package=gap) or [GitHub](https://github.com/jinghuazhao/R/). Some aspects of the downstream analyses links colocalisation and Mendelian randomisation are also available from [gap vignette](https://jinghuazhao.github.io/R/vignettes/gap.html) and [pQTLtools articles](https://jinghuazhao.github.io/pQTLtools/articles/index.html).
 
 ## The OPG example
 
