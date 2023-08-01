@@ -64,7 +64,7 @@ Many functions become part of two R packages, gap ([CRAN](https://CRAN.R-project
 
 ## A benchmark
 
-As revealed by PhenoScanner[^phenoscanner], OPG proves to be a positive control[^OPG] involving both a cis and a trans pQTLs, with the cis-pQTL showing stronger association -- see a stacked image containg Manhattan, Q-Q, forest and LocusZoom plots, [OPG.pdf](doc/OPG.pdf).
+As revealed by PhenoScanner[^phenoscanner], Osteoprotegerin (OPG) proves to be a positive control[^OPG] involving both a cis and a trans pQTLs, with the cis-pQTL showing stronger association -- see a stacked image containg Manhattan, Q-Q, forest and LocusZoom plots, [OPG.pdf](doc/OPG.pdf).
 
 ## Summary statistics
 
