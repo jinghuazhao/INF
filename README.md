@@ -73,7 +73,7 @@ As revealed by PhenoScanner[^phenoscanner], Osteoprotegerin (OPG) proves to be a
 They will be available from 
 
 * Cardiovascular Epidemiology Unit (CEU), <https://www.phpc.cam.ac.uk/ceu/proteins>
-* GWAS catalog (accession GCST90274758-GCST90274848, [protein-target-gene mapping](https://github.com/jinghuazhao/INF/blob/master/doc/prot_target_gene.tsv))
+* GWAS catalog (accession GCST90274758-GCST90274848, [gcst_list.xlsx](doc/gcst_list.xlsx), [protein-target-gene mapping](https://github.com/jinghuazhao/INF/blob/master/doc/prot_target_gene.tsv))
     - <https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90274001-GCST90275000/>
     - <https://www.ebi.ac.uk/gwas/studies/GCST90274758><pre>&#x2026;</pre><https://www.ebi.ac.uk/gwas/studies/GCST90274848>
 
