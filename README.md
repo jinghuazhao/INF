@@ -52,9 +52,9 @@ graph TB;
   Prototyping --> Multi-omics-analysis;
 ```
 
-<font color="blue"><b>To view the code inside the browser, select the `GitHub` button from the menu</b></font>.
-
 ## Comments
+
+<font color="blue"><b>To view the code inside the browser, select the `GitHub` button from the menu</b></font>.
 
 The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are associated with the named Linux cluster(s) used for the analysis over time. Early implementation involves the following aspects,
 
