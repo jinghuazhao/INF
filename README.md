@@ -52,15 +52,17 @@ graph TB;
   Prototyping --> Multi-omics-analysis;
 ```
 
+<font color="blue"><b>To view the code inside the browser, select the `GitHub` button from the menu</b></font>.
+
 ## Comments
 
-The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are associated with the named Linux cluster(s) used for the analysis over time. Most recent implementations are documented in `Supplementary notes` ([rsid](rsid)). <font color="blue"><b>To view the code inside the browser, select the `GitHub` button from the menu</b></font>. Early implementation involves the following aspects,
+The [tryggve](tryggve), [cardio](cardio) and [csd3](csd3) directories here are associated with the named Linux cluster(s) used for the analysis over time. Early implementation involves the following aspects,
 
 1. Data pre-processing from tryggve with [list.sh](tryggve/list.sh) and [format.sh](tryggve/format.sh), followed by meta-analysis according to [metal.sh](tryggve/metal.sh) using METAL whose results were cross-examined with [QCGWAS.sh](tryggve/QCGWAS.sh) together with additional investigation.
 2. The main analysis with [analysis.sh](tryggve/analysis.sh) containing codes for Manhattan/Q-Q/forest/LocusZoom plots, clumping using PLINK and conditional analysis using GCTA. The clumping results were classified into cis/trans signals. As the meta-analysis stabilised especially with INTERVAL reference, analysis has been intensively done locally with cardio and csd3. cis/trans classification has been done via [cis.vs.trans.classification.R](cardio/cis.vs.trans.classification.R) as validated by [cistrans.sh](cardio/cistrans.sh).
 3. Prototyping analysis on cardio with INTERVAL such as [INTERVAL.sh](tryggve/INTERVAL.sh) and [cardio.sh](cardio/cardio.sh) as well as individual level data analysis for the KORA study. Most analyses were done locally on CSD3.
 
-Many functions become part of two R packages, gap ([CRAN](https://CRAN.R-project.org/package=gap), [GitHub](https://github.com/jinghuazhao/R/), [vignette](https://jinghuazhao.github.io/R/vignettes/gap.html)) ) and pQTLtools ([Web page](https://jinghuazhao.github.io/pQTLtools/)).
+Most recent implementations are documented in `Supplementary notes` ([rsid](rsid)). Over time, many functions become part of two R packages, gap ([CRAN](https://CRAN.R-project.org/package=gap), [GitHub](https://github.com/jinghuazhao/R/), [vignette](https://jinghuazhao.github.io/R/vignettes/gap.html)) ) and pQTLtools ([Web page](https://jinghuazhao.github.io/pQTLtools/)).
 
 ## A benchmark
 
