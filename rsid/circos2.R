@@ -113,6 +113,9 @@ circlize <- function()
                circos.genomicAxis(h="top", direction="inside", labels.cex=0.2, major.at=seq(0,1e10,5e7))})
   circos.genomicTrackPlotRegion(pQTLs, track.height=0.15, bg.border=NA, bg.col="#FFFFFF", ylim=c(0, 150),
                                 panel.fun=function(region, value, ...) circos.genomicPoints(region, value, pch=16, col=value[,2], cex=0.3))
+# draw.sector(0, 360, rou1 = 0.365, rou2 = 0.365, clock.wise = FALSE, col = "#FF000080", lty="dashed", lwd=1)
+# draw.sector(0, 360, rou1 = 0.32, rou2 = 0.32, clock.wise = FALSE, col = "#FF000080", lty="dashed", lwd=1)
+# draw.sector(0, 360, rou1 = 0.275, rou2 = 0.275, clock.wise = FALSE, col = "#FF000080", lty="dashed", lwd=1)
   circos.yaxis(side="left", at=seq(0, 150, 50), labels=seq(0, 150, 50), sector.index=get.all.sector.index()[1], labels.cex=0.3, lwd=0.3,
                tick.length=0.5*(convert_x(1, "mm", get.cell.meta.data("sector.index"), get.cell.meta.data("track.index"))))
   circos.genomicText(data.frame(start=1,end=1),sector.index=get.all.sector.index()[1],
@@ -127,7 +130,7 @@ circlize <- function()
   upViewport()
   draw(llist_horizontal, x=circle_size*0.3, y=circle_size, just="right")
   dev.off()
-  system("module load texlive;ps2eps ${INF}/circos/circlize.ps")
+  system("module load texlive;ps2eps -f ${INF}/circos/circlize.ps")
   system("convert -density 600 ${INF}/circos/circlize.ps ${INF}/circos/circlize.png")
 }
 
