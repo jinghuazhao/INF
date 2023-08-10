@@ -125,10 +125,8 @@
 <div class="col-md-9" role="main">
 <p><img align="right" height="80" src="https://connect.medrxiv.org/qr/qr_img.php?id=2023.03.24.23287680" width="80"/>.</p>
 <h1 id="scallop-inf_meta-analysis">SCALLOP-INF meta-analysis<a class="headerlink" href="#scallop-inf_meta-analysis" title="Permanent link">¶</a></h1>
-<p>A companion web site for this paper, </p>
-<p>The SCALLOP consortium. Jing Hua Zhao, David Stacey, Niclas Eriksson, Erin Macdonald-Dunlop, Asa H Hedman, Anette Kalnapenkis, Stefan Enroth, Domenico Cozzetto, Jonathan Digby-Bell, Jonanthan Marten, Lasse Folkersen, Christian Herder, Lina Jonsson, Sarah E. Bergen, Christian Gieger, Elise J Needham, Praveen Surendran, Estonia Biobank Research Team, Dirk S Paul, Ozren Polasek, Barbara Thorand, Harald Grallert, Michael Roden, Urmo Vosa, Tonu Esko, Caroline Hayward, Asa Johansson, Ulf Gyllensten, Nicholas Powell, Oskar Hansson, Niklas Mattsson-Carlgren, Peter K Joshi, John Danesh, Leonid Padyukov, Lars Klareskog, Mikael Landen, James F Wilson, Agneta Siegbahn, Lars Wallentin, Anders Malarstig, Adam S Butterworth, James E. Peters.
-<strong>Mapping pQTLs of circulating inflammatory proteins identifies drivers of immune-related disease risk and novel therapeutic targets</strong>.
-medRxiv 2023.03.24.23287680; doi: <a href="https://doi.org/10.1101/2023.03.24.23287680">https://doi.org/10.1101/2023.03.24.23287680</a>.</p>
+<p>A companion web site for this paper<sup id="fnref:medRxiv"><a class="footnote-ref" href="#fn:medRxiv">1</a></sup>, </p>
+<p>Zhao, J.H. et al. Genetics of circulating inflammatory proteins identifies drivers of immune-mediated disease risk and therapeutic targets. <em>Nature Immunology</em> (2023), URL <a href="https://www.nature.com/articles/s41590-023-01588-w#citeas">https://www.nature.com/articles/s41590-023-01588-w#citeas</a>.</p>
 <p>Quick links to codes for figures,</p>
 <ul>
 <li>Figure 1, <a href="https://github.com/jinghuazhao/INF/blob/master/rsid/circos2.R">circos2.R</a></li>
@@ -189,7 +187,7 @@ medRxiv 2023.03.24.23287680; doi: <a href="https://doi.org/10.1101/2023.03.24.23
 </ol>
 <p>Most recent implementations are documented in <code>Supplementary notes</code> (<a href="rsid">rsid</a>). Over time, many functions become part of two R packages, gap (<a href="https://CRAN.R-project.org/package=gap">CRAN</a>, <a href="https://github.com/jinghuazhao/R/">GitHub</a>, <a href="https://jinghuazhao.github.io/R/vignettes/gap.html">vignette</a>) and pQTLtools (<a href="https://jinghuazhao.github.io/pQTLtools/">Web page</a>).</p>
 <h2 id="a_benchmark">A benchmark<a class="headerlink" href="#a_benchmark" title="Permanent link">¶</a></h2>
-<p>As revealed by PhenoScanner<sup id="fnref:phenoscanner"><a class="footnote-ref" href="#fn:phenoscanner">1</a></sup>, Osteoprotegerin (OPG) proves to be a positive control<sup id="fnref:OPG"><a class="footnote-ref" href="#fn:OPG">2</a></sup> involving both a cis and a trans pQTLs, with the cis-pQTL showing stronger association -- see a stacked image containg forest+LocusZoom and Manhattan+Q-Q plots, <a href="doc/OPG.pdf">OPG.pdf</a>.</p>
+<p>As revealed by PhenoScanner<sup id="fnref:phenoscanner"><a class="footnote-ref" href="#fn:phenoscanner">2</a></sup>, Osteoprotegerin (OPG) proves to be a positive control<sup id="fnref:OPG"><a class="footnote-ref" href="#fn:OPG">3</a></sup> involving both a cis and a trans pQTLs, with the cis-pQTL showing stronger association -- see a stacked image containg forest+LocusZoom and Manhattan+Q-Q plots, <a href="doc/OPG.pdf">OPG.pdf</a>.</p>
 <h2 id="summary_statistics">Summary statistics<a class="headerlink" href="#summary_statistics" title="Permanent link">¶</a></h2>
 <p>They will be available from </p>
 <ul>
@@ -206,11 +204,16 @@ medRxiv 2023.03.24.23287680; doi: <a href="https://doi.org/10.1101/2023.03.24.23
 <div class="footnote">
 <hr/>
 <ol>
+<li id="fn:medRxiv">
+<p>The SCALLOP consortium. Jing Hua Zhao, David Stacey, Niclas Eriksson, Erin Macdonald-Dunlop, Asa H Hedman, Anette Kalnapenkis, Stefan Enroth, Domenico Cozzetto, Jonathan Digby-Bell, Jonanthan Marten, Lasse Folkersen, Christian Herder, Lina Jonsson, Sarah E. Bergen, Christian Gieger, Elise J Needham, Praveen Surendran, Estonia Biobank Research Team, Dirk S Paul, Ozren Polasek, Barbara Thorand, Harald Grallert, Michael Roden, Urmo Vosa, Tonu Esko, Caroline Hayward, Asa Johansson, Ulf Gyllensten, Nicholas Powell, Oskar Hansson, Niklas Mattsson-Carlgren, Peter K Joshi, John Danesh, Leonid Padyukov, Lars Klareskog, Mikael Landen, James F Wilson, Agneta Siegbahn, Lars Wallentin, Anders Malarstig, Adam S Butterworth, James E. Peters.
+<strong>Mapping pQTLs of circulating inflammatory proteins identifies drivers of immune-related disease risk and novel therapeutic targets</strong>.
+medRxiv 2023.03.24.23287680; doi: <a href="https://doi.org/10.1101/2023.03.24.23287680">https://doi.org/10.1101/2023.03.24.23287680</a>. <a class="footnote-backref" href="#fnref:medRxiv" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
 <li id="fn:phenoscanner">
-<p>Kamat, M.A. et al. PhenoScanner V2: an expanded tool for searching human genotype-phenotype associations. Bioinformatics 35, 4851-4853 (2019). <a class="footnote-backref" href="#fnref:phenoscanner" title="Jump back to footnote 1 in the text">↩</a></p>
+<p>Kamat, M.A. et al. PhenoScanner V2: an expanded tool for searching human genotype-phenotype associations. Bioinformatics 35, 4851-4853 (2019). <a class="footnote-backref" href="#fnref:phenoscanner" title="Jump back to footnote 2 in the text">↩</a></p>
 </li>
 <li id="fn:OPG">
-<p>Kwan, J.S. et al. Meta-analysis of genome-wide association studies identifies two loci associated with circulating osteoprotegerin levels. Hum Mol Genet 23, 6684-6693 (2014). <a class="footnote-backref" href="#fnref:OPG" title="Jump back to footnote 2 in the text">↩</a></p>
+<p>Kwan, J.S. et al. Meta-analysis of genome-wide association studies identifies two loci associated with circulating osteoprotegerin levels. Hum Mol Genet 23, 6684-6693 (2014). <a class="footnote-backref" href="#fnref:OPG" title="Jump back to footnote 3 in the text">↩</a></p>
 </li>
 </ol>
 </div></div>
@@ -296,5 +299,5 @@ medRxiv 2023.03.24.23287680; doi: <a href="https://doi.org/10.1101/2023.03.24.23
 </html>
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2023-08-02 21:31:38.275413+00:00
+Build Date UTC : 2023-08-10 15:31:47.778256+00:00
 -->
