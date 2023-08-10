@@ -3,7 +3,7 @@
 
 A companion web site for this paper[^medRxiv], 
 
-Zhao, J.H. et al. Genetics of circulating inflammatory proteins identifies drivers of immune-mediated disease risk and therapeutic targets. *Nature Immunology* (2023), URL <https://www.nature.com/articles/s41590-023-01588-w#citeas>.
+Zhao, J.H., Stacey, D., Eriksson, N., Macdonald-Dunlop, E., Hedman, Å.K., Kalnapenkis, A., Enroth, S., Cozzetto, D., Digby-Bell, J., Marten, J., et al. (2023). Genetics of circulating inflammatory proteins identifies drivers of immune-mediated disease risk and therapeutic targets. *Nature Immunology*, URL <https://www.nature.com/articles/s41590-023-01588-w#citeas>.
 
 Quick links to codes for figures,
 
