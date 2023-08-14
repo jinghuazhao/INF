@@ -58,7 +58,6 @@ Rscript -e '
   INF <- Sys.getenv("INF")
   prot <- Sys.getenv("prot")
   n <- c("trans-pQTL for IL18","cis-eQTL for NLRC4")
-  n <- c(" "," ")
   d <- read.table(paste0(file.path("work",prot),".gassoc"),check.names=FALSE,
                   col.names=c("snpid","marker","chr","pos",n,"QTL"))
   markers <- d[c("marker","chr","pos")]
