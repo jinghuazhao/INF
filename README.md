@@ -8,7 +8,7 @@ URL <https://www.nature.com/articles/s41590-023-01588-w>.
 Quick links to codes for figures,
 
 - Figure 1, [circos2.R](https://github.com/jinghuazhao/INF/blob/master/rsid/circos2.R)
-- Figure 2, [rs12075.R](https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh), [IL.12B.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/IL.12B.sh), [TRAIL.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/TRAIL.sh)
+- Figure 2, [hotspot.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/hotspot.sh), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh), [IL.12B.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/IL.12B.sh), [TRAIL.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/TRAIL.sh)
 - Figure 3, [IL.18-rs385076.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.18-rs385076.sh)
 - Figure 4,
 - Figure 5, [gsmr.r](https://github.com/jinghuazhao/INF/blob/master/workflow/scripts/gsmr.r)
