@@ -77,7 +77,7 @@ They will be available from
 
 <p align="center"><img src="doc/circos.svg"></p>
 
-The diagram highlights pQTLs [causal genes]; the significance levels of association can be seen from the inner scatter plot whose ceiling for -log10(P) is set to be 150.
+The diagram is based on [circos](http://circos.ca/) in the named directory[circos](https://github.com/jinghuazhao/INF/tree/master/circos) which highlights pQTLs [causal genes]; the significance levels of association can be seen from the inner scatter plot whose ceiling for -log10(P) is set to be 150.
 
 ## References
 
