@@ -95,7 +95,7 @@ circlize <- function()
   circos.clear()
   circos.par(start.degree=90, gap.degree=c(rep(c(0.7), 21), 8), track.margin=c(0.005, 0.005), cell.padding=c(0.001, 0.01, 0.01, 0.001))
   circos.initializeWithIdeogram(cytoband=file.path(INF,"circos","cytoband.txt"),plotType=NULL)
-  circos.genomicLabels(pQTL_labels, labels.column=4, side="outside", cex=0.45, line_lwd=0.8,
+  circos.genomicLabels(pQTL_labels, labels.column=4, side="outside", cex=0.45, font=3, line_lwd=0.8,
                        labels_height=min(c(cm_h(3.15), max(strwidth(pQTL_labels, cex = 0.4, font = par("font"))))),
                        connection_height=convert_height(8, "mm"), col=pQTL_labels[[5]], line_col=pQTL_labels[[5]])
   circos.track(ylim=c(0,1), track.height=0.05, bg.border=NA,
