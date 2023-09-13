@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+cat <(head -1 KORA.pheno) <(awk 'NR>2' KORA.pheno | grep -f KORA.prune.relatedness -v) > ~/KORA.pheno
+module load ceuadmin/stata
+stata <<END
+   insheet using ~/KORA.pheno, delim(" ")
+   sum age
+   tabulate sex
+END
