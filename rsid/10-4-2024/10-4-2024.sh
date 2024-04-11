@@ -31,20 +31,20 @@ function forestplot()
     }
     gsmr(input="gsmr-reduce.txt",output="gsmr-efo-reduce-more.txt",top="gsmr-reduce-top.txt")
   END
-  awk 'NR==1 || /CD40/' ${INF}/mr/gsmr/gsmr-efo-reduce-more.txt > gsmr-efo-reduce-CD40.txt
+  # awk 'NR==1 || /CD40/' ${INF}/mr/gsmr/gsmr-efo-reduce-more.txt > gsmr-efo-reduce-CD40.txt
   cd -
   R --no-save <<\ \ END
   suppressMessages(library(dplyr))
-  INF <- Sys.getenv("INF")
-  CD40 <- read.delim(file.path(INF,"gsmr-efo-reduce-CD40.txt")) %>%
-          filter(id %in% c("ieu-a-833","ieu-b-18","ebi-a-GCST004131","ebi-a-GCST004132","ebi-a-GCST004133")) %>%
+  CD40 <- read.delim("gsmr-efo-reduce-more.txt") %>%
+          filter(protein=="CD40" &
+                 id %in% c("ieu-a-833","ieu-b-18","ebi-a-GCST004131","ebi-a-GCST004132","ebi-a-GCST004133")) %>%
           select(Disease,bxy,se) %>%
           setNames(c("outcome","Effect","StdErr")) %>%
           mutate(outcome=gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))
   library(gap)
-  pdf(file.path(INF,"CD40.pdf"),height=3,width=9)
+  pdf("CD40.pdf",height=3,width=9)
   mr_forestplot(CD40,colgap.forest.left="0.05cm", fontsize=14,
-                leftcols=c("studlab"), leftlabs=c("CD40 measurement"),
+                leftcols=c("studlab"), leftlabs=c("Outcome"),
                 plotwidth="3inch", sm="OR",
                 rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
                 digits=2, digits.pval=2, scientific.pval=TRUE,
@@ -160,7 +160,7 @@ function forestplot()
   library(gap)
   pdf("IL6.pdf",height=3,width=10)
   mr_forestplot(IL6,colgap.forest.left="0.05cm", fontsize=14,
-                leftcols=c("studlab"), leftlabs=c("IL6 measurement"),
+                leftcols=c("studlab"), leftlabs=c("Outcome"),
                 plotwidth="3inch", sm="OR",
                 rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
                 digits=2, digits.pval=2, scientific.pval=TRUE,
