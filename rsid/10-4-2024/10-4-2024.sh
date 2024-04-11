@@ -160,7 +160,7 @@ function forestplot()
   library(gap)
   pdf("IL6.pdf",height=3,width=10)
   mr_forestplot(IL6,colgap.forest.left="0.05cm", fontsize=14,
-                leftcols=c("studlab"), leftlabs=c("CD40 measurement"),
+                leftcols=c("studlab"), leftlabs=c("IL6 measurement"),
                 plotwidth="3inch", sm="OR",
                 rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
                 digits=2, digits.pval=2, scientific.pval=TRUE,
