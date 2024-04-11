@@ -32,8 +32,8 @@ Quick links to codes for figures,
  [Supplementary Figure 2](doc/fp-lz.pdf) | [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
  [Supplementary Figure 3](doc/eQTLGen-INF.pdf) | [eQTLGen.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh)
  [Supplementary Figure 4](doc/GWAS-INF.pdf) | [coloc-disease.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/coloc-disease.sh)
- **Supplementary item** | [js.R](https://github.com/jinghuazhao/INF/blob/master/csd3/js.R), [merge.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/merge.sh)
- **Supplementary Tables** | [tables.R](https://github.com/jinghuazhao/INF/blob/master/rsid/tables.R)
+ [**Supplementary item**](https://static-content.springer.com/esm/art%3A10.1038%2Fs41590-023-01588-w/MediaObjects/41590_2023_1588_MOESM5_ESM.xlsx) | [js.R](https://github.com/jinghuazhao/INF/blob/master/csd3/js.R), [merge.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/merge.sh)
+ [**Supplementary Tables**](https://static-content.springer.com/esm/art%3A10.1038%2Fs41590-023-01588-w/MediaObjects/41590_2023_1588_MOESM4_ESM.html) | [tables.R](https://github.com/jinghuazhao/INF/blob/master/rsid/tables.R)
 
 ## Flow of analysis
 
