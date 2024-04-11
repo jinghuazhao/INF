@@ -104,9 +104,8 @@ function forestplot()
   subset(jma,prot=="IL.6")
   Ins<-format_data(jma, type = "exposure", header = TRUE,
                    phenotype_col = "Protein", snp_col = "SNP", beta_col = "b",
-                   se_col = "se", eaf_col = "eaf", effect_allele_col = "a1",
+                   se_col = "se", eaf_col = "freq", effect_allele_col = "a1",
                    other_allele_col = "a2", pval_col = "p")
-
   ##read in the outcome data
   #ao<-available_outcomes(access_token=NULL)
 
@@ -118,11 +117,11 @@ function forestplot()
 
   outcome_dat <- data <- read.delim("Ins.txt") %>%
                          mutate(SNP="rs2228145",a1="A",a2="C")
-  outcome_dat[2,"trait"] <- "Abdominal aortic aneurysm"
+  outcome_dat[2,"trait"] <- data[2,"trait"] <- "Abdominal aortic aneurysm"
 
   outcome_dat <-format_data(outcome_dat, type = "outcome", header = TRUE,
                             phenotype_col = "trait", snp_col = "SNP", beta_col = "beta",
-                            se_col = "se", eaf_col = "freq", effect_allele_col = "a2",
+                            se_col = "se", eaf_col = "eaf", effect_allele_col = "a2",
                             other_allele_col = "a1", pval_col = "p")
 
   ##harmonise the exposure and outcome data
@@ -167,6 +166,11 @@ function forestplot()
                 common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
                 addrow=TRUE, backtransf=TRUE, at=c(1:5)*0.5, spacing=1.5, xlim=c(0.5,2.5))
   dev.off()
+  #as benchmark
+  ins <- select(jma,prot,SNP,a1,a2,freq,b,se,p) %>%
+         setNames(c("Phenotype","SNP","effect_allele","other_allele","eaf","beta","se","pval"))
+  write.csv(ins,file="~/Ins.csv",quote=FALSE,row.names=FALSE)
+  write.csv(data,file="~/out.csv",quote=FALSE,row.names=FALSE)
   END
 }
 
