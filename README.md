@@ -7,33 +7,32 @@ URL <https://www.nature.com/articles/s41590-023-01588-w>.
 
 Quick links to codes for figures,
 
-- [Figure 1](https://www.nature.com/articles/s41590-023-01588-w/figures/1), [circos2.R](https://github.com/jinghuazhao/INF/blob/master/rsid/circos2.R)
-- [Figure 2](https://www.nature.com/articles/s41590-023-01588-w/figures/2), [hotspot.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/hotspot.sh), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh), [IL.12B.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/IL.12B.sh), [TRAIL.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/TRAIL.sh)
-- [Figure 3](https://www.nature.com/articles/s41590-023-01588-w/figures/3), [IL.18-rs385076.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.18-rs385076.sh)
-- [Figure 4](https://www.nature.com/articles/s41590-023-01588-w/figures/4),
-- [Figure 5](https://www.nature.com/articles/s41590-023-01588-w/figures/5), [gsmr.r](https://github.com/jinghuazhao/INF/blob/master/workflow/scripts/gsmr.r)
-- [Figure 6](https://www.nature.com/articles/s41590-023-01588-w/figures/6), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
-
-- [Extended Data Figure 1](https://www.nature.com/articles/s41590-023-01588-w/figures/7),
-- [Extended Data Figure 2](https://www.nature.com/articles/s41590-023-01588-w/figures/8), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh), [IL.17C.R](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.17C.R)
-- [Extended Data Figure 3](https://www.nature.com/articles/s41590-023-01588-w/figures/9), [aristotle.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/aristotle.sh)
-- [Extended Data Figure 4](https://www.nature.com/articles/s41590-023-01588-w/figures/10), [h2pve.R](https://github.com/jinghuazhao/INF/blob/master/rsid/h2pve.R)
-- [Extended Data Figure 5](https://www.nature.com/articles/s41590-023-01588-w/figures/11), [rs12075.R](https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R)
-- [Extended Data Figure 6](https://www.nature.com/articles/s41590-023-01588-w/figures/12), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
-- [Extended Data Figure 7](https://www.nature.com/articles/s41590-023-01588-w/figures/13),
-- [Extended Data Figure 8](https://www.nature.com/articles/s41590-023-01588-w/figures/14), [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
-- [Extended Data Figure 9](https://www.nature.com/articles/s41590-023-01588-w/figures/15), [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
-- [Extended Data Figure 10](https://www.nature.com/articles/s41590-023-01588-w/figures/16), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
-
-- [Supplementary Figure 1](doc/manhattan-qq.pdf) (450dpi), [qqmanhattanlz.sb](https://github.com/jinghuazhao/INF/blob/master/rsid/qqmanhattanlz.sb), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
-- [Supplementary Figure 2](doc/fp-lz.pdf), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
-- [Supplementary Figure 3](doc/eQTLGen-INF.pdf), [eQTLGen.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh)
-- [Supplementary Figure 4](doc/GWAS-INF.pdf), [coloc-disease.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/coloc-disease.sh)
-
-- Supplementary item, [js.R](https://github.com/jinghuazhao/INF/blob/master/csd3/js.R), [merge.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/merge.sh)
-
-- Supplementary Tables, [tables.R](https://github.com/jinghuazhao/INF/blob/master/rsid/tables.R)
-
+ Name                                                                     | Link
+--------------------------------------------------------------------------|-------------------------------------------------------------------------------------
+ [Figure 1](https://www.nature.com/articles/s41590-023-01588-w/figures/1) | [circos2.R](https://github.com/jinghuazhao/INF/blob/master/rsid/circos2.R)
+ [Figure 2](https://www.nature.com/articles/s41590-023-01588-w/figures/2) | [hotspot.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/hotspot.sh), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh), [IL.12B.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/IL.12B.sh), [TRAIL.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/TRAIL.sh)
+ [Figure 3](https://www.nature.com/articles/s41590-023-01588-w/figures/3) | [IL.18-rs385076.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.18-rs385076.sh)
+ [Figure 4](https://www.nature.com/articles/s41590-023-01588-w/figures/4) 
+ [Figure 5](https://www.nature.com/articles/s41590-023-01588-w/figures/5) | [gsmr.r](https://github.com/jinghuazhao/INF/blob/master/workflow/scripts/gsmr.r)
+ [Figure 6](https://www.nature.com/articles/s41590-023-01588-w/figures/6) | [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
+ Extended Data Figure
+ [Extended Data Figure 1](https://www.nature.com/articles/s41590-023-01588-w/figures/7)
+ [Extended Data Figure 2](https://www.nature.com/articles/s41590-023-01588-w/figures/8) | [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh), [IL.17C.R](https://github.com/jinghuazhao/INF/blob/master/rsid/IL.17C.R)
+ [Extended Data Figure 3](https://www.nature.com/articles/s41590-023-01588-w/figures/9) | [aristotle.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/aristotle.sh)
+ [Extended Data Figure 4](https://www.nature.com/articles/s41590-023-01588-w/figures/10)| [h2pve.R](https://github.com/jinghuazhao/INF/blob/master/rsid/h2pve.R)
+ [Extended Data Figure 5](https://www.nature.com/articles/s41590-023-01588-w/figures/11)| [rs12075.R](https://github.com/jinghuazhao/INF/blob/master/rsid/rs12075.R)
+ [Extended Data Figure 6](https://www.nature.com/articles/s41590-023-01588-w/figures/12)| [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
+ [Extended Data Figure 7](https://www.nature.com/articles/s41590-023-01588-w/figures/13)
+ [Extended Data Figure 8](https://www.nature.com/articles/s41590-023-01588-w/figures/14)| [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
+ [Extended Data Figure 9](https://www.nature.com/articles/s41590-023-01588-w/figures/15)| [pqtlGWAS.R](https://github.com/jinghuazhao/INF/blob/master/rsid/pqtlGWAS.R)
+ [Extended Data Figure 10](https://www.nature.com/articles/s41590-023-01588-w/figures/16)| [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
+ Supplementary Figure
+ [Supplementary Figure 1](doc/manhattan-qq.pdf) (450dpi), [qqmanhattanlz.sb](https://github.com/jinghuazhao/INF/blob/master/rsid/qqmanhattanlz.sb), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
+ [Supplementary Figure 2](doc/fp-lz.pdf), [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
+ [Supplementary Figure 3](doc/eQTLGen-INF.pdf), [eQTLGen.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh)
+ [Supplementary Figure 4](doc/GWAS-INF.pdf), [coloc-disease.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/coloc-disease.sh)
+ Supplementary item | [js.R](https://github.com/jinghuazhao/INF/blob/master/csd3/js.R), [merge.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/merge.sh)
+ Supplementary Tables | [tables.R](https://github.com/jinghuazhao/INF/blob/master/rsid/tables.R)
 
 ## Flow of analysis
 
