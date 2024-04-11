@@ -141,12 +141,12 @@ function forestplot()
   try(mr_single <- mr_singlesnp(dat)) #single SNP MR using Wald ratio
 
   ##save the MR results
-  exposure <- "pQTL-combined"
-  result_file0 <- paste0(".",exposure,".harmonise.txt")
-  result_file <- paste0(".",exposure,".mr.txt")
-  #result_file2 <- paste0(".",exposure,".mr_hetero.txt")
-  #result_file3 <- paste0(".",exposure,".mr_pleio.txt")
-  result_file4 <- paste0(".",exposure,".mr_single.txt")
+  exposure <- "IL6-rs2228145"
+  result_file0 <- paste0("./",exposure,".harmonise.txt")
+  result_file <- paste0("./",exposure,".mr.txt")
+  #result_file2 <- paste0("./",exposure,".mr_hetero.txt")
+  #result_file3 <- paste0("./",exposure,".mr_pleio.txt")
+  result_file4 <- paste0("./",exposure,".mr_single.txt")
   if (exists("dat")==TRUE){ write.table(dat,file=result_file0,sep="\t",col.names=T,row.names=F,quote=F)}
   if (exists("mr_results")==TRUE){ write.table(mr_results,file=result_file,sep="\t",col.names=T,row.names=F,quote=F)}
   #if (exists("mr_hetero")==TRUE){ write.table(mr_hetero,file=result_file2,sep="\t",col.names=T,row.names=F,quote=F)}
