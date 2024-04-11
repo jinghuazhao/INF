@@ -11,20 +11,18 @@
 <link href="css/bootstrap.min.css" rel="stylesheet"/>
 <link href="css/font-awesome.min.css" rel="stylesheet"/>
 <link href="css/base.css" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
-<script defer="" src="js/jquery-1.10.2.min.js"></script>
-<script defer="" src="js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/HTML.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Java.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/JavaScript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Perl.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Python.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/R.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/rust.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/Bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/HTML.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/Java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/JavaScript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/Perl.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/Python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/R.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+<script>hljs.highlightAll();</script>
 </head>
 <body class="homepage">
 <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
@@ -224,15 +222,17 @@ medRxiv 2023.03.24.23287680; doi: <a href="https://doi.org/10.1101/2023.03.24.23
 <hr/>
 <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
 </footer>
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 <script>
             var base_url = ".",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-<script defer="" src="js/base.js"></script>
-<script defer="" src="javascripts/config.js"></script>
-<script defer="" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-<script defer="" src="search/main.js"></script>
+<script src="js/base.js"></script>
+<script src="javascripts/config.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="search/main.js"></script>
 <div aria-hidden="true" aria-labelledby="searchModalLabel" class="modal" id="mkdocs_search_modal" role="dialog" tabindex="-1">
 <div class="modal-dialog modal-lg">
 <div class="modal-content">
@@ -241,16 +241,13 @@ medRxiv 2023.03.24.23287680; doi: <a href="https://doi.org/10.1101/2023.03.24.23
 <button class="close" data-dismiss="modal" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
 </div>
 <div class="modal-body">
-<p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
+<p>From here you can search these documents. Enter your search terms below.</p>
 <form>
 <div class="form-group">
 <input class="form-control" id="mkdocs-search-query" placeholder="Search..." title="Type search term here" type="search"/>
 </div>
 </form>
-<div id="mkdocs-search-results"></div>
+<div data-no-results-text="No results found" id="mkdocs-search-results"></div>
 </div>
 <div class="modal-footer">
 </div>
@@ -299,6 +296,6 @@ medRxiv 2023.03.24.23287680; doi: <a href="https://doi.org/10.1101/2023.03.24.23
 <script src="https://unpkg.com/mermaid@8.8.0/dist/mermaid.min.js"></script><script>mermaid.initialize({});</script></body>
 </html>
 <!--
-MkDocs version : 1.1.2
-Build Date UTC : 2023-09-13 14:31:02.024987+00:00
+MkDocs version : 1.5.3
+Build Date UTC : 2024-04-11 15:51:11.706060+00:00
 -->

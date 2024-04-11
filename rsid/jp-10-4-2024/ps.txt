@@ -1,0 +1,18 @@
+trait	efo	study	pmid	ancestry	year	beta	se	p	direction	n	n_cases	n_controls	n_studies	unit	dataset
+1	Coronary artery disease	EFO_0000378;EFO_0001645	CARDIoGRAM	21378990	European	2011	0.04358	0.0142	0.002149	+	84264	21976	62288	14	log OR	CARDIoGRAM_CHD_EUR_2011
+2	Coronary artery disease	EFO_0000378;EFO_0001645	CARDIoGRAMplusC4D	23202125	Mixed	2013	0.04698	0.008844	1.11e-07	+	194427	63746	130681	48	log OR	CARDIoGRAMplusC4D_CHD_Mixed_2013
+3	Coronary artery disease	EFO_0000378;EFO_0001645	CARDIoGRAMplusC4D	26343387	Mixed	2015	0.04961	0.009517	1.86e-07	+	184305	60801	123504	48	log OR	CARDIoGRAMplusC4D_CHD_Mixed_2015
+4	Atopic dermatitis	EFO_0000274	EAGLE	26482879	Mixed	2015	-0.07637	0.01716	8.67e-06	-	103066	18900	84166	22	log OR	EAGLE_Eczema_Mixed_2015
+5	Cause of death: abdominal aortic aneurysm, ruptured	NCIT_C27046	Neale B	UKBB	European	2017	0.0001508	0.001067	0.8876	+	7637	33	7604	1	risk diff	Neale-B_UKBB_EUR_2017
+6	Cause of death: rheumatoid arthritis, unspecified	NCIT_C2884;HP_0001370	Neale B	UKBB	European	2017	-0.0004174	0.0005889	0.4784	-	7637	10	7627	1	risk diff	Neale-B_UKBB_EUR_2017
+7	Other rheumatoid arthritis	NCIT_C2884;HP_0001370	Neale B	UKBB	European	2017	3.832e-05	0.0001319	0.7714	+	337199	964	336235	1	risk diff	Neale-B_UKBB_EUR_2017
+8	Self-reported rheumatoid arthritis	EFO_0000685	Neale B	UKBB	European	2017	0.000309	0.0002583	0.2316	+	337159	3730	333429	1	risk diff	Neale-B_UKBB_EUR_2017
+9	Seropositive rheumatoid arthritis	EFO_0000685;EFO_0005767;EFO_0007791	Neale B	UKBB	European	2017	4.37e-05	6.03e-05	0.4686	+	337199	201	336998	1	risk diff	Neale-B_UKBB_EUR_2017
+10	Coronary artery disease	EFO_0000378;EFO_0001645	Nelson CP	28714975	Mixed	2017	0.02821	0.00851	0.000922	+	332477	71602	260875	1	log OR	Nelson-CP_CAD_Mixed_2017
+11	Atopic dermatitis	EFO_0000274	EAGLE	26482879	Mixed	2015	-0.07696	0.01237	5e-10	-	-	-	-	-	log_OR	NHGRI-EBI GWAS Catalog
+12	Rheumatoid arthritis	EFO_0000685	Okada Y	24390342	East Asian	2014	0.09531	0.02542	1e-04	+	22515	4873	17642	4	log OR	Okada-Y_RA_EAS_2014
+13	Rheumatoid arthritis	EFO_0000685	Okada Y	24390342	European	2014	0.06766	0.01662	4.5e-06	+	58284	14361	43923	18	log OR	Okada-Y_RA_EUR_2014
+14	Rheumatoid arthritis	EFO_0000685	Okada Y	24390342	Mixed	2014	0.07696	0.01418	3.5e-09	+	80799	19234	61565	22	log OR	Okada-Y_RA_Mixed_2014
+15	Rheumatoid arthritis	EFO_0000685	Stahl E	20453842	European	2010	0.06188	0.02716	0.01896	+	25712	5539	20172	6	log OR	Stahl-E_RA_EUR_2010
+16	Coronary artery disease	EFO_0000378;EFO_0001645	van der Harst P	29212778	Mixed	2018	0.0389	0.0052	4.802e-14	+	547261	122733	424528	2	log OR	van-der-Harst-P_CAD_Mixed_2018
+17	Coronary artery disease	EFO_0000378;EFO_0001645	van der Harst P	29212778	Mixed	2018	0.0297	0.007097	2.8e-05	+	296525	34541	261984	1	log OR	van-der-Harst-P_CAD-UKBB_Mixed_2018
