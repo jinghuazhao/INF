@@ -32,8 +32,8 @@ Quick links to codes for figures,
  [Supplementary Figure 2](doc/fp-lz.pdf) | [utils.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/utils.sh)
  [Supplementary Figure 3](doc/eQTLGen-INF.pdf) | [eQTLGen.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/eQTLGen.sh)
  [Supplementary Figure 4](doc/GWAS-INF.pdf) | [coloc-disease.sh](https://github.com/jinghuazhao/INF/blob/master/rsid/coloc-disease.sh)
- Supplementary item | [js.R](https://github.com/jinghuazhao/INF/blob/master/csd3/js.R), [merge.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/merge.sh)
- Supplementary Tables | [tables.R](https://github.com/jinghuazhao/INF/blob/master/rsid/tables.R)
+ **Supplementary item** | [js.R](https://github.com/jinghuazhao/INF/blob/master/csd3/js.R), [merge.sh](https://github.com/jinghuazhao/INF/blob/master/csd3/merge.sh)
+ **Supplementary Tables** | [tables.R](https://github.com/jinghuazhao/INF/blob/master/rsid/tables.R)
 
 ## Flow of analysis
 
