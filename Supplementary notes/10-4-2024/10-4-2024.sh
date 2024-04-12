@@ -45,11 +45,11 @@ function forestplot()
   pdf("CD40.pdf",height=3,width=9)
   mr_forestplot(CD40,colgap.forest.left="0.05cm", fontsize=14,
                 leftcols=c("studlab"), leftlabs=c("Outcome"),
-                plotwidth="3inch", sm="OR",
+                plotwidth="4inch", sm="OR",
                 rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
                 digits=2, digits.pval=2, scientific.pval=TRUE,
                 common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
-                addrow=TRUE, backtransf=TRUE, at=5:11/10, spacing=1.5, xlim=c(0.5,1.1))
+                addrow=TRUE, backtransf=TRUE, at=c(0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5), spacing=1.5, xlim=c(0.6,1.5))
   dev.off()
   END
   module load ceuadmin/phenoscanner
@@ -62,11 +62,15 @@ function forestplot()
   gwas <- read.delim("rs2228145_PhenoScanner_GWAS.tsv") %>%
           filter(grepl(traits,trait)) %>%
           filter(proxy==0 & r2==1 & !is.na(beta)) %>%
-          select(-c(snp,hg19_coordinates,a1,a2,rsid,ref_rsid,ref_hg19_coordinates,ref_a1,ref_a2,
+          select(-c(hg19_coordinates,ref_rsid,ref_hg19_coordinates,ref_a1,ref_a2,
                     ref_hg38_coordinates,hg38_coordinates,proxy,r2,dprime))
+  swap <- gwas[["direction"]]=="-"
+  gwas[swap,"a1"] <- "C"
+  gwas[swap,"a2"] <- "A"
   write.table(gwas,file="ps.txt",sep="\t",quote=FALSE)
   select(gwas,study,efo,trait,beta,se,p,n)
-  write.table(gwas[c(4,5,14,16),c("study","pmid","trait","efo","beta","se","p")],file="Ins.txt",sep="\t",row.names=FALSE,quote=FALSE)
+  write.table(gwas[c(4,5,14,16),c("study","pmid","trait","efo","snp","a1","a2","beta","se","p")],
+              file="Ins.txt",sep="\t",row.names=FALSE,quote=FALSE)
   END
   R --no-save <<\ \ END
   #########################################
@@ -115,14 +119,13 @@ function forestplot()
   #snps = Ins$SNP,
   #outcomes = ids)
 
-  outcome_dat <- data <- read.delim("Ins.txt") %>%
-                         mutate(SNP="rs2228145",a1="A",a2="C")
+  outcome_dat <- data <- read.delim("Ins.txt")
   outcome_dat[2,"trait"] <- data[2,"trait"] <- "Abdominal aortic aneurysm"
 
   outcome_dat <-format_data(outcome_dat, type = "outcome", header = TRUE,
-                            phenotype_col = "trait", snp_col = "SNP", beta_col = "beta",
-                            se_col = "se", eaf_col = "eaf", effect_allele_col = "a2",
-                            other_allele_col = "a1", pval_col = "p")
+                            phenotype_col = "trait", snp_col = "snp", beta_col = "beta",
+                            se_col = "se", eaf_col = "eaf", effect_allele_col = "a1",
+                            other_allele_col = "a2", pval_col = "p")
 
   ##harmonise the exposure and outcome data
   dat <- NULL
@@ -160,18 +163,18 @@ function forestplot()
   pdf("IL6.pdf",height=3,width=10)
   mr_forestplot(IL6,colgap.forest.left="0.05cm", fontsize=14,
                 leftcols=c("studlab"), leftlabs=c("Outcome"),
-                plotwidth="3inch", sm="OR",
+                plotwidth="3.5inch", sm="OR",
                 rightcols=c("effect","ci","pval"), rightlabs=c("OR","95%CI","P"),
                 digits=2, digits.pval=2, scientific.pval=TRUE,
                 common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
-                addrow=TRUE, backtransf=TRUE, at=c(1:5)*0.5, spacing=1.5, xlim=c(0.5,2.5))
+                addrow=TRUE, backtransf=TRUE, at=c(1:3)*0.5, spacing=1.5, xlim=c(0.5,1.5))
   dev.off()
   #as benchmark
   ins <- select(jma,prot,SNP,a1,a2,freq,b,se,p) %>%
          setNames(c("Phenotype","SNP","effect_allele","other_allele","eaf","beta","se","pval"))
   write.csv(ins,file="~/Ins.csv",quote=FALSE,row.names=FALSE)
   write.csv(rename(data,Phenotype=trait,effect_allele=a2,other_allele=a1,pval=p),
-            file="~/out.csv",quote=FALSE,row.names=FALSE)
+            file="~/Out.csv",quote=FALSE,row.names=FALSE)
   END
 }
 
