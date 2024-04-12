@@ -1,4 +1,4 @@
-# CD40/IL6 Forest plots
+# CD40/IL6 forest plots
 
 Lookup was done with PhenoScanner V2
 
