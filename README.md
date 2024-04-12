@@ -7,7 +7,7 @@ URL <https://www.nature.com/articles/s41590-023-01588-w>.
 
 Quick links to codes for figures,
 
- Name                                                                     | Link
+ Name                                                                     | Script
 --------------------------------------------------------------------------|-------------------------------------------------------------------------------------
  **Figure**
  [Figure 1](https://www.nature.com/articles/s41590-023-01588-w/figures/1) | [circos2.R](https://github.com/jinghuazhao/INF/blob/master/rsid/circos2.R)
