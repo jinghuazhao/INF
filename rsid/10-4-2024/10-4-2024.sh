@@ -56,13 +56,14 @@ function forestplot()
           filter(grepl(traits,trait)) %>%
           filter(proxy==0 & r2==1 & !is.na(beta)) %>%
           select(-c(hg19_coordinates,ref_rsid,ref_hg19_coordinates,ref_a1,ref_a2,
-                    ref_hg38_coordinates,hg38_coordinates,proxy,r2,dprime))
+                    ref_hg38_coordinates,hg38_coordinates,proxy,r2,dprime)) %>%
+          rename(SNP=snp)
   swap <- gwas[["direction"]]=="-"
   gwas[swap,"a1"] <- "C"
   gwas[swap,"a2"] <- "A"
   write.table(gwas,file="ps.txt",sep="\t",quote=FALSE)
   select(gwas,study,efo,trait,beta,se,p,n)
-  write.table(gwas[c(4,14,16),c("study","pmid","trait","efo","snp","a1","a2","beta","se","p")],
+  write.table(gwas[c(4,14,16),c("study","pmid","trait","efo","SNP","a1","a2","beta","se","p")],
               file="Ins.txt",sep="\t",row.names=FALSE,quote=FALSE)
   #########################################
   #MR pQTL analysis script -- Jie Zheng #
@@ -111,11 +112,11 @@ function forestplot()
   #outcomes = ids)
 
   data <- read.delim("Ins.txt")
-  outcome_data <- format_data(data,
-                              type = "outcome", header = TRUE,
-                              phenotype_col = "trait", snp_col = "snp", beta_col = "beta",
-                              se_col = "se", eaf_col = "eaf", effect_allele_col = "a1",
-                              other_allele_col = "a2", pval_col = "p")
+  outcome_dat <- format_data(data,
+                             type = "outcome", header = TRUE,
+                             phenotype_col = "trait", snp_col = "SNP", beta_col = "beta",
+                             se_col = "se", eaf_col = "eaf", effect_allele_col = "a1",
+                             other_allele_col = "a2", pval_col = "p")
 
   ##harmonise the exposure and outcome data
   dat <- NULL
