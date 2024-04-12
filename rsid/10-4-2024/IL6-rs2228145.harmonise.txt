@@ -1,5 +1,5 @@
 SNP	effect_allele.exposure	other_allele.exposure	effect_allele.outcome	other_allele.outcome	beta.exposure	beta.outcome	eaf.exposure	eaf.outcome	remove	palindromic	ambiguous	id.outcome	se.outcome	pval.outcome	outcome	mr_keep.outcome	pval_origin.outcome	se.exposure	pval.exposure	exposure	mr_keep.exposure	pval_origin.exposure	id.exposure	action	mr_keep	samplesize.outcome
-rs2228145	A	C	A	C	-0.1684	-0.0389	NA	NA	FALSE	FALSE	FALSE	95T3mQ	0.0052	4.802e-14	Coronary artery disease	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	NyZipD	2	TRUE	NA
-rs2228145	A	C	A	C	-0.1684	-0.07696	NA	NA	FALSE	FALSE	FALSE	fX8wHD	0.01418	3.5e-09	Rheumatoid arthritis	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	NyZipD	2	TRUE	NA
-rs2228145	A	C	A	C	-0.1684	0.07637	NA	NA	FALSE	FALSE	FALSE	iSqC6k	0.01716	8.67e-06	Atopic dermatitis	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	NyZipD	2	TRUE	NA
-rs2228145	A	C	A	C	-0.1684	-0.0001508	NA	NA	FALSE	FALSE	FALSE	wA3yAp	0.001067	0.8876	Abdominal aortic aneurysm	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	NyZipD	2	TRUE	NA
+rs2228145	A	C	A	C	-0.1684	0.07637	0.6128	NA	FALSE	FALSE	FALSE	GQn2fM	0.01716	8.67e-06	Atopic dermatitis	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	8x6aAa	2	TRUE	NA
+rs2228145	A	C	A	C	-0.1684	0.0389	0.6128	NA	FALSE	FALSE	FALSE	mqmq0A	0.0052	4.802e-14	Coronary artery disease	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	8x6aAa	2	TRUE	NA
+rs2228145	A	C	A	C	-0.1684	0.07696	0.6128	NA	FALSE	FALSE	FALSE	nMmzig	0.01418	3.5e-09	Rheumatoid arthritis	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	8x6aAa	2	TRUE	NA
+rs2228145	A	C	A	C	-0.1684	0.0001508	0.6128	NA	FALSE	FALSE	FALSE	ss93fv	0.001067	0.8876	Abdominal aortic aneurysm	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	8x6aAa	2	TRUE	NA
