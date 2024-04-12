@@ -170,7 +170,8 @@ function forestplot()
   ins <- select(jma,prot,SNP,a1,a2,freq,b,se,p) %>%
          setNames(c("Phenotype","SNP","effect_allele","other_allele","eaf","beta","se","pval"))
   write.csv(ins,file="~/Ins.csv",quote=FALSE,row.names=FALSE)
-  write.csv(data,file="~/out.csv",quote=FALSE,row.names=FALSE)
+  write.csv(rename(data,Phenotype=trait,effect_allele=a2,other_allele=a1,pval=p),
+            file="~/out.csv",quote=FALSE,row.names=FALSE)
   END
 }
 
