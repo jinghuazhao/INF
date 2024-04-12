@@ -2,46 +2,45 @@
 
 function forestplot()
 {
-  cd ${INF}/mr/gsmr
+  cd ${INF}/rsid/10-4-2024
+  module load ceuadmin/phenoscanner
+  phenoscanner --snp=rs2228145 -c All -x EUR -r 0.8
+# awk 'NR==1 || /CD40/' ${INF}/mr/gsmr/gsmr-efo-reduce-more.txt > gsmr-efo-reduce-CD40.txt
   R --no-save -q <<\ \ END
-    library(dplyr)
-    INF <- Sys.getenv("INF")
-    metal <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
-             filter(cis.trans=="cis") %>%
-             select(prot,rsid,Chromosome) %>%
-             rename(pqtl=rsid,chr=Chromosome)
-    gsmr <- function (input="gsmr.txt",output="gsmr-efo.txt",top="gsmr-top.txt")
-    {
-      gsmr <- read.delim(input)
-      efo <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt")) %>%
-             select(id,trait,ncase,ncontrol) %>%
-             mutate(Ntotal=ncase+ncontrol) %>%
-             filter(id %in% unique(gsmr$Outcome))
-      gwas <- read.table(top,col.names=c("prot","id","qtl","a1_qtl","a2_qtl","freq","b_qtl","se_qtl","p_qtl","n_qtl")) %>%
-              select(prot,id,qtl,b_qtl,se_qtl,p_qtl)
-      gsmr_efo <- left_join(gsmr,pQTLdata::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
-                  left_join(filter(metal,prot %in% (gsmr$Exposure)), by=c("Exposure"="prot")) %>%
-                  left_join(efo,by=c("Outcome"="id")) %>%
-                  left_join(gwas,by=c("Exposure"="prot","Outcome"="id")) %>%
-                  rename(protein=Exposure,id=Outcome,Disease=trait,Ncase=ncase,Ncontrol=ncontrol) %>%
-                  mutate(protein=target.short,fdr=p.adjust(p,method="fdr")) %>%
-                  select(protein,Disease,id,nsnp,fdr,Ncase,Ncontrol,Ntotal,bxy,se,pqtl,p,qtl,b_qtl,se_qtl,p_qtl,chr,pqtl) %>%
-                  arrange(fdr)
-      write.table(gsmr_efo,output,row.names=FALSE,quote=FALSE,sep="\t")
-    }
-    gsmr(input="gsmr-reduce.txt",output="gsmr-efo-reduce-more.txt",top="gsmr-reduce-top.txt")
-  END
-  # awk 'NR==1 || /CD40/' ${INF}/mr/gsmr/gsmr-efo-reduce-more.txt > gsmr-efo-reduce-CD40.txt
-  cd -
-  R --no-save <<\ \ END
+  options(width=200)
   suppressMessages(library(dplyr))
+  INF <- Sys.getenv("INF")
+  metal <- read.delim(file.path(INF,"work","INF1.METAL")) %>%
+           filter(cis.trans=="cis") %>%
+           select(prot,rsid,Chromosome) %>%
+           rename(pqtl=rsid,chr=Chromosome)
+  gsmr <- function (input="gsmr.txt",output="gsmr-efo.txt",top="gsmr-top.txt")
+  {
+    gsmr <- read.delim(input)
+    efo <- read.delim(file.path(INF,"OpenGWAS","efo-update.txt")) %>%
+           select(id,trait,ncase,ncontrol) %>%
+           mutate(Ntotal=ncase+ncontrol) %>%
+           filter(id %in% unique(gsmr$Outcome))
+    gwas <- read.table(top,col.names=c("prot","id","qtl","a1_qtl","a2_qtl","freq","b_qtl","se_qtl","p_qtl","n_qtl")) %>%
+            select(prot,id,qtl,b_qtl,se_qtl,p_qtl)
+    gsmr_efo <- left_join(gsmr,pQTLdata::inf1[c("prot","target.short")], by=c("Exposure"="prot")) %>%
+                left_join(filter(metal,prot %in% (gsmr$Exposure)), by=c("Exposure"="prot")) %>%
+                left_join(efo,by=c("Outcome"="id")) %>%
+                left_join(gwas,by=c("Exposure"="prot","Outcome"="id")) %>%
+                rename(protein=Exposure,id=Outcome,Disease=trait,Ncase=ncase,Ncontrol=ncontrol) %>%
+                mutate(protein=target.short,fdr=p.adjust(p,method="fdr")) %>%
+                select(protein,Disease,id,nsnp,fdr,Ncase,Ncontrol,Ntotal,bxy,se,pqtl,p,qtl,b_qtl,se_qtl,p_qtl,chr,pqtl) %>%
+                arrange(fdr)
+    write.table(gsmr_efo,output,row.names=FALSE,quote=FALSE,sep="\t")
+  }
+  gsmr(input=file.path(INF,"mr","gsmr","gsmr-reduce.txt"),output="gsmr-efo-reduce-more.txt",top="gsmr-reduce-top.txt")
   CD40 <- read.delim("gsmr-efo-reduce-more.txt") %>%
           filter(protein=="CD40" &
                  id %in% c("ieu-a-833","ieu-b-18","ebi-a-GCST004131","ebi-a-GCST004132","ebi-a-GCST004133")) %>%
           select(Disease,bxy,se) %>%
           setNames(c("outcome","Effect","StdErr")) %>%
           mutate(outcome=gsub("\\b(^[a-z])","\\U\\1",outcome,perl=TRUE))
-  library(gap)
+  suppressMessages(library(gap))
   pdf("CD40.pdf",height=3,width=9)
   mr_forestplot(CD40,colgap.forest.left="0.05cm", fontsize=14,
                 leftcols=c("studlab"), leftlabs=c("Outcome"),
@@ -51,12 +50,6 @@ function forestplot()
                 common=FALSE, random=FALSE, print.I2=FALSE, print.pval.Q=FALSE, print.tau2=FALSE,
                 addrow=TRUE, backtransf=TRUE, at=c(0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5), spacing=1.5, xlim=c(0.6,1.5))
   dev.off()
-  END
-  module load ceuadmin/phenoscanner
-  phenoscanner --snp=rs2228145 -c All -x EUR -r 0.8
-  R --no-save <<\ \ END
-  options(width=200)
-  suppressMessages(library(dplyr))
   # rs2228145, chr1:154426970, a1=A, a2=C
   traits <- "heumatoid|Coronary artery disease|abdominal aortic aneurysm|Abdominal aortic aneurysm|Atopic dermatitis"
   gwas <- read.delim("rs2228145_PhenoScanner_GWAS.tsv") %>%
@@ -69,10 +62,8 @@ function forestplot()
   gwas[swap,"a2"] <- "A"
   write.table(gwas,file="ps.txt",sep="\t",quote=FALSE)
   select(gwas,study,efo,trait,beta,se,p,n)
-  write.table(gwas[c(4,5,14,16),c("study","pmid","trait","efo","snp","a1","a2","beta","se","p")],
+  write.table(gwas[c(4,14,16),c("study","pmid","trait","efo","snp","a1","a2","beta","se","p")],
               file="Ins.txt",sep="\t",row.names=FALSE,quote=FALSE)
-  END
-  R --no-save <<\ \ END
   #########################################
   #MR pQTL analysis script -- Jie Zheng #
   #########################################
@@ -96,7 +87,7 @@ function forestplot()
   #rm(list=ls(all=TRUE))
 
   ##setup your working folder
-  setwd("~/INF/rsid/jp-10-4-2024")
+  #setwd("~/INF/rsid/jp-10-4-2024")
 
   ##read in the exposure data from a file
   #Ins<-data <- read_excel("./data/Instruments.xlsx",1)
@@ -119,13 +110,12 @@ function forestplot()
   #snps = Ins$SNP,
   #outcomes = ids)
 
-  outcome_dat <- data <- read.delim("Ins.txt")
-  outcome_dat[2,"trait"] <- data[2,"trait"] <- "Abdominal aortic aneurysm"
-
-  outcome_dat <-format_data(outcome_dat, type = "outcome", header = TRUE,
-                            phenotype_col = "trait", snp_col = "snp", beta_col = "beta",
-                            se_col = "se", eaf_col = "eaf", effect_allele_col = "a1",
-                            other_allele_col = "a2", pval_col = "p")
+  data <- read.delim("Ins.txt")
+  outcome_data <- format_data(data,
+                              type = "outcome", header = TRUE,
+                              phenotype_col = "trait", snp_col = "snp", beta_col = "beta",
+                              se_col = "se", eaf_col = "eaf", effect_allele_col = "a1",
+                              other_allele_col = "a2", pval_col = "p")
 
   ##harmonise the exposure and outcome data
   dat <- NULL
@@ -178,5 +168,5 @@ function forestplot()
   END
 }
 
-# 4,5,14,16
+# 4,14,16
 #  select(gwas,study,efo,trait,beta,se,n,direction)
