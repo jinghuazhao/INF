@@ -1,4 +1,4 @@
-snp	rsid	a1	a2	trait	efo	study	pmid	ancestry	year	beta	se	p	direction	n	n_cases	n_controls	n_studies	unit	dataset
+SNP	rsid	a1	a2	trait	efo	study	pmid	ancestry	year	beta	se	p	direction	n	n_cases	n_controls	n_studies	unit	dataset
 1	rs2228145	rs2228145	A	C	Coronary artery disease	EFO_0000378;EFO_0001645	CARDIoGRAM	21378990	European	2011	0.04358	0.0142	0.002149	+	84264	21976	62288	14	log OR	CARDIoGRAM_CHD_EUR_2011
 2	rs2228145	rs2228145	A	C	Coronary artery disease	EFO_0000378;EFO_0001645	CARDIoGRAMplusC4D	23202125	Mixed	2013	0.04698	0.008844	1.11e-07	+	194427	63746	130681	48	log OR	CARDIoGRAMplusC4D_CHD_Mixed_2013
 3	rs2228145	rs2228145	A	C	Coronary artery disease	EFO_0000378;EFO_0001645	CARDIoGRAMplusC4D	26343387	Mixed	2015	0.04961	0.009517	1.86e-07	+	184305	60801	123504	48	log OR	CARDIoGRAMplusC4D_CHD_Mixed_2015

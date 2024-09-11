@@ -1,10 +1,10 @@
 exposure	outcome	id.exposure	id.outcome	samplesize	SNP	b	se	p
-IL-6	Atopic dermatitis	mDfCzV	bBmRf0	NA	rs2228145	-0.453503562945368	0.101900237529691	8.56840789294565e-06
-IL-6	Atopic dermatitis	mDfCzV	bBmRf0	NA	All - Inverse variance weighted	NA	NA	NA
-IL-6	Atopic dermatitis	mDfCzV	bBmRf0	NA	All - MR Egger	NA	NA	NA
-IL-6	Coronary artery disease	mDfCzV	LhWMge	NA	rs2228145	-0.230997624703088	0.0308788598574822	7.38888279689088e-14
-IL-6	Coronary artery disease	mDfCzV	LhWMge	NA	All - Inverse variance weighted	NA	NA	NA
-IL-6	Coronary artery disease	mDfCzV	LhWMge	NA	All - MR Egger	NA	NA	NA
-IL-6	Rheumatoid arthritis	mDfCzV	vSwIHQ	NA	rs2228145	-0.457007125890736	0.0842042755344418	5.7192901117009e-08
-IL-6	Rheumatoid arthritis	mDfCzV	vSwIHQ	NA	All - Inverse variance weighted	NA	NA	NA
-IL-6	Rheumatoid arthritis	mDfCzV	vSwIHQ	NA	All - MR Egger	NA	NA	NA
+IL-6	Coronary artery disease	z4a2su	3RJgRV	NA	rs2228145	-0.230997624703088	0.0308788598574822	7.38888279689088e-14
+IL-6	Coronary artery disease	z4a2su	3RJgRV	NA	All - Inverse variance weighted	NA	NA	NA
+IL-6	Coronary artery disease	z4a2su	3RJgRV	NA	All - MR Egger	NA	NA	NA
+IL-6	Atopic dermatitis	z4a2su	9FYdJw	NA	rs2228145	-0.453503562945368	0.101900237529691	8.56840789294565e-06
+IL-6	Atopic dermatitis	z4a2su	9FYdJw	NA	All - Inverse variance weighted	NA	NA	NA
+IL-6	Atopic dermatitis	z4a2su	9FYdJw	NA	All - MR Egger	NA	NA	NA
+IL-6	Rheumatoid arthritis	z4a2su	QiGcU7	NA	rs2228145	-0.457007125890736	0.0842042755344418	5.7192901117009e-08
+IL-6	Rheumatoid arthritis	z4a2su	QiGcU7	NA	All - Inverse variance weighted	NA	NA	NA
+IL-6	Rheumatoid arthritis	z4a2su	QiGcU7	NA	All - MR Egger	NA	NA	NA

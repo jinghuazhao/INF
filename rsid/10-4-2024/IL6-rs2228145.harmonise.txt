@@ -1,4 +1,4 @@
 SNP	effect_allele.exposure	other_allele.exposure	effect_allele.outcome	other_allele.outcome	beta.exposure	beta.outcome	eaf.exposure	eaf.outcome	remove	palindromic	ambiguous	id.outcome	se.outcome	pval.outcome	outcome	mr_keep.outcome	pval_origin.outcome	se.exposure	pval.exposure	exposure	mr_keep.exposure	pval_origin.exposure	id.exposure	action	SNP_index	mr_keep	samplesize.outcome
-rs2228145	A	C	A	C	-0.1684	0.07637	0.6128	NA	FALSE	FALSE	FALSE	bBmRf0	0.01716	8.67e-06	Atopic dermatitis	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	mDfCzV	2	1	TRUE	NA
-rs2228145	A	C	A	C	-0.1684	0.0389	0.6128	NA	FALSE	FALSE	FALSE	LhWMge	0.0052	4.802e-14	Coronary artery disease	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	mDfCzV	2	1	TRUE	NA
-rs2228145	A	C	A	C	-0.1684	0.07696	0.6128	NA	FALSE	FALSE	FALSE	vSwIHQ	0.01418	3.5e-09	Rheumatoid arthritis	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	mDfCzV	2	1	TRUE	NA
+rs2228145	A	C	A	C	-0.1684	0.0389	0.6128	NA	FALSE	FALSE	FALSE	3RJgRV	0.0052	4.802e-14	Coronary artery disease	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	z4a2su	2	1	TRUE	NA
+rs2228145	A	C	A	C	-0.1684	0.07637	0.6128	NA	FALSE	FALSE	FALSE	9FYdJw	0.01716	8.67e-06	Atopic dermatitis	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	z4a2su	2	1	TRUE	NA
+rs2228145	A	C	A	C	-0.1684	0.07696	0.6128	NA	FALSE	FALSE	FALSE	QiGcU7	0.01418	3.5e-09	Rheumatoid arthritis	TRUE	reported	0.0119	1.83439e-45	IL-6	TRUE	reported	z4a2su	2	1	TRUE	NA

@@ -1,4 +1,4 @@
 id.exposure	id.outcome	outcome	exposure	method	nsnp	b	se	pval
-mDfCzV	bBmRf0	Atopic dermatitis	IL-6	Wald ratio	1	-0.453503562945368	0.101900237529691	8.56840789294565e-06
-mDfCzV	LhWMge	Coronary artery disease	IL-6	Wald ratio	1	-0.230997624703088	0.0308788598574822	7.38888279689088e-14
-mDfCzV	vSwIHQ	Rheumatoid arthritis	IL-6	Wald ratio	1	-0.457007125890736	0.0842042755344418	5.7192901117009e-08
+z4a2su	3RJgRV	Coronary artery disease	IL-6	Wald ratio	1	-0.230997624703088	0.0308788598574822	7.38888279689088e-14
+z4a2su	9FYdJw	Atopic dermatitis	IL-6	Wald ratio	1	-0.453503562945368	0.101900237529691	8.56840789294565e-06
+z4a2su	QiGcU7	Rheumatoid arthritis	IL-6	Wald ratio	1	-0.457007125890736	0.0842042755344418	5.7192901117009e-08
