@@ -17,6 +17,7 @@ git push
 
 function setup()
 {
+export LD_PRELOAD=/usr/lib64/libcrypto.so
 module load python/3.7
 source ~/COVID-19/py37/bin/activate
 }
